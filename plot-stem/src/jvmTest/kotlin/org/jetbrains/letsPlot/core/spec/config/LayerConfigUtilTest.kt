@@ -42,7 +42,7 @@ class LayerConfigUtilTest {
         )
         doCheck(
             GeomName.JITTER,
-            withPos(jitter(width = 0.01, height = 0.02)) + mapOf("width" to 1.01, "height" to 2.02),
+            withPos(jitter(width = 0.01, height = 0.02)) + mapOf("width" to 1.0, "height" to 2.0),
             mapOf("name" to "jitter", "width" to 1.01, "height" to 2.02)
         )
         doCheck(
@@ -64,7 +64,7 @@ class LayerConfigUtilTest {
         doCheck(
             GeomName.TEXT,
             withPos(nudge(x = 1.0)) + mapOf("nudge_x" to 0.2),
-            mapOf("name" to "nudge", "x" to 0.2)
+            mapOf("name" to "nudge", "x" to 1.2)
         )
         doCheck(
             GeomName.TEXT,

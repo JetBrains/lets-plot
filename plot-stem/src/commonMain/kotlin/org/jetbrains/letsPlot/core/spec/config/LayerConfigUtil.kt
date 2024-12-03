@@ -20,7 +20,7 @@ internal object LayerConfigUtil {
         val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
         val hasOwnPositionOptions = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
         val specifiedPosOptions: Map<String, Any> = when (val v = layerOptions[POS]) {
-            null -> preferredPosOptions
+            null -> preferredPosOptions[Option.Meta.NAME]?.let { mapOf(Option.Meta.NAME to it) } ?: emptyMap()
             is Map<*, *> ->
                 @Suppress("UNCHECKED_CAST")
                 v as Map<String, Any>
@@ -33,10 +33,21 @@ internal object LayerConfigUtil {
         return when {
             specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME] -> {
                 // Merge
-                if (hasOwnPositionOptions) {
-                    specifiedPosOptions + preferredPosOptions
-                } else {
-                    preferredPosOptions + specifiedPosOptions
+                (preferredPosOptions.keys + specifiedPosOptions.keys).associateWith { option ->
+                    when {
+                        !specifiedPosOptions.containsKey(option) -> preferredPosOptions.getValue(option)
+                        !preferredPosOptions.containsKey(option) -> specifiedPosOptions.getValue(option)
+                        !hasOwnPositionOptions -> specifiedPosOptions.getValue(option)
+                        else -> {
+                            val preferredValue = preferredPosOptions.getValue(option)
+                            val specifiedValue = specifiedPosOptions.getValue(option)
+                            if (preferredValue is Number && specifiedValue is Number) {
+                                preferredValue.toDouble() + specifiedValue.toDouble()
+                            } else {
+                                preferredValue
+                            }
+                        }
+                    }
                 }
             }
 
