@@ -12,12 +12,14 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.spec.GeomProto
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
+import org.jetbrains.letsPlot.core.spec.PosProto
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 internal object LayerConfigUtil {
 
     fun positionAdjustmentOptions(layerOptions: OptionsAccessor, geomProto: GeomProto): Map<String, Any> {
         val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
+        val hasOwnPositionOptions = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
         val specifiedPosOptions: Map<String, Any>? = layerOptions[POS]?.let { v ->
             when (v) {
                 is Map<*, *> ->
@@ -30,7 +32,11 @@ internal object LayerConfigUtil {
 
         return when {
             specifiedPosOptions == null -> preferredPosOptions
-            geomProto.hasOwnPositionAdjustmentOptions(layerOptions) -> mapOf(Option.Meta.NAME to "composition", "first" to specifiedPosOptions, "second" to preferredPosOptions)
+            hasOwnPositionOptions -> mapOf(
+                Option.Meta.NAME to PosProto.COMPOSITION,
+                Option.Pos.Composition.FIRST to specifiedPosOptions,
+                Option.Pos.Composition.SECOND to preferredPosOptions
+            )
             specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME] -> preferredPosOptions + specifiedPosOptions
             else -> specifiedPosOptions
         }

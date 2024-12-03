@@ -54,8 +54,8 @@ internal object PosProto {
             )
 
             COMPOSITION -> {
-                val firstProvider = createPosProvider(opts.getMap("first"))
-                val secondProvider = createPosProvider(opts.getMap("second"))
+                val firstProvider = createPosProvider(opts.getMap(Pos.Composition.FIRST))
+                val secondProvider = createPosProvider(opts.getMap(Pos.Composition.SECOND))
                 PosProvider.composition(firstProvider, secondProvider)
             }
 
