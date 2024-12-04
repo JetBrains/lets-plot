@@ -1,10 +1,14 @@
-## [4.5.2] - 2024-11-dd
+## [4.5.2] - 2024-12-dd
 
 ### Added
 
 ### Changed
-- The `g` format type no longer uses truncation by default. To enable it, use `~` (e.g., `~g`).
-  
+
+- Number formatting:
+  - We have aligned our specifications with D3.js (rather than Python): `g` format type with `~` (e.g. `~g`) now truncates trailing zeros, and without `~` it doesn't.
+  - By default, number formatting is based on the inferred data type (e.g. `int` or decimal).
+  - The default number formatter now respects `theme(exponent_format=...)` settings and does not use 's' format type for large numbers.
+
 ### Fixed
 - Bad precision in the default tooltip format when using coord limits [[#1134](https://github.com/JetBrains/lets-plot/issues/1134)]. 
 - Display integer values without fractional part in tooltips [[#1186](https://github.com/JetBrains/lets-plot/issues/1186)].
