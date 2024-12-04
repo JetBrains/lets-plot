@@ -18,8 +18,12 @@ import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 internal object LayerConfigUtil {
 
     fun positionAdjustmentOptions(layerOptions: OptionsAccessor, geomProto: GeomProto): Map<String, Any> {
+        // By "positioning parameter" I mean a geometry parameter that is not `position`, but affects to the position adjustment (like `nudge_x`)
+        // true if user specified some positioning parameter
+        val hasOwnPositionOptions: Boolean = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
+        // Position options, defined by geometry, with values that are either default or overwritten by some positioning parameters
         val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
-        val hasOwnPositionOptions = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
+        // Position options, that comes from the parameter `position`
         val specifiedPosOptions: Map<String, Any>? = layerOptions[POS]?.let { v ->
             when (v) {
                 is Map<*, *> ->
