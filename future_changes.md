@@ -18,5 +18,6 @@
 - Extra trim in formatted number when type='g' [[#1241](https://github.com/JetBrains/lets-plot/issues/1241)].
 - Axis breaks are badly formatted if explicitly set [[#1245](https://github.com/JetBrains/lets-plot/issues/1245)].
 - Badly formatted zero break for the "~g" format [[#1246](https://github.com/JetBrains/lets-plot/issues/1246)].
+- How to adjust the vertical position of geom_text when using position_dodge [[#1248](https://github.com/JetBrains/lets-plot/issues/1248)].
 - Incorrect result for format(9.999, ".2f") [[#1251](https://github.com/JetBrains/lets-plot/issues/1251)].
 - Tooltips overlapping when not enough vertical space for them [[#1254](https://github.com/JetBrains/lets-plot/issues/1254)].
