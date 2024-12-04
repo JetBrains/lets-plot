@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.*
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import kotlin.math.max
@@ -629,7 +628,6 @@ class LayoutManager(
     }
 
     class PositionedTooltip {
-        val tooltipBox: TooltipBox
         internal val tooltipSize: DoubleVector
         val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
@@ -646,7 +644,6 @@ class LayoutManager(
         internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
             tooltipSpec = measuredTooltip.tooltipSpec
             tooltipSize = measuredTooltip.size
-            tooltipBox = measuredTooltip.tooltipBox
             this.tooltipCoord = tooltipCoord
             this.stemCoord = stemCoord
         }
@@ -654,7 +651,6 @@ class LayoutManager(
         private constructor(positionedTooltip: PositionedTooltip, newTooltipCoord: DoubleVector) {
             tooltipSpec = positionedTooltip.tooltipSpec
             tooltipSize = positionedTooltip.tooltipSize
-            tooltipBox = positionedTooltip.tooltipBox
             stemCoord = positionedTooltip.stemCoord
             tooltipCoord = newTooltipCoord
         }
@@ -671,12 +667,8 @@ class LayoutManager(
     class MeasuredTooltip(
         internal val tooltipSpec: TooltipSpec,
         internal val size: DoubleVector,
-        internal val tooltipBox: TooltipBox,
         private val strokeWidth: Double
     ) {
-        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox, strokeWidth: Double)
-                : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox, strokeWidth)
-
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
         internal val hintKind get() = tooltipSpec.layoutHint.kind
         internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius + strokeWidth

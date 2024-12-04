@@ -21,9 +21,10 @@ class TooltipSpecFactory(
     private val axisOrigin: DoubleVector,
     private val flippedAxis: Boolean,
     private val xAxisTheme: AxisTheme,
-    private val yAxisTheme: AxisTheme
+    private val yAxisTheme: AxisTheme,
+    private val ctx: PlotContext
 ) {
-    fun create(geomTarget: GeomTarget, ctx: PlotContext): List<TooltipSpec> {
+    fun create(geomTarget: GeomTarget): List<TooltipSpec> {
         return ArrayList(Helper(geomTarget, flippedAxis, ctx).createTooltipSpecs())
     }
 
@@ -38,7 +39,7 @@ class TooltipSpecFactory(
         private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
         private val myTooltipTitle = contextualMapping.getTitle(hitIndex(), ctx)
 
-        internal fun createTooltipSpecs(): List<TooltipSpec> {
+        fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
             tooltipSpecs += axisTooltipSpec()
             tooltipSpecs += sideTooltipSpec()

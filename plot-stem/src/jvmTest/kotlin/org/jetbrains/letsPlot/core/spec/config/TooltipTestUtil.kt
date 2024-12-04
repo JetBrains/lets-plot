@@ -26,15 +26,15 @@ object TooltipTestUtil {
             axisOrigin = ZERO,
             flippedAxis = false,
             xAxisTheme = axisTheme,
-            yAxisTheme = axisTheme
+            yAxisTheme = axisTheme,
+            ctx = TestingPlotContext.create(layer)
         )
         return factory.create(
             geomTarget = GeomTarget(
                 hitIndex = hitIndex,
                 tipLayoutHint = tipLayoutHint,
                 aesTipLayoutHints = emptyMap()
-            ),
-            ctx = TestingPlotContext.create(layer)
+            )
         )
     }
 
