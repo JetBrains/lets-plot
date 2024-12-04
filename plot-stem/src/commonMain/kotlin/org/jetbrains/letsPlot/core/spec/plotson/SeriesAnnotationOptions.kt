@@ -28,6 +28,12 @@ class SeriesAnnotationOptions : Options() {
         FLOATING(Option.Meta.SeriesAnnotation.Types.FLOATING),
         STRING(Option.Meta.SeriesAnnotation.Types.STRING),
         BOOLEAN(Option.Meta.SeriesAnnotation.Types.BOOLEAN),
-        UNKNOWN(Option.Meta.SeriesAnnotation.Types.UNKNOWN)
+        UNKNOWN(Option.Meta.SeriesAnnotation.Types.UNKNOWN);
+
+        companion object {
+            fun from(value: String): Types? {
+                return entries.firstOrNull { it.value == value }
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
+import org.jetbrains.letsPlot.core.spec.getList
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import kotlin.collections.first
 
@@ -187,10 +188,11 @@ class WaterfallPlotOptionsBuilder(
     }
 
     private fun dataMetaOptions(): DataMetaOptions? {
-        val seriesAnnotation = dataMeta?.get(Option.Meta.SeriesAnnotation.TAG) as? List<Map<Any, Any>> ?: return null
+        @Suppress("UNCHECKED_CAST")
+        val seriesAnnotation = dataMeta?.getList(Option.Meta.SeriesAnnotation.TAG) as? List<Map<*, *>> ?: return null
         val yMeta = seriesAnnotation.firstOrNull { it[Option.Meta.SeriesAnnotation.COLUMN] == y } ?: return null
         val yTypeStr = yMeta[Option.Meta.SeriesAnnotation.TYPE] ?: return null
-        val yType = SeriesAnnotationOptions.Types.entries.firstOrNull { it.value == yTypeStr } ?: return null
+        val yType = SeriesAnnotationOptions.Types.from(yTypeStr.toString()) ?: return null
         val variables = listOf(
             Waterfall.Var.Stat.YMIN,
             Waterfall.Var.Stat.YMIDDLE,

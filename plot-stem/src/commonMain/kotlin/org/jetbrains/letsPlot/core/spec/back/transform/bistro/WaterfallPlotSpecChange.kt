@@ -46,8 +46,11 @@ class WaterfallPlotSpecChange : SpecChange {
             if (plotDataMeta.isNotEmpty()) {
                 val waterfallSeriesAnnotation = waterfallDataMeta.getList(Option.Meta.SeriesAnnotation.TAG) ?: emptyList<Any>()
                 val plotSeriesAnnotation = plotDataMeta.getList(Option.Meta.SeriesAnnotation.TAG) ?: emptyList<Any>()
-                spec[Option.Meta.DATA_META] = plotDataMeta.toMutableMap().apply {
-                    this[Option.Meta.SeriesAnnotation.TAG] = (waterfallSeriesAnnotation + plotSeriesAnnotation).toMutableList()
+                spec[Option.Meta.DATA_META] = plotDataMeta.entries.associate { (option, value) ->
+                    option to when (option) {
+                        Option.Meta.SeriesAnnotation.TAG -> waterfallSeriesAnnotation + plotSeriesAnnotation
+                        else -> value
+                    }
                 }
             } else {
                 spec[Option.Meta.DATA_META] = waterfallDataMeta
