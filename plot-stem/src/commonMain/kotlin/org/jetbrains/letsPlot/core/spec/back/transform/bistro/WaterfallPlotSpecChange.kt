@@ -50,7 +50,7 @@ class WaterfallPlotSpecChange : SpecChange {
                     this[Option.Meta.SeriesAnnotation.TAG] = (waterfallSeriesAnnotation + plotSeriesAnnotation).toMutableList()
                 }
             } else {
-                spec[Option.Meta.DATA_META] = waterfallDataMeta.toMutableMap()
+                spec[Option.Meta.DATA_META] = waterfallDataMeta
             }
         }
 
