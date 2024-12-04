@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.spec.GeomProto
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName
-import org.jetbrains.letsPlot.core.spec.config.LayerConfigUtil
-import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -42,13 +40,21 @@ class LayerConfigUtilTest {
         )
         doCheck(
             GeomName.JITTER,
-            withPos(jitter(width = 0.01, height = 0.02)) + mapOf("width" to 1.01, "height" to 2.02),
-            mapOf("name" to "jitter", "width" to 1.01, "height" to 2.02)
+            withPos(jitter(width = 0.01, height = 0.02)) + mapOf("width" to 1.0, "height" to 2.0),
+            mapOf(
+                "name" to "composition",
+                "first" to mapOf("name" to "jitter", "width" to 0.01, "height" to 0.02),
+                "second" to mapOf("name" to "jitter", "width" to 1.0, "height" to 2.0)
+            )
         )
         doCheck(
             GeomName.JITTER,
             withPos(jitter(width = 1.01)) + mapOf("height" to 2.02),
-            mapOf("name" to "jitter", "width" to 1.01, "height" to 2.02)
+            mapOf(
+                "name" to "composition",
+                "first" to mapOf("name" to "jitter", "width" to 1.01),
+                "second" to mapOf("name" to "jitter", "height" to 2.02)
+            )
         )
 
         doCheck(GeomName.Y_DOT_PLOT, emptyMap(), mapOf("name" to "dodge", "width" to 0.95))
@@ -59,17 +65,17 @@ class LayerConfigUtilTest {
         doCheck(
             GeomName.TEXT,
             withPos("identity") + mapOf("nudge_x" to 0.2),
-            mapOf("name" to "nudge", "x" to 0.2)
+            mapOf("name" to "composition", "first" to mapOf("name" to "identity"), "second" to mapOf("name" to "nudge", "x" to 0.2))
         )
         doCheck(
             GeomName.TEXT,
             withPos(nudge(x = 1.0)) + mapOf("nudge_x" to 0.2),
-            mapOf("name" to "nudge", "x" to 0.2)
+            mapOf("name" to "composition", "first" to mapOf("name" to "nudge", "x" to 1.0), "second" to mapOf("name" to "nudge", "x" to 0.2))
         )
         doCheck(
             GeomName.TEXT,
             withPos(nudge(x = 0.2)) + mapOf("nudge_y" to 0.5),
-            mapOf("name" to "nudge", "x" to 0.2, "y" to 0.5)
+            mapOf("name" to "composition", "first" to mapOf("name" to "nudge", "x" to 0.2), "second" to mapOf("name" to "nudge", "y" to 0.5))
         )
     }
 

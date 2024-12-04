@@ -563,6 +563,11 @@ object Option {
             const val VJUST = "vjust"
             const val MODE = "mode"
         }
+
+        object Composition {
+            const val FIRST = "first"
+            const val SECOND = "second"
+        }
     }
 
     object Scale {
