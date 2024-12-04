@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.groupBy
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.replace
@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
-import org.jetbrains.letsPlot.core.spec.getList
+import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import kotlin.collections.first
 
@@ -189,9 +189,9 @@ class WaterfallPlotOptionsBuilder(
 
     private fun dataMetaOptions(): DataMetaOptions? {
         @Suppress("UNCHECKED_CAST")
-        val seriesAnnotation = dataMeta?.getList(Option.Meta.SeriesAnnotation.TAG) as? List<Map<*, *>> ?: return null
-        val yMeta = seriesAnnotation.firstOrNull { it[Option.Meta.SeriesAnnotation.COLUMN] == y } ?: return null
-        val yTypeStr = yMeta[Option.Meta.SeriesAnnotation.TYPE] ?: return null
+        val seriesAnnotation = dataMeta?.getMaps(Meta.SeriesAnnotation.TAG) ?: return null
+        val yMeta = seriesAnnotation.firstOrNull { (Meta.SeriesAnnotation.COLUMN to y) in it } ?: return null
+        val yTypeStr = yMeta[Meta.SeriesAnnotation.TYPE] ?: return null
         val yType = SeriesAnnotationOptions.Types.from(yTypeStr.toString()) ?: return null
         val variables = listOf(
             Waterfall.Var.Stat.YMIN,
