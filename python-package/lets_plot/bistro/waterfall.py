@@ -1,7 +1,8 @@
 #  Copyright (c) 2024. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from lets_plot.plot.core import PlotSpec
+from lets_plot.plot.core import PlotSpec, aes
+from lets_plot.plot.util import as_annotated_data
 
 __all__ = ['waterfall_plot']
 
@@ -221,6 +222,7 @@ def waterfall_plot(data, x, y, *,
             facet_wrap(facets='company', scales='free_x')
 
     """
+    data, mapping, data_meta = as_annotated_data(data, aes(x=x, y=y))
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'waterfall',
         'x': x,
@@ -247,4 +249,4 @@ def waterfall_plot(data, x, y, *,
         'connector': connector,
         'label': label,
         'label_format': label_format,
-    })
+    }, **data_meta)

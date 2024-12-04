@@ -14,6 +14,7 @@ class Waterfall {
             checkParameters(),
             withGrouping(),
             withMeasure(),
+            withDataMeta(),
         )
     }
 
@@ -153,6 +154,41 @@ class Waterfall {
                 'measure': 'm',
                 'show_legend': true
               }
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withDataMeta(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'cat': ['A', 'B', 'C', 'D', 'E'],
+                'val': [100000, 200000, -400000, 500000, -200000]
+              },
+              'data_meta': {
+                'series_annotations': [
+                  {'type': 'str', 'column': 'cat'},
+                  {'type': 'float', 'column': 'val'}
+                ]
+              },
+              'ggtitle': {
+                'text': 'With specified data_meta'
+              },
+              'bistro': {
+                'name': 'waterfall',
+                'x': 'cat',
+                'y': 'val'
+              },
+              'scales': [
+                {
+                  'aesthetic': 'y',
+                  'breaks': [-100000.0, 150000.0, 400000.0]
+                }
+              ]
             }
         """.trimIndent()
 
