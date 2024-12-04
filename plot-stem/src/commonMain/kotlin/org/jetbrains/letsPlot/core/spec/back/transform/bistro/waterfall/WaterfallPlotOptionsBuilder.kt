@@ -190,7 +190,7 @@ class WaterfallPlotOptionsBuilder(
     private fun dataMetaOptions(): DataMetaOptions? {
         @Suppress("UNCHECKED_CAST")
         val seriesAnnotation = dataMeta?.getMaps(Meta.SeriesAnnotation.TAG) ?: return null
-        val yMeta = seriesAnnotation.firstOrNull { (Meta.SeriesAnnotation.COLUMN to y) in it } ?: return null
+        val yMeta = seriesAnnotation.firstOrNull { it[Meta.SeriesAnnotation.COLUMN] == y } ?: return null
         val yTypeStr = yMeta[Meta.SeriesAnnotation.TYPE] ?: return null
         val yType = SeriesAnnotationOptions.Types.from(yTypeStr.toString()) ?: return null
         val variables = listOf(
