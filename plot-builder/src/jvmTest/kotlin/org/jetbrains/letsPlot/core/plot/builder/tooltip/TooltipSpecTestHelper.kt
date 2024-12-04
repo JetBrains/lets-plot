@@ -110,8 +110,9 @@ open class TooltipSpecTestHelper {
             DoubleVector.ZERO,
             flippedAxis = false,
             axisTheme,
-            axisTheme
-        ).create(geomTarget, plotContext)
+            axisTheme,
+            plotContext
+        ).create(geomTarget)
     }
 
     internal fun createTooltipSpecWithValueSources(
@@ -130,8 +131,9 @@ open class TooltipSpecTestHelper {
             DoubleVector.ZERO,
             flippedAxis = false,
             axisTheme,
-            axisTheme
-        ).create(geomTarget, plotContext)
+            axisTheme,
+            plotContext
+        ).create(geomTarget)
     }
 
     internal fun buildTooltipSpecs() {

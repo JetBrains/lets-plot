@@ -152,10 +152,7 @@ class SquareFrameOfReferenceGridTest {
 
         val unusedRect = DoubleRectangle.LTRB(0, 0, 0, 0)
 
-        val scaleBreaks = ScaleBreaks.DemoAndTest.continuous(
-            domainValues = breaks.map { it.toDouble() },
-            formatter = { v -> (v as Number).toInt().toString() },
-        )
+        val scaleBreaks = ScaleBreaks.DemoAndTest.continuous(domainValues = breaks.map { it.toDouble() })
 
         val squareFrameOfReference = SquareFrameOfReference(
             hScaleBreaks = scaleBreaks,

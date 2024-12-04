@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Iterables
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import kotlin.math.absoluteValue
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
@@ -20,23 +19,6 @@ object SeriesUtil {
     private const val MAX_DECIMAL_PLACES = 12
 
     private val REAL_NUMBER = { it: Double? -> isFinite(it) }
-
-
-    // Looks like zero when in v >= 0 and v < 1, and the first non-zero digit
-    // is at least 6 orders of magnitude smaller than step
-    fun isLooksLikeZero(v: Double, step: Double): Boolean {
-        if (v == 0.0) {
-            return true
-        }
-
-        if (v.absoluteValue >= 1.0) {
-            return false
-        }
-
-        val vPower = log10(v.absoluteValue)
-        val stepPower = log10(step)
-        return (vPower - stepPower) < -6
-    }
 
     fun isBeyondPrecision(range: DoubleSpan): Boolean {
         val delta = range.length

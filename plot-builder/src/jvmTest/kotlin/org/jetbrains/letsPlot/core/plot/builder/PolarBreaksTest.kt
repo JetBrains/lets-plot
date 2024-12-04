@@ -131,10 +131,7 @@ class PolarBreaksTest {
 
         if (axisKind == ANGLE) {
             return breaksData(
-                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(
-                    domainValues = breaks,
-                    formatter = { v -> (v as Number).toInt().toString() },
-                ),
+                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(domainValues = breaks),
                 coord = coordinateSystem,
                 gridDomain = gridDomain,
                 flipAxis = false,
@@ -143,10 +140,7 @@ class PolarBreaksTest {
             )
         } else {
             return breaksData(
-                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(
-                    domainValues = breaks,
-                    formatter = { v -> (v as Number).toInt().toString() },
-                ),
+                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(domainValues = breaks),
                 coord = coordinateSystem,
                 gridDomain = gridDomain,
                 flipAxis = false,

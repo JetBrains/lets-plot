@@ -12,8 +12,14 @@ internal object VegaOption {
     const val LAYER = "layer"
     const val MARK = "mark"
     const val FACET = "facet"
+
+    const val CONCAT = "concat"
+    const val VCONCAT = "vconcat"
+    const val HCONCAT = "hconcat"
     const val REPEAT = "repeat"
     const val ENCODING = "encoding"
+
+    const val CONFIG = "config"
 
     object Data {
         const val VALUES = "values"

@@ -3,9 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package sizing
+package org.jetbrains.letsPlot.core.util.sizing
 
-internal enum class SizingMode {
+enum class SizingMode {
     FIT,            // assume the container dimension
     MIN,            // assume plot own dimention or the container dimension whichever is smaller
     SCALED,         // the dimension is computed so that plot preserves its aspect ratio

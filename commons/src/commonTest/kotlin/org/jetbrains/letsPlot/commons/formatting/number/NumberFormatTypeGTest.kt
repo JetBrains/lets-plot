@@ -57,12 +57,12 @@ class NumberFormatTypeGTest {
     fun canGroupThousandsWithGeneralNotation() {
         val format = format(",.12g")::apply
         val formatTruncated = format(",.12~g")::apply
-        
+
         0.let {
             assertEquals("0", formatTruncated(it))
             assertEquals("0.00000000000", format(it))
         }
-        
+
         42.let {
             assertEquals("42", formatTruncated(it))
             assertEquals("42.0000000000", format(it))
@@ -232,7 +232,7 @@ class NumberFormatTypeGTest {
         assertEquals("\\(10^{-1}\\)", format(ExponentNotationType.POW, 0 to 0).apply(0.1))
         assertEquals("1·\\(10^{-1}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(0.1))
 
-        assertEquals("1e+0", format(ExponentNotationType.E, 0 to 0).apply(1))
+         assertEquals("1e+0", format(ExponentNotationType.E, 0 to 0).apply(1))
         assertEquals("\\(10^{0}\\)", format(ExponentNotationType.POW, 0 to 0).apply(1))
         assertEquals("1·\\(10^{0}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(1))
 
@@ -295,19 +295,25 @@ class NumberFormatTypeGTest {
     @Test
     fun p0() {
         val format = format(".0g")::apply
-        assertEquals("0", format(0.0))
         assertEquals("5e-13", format(0.000_000_000_000_5))
         assertEquals("6e-13", format(0.000_000_000_000_55))
         assertEquals("6e-13", format(0.000_000_000_000_555))
         assertEquals("0.005", format(0.005))
         assertEquals("0.05", format(0.05))
-        assertEquals("5", format(5.0))
         assertEquals("5e+1", format(50.0))
         assertEquals("6e+1", format(55.0))
         assertEquals("5e+2", format(500.0))
         assertEquals("5e+2", format(505.0))
         assertEquals("6e+2", format(550.0))
         assertEquals("6e+2", format(555.0))
+        assertEquals("0", format(0.0))
+        assertEquals("5", format(5.0))
+        assertEquals("5", format(5.4))
+        assertEquals("6", format(5.5))
+        assertEquals("9", format(9.0))
+        assertEquals("9", format(9.4))
+        assertEquals("1e+1", format(9.5))
+        assertEquals("1e+1", format(10.0))
     }
 
     @Test
@@ -355,5 +361,32 @@ class NumberFormatTypeGTest {
     @Test
     fun round_9_9999999eMINUS9() {
         assertEquals("1e-8", format(9.9999999e-9, "~g"))
+    }
+
+    @Test
+    fun shouldDecideDecimalOrExponentNotationAfterRounding() {
+        // Note that number of 9s is important - it should be more than 6(default precision) to trigger rounding
+
+        assertEquals("0.0001", format(0.000_099_999_999, "~g{-5,7}"))
+
+        // Demo for d3 (d3 doesn't have minExp parameter, but have implicit default for it with value -7)
+        assertEquals("0.000001", format(0.000_000_999_999_999, "~g{-7,7}")) // default d3 precision, yet different result
+        assertEquals("1e-7", format(0.000_000_1, "~g{-7,7}")) // default d3 precision, yet different result
+    }
+
+    @Test
+    fun shouldDecideDecimalOrExponentNotationAfterRoundingWithExpNotation() {
+        assertEquals("1e-4", format(0.00009999999, "~g{-4,7}"))
+    }
+
+    @Test
+    fun zeroPrecisionWithExplicitMaxExp() {
+        assertEquals("1e-8", format(0.00000001, ".0g{-5,7}")) // may fail with negative precision
+    }
+
+    @Test
+    fun d3DecimalOrExponentNotationDecisionWithRounding() {
+        assertEquals("0.00000100000", format(0.00000099999999999, "g"))
+        assertEquals("1.00000e-7", format(0.000000099999999, "g"))
     }
 }

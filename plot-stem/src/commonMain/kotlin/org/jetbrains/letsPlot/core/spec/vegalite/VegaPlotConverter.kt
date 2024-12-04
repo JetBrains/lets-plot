@@ -63,8 +63,6 @@ internal class VegaPlotConverter private constructor(
                     processLayerSpec(it, combinedEncoding, accessLogger.nested(listOf(VegaOption.LAYER, i)))
                 }
             }
-
-            VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
 
         if (HIDE_LETS_PLOT_CONVERTER_SUMMARY !in vegaPlotSpec) {

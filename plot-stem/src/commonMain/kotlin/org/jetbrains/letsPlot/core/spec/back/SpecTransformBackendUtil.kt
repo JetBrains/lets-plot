@@ -27,6 +27,8 @@ object SpecTransformBackendUtil {
         plotSpecRaw: MutableMap<String, Any>,
         simulateFailure: Boolean
     ): MutableMap<String, Any> {
+        var vegaLiteConverterSummary: List<*>? = null
+
         return try {
             // --> Testing
             if (simulateFailure) {
@@ -47,7 +49,9 @@ object SpecTransformBackendUtil {
                 @Suppress("UNCHECKED_CAST")
                 val vegaSpec = plotSpecRaw as MutableMap<String, Any?>
 
-                VegaConfig.transform(vegaSpec)
+                val transformedSpec = VegaConfig.transform(vegaSpec)
+                vegaLiteConverterSummary = transformedSpec[Option.Plot.COMPUTATION_MESSAGES] as? List<*>
+                transformedSpec
             } else {
                 plotSpecRaw
             }
@@ -56,7 +60,6 @@ object SpecTransformBackendUtil {
                 FigKind.PLOT_SPEC -> processTransformIntern(spec)
                 FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(spec)
                 FigKind.GG_BUNCH_SPEC -> processTransformInBunch(spec)
-                else -> throw IllegalArgumentException("Unsupported figure kind")
             }
 
         } catch (e: RuntimeException) {
@@ -64,7 +67,13 @@ object SpecTransformBackendUtil {
             if (failureInfo.isInternalError) {
                 LOG.error(e) { failureInfo.message }
             }
-            HashMap(PlotConfig.failure(failureInfo.message))
+
+            val message = when (vegaLiteConverterSummary) {
+                null -> failureInfo.message
+                else -> failureInfo.message + "\n\nVega-Lite converter messages:\n" + vegaLiteConverterSummary.joinToString("\n")
+            }
+
+            HashMap(PlotConfig.failure(message))
         }
     }
 
