@@ -5,22 +5,31 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.plotson.toJson
 
 object VegaConfig {
     fun isVegaLiteSpec(opts: Map<String, Any>): Boolean {
         return VegaOption.DATA in opts && Option.Meta.KIND !in opts
     }
 
-    fun transform(map: MutableMap<String, Any?>): MutableMap<String, Any> {
-        return VegaPlotConverter.convert(map)
+    fun toLetsPlotSpec(vegaSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
+        val plotOptions = VegaPlotConverter.convert(vegaSpec)
+
+        return plotOptions.toJson().also {
+            if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
+                plotOptions.data = plotOptions.data?.mapValues { (_, values) -> values.take(5) }
+                plotOptions.layerOptions?.forEach { layerOptions ->
+                    layerOptions.data = layerOptions.data?.mapValues { (_, values) -> values.take(5) }
+                }
+
+                println(JsonSupport.formatJson(plotOptions.toJson(), pretty = true))
+            }
+        }
     }
 
     internal fun getPlotKind(opts: Map<*, *>): VegaPlotKind {
-        //if (!isVegaLiteSpec(opts)) {
-        //    throw IllegalArgumentException("Not a Vega-Lite spec")
-        //}
-
         return when {
             VegaOption.LAYER in opts -> VegaPlotKind.MULTI_LAYER
             VegaOption.MARK in opts -> VegaPlotKind.SINGLE_LAYER

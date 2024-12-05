@@ -6,6 +6,11 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 internal object VegaOption {
+    object LetsPlotExt {
+        const val LOG_LETS_PLOT_SPEC = "logLetsPlotSpec"
+        const val REPORT_LETS_PLOT_CONVERTER_SUMMARY = "reportLetsPlotConverterSummary"
+    }
+
     const val SCHEMA = "\$schema"
     const val DESCRIPTION = "description"
     const val DATA = "data"

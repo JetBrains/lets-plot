@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
 import org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.getList
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 
 
@@ -49,9 +50,10 @@ object SpecTransformBackendUtil {
                 @Suppress("UNCHECKED_CAST")
                 val vegaSpec = plotSpecRaw as MutableMap<String, Any?>
 
-                val transformedSpec = VegaConfig.transform(vegaSpec)
-                vegaLiteConverterSummary = transformedSpec[Option.Plot.COMPUTATION_MESSAGES] as? List<*>
-                transformedSpec
+                val letsPlotSpec = VegaConfig.toLetsPlotSpec(vegaSpec)
+                vegaLiteConverterSummary = letsPlotSpec.getList(Option.Plot.COMPUTATION_MESSAGES)
+
+                letsPlotSpec
             } else {
                 plotSpecRaw
             }

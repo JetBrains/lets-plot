@@ -27,17 +27,15 @@ internal class VegaPlotConverter private constructor(
     private val vegaPlotSpec = TraceableMapWrapper(vegaPlotSpecMap, accessLogger)
 
     companion object {
-        fun convert(vegaPlotSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
+        fun convert(vegaPlotSpec: MutableMap<String, Any?>): PlotOptions {
             val vegaPlotConverter = VegaPlotConverter(vegaPlotSpec)
             return vegaPlotConverter.convert()
         }
-
-        private const val HIDE_LETS_PLOT_CONVERTER_SUMMARY = "hideLetsPlotConverterSummary"
     }
 
     private val plotOptions = PlotOptions()
 
-    private fun convert(): MutableMap<String, Any> {
+    private fun convert(): PlotOptions {
         when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
             VegaPlotKind.SINGLE_LAYER -> {
                 val encodingSpecMap = vegaPlotSpecMap.getMap(VegaOption.ENCODING) ?: emptyMap<Any, Any>()
@@ -65,7 +63,7 @@ internal class VegaPlotConverter private constructor(
             }
         }
 
-        if (HIDE_LETS_PLOT_CONVERTER_SUMMARY !in vegaPlotSpec) {
+        if (vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
             val summary = accessLogger
                 .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
                 .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
@@ -73,7 +71,7 @@ internal class VegaPlotConverter private constructor(
             plotOptions.computationMessages = summary
         }
 
-        return plotOptions.toJson()
+        return plotOptions
     }
 
     private fun processLayerSpec(
