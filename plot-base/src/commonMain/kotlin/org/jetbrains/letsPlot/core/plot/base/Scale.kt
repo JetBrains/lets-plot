@@ -35,6 +35,8 @@ interface Scale {
     // For axis and legend (truncated labels). For tooltips the getScaleBreaks functions should be used (full labels).
     fun getShortenedScaleBreaks(): ScaleBreaks
 
+    fun getUserFormatter(): ((Any) -> String)?
+
     fun with(): Builder
 
     interface Builder {

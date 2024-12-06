@@ -41,6 +41,10 @@ internal class BogusScale : Scale {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
+    override fun getUserFormatter(): ((Any) -> String)? {
+        throw IllegalStateException("Bogus scale is not supposed to be used.")
+    }
+
     override fun getBreaksGenerator(): BreaksGenerator {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
