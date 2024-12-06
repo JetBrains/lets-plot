@@ -22,14 +22,20 @@ internal object TooltipFormatting {
         }
 
         val scale = ctx.getScale(aes)
-        if (scale.isContinuousDomain) {
-            val domain = ctx.overallTransformedDomain(aes)
-            val formatter = scale.getBreaksGenerator().defaultFormatter(domain, 100)
-            return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
+
+        val formatter = if (scale.isContinuousDomain) {
+            if (scale.userFormatter != null) {
+                scale.userFormatter!!
+            } else {
+                val domain = ctx.overallTransformedDomain(aes)
+                scale.getBreaksGenerator().defaultFormatter(domain, 100)
+            }
         } else {
             val labelsMap = ScaleUtil.labelByBreak(scale)
-            return { value -> value?.let { labelsMap[it] } ?: "n/a" }
+            labelsMap::get
         }
+
+        return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
     }
 
     fun createFormatter(variable: DataFrame.Variable, formatters: Map<Any, (Any) -> String>, expFormat: StringFormat.ExponentFormat): (Any) -> String {

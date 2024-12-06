@@ -29,6 +29,9 @@ internal class BogusScale : Scale {
     override val transform: Transform
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
+    override val userFormatter: ((Any) -> String)?
+        get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
+
     override fun hasBreaks(): Boolean {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
