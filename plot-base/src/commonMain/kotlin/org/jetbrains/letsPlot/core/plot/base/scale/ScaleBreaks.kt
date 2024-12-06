@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
@@ -276,7 +278,7 @@ class ScaleBreaks private constructor(
     object DemoAndTest {
         fun continuous(
             domainValues: List<Double>,
-            formatter: ((Any) -> String) = DataType.INTEGER.formatter
+            formatter: ((Any) -> String) = FormatterUtil.byDataType(DataType.INTEGER, DEF_EXPONENT_FORMAT)
         ): ScaleBreaks {
             return ScaleBreaks(
                 domainValues = domainValues,

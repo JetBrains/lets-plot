@@ -6,6 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.base.scale
 
 import demoAndTestShared.assertEquals
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
@@ -53,6 +56,20 @@ class DiscreteScaleTest {
 
         assertTrue(scale.hasBreaks())
         assertEquals(listOf("b", "c", "d"), scale.getScaleBreaks().domainValues)
+    }
+
+    @Test
+    fun issue1250_explicitBreaksFormatterShouldTakeIntoAccountExpThemeConfig() {
+        val scale = Scales.DemoAndTest.discreteDomain(
+            "Test scale", listOf(-1e-2, -1e-1, 0.0, 1e1, 1e2)
+        ).with()
+            .dataType(DataType.FLOATING)
+            .exponentFormat(StringFormat.ExponentFormat(ExponentNotationType.POW, -2, 2))
+            .breaks(listOf(-1e-2, -1e-1, 0.0, 1e1, 1e2))
+            .build()
+
+        val scaleBreaks = scale.getScaleBreaks()
+        assertEquals(listOf("-\\(10^{-2}\\)", "-0.1", "0", "10", "\\(10^{2}\\)"), scaleBreaks.labels)
     }
 
     @Test

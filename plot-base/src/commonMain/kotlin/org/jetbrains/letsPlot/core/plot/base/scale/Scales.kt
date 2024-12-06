@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -26,7 +25,6 @@ object Scales {
     object DemoAndTest {
         fun discreteDomain(name: String, domainValues: List<Any>, domainLimits: List<Any> = emptyList()): Scale {
             return DiscreteScale(name, DiscreteTransform(domainValues, domainLimits))
-                .with().dataTypeFormatter(DataType.UNKNOWN.formatter).build()
         }
 
         fun pureDiscrete(name: String, domainValues: List<Any>): Scale {
@@ -35,7 +33,7 @@ object Scales {
         }
 
         fun continuousDomain(name: String, aes: Aes<*>): Scale {
-            return ContinuousScale(name, aes.isNumeric).with().dataTypeFormatter(DataType.UNKNOWN.formatter).build()
+            return ContinuousScale(name, aes.isNumeric)
         }
 
         fun continuousDomainNumericRange(name: String): Scale {

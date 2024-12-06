@@ -98,7 +98,7 @@ internal object PlotConfigScaleProviders {
 
         return scaleProviderBuilders.mapValues { (aes, builder) ->
             builder
-                .dataTypeFormatter(getDType(aes).formatter)
+                .dataType(getDType(aes))
                 .exponentFormat(expFormat)
                 .build()
         }

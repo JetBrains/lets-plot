@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
@@ -35,7 +36,7 @@ internal object TooltipFormatting {
         return when (variable) {
             Stats.PROP, Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, expFormat = expFormat)::format
             Stats.PROPPCT, Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name, expFormat = expFormat)::format
-            else -> formatters[variable.name] ?: DataType.UNKNOWN.formatter
+            else -> formatters[variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat)
         }
     }
 }

@@ -31,7 +31,7 @@ internal class ScaleProviderBuilderTest {
 
         val scaleProvider = ScaleProviderBuilder(Aes.X)
             .breaksGenerator(bg)
-            .dataTypeFormatter(DataType.FLOATING.formatter)
+            .dataType(DataType.FLOATING)
             .build()
 
         // continuous scale
