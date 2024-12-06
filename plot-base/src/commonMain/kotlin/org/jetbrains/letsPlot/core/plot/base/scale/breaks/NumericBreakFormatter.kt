@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFor
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
-import kotlin.math.max
 
 internal class NumericBreakFormatter(
     value: Double,
@@ -35,7 +34,6 @@ internal class NumericBreakFormatter(
             abs(step)
         }
 
-
         val minExp = expFormat.min ?: DEF_MIN_EXP
         val maxExp = expFormat.max ?: DEF_MAX_EXP
 
@@ -52,19 +50,12 @@ internal class NumericBreakFormatter(
             // always has fraction digits
             else -> ceil(domain10Power) - step10Power // size of fraction part (-step10Power) + size of integer part
         }
-        // type is integer only for steps larger than 1, when there is no breaks using scientific notation
-        val type = if (step10Power > max(0, minExp) && domain10Power < maxExp) {
-            "d"
-        } else {
-            "g"
-        }
-        val comma = type == "g"
 
         formatter = NumberFormat(NumberFormat.Spec(
-            comma = comma,
+            comma = true,
             precision = ceil(precision - 0.001).toInt(), // round-up precision unless it's very close to smaller int
             trim = true,
-            type = type,
+            type = "g",
             expType = expFormat.notationType,
             minExp = minExp,
             maxExp = maxExp,
