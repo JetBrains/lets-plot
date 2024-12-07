@@ -6,7 +6,6 @@
 
 - Number formatting:
   - We have aligned our specifications with D3.js (rather than Python): `g` format type with `~` (e.g. `~g`) now truncates trailing zeros, and without `~` it doesn't.
-  - By default, number formatting is based on the inferred data type (e.g. `int` or decimal).
   - The default number formatter now respects `theme(exponent_format=...)` settings and does not use 's' format type for large numbers.
 
 ### Fixed
