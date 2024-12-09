@@ -57,6 +57,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
         additiveExpand = b.myAdditiveExpand
     }
 
+    override val userFormatter: ((Any) -> String)? get() = providedFormatter
+
     override fun hasBreaks(): Boolean {
         return providedBreaks != null || providedScaleBreaks != null
     }

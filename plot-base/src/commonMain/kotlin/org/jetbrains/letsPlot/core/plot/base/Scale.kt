@@ -26,6 +26,8 @@ interface Scale {
 
     val transform: Transform
 
+    val userFormatter: ((Any) -> String)?
+
     fun hasBreaks(): Boolean
 
     fun getBreaksGenerator(): BreaksGenerator

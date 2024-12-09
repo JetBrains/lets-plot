@@ -24,3 +24,4 @@
 - How to adjust the vertical position of geom_text when using position_dodge [[#1248](https://github.com/JetBrains/lets-plot/issues/1248)].
 - Incorrect result for format(9.999, ".2f") [[#1251](https://github.com/JetBrains/lets-plot/issues/1251)].
 - Tooltips overlapping when not enough vertical space for them [[#1254](https://github.com/JetBrains/lets-plot/issues/1254)].
+- Nice to have tooltip to inherit formatting configured for axis [[LPK-229](https://github.com/JetBrains/lets-plot-kotlin/issues/229)].

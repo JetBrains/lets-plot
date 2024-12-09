@@ -310,4 +310,25 @@ class TooltipCheckLabelInLines {
         )
 
     }
+
+    @Test
+    fun `issue LPK-229`() {
+        val spec = """
+                |{
+                |  "data": {
+                |    "x": [ 0.05, 0.1, 0.17, 0.34, 0.87 ]
+                |  },
+                |  "data_meta": {
+                |    "series_annotations": [ { "type": "float", "column": "x" } ]
+                |  },
+                |  "kind": "plot",
+                |  "scales": [ { "aesthetic": "x", "format": ".0%" } ],
+                |  "layers": [ { "geom": "point", "mapping": { "x": "x" } } ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+
+        assertXAxisTooltip(layer, expectedLines = listOf("10%"), hitIndex = 1)
+    }
 }
