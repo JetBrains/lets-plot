@@ -858,7 +858,7 @@ class TooltipConfigTest {
             )
         )
         assertTooltipStrings(
-            expected = listOf("1.0"),
+            expected = listOf("1"),
             actual = getGeneralTooltipStrings(geomLayer)
         )
     }

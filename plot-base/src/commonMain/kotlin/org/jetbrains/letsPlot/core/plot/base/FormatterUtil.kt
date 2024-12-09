@@ -10,14 +10,22 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFor
 import org.jetbrains.letsPlot.core.commons.data.DataType
 
 object FormatterUtil{
+    private const val FLOATING_PATTERN = ",~g"
+
     fun byDataType(dataType: DataType, expFormat: ExponentFormat): (Any) -> String {
         return when (dataType) {
-            DataType.FLOATING -> StringFormat.forOneArg(",~g", expFormat = expFormat)::format
+            DataType.FLOATING -> StringFormat.forOneArg(FLOATING_PATTERN, expFormat = expFormat)::format
             DataType.INTEGER -> StringFormat.forOneArg("d")::format
             DataType.STRING -> StringFormat.forOneArg("{}")::format
             DataType.INSTANT -> StringFormat.forOneArg("%Y-%m-%dT%H:%M:%S")::format
             DataType.BOOLEAN -> StringFormat.forOneArg("{}")::format
-            else -> StringFormat.forOneArg("{}")::format
+            DataType.UNKNOWN -> {
+                fun unknownFormatter(value: Any): String = when (value) {
+                    is Number -> StringFormat.forOneArg(FLOATING_PATTERN, expFormat = expFormat).format(value)
+                    else -> StringFormat.forOneArg("{}").format(value)
+                }
+                ::unknownFormatter
+            }
         }
     }
 }

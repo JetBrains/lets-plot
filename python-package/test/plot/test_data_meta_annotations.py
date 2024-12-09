@@ -211,16 +211,38 @@ def test_dict_with_empty_series():
     assert p.as_dict()['data_meta'] == {}
 
 
-def test_df_with_empty_series():
+def test_dict_with_none_series():
+    data = {'x': [None], 'y': [None]}
+    p = ggplot(data) + geom_point()
+    assert p.as_dict()['data_meta'] == {}
+
+
+def test_dict_with_mixed_int_float_series():
+    data = {'x': [1, 1.0, 2, 2.0]}
+    p = ggplot(data) + geom_point()
+    assert p.as_dict()['data_meta']['series_annotations'] == [
+        {'column': 'x', 'type': 'float'}
+    ]
+
+
+def test_pd_with_empty_series():
     data = DataFrame({'x': [], 'y': []})
     p = ggplot(data) + geom_point()
     assert p.as_dict()['data_meta'] == {}
 
 
-def test_df_with_none_series():
+def test_pd_with_none_series():
     data = DataFrame({'x': [None], 'y': [None]})
     p = ggplot(data) + geom_point()
     assert p.as_dict()['data_meta'] == {}
+
+
+def test_pd_with_mixed_int_float_series():
+    data = DataFrame({'x': [1, 1.0, 2, 2.0]})
+    p = ggplot(data) + geom_point()
+    assert p.as_dict()['data_meta']['series_annotations'] == [
+        {'column': 'x', 'type': 'float'}
+    ]
 
 
 def test_factor_levels():

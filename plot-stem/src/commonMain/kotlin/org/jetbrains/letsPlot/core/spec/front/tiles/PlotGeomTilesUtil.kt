@@ -122,7 +122,7 @@ internal object PlotGeomTilesUtil {
         val varFormatters = dataFormatters + statFormatters
 
         val aesFormatters = layerConfig.varBindings
-            .associate { it.aes to (varFormatters[it.variable.name] ?: FormatterUtil.byDataType(DataType.STRING, expFormat)) }
+            .associate { it.aes to (varFormatters[it.variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat)) }
 
         return varFormatters + aesFormatters
 

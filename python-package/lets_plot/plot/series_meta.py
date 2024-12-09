@@ -86,11 +86,17 @@ def infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Dic
                     continue
 
                 type_set = set(type(val) for val in var_content)
-                if None in type_set:
-                    type_set.remove(None)
+                if type(None) in type_set:
+                    type_set.remove(type(None))
+
+                if len(type_set) == 0:
+                    continue
 
                 if len(type_set) > 1:
-                    type_info[var_name] = 'unknown(mixed types)'
+                    if all(issubclass(type_obj, int) or issubclass(type_obj, float) for type_obj in type_set):
+                        type_info[var_name] = TYPE_FLOATING
+                    else:
+                        type_info[var_name] = 'unknown(mixed types)'
                     continue
 
                 try:
