@@ -14,10 +14,10 @@ import kotlin.test.assertEquals
 class FormatterUtilTest {
 
     @Test
-    fun intDtype() {
+    fun intDtypeHasSameDefaultFormatAsFloating() {
         assertEquals("1", formatDType(1.0, DataType.INTEGER))
-        assertEquals("2", formatDType(1.5, DataType.INTEGER))
-        assertEquals("1000000000000000000000000000000", formatDType(1e30, DataType.INTEGER))
+        assertEquals("1.5", formatDType(1.5, DataType.INTEGER))
+        assertEquals("1e+30", formatDType(1e30, DataType.INTEGER))
     }
 
     @Test
@@ -30,10 +30,16 @@ class FormatterUtilTest {
 
     @Test
     fun unknownDtype() {
-        assertEquals("1", formatDType(1.0, DataType.UNKNOWN))
+        // ints with floating format
         assertEquals("1", formatDType(1, DataType.UNKNOWN))
+        assertEquals("1e+9", formatDType(1_000_000_000, DataType.UNKNOWN))
+
+        // floats
+        assertEquals("1", formatDType(1.0, DataType.UNKNOWN))
         assertEquals("1.5", formatDType(1.5, DataType.UNKNOWN))
         assertEquals("1e+30", formatDType(1e30, DataType.UNKNOWN))
+
+        // strings
         assertEquals("asd", formatDType("asd", DataType.UNKNOWN))
     }
 
