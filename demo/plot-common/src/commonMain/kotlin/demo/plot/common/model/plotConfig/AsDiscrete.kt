@@ -19,19 +19,21 @@ class AsDiscrete {
             smoothStatAsDiscrete(),
             smoothStatWithGroup(),
             factorLevels(),
-            scatterplotWith_199_999_Groups(),
+            scatterplotWith_100_000_Groups(),
         )
     }
 
     @Suppress("FunctionName")
-    private fun scatterplotWith_199_999_Groups(): MutableMap<String, Any> {
+    private fun scatterplotWith_100_000_Groups(): MutableMap<String, Any> {
         val n = 199_999
+        val gn = 100_000
         val rand = Random(12)
 
         val data = """{
             "x": [${List(n) { rand.nextDouble() }.joinToString()}], 
             "y": [${List(n) { rand.nextDouble() }.joinToString()}],
-            "g": [${List(n) { it }.joinToString()}]
+            "col": [${List(n) { it % gn }.joinToString()}],
+            "g": [${List(n) { it % gn }.joinToString()}]
         }"""
         val spec = """
                 |{
@@ -40,7 +42,8 @@ class AsDiscrete {
                 |  "mapping": {
                 |    "x": "x",
                 |    "y": "y",
-                |    "color": "g"
+                |    "color": "col",
+                |    "group": "g"
                 |  },
                 |  "data_meta": {
                 |    "mapping_annotations": [
