@@ -6,6 +6,7 @@
 package demo.plot.common.model.plotConfig
 
 import demoAndTestShared.parsePlotSpec
+import kotlin.random.Random
 
 class AsDiscrete {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -17,8 +18,43 @@ class AsDiscrete {
             layerData_DiscreteGroup(),
             smoothStatAsDiscrete(),
             smoothStatWithGroup(),
-            factorLevels()
+            factorLevels(),
+            scatterplotWith_199_999_Groups(),
         )
+    }
+
+    @Suppress("FunctionName")
+    private fun scatterplotWith_199_999_Groups(): MutableMap<String, Any> {
+        val n = 199_999
+        val rand = Random(12)
+
+        val data = """{
+            "x": [${List(n) { rand.nextDouble() }.joinToString()}], 
+            "y": [${List(n) { rand.nextDouble() }.joinToString()}],
+            "g": [${List(n) { it }.joinToString()}]
+        }"""
+        val spec = """
+                |{
+                |  "kind": "plot",
+                |  "data": $data,
+                |  "mapping": {
+                |    "x": "x",
+                |    "y": "y",
+                |    "color": "g"
+                |  },
+                |  "data_meta": {
+                |    "mapping_annotations": [
+                |      {
+                |        "aes": "color",
+                |        "annotation": "as_discrete",
+                |        "parameters": {"label": "clr"}
+                |      }
+                |    ]
+                |  },
+                |  "layers": [ { "geom": "point", "size": 8, "sampling": "none" } ]
+                |}
+        """.trimMargin()
+        return parsePlotSpec(spec)
     }
 
     private val data = """{
@@ -35,7 +71,7 @@ class AsDiscrete {
         |    "x": [0, 2, 5, 8, 9, 12, 16, 20, 40],
         |    "y": [3, 1, 2, 7, 8, 9, 10, 10, 10],
         |    "g": [0, 0, 0, 1, 1, 1, 2, 2, 2],
-        |    "d": ['0', '0', '0', '1', '1', '1', '2', '2', '2']
+        |    "d": ["0", "0", "0", "1", "1", "1", "2", "2", "2"]
         |}
     """.trimMargin()
 
@@ -229,26 +265,26 @@ class AsDiscrete {
 
     private fun factorLevels(): MutableMap<String, Any> {
         val spec = """{
-            'data': { 
-                'name' : ['c', 'c', 'a', 'a', 'd', 'b', 'b', 'a'],
-                'value': [1,   2,   3,    2,   2,   1,   4,  1]    
+            "data": { 
+                "name" : ["c", "c", "a", "a", "d", "b", "b", "a"],
+                "value": [1,   2,   3,    2,   2,   1,   4,  1]    
             },
-            'kind': 'plot',
-            'layers': [
+            "kind": "plot",
+            "layers": [
                 { 
-                    'geom': 'bar',
-                    'stat': 'identity',
-                    'mapping': {'x': 'name', 'y': 'value', 'fill': 'value'},
-                    'data_meta': {
-                        'series_annotations': [
+                    "geom": "bar",
+                    "stat": "identity",
+                    "mapping": {"x": "name", "y": "value", "fill": "value"},
+                    "data_meta": {
+                        "series_annotations": [
                             {   
-                                'column': 'name',
-                                'factor_levels': ['a','c','b']
+                                "column": "name",
+                                "factor_levels": ["a","c","b"]
                             },
                             {   
-                                'column': 'value',
-                                'factor_levels': [1,2,3],
-                                'order': -1
+                                "column": "value",
+                                "factor_levels": [1,2,3],
+                                "order": -1
                             }                            
                         ]
                     }        

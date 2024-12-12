@@ -7,12 +7,14 @@
 - Number formatting:
   - We have aligned our specifications with D3.js (rather than Python): `g` format type with `~` (e.g. `~g`) now truncates trailing zeros, and without `~` it doesn't.
   - The default number formatter now respects `theme(exponent_format=...)` settings and does not use 's' format type for large numbers.
+- Legends with more than 200 items are now not rendered.
 
 ### Fixed
 - Bad precision in the default tooltip format when using coord limits [[#1134](https://github.com/JetBrains/lets-plot/issues/1134)]. 
 - Display integer values without fractional part in tooltips [[#1186](https://github.com/JetBrains/lets-plot/issues/1186)].
 - Suboptimal tooltip positioning in facets [[#1187](https://github.com/JetBrains/lets-plot/issues/1187)].
 - Incorrect Y-axis layout with facets and panel_inset [[#1194](https://github.com/JetBrains/lets-plot/issues/1194)].
+- Grouped plot hits the limit of 1000 and doesn't render with not-friendly exception [[#1224](https://github.com/JetBrains/lets-plot/issues/1224)].
 - Kandy toPNG reports NullPointerException [[#1228](https://github.com/JetBrains/lets-plot/issues/1228)]
 - lets_plot_kotlin_bridge is unable to locate libc++.1.dylib, I am using Mac m2 [[#1234](https://github.com/JetBrains/lets-plot/issues/1234)].
 - Wrong formatting when type='g' for small values [[#1238](https://github.com/JetBrains/lets-plot/issues/1238)].
@@ -24,4 +26,5 @@
 - How to adjust the vertical position of geom_text when using position_dodge [[#1248](https://github.com/JetBrains/lets-plot/issues/1248)].
 - Incorrect result for format(9.999, ".2f") [[#1251](https://github.com/JetBrains/lets-plot/issues/1251)].
 - Tooltips overlapping when not enough vertical space for them [[#1254](https://github.com/JetBrains/lets-plot/issues/1254)].
+- Plot limited to 1000 lines (Internal error: IllegalStateException : Too many groups: 1099) [[#1261](https://github.com/JetBrains/lets-plot/issues/1261)].
 - Nice to have tooltip to inherit formatting configured for axis [[LPK-229](https://github.com/JetBrains/lets-plot-kotlin/issues/229)].

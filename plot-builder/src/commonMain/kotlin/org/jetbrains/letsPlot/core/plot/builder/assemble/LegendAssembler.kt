@@ -161,6 +161,13 @@ class LegendAssembler(
                     check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
                     val scaleBreaks = scale.getShortenedScaleBreaks()
+
+                    // processOverrideAesValues() has a quadratic complexity - limit the number of labels.
+                    // And big legends are not very useful anyway.
+                    if (scaleBreaks.labels.size > MAX_LEGEND_LABELS) {
+                        continue
+                    }
+
                     val aesValues = scaleBreaks.transformedValues.map {
                         scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
                     }
@@ -227,6 +234,7 @@ class LegendAssembler(
 
     companion object {
         private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
+        private const val MAX_LEGEND_LABELS = 200
 
         fun createLegendSpec(
             title: String,
