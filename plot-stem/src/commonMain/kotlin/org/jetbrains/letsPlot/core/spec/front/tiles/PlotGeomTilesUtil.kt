@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
@@ -124,8 +125,12 @@ internal object PlotGeomTilesUtil {
         val aesFormatters = layerConfig.varBindings
             .associate { it.aes to (varFormatters[it.variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat)) }
 
-        return varFormatters + aesFormatters
+        val labelFormat = layerConfig.labelFormat?.let {
+            val fmt: (Any) -> String = StringFormat.forOneArg(it)::format
+            mapOf(Aes.LABEL to fmt)
+        }
 
+        return varFormatters + aesFormatters + (labelFormat ?: emptyMap())
     }
 
     fun createLayerBuilder(

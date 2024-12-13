@@ -333,7 +333,7 @@ class TooltipCheckLabelInLines {
     }
 
     @Test
-    fun xxx() {
+    fun `tooltip for geom_layer() without user format should use default g`() {
         val spec = """
                 |{
                 |  "kind": "plot",
@@ -353,5 +353,32 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
 
         assertXAxisTooltip(layer, expectedLines = listOf("label: 2.46913e+6"), hitIndex = 1)
+    }
+
+    @Test
+    fun `tooltip for geom_layer() with user format should use layer format`() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "ggtitle": { "text": "Custom label_format value" },
+            |  "layers": [
+            |    {
+            |      "geom": "label",
+            |      "mapping": {
+            |        "y": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ],
+            |        "label": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ]
+            |      },
+            |      "tooltips": {
+            |        "variables": [ "label" ]
+            |      },
+            |      "label_format": ",.7~g"
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+
+        assertXAxisTooltip(layer, expectedLines = listOf("label: 2,469,134"), hitIndex = 1)
     }
 }

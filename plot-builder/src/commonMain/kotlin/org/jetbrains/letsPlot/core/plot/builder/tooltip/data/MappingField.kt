@@ -48,22 +48,16 @@ class MappingField(
 //        return myFormatter!!
 
         val formatter = if (mappingFormatter != null) {
-            { value: Any? ->
-                value?.let { mappingFormatter.format(value) } ?: "n/a"
-            }
+            { value: Any? -> value?.let { mappingFormatter.format(value) } ?: "n/a" }
         } else {
             // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
-            val primaryAes =
-                aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+            val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
 
-            if (Aes.isPositional(primaryAes)) {
+            if (Aes.isPositional(primaryAes)) { // ask scale for formatter
                 ctx.getTooltipFormatter(primaryAes)
-            } else {
+            } else { // use formatter provided by dtype or geom
                 val fmt = myDataAccess.defaultFormatters[primaryAes] ?: Any?::toString
-
-                { value: Any? ->
-                    value?.let { fmt.invoke(it) } ?: "n/a"
-                }
+                { value: Any? -> value?.let { fmt(it) } ?: "n/a" }
             }
         }
 

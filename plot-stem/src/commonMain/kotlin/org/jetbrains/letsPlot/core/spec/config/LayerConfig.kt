@@ -63,6 +63,7 @@ class LayerConfig constructor(
     val dtypes: Map<String, DataType>// = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
+    val labelFormat: String? = getString(Option.Geom.Text.LABEL_FORMAT)
 
     val posProvider: PosProvider =
         PosProto.createPosProvider(
