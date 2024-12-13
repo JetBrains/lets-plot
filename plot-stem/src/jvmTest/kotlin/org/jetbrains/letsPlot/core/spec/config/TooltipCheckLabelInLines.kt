@@ -331,4 +331,27 @@ class TooltipCheckLabelInLines {
 
         assertXAxisTooltip(layer, expectedLines = listOf("10%"), hitIndex = 1)
     }
+
+    @Test
+    fun xxx() {
+        val spec = """
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "label",
+                |      "mapping": {
+                |        "y": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ],
+                |        "label": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ]
+                |      },
+                |      "tooltips": { "variables": [ "label" ] }
+                |    }
+                |  ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+
+        assertXAxisTooltip(layer, expectedLines = listOf("label: 2.46913e+6"), hitIndex = 1)
+    }
 }

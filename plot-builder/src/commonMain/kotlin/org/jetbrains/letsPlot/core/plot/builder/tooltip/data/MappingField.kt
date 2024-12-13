@@ -56,7 +56,15 @@ class MappingField(
             val primaryAes =
                 aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
 
-            ctx.getTooltipFormatter(primaryAes)
+            if (Aes.isPositional(primaryAes)) {
+                ctx.getTooltipFormatter(primaryAes)
+            } else {
+                val fmt = myDataAccess.defaultFormatters[primaryAes] ?: Any?::toString
+
+                { value: Any? ->
+                    value?.let { fmt.invoke(it) } ?: "n/a"
+                }
+            }
         }
 
         myFormatter = formatter

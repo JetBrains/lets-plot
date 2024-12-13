@@ -21,21 +21,25 @@ internal object TooltipFormatting {
             "Positional aesthetic should be either X or Y but was $aes"
         }
 
-        val scale = ctx.getScale(aes)
+        if (Aes.isPositional(aes)) {
+            val scale = ctx.getScale(aes)
 
-        val formatter = if (scale.isContinuousDomain) {
-            if (scale.userFormatter != null) {
-                scale.userFormatter!!
+            val formatter = if (scale.isContinuousDomain) {
+                if (scale.userFormatter != null) {
+                    scale.userFormatter!!
+                } else {
+                    val domain = ctx.overallTransformedDomain(aes)
+                    scale.getBreaksGenerator().defaultFormatter(domain, 100)
+                }
             } else {
-                val domain = ctx.overallTransformedDomain(aes)
-                scale.getBreaksGenerator().defaultFormatter(domain, 100)
+                val labelsMap = ScaleUtil.labelByBreak(scale)
+                labelsMap::get
             }
-        } else {
-            val labelsMap = ScaleUtil.labelByBreak(scale)
-            labelsMap::get
-        }
 
-        return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
+            return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
+        } else {
+            return { value -> value?.toString() ?: "n/a" }
+        }
     }
 
     fun createFormatter(variable: DataFrame.Variable, formatters: Map<Any, (Any) -> String>, expFormat: StringFormat.ExponentFormat): (Any) -> String {
