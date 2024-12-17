@@ -54,6 +54,7 @@ internal object Util {
     fun isContinuous(channel: String, encoding: Map<*, *>): Boolean {
         val channelEncoding = encoding.getMap(channel) ?: return false
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.QUANTITATIVE) return true
+        if (channelEncoding[Encoding.TYPE] == Encoding.Types.TEMPORAL) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.ORDINAL) return false
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.NOMINAL) return false
         if (channelEncoding.contains(Encoding.BIN)) return true
