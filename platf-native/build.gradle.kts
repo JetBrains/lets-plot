@@ -9,7 +9,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
 kotlin {
     // Enable the default target hierarchy:

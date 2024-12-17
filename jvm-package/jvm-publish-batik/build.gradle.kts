@@ -16,8 +16,8 @@ kotlin {
 val artifactBaseName = "lets-plot-batik"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val batikVersion = extra["batik_version"] as String
-val mavenLocalPath = rootProject.extra["localMavenRepository"]
+val batikVersion = project.extra["batik_version"] as String
+val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
 val jvmJarBatik by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")

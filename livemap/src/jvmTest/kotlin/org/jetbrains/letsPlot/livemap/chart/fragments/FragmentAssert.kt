@@ -5,15 +5,14 @@
 
 package org.jetbrains.letsPlot.livemap.chart.fragments
 
-import org.jetbrains.letsPlot.livemap.LiveMapTestBase
+import org.assertj.core.api.AbstractAssert
+import org.assertj.core.api.Assertions
 import org.jetbrains.letsPlot.livemap.chart.fragment.CachedFragmentsComponent
 import org.jetbrains.letsPlot.livemap.chart.fragment.EmittedFragmentsComponent
 import org.jetbrains.letsPlot.livemap.chart.fragment.EmptyFragmentsComponent
 import org.jetbrains.letsPlot.livemap.chart.fragment.StreamingFragmentsComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
-import org.assertj.core.api.AbstractAssert
-import org.assertj.core.api.Assertions
 
 internal class FragmentAssert(fragmentSpec: FragmentSpec?, private val myTestBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) :
     AbstractAssert<FragmentAssert?, FragmentSpec?>(fragmentSpec, FragmentAssert::class.java) {
@@ -95,7 +94,7 @@ internal class FragmentAssert(fragmentSpec: FragmentSpec?, private val myTestBas
         get() {
             Assertions.assertThat(
                 myTestBase.getSingletonComponent<EmptyFragmentsComponent>()
-                    .contains(actual!!.key().regionId, actual.key().quadKey)
+                    .contains(actual!!.key().regionId, actual!!.key().quadKey)
             ).isTrue()
             return this
         }
@@ -103,7 +102,7 @@ internal class FragmentAssert(fragmentSpec: FragmentSpec?, private val myTestBas
         get() {
             Assertions.assertThat(
                 myTestBase.getSingletonComponent<EmptyFragmentsComponent>()
-                    .contains(actual!!.key().regionId, actual.key().quadKey)
+                    .contains(actual!!.key().regionId, actual!!.key().quadKey)
             ).isFalse()
             return this
         }

@@ -8,12 +8,12 @@ plugins {
 }
 
 
-val mockkVersion = extra["mockk_version"] as String
-val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
-val kotlinxCoroutinesVersion = extra["kotlinx_coroutines_version"] as String
-val hamcrestVersion = extra["hamcrest_version"] as String
-val mockitoVersion = extra["mockito_version"] as String
-val assertjVersion = extra["assertj_version"] as String
+val mockkVersion = project.extra["mockk_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val hamcrestVersion = project.extra["hamcrest_version"] as String
+val mockitoVersion = project.extra["mockito_version"] as String
+val assertjVersion = project.extra["assertj_version"] as String
 
 kotlin {
     // Enable the default target hierarchy:
