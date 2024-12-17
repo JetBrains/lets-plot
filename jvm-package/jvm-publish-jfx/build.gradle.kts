@@ -16,7 +16,7 @@ kotlin {
 val artifactBaseName = "lets-plot-jfx"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val mavenLocalPath = rootProject.extra["localMavenRepository"]
+val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
 val jvmJarJfx by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")

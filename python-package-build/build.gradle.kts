@@ -11,7 +11,7 @@ plugins {
 
 fun ExtraPropertiesExtension.getOrNull(name: String): Any? = if (has(name)) { get(name) } else { null }
 
-val enablePythonPackage: Boolean = (rootProject.extra["enable_python_package"] as String).toBoolean()
+val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val pythonPackagePath = "${rootDir}/python-package"
 val pythonPackageBuildDir = "${pythonPackagePath}/build"
 val pythonPackageDistDir = "${pythonPackagePath}/dist"
@@ -35,7 +35,7 @@ if (enablePythonPackage) {
     val pypiProdUsername = rootProject.extra.getOrNull("pypi.prod.username")
     val pypiProdPassword = rootProject.extra.getOrNull("pypi.prod.password")
 
-    val pythonBinPath = rootProject.extra["python.bin_path"]
+    val pythonBinPath = rootProject.project.extra["python.bin_path"]
 
     val pythonBuildParams = listOf("${pythonBinPath}/python",
         "-m",
@@ -50,7 +50,7 @@ if (enablePythonPackage) {
     val commandLine = pythonBuildParams + pythonExtraBuildParams
 
     tasks.register<Exec>("buildPythonPackage") {
-        group = rootProject.extra["letsPlotTaskGroup"] as String
+        group = rootProject.project.extra["letsPlotTaskGroup"] as String
         description = "Builds lets-plot wheel distribution (python)"
         dependsOn(":js-package:build")
         dependsOn(":python-extension:build")
@@ -65,7 +65,7 @@ if (enablePythonPackage) {
 
     if (pypiTestUsername != null && pypiTestPassword != null) {
         tasks.register<Exec>("publishTestPythonPackage") {
-            group = rootProject.extra["letsPlotTaskGroup"] as String
+            group = rootProject.project.extra["letsPlotTaskGroup"] as String
             description = "Publishes lets-plot python package to test.pypi.org"
             workingDir(pythonPackageDistDir)
             commandLine(pythonTwineCommand,
@@ -83,7 +83,7 @@ if (enablePythonPackage) {
 
     if (pypiProdUsername != null && pypiProdPassword != null) {
         tasks.register<Exec>("publishProdPythonPackage") {
-            group = rootProject.extra["letsPlotTaskGroup"] as String
+            group = rootProject.project.extra["letsPlotTaskGroup"] as String
             description = "Publishes lets-plot python package to pypi.org"
             workingDir(pythonPackageDistDir)
             commandLine(pythonTwineCommand,

@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.Clipboard
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
-import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
 import org.jetbrains.letsPlot.livemap.core.graphics.*
 import org.jetbrains.letsPlot.livemap.core.input.InputMouseEvent
@@ -73,7 +72,7 @@ class LiveMapUiSystem(
 
         widget.get<LayerEntitiesComponent>().entities
             .run(::getEntitiesById)
-            .forEach(EcsEntity::remove)
+            .forEach { it.remove() }
 
         myLayerManager.removeLayer(widget.get<CanvasLayerComponent>().canvasLayer)
 

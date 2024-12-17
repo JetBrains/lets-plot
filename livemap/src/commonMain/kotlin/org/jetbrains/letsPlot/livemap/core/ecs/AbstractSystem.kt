@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.core.ecs
 
-import kotlin.jvm.Synchronized
 import kotlin.reflect.KClass
 
 abstract class AbstractSystem<T : EcsContext> protected constructor(val componentManager: EcsComponentManager) :
@@ -83,7 +82,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         return componentManager.createEntity(name)
     }
 
-    @Synchronized
+    //@Synchronized
     protected fun runLaterBySystem(entity: EcsEntity, entityHandler: (EcsEntity) -> Unit) {
         myTasks.add {
             if (componentManager.containsEntity(entity)) {
@@ -92,7 +91,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         }
     }
 
-    @Synchronized
+    //@Synchronized
     private fun fetchTasks(): List<() -> Unit> {
         if (myTasks.isEmpty()) {
             return emptyList()

@@ -7,8 +7,8 @@ plugins {
     kotlin("multiplatform")
 }
 
-val jfxVersion = extra["jfx_version"] as String
-val jfxPlatform = extra["jfxPlatformResolved"] as String
+val jfxVersion = project.extra["jfx_version"] as String
+val jfxPlatform = project.extra["jfxPlatformResolved"] as String
 
 kotlin {
     jvm()
