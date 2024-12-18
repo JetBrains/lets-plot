@@ -5,6 +5,7 @@
 
 *.iml
 .gradle
+.kotlin/
 .DS_Store
 **/build
 build-idea
