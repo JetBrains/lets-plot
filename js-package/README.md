@@ -34,7 +34,7 @@ For example: https://github.com/JetBrains/lets-plot/releases/download/v3.2.0/let
                                                                                                        
 ## Local Dev
 
-The "dev" version of JS library can be served from `js-package/build/dist/js/developmentExecutable` folder:
+The "dev" version of JS library can be served from `js-package/build/kotlin-webpack/js/developmentExecutable` folder:
 
 ```
 $ cd lets-plot
