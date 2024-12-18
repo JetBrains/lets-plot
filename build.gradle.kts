@@ -3,12 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import java.util.*
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
+import java.util.*
 
 plugins {
     kotlin("multiplatform") apply false
@@ -329,6 +329,22 @@ subprojects {
                 if (!project.version.toString().contains("SNAPSHOT")) {
                     configure<SigningExtension> {
                         sign(it)
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+// Suppress expect/actual classes are in Beta warning.
+subprojects {
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+        extensions.configure<KotlinMultiplatformExtension> {
+            targets.configureEach {
+                compilations.configureEach {
+                    compileTaskProvider.get().compilerOptions {
+                        freeCompilerArgs.add("-Xexpect-actual-classes")
                     }
                 }
             }
