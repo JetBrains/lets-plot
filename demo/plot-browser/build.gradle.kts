@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    jvm()
+    jvm("demoRunner")
     js {
         browser()
         binaries.executable()
@@ -32,7 +32,7 @@ kotlin {
                 implementation(project(":demo-and-test-shared"))
             }
         }
-        jvmMain {
+        named("demoRunnerMain") {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
 

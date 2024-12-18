@@ -12,7 +12,7 @@ repositories {
 }
 
 kotlin {
-    jvm()
+    jvm("demoRunner")
     js {
         browser()
         binaries.executable()
@@ -35,7 +35,7 @@ kotlin {
                 implementation(project(":demo-common-svg"))
             }
         }
-        jvmMain {
+        named("demoRunnerMain") {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
                 implementation(project(":demo-common-jvm-util"))

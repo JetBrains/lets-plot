@@ -7,15 +7,8 @@ plugins {
     kotlin("multiplatform")
 }
 
-// KT-55751. MPP / Gradle: Consumable configurations must have unique attributes.
-// https://youtrack.jetbrains.com/issue/KT-55751/MPP-Gradle-Consumable-configurations-must-have-unique-attributes
-//
-val dummyAttribute = Attribute.of("dummyAttribute", String::class.java)
-
 kotlin {
-    jvm("jvmBrowser") {
-        attributes.attribute(dummyAttribute, "jvmBrowser")
-    }
+    jvm("demoRunner")
     js {
         browser()
         binaries.executable()
@@ -46,7 +39,7 @@ kotlin {
                 implementation(project(":demo-common-livemap"))
             }
         }
-        named("jvmBrowserMain") {
+        named("demoRunnerMain") {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
 
