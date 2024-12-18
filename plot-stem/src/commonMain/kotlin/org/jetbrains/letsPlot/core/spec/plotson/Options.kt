@@ -20,6 +20,7 @@ abstract class Options(
 
     class PropSpec<T>(val key: String)
     inner class PropertyDelegate() {
+        @Suppress("UNCHECKED_CAST")
         operator fun <T> get(propSpec: PropSpec<T>): T? = properties[propSpec.key] as T?
         operator fun <T> set(propSpec: PropSpec<T>, value: T?)  = run { properties[propSpec.key] = value }
     }

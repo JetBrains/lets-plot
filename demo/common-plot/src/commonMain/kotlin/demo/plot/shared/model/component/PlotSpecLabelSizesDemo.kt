@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
@@ -47,9 +46,11 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         }
     }
 
-    private fun PlotLabelSpec.width(text: String): Double {
-        return text.map(LetterCategory.Companion::getLetterRatio).sum() * font.size
-    }
+    // WARNING:
+    // This extension is shadowed by a member: 'fun width(labelText: String): Double' defined in 'org/jetbrains/letsPlot/core/plot/builder/presentation/PlotLabelSpec'.
+    //private fun PlotLabelSpec.width(text: String): Double {
+    //    return text.map(LetterCategory.Companion::getLetterRatio).sum() * font.size
+    //}
 
     ////////
 

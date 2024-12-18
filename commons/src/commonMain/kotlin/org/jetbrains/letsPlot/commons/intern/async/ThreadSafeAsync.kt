@@ -5,22 +5,22 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import org.jetbrains.letsPlot.commons.intern.function.Consumer
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 class ThreadSafeAsync<ItemT>() : ResolvableAsync<ItemT> {
     private val myAsync: SimpleAsync<ItemT> = SimpleAsync()
     private val lock = Lock()
 
-    override fun onSuccess(successHandler: Consumer<in ItemT>): Registration {
+    override fun onSuccess(successHandler: Consumer<ItemT>): Registration {
         lock.execute {
             return safeReg(myAsync.onSuccess(successHandler))
         }
     }
 
-    override fun onResult(successHandler: Consumer<in ItemT>, failureHandler: Consumer<Throwable>): Registration {
+    override fun onResult(successHandler: Consumer<ItemT>, failureHandler: Consumer<Throwable>): Registration {
         lock.execute {
             return safeReg(myAsync.onResult(successHandler, failureHandler))
         }

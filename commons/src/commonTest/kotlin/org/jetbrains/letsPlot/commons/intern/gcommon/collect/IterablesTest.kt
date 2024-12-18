@@ -20,7 +20,7 @@ class IterablesTest {
             }
         }
 
-        private fun <T> eq(v: T): Predicate<in T> {
+        private fun <T> eq(v: T): Predicate<T> {
             return { v == it }
         }
     }

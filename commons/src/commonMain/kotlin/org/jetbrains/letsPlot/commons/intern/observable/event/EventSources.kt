@@ -37,7 +37,7 @@ object EventSources {
         return CompositeEventSource(sources)
     }
 
-    fun <EventT> filter(source: EventSource<EventT>, pred: Predicate<in EventT>): EventSource<EventT> {
+    fun <EventT> filter(source: EventSource<EventT>, pred: Predicate<EventT>): EventSource<EventT> {
         return object : EventSource<EventT> {
             override fun addHandler(handler: EventHandler<EventT>): Registration {
                 return source.addHandler(object : EventHandler<EventT> {

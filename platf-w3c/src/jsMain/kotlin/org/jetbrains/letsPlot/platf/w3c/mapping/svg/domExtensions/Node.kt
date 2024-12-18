@@ -11,7 +11,7 @@ import org.w3c.dom.get
 val Node.childCount: Int
     get() = childNodes.length
 
-inline fun Node.getChild(index: Int): Node? = childNodes[index]
+fun Node.getChild(index: Int): Node? = childNodes[index]
 
 fun Node.insertFirst(child: Node) = insertBefore(child, firstChild)
 
