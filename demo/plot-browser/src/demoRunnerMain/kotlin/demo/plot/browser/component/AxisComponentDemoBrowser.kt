@@ -5,8 +5,8 @@
 
 package demo.plot.browser.component
 
-import demo.common.util.demoUtils.browser.BrowserDemoUtil
-import demo.common.util.demoUtils.browser.BrowserDemoUtil.mapperDemoHtml
+import demo.common.utils.browser.BrowserDemoUtil
+import demo.common.utils.browser.BrowserDemoUtil.mapperDemoHtml
 
 private const val DEMO_PROJECT_PATH = "demo/plot"
 private const val DEMO_PROJECT = "demo-plot"

@@ -5,7 +5,7 @@
 
 package demo.svgMapping
 
-import demo.common.util.demoUtils.browser.BrowserDemoUtil
+import demo.common.utils.browser.BrowserDemoUtil
 
 private const val DEMO_PROJECT_PATH = "demo/svg-browser"
 private const val DEMO_PROJECT = "demo-svg-browser"

@@ -5,7 +5,7 @@
 
 package demo.livemap.component
 
-import demo.common.util.demoUtils.batik.PlotSpecsDemoWindowBatik
+import demo.common.utils.batik.PlotSpecsDemoWindowBatik
 import demo.livemap.common.plot.LiveMap
 
 fun main(args: Array<String>) {

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.common.util.demoUtils.swing
+package demo.common.utils.swing
 
 import java.awt.Color
 import java.awt.Dimension
@@ -23,7 +23,7 @@ abstract class PlotSpecsDemoWindowBase(
     private val rootPanel: JPanel
 
     init {
-        defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        defaultCloseOperation = EXIT_ON_CLOSE
 
         rootPanel = JPanel()
         rootPanel.layout = GridLayout(0, min(maxCol, specList.size))

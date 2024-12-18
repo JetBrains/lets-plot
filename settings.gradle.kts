@@ -47,8 +47,8 @@ include("jvm-package:jvm-publish-gis")
 include("demo-and-test-shared")
 project(":demo-and-test-shared").projectDir = File("./demo/demo-and-test-shared")
 
-include("demo-common-jvm-util")
-project(":demo-common-jvm-util").projectDir = File("./demo/common-jvm-util")
+include("demo-common-jvm-utils")
+project(":demo-common-jvm-utils").projectDir = File("./demo/common-jvm-utils")
 
 include("demo-common-svg")
 project(":demo-common-svg").projectDir = File("./demo/common-svg")

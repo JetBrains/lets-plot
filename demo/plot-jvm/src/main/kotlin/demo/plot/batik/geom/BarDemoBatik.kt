@@ -5,7 +5,7 @@
 
 package demo.plot.batik.geom
 
-import demo.common.util.demoUtils.batik.SvgViewerDemoWindowBatik
+import demo.common.utils.batik.SvgViewerDemoWindowBatik
 import demo.plot.shared.model.geom.BarDemo
 
 fun main() {

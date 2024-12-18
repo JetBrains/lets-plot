@@ -5,7 +5,7 @@
 
 package demo.plot.batik.plotConfig
 
-import demo.common.util.demoUtils.batik.PlotSpecsDemoWindowBatik
+import demo.common.utils.batik.PlotSpecsDemoWindowBatik
 import demo.plot.common.model.plotConfig.Issue_broken_facets_when_no_facet_var
 
 fun main() {

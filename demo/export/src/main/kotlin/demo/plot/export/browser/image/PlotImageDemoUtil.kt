@@ -5,8 +5,8 @@
 
 package demo.plot.export.browser.image
 
-import demo.common.util.demoUtils.browser.BrowserDemoUtil
-import demo.common.util.demoUtils.browser.BrowserDemoUtil.createDemoFile
+import demo.common.utils.browser.BrowserDemoUtil
+import demo.common.utils.browser.BrowserDemoUtil.createDemoFile
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.jetbrains.letsPlot.core.plot.export.PlotImageExport

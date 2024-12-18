@@ -5,7 +5,7 @@
 
 package demo.svMapping.jfx
 
-import demo.common.util.demoUtils.jfx.SvgViewerDemoWindowJfx
+import demo.common.utils.jfx.SvgViewerDemoWindowJfx
 import demo.svgMapping.model.DemoModelA
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 

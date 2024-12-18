@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":datamodel"))
     implementation(project(":canvas")) // needed for `svg transform` parsing
 
-    implementation(project(":demo-common-jvm-util"))
+    implementation(project(":demo-common-jvm-utils"))
     implementation(project(":demo-common-svg"))
 
     // Batik

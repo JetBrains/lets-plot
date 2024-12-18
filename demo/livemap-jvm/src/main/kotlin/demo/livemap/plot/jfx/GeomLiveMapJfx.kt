@@ -5,7 +5,7 @@
 
 package demo.livemap.plot.jfx
 
-import demo.common.util.demoUtils.jfx.PlotSpecsDemoWindowJfx
+import demo.common.utils.jfx.PlotSpecsDemoWindowJfx
 import demo.livemap.common.plot.LiveMap
 
 object GeomLiveMapJfx {

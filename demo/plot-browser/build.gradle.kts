@@ -36,7 +36,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
 
-                implementation(project(":demo-common-jvm-util"))
+                implementation(project(":demo-common-jvm-utils"))
 
                 implementation(project(":canvas"))
                 implementation(project(":livemap"))

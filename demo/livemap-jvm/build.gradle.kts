@@ -43,6 +43,6 @@ dependencies {
 
 
     implementation(project(":demo-and-test-shared"))
-    implementation(project(":demo-common-jvm-util"))
+    implementation(project(":demo-common-jvm-utils"))
     implementation(project(":demo-common-livemap"))
 }

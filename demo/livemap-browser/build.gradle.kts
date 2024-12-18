@@ -43,7 +43,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
 
-                implementation(project(":demo-common-jvm-util"))
+                implementation(project(":demo-common-jvm-utils"))
 
                 compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("io.ktor:ktor-client-cio:${ktorVersion}")

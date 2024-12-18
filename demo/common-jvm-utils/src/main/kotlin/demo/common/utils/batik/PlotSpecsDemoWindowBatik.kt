@@ -3,33 +3,33 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.common.util.demoUtils.jfx
+package demo.common.utils.batik
 
-import demo.common.util.demoUtils.swing.PlotSpecsDemoWindowBase
+import demo.common.utils.swing.PlotSpecsDemoWindowBase
+import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
-import org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class PlotSpecsDemoWindowJfx(
+class PlotSpecsDemoWindowBatik(
     title: String,
     specList: List<MutableMap<String, Any>>,
-    private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 3,
     plotSize: Dimension? = null,
     background: Color = Color.WHITE
 ) : PlotSpecsDemoWindowBase(
-    "$title (JFX)",
+    "$title (Batik)",
     specList = specList,
     maxCol = maxCol,
     plotSize = plotSize,
     background = background
 ) {
+
     override fun createPlotComponent(rawSpec: MutableMap<String, Any>, plotSize: Dimension?): JComponent {
         // Pre-process figure specifications
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-        val plotPanel = DefaultPlotPanelJfx(
+        val plotPanel = DefaultPlotPanelBatik(
             processedSpec = processedSpec,
             preferredSizeFromPlot = plotSize == null,
             repaintDelay = 300,
