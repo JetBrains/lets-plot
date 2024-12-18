@@ -19,7 +19,7 @@ python_package = 'lets_plot'
 def update_js():
     js_relative_path = ['js-package', 'build', 'dist', 'js', 'productionExecutable']
     js_libs = [
-        'lets-plot.min',
+        'lets-plot',
     ]
 
     from shutil import copy
@@ -31,7 +31,8 @@ def update_js():
         if not os.path.isdir(dst_dir):
             os.mkdir(dst_dir)
 
-        copy(js_path, dst_dir)
+        dst_path = os.path.join(dst_dir, lib + '.min.js')
+        copy(js_path, dst_path)
 
 
 version_locals = {}
