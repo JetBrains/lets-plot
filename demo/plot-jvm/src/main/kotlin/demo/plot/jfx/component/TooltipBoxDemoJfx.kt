@@ -5,7 +5,7 @@
 
 package demo.plot.jfx.component
 
-import demo.common.util.demoUtils.jfx.SvgViewerDemoWindowJfx
+import demo.common.utils.jfx.SvgViewerDemoWindowJfx
 import demo.plot.shared.model.component.TooltipBoxDemo
 import javafx.application.Platform.runLater
 import org.jetbrains.letsPlot.jfx.util.runOnFxThread

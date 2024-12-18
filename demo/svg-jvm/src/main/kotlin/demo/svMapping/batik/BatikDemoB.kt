@@ -5,7 +5,7 @@
 
 package demo.svgMapping
 
-import demo.common.util.demoUtils.batik.SvgViewerDemoWindowBatik
+import demo.common.utils.batik.SvgViewerDemoWindowBatik
 import demo.svgMapping.model.DemoModelB
 
 fun main() {

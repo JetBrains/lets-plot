@@ -5,7 +5,7 @@
 
 package demo.plot.browser.plotConfig
 
-import demo.common.util.demoUtils.browser.BrowserDemoUtil
+import demo.common.utils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector

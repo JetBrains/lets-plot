@@ -5,7 +5,7 @@
 
 package demo.plot.batik.plotContainer
 
-import demo.common.util.demoUtils.batik.PlotResizableDemoWindowBatik
+import demo.common.utils.batik.PlotResizableDemoWindowBatik
 import demo.plot.shared.model.plotContainer.BarPlotResizeDemo
 
 fun main() {

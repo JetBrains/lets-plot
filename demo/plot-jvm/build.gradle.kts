@@ -24,7 +24,7 @@ dependencies {
     implementation(project(":plot-builder"))
     implementation(project(":plot-stem"))
     implementation(project(":demo-common-plot"))
-    implementation(project(":demo-common-jvm-util"))
+    implementation(project(":demo-common-jvm-utils"))
     implementation(project(":demo-and-test-shared"))
 
     implementation(project(":canvas"))

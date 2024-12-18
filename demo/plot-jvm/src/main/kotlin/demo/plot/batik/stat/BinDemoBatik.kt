@@ -5,7 +5,7 @@
 
 package demo.plot.batik.stat
 
-import demo.common.util.demoUtils.batik.SvgViewerDemoWindowBatik
+import demo.common.utils.batik.SvgViewerDemoWindowBatik
 import demo.plot.shared.model.stat.BinDemo
 
 fun main() {

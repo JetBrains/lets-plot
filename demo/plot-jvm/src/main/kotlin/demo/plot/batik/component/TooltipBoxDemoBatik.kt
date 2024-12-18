@@ -5,7 +5,7 @@
 
 package demo.plot.batik.component
 
-import demo.common.util.demoUtils.batik.SvgViewerDemoWindowBatik
+import demo.common.utils.batik.SvgViewerDemoWindowBatik
 import demo.plot.shared.model.component.TooltipBoxDemo
 import java.awt.EventQueue.invokeLater
 

@@ -5,7 +5,7 @@
 
 package demo.plot.jfx.scale
 
-import demo.common.util.demoUtils.jfx.PlotSpecsDemoWindowJfx
+import demo.common.utils.jfx.PlotSpecsDemoWindowJfx
 import demo.plot.shared.model.scale.DateTimeScaleX
 
 fun main() {

@@ -17,7 +17,7 @@ dependencies {
     implementation(project(":commons"))
     implementation(project(":plot-image-export"))
     implementation(project(":demo-common-plot"))
-    implementation(project(":demo-common-jvm-util"))
+    implementation(project(":demo-common-jvm-utils"))
 
     compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")

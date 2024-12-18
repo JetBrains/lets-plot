@@ -5,7 +5,7 @@
 
 package demo.plot.jfx.plotContainer
 
-import demo.common.util.demoUtils.jfx.PlotResizableDemoWindowJfx
+import demo.common.utils.jfx.PlotResizableDemoWindowJfx
 import demo.plot.shared.model.plotContainer.BarPlotResizeDemo
 
 fun main() {

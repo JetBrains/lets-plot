@@ -5,7 +5,7 @@
 
 package demo.plot.jfx.plotConfig
 
-import demo.common.util.demoUtils.jfx.PlotSpecsDemoWindowJfx
+import demo.common.utils.jfx.PlotSpecsDemoWindowJfx
 import demo.plot.common.model.plotConfig.HVLine
 
 fun main() {

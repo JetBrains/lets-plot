@@ -5,7 +5,7 @@
 
 package demo.plot.batik.plotConfig
 
-import demo.common.util.demoUtils.batik.PlotSpecsDemoWindowBatik
+import demo.common.utils.batik.PlotSpecsDemoWindowBatik
 import demo.plot.common.model.plotConfig.Issue_facet_ordering_groups_679
 
 fun main() {

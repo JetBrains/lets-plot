@@ -5,7 +5,7 @@
 
 package demo.svgMapping
 
-import demo.common.util.demoUtils.batik.SvgViewerDemoWindowBatik
+import demo.common.utils.batik.SvgViewerDemoWindowBatik
 import demo.svgMapping.model.DemoModelA
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 

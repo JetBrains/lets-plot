@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.common.util.demoUtils.jfx
+package demo.common.utils.jfx
 
-import demo.common.util.demoUtils.swing.PlotObjectsDemoWindowBase
+import demo.common.utils.swing.PlotObjectsDemoWindowBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
