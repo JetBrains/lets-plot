@@ -7,6 +7,8 @@ package demo.plot.common.model.plotConfig
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.getMaps
+import org.jetbrains.letsPlot.core.spec.write
 
 class AxisPositionFixedBreaksRotated  {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -52,14 +54,12 @@ class AxisPositionFixedBreaksRotated  {
         }
 
         private fun setScaleBreaks(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-            val scalesNew = (plotSpec["scales"] as List<*>).map { scaleSpec ->
-                val newSpec = HashMap<String, Any>(scaleSpec as Map<String, Any>)
-                newSpec[Option.Scale.BREAKS] = BREAKS
-                newSpec[Option.Scale.LABELS] = LABS
-                newSpec
-            }
-
-            plotSpec["scales"] = scalesNew
+            plotSpec
+                .getMaps("scales")!!
+                .map { scaleSpec ->
+                    scaleSpec.write(Option.Scale.BREAKS) { BREAKS }
+                    scaleSpec.write(Option.Scale.LABELS) { LABS }
+                }
             return plotSpec
         }
 
