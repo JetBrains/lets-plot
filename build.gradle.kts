@@ -5,6 +5,8 @@
 
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
@@ -336,19 +338,34 @@ subprojects {
     }
 }
 
-
+// Fix warnings in all projects.
 subprojects {
+    fun KotlinCommonCompilerOptions.configCompilerWarnings() {
+        freeCompilerArgs.addAll(
+            // Suppress expect/actual classes are in Beta warning.
+            "-Xexpect-actual-classes",
+            // Non-public primary constructor is exposed via the generated 'copy()' method of the 'data' class.
+            "-Xconsistent-data-class-copy-visibility",
+            // Enable all warnings as errors.
+            "-Werror"
+        )
+    }
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
         extensions.configure<KotlinMultiplatformExtension> {
             targets.configureEach {
                 compilations.configureEach {
                     compileTaskProvider.get().compilerOptions {
-                        // Suppress expect/actual classes are in Beta warning.
-                        freeCompilerArgs.add("-Xexpect-actual-classes")
-                        // Non-public primary constructor is exposed via the generated 'copy()' method of the 'data' class.
-                        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+                        configCompilerWarnings()
                     }
                 }
+            }
+        }
+    }
+
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        extensions.configure<KotlinJvmExtension> {
+            compilerOptions {
+                configCompilerWarnings()
             }
         }
     }
