@@ -13,8 +13,8 @@ kotlin {
         browser {}
     }
 
-    val ktorVersion = extra["ktor_version"] as String
-    val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+    val ktorVersion = project.extra["ktor_version"] as String
+    val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
     sourceSets {
         commonMain {

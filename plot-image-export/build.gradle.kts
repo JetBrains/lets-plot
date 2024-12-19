@@ -14,17 +14,17 @@ plugins {
 val artifactBaseName = "lets-plot-image-export"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val assertjVersion = extra["assertj_version"]
+val assertjVersion = project.extra["assertj_version"]
 val batikGroupId = "org.apache.xmlgraphics"
 val batikArtifacts = listOf("batik-transcoder", "batik-codec")
-val batikVersion = extra["batik_version"]
-val hamcrestVersion = extra["hamcrest_version"]
-val kotlinLoggingVersion = extra["kotlinLogging_version"]
-val mavenLocalPath = rootProject.extra["localMavenRepository"]
-val mockitoVersion = extra["mockito_version"]
+val batikVersion = project.extra["batik_version"]
+val hamcrestVersion = project.extra["hamcrest_version"]
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"]
+val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
+val mockitoVersion = project.extra["mockito_version"]
 val tiffioGroupId = "com.twelvemonkeys.imageio"
 val tiffioArtifact = "imageio-tiff"
-val tiffioVersion = extra["twelvemonkeys_imageio_version"]
+val tiffioVersion = project.extra["twelvemonkeys_imageio_version"]
 
 kotlin {
     jvm()

@@ -9,18 +9,18 @@ plugins {
     kotlin("multiplatform")
 }
 
-val enablePythonPackage: Boolean = (rootProject.extra["enable_python_package"] as String).toBoolean()
+val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
 
 kotlin {
     if(enablePythonPackage) {
-        val target = if (os.isMacOsX && rootProject.extra["architecture"] == "arm64") {
+        val target = if (os.isMacOsX && rootProject.project.extra["architecture"] == "arm64") {
             macosArm64("native")
-        } else if (os.isMacOsX && rootProject.extra["architecture"] == "x86_64") {
+        } else if (os.isMacOsX && rootProject.project.extra["architecture"] == "x86_64") {
             macosX64("native")
-        } else if (os.isLinux && rootProject.extra["architecture"] == "arm64") {
+        } else if (os.isLinux && rootProject.project.extra["architecture"] == "arm64") {
             linuxArm64("native")
-        } else if (os.isLinux && rootProject.extra["architecture"] == "x86_64") {
+        } else if (os.isLinux && rootProject.project.extra["architecture"] == "x86_64") {
             linuxX64("native")
         } else if (os.isWindows) {
             mingwX64("native")
@@ -36,7 +36,7 @@ kotlin {
 
         target.compilations.getByName("main") {
             val python by cinterops.creating {
-                compilerOpts("-I${rootProject.extra["python.include_path"]}")
+                compilerOpts("-I${rootProject.project.extra["python.include_path"]}")
             }
         }
 

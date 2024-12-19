@@ -6,12 +6,25 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 internal object VegaOption {
+    object LetsPlotExt {
+        const val LOG_LETS_PLOT_SPEC = "logLetsPlotSpec"
+        const val REPORT_LETS_PLOT_CONVERTER_SUMMARY = "reportLetsPlotConverterSummary"
+    }
+
+    const val SCHEMA = "\$schema"
+    const val DESCRIPTION = "description"
     const val DATA = "data"
     const val LAYER = "layer"
     const val MARK = "mark"
     const val FACET = "facet"
+
+    const val CONCAT = "concat"
+    const val VCONCAT = "vconcat"
+    const val HCONCAT = "hconcat"
     const val REPEAT = "repeat"
     const val ENCODING = "encoding"
+
+    const val CONFIG = "config"
 
     object Data {
         const val VALUES = "values"
@@ -40,8 +53,26 @@ internal object VegaOption {
 
         object Aggregate {
             const val COUNT = "count"
+            const val VALID = "valid"
+            const val VALUES = "values"
+            const val MISSING = "missing"
+            const val DISTINCT = "distinct"
             const val SUM = "sum"
+            const val PRODUCT = "product"
             const val MEAN = "mean"
+            const val AVERAGE = "average"
+            const val VARIANCE = "variance"
+            const val VARIANCE_P = "variancep"
+            const val STDEV = "stdev"
+            const val STDEV_P = "stdevp"
+            const val STDERR = "stderr"
+            const val MEDIAN = "median"
+            const val Q1 = "q1"
+            const val Q3 = "q3"
+            const val CI0 = "ci0"
+            const val CI1 = "ci1"
+            const val MIN = "min"
+            const val MAX = "max"
             const val ARGMIN = "argmin"
             const val ARGMAX = "argmax"
         }

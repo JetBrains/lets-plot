@@ -80,7 +80,7 @@ internal class DiscreteScale : AbstractScale<Any> {
         return ScaleBreaks.Fixed.withTransform(
             breaksEffective,
             transform = transform,
-            formatter = providedFormatter ?: ScaleBreaks.IDENTITY_FORMATTER,
+            formatter = ::formatValue,
             alternativeLabels = labels,
             labelLengthLimit = if (shortenLabels) labelLengthLimit else null
         )
@@ -91,7 +91,7 @@ internal class DiscreteScale : AbstractScale<Any> {
     }
 
     private class MyBuilder(scale: DiscreteScale) : AbstractBuilder<Any>(scale) {
-        internal var discreteTransform: DiscreteTransform = scale.discreteTransform
+        var discreteTransform: DiscreteTransform = scale.discreteTransform
 
         override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
             throw IllegalStateException("Not applicable to scale with discrete domain")

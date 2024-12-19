@@ -3,12 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import java.util.*
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
+import java.util.*
 
 plugins {
     kotlin("multiplatform") apply false
@@ -25,7 +27,7 @@ val letsPlotTaskGroup by extra { "lets-plot" }
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.5.1-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "4.5.3-SNAPSHOT" // see also: python-package/lets_plot/_version.py
 //    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
@@ -331,6 +333,39 @@ subprojects {
                         sign(it)
                     }
                 }
+            }
+        }
+    }
+}
+
+// Fix warnings in all projects.
+subprojects {
+    fun KotlinCommonCompilerOptions.configCompilerWarnings() {
+        freeCompilerArgs.addAll(
+            // Suppress expect/actual classes are in Beta warning.
+            "-Xexpect-actual-classes",
+            // Non-public primary constructor is exposed via the generated 'copy()' method of the 'data' class.
+            "-Xconsistent-data-class-copy-visibility",
+            // Enable all warnings as errors.
+            "-Werror"
+        )
+    }
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+        extensions.configure<KotlinMultiplatformExtension> {
+            targets.configureEach {
+                compilations.configureEach {
+                    compileTaskProvider.get().compilerOptions {
+                        configCompilerWarnings()
+                    }
+                }
+            }
+        }
+    }
+
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        extensions.configure<KotlinJvmExtension> {
+            compilerOptions {
+                configCompilerWarnings()
             }
         }
     }

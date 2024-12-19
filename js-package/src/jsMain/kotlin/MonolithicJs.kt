@@ -15,15 +15,13 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
+import org.jetbrains.letsPlot.core.util.sizing.SizingOption
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.get
-import sizing.SizingOption
-import sizing.SizingOption.HEIGHT
-import sizing.SizingOption.WIDTH
-import sizing.SizingPolicy
 
 private val LOG = PortableLogging.logger("MonolithicJs")
 
@@ -40,12 +38,15 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 @JsExport
 fun buildPlotFromRawSpecs(
     plotSpecJs: dynamic,
-    width: Double,
-    height: Double,
+    width: Double,              // deprecated - do not use!!!
+    height: Double,             // deprecated - do not use!!!
     parentElement: HTMLElement,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
+        check(width < 0) { "Do not use 'width' parameter: deprecated." }
+        check(height < 0) { "Do not use 'height' parameter: deprecated." }
+
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
@@ -57,7 +58,6 @@ fun buildPlotFromRawSpecs(
 
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
-            width, height,
             parentElement,
             options
         )
@@ -94,12 +94,15 @@ fun buildPlotFromRawSpecs(
 @JsExport
 fun buildPlotFromProcessedSpecs(
     plotSpecJs: dynamic,
-    width: Double,
-    height: Double,
+    width: Double,              // deprecated - do not use!!!
+    height: Double,             // deprecated - do not use!!!
     parentElement: HTMLElement,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
+        check(width < 0) { "Do not use 'width' parameter: deprecated." }
+        check(height < 0) { "Do not use 'height' parameter: deprecated." }
+
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // Though the "plotSpec" might contain already "processed" specs,
         // we apply "frontend" transforms anyway, just to be sure that
@@ -113,7 +116,6 @@ fun buildPlotFromProcessedSpecs(
 
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
-            width, height,
             parentElement,
             options
         )
@@ -125,8 +127,6 @@ fun buildPlotFromProcessedSpecs(
 
 private fun buildPlotFromProcessedSpecsPrivate(
     processedSpec: Map<String, Any>,
-    width: Double,
-    height: Double,
     parentElement: HTMLElement,
     options: Map<String, Any>
 ): FigureModelJs? {
@@ -142,89 +142,49 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val messagesDiv = document.createElement("div") as HTMLDivElement
     parentElement.appendChild(messagesDiv)
 
-    val sizingPolicy = createSizingPolicy(
-        width, height,
-        parentElement,
-        options[SizingOption.KEY] as? Map<*, *>
-    )
+    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
+        is Map<*, *> -> SizingPolicy.create(o)
+        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
+    }
+
+    // Datalore specific option - not compatible with reactive sizing.
+    val datalorePreferredWidth: Double? =
+        parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
 
     return buildPlotFromProcessedSpecsIntern(
         processedSpec,
-        width, height,
         wrapperDiv,
         sizingPolicy,
+        datalorePreferredWidth,
         MessageHandler(messagesDiv),
     )
 }
 
-private fun createSizingPolicy(
-    width: Double,    // "not-specified" if set to value <= 0
-    height: Double,   // same
-    parentElement: HTMLElement,
-    sizingOptions: Map<*, *>?
-): SizingPolicy {
-
-    // Fixed plot size (not compatible with reactive sizing).
-    val plotSizeProvided = if (width > 0 && height > 0) DoubleVector(width, height) else null
-
-    return if (plotSizeProvided != null) {
-        // Ignore sizing options even if provided
-        SizingPolicy.fixedBoth(plotSizeProvided)
-    } else {
-        val parentWidth = when (val w = parentElement.clientWidth) {
-            0 -> null  // parent element wasn't yet layouted
-            else -> w
-        }?.toDouble()
-        val parentHeight = when (val h = parentElement.clientHeight) {
-            0 -> null  // parent element wasn't yet layouted
-            else -> h
-        }?.toDouble()
-
-        when (sizingOptions) {
-            is Map<*, *> -> {
-                // The width/height should be in 'sizingOptions'.
-                // Take the 'parentElement' dimensions as a fallback option.
-                val fallbackSizingOptions = mapOf(
-                    WIDTH to parentWidth,
-                    HEIGHT to parentHeight,
-                )
-                SizingPolicy.create(fallbackSizingOptions + sizingOptions)
-            }
-
-            else -> {
-                // No sizing options given - default to 'notebook mode'.
-                SizingPolicy.notebookCell(parentWidth, parentHeight)
-            }
-        }
-    }
-}
-
+/**
+ * Also used in FigureModelJs.updateView()
+ */
 internal fun buildPlotFromProcessedSpecsIntern(
     plotSpec: Map<String, Any>,
-    width: Double,
-    height: Double,
     wrapperElement: HTMLElement,
     sizingPolicy: SizingPolicy,
+    datalorePreferredWidth: Double?,
     messageHandler: MessageHandler
 ): FigureModelJs? {
 
-    // Datalore specific option - not compatible with reactive sizing.
-    val datalorePreferredWidth: Double? =
-        wrapperElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-
-    val (plotSize, plotMaxWidth) = if (datalorePreferredWidth != null) {
-        SizingPolicyAdapter.SizeAndMaxWidth(null, null)
+    @Suppress("NAME_SHADOWING")
+    val sizingPolicy = if (datalorePreferredWidth != null) {
+        sizingPolicy.withFixedWidth(datalorePreferredWidth)
     } else {
-        val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
-        sizingPolicyAdapter.toMonolithicSizingParameters()
+        sizingPolicy
     }
 
 //    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
-        plotSize,
-        plotMaxWidth,
-        datalorePreferredWidth,
+        plotSize = null,
+        plotMaxWidth = null,
+        plotPreferredWidth = null,
+        sizingPolicy
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
@@ -245,12 +205,11 @@ internal fun buildPlotFromProcessedSpecsIntern(
         FigureModelJs(
             plotSpec,
             MonolithicParameters(
-                width,
-                height,
                 wrapperElement,
-                sizingPolicy,
+                datalorePreferredWidth,
                 messageHandler.toMute(),
             ),
+            sizingPolicy,
             result.toolEventDispatcher,
             result.figureRegistration
         )

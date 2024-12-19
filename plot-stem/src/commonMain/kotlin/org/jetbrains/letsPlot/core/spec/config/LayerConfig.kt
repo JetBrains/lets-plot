@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -59,9 +60,10 @@ class LayerConfig constructor(
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    val dtypes = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
+    val dtypes: Map<String, DataType>// = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
+    val labelFormat: String? = getString(Option.Geom.Text.LABEL_FORMAT)
 
     val posProvider: PosProvider =
         PosProto.createPosProvider(
@@ -256,6 +258,19 @@ class LayerConfig constructor(
             clientSide = clientSide,
             isMapPlot = isMapPlot
         )
+
+        val baseDTypes = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
+        val discreteVarsDTypes = if (clientSide) {
+            combinedDiscreteMappings
+                .entries.associate { (aes, varName) ->
+                DataMetaUtil.asDiscreteName(aes, varName) to baseDTypes.getOrElse(varName) { DataType.UNKNOWN }
+            }
+        } else {
+            emptyMap()
+        }
+
+        dtypes = baseDTypes + discreteVarsDTypes
+
 
         // init AES constants excluding mapped AES
         constantsMap = LayerConfigUtil.initConstants(

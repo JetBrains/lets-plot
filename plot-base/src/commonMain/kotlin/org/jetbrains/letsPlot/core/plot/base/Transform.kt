@@ -18,4 +18,9 @@ interface Transform {
     fun unwrap(): Transform {
         return this
     }
+
+    companion object {
+        const val MAX_DOUBLE = Double.MAX_VALUE / 1e5
+        const val MIN_POSITIVE_DOUBLE = Double.MIN_VALUE * 1e5
+    }
 }

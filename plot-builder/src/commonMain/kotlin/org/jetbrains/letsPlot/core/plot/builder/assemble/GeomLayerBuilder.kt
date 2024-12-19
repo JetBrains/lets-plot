@@ -365,13 +365,13 @@ class GeomLayerBuilder(
         }
 
         override fun createContextualMapping(): ContextualMapping {
-            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
+            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation, defaultFormatters)
             return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
         }
 
         override fun createAnnotation(): Annotation? {
             return annotationProvider?.let { provider ->
-                val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
+                val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation, defaultFormatters)
                 provider(dataAccess, dataFrame)
             }
         }

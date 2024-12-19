@@ -7,6 +7,5 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 internal enum class VegaPlotKind {
     SINGLE_LAYER,
-    MULTI_LAYER,
-    FACETED
+    MULTI_LAYER
 }

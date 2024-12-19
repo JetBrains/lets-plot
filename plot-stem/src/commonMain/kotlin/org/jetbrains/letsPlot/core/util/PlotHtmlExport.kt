@@ -54,14 +54,15 @@ object PlotHtmlExport {
         )
 
         val style = if (iFrame) {
-            "\n       <style> html, body { margin: 0; overflow: hidden; } </style>"
+            "<style> html, body { margin: 0; padding: 0; overflow: hidden; } </style>"
         } else {
-            ""
+            "<style> html, body { margin: 0; padding: 0; } </style>"
         }
         val html = """
             |<html lang="en">
             |   <head>
-            |       <meta charset="UTF-8">$style
+            |       <meta charset="UTF-8">
+            |       $style
             |       $configureHtml
             |   </head>
             |   <body>
@@ -71,7 +72,8 @@ object PlotHtmlExport {
         """.trimMargin()
 
         return if (iFrame) {
-            val frameHeight = fixedSizeQ!!.y.toInt().let {
+            fixedSizeQ!!
+            val frameHeight = fixedSizeQ.y.toInt().let {
                 if(PlotConfigUtil.containsToolbar(plotSpec)) {
                     // adjust for toolbar height
                     it + 33  // The expected height of toolbar, see: DefaultToolbarJs

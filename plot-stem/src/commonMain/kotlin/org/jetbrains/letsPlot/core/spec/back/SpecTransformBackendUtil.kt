@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
 import org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.getList
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 
 
@@ -27,6 +28,8 @@ object SpecTransformBackendUtil {
         plotSpecRaw: MutableMap<String, Any>,
         simulateFailure: Boolean
     ): MutableMap<String, Any> {
+        var vegaLiteConverterSummary: List<*>? = null
+
         return try {
             // --> Testing
             if (simulateFailure) {
@@ -40,7 +43,17 @@ object SpecTransformBackendUtil {
             // <-- Testing
 
             val spec = if (VegaConfig.isVegaLiteSpec(plotSpecRaw)) {
-                VegaConfig.transform(plotSpecRaw)
+                // There are options in Vega-Lite that have different meaning if they are null or missing.
+                // Lets-Plot treats null and missing value equally and uses non-nullable value types
+                // (i.e., expects that all null values were dropped before the spec is passed to the backend).
+                // So, Lets-Plot is actually incompatible with Vega-Lite in this aspect.
+                @Suppress("UNCHECKED_CAST")
+                val vegaSpec = plotSpecRaw as MutableMap<String, Any?>
+
+                val letsPlotSpec = VegaConfig.toLetsPlotSpec(vegaSpec)
+                vegaLiteConverterSummary = letsPlotSpec.getList(Option.Plot.COMPUTATION_MESSAGES)
+
+                letsPlotSpec
             } else {
                 plotSpecRaw
             }
@@ -49,7 +62,6 @@ object SpecTransformBackendUtil {
                 FigKind.PLOT_SPEC -> processTransformIntern(spec)
                 FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(spec)
                 FigKind.GG_BUNCH_SPEC -> processTransformInBunch(spec)
-                else -> throw IllegalArgumentException("Unsupported figure kind")
             }
 
         } catch (e: RuntimeException) {
@@ -57,7 +69,13 @@ object SpecTransformBackendUtil {
             if (failureInfo.isInternalError) {
                 LOG.error(e) { failureInfo.message }
             }
-            HashMap(PlotConfig.failure(failureInfo.message))
+
+            val message = when (vegaLiteConverterSummary) {
+                null -> failureInfo.message
+                else -> failureInfo.message + "\n\nVega-Lite converter messages:\n" + vegaLiteConverterSummary.joinToString("\n")
+            }
+
+            HashMap(PlotConfig.failure(message))
         }
     }
 

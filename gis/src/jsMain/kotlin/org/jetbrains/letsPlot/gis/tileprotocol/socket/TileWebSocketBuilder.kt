@@ -13,7 +13,7 @@ actual class TileWebSocketBuilder
 actual constructor(
     private val myUrl: String
 ) : SocketBuilder {
-    override fun build(handler: SocketHandler): Socket {
+    actual override fun build(handler: SocketHandler): Socket {
         val client = HttpClient(Js) {
             install(WebSockets)
         }

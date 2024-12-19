@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
@@ -24,6 +25,8 @@ interface Scale {
     val additiveExpand: Double
 
     val transform: Transform
+
+    val userFormatter: ((Any) -> String)?
 
     fun hasBreaks(): Boolean
 
@@ -48,6 +51,8 @@ interface Scale {
         fun labelLengthLimit(v: Int): Builder
 
         fun labelFormatter(v: (Any) -> String): Builder
+
+        fun dataType(v: DataType): Builder
 
         fun exponentFormat(v: ExponentFormat): Builder
 

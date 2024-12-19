@@ -63,8 +63,7 @@ internal class ContinuousScale : AbstractScale<Double> {
                     ?: ScaleBreaks.Fixed.withTransform(
                         domainValues,
                         transform,
-                        formatter = providedFormatter
-                            ?: ScaleBreaks.IDENTITY_FORMATTER, // ToDo: need "default formatter"
+                        formatter = ::formatValue,
                         alternativeLabels = fixedLabels
                     )
             }

@@ -14,9 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.*
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import kotlin.math.max
 import kotlin.math.min
@@ -396,16 +394,21 @@ class LayoutManager(
                     stemY = targetBottomPoint
                 }
 
-                targetTopPoint in myVerticalTooltipSpace &&
-                        myVerticalAlignmentResolver.resolve(
-                            topTooltipRange,
-                            bottomTooltipRange,
-                            preferredAlignment,
-                            cursorVerticalRange
-                        ) === TOP -> {
-                    tooltipY = topTooltipRange.lowerEnd
-                    stemY = targetTopPoint
-                }
+                targetTopPoint in myVerticalTooltipSpace ->
+                    when (myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, preferredAlignment, cursorVerticalRange)) {
+                        TOP -> {
+                            tooltipY = topTooltipRange.lowerEnd
+                            stemY = targetTopPoint
+                        }
+                        BOTTOM -> {
+                            tooltipY = bottomTooltipRange.lowerEnd
+                            stemY = targetBottomPoint
+                        }
+                        FIT -> {
+                            tooltipY = centerInsideRange(targetCoordY, tooltipHeight, myVerticalSpace)
+                            stemY = targetCoordY
+                        }
+                    }
 
                 else -> {
                     tooltipY = bottomTooltipRange.lowerEnd
@@ -606,7 +609,8 @@ class LayoutManager(
 
     internal enum class VerticalAlignment {
         TOP,
-        BOTTOM
+        BOTTOM,
+        FIT
     }
 
     enum class HorizontalAlignment {
@@ -624,7 +628,6 @@ class LayoutManager(
     }
 
     class PositionedTooltip {
-        val tooltipBox: TooltipBox
         internal val tooltipSize: DoubleVector
         val tooltipSpec: TooltipSpec
         val tooltipCoord: DoubleVector
@@ -641,7 +644,6 @@ class LayoutManager(
         internal constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
             tooltipSpec = measuredTooltip.tooltipSpec
             tooltipSize = measuredTooltip.size
-            tooltipBox = measuredTooltip.tooltipBox
             this.tooltipCoord = tooltipCoord
             this.stemCoord = stemCoord
         }
@@ -649,7 +651,6 @@ class LayoutManager(
         private constructor(positionedTooltip: PositionedTooltip, newTooltipCoord: DoubleVector) {
             tooltipSpec = positionedTooltip.tooltipSpec
             tooltipSize = positionedTooltip.tooltipSize
-            tooltipBox = positionedTooltip.tooltipBox
             stemCoord = positionedTooltip.stemCoord
             tooltipCoord = newTooltipCoord
         }
@@ -666,12 +667,8 @@ class LayoutManager(
     class MeasuredTooltip(
         internal val tooltipSpec: TooltipSpec,
         internal val size: DoubleVector,
-        internal val tooltipBox: TooltipBox,
         private val strokeWidth: Double
     ) {
-        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox, strokeWidth: Double)
-                : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox, strokeWidth)
-
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
         internal val hintKind get() = tooltipSpec.layoutHint.kind
         internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius + strokeWidth

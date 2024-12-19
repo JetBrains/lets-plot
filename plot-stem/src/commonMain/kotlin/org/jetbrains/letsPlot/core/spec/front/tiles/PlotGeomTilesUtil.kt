@@ -5,17 +5,20 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler.Companion.extractExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig
@@ -113,16 +116,21 @@ internal object PlotGeomTilesUtil {
         }
     }
 
-    private fun createDefaultFormatters(layerConfig: LayerConfig): Map<Any, (Any) -> String> {
-        val dataFormatters = layerConfig.dtypes.mapValues { (_, dtype) -> dtype.formatter }
-        val statFormatters = Stats.VARS.mapValues { DataType.FLOATING.formatter }
+    private fun createDefaultFormatters(layerConfig: LayerConfig, exponentFormat: ExponentFormat): Map<Any, (Any) -> String> {
+        val expFormat = extractExponentFormat(exponentFormat)
+        val dataFormatters = layerConfig.dtypes.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat) }
+        val statFormatters = Stats.VARS.mapValues { FormatterUtil.byDataType(DataType.FLOATING, expFormat) }
         val varFormatters = dataFormatters + statFormatters
 
         val aesFormatters = layerConfig.varBindings
-            .associate { it.aes to (varFormatters[it.variable.name] ?: DataType.STRING.formatter) }
+            .associate { it.aes to (varFormatters[it.variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat)) }
 
-        return varFormatters + aesFormatters
+        val labelFormat = layerConfig.labelFormat?.let {
+            val fmt: (Any) -> String = StringFormat.forOneArg(it)::format
+            mapOf(Aes.LABEL to fmt)
+        }
 
+        return varFormatters + aesFormatters + (labelFormat ?: emptyMap())
     }
 
     fun createLayerBuilder(
@@ -194,7 +202,7 @@ internal object PlotGeomTilesUtil {
         )
 
         layerBuilder.defaultFormatters(
-            createDefaultFormatters(layerConfig)
+            createDefaultFormatters(layerConfig, theme.exponentFormat)
         )
 
         return layerBuilder

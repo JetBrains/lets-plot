@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
-import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.FORMATS
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FIELD
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FORMAT
@@ -68,22 +68,26 @@ class TooltipAxisConfigTest {
     }
 
     @Test
-    fun `scale format does not apply to tooltips`() {
+    fun `scale format should be applied to tooltips`() {
         run {
-            val geomLayer = geomLayer(
-                scaleFormat = "scale = {} %",    // todo should use the default tick value -> 0.3
-                tooltipFormat = null
-            )
-            assertGeneralTooltip(geomLayer, "0.34")
-            assertYAxisTooltip(geomLayer, "0.34")
-            // todo assertEquals("scale = 0.3 %", getYTick(geomLayer))
+            val geomLayer = geomLayer(scaleFormat = "scale = {} %", tooltipFormat = null)
+            assertGeneralTooltip(geomLayer, "scale = 0.34447 %")
+            assertYAxisTooltip(geomLayer, "scale = 0.34447 %")
         }
         run {
             val geomLayer = geomLayer(scaleFormat = "scale = {.3f} %", tooltipFormat = null)
-            assertGeneralTooltip(geomLayer, "0.34")
-            assertYAxisTooltip(geomLayer, "0.34")
+            assertGeneralTooltip(geomLayer, "scale = 0.344 %")
+            assertYAxisTooltip(geomLayer, "scale = 0.344 %")
             assertEquals("scale = 0.300 %", getYTick(geomLayer))
         }
+    }
+
+    @Test
+    fun `simple scale format should be applied to tooltips`() {
+        val geomLayer = geomLayer(scaleFormat = ".2%", tooltipFormat = null)
+        assertGeneralTooltip(geomLayer, "34.45%")
+        assertYAxisTooltip(geomLayer, "34.45%")
+        assertEquals("30.00%", getYTick(geomLayer))
     }
 
     @Test

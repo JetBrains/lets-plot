@@ -51,7 +51,7 @@ class AsyncAssert<ItemT> private constructor(actual: Async<ItemT>) :
         return this
     }
 
-    fun failure(): AbstractThrowableAssert<*, out Throwable> {
+    fun failure(): AbstractThrowableAssert<*, Throwable> {
         val result = getResult(actual)
         failIfUnfinished(result)
         failIfSucceeded(result)

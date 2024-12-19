@@ -24,11 +24,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.math3
 
-import kotlin.jvm.JvmOverloads
-import kotlin.math.*
+import kotlin.math.pow
 
-internal class UniformDistribution
-@JvmOverloads constructor(
+internal class UniformDistribution(
     private val a: Double,
     private val b: Double
 ) : AbstractRealDistribution() {

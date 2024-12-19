@@ -24,6 +24,7 @@ internal object PosProto {
     const val NUDGE = "nudge"
     const val JITTER = "jitter"
     const val JITTER_DODGE = "jitterdodge"
+    const val COMPOSITION = "composition"
 
     fun createPosProvider(posOptions: Map<String, Any>): PosProvider {
         val posName = ConfigUtil.featureName(posOptions)
@@ -51,6 +52,12 @@ internal object PosProto {
                 opts.getDouble(Pos.JitterDodge.JITTER_HEIGHT),
                 opts.getLong(Pos.JitterDodge.SEED)
             )
+
+            COMPOSITION -> {
+                val firstProvider = createPosProvider(opts.getMap(Pos.Composition.FIRST))
+                val secondProvider = createPosProvider(opts.getMap(Pos.Composition.SECOND))
+                PosProvider.composition(firstProvider, secondProvider)
+            }
 
             else -> throw IllegalArgumentException("Unknown position adjustments name: '$posName'")
         }

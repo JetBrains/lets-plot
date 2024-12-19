@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
 import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertGeneralTooltip
+import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertXAxisTooltip
 import kotlin.test.Test
 
 
@@ -34,7 +35,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("10.00")
+            expectedLines = listOf("10")
         )
     }
 
@@ -75,7 +76,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.00", "n: 20.00")
+            expectedLines = listOf("y: 10", "n: 20")
         )
     }
 
@@ -123,7 +124,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.00")
+            expectedLines = listOf("y: 10")
         )
     }
 
@@ -144,7 +145,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.00")
+            expectedLines = listOf("y: 10")
         )
     }
 
@@ -165,7 +166,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("10.00")
+            expectedLines = listOf("10")
         )
     }
 
@@ -191,37 +192,193 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("10.0")
+            expectedLines = listOf("10")
         )
     }
 
     @Test
-    fun `the label in one-line general tooltip is equal to Y axis and we show it`() {
+    fun `variable 'b' in as_discrete color mapping should deduce proper DataType formatter`() {
+        // Note that as_discrete produces a new variable with the name "color.b". Because of this DataType
+        // resolution may fail (there is no "color.b" in series_annotations) and DataType.UNKNOWN.formatter
+        // (i.e., toString()) will be used with the result "10.0" instead of "10".
+
         val spec = """
-        {
-          "data": { 
-              "v": [ 1, 2, 3, 4, 5 ],
-              "f": [ 10, 20, 30, 40, 50 ]
-          },
-          "kind": "plot",
-          "mapping": { "x" : "v", "y" : "v", "fill" : "f" },
-          "data_meta": { 
-             "mapping_annotations": [ {
-                 "aes": "fill",
-                 "annotation": "as_discrete",
-                 "parameters": { "label": "v" }
-             } ] 
-          },
-          "layers": [
-            {
-                "geom" : "point"
-            }
-          ]
-        }""".trimIndent()
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "point",
+                |      "data": {
+                |        "a": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+                |        "b": [ 10.0, 20.0, 30.0, 40.0, 50.0 ]
+                |      },
+                |      "mapping": { "x": "a", "y": "b", "color": "b" },
+                |      "data_meta": {
+                |        "series_annotations": [
+                |          { "type": "int", "column": "a" },
+                |          { "type": "int", "column": "b" }
+                |        ],
+                |        "mapping_annotations": [
+                |          {
+                |            "parameters": { "label": "b" },
+                |            "aes": "color",
+                |            "annotation": "as_discrete"
+                |          }
+                |        ]
+                |      }
+                |    }
+                |  ]
+                |}""".trimMargin()
+
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("v: 10.0")
+            expectedLines = listOf("b: 10")
         )
+    }
+
+    @Test
+    fun `issue 1186 - dataframe variable should be formatted using the DataType from series_annotations`() {
+        val spec = """
+                |{
+                |  "data": {
+                |    "l": [ 3.0 ],
+                |    "b": [ 4.0 ]
+                |  },
+                |  "mapping": { "color": "l" },
+                |  "data_meta": {
+                |    "series_annotations": [
+                |      { "type": "int", "column": "l" },
+                |      { "type": "int", "column": "b" }
+                |    ]
+                |  },
+                |  "ggsize": { "width": 300.0, "height": 200.0 },
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "point",
+                |      "tooltips": {
+                |        "lines": [
+                |          "l is @l",
+                |          "b is @b"
+                |        ]
+                |      }
+                |    }
+                |  ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+        assertGeneralTooltip(
+            layer,
+            expectedLines = listOf("l is 3", "b is 4")
+        )
+    }
+
+    @Test
+    fun `issue 1134`() {
+        val spec = """
+                |{
+                |  "data": {
+                |    "x": [ -10.0, 0.255, 0.265, 0.285, 0.295, 10.0 ]
+                |  },
+                |  "data_meta": {
+                |    "series_annotations": [
+                |      { "type": "unknown(mixed types)", "column": "x" }
+                |    ]
+                |  },
+                |  "coord": {
+                |    "name": "cartesian",
+                |    "xlim": [ 0.25, 0.3 ],
+                |    "flip": false
+                |  },
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "point",
+                |      "mapping": { "x": "x" }
+                |    }
+                |  ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+        assertXAxisTooltip(
+            layer,
+            expectedLines = listOf("0.26"),
+            hitIndex = 1
+        )
+
+    }
+
+    @Test
+    fun `issue LPK-229`() {
+        val spec = """
+                |{
+                |  "data": {
+                |    "x": [ 0.05, 0.1, 0.17, 0.34, 0.87 ]
+                |  },
+                |  "data_meta": {
+                |    "series_annotations": [ { "type": "float", "column": "x" } ]
+                |  },
+                |  "kind": "plot",
+                |  "scales": [ { "aesthetic": "x", "format": ".0%" } ],
+                |  "layers": [ { "geom": "point", "mapping": { "x": "x" } } ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+
+        assertXAxisTooltip(layer, expectedLines = listOf("10%"), hitIndex = 1)
+    }
+
+    @Test
+    fun `tooltip for geom_layer() without user format should use default g`() {
+        val spec = """
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "label",
+                |      "mapping": {
+                |        "y": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ],
+                |        "label": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ]
+                |      },
+                |      "tooltips": { "variables": [ "label" ] }
+                |    }
+                |  ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+
+        assertXAxisTooltip(layer, expectedLines = listOf("label: 2.46913e+6"), hitIndex = 1)
+    }
+
+    @Test
+    fun `tooltip for geom_layer() with user format should use layer format`() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "ggtitle": { "text": "Custom label_format value" },
+            |  "layers": [
+            |    {
+            |      "geom": "label",
+            |      "mapping": {
+            |        "y": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ],
+            |        "label": [ 1234567.0, 2469134.0, 3703701.0, 4938268.0, 6172835.0 ]
+            |      },
+            |      "tooltips": {
+            |        "variables": [ "label" ]
+            |      },
+            |      "label_format": ",.7~g"
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+
+        assertXAxisTooltip(layer, expectedLines = listOf("label: 2,469,134"), hitIndex = 1)
     }
 }

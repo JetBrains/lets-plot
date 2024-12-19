@@ -5,7 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -18,6 +21,20 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ContinuousScaleTest {
+    @Test
+    fun issue1250_explicitBreaksFormatterShouldTakeIntoAccountExpThemeConfig() {
+        val scale = Scales.DemoAndTest.continuousDomain("Test scale", Aes.X)
+            .with()
+            .dataType(DataType.FLOATING)
+            .continuousTransform(transWithLims(lower = -1e-5, upper = 1e5))
+            .exponentFormat(StringFormat.ExponentFormat(ExponentNotationType.POW, -2, 2))
+            .breaks(listOf(-1e-2, -1e-1, 0.0, 1e1, 1e2))
+            .build()
+
+        val scaleBreaks = scale.getScaleBreaks()
+        assertEquals(listOf("-\\(10^{-2}\\)", "-0.1", "0", "10", "\\(10^{2}\\)"), scaleBreaks.labels)
+    }
+
     private fun createScale(): Scale {
         return Scales.DemoAndTest.continuousDomain("Test scale", Aes.X)
     }

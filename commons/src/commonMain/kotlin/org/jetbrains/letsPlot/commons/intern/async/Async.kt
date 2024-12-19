@@ -18,8 +18,8 @@ import org.jetbrains.letsPlot.commons.registration.Registration
  * Implementations should make appropriate cleanup to avoid memory leaks when async is succeeded or failed.
  */
 interface Async<ItemT> {
-    fun onSuccess(successHandler: Consumer<in ItemT>): Registration
-    fun onResult(successHandler: Consumer<in ItemT>, failureHandler: Consumer<Throwable>): Registration
+    fun onSuccess(successHandler: Consumer<ItemT>): Registration
+    fun onResult(successHandler: Consumer<ItemT>, failureHandler: Consumer<Throwable>): Registration
     fun onFailure(failureHandler: Consumer<Throwable>): Registration
 
     /**

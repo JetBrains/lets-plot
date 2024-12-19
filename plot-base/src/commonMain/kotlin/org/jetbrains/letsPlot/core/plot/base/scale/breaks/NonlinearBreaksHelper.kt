@@ -116,7 +116,6 @@ internal class NonlinearBreaksHelper(
             return NumericBreakFormatter(
                 domainValue,
                 step,
-                true,
                 expFormat = expFormat
             )::apply
         }

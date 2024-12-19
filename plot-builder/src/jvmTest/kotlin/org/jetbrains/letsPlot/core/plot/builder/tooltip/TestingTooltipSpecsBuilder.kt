@@ -38,7 +38,14 @@ internal class TestingTooltipSpecsBuilder private constructor(
             DataFrame.Builder().build()
         )
         val factory =
-            TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
+            TooltipSpecFactory(
+                contextualMapping,
+                DoubleVector.ZERO,
+                flippedAxis = false,
+                axisTheme,
+                axisTheme,
+                plotContext
+            )
 
         val tipLayoutHint = mock(TipLayoutHint::class.java, mockSettings)
         `when`(tipLayoutHint.kind).thenReturn(VERTICAL_TOOLTIP)
@@ -48,7 +55,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tipLayoutHint).thenReturn(tipLayoutHint)
 
-        return factory.create(geomTarget, plotContext)
+        return factory.create(geomTarget)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {

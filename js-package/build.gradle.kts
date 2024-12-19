@@ -7,13 +7,17 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
-val kotlinVersion = extra["kotlin_version"] as String
-val ktorVersion = extra["ktor_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinVersion = project.extra["kotlin_version"] as String
+val ktorVersion = project.extra["ktor_version"] as String
 
 kotlin {
     js {
-        browser()
+        browser {
+            webpackTask {
+                mainOutputFileName = "lets-plot.js"
+            }
+        }
         binaries.executable()
     }
 
@@ -44,28 +48,7 @@ kotlin {
 
 val jsPackageBuildDir = project.layout.buildDirectory.get().asFile.path as String // 'project.buildDir' has been deprecated.
 val prodJsExecDistDir = "${jsPackageBuildDir}/dist/js/productionExecutable/"
-val devJsExecDistDir = "${jsPackageBuildDir}/dist/js/developmentExecutable/"
-val jsArtifactName = "js-package.js"
-
-tasks.named("jsBrowserProductionWebpack") {
-    doLast {
-        copy {
-            from("${prodJsExecDistDir}${jsArtifactName}")
-            rename(jsArtifactName, "lets-plot.min.js")
-            into(prodJsExecDistDir)
-        }
-    }
-}
-
-tasks.named("jsBrowserDevelopmentWebpack"){
-    doLast {
-        copy {
-            from("${devJsExecDistDir}${jsArtifactName}")
-            rename(jsArtifactName, "lets-plot.js")
-            into(devJsExecDistDir)
-        }
-    }
-}
+val jsArtifactName = "lets-plot.js"
 
 tasks.register<Copy>("copyForPublish") {
     dependsOn(tasks.named("jsBrowserProductionWebpack"))

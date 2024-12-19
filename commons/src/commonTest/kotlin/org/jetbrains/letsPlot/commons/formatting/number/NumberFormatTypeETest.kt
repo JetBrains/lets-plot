@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Spec
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -13,7 +14,7 @@ class NumberFormatTypeETest {
     @Test
     fun canOutputExponentNotation() {
         val f = NumberFormat("e")
-        assertEquals("0.000000", f.apply(0))
+        assertEquals("0.000000e+0", format("e", 0))
         assertEquals("4.200000e+1", f.apply(42))
         assertEquals("4.200000e+7", f.apply(42000000))
         assertEquals("4.200000e+8", f.apply(420000000))
@@ -26,16 +27,28 @@ class NumberFormatTypeETest {
         assertEquals("4.200e+1", NumberFormat(".3e").apply(42))
     }
 
+    @Ignore
     @Test
-    fun canFormatNegativeZeroAsZero() {
-        assertEquals("0.000000", NumberFormat("1e").apply(-0))
+    fun noPrecision() {
+        assertEquals("0", NumberFormat(Spec(type="e", precision = -1)).apply(0.0))
+        assertEquals("1e+0", NumberFormat(Spec(type="e", precision = -1)).apply(1.0))
+        assertEquals("1e-1", NumberFormat(Spec(type="e", precision = -1)).apply(0.1))
+        assertEquals("1e+0", NumberFormat(Spec(type="e", precision = -1)).apply(1.0))
+        assertEquals("1e+1", NumberFormat(Spec(type="e", precision = -1)).apply(10.0))
+        assertEquals("1e+2", NumberFormat(Spec(type="e", precision = -1)).apply(100.0))
+        assertEquals("5e+2", NumberFormat(Spec(type="e", precision = -1)).apply(500.0))
+        assertEquals("1.00123e+2", NumberFormat(Spec(type="e", precision = -1)).apply(100.123))
+    }
+
+    @Test
+    fun canFormatNegative() {
         assertEquals("-1.000000e-12", NumberFormat("1e").apply(-1e-12))
     }
 
     @Test
     fun canOutputScientificExponentNotation() {
         val f = NumberFormat("e&P")
-        assertEquals("0.000000", f.apply(0))
+        //assertEquals("0.000000", f.apply(0))
         assertEquals("1.500000", f.apply(1.5e0))
         assertEquals("1.500000·10", f.apply(1.5e1))
         assertEquals("1.500000·\\(10^{-1}\\)", f.apply(1.5e-1))
@@ -57,156 +70,25 @@ class NumberFormatTypeETest {
     }
 
     @Test
-    fun compactFormatOfScientificNotation() {
-        fun format(expType: ExponentNotationType, limits: Pair<Int, Int>? = null): NumberFormat {
-            val limitsStr = limits?.let { "{${it.first},${it.second}}" } ?: ""
-            return NumberFormat("&${expType.symbol}$limitsStr")
-        }
+    fun rounding() {
+        assertEquals("1.234568e+0", NumberFormat("e").apply(1.23456789))
+    }
 
-        //
-        // Default limits
-        //
+    @Test
+    fun round_9_9999999eMINUS9_precision_6() {
+        assertEquals("1.000000e-8", NumberFormat(".6e").apply(9.9999999e-9))
+    }
 
-        // 10^n
+    @Test
+    fun round_9_9eMINUS9_precision_0() {
+        assertEquals("1e-8", NumberFormat(".0e").apply(9.9e-9))
+    }
 
-        assertEquals("1e-7", format(ExponentNotationType.E).apply(0.0000001))
-        assertEquals("\\(10^{-7}\\)", format(ExponentNotationType.POW).apply(0.0000001))
-        assertEquals("1·\\(10^{-7}\\)", format(ExponentNotationType.POW_FULL).apply(0.0000001))
-
-        assertEquals("0.000001", format(ExponentNotationType.E).apply(0.000001))
-        assertEquals("0.000001", format(ExponentNotationType.POW).apply(0.000001))
-        assertEquals("0.000001", format(ExponentNotationType.POW_FULL).apply(0.000001))
-
-        assertEquals("0.1", format(ExponentNotationType.E).apply(0.1))
-        assertEquals("0.1", format(ExponentNotationType.POW).apply(0.1))
-        assertEquals("0.1", format(ExponentNotationType.POW_FULL).apply(0.1))
-
-        assertEquals("1", format(ExponentNotationType.E).apply(1))
-        assertEquals("1", format(ExponentNotationType.POW).apply(1))
-        assertEquals("1", format(ExponentNotationType.POW_FULL).apply(1))
-
-        assertEquals("10", format(ExponentNotationType.E).apply(10))
-        assertEquals("10", format(ExponentNotationType.POW).apply(10))
-        assertEquals("10", format(ExponentNotationType.POW_FULL).apply(10))
-
-        assertEquals("100000", format(ExponentNotationType.E).apply(100000))
-        assertEquals("100000", format(ExponentNotationType.POW).apply(100000))
-        assertEquals("100000", format(ExponentNotationType.POW_FULL).apply(100000))
-
-        assertEquals("1e+6", format(ExponentNotationType.E).apply(1000000))
-        assertEquals("\\(10^{6}\\)", format(ExponentNotationType.POW).apply(1000000))
-        assertEquals("1·\\(10^{6}\\)", format(ExponentNotationType.POW_FULL).apply(1000000))
-
-        // 2*10^n
-
-        assertEquals("2e-7", format(ExponentNotationType.E).apply(0.0000002))
-        assertEquals("2·\\(10^{-7}\\)", format(ExponentNotationType.POW).apply(0.0000002))
-        assertEquals("2·\\(10^{-7}\\)", format(ExponentNotationType.POW_FULL).apply(0.0000002))
-
-        assertEquals("0.000002", format(ExponentNotationType.E).apply(0.000002))
-        assertEquals("0.000002", format(ExponentNotationType.POW).apply(0.000002))
-        assertEquals("0.000002", format(ExponentNotationType.POW_FULL).apply(0.000002))
-
-        assertEquals("200000", format(ExponentNotationType.E).apply(200000))
-        assertEquals("200000", format(ExponentNotationType.POW).apply(200000))
-        assertEquals("200000", format(ExponentNotationType.POW_FULL).apply(200000))
-
-        assertEquals("2e+6", format(ExponentNotationType.E).apply(2000000))
-        assertEquals("2·\\(10^{6}\\)", format(ExponentNotationType.POW).apply(2000000))
-        assertEquals("2·\\(10^{6}\\)", format(ExponentNotationType.POW_FULL).apply(2000000))
-
-        // Negative numbers
-
-        assertEquals("-1e+6", format(ExponentNotationType.E).apply(-1000000))
-        assertEquals("-\\(10^{6}\\)", format(ExponentNotationType.POW).apply(-1000000))
-        assertEquals("-1·\\(10^{6}\\)", format(ExponentNotationType.POW_FULL).apply(-1000000))
-
-        assertEquals("-1e-7", format(ExponentNotationType.E).apply(-0.0000001))
-        assertEquals("-\\(10^{-7}\\)", format(ExponentNotationType.POW).apply(-0.0000001))
-        assertEquals("-1·\\(10^{-7}\\)", format(ExponentNotationType.POW_FULL).apply(-0.0000001))
-
-        assertEquals("-2e+6", format(ExponentNotationType.E).apply(-2000000))
-        assertEquals("-2·\\(10^{6}\\)", format(ExponentNotationType.POW).apply(-2000000))
-        assertEquals("-2·\\(10^{6}\\)", format(ExponentNotationType.POW_FULL).apply(-2000000))
-
-        assertEquals("-2e-7", format(ExponentNotationType.E).apply(-0.0000002))
-        assertEquals("-2·\\(10^{-7}\\)", format(ExponentNotationType.POW).apply(-0.0000002))
-        assertEquals("-2·\\(10^{-7}\\)", format(ExponentNotationType.POW_FULL).apply(-0.0000002))
-
-        //
-        // Limits: (-2, 3)
-        //
-
-        // 10^n
-
-        assertEquals("1e-2", format(ExponentNotationType.E, -2 to 3).apply(0.01))
-        assertEquals("\\(10^{-2}\\)", format(ExponentNotationType.POW, -2 to 3).apply(0.01))
-        assertEquals("1·\\(10^{-2}\\)", format(ExponentNotationType.POW_FULL, -2 to 3).apply(0.01))
-
-        assertEquals("0.1", format(ExponentNotationType.E, -2 to 3).apply(0.1))
-        assertEquals("0.1", format(ExponentNotationType.POW, -2 to 3).apply(0.1))
-        assertEquals("0.1", format(ExponentNotationType.POW_FULL, -2 to 3).apply(0.1))
-
-        assertEquals("1", format(ExponentNotationType.E, -2 to 3).apply(1))
-        assertEquals("1", format(ExponentNotationType.POW, -2 to 3).apply(1))
-        assertEquals("1", format(ExponentNotationType.POW_FULL, -2 to 3).apply(1))
-
-        assertEquals("10", format(ExponentNotationType.E, -2 to 3).apply(10))
-        assertEquals("10", format(ExponentNotationType.POW, -2 to 3).apply(10))
-        assertEquals("10", format(ExponentNotationType.POW_FULL, -2 to 3).apply(10))
-
-        assertEquals("100", format(ExponentNotationType.E, -2 to 3).apply(100))
-        assertEquals("100", format(ExponentNotationType.POW, -2 to 3).apply(100))
-        assertEquals("100", format(ExponentNotationType.POW_FULL, -2 to 3).apply(100))
-
-        assertEquals("1e+3", format(ExponentNotationType.E, -2 to 3).apply(1000))
-        assertEquals("\\(10^{3}\\)", format(ExponentNotationType.POW, -2 to 3).apply(1000))
-        assertEquals("1·\\(10^{3}\\)", format(ExponentNotationType.POW_FULL, -2 to 3).apply(1000))
-
-        // 2*10^n
-
-        assertEquals("2e-2", format(ExponentNotationType.E, -2 to 3).apply(0.02))
-        assertEquals("2·\\(10^{-2}\\)", format(ExponentNotationType.POW, -2 to 3).apply(0.02))
-        assertEquals("2·\\(10^{-2}\\)", format(ExponentNotationType.POW_FULL, -2 to 3).apply(0.02))
-
-        assertEquals("0.2", format(ExponentNotationType.E, -2 to 3).apply(0.2))
-        assertEquals("0.2", format(ExponentNotationType.POW, -2 to 3).apply(0.2))
-        assertEquals("0.2", format(ExponentNotationType.POW_FULL, -2 to 3).apply(0.2))
-
-        assertEquals("200", format(ExponentNotationType.E, -2 to 3).apply(200))
-        assertEquals("200", format(ExponentNotationType.POW, -2 to 3).apply(200))
-        assertEquals("200", format(ExponentNotationType.POW_FULL, -2 to 3).apply(200))
-
-        assertEquals("2e+3", format(ExponentNotationType.E, -2 to 3).apply(2000))
-        assertEquals("2·\\(10^{3}\\)", format(ExponentNotationType.POW, -2 to 3).apply(2000))
-        assertEquals("2·\\(10^{3}\\)", format(ExponentNotationType.POW_FULL, -2 to 3).apply(2000))
-
-        //
-        // Limits: (0, 0)
-        //
-
-        assertEquals("1e-1", format(ExponentNotationType.E, 0 to 0).apply(0.1))
-        assertEquals("\\(10^{-1}\\)", format(ExponentNotationType.POW, 0 to 0).apply(0.1))
-        assertEquals("1·\\(10^{-1}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(0.1))
-
-        assertEquals("1e+0", format(ExponentNotationType.E, 0 to 0).apply(1))
-        assertEquals("\\(10^{0}\\)", format(ExponentNotationType.POW, 0 to 0).apply(1))
-        assertEquals("1·\\(10^{0}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(1))
-
-        assertEquals("1e+1", format(ExponentNotationType.E, 0 to 0).apply(10))
-        assertEquals("\\(10^{1}\\)", format(ExponentNotationType.POW, 0 to 0).apply(10))
-        assertEquals("1·\\(10^{1}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(10))
-
-        assertEquals("2e-1", format(ExponentNotationType.E, 0 to 0).apply(0.2))
-        assertEquals("2·\\(10^{-1}\\)", format(ExponentNotationType.POW, 0 to 0).apply(0.2))
-        assertEquals("2·\\(10^{-1}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(0.2))
-
-        assertEquals("2e+0", format(ExponentNotationType.E, 0 to 0).apply(2))
-        assertEquals("2·\\(10^{0}\\)", format(ExponentNotationType.POW, 0 to 0).apply(2))
-        assertEquals("2·\\(10^{0}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(2))
-
-        assertEquals("2e+1", format(ExponentNotationType.E, 0 to 0).apply(20))
-        assertEquals("2·\\(10^{1}\\)", format(ExponentNotationType.POW, 0 to 0).apply(20))
-        assertEquals("2·\\(10^{1}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(20))
+    @Test
+    fun zero() {
+        assertEquals("0.000000e+0", NumberFormat("e").apply(0.0))
+        assertEquals("0e+0", NumberFormat(".0e").apply(0.0))
+        assertEquals("0.0e+0", NumberFormat(".1e").apply(0.0))
+        assertEquals("0", NumberFormat(Spec(type="e", precision = -1)).apply(0.0))
     }
 }

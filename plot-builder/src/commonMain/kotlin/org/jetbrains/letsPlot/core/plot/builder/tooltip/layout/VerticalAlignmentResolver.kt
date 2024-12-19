@@ -7,8 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.layout
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.*
 
 internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleSpan) {
 
@@ -145,19 +144,14 @@ internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleSpan
 
             rule(
                 Matcher()
+                    .topSpaceOk(false)
                     .bottomSpaceOk(false),
-                TOP
-            ),
-
-            rule(
-                Matcher()
-                    .topSpaceOk(false),
-                BOTTOM
+                FIT
             ),
 
             rule(
                 Matcher(),
-                TOP
+                FIT
             )
         )
 

@@ -5,4 +5,6 @@
 
 package org.jetbrains.letsPlot.gis.tileprotocol.socket
 
-expect class TileWebSocketBuilder(myUrl: String): SocketBuilder
+expect class TileWebSocketBuilder(myUrl: String): SocketBuilder {
+    override fun build(handler: SocketHandler): Socket
+}

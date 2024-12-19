@@ -389,7 +389,7 @@ object DataProcessing {
     private fun computeDummyValues(list1: List<Int>, list2: List<Int>): List<Int> {
         if (list1.isEmpty()) return emptyList()
 
-        val limit = 1000
+        val limit = 100_000
 
         val max = (list1 + list2).maxOrNull()!!
         check(max < limit) { "Too many groups: $max" }

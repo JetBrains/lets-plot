@@ -7,7 +7,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val batikVersion = extra["batik_version"] as String
+val batikVersion = project.extra["batik_version"] as String
 
 kotlin {
     jvm()

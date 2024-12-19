@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.commons.intern.async
 
 import org.jetbrains.letsPlot.commons.intern.function.Consumer
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
     private var mySuccessItem: ItemT? = null
@@ -17,10 +17,10 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
     private var myFailureThrowable: Throwable? = null
     private var myFailed = false
 
-    private var mySuccessHandlers: Listeners<Consumer<in ItemT>>? = Listeners()
+    private var mySuccessHandlers: Listeners<Consumer<ItemT>>? = Listeners()
     private var myFailureHandlers: Listeners<Consumer<Throwable>>? = Listeners()
 
-    override fun onSuccess(successHandler: Consumer<in ItemT>): Registration {
+    override fun onSuccess(successHandler: Consumer<ItemT>): Registration {
 
         if (alreadyHandled()) {
             if (mySucceeded) {
@@ -31,7 +31,7 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
         return mySuccessHandlers!!.add(successHandler)
     }
 
-    override fun onResult(successHandler: Consumer<in ItemT>, failureHandler: Consumer<Throwable>): Registration {
+    override fun onResult(successHandler: Consumer<ItemT>, failureHandler: Consumer<Throwable>): Registration {
         val successRegistration = onSuccess(successHandler)
         val failureRegistration = onFailure(failureHandler)
         return object : Registration() {
@@ -67,8 +67,8 @@ class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
         mySuccessItem = result
         mySucceeded = true
 
-        mySuccessHandlers!!.fire(object : ListenerCaller<Consumer<in ItemT>> {
-            override fun call(l: Consumer<in ItemT>) {
+        mySuccessHandlers!!.fire(object : ListenerCaller<Consumer<ItemT>> {
+            override fun call(l: Consumer<ItemT>) {
                 @Suppress("UNCHECKED_CAST")
                 l(mySuccessItem as ItemT)
             }

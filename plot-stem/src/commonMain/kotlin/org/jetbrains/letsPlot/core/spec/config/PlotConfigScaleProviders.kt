@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
@@ -33,14 +35,11 @@ internal object PlotConfigScaleProviders {
         val setup = PlotConfigUtil.createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
         val dataByVarBinding = setup.dataByVarBinding
-        val variablesByMappedAes = setup.variablesByMappedAes
 
         // Append date-time scale provider
         val dateTimeAesByVarBinding = dataByVarBinding
             .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
-//            .keys
-//            .map(VarBinding::aes)
-            .map { (varBinding, _) -> varBinding.aes}
+            .map { (varBinding, _) -> varBinding.aes }
 
         // Axis that don't have an explicit mapping but have a corresponding positional mapping to a datetime variable
         val dateTimeAxisAesByPositionalVarBinding = listOfNotNull(
@@ -83,8 +82,23 @@ internal object PlotConfigScaleProviders {
                 }
         }
 
-        return scaleProviderBuilders.mapValues { (_, builder) ->
+        fun getDType(aes: Aes<*>): DataType {
+            val aesBindingByLayer = layerConfigs
+                .associateWith(LayerConfig::varBindings)
+                .mapValues { (_, bindings) -> bindings.singleOrNull { binding -> aes == binding.aes }?.variable?.name }
+                .filterNotNullValues()
+
+            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypes[varName] }
+
+            // Multiple layers with different data types for the same aes.
+            // Don't use any (e.g., INTEGER) - may crash if another layer uses a different incompatible data type.
+            // Return UNKNOWN (effectively, Any.toString()) to avoid crashes.
+            return dTypes.distinct().singleOrNull() ?: DataType.UNKNOWN
+        }
+
+        return scaleProviderBuilders.mapValues { (aes, builder) ->
             builder
+                .dataType(getDType(aes))
                 .exponentFormat(expFormat)
                 .build()
         }

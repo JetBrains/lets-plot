@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
@@ -22,6 +23,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabels: List<String>? = null
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
+    private var myDataType: DataType = DataType.UNKNOWN
     private var myExpFormat: ExponentFormat = DEF_EXPONENT_FORMAT
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
@@ -68,6 +70,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     fun labelFormat(format: String?): ScaleProviderBuilder<T> {
         myLabelFormat = format
+        return this
+    }
+
+    fun dataType(dataType: DataType): ScaleProviderBuilder<T> {
+        myDataType = dataType
         return this
     }
 
@@ -146,6 +153,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myLabels: List<String>? = b.myLabels?.let { ArrayList(it) }
         private val myLabelLengthLimit: Int? = b.myLabelLengthLimit
         private val myLabelFormat: String? = b.myLabelFormat
+        private val myDataType: DataType = b.myDataType
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
@@ -230,6 +238,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             val with = scale.with()
                 .exponentFormat(PlotAssembler.extractExponentFormat(myExpFormat))
 
+            with.dataType(myDataType)
             if (breaks != null) {
                 with.breaks(breaks)
             }

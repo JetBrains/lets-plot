@@ -5,20 +5,16 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
+import org.jetbrains.letsPlot.commons.intern.concurrent.AtomicInteger
 import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
-import kotlin.native.concurrent.ThreadLocal
 
-// In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
-// See:  https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
-// Required mutations:
-//      -   `suffixGen`
-@ThreadLocal
 object SvgUID {
     private var suffixGen: () -> Any = { randomString(6) }
 
+    // For tests only.
+    val index = AtomicInteger(-1)
     fun setUpForTest() {
-        val incrementalId = IncrementalId()
-        suffixGen = { incrementalId.next() }
+        suffixGen = { "clip-${index.incrementAndGet()}" }
     }
 
     fun get(prefix: String): String {
@@ -29,10 +25,5 @@ object SvgUID {
             "ID prefix can contain only the characters [a-zA-Z0-9], the hyphen (-) and the underscore (_)"
         }
         return "$prefix${suffixGen()}"
-    }
-
-    private class IncrementalId {
-        private var nextIndex = 0
-        fun next() = ("clip-${nextIndex++}")
     }
 }

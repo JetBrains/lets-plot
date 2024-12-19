@@ -36,7 +36,7 @@ class TooltipSkippedAesTest {
         val layer = getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("2.00")
+            expectedLines = listOf("2")
         )
     }
 
@@ -102,7 +102,7 @@ class TooltipSkippedAesTest {
         val layer = getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("z: 5.00")
+            expectedLines = listOf("z: 5")
         )
     }
 
@@ -121,7 +121,7 @@ class TooltipSkippedAesTest {
         val layer = getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("z: 5.00")
+            expectedLines = listOf("z: 5")
         )
     }
 
@@ -140,7 +140,7 @@ class TooltipSkippedAesTest {
             val layer = getSingleGeomLayer(spec)
             assertGeneralTooltip(
                 layer,
-                expectedLines = listOf("Color: 5.00")
+                expectedLines = listOf("Color: 5")
             )
         }
         run {
@@ -156,7 +156,7 @@ class TooltipSkippedAesTest {
             val layer = getSingleGeomLayer(spec)
             assertGeneralTooltip(
                 layer,
-                expectedLines = listOf("Size: 5.00")
+                expectedLines = listOf("Size: 5")
             )
         }
     }

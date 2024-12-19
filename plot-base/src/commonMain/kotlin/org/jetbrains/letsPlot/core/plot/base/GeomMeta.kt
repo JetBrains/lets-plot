@@ -6,38 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base
 
 import org.jetbrains.letsPlot.commons.values.Color
-import kotlin.native.concurrent.ThreadLocal
 
-// In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
-// See:  https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
-// Required mutations:
-//      -   `renderedAesByGeom` map
-@ThreadLocal
 object GeomMeta {
-    private val renderedAesByGeom = HashMap<GeomKind, List<Aes<*>>>()
-
-    private fun renders(geomKind: GeomKind): List<Aes<*>> {
-        if (!renderedAesByGeom.containsKey(geomKind)) {
-            renderedAesByGeom[geomKind] =
-                renderedAesList(geomKind)
-        }
-        return renderedAesByGeom[geomKind]!!
-    }
-
-    fun renders(
-        geomKind: GeomKind,
-        actualColorAes: Aes<Color>,
-        actualFillAes: Aes<Color>,
-        exclude: List<Aes<*>> = emptyList()
-    ): List<Aes<*>> {
-        return (renders(geomKind) - exclude).map {
-            when (it) {
-                Aes.COLOR -> actualColorAes
-                Aes.FILL -> actualFillAes
-                else -> it
-            }
-        }
-    }
 
     private val POINT = listOf(
         Aes.X, Aes.Y,
@@ -81,11 +51,30 @@ object GeomMeta {
         Aes.ALPHA
     )
 
+    private val RENDERED_AES_BY_GEOM: Map<GeomKind, List<Aes<*>>> = GeomKind.entries.associateWith {
+        renderedAesList(it)
+    }
+
+    fun renders(
+        geomKind: GeomKind,
+        actualColorAes: Aes<Color>,
+        actualFillAes: Aes<Color>,
+        exclude: List<Aes<*>> = emptyList()
+    ): List<Aes<*>> {
+        return (RENDERED_AES_BY_GEOM.getValue(geomKind) - exclude).map {
+            when (it) {
+                Aes.COLOR -> actualColorAes
+                Aes.FILL -> actualFillAes
+                else -> it
+            }
+        }
+    }
 
     private fun renderedAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.POINT,
-            GeomKind.BLANK-> POINT
+            GeomKind.BLANK -> POINT
+
             GeomKind.PATH -> PATH
             GeomKind.LINE -> PATH
 

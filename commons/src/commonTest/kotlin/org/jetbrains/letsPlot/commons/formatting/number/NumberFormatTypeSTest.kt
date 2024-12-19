@@ -27,20 +27,31 @@ class NumberFormatTypeSTest {
     }
 
     @Test
+    fun asd() {
+        assertEquals("1.9990M", format(1_999_000.123_456, ".5s"))
+        assertEquals("19.999M", format(19_999_000.123_456, ".5s"))
+        assertEquals("200.00M", format(199_999_000.123_456, ".5s"))
+        assertEquals("1.0000G", format(999_999_000.123_456, ".5s"))
+    }
+
+    @Test
     fun withPrecision() {
         val f1 = NumberFormat(".3s")
-        assertEquals("0.00", f1.apply(0))
-        assertEquals("1.00", f1.apply(1))
-        assertEquals("10.0", f1.apply(10))
-        assertEquals("100", f1.apply(100))
+        assertEquals("1.99M", f1.apply(1992000.5))
+        assertEquals("1.99k", f1.apply(1992.5))
+        assertEquals("2.00k", f1.apply(1999.5))
         assertEquals("1.00k", f1.apply(999.5))
+        assertEquals("1.00µ", f1.apply(.000001))
+        assertEquals("10.0", f1.apply(10))
+        assertEquals("0.00", f1.apply(0))
+        assertEquals("100", f1.apply(100))
+        assertEquals("1.00", f1.apply(1))
         assertEquals("1.00M", f1.apply(999500))
         assertEquals("1.00k", f1.apply(1000))
         assertEquals("1.50k", f1.apply(1500.5))
         assertEquals("146M", f1.apply(145500000))
         assertEquals("146M", f1.apply(145999999.999999347))
         assertEquals("100Y", f1.apply(1e26))
-        assertEquals("1.00µ", f1.apply(.000001))
         assertEquals("10.0m", f1.apply(.009995))
         val f2 = NumberFormat(".4s")
         assertEquals("999.5", f2.apply(999.5))
@@ -76,13 +87,13 @@ class NumberFormatTypeSTest {
     @Test
     fun veryLargeWithYotta() {
         val f = NumberFormat(".8s")
+        assertEquals("1230.0000Y", f.apply(1.23e+27))
         assertEquals("1.2300000Z", f.apply(1.23e+21))
         assertEquals("12.300000Z", f.apply(1.23e+22))
         assertEquals("123.00000Z", f.apply(1.23e+23))
         assertEquals("1.2300000Y", f.apply(1.23e+24))
         assertEquals("12.300000Y", f.apply(1.23e+25))
         assertEquals("123.00000Y", f.apply(1.23e+26))
-        assertEquals("1230.0000Y", f.apply(1.23e+27))
         assertEquals("12300.000Y", f.apply(1.23e+28))
         assertEquals("123000.00Y", f.apply(1.23e+29))
         assertEquals("1230000.0Y", f.apply(1.23e+30))
@@ -128,6 +139,7 @@ class NumberFormatTypeSTest {
     @Test
     fun consistentForSmallAndLargeNumbers() {
         val f1 = NumberFormat(".0s")
+        assertEquals("20µ", f1.apply(1.6e-5))
         assertEquals("10µ", f1.apply(1e-5))
         assertEquals("100µ", f1.apply(1e-4))
         assertEquals("1m", f1.apply(1e-3))

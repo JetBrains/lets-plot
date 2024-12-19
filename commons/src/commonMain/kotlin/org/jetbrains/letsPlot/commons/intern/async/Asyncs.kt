@@ -23,13 +23,13 @@ object Asyncs {
 
     fun <ValueT> constant(value: ValueT): Async<ValueT> {
         return object : Async<ValueT> {
-            override fun onSuccess(successHandler: Consumer<in ValueT>): Registration {
+            override fun onSuccess(successHandler: Consumer<ValueT>): Registration {
                 successHandler(value)
                 return Registration.EMPTY
             }
 
             override fun onResult(
-                successHandler: Consumer<in ValueT>,
+                successHandler: Consumer<ValueT>,
                 failureHandler: Consumer<Throwable>
             ): Registration {
                 return onSuccess(successHandler)
@@ -72,12 +72,12 @@ object Asyncs {
 
     fun <ValueT> failure(t: Throwable): Async<ValueT> {
         return object : Async<ValueT> {
-            override fun onSuccess(successHandler: Consumer<in ValueT>): Registration {
+            override fun onSuccess(successHandler: Consumer<ValueT>): Registration {
                 return Registration.EMPTY
             }
 
             override fun onResult(
-                successHandler: Consumer<in ValueT>,
+                successHandler: Consumer<ValueT>,
                 failureHandler: Consumer<Throwable>
             ): Registration {
                 return onFailure(failureHandler)

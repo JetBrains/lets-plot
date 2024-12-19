@@ -18,6 +18,7 @@ class DataFrameField(
     private val format: String? = null
 ) : ValueSource {
 
+    private lateinit var myDataAccess: MappedDataAccess
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
     private var myFormatter: ((Any) -> String)? = null
@@ -26,7 +27,7 @@ class DataFrameField(
         require(myFormatter == null)
 
         myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable, expFormat)
+            null -> TooltipFormatting.createFormatter(myVariable, myDataAccess.defaultFormatters, expFormat)
             else -> StringFormat.forOneArg(format, formatFor = name, expFormat = expFormat)::format
         }
         return myFormatter!!
@@ -37,6 +38,9 @@ class DataFrameField(
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
+        require(!::myDataAccess.isInitialized) { "Data context can be initialized only once" }
+        myDataAccess = mappedDataAccess
+
         require(!::myDataFrame.isInitialized) { "Data context can be initialized only once" }
 
         myDataFrame = data

@@ -42,7 +42,7 @@ class EcsComponentManagerTest {
         man.createEntity("").addComponents { + Foo() }
         man.createEntity("").addComponents { + Foo() }
 
-        man.getEntities(Foo::class).forEach(EcsEntity::remove)
+        man.getEntities(Foo::class).forEach { it.remove() }
         man.doRemove()
         assertEquals(3, man.entitiesCount)
     }

@@ -58,7 +58,7 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = null)
 
         val expectedLines = listOf(
-            "cty: 15.00"
+            "cty: 15"
         )
         val lines = getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(expectedLines, lines)
@@ -160,7 +160,7 @@ class TooltipConfigTest {
         val defaultGeomLayer = buildPointLayer(data, mappingWithColor, tooltips = null)
         assertTooltipStrings(
             listOf(
-                "year: 1,998.00"
+                "year: 1,998"
             ),
             getGeneralTooltipStrings(defaultGeomLayer)
         )
@@ -275,8 +275,8 @@ class TooltipConfigTest {
         val geomLayer = getSingleGeomLayer(plotSpec)
         val expectedLines = mapOf(
             Aes.YMAX to "11.5",
-            Aes.UPPER to "8.7",
-            Aes.MIDDLE to "6.9",
+            Aes.UPPER to "8.65",
+            Aes.MIDDLE to "6.85",
             Aes.LOWER to "6.1",
             Aes.YMIN to "4.2"
         )
@@ -334,8 +334,8 @@ class TooltipConfigTest {
 
         val generalExpectedLine = listOf(
             "y max: 11.5",
-            "upper: 8.7",
-            "middle: 6.9",
+            "upper: 8.65",
+            "middle: 6.85",
             "lower: 6.1",
             "y min: 4.2"
         )
@@ -530,7 +530,7 @@ class TooltipConfigTest {
         )
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
-            "1.60",
+            "1.6",
             "x",
             "\$x",
             ".1f"
@@ -635,7 +635,7 @@ class TooltipConfigTest {
             )
             val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
             val expectedLines = listOf(
-                "cty: 15.00"
+                "cty: 15"
             )
             val lines = getGeneralTooltipStrings(geomLayer)
             assertTooltipStrings(expectedLines, lines)
@@ -674,7 +674,7 @@ class TooltipConfigTest {
             )
             val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
             val expectedLines = listOf(
-                "15.00"
+                "15"
             )
             val lines = getGeneralTooltipStrings(geomLayer)
             assertTooltipStrings(expectedLines, lines)
@@ -770,7 +770,7 @@ class TooltipConfigTest {
             )
             val geomLayer = buildPointLayer(data, curMapping, tooltips = tooltipConfig)
             val expectedLines = listOf(
-                "cty: 15.00"
+                "cty: 15"
             )
             val lines = getGeneralTooltipStrings(geomLayer)
             assertTooltipStrings(expectedLines, lines)
@@ -858,7 +858,7 @@ class TooltipConfigTest {
             )
         )
         assertTooltipStrings(
-            expected = listOf("1.0"),
+            expected = listOf("1"),
             actual = getGeneralTooltipStrings(geomLayer)
         )
     }
@@ -952,7 +952,7 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
             "dodge car (US)",
-            "cty: 15.00"
+            "cty: 15"
         )
         val lines = getGeneralTooltipStrings(geomLayer).toMutableList().also { lines ->
             getTitleString(geomLayer)?.let { title -> lines.add(0, title) }
@@ -969,7 +969,7 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
             "dodge car (US)",
-            "15.00 (mpg)"
+            "15 (mpg)"
         )
         val lines = getGeneralTooltipStrings(geomLayer).toMutableList().also { lines ->
             getTitleString(geomLayer)?.let { title -> lines.add(0, title) }
@@ -987,7 +987,7 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
             "title 2",
-            "15.00 (mpg)"
+            "15 (mpg)"
         )
         val lines = getGeneralTooltipStrings(geomLayer).toMutableList().also { lines ->
             getTitleString(geomLayer)?.let { title -> lines.add(0, title) }
@@ -1016,8 +1016,8 @@ class TooltipConfigTest {
             Aes.YMAX to "0.99",
             Aes.UPPER to "0.84",
             Aes.MIDDLE to "0.54",
-            Aes.LOWER to "0.20",
-            Aes.YMIN to "0.02",
+            Aes.LOWER to "0.2",
+            Aes.YMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
@@ -1047,8 +1047,8 @@ class TooltipConfigTest {
             Aes.YMAX to "0.99",
             Aes.UPPER to "0.84",
             Aes.MIDDLE to "0.54",
-            Aes.LOWER to "0.20",
-            Aes.YMIN to "0.02",
+            Aes.LOWER to "0.2",
+            Aes.YMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
@@ -1078,7 +1078,7 @@ class TooltipConfigTest {
             Aes.UPPER to "0.94",
             Aes.MIDDLE to "0.64",
             Aes.LOWER to "0.34",
-            Aes.YMIN to "0.02",
+            Aes.YMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {

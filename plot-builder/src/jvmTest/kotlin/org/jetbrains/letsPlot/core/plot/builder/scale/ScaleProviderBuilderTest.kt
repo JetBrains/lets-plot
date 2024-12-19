@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
@@ -28,9 +29,11 @@ internal class ScaleProviderBuilderTest {
             }
         }
 
-        val builder = ScaleProviderBuilder(Aes.X).breaksGenerator(bg)
+        val scaleProvider = ScaleProviderBuilder(Aes.X)
+            .breaksGenerator(bg)
+            .dataType(DataType.FLOATING)
+            .build()
 
-        val scaleProvider = builder.build()
         // continuous scale
         val scale = scaleProvider.createScale(
             "X-scale",

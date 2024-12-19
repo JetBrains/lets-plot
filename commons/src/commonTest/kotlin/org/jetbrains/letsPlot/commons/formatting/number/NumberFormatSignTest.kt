@@ -20,7 +20,7 @@ class NumberFormatSignTest {
         assertEquals("+      0", format("=+8,d").apply(0))
         assertEquals("+           0", format("=+13,d").apply(0))
         assertEquals("+                   0", format("=+21,d").apply(0))
-        assertEquals("+               1e+21", format("=+21,d").apply(1e21))
+        assertEquals("+1,000,000,000,000,000,000,000", format("=+21,d").apply(1e21))
     }
 
     @Test

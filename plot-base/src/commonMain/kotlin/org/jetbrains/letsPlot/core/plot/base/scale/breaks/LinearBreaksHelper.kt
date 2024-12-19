@@ -81,19 +81,33 @@ internal class LinearBreaksHelper(
             val endE = end + delta
 
             val breaks = ArrayList<Double>()
-            var tick = ceil(startE / step) * step
-            if (start >= 0 && startE < 0) {
-                // avoid negative zero
+
+            if (startE <= 0.0 && endE >= 0.0) {
+                var tick = -step
+                while (tick >= startE) {
+                    // don't allow ticks to go beyond the range
+                    tick = max(tick, start)
+                    breaks.add(0, tick) // add in reverse order to keep the breaks sorted
+                    tick -= step
+                }
+
                 tick = 0.0
-            }
-            while (tick <= endE) {
-                // don't allow ticks to go beyond the range
-                tick = min(tick, end)
+                while (tick <= endE) {
+                    // don't allow ticks to go beyond the range
+                    tick = min(tick, end)
+                    breaks.add(tick)
+                    tick += step
+                }
 
-                breaks.add(tick)
-                tick += step
+            } else {
+                var tick = ceil(startE / step) * step
+                while (tick <= endE) {
+                    // don't allow ticks to go beyond the range
+                    tick = min(tick, end)
+                    breaks.add(tick)
+                    tick += step
+                }
             }
-
             return breaks
         }
 
@@ -113,7 +127,6 @@ internal class LinearBreaksHelper(
             val formatter = NumericBreakFormatter(
                 referenceValue,
                 step,
-                allowMetricPrefix = true,
                 expFormat = expFormat
             )
             return formatter::apply

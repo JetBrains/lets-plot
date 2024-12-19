@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -65,6 +66,9 @@ object PlotSizeHelper {
 
     /**
      * Plot spec can be either raw or processed
+     *
+     * Old sizing approach.
+     * ToDo: deprecate, remove.
      */
     fun singlePlotSize(
         plotSpec: Map<*, *>,
@@ -86,6 +90,29 @@ object PlotSizeHelper {
         )
     }
 
+    /**
+     * Plot spec can be either raw or processed
+     *
+     * New sizing approach.
+     */
+    fun singlePlotSize(
+        plotSpec: Map<*, *>,
+        sizingPolicy: SizingPolicy,
+        facets: PlotFacets,
+        containsLiveMap: Boolean
+    ): DoubleVector {
+        if (sizingPolicy.isFixedDefined()) {
+            return sizingPolicy.getFixedDefined()
+        }
+
+        val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
+        return sizingPolicy.resize(defaultSize)
+    }
+
+    /**
+     * Old sizing approach.
+     * ToDo: deprecate, remove.
+     */
     fun compositeFigureSize(
         config: CompositeFigureConfig,
         plotSize: DoubleVector?,
@@ -109,6 +136,28 @@ object PlotSizeHelper {
             plotMaxWidth,
             plotPreferredWidth
         )
+    }
+
+    /**
+     * New sizing approach.
+     */
+    fun compositeFigureSize(
+        config: CompositeFigureConfig,
+        sizingPolicy: SizingPolicy,
+    ): DoubleVector {
+        if (sizingPolicy.isFixedDefined()) {
+            return sizingPolicy.getFixedDefined()
+        }
+
+        val specifiedFigureSize = getSizeOptionOrNull(config.toMap())
+        val figureSize = specifiedFigureSize ?: run {
+            val gridColsRows = config.gridSizeOrNull()
+            gridColsRows?.let { (ncols, nrows) ->
+                defaultPlotGridSize(ncols, nrows)
+            } ?: DEF_PLOT_SIZE
+        }
+
+        return sizingPolicy.resize(figureSize)
     }
 
     private fun toScaledSize(

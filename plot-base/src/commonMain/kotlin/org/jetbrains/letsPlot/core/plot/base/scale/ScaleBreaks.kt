@@ -5,8 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
@@ -128,8 +131,6 @@ class ScaleBreaks private constructor(
 
 
     companion object {
-        val IDENTITY_FORMATTER: (Any) -> String = { v -> v.toString() }
-
         private val DUMMY_FORMATTER: (Any) -> String =
             { v -> throw IllegalStateException("An attempt to format $v using 'dummy formatter'.") }
 
@@ -242,6 +243,16 @@ class ScaleBreaks private constructor(
                 }
             }
 
+            // Safe formatter
+            @Suppress("NAME_SHADOWING")
+            val formatter = { v: Any ->
+                try {
+                    formatter(v)
+                } catch (_: RuntimeException) {
+                    "---"
+                }
+            }
+
             val labels = alternativeLabels ?: domainValues.map(formatter)
             val (
                 filteredDomainValues,
@@ -267,10 +278,8 @@ class ScaleBreaks private constructor(
     object DemoAndTest {
         fun continuous(
             domainValues: List<Double>,
-            formatter: ((Any) -> String)? = null
+            formatter: ((Any) -> String) = FormatterUtil.byDataType(DataType.INTEGER, DEF_EXPONENT_FORMAT)
         ): ScaleBreaks {
-            @Suppress("NAME_SHADOWING")
-            val formatter = formatter ?: ScaleBreaks.IDENTITY_FORMATTER
             return ScaleBreaks(
                 domainValues = domainValues,
                 transformedValues = domainValues,

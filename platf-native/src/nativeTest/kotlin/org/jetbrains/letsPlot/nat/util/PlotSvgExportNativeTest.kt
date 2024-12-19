@@ -114,8 +114,11 @@ internal class PlotSvgExportNativeTest {
             plotSpec = parsePlotSpec(spec),
             useCssPixelatedImageRendering = true
         ).let {
+            // Double.toString() should not be used for formatting numbers.
             assertEquals(-1, it.indexOf("717273.0"))
-            assertTrue { it.indexOf("717273") >= 0 }
+
+            // NumberFormat should be used.
+            assertTrue { it.indexOf("717,273") >= 0 }
         }
     }
 }

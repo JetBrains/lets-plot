@@ -45,21 +45,36 @@ include("jvm-package:jvm-publish-gis")
 
 
 include("demo-and-test-shared")
-include("demo-common-util")
-include("demo-common-jfx")
-include("demo-common-batik")
-include("demo-svg")
-include("demo-plot-common")
-include("demo-plot")
-include("demo-livemap")
-include("demo-plot-export")
-
 project(":demo-and-test-shared").projectDir = File("./demo/demo-and-test-shared")
-project(":demo-common-util").projectDir = File("./demo/common-util")
-project(":demo-common-jfx").projectDir = File("./demo/common-jfx")
-project(":demo-common-batik").projectDir = File("./demo/common-batik")
-project(":demo-svg").projectDir = File("./demo/svg")
-project(":demo-plot-common").projectDir = File("./demo/plot-common")
-project(":demo-plot").projectDir = File("./demo/plot")
-project(":demo-livemap").projectDir = File("./demo/livemap")
-project(":demo-plot-export").projectDir = File("./demo/plot-export")
+
+include("demo-common-jvm-utils")
+project(":demo-common-jvm-utils").projectDir = File("./demo/common-jvm-utils")
+
+include("demo-common-svg")
+project(":demo-common-svg").projectDir = File("./demo/common-svg")
+
+include("demo-common-plot")
+project(":demo-common-plot").projectDir = File("./demo/common-plot")
+
+include("demo-svg-jvm")
+project(":demo-svg-jvm").projectDir = File("./demo/svg-jvm")
+include("demo-svg-browser")
+project(":demo-svg-browser").projectDir = File("./demo/svg-browser")
+
+include("demo-plot-jvm")
+project(":demo-plot-jvm").projectDir = File("./demo/plot-jvm")
+include("demo-plot-browser")
+project(":demo-plot-browser").projectDir = File("./demo/plot-browser")
+
+include("demo-export")
+project(":demo-export").projectDir = File("./demo/export")
+
+
+include("demo-common-livemap")
+project(":demo-common-livemap").projectDir = File("./demo/common-livemap")
+
+include("demo-livemap-jvm")
+project(":demo-livemap-jvm").projectDir = File("./demo/livemap-jvm")
+
+include("demo-livemap-browser")
+project(":demo-livemap-browser").projectDir = File("./demo/livemap-browser")

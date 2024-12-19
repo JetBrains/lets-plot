@@ -7,7 +7,7 @@ from pandas import DataFrame
 from shapely.geometry import Point, Polygon, LinearRing, MultiPolygon
 
 from geo_data_test_util import assert_error
-from lets_plot._kbridge import _standardize_plot_spec
+from lets_plot._type_utils import standardize_dict
 from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_STATE, DF_COLUMN_COUNTY
 from lets_plot.geo_data.geocoder import Geocoder
 from lets_plot.plot import ggplot, geom_polygon, geom_point, geom_map, geom_rect, geom_text, geom_path
@@ -23,15 +23,15 @@ def geo_data_frame(geometry, columns=[]):
 
 
 def get_map(plot_spec) -> dict:
-    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['map']
+    return standardize_dict(plot_spec.as_dict())['layers'][0]['map']
 
 
 def get_map_join(plot_spec) -> dict:
-    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['map_join']
+    return standardize_dict(plot_spec.as_dict())['layers'][0]['map_join']
 
 
 def get_data(plot_spec) -> dict:
-    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0]['data']
+    return standardize_dict(plot_spec.as_dict())['layers'][0]['data']
 
 
 def assert_map_data_meta(plot_spec):
@@ -95,7 +95,7 @@ def test_data_should_call_to_dataframe():
 
 
 def get_layer_spec(plot_spec, spec_name):
-    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0].get(spec_name)
+    return standardize_dict(plot_spec.as_dict())['layers'][0].get(spec_name)
 
 
 @pytest.mark.parametrize('map_join,map_columns,expected', [
