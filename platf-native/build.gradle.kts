@@ -12,9 +12,6 @@ plugins {
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
 kotlin {
-    // Enable the default target hierarchy:
-    targetHierarchy.default()
-
     sourceSets {
         all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
