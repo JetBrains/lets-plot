@@ -9,9 +9,9 @@ import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.launch
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
-import kotlinx.coroutines.launch
 
 class HttpTileTransport {
     private val myClient = HttpClient()
@@ -21,7 +21,7 @@ class HttpTileTransport {
 
         myClient.launch {
             try {
-                val response = myClient.get(url).readBytes()
+                val response = myClient.get(url).readRawBytes()
                 async.success(response)
             } catch (c: ResponseException) {
                 async.failure(Exception(c.response.status.toString()))
