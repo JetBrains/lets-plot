@@ -337,14 +337,16 @@ subprojects {
 }
 
 
-// Suppress expect/actual classes are in Beta warning.
 subprojects {
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
         extensions.configure<KotlinMultiplatformExtension> {
             targets.configureEach {
                 compilations.configureEach {
                     compileTaskProvider.get().compilerOptions {
+                        // Suppress expect/actual classes are in Beta warning.
                         freeCompilerArgs.add("-Xexpect-actual-classes")
+                        // Non-public primary constructor is exposed via the generated 'copy()' method of the 'data' class.
+                        freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
                     }
                 }
             }

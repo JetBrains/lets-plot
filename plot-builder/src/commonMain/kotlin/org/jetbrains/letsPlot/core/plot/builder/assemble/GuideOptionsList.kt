@@ -36,7 +36,9 @@ class GuideOptionsList {
     }
 }
 
-data class GuideKey internal constructor(private val key: String) {
+data class GuideKey private constructor(
+    private val key: String
+) {
     companion object {
         fun fromAes(aes: Aes<*>) = GuideKey(aes.name)
         fun fromName(name: String) = GuideKey(name)
