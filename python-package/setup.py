@@ -6,30 +6,24 @@ import platform
 from setuptools import Extension
 from setuptools import setup, find_packages
 
+kn_platform_build_dir = {
+    ('Linux', 'x86_64'): 'linuxX64',
+    ('Linux', 'aarch64'): 'linuxArm64',
+    ('Darwin', 'x86_64'): 'macosX64',
+    ('Darwin', 'arm64'): 'macosArm64',
+    ('Windows', 'x86_64'): 'mingwX64',
+}
+
 this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(this_dir)
 this_system = platform.system()
 
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
 
-python_extension_output_dir_name = {
-    ('Linux', 'x86_64'): 'linuxX64',
-    #('Linux', 'aarch64'): 'linuxArm64',
-    #('Darwin', 'x86_64'): 'macX64',
-    #('Darwin', 'arm64'): 'macArm64',
-    #('Windows', 'AMD64'): 'winX64',
-    #('Windows', 'x86_64'): 'winX64',
-    #('Windows', 'AMD64'): 'winX64',
-    #('Windows', 'x86'): 'winX86',
-    #('Windows', 'x86_64'): 'winX64',
-    #('Windows', 'AMD64'): 'winX64',
-}[platform.system(), platform.machine()]
-
-if python_extension_output_dir_name is None:
-    raise ValueError("Unsupported platform: %s %s" % (platform.system(), platform.machine()))
-
-binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', python_extension_output_dir_name, 'releaseStatic')
+binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
+                                   kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
 python_package = 'lets_plot'
+
 
 def update_js():
     js_relative_path = ['js-package', 'build', 'dist', 'js', 'productionExecutable']
@@ -68,6 +62,7 @@ elif this_system == 'Windows':
     extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread', '-lz']
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
+
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 elif this_system == 'Linux':
