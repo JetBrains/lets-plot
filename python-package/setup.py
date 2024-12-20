@@ -11,7 +11,7 @@ kn_platform_build_dir = {
     ('Linux', 'aarch64'): 'linuxArm64',
     ('Darwin', 'x86_64'): 'macosX64',
     ('Darwin', 'arm64'): 'macosArm64',
-    ('Windows', 'x86_64'): 'mingwX64',
+    ('Windows', 'AMD64'): 'mingwX64',
 }
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
