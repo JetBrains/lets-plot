@@ -11,21 +11,17 @@ plugins {
 
 val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
+val arch = rootProject.project.extra["architecture"]
 
 kotlin {
     if(enablePythonPackage) {
-        val target = if (os.isMacOsX && rootProject.project.extra["architecture"] == "arm64") {
-            macosArm64("native")
-        } else if (os.isMacOsX && rootProject.project.extra["architecture"] == "x86_64") {
-            macosX64("native")
-        } else if (os.isLinux && rootProject.project.extra["architecture"] == "arm64") {
-            linuxArm64("native")
-        } else if (os.isLinux && rootProject.project.extra["architecture"] == "x86_64") {
-            linuxX64("native")
-        } else if (os.isWindows) {
-            mingwX64("native")
-        } else {
-            throw Exception("Unsupported platform! Check project settings.")
+        val target = when {
+            os.isMacOsX && arch == "arm64" -> macosArm64()
+            os.isMacOsX && arch == "x86_64" -> macosX64()
+            os.isLinux && arch == "arm64" -> linuxArm64()
+            os.isLinux && arch == "x86_64" -> linuxX64()
+            os.isWindows -> mingwX64()
+            else -> throw Exception("Unsupported platform! Check project settings.")
         }
 
         target.binaries {
