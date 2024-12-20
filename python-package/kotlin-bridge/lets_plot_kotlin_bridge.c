@@ -44,7 +44,7 @@ static PyObject* export_html(PyObject* self, PyObject* args) {
     int iframe;          // 0 - false, 1 - true
     PyArg_ParseTuple(args, "Osp", &rawPlotSpecDict, &scriptUrl, &iframe);
 
-    PyObject* html = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateStaticHtmlPage(reprGen, rawPlotSpecDict, scriptUrl, iframe);
+    PyObject* html = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateStaticHtmlPage(reprGen, rawPlotSpecDict, (void*)scriptUrl, iframe);
     return html;
 }
 

@@ -42,19 +42,15 @@ allprojects {
         targetCompatibility = "1.8"
     }
 
-    fun getJfxPlatform(): String {
-        if (os.isWindows()) {
-            return "win"
-        } else if (os.isLinux()) {
-            return "linux"
-        } else if (os.isMacOsX()) {
-            return "mac"
-        } else {
-            return "unknown"
+    @Suppress("unused") // Used in the 'platf-jfx-swing' module.
+    val jfxPlatformResolved by extra {
+        when {
+            os.isWindows -> "win"
+            os.isLinux -> "linux"
+            os.isMacOsX -> "mac"
+            else -> "unknown"
         }
     }
-
-    val jfxPlatformResolved by extra { getJfxPlatform() }
 
     repositories {
         mavenCentral()
@@ -89,7 +85,7 @@ fun readPropertiesFromFile() {
         properties.load(project.file(localPropsFileName).inputStream())
     } else {
         throw FileNotFoundException(
-            "${localPropsFileName} file not found!\n" +
+            "$localPropsFileName file not found!\n" +
                     "Check ${localPropsFileName}_template file for the template."
         )
     }

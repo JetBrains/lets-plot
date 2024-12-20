@@ -16,9 +16,6 @@ val mockitoVersion = project.extra["mockito_version"] as String
 val assertjVersion = project.extra["assertj_version"] as String
 
 kotlin {
-    // Enable the default target hierarchy:
-    targetHierarchy.default()
-
     jvm()
     js {
         browser()
