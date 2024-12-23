@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.jfx.mapping.svg.attr
 
 import javafx.scene.transform.*
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
-import org.jetbrains.letsPlot.jfx.mapping.svg.util.ParsingUtil
-import org.jetbrains.letsPlot.jfx.mapping.svg.util.toRadians
+import org.jetbrains.letsPlot.jfx.util.ParsingUtil
 import kotlin.math.sin
 
 private const val SCALE_X = 0
