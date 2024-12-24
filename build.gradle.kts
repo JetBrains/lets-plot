@@ -161,10 +161,14 @@ nexusPublishing {
 // Publish some sub-projects as Kotlin Multi-project libraries.
 val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
     group=letsPlotTaskGroup
+    // Add platf-jfx-swing JVM publish task:
+    dependsOn("platf-jfx-swing:publishPlatfJfxSwingJvmPublicationToMavenLocalRepository")
 }
 
 val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
     group=letsPlotTaskGroup
+    // Add platf-jfx-swing JVM publish task:
+    dependsOn("platf-jfx-swing:publishPlatfJfxSwingJvmPublicationToMavenRepository")
 }
 
 // Generating JavaDoc task for each publication task.
@@ -235,22 +239,18 @@ subprojects {
         "plot-livemap",
         "platf-awt",
         "platf-batik",
-        "platf-jfx-swing",
         "deprecated-in-v4"
     )
 
     if (name in coreModulesForPublish) {
-        if (name != "platf-jfx-swing") {
-            apply(plugin = "org.jetbrains.kotlin.multiplatform")
-
-            // For `jvmSourcesJar` task:
-            configure<KotlinMultiplatformExtension> {
-                jvm()
-            }
-        }
-
+        apply(plugin = "org.jetbrains.kotlin.multiplatform")
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
+
+        // For `jvmSourcesJar` task:
+        configure<KotlinMultiplatformExtension> {
+            jvm()
+        }
 
         // Do not publish 'native' targets:
         val publicationsToPublish = listOf("jvm", "js", "kotlinMultiplatform", "metadata")
@@ -296,16 +296,13 @@ subprojects {
 
         afterEvaluate {
             // Add LICENSE file to the META-INF folder inside published JAR files.
-            tasks.filterIsInstance<Jar>()
-                .forEach {
-                    if (it.name == "jvmJar" || it.name == "jar") { // "jar" for 'org.jetbrains.kotlin.jvm' plugin
-                        it.metaInf {
-                            from("$rootDir") {
-                                include("LICENSE")
-                            }
-                        }
+            tasks.named<Jar>("jvmJar") {
+                metaInf {
+                    from("$rootDir") {
+                        include("LICENSE")
                     }
                 }
+            }
 
             // Configure artifacts signing process for release versions.
             val publicationsToSign = mutableListOf<Publication>()
