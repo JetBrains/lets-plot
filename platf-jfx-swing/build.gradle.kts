@@ -4,46 +4,30 @@
  */
 
 plugins {
-    kotlin("multiplatform")
+    kotlin("jvm")
 }
 
 val jfxVersion = project.extra["jfx_version"] as String
 val jfxPlatform = project.extra["jfxPlatformResolved"] as String
 
-kotlin {
-    jvm()
+dependencies {
+    compileOnly(project("::platf-awt"))
+    compileOnly(project(":commons"))
+    compileOnly(project(":datamodel"))
+    compileOnly(project(":canvas"))
+    compileOnly(project(":plot-stem"))
 
-    sourceSets {
-        commonMain {
-            dependencies {
-                compileOnly(project(":commons"))
-                compileOnly(project(":datamodel"))
-                compileOnly(project(":canvas"))
-                compileOnly(project(":plot-stem"))
-            }
-        }
+    compileOnly("org.openjfx:javafx-base:$jfxVersion:$jfxPlatform")
+    compileOnly("org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform")
+    compileOnly("org.openjfx:javafx-swing:$jfxVersion:$jfxPlatform")
 
-        commonTest {
-            dependencies {
-                implementation(project(":demo-and-test-shared"))
-            }
-        }
+    compileOnly(project(":platf-awt"))
 
-        named("jvmMain") {
-            dependencies {
-                compileOnly("org.openjfx:javafx-base:$jfxVersion:$jfxPlatform")
-                compileOnly("org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform")
-                compileOnly("org.openjfx:javafx-swing:$jfxVersion:$jfxPlatform")
-
-                compileOnly(project(":platf-awt"))
-            }
-        }
-
-        named("jvmTest") {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(kotlin("test-junit"))
-            }
-        }
-    }
+    testImplementation(project(":demo-and-test-shared"))
+    testImplementation(project(":platf-awt"))
+    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
+    testImplementation("org.openjfx:javafx-base:$jfxVersion:$jfxPlatform")
+    testImplementation("org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform")
+    testImplementation("org.openjfx:javafx-swing:$jfxVersion:$jfxPlatform")
 }

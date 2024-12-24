@@ -240,14 +240,17 @@ subprojects {
     )
 
     if (name in coreModulesForPublish) {
-        apply(plugin = "org.jetbrains.kotlin.multiplatform")
+        if (name != "platf-jfx-swing") {
+            apply(plugin = "org.jetbrains.kotlin.multiplatform")
+
+            // For `jvmSourcesJar` task:
+            configure<KotlinMultiplatformExtension> {
+                jvm()
+            }
+        }
+
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
-
-        // For `jvmSourcesJar` task:
-        configure<KotlinMultiplatformExtension> {
-            jvm()
-        }
 
         // Do not publish 'native' targets:
         val publicationsToPublish = listOf("jvm", "js", "kotlinMultiplatform", "metadata")
@@ -293,13 +296,16 @@ subprojects {
 
         afterEvaluate {
             // Add LICENSE file to the META-INF folder inside published JAR files.
-            tasks.named<Jar>("jvmJar") {
-                metaInf {
-                    from("$rootDir") {
-                        include("LICENSE")
+            tasks.filterIsInstance<Jar>()
+                .forEach {
+                    if (it.name == "jvmJar" || it.name == "jar") { // "jar" for 'org.jetbrains.kotlin.jvm' plugin
+                        it.metaInf {
+                            from("$rootDir") {
+                                include("LICENSE")
+                            }
+                        }
                     }
                 }
-            }
 
             // Configure artifacts signing process for release versions.
             val publicationsToSign = mutableListOf<Publication>()
@@ -316,7 +322,7 @@ subprojects {
                         publishLetsPlotCoreModulesToMavenRepository.configure {
                             dependsOn += task
                         }
-                            publicationsToSign.add(task.publication)
+                        publicationsToSign.add(task.publication)
                     } else {
                         throw IllegalStateException("Repository expected: 'MavenLocal' or 'maven' but was: '$repoName'.")
                     }

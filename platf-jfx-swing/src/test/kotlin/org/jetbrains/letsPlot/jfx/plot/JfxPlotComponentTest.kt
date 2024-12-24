@@ -5,14 +5,14 @@
 
 package org.jetbrains.letsPlot.jfx.plot
 
-import org.jetbrains.letsPlot.commons.registration.Disposable
 import demoAndTestShared.SimpleTestSpecs.simpleBunch
 import demoAndTestShared.SimpleTestSpecs.simplePlot
 import demoAndTestShared.SimpleTestSpecs.simplePointLayer
+import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
 import org.jetbrains.letsPlot.jfx.util.runOnFxThread
-import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.test.Ignore
