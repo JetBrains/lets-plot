@@ -6,7 +6,7 @@
 package demo.livemap.common.component
 
 import demo.livemap.common.Cities.GERMANY
-import demo.livemap.model.Cities.POLAND
+import demo.livemap.common.Cities.POLAND
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.api.*
