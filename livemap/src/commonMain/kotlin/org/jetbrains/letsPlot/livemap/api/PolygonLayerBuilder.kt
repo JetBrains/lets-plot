@@ -140,6 +140,8 @@ class PolygonEntityBuilder(
                 + ChartElementComponent().apply {
                     sizeScalingRange = this@PolygonEntityBuilder.sizeScalingRange
                     alphaScalingEnabled = this@PolygonEntityBuilder.alphaScalingEnabled
+                    lineDash = this@PolygonEntityBuilder.lineDash.toDoubleArray()
+                    lineDashOffset = this@PolygonEntityBuilder.lineDashOffset
                     fillColor = this@PolygonEntityBuilder.fillColor
                     strokeColor = this@PolygonEntityBuilder.strokeColor
                     strokeWidth = this@PolygonEntityBuilder.strokeWidth

@@ -53,25 +53,31 @@ class RegionRenderer : Renderer {
         ctx.drawMultiPolygon(regionFace) { nop() }
         ctx.closePath()
 
-        ctx.setFillStyle(chartElement.scaledFillColor())
-        ctx.fill()
+        if (chartElement.fillColor != null) {
+            ctx.setFillStyle(chartElement.scaledFillColor())
+            ctx.fill()
+        }
         ctx.restore()
+        if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
+            ctx.save()
+            ctx.scale(renderHelper.zoomFactor)
 
-        ctx.save()
-        ctx.scale(renderHelper.zoomFactor)
+            ctx.beginPath()
+            ctx.drawMultiLineString(regionBorder) { nop() }
 
-        ctx.beginPath()
-        ctx.drawMultiLineString(regionBorder) { nop() }
+            ctx.restore()
+            ctx.save()
 
-        ctx.restore()
-        ctx.save()
+            ctx.setStrokeStyle(chartElement.scaledStrokeColor())
+            ctx.setLineDash(chartElement.scaledLineDash())
+            ctx.setLineDashOffset(chartElement.scaledLineDashOffset())
+            ctx.setLineWidth(chartElement.scaledStrokeWidth())
+            ctx.setLineCap(LineCap.ROUND)
+            ctx.setLineJoin(LineJoin.ROUND)
+            ctx.stroke()
 
-        ctx.setStrokeStyle(chartElement.scaledStrokeColor())
-        ctx.setLineWidth(chartElement.scaledStrokeWidth())
-        ctx.setLineCap(LineCap.ROUND)
-        ctx.setLineJoin(LineJoin.ROUND)
-        ctx.stroke()
-        ctx.restore()
+            ctx.restore()
+        }
     }
 
     private fun nop() {}
