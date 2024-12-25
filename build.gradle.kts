@@ -260,10 +260,10 @@ subprojects {
         apply(plugin = "org.jetbrains.kotlin.jvm")
         apply(plugin = "maven-publish")
 
-        fun getJarSourcesTask(distributeName:String): TaskProvider<Jar> {
-            return tasks.register<Jar>("${distributeName}Sources") {
+        configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
+            tasks.register<Jar>("${name}-jvm-sources") {
                 archiveClassifier.set("sources")
-                from(project.extensions.getByType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension>().sourceSets.getByName("main").kotlin.srcDirs)
+                from(sourceSets.getByName("main").kotlin.srcDirs)
             }
         }
 
@@ -275,7 +275,7 @@ subprojects {
                     version = project.version as String
 
                     artifact(tasks["jar"])
-                    artifact(getJarSourcesTask(name))
+                    artifact(tasks["${name}-sources"])
                 }
             }
         }
