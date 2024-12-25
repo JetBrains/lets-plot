@@ -7,6 +7,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
@@ -260,7 +261,7 @@ subprojects {
         apply(plugin = "org.jetbrains.kotlin.jvm")
         apply(plugin = "maven-publish")
 
-        configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
+        configure<KotlinJvmProjectExtension> {
             tasks.register<Jar>("${name}-jvm-sources") {
                 archiveClassifier.set("sources")
                 from(sourceSets.getByName("main").kotlin.srcDirs)
