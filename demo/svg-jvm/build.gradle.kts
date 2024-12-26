@@ -9,10 +9,11 @@ plugins {
 }
 
 val batikVersion = project.extra["batik_version"] as String
+val jfxVersion = extra["jfx_version"] as String
 
 javafx {
-    version = extra["jfx_version"] as String
-    modules = listOf( "javafx.base", "javafx.graphics", "javafx.swing")
+    version = jfxVersion
+    modules = listOf("javafx.controls", "javafx.swing")
 }
 
 dependencies {
