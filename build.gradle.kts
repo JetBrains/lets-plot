@@ -7,6 +7,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
@@ -161,14 +162,10 @@ nexusPublishing {
 // Publish some sub-projects as Kotlin Multi-project libraries.
 val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
     group=letsPlotTaskGroup
-    // Add platf-jfx-swing JVM publish task:
-    dependsOn("platf-jfx-swing:publishPlatfJfxSwingJvmPublicationToMavenLocalRepository")
 }
 
 val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
     group=letsPlotTaskGroup
-    // Add platf-jfx-swing JVM publish task:
-    dependsOn("platf-jfx-swing:publishPlatfJfxSwingJvmPublicationToMavenRepository")
 }
 
 // Generating JavaDoc task for each publication task.
@@ -186,7 +183,7 @@ fun getJarJavaDocsTask(distributeName:String): TaskProvider<Jar> {
     }
 }
 
-
+// Configure native targets for python-extension dependencies.
 subprojects {
     val pythonExtensionModules = listOf(
         "commons",
@@ -226,39 +223,85 @@ subprojects {
             }
         }
     }
+}
 
-    val coreModulesForPublish = listOf(
-        "commons",
-        "datamodel",
-        "canvas",
-        "gis",
-        "livemap",
-        "plot-base",
-        "plot-builder",
-        "plot-stem",
-        "plot-livemap",
-        "platf-awt",
-        "platf-batik",
-        "deprecated-in-v4"
-    )
+// Configure Lets-Plot Core multiplatform modules.
+val multiPlatformCoreModulesForPublish = listOf(
+    "commons",
+    "datamodel",
+    "canvas",
+    "gis",
+    "livemap",
+    "plot-base",
+    "plot-builder",
+    "plot-stem",
+    "plot-livemap",
+    "deprecated-in-v4"
+)
 
-    if (name in coreModulesForPublish) {
+subprojects {
+    if (name in multiPlatformCoreModulesForPublish) {
         apply(plugin = "org.jetbrains.kotlin.multiplatform")
-        apply(plugin = "maven-publish")
-        apply(plugin = "signing")
-
         // For `jvmSourcesJar` task:
         configure<KotlinMultiplatformExtension> {
             jvm()
         }
+    }
+}
 
+// Configure Lets-Plot Core JVM modules.
+val jvmCoreModulesForPublish = listOf(
+    "platf-awt",
+    "platf-batik",
+    "platf-jfx-swing"
+)
+
+subprojects {
+    if(name in jvmCoreModulesForPublish) {
+        apply(plugin = "org.jetbrains.kotlin.jvm")
+        apply(plugin = "maven-publish")
+
+        configure<KotlinJvmProjectExtension> {
+            tasks.register<Jar>("${name}-jvm-sources") {
+                archiveClassifier.set("sources")
+                from(sourceSets.getByName("main").kotlin.srcDirs)
+            }
+        }
+
+        configure<PublishingExtension> {
+            publications {
+                register("$name-jvm", MavenPublication::class) {
+                    groupId = project.group as String
+                    artifactId = name
+                    version = project.version as String
+
+                    artifact(tasks["jar"])
+                    artifact(tasks["${name}-sources"])
+                }
+            }
+        }
+    }
+}
+
+// Configure Maven publication for Lets-Plot Core modules.
+subprojects {
+    if(name in multiPlatformCoreModulesForPublish + jvmCoreModulesForPublish) {
+        apply(plugin = "maven-publish")
+        apply(plugin = "signing")
         // Do not publish 'native' targets:
-        val publicationsToPublish = listOf("jvm", "js", "kotlinMultiplatform", "metadata")
+        val targetsToPublish = listOf(
+            "platf-awt-jvm",
+            "platf-batik-jvm",
+            "platf-jfx-swing-jvm",
+            "jvm",
+            "js",
+            "kotlinMultiplatform",
+            "metadata")
 
         configure<PublishingExtension> {
             publications {
                 withType(MavenPublication::class) {
-                    if (name in publicationsToPublish) {
+                    if (name in targetsToPublish) {
                         // Configure this publication.
                         artifact(getJarJavaDocsTask("${name}-${project.name}"))
 
@@ -293,22 +336,24 @@ subprojects {
                 }
             }
         }
-
         afterEvaluate {
             // Add LICENSE file to the META-INF folder inside published JAR files.
-            tasks.named<Jar>("jvmJar") {
-                metaInf {
-                    from("$rootDir") {
-                        include("LICENSE")
+            tasks.filterIsInstance<Jar>()
+                .forEach {
+                    if (it.name == "jvmJar" || it.name == "jar") { // "jar" for 'org.jetbrains.kotlin.jvm' plugin
+                        it.metaInf {
+                            from("$rootDir") {
+                                include("LICENSE")
+                            }
+                        }
                     }
                 }
-            }
 
             // Configure artifacts signing process for release versions.
             val publicationsToSign = mutableListOf<Publication>()
 
             for (task in tasks.withType(PublishToMavenRepository::class)) {
-                if (task.publication.name in publicationsToPublish) {
+                if (task.publication.name in targetsToPublish) {
                     val repoName = task.repository.name
 
                     if (repoName == "MavenLocal") {

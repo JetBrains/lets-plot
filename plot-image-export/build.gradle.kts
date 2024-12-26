@@ -155,7 +155,7 @@ publishing {
 
                     dep = deps.appendNode("dependency")
                     dep.appendNode("groupId", project.group)
-                    dep.appendNode("artifactId", "platf-awt")
+                    dep.appendNode("artifactId", "platf-awt-jvm")
                     dep.appendNode("version", project.version)
 
                 }
