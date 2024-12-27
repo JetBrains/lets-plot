@@ -90,8 +90,6 @@ fun readPropertiesFromFile() {
         assert(pythonIncludePath != null)
 
         if (!os.isWindows) {
-            //val getArchOutput = ByteArrayOutputStream()
-
             val execResult = providers.exec {
                 commandLine(
                     "${pythonBinPath}/python",
