@@ -576,7 +576,7 @@ def element_text(
     face : str
         Font face ("plain", "italic", "bold", "bold_italic").
     size : int
-        Text size in pt.
+        Text size in px.
     angle : float
         Angle to rotate the text (in degrees).
     hjust : float
