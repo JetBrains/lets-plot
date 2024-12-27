@@ -43,9 +43,7 @@ kotlin {
     sourceSets {
         all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
-        }
 
-        nativeMain {
             dependencies {
                 implementation(kotlin("stdlib-common"))
 

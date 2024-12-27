@@ -5,11 +5,8 @@
 
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.FileNotFoundException
 import java.util.*
 
@@ -33,10 +30,8 @@ allprojects {
 //    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_1_8)
     }
 
     tasks.withType<JavaCompile>().configureEach {
@@ -95,15 +90,16 @@ fun readPropertiesFromFile() {
         assert(pythonIncludePath != null)
 
         if (!os.isWindows) {
-            val getArchOutput = ByteArrayOutputStream()
-            exec {
+            //val getArchOutput = ByteArrayOutputStream()
+
+            val execResult = providers.exec {
                 commandLine(
                     "${pythonBinPath}/python",
                     "-c",
                     "import platform; print(platform.machine())"
                 )
-                standardOutput = getArchOutput
             }
+            val getArchOutput = execResult.standardOutput.asText.get()
 
             val currentPythonArch = getArchOutput.toString().trim()
             if (currentPythonArch != properties["architecture"]) {
@@ -401,6 +397,7 @@ subprojects {
         extensions.configure<KotlinJvmExtension> {
             compilerOptions {
                 configCompilerWarnings()
+                jvmTarget.set(JvmTarget.JVM_1_8)
             }
         }
     }
