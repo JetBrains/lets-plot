@@ -17,6 +17,7 @@ plugins {
     kotlin("multiplatform") apply false
     kotlin("js") apply false
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+    id ("org.openjfx.javafxplugin") version "0.1.0" apply false
 }
 
 
@@ -41,16 +42,6 @@ allprojects {
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = "1.8"
         targetCompatibility = "1.8"
-    }
-
-    @Suppress("unused") // Used in the 'platf-jfx-swing' module.
-    val jfxPlatformResolved by extra {
-        when {
-            os.isWindows -> "win"
-            os.isLinux -> "linux"
-            os.isMacOsX -> "mac"
-            else -> "unknown"
-        }
     }
 
     repositories {

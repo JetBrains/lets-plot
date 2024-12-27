@@ -5,14 +5,16 @@
 
 plugins {
     kotlin("jvm")
+    id ("org.openjfx.javafxplugin")
 }
 
-// KT-55751. MPP / Gradle: Consumable configurations must have unique attributes.
-// https://youtrack.jetbrains.com/issue/KT-55751/MPP-Gradle-Consumable-configurations-must-have-unique-attributes
-//
 val batikVersion = project.extra["batik_version"] as String
-val jfxPlatform = project.extra["jfxPlatformResolved"] as String
-val jfxVersion = project.extra["jfx_version"] as String
+val jfxVersion = extra["jfx_version"] as String
+
+javafx {
+    version = jfxVersion
+    modules = listOf("javafx.controls", "javafx.swing")
+}
 
 dependencies {
     implementation(kotlin("stdlib-common"))
@@ -32,8 +34,4 @@ dependencies {
 
     // JFX
     implementation(project(":platf-jfx-swing"))
-    implementation("org.openjfx:javafx-base:${jfxVersion}:${jfxPlatform}")
-    implementation("org.openjfx:javafx-graphics:${jfxVersion}:${jfxPlatform}")
-    implementation("org.openjfx:javafx-swing:${jfxVersion}:${jfxPlatform}")
-
 }
