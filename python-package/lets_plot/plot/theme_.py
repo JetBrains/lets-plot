@@ -99,20 +99,21 @@ def theme(*,
     Parameters
     ----------
     exponent_format : {'e', 'pow', 'pow_full'} or tuple, default='e'
-        Format for numeric labels in scientific notation.
 
-        - e for "e" notation (e.g. 1e+6);
-        - pow_full for "power" notation (e.g. 1x10^6). This will enable superscript formatting for the exponent;
-        - pow works as pow_full but will shorten powers of 10 (e.g. 10^6 instead of 1x10^6).
+        Controls the appearance of numbers formatted with 'e' or 'g' types.
 
-        If parameter is a tuple, then it should be a three-element tuple:
+        Value is either a string - style, or a tuple: (style, lower_exp_bound, upper_exp_bound)
+        where style can be:
+        
+        - 'e' : e-notation (e.g., 1e+6)
+        - 'pow' : superscript powers of 10 in shortened form (e.g., 10^6)
+        - 'pow_full' : superscript powers of 10 with coefficient (e.g., 1×10^6)
 
-        - the first element is the format - 'e', 'pow', 'pow_full';
-        - the second element is minimum exponent value from which to use scientific notation (default is -7);
-        - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see `Formatting <https://lets-plot.org/python/pages/formats.html>`__).
+        For 'g' type formatting, scientific notation is applied when the number's exponent
+        is less than or equal to the lower_exp_bound (-7 by default) or greater than or equal
+        to the upper_exp_bound (6 by default, but can be affected by `precision` in format specifier).
 
-        Minimum and maximum exponent values are only taken into account when "g" format is used,
-        see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+         see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
         Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
