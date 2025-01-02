@@ -23,6 +23,18 @@ Run tne next gradle tasks from the project root:
 Check uploaded artifacts here:
 
 https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/lets-plot/
-            
+                
+### 4. Use SNAPSHOT artifacts:
 
-TBD: Snapshot vertsion of JS artifacts.
+Add snapshots repository to the `repositories` section of the `build.gradle.kts` file:
+
+```kotlin
+repositories {
+    mavenCentral()
+    // SNAPSHOTS
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+}
+```
+
+### 5. Snapshot vertsion of JS artifacts.
+TBD
