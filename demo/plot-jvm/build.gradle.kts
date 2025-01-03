@@ -10,7 +10,6 @@ plugins {
 
 val batikVersion = project.extra["batik_version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
 val ktorVersion = project.extra["ktor_version"] as String
 val jfxVersion = extra["jfx_version"] as String
 
@@ -43,9 +42,7 @@ dependencies {
 
     implementation(project(":platf-jfx-swing"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
     implementation("io.ktor:ktor-client-cio:${ktorVersion}")
     implementation("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
-
 }
