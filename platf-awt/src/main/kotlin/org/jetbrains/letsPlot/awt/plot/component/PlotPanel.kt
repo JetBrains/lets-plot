@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.awt.plot.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import java.awt.BorderLayout
 import java.awt.Component

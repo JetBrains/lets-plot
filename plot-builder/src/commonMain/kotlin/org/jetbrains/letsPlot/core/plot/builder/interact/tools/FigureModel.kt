@@ -5,9 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
-interface FigureModelAdapter {
-    fun activateTool(tool: ToggleTool)
-    fun deactivateTool(tool: ToggleTool)
+// See: PlotPanel.ResizeHook
+interface FigureModel {
+    fun onToolEvent(callback: (Map<String, Any>) -> Unit)
+    fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
+    fun deactivateInteractions(origin: String)
     fun updateView(specOverride: Map<String, Any>? = null)
-    fun showError(msg:String)
 }

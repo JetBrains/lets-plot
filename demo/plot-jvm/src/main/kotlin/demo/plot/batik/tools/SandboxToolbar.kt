@@ -5,10 +5,8 @@
 
 package demo.plot.batik.tools
 
-import org.jetbrains.letsPlot.awt.plot.FigureModel
-import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultToolbarController
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelAdapter
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolView
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.BBOX_ZOOM_TOOL_SPEC
@@ -23,8 +21,18 @@ internal class SandboxToolbar(
     figureModel: FigureModel
 ) : JPanel() {
 
-    private val controller = DefaultToolbarController(
-        figure = asFigureAdapter(figureModel)
+    private val controller = DefaultFigureToolsController(
+        figure = figureModel,
+        errorMessageHandler = { msg ->
+            SwingUtilities.invokeLater {
+                JOptionPane.showMessageDialog(
+                    null,
+                    msg,
+                    "Situation",
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
     )
 
     init {
@@ -69,43 +77,5 @@ internal class SandboxToolbar(
             controller.resetFigure(deactiveTools = true)
         }
         return button
-    }
-
-    companion object {
-        private val LOG = PortableLogging.logger("SandboxToolbar")
-
-        fun asFigureAdapter(figureModel: FigureModel): FigureModelAdapter {
-            return object : FigureModelAdapter {
-                override fun activateTool(tool: ToggleTool) {
-                    if (!tool.active) {
-                        figureModel.activateInteractions(
-                            origin = tool.name,
-                            interactionSpecList = tool.interactionSpecList
-                        )
-                    }
-                }
-
-                override fun deactivateTool(tool: ToggleTool) {
-                    if (tool.active) {
-                        figureModel.deactivateInteractions(tool.name)
-                    }
-                }
-
-                override fun updateView(specOverride: Map<String, Any>?) {
-                    figureModel.updateView(specOverride)
-                }
-
-                override fun showError(msg: String) {
-                    SwingUtilities.invokeLater {
-                        JOptionPane.showMessageDialog(
-                            null,
-                            msg,
-                            "Situation",
-                            JOptionPane.ERROR_MESSAGE
-                        )
-                    }
-                }
-            }
-        }
     }
 }

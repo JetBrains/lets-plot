@@ -5,7 +5,7 @@
 
 package demo.plot.batik.tools
 
-import org.jetbrains.letsPlot.awt.plot.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
 import java.awt.BorderLayout
 import java.awt.Dimension

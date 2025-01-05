@@ -7,10 +7,9 @@ package tools
 
 import FigureModelJs
 import kotlinx.browser.document
-import kotlinx.browser.window
-import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.*
-import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolView
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
@@ -21,11 +20,8 @@ import org.w3c.dom.HTMLElement
 class SandboxToolbarJs() {
     private val element: HTMLElement = document.createElement("div") as HTMLElement
 
-    private var figureModel: FigureModelJs? = null
-
-    private val controller = DefaultToolbarController(
-        figure = FigureModelAdapterJs()
-    )
+    private var figure: FigureModelJs? = null
+    private val controller = FigureToolsControllerJs { figure }
 
     init {
         element.style.display = "flex"
@@ -52,8 +48,8 @@ class SandboxToolbarJs() {
 
     @Suppress("DuplicatedCode")
     fun bind(figure: FigureModelJs) {
-        check(this.figureModel == null) { "Toolbar is already bound to another figure." }
-        this.figureModel = figure
+        check(this.figure == null) { "Toolbar is already bound to another figure." }
+        this.figure = figure
         figure.onToolEvent { e: dynamic ->
             val event = dynamicObjectToMap(e)
             controller.handleToolFeedback(event)
@@ -89,36 +85,5 @@ class SandboxToolbarJs() {
             controller.resetFigure(deactiveTools = true)
         })
         return button
-    }
-
-    inner class FigureModelAdapterJs : FigureModelAdapter {
-        override fun activateTool(@Suppress("NON_EXPORTABLE_TYPE") tool: ToggleTool) {
-            if (!tool.active) {
-                figureModel?.activateInteractions(
-                    origin = tool.name,
-                    interactionSpecListJs = dynamicFromAnyQ(tool.interactionSpecList)
-                ) ?: LOG.info { "The toolbar is unbound." }
-            }
-        }
-
-        override fun deactivateTool(@Suppress("NON_EXPORTABLE_TYPE") tool: ToggleTool) {
-            if (tool.active) {
-                figureModel?.deactivateInteractions(tool.name)
-                    ?: LOG.info { "The toolbar is unbound." }
-            }
-        }
-
-        override fun updateView(specOverride: Map<String, Any>?) {
-            figureModel?.updateView(dynamicFromAnyQ(specOverride))
-        }
-
-        override fun showError(msg: String) {
-            window.alert(msg)
-        }
-    }
-
-
-    companion object {
-        private val LOG = PortableLogging.logger("SandboxToolbar")
     }
 }

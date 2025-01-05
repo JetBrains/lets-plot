@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.awt.plot.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs

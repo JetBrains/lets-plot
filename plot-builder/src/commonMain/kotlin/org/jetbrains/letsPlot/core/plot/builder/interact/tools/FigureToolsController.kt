@@ -19,12 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
-/**
- * "open" class ?
- */
-class DefaultToolbarController(
-    private val figure: FigureModelAdapter
-) {
+abstract class FigureToolsController {
     private val tools: MutableList<ToolAndView> = ArrayList()
 
     fun registerTool(tool: ToggleTool, view: ToggleToolView) {
@@ -32,25 +27,25 @@ class DefaultToolbarController(
 
         view.onAction {
             when (tool.active) {
-                true -> figure.deactivateTool(tool)
-                false -> figure.activateTool(tool)
+                true -> deactivateFigureTool(tool)
+                false -> activateFigureTool(tool)
             }
         }
     }
 
     fun deactivateAllTools() {
         tools.filter { it.tool.active }.forEach {
-            figure.deactivateTool(it.tool)
+            deactivateFigureTool(it.tool)
         }
     }
 
     fun resetFigure(deactiveTools: Boolean) {
         if (deactiveTools) {
             tools.filter { it.tool.active }.forEach {
-                figure.deactivateTool(it.tool)
+                deactivateFigureTool(it.tool)
             }
         }
-        figure.updateView()
+        updateFigureView()
     }
 
     fun handleToolFeedback(event: Map<String, Any>) {
@@ -75,7 +70,7 @@ class DefaultToolbarController(
                             map[TARGET_ID] = targetId
                         }
                     }
-                    figure.updateView(specOverride)
+                    updateFigureView(specOverride)
                 }
             }
 
@@ -84,11 +79,11 @@ class DefaultToolbarController(
                 val specOverride = targetId?.let {
                     mapOf(TARGET_ID to targetId)
                 }
-                figure.updateView(specOverride)
+                updateFigureView(specOverride)
             }
 
             INTERACTION_UNSUPPORTED -> {
-                figure.showError(
+                showFigureError(
                     (event[EVENT_RESULT_ERROR_MSG] as? String) ?: "Unspecified error."
                 )
             }
@@ -96,6 +91,11 @@ class DefaultToolbarController(
             else -> {}
         }
     }
+
+    abstract fun activateFigureTool(tool: ToggleTool)
+    abstract fun deactivateFigureTool(tool: ToggleTool)
+    abstract fun updateFigureView(specOverride: Map<String, Any>? = null)
+    abstract fun showFigureError(msg: String)
 
     private data class ToolAndView(
         val tool: ToggleTool,
