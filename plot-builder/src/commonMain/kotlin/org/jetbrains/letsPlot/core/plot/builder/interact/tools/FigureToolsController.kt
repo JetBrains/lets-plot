@@ -92,10 +92,10 @@ abstract class FigureToolsController {
         }
     }
 
-    abstract fun activateFigureTool(tool: ToggleTool)
-    abstract fun deactivateFigureTool(tool: ToggleTool)
-    abstract fun updateFigureView(specOverride: Map<String, Any>? = null)
-    abstract fun showFigureError(msg: String)
+    protected abstract fun activateFigureTool(tool: ToggleTool)
+    protected abstract fun deactivateFigureTool(tool: ToggleTool)
+    protected abstract fun updateFigureView(specOverride: Map<String, Any>? = null)
+    protected abstract fun showFigureError(msg: String)
 
     private data class ToolAndView(
         val tool: ToggleTool,
