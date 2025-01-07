@@ -24,8 +24,7 @@ object PlotSizeUtil {
 
             FigKind.GG_BUNCH_SPEC -> {
                 // Don't scale GGBunch.
-                val bunchSize = PlotSizeHelper.plotBunchSize(figureSpec)
-                DoubleVector(bunchSize.x, bunchSize.y)
+                PlotSizeHelper.plotBunchSize(figureSpec)
             }
 
             FigKind.SUBPLOTS_SPEC -> {
@@ -38,11 +37,7 @@ object PlotSizeUtil {
                     // ignore message when computing a figure size.
                 }
 
-                // ToDo: use sizing policy to fit plot in container.
-                val defaultSize = PlotSizeHelper.compositeFigureSize(
-                    compositeFigureConfig,
-                    sizingPolicy = null
-                )
+                val defaultSize = PlotSizeHelper.compositeFigureSizeDefault(compositeFigureConfig)
                 fitPlotInContainer(plotSize = defaultSize, containerSize)
             }
 
@@ -53,9 +48,8 @@ object PlotSizeUtil {
                 }
 
                 val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
-                val defaultSize = PlotSizeHelper.singlePlotSize(
+                val defaultSize = PlotSizeHelper.singlePlotSizeDefault(
                     figureSpec,
-                    sizingPolicy = null,
                     config.facets,
                     config.containsLiveMap
                 )

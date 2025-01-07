@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -25,7 +26,10 @@ object PlotSizeHelper {
 
     /**
      * Semi-open API.
-     * Used in Lets-Plot-Kotlin, IDEA Plugin(?)
+     * Used in Lets-Plot-Kotlin
+     *
+     * Only needed to compute size of GGBunch
+     * @ToDo: remove when new `ggbunch()` is added.
      */
     fun scaledFigureSize(
         figureSpec: Map<String, Any>,
@@ -63,9 +67,7 @@ object PlotSizeHelper {
     }
 
     /**
-     * Plot spec can be either raw or processed
-     *
-     * New sizing approach.
+     * `plotSpec` can be either raw or processed.
      */
     fun singlePlotSize(
         plotSpec: Map<*, *>,
@@ -77,12 +79,29 @@ object PlotSizeHelper {
             return sizingPolicy.getFixedDefined()
         }
 
-        val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
+        val defaultSize = singlePlotSizeDefault(plotSpec, facets, containsLiveMap)
         return sizingPolicy?.resize(defaultSize) ?: defaultSize
     }
 
     /**
-     * New sizing approach.
+     * `plotSpec` can be either raw or processed.
+     */
+    fun singlePlotSizeDefault(
+        plotSpec: Map<*, *>,
+        facets: PlotFacets,
+        containsLiveMap: Boolean
+    ): DoubleVector {
+        return getSizeOptionOrNull(plotSpec) ?: if (facets.isDefined) {
+            defaulPlotPanelGridSize(facets.colCount, facets.rowCount)
+        } else if (containsLiveMap) {
+            DEF_LIVE_MAP_SIZE
+        } else {
+            DEF_PLOT_SIZE
+        }
+    }
+
+    /**
+     * `plotSpec` can be either raw or processed.
      */
     fun compositeFigureSize(
         config: CompositeFigureConfig,
@@ -92,15 +111,23 @@ object PlotSizeHelper {
             return sizingPolicy.getFixedDefined()
         }
 
+        val defaultSize = compositeFigureSizeDefault(config)
+        return sizingPolicy?.resize(defaultSize) ?: defaultSize
+    }
+
+    /**
+     * `plotSpec` can be either raw or processed.
+     */
+    fun compositeFigureSizeDefault(
+        config: CompositeFigureConfig,
+    ): DoubleVector {
         val specifiedFigureSize = getSizeOptionOrNull(config.toMap())
-        val figureSize = specifiedFigureSize ?: run {
+        return specifiedFigureSize ?: run {
             val gridColsRows = config.gridSizeOrNull()
             gridColsRows?.let { (ncols, nrows) ->
                 defaultPlotGridSize(ncols, nrows)
             } ?: DEF_PLOT_SIZE
         }
-
-        return sizingPolicy?.resize(figureSize) ?: figureSize
     }
 
     private fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
@@ -128,21 +155,10 @@ object PlotSizeHelper {
         return if (bunchItem.hasSize()) {
             bunchItem.size
         } else {
-            singlePlotSize(
+            singlePlotSizeDefault(
                 bunchItem.featureSpec,
-                sizingPolicy = null,
                 PlotFacets.UNDEFINED, false
             )
-        }
-    }
-
-    private fun defaultSinglePlotSize(facets: PlotFacets, containsLiveMap: Boolean): DoubleVector {
-        return if (facets.isDefined) {
-            defaulPlotPanelGridSize(facets.colCount, facets.rowCount)
-        } else if (containsLiveMap) {
-            DEF_LIVE_MAP_SIZE
-        } else {
-            DEF_PLOT_SIZE
         }
     }
 

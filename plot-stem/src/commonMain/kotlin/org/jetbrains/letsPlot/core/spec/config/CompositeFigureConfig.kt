@@ -93,9 +93,8 @@ class CompositeFigureConfig constructor(
             val elementsDefaultSizes: List<DoubleVector?> = elementConfigs.map { figureSpec ->
                 figureSpec?.let {
                     if (!fitCellAspectRatio) {
-                        PlotSizeHelper.singlePlotSize(
+                        PlotSizeHelper.singlePlotSizeDefault(
                             plotSpec = it.toMap(),
-                            sizingPolicy = null,
                             facets = PlotFacets.UNDEFINED,
                             containsLiveMap = false
                         )
