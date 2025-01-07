@@ -99,7 +99,7 @@ class StringFormat private constructor(
                     require(value is Number) {
                         error("Value '$value' to be formatted as DateTime expected to be a Number, but was ${value::class.simpleName}")
                     }
-                    (value as Number).toLong()
+                    value.toLong()
                         .let(::Instant)
                         .let(TimeZone.UTC::toDateTime)
                         .let(dateTimeFormatter::apply)
