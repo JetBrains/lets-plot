@@ -97,6 +97,7 @@ internal object FormatNotationUtil {
     ): FormattedNumber {
         // precision = 0 and maxExp = 0 forces all numbers to be formatted in exponential notation.
         // Override maxExp to format single digit numbers as decimals  (5 -> "5" instead of "5e+0").
+        @Suppress("NAME_SHADOWING")
         val maxExp = maxExp.takeUnless { precision == 0 && it == 0 } ?: 1
 
         val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
