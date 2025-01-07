@@ -1,5 +1,6 @@
 package org.jetbrains.letsPlot.core.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
@@ -65,19 +66,9 @@ object PlotSizeUtil {
     }
 
     private fun fitPlotInContainer(plotSize: DoubleVector, containerSize: DoubleVector): DoubleVector {
-        val aspectRatio = plotSize.x / plotSize.y
+        return DoubleRectangle(DoubleVector.ZERO, containerSize)
+            .shrinkToAspectRatio(plotSize)
+            .dimension
 
-        val width = containerSize.x
-        val height = containerSize.y
-
-        return if (aspectRatio >= 1.0) {
-            val plotHeight = width / aspectRatio
-            val scaling = if (plotHeight > height) height / plotHeight else 1.0
-            DoubleVector(width * scaling, plotHeight * scaling)
-        } else {
-            val plotWidth = height * aspectRatio
-            val scaling = if (plotWidth > width) width / plotWidth else 1.0
-            DoubleVector(plotWidth * scaling, height * scaling)
-        }
     }
 }
