@@ -37,11 +37,10 @@ object PlotSizeUtil {
                     // ignore message when computing a figure size.
                 }
 
+                // ToDo: use sizing policy to fit plot in container.
                 val defaultSize = PlotSizeHelper.compositeFigureSize(
                     compositeFigureConfig,
-                    plotSize = null,
-                    plotMaxWidth = null,
-                    plotPreferredWidth = null,
+                    sizingPolicy = null
                 )
                 fitPlotInContainer(plotSize = defaultSize, containerSize)
             }
@@ -55,9 +54,7 @@ object PlotSizeUtil {
                 val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
                 val defaultSize = PlotSizeHelper.singlePlotSize(
                     figureSpec,
-                    plotSize = null,
-                    plotMaxWidth = null,
-                    plotPreferredWidth = null,
+                    sizingPolicy = null,
                     config.facets,
                     config.containsLiveMap
                 )

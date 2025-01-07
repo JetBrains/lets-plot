@@ -178,12 +178,8 @@ internal fun buildPlotFromProcessedSpecsIntern(
         sizingPolicy
     }
 
-//    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
-        plotSize = null,
-        plotMaxWidth = null,
-        plotPreferredWidth = null,
         sizingPolicy
     )
     if (buildResult.isError) {

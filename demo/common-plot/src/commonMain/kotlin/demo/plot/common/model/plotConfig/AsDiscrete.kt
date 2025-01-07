@@ -19,7 +19,8 @@ class AsDiscrete {
             smoothStatAsDiscrete(),
             smoothStatWithGroup(),
             factorLevels(),
-            scatterplotWith_100_000_Groups(),
+            // Very slow:
+//            scatterplotWith_100_000_Groups(),
         )
     }
 

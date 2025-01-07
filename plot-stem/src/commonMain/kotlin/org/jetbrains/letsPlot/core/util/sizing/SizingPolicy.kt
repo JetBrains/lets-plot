@@ -135,6 +135,15 @@ class SizingPolicy(
             )
         }
 
+        fun fixed(width: Double, height: Double): SizingPolicy {
+            return SizingPolicy(
+                widthMode = FIXED,
+                heightMode = FIXED,
+                width = max(0.0, width),
+                height = max(0.0, height),
+            )
+        }
+
         fun create(
             options: Map<*, *>,
         ): SizingPolicy {

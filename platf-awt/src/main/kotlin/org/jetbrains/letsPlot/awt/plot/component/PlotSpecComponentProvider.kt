@@ -106,7 +106,6 @@ abstract class PlotSpecComponentProvider(
             return MonolithicAwt.buildPlotFromProcessedSpecs(
                 plotSpec = figureSpecProcessed,
                 plotSize = preferredSize,
-                plotMaxWidth = null,
                 svgComponentFactory = svgComponentFactory,
                 executor = executor,
                 errorMessageComponentFactory = errorMessageComponentFactory,

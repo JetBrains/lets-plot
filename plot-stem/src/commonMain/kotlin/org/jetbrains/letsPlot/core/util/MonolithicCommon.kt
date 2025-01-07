@@ -36,7 +36,11 @@ object MonolithicCommon {
     ): List<String> {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
-        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, plotSize)
+        val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
+        val buildResult = buildPlotsFromProcessedSpecs(
+            plotSpec,
+            sizingPolicy
+        )
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
@@ -54,29 +58,11 @@ object MonolithicCommon {
     }
 
 
-    /**
-     * ToDo: remove params: plotSize, plotMaxWidth, plotPreferredSize - old sizing approach.
-     */
     fun buildPlotsFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        plotSize: DoubleVector?,
-        plotMaxWidth: Double? = null,
-        plotPreferredWidth: Double? = null,
-        // Implementing new sizing approach.
-        sizingPolicy: SizingPolicy? = null,
+        sizingPolicy: SizingPolicy?,
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
-
-        @Suppress("NAME_SHADOWING")
-        val plotSize = plotSize?.let {
-            // Fix error (Batik):
-            //  org.apache.batik.bridge.BridgeException: null:-1
-            //  The attribute "height" of the element <svg> cannot be negative
-            DoubleVector(
-                max(0.0, it.x),
-                max(0.0, it.y)
-            )
-        }
 
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
@@ -85,25 +71,21 @@ object MonolithicCommon {
         }
 
         return when (PlotConfig.figSpecKind(plotSpec)) {
-            FigKind.PLOT_SPEC -> PlotsBuildResult.Success(
-                listOf(
-                    buildSinglePlotFromProcessedSpecs(
-                        plotSpec,
-                        plotSize,
-                        plotMaxWidth,
-                        plotPreferredWidth,
-                        sizingPolicy
+            FigKind.PLOT_SPEC -> {
+                PlotsBuildResult.Success(
+                    listOf(
+                        buildSinglePlotFromProcessedSpecs(
+                            plotSpec,
+                            sizingPolicy
+                        )
                     )
                 )
-            )
+            }
 
             FigKind.SUBPLOTS_SPEC -> PlotsBuildResult.Success(
                 listOf(
                     buildCompositeFigureFromProcessedSpecs(
                         plotSpec,
-                        plotSize,
-                        plotMaxWidth,
-                        plotPreferredWidth,
                         sizingPolicy
                     )
                 )
@@ -111,8 +93,8 @@ object MonolithicCommon {
 
             FigKind.GG_BUNCH_SPEC -> buildGGBunchFromProcessedSpecs(
                 plotSpec,
-                plotMaxWidth,
-                plotPreferredWidth,
+                maxWidth = null,
+                preferredWidth = null
             )
         }
     }
@@ -151,10 +133,7 @@ object MonolithicCommon {
 
             val plotFigureBuildInfo = buildSinglePlotFromProcessedSpecs(
                 plotSpec,
-                itemSize,
-                plotMaxWidth = null,
-                plotPreferredWidth = null,
-                sizingPolicy = null,
+                sizingPolicy = SizingPolicy.fixed(itemSize.x, itemSize.y),
             ).withBounds(itemBounds)
 
             buildInfos.add(plotFigureBuildInfo)
@@ -165,10 +144,6 @@ object MonolithicCommon {
 
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
-        plotPreferredWidth: Double?,
-        // Implementing new sizing approach.
         sizingPolicy: SizingPolicy?,
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
@@ -181,8 +156,6 @@ object MonolithicCommon {
 
         return buildSinglePlot(
             config,
-            plotSize,
-            plotMaxWidth, plotPreferredWidth,
             sizingPolicy = sizingPolicy,
             sharedContinuousDomainX = null,  // only applicable to "composite figures"
             sharedContinuousDomainY = null,
@@ -192,28 +165,15 @@ object MonolithicCommon {
 
     private fun buildSinglePlot(
         config: PlotConfigFrontend,
-        plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
-        plotPreferredWidth: Double?,
-        // Implementing new sizing approach.
         sizingPolicy: SizingPolicy?,
         sharedContinuousDomainX: DoubleSpan?,
         sharedContinuousDomainY: DoubleSpan?,
         computationMessages: List<String>
     ): PlotFigureBuildInfo {
 
-        val preferredSize = sizingPolicy?.let {
-            PlotSizeHelper.singlePlotSize(
-                plotSpec = config.toMap(),
-                sizingPolicy = it,
-                config.facets,
-                config.containsLiveMap
-            )
-        } ?: PlotSizeHelper.singlePlotSize(
-            config.toMap(),
-            plotSize,
-            plotMaxWidth,
-            plotPreferredWidth,
+        val preferredSize = PlotSizeHelper.singlePlotSize(
+            plotSpec = config.toMap(),
+            sizingPolicy = sizingPolicy,
             config.facets,
             config.containsLiveMap
         )
@@ -233,10 +193,6 @@ object MonolithicCommon {
 
     private fun buildCompositeFigureFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
-        plotPreferredWidth: Double?,
-        // Implementing new sizing approach.
         sizingPolicy: SizingPolicy?,
     ): CompositeFigureBuildInfo {
         val computationMessages = ArrayList<String>()
@@ -244,18 +200,10 @@ object MonolithicCommon {
             computationMessages.addAll(it)
         }
 
-        val preferredSize = sizingPolicy?.let {
-            PlotSizeHelper.compositeFigureSize(
-                compositeFigureConfig,
-                sizingPolicy = it,
-            )
-        } ?: PlotSizeHelper.compositeFigureSize(
+        val preferredSize = PlotSizeHelper.compositeFigureSize(
             compositeFigureConfig,
-            plotSize,
-            plotMaxWidth,
-            plotPreferredWidth,
+            sizingPolicy,
         )
-
 
         return buildCompositeFigure(
             compositeFigureConfig,
@@ -293,10 +241,7 @@ object MonolithicCommon {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
-                        plotSize = null,           // Will be updateed by sub-plots layout.
-                        plotMaxWidth = null,
-                        plotPreferredWidth = null,
-                        sizingPolicy = null,
+                        sizingPolicy = null, // Doesn't matter - will be updateed by sub-plots layout.
                         sharedContinuousDomainX = sharedXDomains?.get(index),
                         sharedContinuousDomainY = sharedYDomains?.get(index),
                         computationMessages = emptyList()  // No "own messages" when a part of a composite.

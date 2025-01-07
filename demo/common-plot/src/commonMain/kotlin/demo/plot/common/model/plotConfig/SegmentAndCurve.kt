@@ -63,7 +63,7 @@ class SegmentAndCurve {
                 },
                 "ggtitle": { "text": "curvature = $curvature, angle=$angle, ncp=$ncp" },
                 "kind": "plot",
-                'theme': { 'name' : 'grey' },
+                "theme": { "name" : "grey" },
                 "layers": [
                     {
                         "geom": "point"

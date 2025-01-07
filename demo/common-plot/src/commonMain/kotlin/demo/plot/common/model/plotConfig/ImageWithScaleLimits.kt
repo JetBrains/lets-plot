@@ -25,15 +25,15 @@ class ImageWithScaleLimits {
     @Suppress("FunctionName")
     private fun image_3x3(title: String, moreOptions: String? = null): MutableMap<String, Any> {
         val spec = """
-            |{"kind": "plot",
-            | "layers": [
+            |{'kind': 'plot',
+            | 'layers': [
             |             {
-            |                 "geom": "image",
-            |           "xmin": -0.5,
-            |           "ymin": -0.5,
-            |           "xmax": 2.5,
-            |           "ymax": 2.5,
-            |                 "href": "${sampleImageDataUrl3x3()}"
+            |                 'geom': 'image',
+            |           'xmin': -0.5,
+            |           'ymin': -0.5,
+            |           'xmax': 2.5,
+            |           'ymax': 2.5,
+            |           'href': '${sampleImageDataUrl3x3()}'
             |             }
             |         ],
             | 'ggtitle': {'text': '$title'}

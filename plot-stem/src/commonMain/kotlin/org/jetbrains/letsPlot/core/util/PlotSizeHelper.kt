@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.ASPECT_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.BunchConfig
@@ -21,7 +20,6 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.math.ceil
 import kotlin.math.floor
-import kotlin.math.max
 
 object PlotSizeHelper {
 
@@ -67,75 +65,20 @@ object PlotSizeHelper {
     /**
      * Plot spec can be either raw or processed
      *
-     * Old sizing approach.
-     * ToDo: deprecate, remove.
-     */
-    fun singlePlotSize(
-        plotSpec: Map<*, *>,
-        plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
-        plotPreferredWidth: Double?,
-        facets: PlotFacets,
-        containsLiveMap: Boolean
-    ): DoubleVector {
-        if (plotSize != null) {
-            return plotSize
-        }
-
-        val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
-        return toScaledSize(
-            defaultSize,
-            plotMaxWidth,
-            plotPreferredWidth
-        )
-    }
-
-    /**
-     * Plot spec can be either raw or processed
-     *
      * New sizing approach.
      */
     fun singlePlotSize(
         plotSpec: Map<*, *>,
-        sizingPolicy: SizingPolicy,
+        sizingPolicy: SizingPolicy?,
         facets: PlotFacets,
         containsLiveMap: Boolean
     ): DoubleVector {
-        if (sizingPolicy.isFixedDefined()) {
+        if (sizingPolicy != null && sizingPolicy.isFixedDefined()) {
             return sizingPolicy.getFixedDefined()
         }
 
         val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
-        return sizingPolicy.resize(defaultSize)
-    }
-
-    /**
-     * Old sizing approach.
-     * ToDo: deprecate, remove.
-     */
-    fun compositeFigureSize(
-        config: CompositeFigureConfig,
-        plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
-        plotPreferredWidth: Double?
-    ): DoubleVector {
-        if (plotSize != null) {
-            return plotSize
-        }
-
-        val specifiedFigureSize = getSizeOptionOrNull(config.toMap())
-        val figureSize = specifiedFigureSize ?: run {
-            val gridColsRows = config.gridSizeOrNull()
-            gridColsRows?.let { (ncols, nrows) ->
-                defaultPlotGridSize(ncols, nrows)
-            } ?: DEF_PLOT_SIZE
-        }
-
-        return toScaledSize(
-            figureSize,
-            plotMaxWidth,
-            plotPreferredWidth
-        )
+        return sizingPolicy?.resize(defaultSize) ?: defaultSize
     }
 
     /**
@@ -143,9 +86,9 @@ object PlotSizeHelper {
      */
     fun compositeFigureSize(
         config: CompositeFigureConfig,
-        sizingPolicy: SizingPolicy,
+        sizingPolicy: SizingPolicy?,
     ): DoubleVector {
-        if (sizingPolicy.isFixedDefined()) {
+        if (sizingPolicy != null && sizingPolicy.isFixedDefined()) {
             return sizingPolicy.getFixedDefined()
         }
 
@@ -157,23 +100,7 @@ object PlotSizeHelper {
             } ?: DEF_PLOT_SIZE
         }
 
-        return sizingPolicy.resize(figureSize)
-    }
-
-    private fun toScaledSize(
-        size: DoubleVector,
-        plotMaxWidth: Double?,
-        plotPreferredWidth: Double?
-    ): DoubleVector {
-        val scaledSize = plotPreferredWidth?.let { w ->
-            size.mul(max(MIN_PLOT_WIDTH, w) / size.x)
-        } ?: size
-
-        return if (plotMaxWidth != null && plotMaxWidth < scaledSize.x) {
-            scaledSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / scaledSize.x)
-        } else {
-            scaledSize
-        }
+        return sizingPolicy?.resize(figureSize) ?: figureSize
     }
 
     private fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
@@ -203,7 +130,7 @@ object PlotSizeHelper {
         } else {
             singlePlotSize(
                 bunchItem.featureSpec,
-                null, null, null,
+                sizingPolicy = null,
                 PlotFacets.UNDEFINED, false
             )
         }
@@ -249,6 +176,7 @@ object PlotSizeHelper {
      * @param figureFpec Plot or plot bunch specification (can be 'raw' or processed).
      * @return Figure dimatsions width/height ratio.
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     fun figureAspectRatio(figureFpec: Map<*, *>): Double {
         return when (PlotConfig.figSpecKind(figureFpec)) {
             FigKind.PLOT_SPEC,

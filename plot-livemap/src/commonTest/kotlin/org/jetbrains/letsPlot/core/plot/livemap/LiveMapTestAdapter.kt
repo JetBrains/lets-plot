@@ -6,20 +6,19 @@
 package org.jetbrains.letsPlot.core.plot.livemap
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
-import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
-import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.CanvasControlDelegate
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
-import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
+import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
 
 class LiveMapTestAdapter(
     plotSpec: String
@@ -29,7 +28,7 @@ class LiveMapTestAdapter(
 
     init {
         val processSpecs = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec), false)
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(processSpecs, DoubleVector(600.0, 400.0))
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(processSpecs, SizingPolicy.fixed(600.0, 400.0))
         val successBuildResult = buildResult as MonolithicCommon.PlotsBuildResult.Success
         val buildInfo = successBuildResult.buildInfos.single().layoutedByOuterSize()
         buildInfo.injectLiveMapProvider { tiles, spec -> injectLiveMapProvider(tiles, spec, CursorServiceConfig()) }

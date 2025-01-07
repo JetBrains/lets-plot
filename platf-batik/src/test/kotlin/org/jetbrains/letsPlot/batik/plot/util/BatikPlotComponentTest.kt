@@ -71,14 +71,10 @@ class BatikPlotComponentTest {
         assertNull(SvgUtils.findNodeById(svgRoot, "circle"))
 
         // Move cursor outside the ellipse
-        dispatch(AWTMouseEvent.MOUSE_MOVED, 10, 10).let { ellipseEvents ->
-            assertTrue(ellipseEvents.isEmpty())
-        }
+        assertTrue(dispatch(AWTMouseEvent.MOUSE_MOVED, 10, 10).isEmpty())
 
         // Click outside the ellipse
-        dispatch(AWTMouseEvent.MOUSE_CLICKED, 10, 10).let { ellipseEvents ->
-            assertTrue(ellipseEvents.isEmpty())
-        }
+        assertTrue(dispatch(AWTMouseEvent.MOUSE_CLICKED, 10, 10).isEmpty())
 
         assertNull(SvgUtils.findNodeById(svgRoot, "circle"))
 
@@ -160,7 +156,7 @@ class BatikPlotComponentTest {
             val component = MonolithicAwt.buildPlotFromRawSpecs(
                 plotSpec = plotSpec,
                 plotSize = null,
-                plotMaxWidth = null,
+//                plotMaxWidth = null,
                 svgComponentFactory = COMPONENT_FACTORY,
                 executor = AWT_EDT_EXECUTOR
             ) {

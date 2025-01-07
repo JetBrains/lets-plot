@@ -95,9 +95,7 @@ class CompositeFigureConfig constructor(
                     if (!fitCellAspectRatio) {
                         PlotSizeHelper.singlePlotSize(
                             plotSpec = it.toMap(),
-                            plotSize = null,
-                            plotMaxWidth = null,
-                            plotPreferredWidth = null,
+                            sizingPolicy = null,
                             facets = PlotFacets.UNDEFINED,
                             containsLiveMap = false
                         )

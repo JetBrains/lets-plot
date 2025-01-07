@@ -74,7 +74,7 @@ object PlotHtmlExport {
         return if (iFrame) {
             fixedSizeQ!!
             val frameHeight = fixedSizeQ.y.toInt().let {
-                if(PlotConfigUtil.containsToolbar(plotSpec)) {
+                if (PlotConfigUtil.containsToolbar(plotSpec)) {
                     // adjust for toolbar height
                     it + 33  // The expected height of toolbar, see: DefaultToolbarJs
                 } else {
@@ -121,9 +121,7 @@ object PlotHtmlExport {
                     val config = PlotConfigFrontend.create(plotSpec, containerTheme = null) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSize(
                         plotSpec,
-                        plotSize = null,
-                        plotMaxWidth = null,
-                        plotPreferredWidth = null,
+                        sizingPolicy = null,
                         config.facets, config.containsLiveMap
                     )
                 }

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.Dimension
 import java.awt.Rectangle
@@ -23,7 +24,6 @@ object MonolithicAwt {
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         errorMessageComponentFactory: (String) -> JComponent = DefaultErrorMessageComponent.factory,
@@ -36,7 +36,6 @@ object MonolithicAwt {
             buildPlotFromProcessedSpecs(
                 plotSpec,
                 plotSize,
-                plotMaxWidth,
                 svgComponentFactory,
                 executor,
                 errorMessageComponentFactory = errorMessageComponentFactory,
@@ -50,7 +49,6 @@ object MonolithicAwt {
     fun buildPlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        plotMaxWidth: Double?,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         errorMessageComponentFactory: (message: String) -> JComponent = DefaultErrorMessageComponent.factory,
@@ -58,11 +56,10 @@ object MonolithicAwt {
     ): JComponent {
 
         return try {
+            val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
             val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
                 plotSpec,
-                plotSize,
-                plotMaxWidth,
-                plotPreferredWidth = null
+                sizingPolicy
             )
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error

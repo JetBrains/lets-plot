@@ -117,6 +117,7 @@ object Option {
         object Layout {
             const val NAME = Meta.NAME
             const val SUBPLOTS_GRID = "grid"
+            const val SUBPLOTS_FREE = "free"
         }
 
         object Grid {
@@ -137,6 +138,13 @@ object Option {
                 const val SHARE_ROW = "row"
                 const val SHARE_COL = "col"
             }
+        }
+
+        object Free {
+            const val X = "x"
+            const val Y = "y"
+            const val WIDTH = "width"
+            const val HEIGHT = "height"
         }
     }
 
