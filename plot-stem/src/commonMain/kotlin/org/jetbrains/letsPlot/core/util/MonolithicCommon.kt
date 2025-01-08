@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
@@ -21,7 +20,6 @@ import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
-import kotlin.math.max
 
 object MonolithicCommon {
 
@@ -93,27 +91,18 @@ object MonolithicCommon {
 
             FigKind.GG_BUNCH_SPEC -> buildGGBunchFromProcessedSpecs(
                 plotSpec,
-                maxWidth = null,
-                preferredWidth = null
+                sizingPolicy
             )
         }
     }
 
     private fun buildGGBunchFromProcessedSpecs(
         bunchSpec: Map<String, Any>,
-        maxWidth: Double?,
-        preferredWidth: Double?,
+        sizingPolicy: SizingPolicy?,
     ): PlotsBuildResult {
 
         val naturalSize = PlotSizeHelper.plotBunchSize(bunchSpec)
-        val scaledSize = preferredWidth?.let { w ->
-            naturalSize.mul(max(Defaults.MIN_PLOT_WIDTH, w) / naturalSize.x)
-        } ?: naturalSize
-        val neededSize = if (maxWidth != null && maxWidth < scaledSize.x) {
-            scaledSize.mul(max(Defaults.MIN_PLOT_WIDTH, maxWidth) / scaledSize.x)
-        } else {
-            scaledSize
-        }
+        val neededSize = sizingPolicy?.resize(naturalSize) ?: naturalSize
 
         val scalingCoef = neededSize.x / naturalSize.x
 

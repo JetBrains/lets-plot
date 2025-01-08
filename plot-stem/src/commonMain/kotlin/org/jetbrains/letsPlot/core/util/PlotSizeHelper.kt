@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.ASPECT_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import org.jetbrains.letsPlot.core.spec.FigKind
@@ -17,54 +16,9 @@ import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import kotlin.math.ceil
-import kotlin.math.floor
 
 object PlotSizeHelper {
-
-    /**
-     * Semi-open API.
-     * Used in Lets-Plot-Kotlin
-     *
-     * Only needed to compute size of GGBunch
-     * @ToDo: remove when new `ggbunch()` is added.
-     */
-    fun scaledFigureSize(
-        figureSpec: Map<String, Any>,
-        containerWidth: Int,
-        containerHeight: Int
-    ): Pair<Int, Int> {
-
-        if (PlotConfig.isFailure(figureSpec)) {
-            // just keep given size
-            return Pair(containerWidth, containerHeight)
-        }
-
-        return when (PlotConfig.figSpecKind(figureSpec)) {
-            FigKind.GG_BUNCH_SPEC -> {
-                // don't scale GGBunch size
-                val bunchSize = plotBunchSize(figureSpec)
-                Pair(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
-            }
-
-            FigKind.PLOT_SPEC,
-            FigKind.SUBPLOTS_SPEC -> {
-                // for single plot: scale component to fit in requested size
-                val aspectRatio = figureAspectRatio(figureSpec)
-                if (aspectRatio >= 1.0) {
-                    val plotHeight = containerWidth / aspectRatio
-                    val scaling = if (plotHeight > containerHeight) containerHeight / plotHeight else 1.0
-                    Pair(floor(containerWidth * scaling).toInt(), floor(plotHeight * scaling).toInt())
-                } else {
-                    val plotWidth = containerHeight * aspectRatio
-                    val scaling = if (plotWidth > containerWidth) containerWidth / plotWidth else 1.0
-                    Pair(floor(plotWidth * scaling).toInt(), floor(containerHeight * scaling).toInt())
-                }
-            }
-        }
-    }
 
     /**
      * `plotSpec` can be either raw or processed.
@@ -186,28 +140,6 @@ object PlotSizeHelper {
             return null
         }
         return DoubleVector(width, height)
-    }
-
-    /**
-     * @param figureFpec Plot or plot bunch specification (can be 'raw' or processed).
-     * @return Figure dimatsions width/height ratio.
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun figureAspectRatio(figureFpec: Map<*, *>): Double {
-        return when (PlotConfig.figSpecKind(figureFpec)) {
-            FigKind.PLOT_SPEC,
-            FigKind.SUBPLOTS_SPEC -> {
-                // single plot
-                getSizeOptionOrNull(figureFpec)?.let { it.x / it.y } ?: ASPECT_RATIO
-            }
-
-            FigKind.GG_BUNCH_SPEC -> {
-                // bunch
-                @Suppress("UNCHECKED_CAST")
-                val bunchSize = plotBunchSize(figureFpec as Map<String, Any>)
-                bunchSize.x / bunchSize.y
-            }
-        }
     }
 
     fun plotBunchSize(plotBunchFpec: Map<String, Any>): DoubleVector {
