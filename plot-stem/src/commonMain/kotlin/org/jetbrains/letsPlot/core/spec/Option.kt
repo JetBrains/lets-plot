@@ -140,11 +140,12 @@ object Option {
             }
         }
 
+        /**
+         * Free positioning layout (`ggbunch`)
+         */
         object Free {
-            const val X = "x"
-            const val Y = "y"
-            const val WIDTH = "width"
-            const val HEIGHT = "height"
+            const val ORIG = "orig" // array of two nums: [0,0] - left-bottom, [1, 1] - right-top
+            const val SIZE = "size" // array of two nums: [1, 1] - entire container
         }
     }
 

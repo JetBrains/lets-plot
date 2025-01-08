@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.colElements
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToCol
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToRow
@@ -37,7 +36,7 @@ class CompositeFigureGridAlignmentLayout(
     elementsDefaultSizes = elementsDefaultSizes,
     scaleShareX = scaleShareX,
     scaleShareY = scaleShareY,
-), CompositeFigureLayout {
+) {
     override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
         val elementsWithBounds = toElelemtsWithInitialBounds(bounds, elements)
 

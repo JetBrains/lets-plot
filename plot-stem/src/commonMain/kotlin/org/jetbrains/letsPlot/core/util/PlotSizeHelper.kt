@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -46,9 +46,9 @@ object PlotSizeHelper {
         containsLiveMap: Boolean
     ): DoubleVector {
         return getSizeOptionOrNull(plotSpec) ?: if (facets.isDefined) {
-            defaulPlotPanelGridSize(facets.colCount, facets.rowCount)
+            defaultFacetedPlotSize(facets.colCount, facets.rowCount)
         } else if (containsLiveMap) {
-            DEF_LIVE_MAP_SIZE
+            DEF_LARGE_PLOT_SIZE
         } else {
             DEF_PLOT_SIZE
         }
@@ -76,12 +76,7 @@ object PlotSizeHelper {
         config: CompositeFigureConfig,
     ): DoubleVector {
         val specifiedFigureSize = getSizeOptionOrNull(config.toMap())
-        return specifiedFigureSize ?: run {
-            val gridColsRows = config.gridSizeOrNull()
-            gridColsRows?.let { (ncols, nrows) ->
-                defaultPlotGridSize(ncols, nrows)
-            } ?: DEF_PLOT_SIZE
-        }
+        return specifiedFigureSize ?: config.layout.defaultSize()
     }
 
     private fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
@@ -116,11 +111,7 @@ object PlotSizeHelper {
         }
     }
 
-    private fun defaultPlotGridSize(ncol: Int, nrow: Int): DoubleVector {
-        return defaulPlotPanelGridSize(ncol, nrow)
-    }
-
-    private fun defaulPlotPanelGridSize(ncol: Int, nrow: Int): DoubleVector {
+    private fun defaultFacetedPlotSize(ncol: Int, nrow: Int): DoubleVector {
         val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / ncol)
         val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / nrow)
         return DoubleVector(panelWidth * ncol, panelHeight * nrow)

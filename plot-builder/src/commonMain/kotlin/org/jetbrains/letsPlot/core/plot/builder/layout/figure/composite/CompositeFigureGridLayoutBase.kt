@@ -8,10 +8,12 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToCol
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToRow
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.toCellOrigin
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleSharePolicy.*
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import kotlin.math.max
 
 abstract class CompositeFigureGridLayoutBase(
@@ -25,7 +27,14 @@ abstract class CompositeFigureGridLayoutBase(
     private val elementsDefaultSizes: List<DoubleVector?>,
     private val scaleShareX: ScaleSharePolicy,
     private val scaleShareY: ScaleSharePolicy,
-) {
+) : CompositeFigureLayout {
+
+    override fun defaultSize(): DoubleVector {
+        val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / ncols)
+        val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / nrows)
+        return DoubleVector(panelWidth * ncols, panelHeight * nrows)
+    }
+
     protected fun toElelemtsWithInitialBounds(
         bounds: DoubleRectangle,
         elements: List<FigureBuildInfo?>

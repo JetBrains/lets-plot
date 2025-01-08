@@ -43,7 +43,8 @@ class CompositeFigureConfig constructor(
     computationMessagesHandler: ((List<String>) -> Unit)
 ) : OptionsAccessor(opts) {
 
-    val elementConfigs: List<OptionsAccessor?>
+    internal val elementConfigs: List<OptionsAccessor?>
+    internal val layout: CompositeFigureLayout
     internal val theme: Theme
 
     init {
@@ -72,15 +73,17 @@ class CompositeFigureConfig constructor(
             }
         }
 
+        layout = createLayout(OptionsAccessor(getMap(Option.SubPlots.LAYOUT)))
+
         computationMessagesHandler(computationMessages)
     }
 
-    fun createLayout(): CompositeFigureLayout {
-        val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
+    private fun createLayout(layoutOptions: OptionsAccessor): CompositeFigureLayout {
         val layoutKind = layoutOptions.getStringSafe(NAME)
 
         if (layoutKind == Layout.SUBPLOTS_GRID) {
-            val (ncols, nrows) = gridSizeOrNull()!!
+            val ncols = layoutOptions.getIntegerSafe(NCOLS)
+            val nrows = layoutOptions.getIntegerSafe(NROWS)
             val hSpace = layoutOptions.getDoubleDef(HSPACE, DEF_HSPACE)
             val vSpace = layoutOptions.getDoubleDef(VSPACE, DEF_VSPACE)
             val colWidths = layoutOptions.getDoubleList(COL_WIDTHS)
@@ -134,18 +137,6 @@ class CompositeFigureConfig constructor(
         }
 
         throw IllegalArgumentException("Unsupported composit figure layout: $layoutKind")
-    }
-
-    fun gridSizeOrNull(): Pair<Int, Int>? {
-        val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
-        val layoutKind = layoutOptions.getStringSafe(NAME)
-        return if (layoutKind == Layout.SUBPLOTS_GRID) {
-            val ncols = layoutOptions.getIntegerSafe(NCOLS)
-            val nrows = layoutOptions.getIntegerSafe(NROWS)
-            Pair(ncols, nrows)
-        } else {
-            null
-        }
     }
 
     private fun asScaleSharePolicy(option: String, layoutOptions: OptionsAccessor): ScaleSharePolicy {

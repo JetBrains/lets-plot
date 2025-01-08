@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 
 class CompositeFigureGridLayout(
     ncols: Int,
@@ -32,7 +31,7 @@ class CompositeFigureGridLayout(
     elementsDefaultSizes = elementsDefaultSizes,
     scaleShareX = scaleShareX,
     scaleShareY = scaleShareY,
-), CompositeFigureLayout {
+) {
     override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
         val elementsWithBounds = toElelemtsWithInitialBounds(bounds, elements)
 

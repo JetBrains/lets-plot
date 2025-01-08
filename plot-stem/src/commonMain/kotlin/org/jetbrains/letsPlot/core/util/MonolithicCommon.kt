@@ -207,7 +207,7 @@ object MonolithicCommon {
         computationMessages: MutableList<String>,
     ): CompositeFigureBuildInfo {
 
-        val compositeFigureLayout = config.createLayout()
+        val compositeFigureLayout = config.layout
 
         val sharedXDomains: List<DoubleSpan?>?
         val sharedYDomains: List<DoubleSpan?>?
