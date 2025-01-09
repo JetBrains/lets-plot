@@ -21,7 +21,7 @@ class HttpTileTransport {
 
         myClient.launch {
             try {
-                val response = myClient.get(url).readRawBytes()
+                val response = myClient.get(url).readBytes()
                 async.success(response)
             } catch (c: ResponseException) {
                 async.failure(Exception(c.response.status.toString()))

@@ -7,6 +7,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+val ktorVersion = project.extra["ktor_version"] as String
+
 kotlin {
     jvm()
     js {
@@ -21,6 +23,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation("io.ktor:ktor-client-websockets:${ktorVersion}")
 
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
@@ -32,6 +35,13 @@ kotlin {
                 implementation(project(":livemap"))
                 implementation(project(":plot-livemap"))
                 implementation(project(":demo-and-test-shared"))
+            }
+        }
+
+        jsMain {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:${ktorVersion}")
+                implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
             }
         }
     }

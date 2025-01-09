@@ -5,7 +5,10 @@
 
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.FileNotFoundException
 import java.util.*
@@ -373,10 +376,15 @@ subprojects {
         freeCompilerArgs.addAll(
             // Suppress expect/actual classes are in Beta warning.
             "-Xexpect-actual-classes",
+
             // Non-public primary constructor is exposed via the generated 'copy()' method of the 'data' class.
-            "-Xconsistent-data-class-copy-visibility",
+            // Kotlin 2.0 feature.
+            //"-Xconsistent-data-class-copy-visibility",
+
             // Enable all warnings as errors.
-            "-Werror"
+            // Disabled because even with the Suppress("unused") the warnings may still happen:
+            // (https://github.com/JetBrains/lets-plot/blob/f5af69befdd2fa963672d3b1d9992f3635f64840/plot-base/src/commonMain/kotlin/org/jetbrains/letsPlot/core/interact/mouse/MouseDragInteraction.kt#L70)
+            //"-Werror"
         )
     }
     plugins.withId("org.jetbrains.kotlin.multiplatform") {
@@ -391,8 +399,18 @@ subprojects {
         }
     }
 
+    // Koltin 2.0
+    //plugins.withId("org.jetbrains.kotlin.jvm") {
+    //    extensions.configure<KotlinJvmExtension> {
+    //        compilerOptions {
+    //            configCompilerWarnings()
+    //            jvmTarget.set(JvmTarget.JVM_1_8)
+    //        }
+    //    }
+    //}
+
     plugins.withId("org.jetbrains.kotlin.jvm") {
-        extensions.configure<KotlinJvmExtension> {
+        extensions.configure<KotlinJvmProjectExtension> {
             compilerOptions {
                 configCompilerWarnings()
                 jvmTarget.set(JvmTarget.JVM_1_8)
