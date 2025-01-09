@@ -20,7 +20,7 @@ object BrowserDemoUtil {
     private const val ROOT_ELEMENT_ID = "root"
 
     private const val PROD_JS_OUTPUT_DIR = "build/dist/js/productionExecutable"
-    private const val DEV_JS_OUTPUT_DIR = "build/kotlin-webpack/js/developmentExecutable"
+    private const val DEV_JS_OUTPUT_DIR = "build/dist/js/developmentExecutable"
 
     private const val PROD_LETS_PLOT_PATH = "js-package/$PROD_JS_OUTPUT_DIR/lets-plot.js"
     private const val DEV_LETS_PLOT_PATH = "js-package/$DEV_JS_OUTPUT_DIR/lets-plot.js"

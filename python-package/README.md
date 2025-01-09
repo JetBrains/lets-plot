@@ -41,7 +41,7 @@ When the "dev" version is built, `lets-plot` embeds current "dev" js into Jupyte
 
 If necessary, this default can be temporarily overwritten by editing `dev_xxx` settings in `_global_settings.py`
 
-The "dev" version of JS library can be served from `js-package/build/kotlin-webpack/js/developmentExecutable` folder (in **js-package** project):
+The "dev" version of JS library can be served from `js-package/build/dist/js/developmentExecutable` folder (in **js-package** project):
 
 ```
 $ cd lets-plot

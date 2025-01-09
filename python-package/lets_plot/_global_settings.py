@@ -102,7 +102,7 @@ _settings = {
     # ./gradlew js-package:jsBrowserDevelopmentWebpack
     # $ python -m http.server 8080
     'dev_' + JS_BASE_URL: "http://127.0.0.1:8080",
-    'dev_' + JS_PATH_TO_FILE: "js-package/build/kotlin-webpack/js/developmentExecutable",
+    'dev_' + JS_PATH_TO_FILE: "js-package/build/dist/js/developmentExecutable",
     'dev_' + JS_NAME: '',  # default: lets-plot.js
     'dev_' + GEOCODING_PROVIDER_URL: _init_value('dev_' + GEOCODING_PROVIDER_URL, _DATALORE_GEOCODING_SERVICE),
     'dev_' + MAPTILES_KIND: _init_value('dev_' + MAPTILES_KIND, TILES_VECTOR_LETS_PLOT),

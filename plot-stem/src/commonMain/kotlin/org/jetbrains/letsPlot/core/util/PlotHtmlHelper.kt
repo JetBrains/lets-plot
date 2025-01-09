@@ -37,7 +37,7 @@ object PlotHtmlHelper {
             // - Build "dev" JS package (see js-package/README.md)
             // - Activate env containing Python.
             // $ python -m http.server 8080
-            "http://127.0.0.1:8080/js-package/build/kotlin-webpack/js/developmentExecutable/lets-plot.js"
+            "http://127.0.0.1:8080/js-package/build/dist/js/developmentExecutable/lets-plot.js"
         } else {
             // bintray: until v2.0.2
 //            "https://dl.bintray.com/jetbrains/lets-plot/lets-plot-$version.min.js"
