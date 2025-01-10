@@ -144,7 +144,8 @@ object Option {
          * Free positioning layout (`ggbunch`)
          */
         object Free {
-            const val ORIG = "orig" // array of two nums: [0,0] - left-bottom, [1, 1] - right-top
+            const val REGIONS = "regions" // array of objects: {orig:[..], size:[..]}
+            const val ORIGIN = "origin" // array of two nums: [0,0] - left-top, [1, 1] - right-bottom
             const val SIZE = "size" // array of two nums: [1, 1] - entire container
         }
     }

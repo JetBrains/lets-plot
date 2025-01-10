@@ -5,11 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureFreeLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleSharePolicy
@@ -18,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGr
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Free
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.COL_WIDTHS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.FIT_CELL_ASPECT_RATIO
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.HSPACE
@@ -73,70 +76,70 @@ class CompositeFigureConfig constructor(
             }
         }
 
-        layout = createLayout(OptionsAccessor(getMap(Option.SubPlots.LAYOUT)))
+        val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
+        val layoutKind = layoutOptions.getStringSafe(NAME)
+        layout = when (layoutKind) {
+            Layout.SUBPLOTS_GRID -> createGridLayout(layoutOptions)
+            Layout.SUBPLOTS_FREE -> createFreeLayout(layoutOptions, elementConfigs.size)
+            else -> throw IllegalArgumentException("Unsupported composit figure layout: $layoutKind")
+        }
 
         computationMessagesHandler(computationMessages)
     }
 
-    private fun createLayout(layoutOptions: OptionsAccessor): CompositeFigureLayout {
-        val layoutKind = layoutOptions.getStringSafe(NAME)
+    private fun createGridLayout(layoutOptions: OptionsAccessor): CompositeFigureLayout {
+        val ncols = layoutOptions.getIntegerSafe(NCOLS)
+        val nrows = layoutOptions.getIntegerSafe(NROWS)
+        val hSpace = layoutOptions.getDoubleDef(HSPACE, DEF_HSPACE)
+        val vSpace = layoutOptions.getDoubleDef(VSPACE, DEF_VSPACE)
+        val colWidths = layoutOptions.getDoubleList(COL_WIDTHS)
+        val rowHeights = layoutOptions.getDoubleList(ROW_HEIGHTS)
+        val fitCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, true)
+        val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
+        val scaleShareX: ScaleSharePolicy = asScaleSharePolicy(SHARE_X_SCALE, layoutOptions)
+        val scaleShareY: ScaleSharePolicy = asScaleSharePolicy(SHARE_Y_SCALE, layoutOptions)
 
-        if (layoutKind == Layout.SUBPLOTS_GRID) {
-            val ncols = layoutOptions.getIntegerSafe(NCOLS)
-            val nrows = layoutOptions.getIntegerSafe(NROWS)
-            val hSpace = layoutOptions.getDoubleDef(HSPACE, DEF_HSPACE)
-            val vSpace = layoutOptions.getDoubleDef(VSPACE, DEF_VSPACE)
-            val colWidths = layoutOptions.getDoubleList(COL_WIDTHS)
-            val rowHeights = layoutOptions.getDoubleList(ROW_HEIGHTS)
-            val fitCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, true)
-            val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
-            val scaleShareX: ScaleSharePolicy = asScaleSharePolicy(SHARE_X_SCALE, layoutOptions)
-            val scaleShareY: ScaleSharePolicy = asScaleSharePolicy(SHARE_Y_SCALE, layoutOptions)
-
-            val elementsDefaultSizes: List<DoubleVector?> = elementConfigs.map { figureSpec ->
-                figureSpec?.let {
-                    if (!fitCellAspectRatio) {
-                        PlotSizeHelper.singlePlotSizeDefault(
-                            plotSpec = it.toMap(),
-                            facets = PlotFacets.UNDEFINED,
-                            containsLiveMap = false
-                        )
-                    } else {
-                        null
-                    }
+        val elementsDefaultSizes: List<DoubleVector?> = elementConfigs.map { figureSpec ->
+            figureSpec?.let {
+                if (!fitCellAspectRatio) {
+                    PlotSizeHelper.singlePlotSizeDefault(
+                        plotSpec = it.toMap(),
+                        facets = PlotFacets.UNDEFINED,
+                        containsLiveMap = false
+                    )
+                } else {
+                    null
                 }
-            }
-
-            return if (innerAlignment) {
-                CompositeFigureGridAlignmentLayout(
-                    ncols = ncols,
-                    nrows = nrows,
-                    hSpace = hSpace,
-                    vSpace = vSpace,
-                    colWidths = colWidths,
-                    rowHeights = rowHeights,
-                    fitCellAspectRatio = fitCellAspectRatio,
-                    elementsDefaultSizes = elementsDefaultSizes,
-                    scaleShareX = scaleShareX,
-                    scaleShareY = scaleShareY,
-                )
-            } else {
-                CompositeFigureGridLayout(
-                    ncols = ncols,
-                    nrows = nrows,
-                    hSpace = hSpace,
-                    vSpace = vSpace,
-                    colWidths = colWidths,
-                    rowHeights = rowHeights,
-                    fitCellAspectRatio = fitCellAspectRatio,
-                    elementsDefaultSizes = elementsDefaultSizes,
-                    scaleShareX = scaleShareX,
-                    scaleShareY = scaleShareY,
-                )
             }
         }
 
-        throw IllegalArgumentException("Unsupported composit figure layout: $layoutKind")
+        return if (innerAlignment) {
+            CompositeFigureGridAlignmentLayout(
+                ncols = ncols,
+                nrows = nrows,
+                hSpace = hSpace,
+                vSpace = vSpace,
+                colWidths = colWidths,
+                rowHeights = rowHeights,
+                fitCellAspectRatio = fitCellAspectRatio,
+                elementsDefaultSizes = elementsDefaultSizes,
+                scaleShareX = scaleShareX,
+                scaleShareY = scaleShareY,
+            )
+        } else {
+            CompositeFigureGridLayout(
+                ncols = ncols,
+                nrows = nrows,
+                hSpace = hSpace,
+                vSpace = vSpace,
+                colWidths = colWidths,
+                rowHeights = rowHeights,
+                fitCellAspectRatio = fitCellAspectRatio,
+                elementsDefaultSizes = elementsDefaultSizes,
+                scaleShareX = scaleShareX,
+                scaleShareY = scaleShareY,
+            )
+        }
     }
 
     private fun asScaleSharePolicy(option: String, layoutOptions: OptionsAccessor): ScaleSharePolicy {
@@ -150,4 +153,27 @@ class CompositeFigureConfig constructor(
             }
         } ?: ScaleSharePolicy.NONE
     }
+
+    private fun createFreeLayout(
+        layoutOptions: OptionsAccessor,
+        elementsCount: Int
+    ): CompositeFigureLayout {
+
+        val regionOptionsList = layoutOptions.getList(Free.REGIONS)
+        val regionsCount = regionOptionsList.size
+        val regions = regionOptionsList.map {
+            @Suppress("UNCHECKED_CAST")
+            val regionOptions = OptionsAccessor(it as Map<String, Any>)
+
+            val (x, y) = regionOptions.getNumPair(Free.ORIGIN)
+            val (w, h) = regionOptions.getNumPair(Free.SIZE)
+            DoubleRectangle.XYWH(x, y, w, h)
+        } +     // Pad region list if it's shorter than elements list.
+                List(maxOf(0, elementsCount - regionsCount)) {
+                    DoubleRectangle.XYWH(0.25, 0.25, 0.5, 0.5)
+                }
+
+        return CompositeFigureFreeLayout(regions)
+    }
+
 }
