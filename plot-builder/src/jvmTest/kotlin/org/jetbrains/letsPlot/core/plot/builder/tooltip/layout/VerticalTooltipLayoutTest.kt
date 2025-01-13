@@ -67,8 +67,7 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
             expect()
-                .stemCoord(DoubleVector(79.0, 26.0))
-                .tooltipCoord(DoubleVector(50.0, 15.5))
+                .stemCoord(expectedAroundPointStem(VERTICAL_TIP_KEY))
         )
     }
 
@@ -208,6 +207,29 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
             expect()
                 .tooltipY(45.0)
         )
+    }
+
+    @Test
+    fun issue1275() {
+        // geom_point(x=10, y=5, size=3, tooltips=layer_tooltips().line('foo\nbar\nbaz'))
+
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(4.0)
+            .defaultTipSize(DoubleVector(34, 48))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(DoubleRectangle.XYWH(0, 0, 700, 560))
+            .addTooltip(tooltipBuilder.vertical("vertical", DoubleVector(507, 29)).buildTooltip())
+            .geomBounds(DoubleRectangle.XYWH(51, 7, 912, 501))
+
+        val bottomOriented = expect().tooltipY(45.0).tooltipX(490.0)
+
+        // Not enough space to orient the tooltip to the top
+        arrange(layoutManagerController.cursor(DoubleVector(520, 7)).build())
+        assertAllTooltips(bottomOriented)
+
+        // Even if the cursor is above the tooltip, the tooltip should be moved to the bottom position
+        arrange(layoutManagerController.cursor(DoubleVector(520, 59)).build())
+        assertAllTooltips(bottomOriented)
     }
 
     companion object {

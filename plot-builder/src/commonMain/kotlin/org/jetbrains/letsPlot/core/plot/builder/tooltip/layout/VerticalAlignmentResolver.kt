@@ -124,21 +124,13 @@ internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleSpan
 
             rule(
                 Matcher()
-                    .preferredAlignment(TOP)
-                    .topSpaceOk(true)
-                    .topCursorOk(false)
-                    .bottomSpaceOk(true)
-                    .bottomCursorOk(true),
+                    .bottomSpaceOk(true),
                 BOTTOM
             ),
 
             rule(
                 Matcher()
-                    .preferredAlignment(BOTTOM)
-                    .bottomSpaceOk(true)
-                    .bottomCursorOk(false)
-                    .topSpaceOk(true)
-                    .topCursorOk(true),
+                    .topSpaceOk(true),
                 TOP
             ),
 
