@@ -128,7 +128,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
 
     ----
 
@@ -2617,7 +2617,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_boundaries()` function.
 
     ----
 
@@ -2807,7 +2807,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_boundaries()` function.
 
     ----
 
@@ -6154,7 +6154,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `limits()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_limits()` function.
 
     ----
 
@@ -6820,7 +6820,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
 
     ----
 
@@ -7067,7 +7067,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
 
     ----
 
@@ -7305,7 +7305,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
 
     ----
 
@@ -7814,7 +7814,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
 
     ----
 

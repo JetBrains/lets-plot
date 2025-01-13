@@ -99,7 +99,6 @@ def theme(*,
     Parameters
     ----------
     exponent_format : {'e', 'pow', 'pow_full'} or tuple, default='e'
-
         Controls the appearance of numbers formatted with 'e' or 'g' types.
 
         Value is either a string - style, or a tuple: (style, lower_exp_bound, upper_exp_bound)
@@ -113,7 +112,7 @@ def theme(*,
         is less than or equal to the lower_exp_bound (-7 by default) or greater than or equal
         to the upper_exp_bound (6 by default, but can be affected by `precision` in format specifier).
 
-         see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+        See `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
         Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
