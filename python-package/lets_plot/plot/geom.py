@@ -193,7 +193,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8-11
+        :emphasize-lines: 8-12
 
         from lets_plot import *
         from lets_plot.geo_data import *
@@ -205,7 +205,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
             geom_point(aes(size="est_pop_2019"), color="red", show_legend=False, \\
                        data=data, map=centroids, map_join="city", \\
                        tooltips=layer_tooltips().title("@city")
-                                                .line("population|@est_pop_2019"))
+                                                .line("population|@est_pop_2019")
+                                                .format("@est_pop_2019", ".2~s"))
 
     """
     return _geom('point',
