@@ -12,8 +12,16 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLay
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 
 class CompositeFigureFreeLayout(
-    private val regions: List<DoubleRectangle>
+    regions: List<DoubleRectangle>,
+    elementsCount: Int
 ) : CompositeFigureLayout {
+    private val regions: List<DoubleRectangle>
+
+    init {
+        val autoRegionsCount = elementsCount - regions.size
+        this.regions = regions + calculateAutoRegions(autoRegionsCount)
+    }
+
     override fun defaultSize(): DoubleVector {
         return DEF_LARGE_PLOT_SIZE
     }
@@ -34,6 +42,33 @@ class CompositeFigureFreeLayout(
         }
         return elementsWithBounds.map {
             it?.layoutedByOuterSize()
+        }
+    }
+
+    private fun calculateAutoRegions(n: Int): List<DoubleRectangle> {
+        if (n <= 0) return emptyList()
+
+        // Start and end points of diagonal
+        val startPos = 0.3 to 0.3
+        val endPos = 0.7 to 0.7
+
+        val width = 0.3
+        val height = 0.3
+
+        // Available space for movement along diagonal
+        val dx = endPos.first - width - startPos.first
+        val dy = endPos.second - height - startPos.second
+
+        val (stepX, stepY) = if (n > 1) {
+            (dx / (n - 1)) to (dy / (n - 1))
+        } else {
+            0.0 to 0.0
+        }
+
+        return List(n) { i ->
+            val x = startPos.first + (stepX * i)
+            val y = startPos.second + (stepY * i)
+            DoubleRectangle(x, y, width, height)
         }
     }
 }

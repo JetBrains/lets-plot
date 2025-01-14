@@ -106,7 +106,9 @@ internal class FigureToAwt(
 
         val elementJComponents = ArrayList<JComponent>()
         val elementToolEventDispatchers = ArrayList<ToolEventDispatcher>()
-        for (element in svgRoot.elements) {
+        // In Swing components actually are painted in the reverse order of how they were added,
+        // Thus, reverse elements here to have subplots painted in the order we need.
+        for (element in svgRoot.elements.asReversed()) {
             val comp = if (element is PlotSvgRoot) {
                 processPlotFigure(element)
             } else {

@@ -160,20 +160,20 @@ class CompositeFigureConfig constructor(
     ): CompositeFigureLayout {
 
         val regionOptionsList = layoutOptions.getList(Free.REGIONS)
-        val regionsCount = regionOptionsList.size
-        val regions = regionOptionsList.map {
+        val regions = regionOptionsList.map { region ->
+            check(region is List<*> && region.size == 4 && region.all { it is Number }) {
+                "A 'region' in 'free' layout should be a list of 4 numbers but was: $region"
+            }
             @Suppress("UNCHECKED_CAST")
-            val regionOptions = OptionsAccessor(it as Map<String, Any>)
+            region as List<Number>
+            DoubleRectangle.XYWH(
+                x = region[0].toDouble(),
+                y = region[1].toDouble(),
+                width = region[2].toDouble(),
+                height = region[3].toDouble()
+            )
+        }
 
-            val (x, y) = regionOptions.getNumPair(Free.ORIGIN)
-            val (w, h) = regionOptions.getNumPair(Free.SIZE)
-            DoubleRectangle.XYWH(x, y, w, h)
-        } +     // Pad region list if it's shorter than elements list.
-                List(maxOf(0, elementsCount - regionsCount)) {
-                    DoubleRectangle.XYWH(0.25, 0.25, 0.5, 0.5)
-                }
-
-        return CompositeFigureFreeLayout(regions)
+        return CompositeFigureFreeLayout(regions, elementsCount)
     }
-
 }

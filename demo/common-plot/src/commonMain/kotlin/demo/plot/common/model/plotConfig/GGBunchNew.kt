@@ -12,7 +12,8 @@ import demoAndTestShared.parsePlotSpec
 class GGBunchNew {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plotBunch()
+            plotBunch(),
+            plotBunchAutoLayout()
         )
     }
 
@@ -23,9 +24,9 @@ class GGBunchNew {
         |   'layout': {
         |     'name': 'free',
         |     'regions': [
-        |       { 'origin': [0, 0], 'size': [0.5, 0.5] },
-        |       { 'origin': [0.5, 0], 'size': [0.5, 0.5] },
-        |       { 'origin': [0, 0.5], 'size': [0.5, 0.5] }
+        |       [0, 0, 0.5, 0.5],
+        |       [0.5, 0, 0.5, 0.5],
+        |       [0, 0.5, 0.5, 0.5]
         |     ]
         |   },
         |   'figures': [
@@ -35,6 +36,32 @@ class GGBunchNew {
         |            ]
         |}
         """.trimMargin()
+//        |       { 'origin': [0, 0], 'size': [0.5, 0.5] },
+//        |       { 'origin': [0.5, 0], 'size': [0.5, 0.5] },
+//        |       { 'origin': [0, 0.5], 'size': [0.5, 0.5] }
+        return parsePlotSpec(spec)
+    }
+
+    private fun plotBunchAutoLayout(): MutableMap<String, Any> {
+        val spec = """
+        |{
+        |   'kind': 'subplots',
+        |   'layout': {
+        |     'name': 'free',
+        |     'regions': [
+        |       [0, 0, 0.5, 0.5]
+        |     ]
+        |   },
+        |   'figures': [
+        |                 ${onePlotSpecStr("blue")},
+        |                 ${onePlotSpecStr("red")},
+        |                 ${onePlotSpecStr("magenta")}
+        |            ]
+        |}
+        """.trimMargin()
+//        |       { 'origin': [0, 0], 'size': [0.5, 0.5] },
+//        |       { 'origin': [0.5, 0], 'size': [0.5, 0.5] },
+//        |       { 'origin': [0, 0.5], 'size': [0.5, 0.5] }
         return parsePlotSpec(spec)
     }
 
@@ -43,6 +70,7 @@ class GGBunchNew {
         val spec = """
         |{
         |   'kind': 'plot',
+        |   'theme': {'name': 'bw'},
         |   'data': {'x': [1, 2, 3], 'y': [0, 3, 1]},
         |   'mapping':  {
         |                   'x': 'x',
