@@ -159,6 +159,14 @@ internal open class TooltipLayoutTestBase {
         if (shouldCheck(expectedTooltip.stemY())) {
             assertDoubleEquals("stemY", expectedTooltip.stemY()!!, actual.stemCoord().y)
         }
+
+        if (shouldCheck(expectedTooltip.coveredPoint())) {
+            assertTrue { actual.rect().contains(expectedTooltip.coveredPoint()!!) }
+        }
+
+        if (shouldCheck(expectedTooltip.notCoveredPoint())) {
+            assertTrue { !actual.rect().contains(expectedTooltip.notCoveredPoint()!!) }
+        }
     }
 
     private fun assertDoubleEquals(message: String, expected: Double, actual: Double) {
@@ -212,6 +220,17 @@ internal open class TooltipLayoutTestBase {
 
         fun cursor(cursor: DoubleVector): TipLayoutManagerBuilder {
             myCursor = cursor
+            return this
+        }
+
+        fun cursor(x: Number, y: Number): TipLayoutManagerBuilder {
+            myCursor = DoubleVector(x, y)
+            return this
+        }
+
+        fun setTooltips(vararg tooltips: MeasuredTooltip): TipLayoutManagerBuilder {
+            myTooltipData.clear()
+            myTooltipData.addAll(tooltips)
             return this
         }
 
@@ -286,6 +305,8 @@ internal open class TooltipLayoutTestBase {
         private var text: String? = null
         private var tooltipX: Double? = null
         private var tooltipY: Double? = null
+        private var coveredPoint: DoubleVector? = null
+        private var notCoveredPoint: DoubleVector? = null
         private var stemX: Double? = null
         private var stemY: Double? = null
 
@@ -304,10 +325,28 @@ internal open class TooltipLayoutTestBase {
             return this
         }
 
+        fun coversThePoint(coveredPoint: DoubleVector): ExpectedTooltip {
+            this.coveredPoint = coveredPoint
+            return this
+        }
+
+        fun doesNotCoverThePoint(notCoveredPoint: DoubleVector): ExpectedTooltip {
+            this.notCoveredPoint = notCoveredPoint
+            return this
+        }
+
         fun tooltipCoord(tooltipCoord: DoubleVector): ExpectedTooltip {
             this.tooltipX = tooltipCoord.x
             this.tooltipY = tooltipCoord.y
             return this
+        }
+
+        fun coveredPoint(): DoubleVector? {
+            return coveredPoint
+        }
+
+        fun notCoveredPoint(): DoubleVector? {
+            return notCoveredPoint
         }
 
         fun stemCoord(stemCoord: DoubleVector): ExpectedTooltip {

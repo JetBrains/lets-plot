@@ -223,13 +223,183 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         val bottomOriented = expect().tooltipY(45.0).tooltipX(490.0)
 
-        // Not enough space to orient the tooltip to the top
+        // Not enough space to orient the tooltip to the top - move to the bottom
         arrange(layoutManagerController.cursor(DoubleVector(520, 7)).build())
         assertAllTooltips(bottomOriented)
 
-        // Even if the cursor is above the tooltip, the tooltip should be moved to the bottom position
+        // Even if the cursor covers the tooltip, the tooltip should be moved to the bottom position
         arrange(layoutManagerController.cursor(DoubleVector(520, 59)).build())
         assertAllTooltips(bottomOriented)
+    }
+
+    @Test
+    fun `very long tooltip may cover target if no space available`() {
+        val tooltipHeight = 400
+        val targetOffset = 12 + 4 // the stem + object radius
+        val tooltipFactory = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(4.0)
+            .defaultTipSize(70, tooltipHeight)
+
+        val geomBounds = DoubleRectangle.XYWH(0, 0, 800, 600)
+        val targetX = geomBounds.center.x
+        val topAlignmentOffset = targetOffset + tooltipHeight
+        val bottomAlignmentOffset = targetOffset
+
+        val plotState = createTipLayoutManagerBuilder(viewport = geomBounds)
+
+        // not enough space for the tooltip
+        run {
+            val centerTooltip = tooltipFactory.vertical("center", DoubleVector(targetX, geomBounds.center.y)).buildTooltip()
+            plotState.setTooltips(centerTooltip)
+
+            // cursor covers the tooltip
+            arrange(plotState.cursor(centerTooltip.hintCoord).build())
+            assertAllTooltips(expect()
+                .tooltipY(centerTooltip.hintCoord.y - centerTooltip.size.y / 2) // centered vertically
+                .coversThePoint(centerTooltip.hintCoord)
+            )
+        }
+
+        // enough space for the tooltip with the bottom orientation
+        run {
+            val topTooltip = tooltipFactory.vertical("top", DoubleVector(targetX, geomBounds.top)).buildTooltip()
+            plotState.setTooltips(topTooltip)
+
+            // cursor doesn't cover the tooltip
+            arrange(plotState.cursor(topTooltip.hintCoord).build())
+            assertAllTooltips(expect()
+                .tooltipY(topTooltip.hintCoord.y + bottomAlignmentOffset) // bottom position
+                .doesNotCoverThePoint(topTooltip.hintCoord)
+            )
+        }
+
+        // enough space for the tooltip with the bottom orientation
+        run {
+            val bottomTooltip = tooltipFactory.vertical("bottom", DoubleVector(targetX, geomBounds.bottom)).buildTooltip()
+            plotState.setTooltips(bottomTooltip)
+
+            // cursor doesn't cover the tooltip
+            arrange(plotState.cursor(bottomTooltip.hintCoord).build())
+            assertAllTooltips(expect()
+                .tooltipY(bottomTooltip.hintCoord.y - topAlignmentOffset) // top position
+                .doesNotCoverThePoint(bottomTooltip.hintCoord)
+            )
+        }
+    }
+
+    @Test
+    fun `tooltip should never cover the target point if there is enough space for either bottom or top orientation`() {
+        val tooltipHeight = 50
+        val tooltipWidth = 70
+        val targetOffset = 12 + 4 // the stem + object radius
+        val tooltipOffset = tooltipHeight + targetOffset + 10 // stem length + padding from the border
+        val tooltipFactory = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(4.0)
+            .defaultTipSize(tooltipWidth, tooltipHeight)
+
+        val geomBounds = DoubleRectangle.XYWH(0, 0, 800, 600)
+        val targetX = geomBounds.center.x
+        val overlappingOffset = targetOffset + 20 // cursor overlapping the tooltip
+        val topAlignmentOffset = targetOffset + tooltipHeight
+        val bottomAlignmentOffset = targetOffset
+
+        val plotState = createTipLayoutManagerBuilder(viewport = geomBounds)
+
+        run {
+            val topTooltip = tooltipFactory.vertical("top", DoubleVector(targetX, geomBounds.top)).buildTooltip()
+            plotState.setTooltips(topTooltip)
+
+            // cursor doesn't cover the tooltip
+            arrange(plotState.cursor(topTooltip.hintCoord).build())
+            // Not enough top space - orient to the bottom
+            assertAllTooltips(expect()
+                .tooltipY(topTooltip.hintCoord.y + bottomAlignmentOffset)
+                .doesNotCoverThePoint(topTooltip.hintCoord)
+            ) // bottom position
+
+            // cursor covers the tooltip in bottom position
+            arrange(plotState.cursor(targetX, topTooltip.hintCoord.y + overlappingOffset).build())
+            // Not enough top space - keep the bottom position
+            assertAllTooltips(expect()
+                .tooltipY(topTooltip.hintCoord.y + bottomAlignmentOffset)
+                .doesNotCoverThePoint(topTooltip.hintCoord)
+            )
+        }
+
+        run {
+            val upperTooltip = tooltipFactory.vertical("upper", DoubleVector(targetX, geomBounds.top + tooltipOffset)).buildTooltip()
+            plotState.setTooltips(upperTooltip)
+
+            // cursor doesn't cover the tooltip
+            arrange(plotState.cursor(upperTooltip.hintCoord).build())
+            // Enough top space - orient to the top
+            assertAllTooltips(expect()
+                .tooltipY(upperTooltip.hintCoord.y - topAlignmentOffset)
+                .doesNotCoverThePoint(upperTooltip.hintCoord)
+            ) // top position
+
+            // cursor covers the tooltip in top position
+            arrange(plotState.cursor(targetX, upperTooltip.hintCoord.y - overlappingOffset).build())
+            assertAllTooltips(expect()
+                .tooltipY(upperTooltip.hintCoord.y + bottomAlignmentOffset)
+                .doesNotCoverThePoint(upperTooltip.hintCoord)
+            ) // bottom position
+
+            // cursor covers the tooltip in bottom position
+            arrange(plotState.cursor(targetX, upperTooltip.hintCoord.y + overlappingOffset).build())
+            assertAllTooltips(expect()
+                .tooltipY(upperTooltip.hintCoord.y - topAlignmentOffset)
+                .doesNotCoverThePoint(upperTooltip.hintCoord)
+            ) // top position
+        }
+
+        run {
+            val lowerTooltip = tooltipFactory.vertical("lower", DoubleVector(targetX, geomBounds.bottom - tooltipOffset)).buildTooltip()
+            plotState.setTooltips(lowerTooltip)
+
+            // cursor doesn't cover the tooltip
+            arrange(plotState.cursor(lowerTooltip.hintCoord).build())
+            // Enough top space - orient to the top
+            assertAllTooltips(expect()
+                .tooltipY(lowerTooltip.hintCoord.y - topAlignmentOffset)
+                .doesNotCoverThePoint(lowerTooltip.hintCoord)
+            )
+
+            // cursor covers the tooltip in top position
+            arrange(plotState.cursor(targetX, lowerTooltip.hintCoord.y - overlappingOffset).build())
+            assertAllTooltips(expect()
+                .tooltipY(lowerTooltip.hintCoord.y + bottomAlignmentOffset)
+                .doesNotCoverThePoint(lowerTooltip.hintCoord)
+            ) // bottom position
+
+            // cursor covers the tooltip in bottom position
+            arrange(plotState.cursor(targetX, lowerTooltip.hintCoord.y + overlappingOffset).build())
+            assertAllTooltips(expect()
+                .tooltipY(lowerTooltip.hintCoord.y - topAlignmentOffset)
+                .doesNotCoverThePoint(lowerTooltip.hintCoord)
+            ) // top position
+        }
+
+        run {
+            val bottomTooltip = tooltipFactory.vertical("bottom", DoubleVector(targetX, geomBounds.bottom)).buildTooltip()
+            plotState.setTooltips(bottomTooltip)
+
+            // cursor doesn't cover the tooltip
+            arrange(plotState.cursor(bottomTooltip.hintCoord).build())
+            // Not enough top space - orient to the bottom
+            assertAllTooltips(expect()
+                .tooltipY(bottomTooltip.hintCoord.y - topAlignmentOffset)
+                .doesNotCoverThePoint(bottomTooltip.hintCoord)
+            )
+
+            // cursor covers the tooltip in top position
+            arrange(plotState.cursor(targetX, bottomTooltip.hintCoord.y - overlappingOffset).build())
+            // Not enough bottom space - keep the top position
+            assertAllTooltips(expect()
+                .tooltipY(bottomTooltip.hintCoord.y - topAlignmentOffset)
+                .doesNotCoverThePoint(bottomTooltip.hintCoord)
+            )
+        }
     }
 
     companion object {

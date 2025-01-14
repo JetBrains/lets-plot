@@ -91,8 +91,8 @@ internal class MeasuredTooltipBuilder private constructor(
             return this
         }
 
-        fun defaultTipSize(x: Double, y: Double): MeasuredTooltipBuilderFactory {
-            return defaultTipSize(DoubleVector(x, y))
+        fun defaultTipSize(w: Number, h: Number): MeasuredTooltipBuilderFactory {
+            return defaultTipSize(DoubleVector(w, h))
         }
 
         fun defaultObjectRadius(v: Double): MeasuredTooltipBuilderFactory {
