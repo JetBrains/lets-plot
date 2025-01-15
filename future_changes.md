@@ -4,8 +4,7 @@
 
 ### Changed
 
-- The defaults for switching to exponential notation on automatically generated axis breaks
-  are set to match similar defaults from the `theme()` (`lower_exp_bound`, `upper_exp_bound`).
+- Axis breaks: changed default `lower_exp_bound` to -7 and `upper_exp_bound` to 6 (same as in `theme(...)`).
 
 ### Fixed
 - Tooltip should not cover and hide the geometry that it provides info for [[#1275](https://github.com/JetBrains/lets-plot/issues/1275)].
