@@ -34,8 +34,8 @@ val pomDependencies = listOf(
     // Lets-Plot JVM common.
     listOf(project.group, "lets-plot-common", project.version),
     // Lets-Plot core artifacts.
-    listOf(project.group, "platf-awt-jvm", project.version),
-    listOf(project.group, "platf-batik-jvm", project.version),
+    listOf(project.group, "platf-awt", project.version),
+    listOf(project.group, "platf-batik", project.version),
     // Batik.
     listOf("org.apache.xmlgraphics", "batik-codec", batikVersion)
 )

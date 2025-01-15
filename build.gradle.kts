@@ -250,7 +250,7 @@ subprojects {
         apply(plugin = "maven-publish")
 
         configure<KotlinJvmProjectExtension> {
-            tasks.register<Jar>("${name}-jvm-sources") {
+            tasks.register<Jar>("${name}-sources") {
                 archiveClassifier.set("sources")
                 from(sourceSets.getByName("main").kotlin.srcDirs)
             }
@@ -258,7 +258,7 @@ subprojects {
 
         configure<PublishingExtension> {
             publications {
-                register("$name-jvm", MavenPublication::class) {
+                register(name, MavenPublication::class) {
                     groupId = project.group as String
                     artifactId = name
                     version = project.version as String
@@ -278,9 +278,9 @@ subprojects {
         apply(plugin = "signing")
         // Do not publish 'native' targets:
         val targetsToPublish = listOf(
-            "platf-awt-jvm",
-            "platf-batik-jvm",
-            "platf-jfx-swing-jvm",
+            "platf-awt",
+            "platf-batik",
+            "platf-jfx-swing",
             "jvm",
             "js",
             "kotlinMultiplatform",
