@@ -18,3 +18,13 @@ def test_gggrid_plus_unsupported():
 def test_unsupported_plus_gggrid():
     with pytest.raises(TypeError):
         spec = FeatureSpec(kind='unsupported test feature', name=None) + gg.gggrid([gg.ggplot()])
+
+
+def test_ggunch_plus_unsupported():
+    with pytest.raises(TypeError):
+        spec = gg.ggbunch([gg.ggplot()]) + FeatureSpec(kind='unsupported test feature', name=None)
+
+
+def test_unsupported_plus_ggbunch():
+    with pytest.raises(TypeError):
+        spec = FeatureSpec(kind='unsupported test feature', name=None) + gg.ggbunch([gg.ggplot()])
