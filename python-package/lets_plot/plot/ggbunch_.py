@@ -12,31 +12,53 @@ from .subplots_util import _strip_theme_if_global
 __all__ = ['ggbunch']
 
 
-# ggbunch(
-#     [p1, p2, p3, p4],
-#     (1, 1, 2, 2),
-#     (1, 1, 2, 2),
-#     (1, 1, 2, 2),
-#     (1, 1, 2, 2),
-# )
-
-
 def ggbunch(plots: List,
             *regions: Tuple[float, float, float, float]
             ) -> SupPlotsSpec:
     """
-    Combine several plots on one figure, organized in a regular grid.
+    Combine several plots into a single figure with custom layout.
 
     Parameters
     ----------
-    plots : list
-        A list of plot specifications. ToDo...
+    plots : List
+        A list where each element is one of:
+        - a plot specification
+        - a subplots specification
+        - None
+    *regions : Tuple[float, float, float, float]
+        Layout parameters for each plot. Each region is specified as
+        (x, y, width, height) where:
+        - x, y: Position of the plot's top-left corner in relative coordinates
+          ([0,0] is top-left corner, [1,1] is bottom-right corner of the container)
+        - width, height: Size of the plot relative to container dimensions
+          (1.0 equals full container width/height)
 
     Returns
     -------
     `SupPlotsSpec`
-        The plor bunch specification.
+        A specification describing the combined figure with all plots and their layout.
 
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.gamma(2.0, size=100)}
+        p1 = ggplot(data, aes(x='x')) + \
+            geom_histogram(aes(color='x', fill='x'))
+                gggrid(plot_list, ncol=1) + ggsize(400, 300)
+        p2 = ggplot(data, aes(x='x')) + \
+            geom_density() + theme_bw() + theme(axis='blank', panel_grid='blank')
+        ggbunch(
+            [p1, p2],
+            (0, 0, 1, 1),
+            (0.5, 0.1, 0.3, 0.3)
+        ) + ggsize(400, 300)
 
     """
 
