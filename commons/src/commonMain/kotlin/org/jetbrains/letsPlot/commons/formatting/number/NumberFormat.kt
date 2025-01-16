@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.forma
 import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatExponentNotation
 import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatGeneralNotation
 import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatSiNotation
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType.entries
 import kotlin.math.ceil
 
 
@@ -238,7 +237,7 @@ class NumberFormat(spec: Spec) {
 
         // Number that triggers exponential notation (too small value to be formatted as a simple number).
         // Same as in JS (see toPrecision) and D3.format.
-        const val DEF_MIN_EXP = -7
+        private const val DEF_MIN_EXP = -7
 
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
 

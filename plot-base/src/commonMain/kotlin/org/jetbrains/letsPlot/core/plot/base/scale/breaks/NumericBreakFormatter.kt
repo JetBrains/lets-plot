@@ -65,7 +65,7 @@ internal class NumericBreakFormatter(
     fun apply(value: Any): String = formatter.apply(value as Number)
 
     companion object {
-        const val DEF_MIN_EXP = -5
-        const val DEF_MAX_EXP = 7
+        const val DEF_MIN_EXP = -7 // Constant duplication, see NumberFormat.DEF_MIN_EXP
+        const val DEF_MAX_EXP = 6 // Hidden coupling, see NumberFormat.DEF_PRECISION
     }
 }
