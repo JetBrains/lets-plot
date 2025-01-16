@@ -61,7 +61,11 @@ object SpecTransformBackendUtil {
             when (PlotConfig.figSpecKind(spec)) {
                 FigKind.PLOT_SPEC -> processTransformIntern(spec)
                 FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(spec)
-                FigKind.GG_BUNCH_SPEC -> processTransformInBunch(spec)
+                FigKind.GG_BUNCH_SPEC -> {
+                    val bunchSpecOld = processTransformInBunch(spec)
+                    // No 'GG_BUNCH_SPEC' beyond this point
+                    SpecGGBunchTransformBackendUtil.ggbunchFromGGBunch(bunchSpecOld)
+                }
             }
 
         } catch (e: RuntimeException) {
@@ -72,7 +76,9 @@ object SpecTransformBackendUtil {
 
             val message = when (vegaLiteConverterSummary) {
                 null -> failureInfo.message
-                else -> failureInfo.message + "\n\nVega-Lite converter messages:\n" + vegaLiteConverterSummary.joinToString("\n")
+                else -> failureInfo.message + "\n\nVega-Lite converter messages:\n" + vegaLiteConverterSummary.joinToString(
+                    "\n"
+                )
             }
 
             HashMap(PlotConfig.failure(message))
