@@ -4,6 +4,7 @@
 #
 # Script parameters required:
 # - OS architecture ('x86_64' or 'arm64')
+# - CPython version ('cp3XX': cp38, cp310)
 
 
 set -e
@@ -12,6 +13,7 @@ set -e
 if [[ -z "$1" ]]
 then
   printf "Set OS architecture parameter."
+  exit 1
 elif [[ "$1" = "x86_64" ]]
 then
   arch="$1"
@@ -28,6 +30,14 @@ else
   exit 1
 fi
 
+if [[ -z "$2" ]]
+then
+  printf "Set Python version parameter."
+  exit 1
+else
+  cpython_version=$2
+fi
+
 root_path=$PWD
 python_extension_path="${root_path}/python-extension"
 python_package_path="${root_path}/python-package"
@@ -41,6 +51,7 @@ echo "Started manylinux packages build for ${arch} on ${platform_name}..."
 echo "-------------------------"
 docker run --rm \
   -e ARCH=$arch \
+  -e CPYTHON_VERSION=$cpython_version \
   -e PLAT=$platform_name \
   -e USER_ID=$sys_user_id \
   -e GROUP_ID=$sys_group_id \

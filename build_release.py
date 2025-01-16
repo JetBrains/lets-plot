@@ -74,26 +74,25 @@ def run_command(command):
     if process.returncode != 0:
         print_error_and_exit("Build failed. Check output.")
 
+def get_command_output(command):
+    # Runs shell-command and returns its output.
+    process = subprocess.check_output(command, stderr=None)
+    return process.decode().strip()
 
-def build_python_packages(build_command, architecture=None):
-    # Runs Python artifacts build commands. If 'architecture' argument was passed, adds it to shell command.
+
+def build_python_packages(build_command):
+    # Runs Python artifacts build commands.
     python_extension_build_command = [gradle_script_name, "python-extension:build"]
-    if architecture is not None:
-        python_extension_build_command += [f"-Parchitecture={architecture}"]
-        command = build_command + [architecture]
-    else:
-        command = build_command
     print_message(f"Building Python Extension...")
     run_command(python_extension_build_command + build_parameters)
     print_message(f"Building Python Package...")
-    run_command(command)
+    run_command(build_command)
 
 
 def get_python_architecture(python_bin_path):
+    # Hadles and returns Python architecture.
     supported_architectures = ["arm64", "x86_64", "AMD64"]
-    get_python_architecture_command = [f"{python_bin_path}/python", "-c", "import platform; print(platform.machine())"]
-    process = subprocess.check_output(get_python_architecture_command, stderr=None)
-    current_python_architecture = process.decode().strip()
+    current_python_architecture = get_command_output([f"{python_bin_path}/python", "-c", "import platform; print(platform.machine())"])
     if current_python_architecture in supported_architectures:
         return current_python_architecture
     else:
@@ -111,7 +110,7 @@ system = platform.system()
 # Define basic gradle commands for project build:
 if system == "Windows":
     # For Windows Gradle scipt should be called with another path and name:
-    gradle_script_name = ".\gradlew.bat"
+    gradle_script_name = ".\\gradlew.bat"
 elif system == "Linux" or system == "Darwin":
     # For Linux and Mac the standard name:
     gradle_script_name = "./gradlew"
@@ -124,43 +123,44 @@ python_extension_clean_command = [gradle_script_name, "python-extension:clean"]
 # Run Python artifacts build.
 if system == "Linux":
     # Define Linux-specific parameters.
-    # Python linux packages will be built inside Docker 'manylinux' containers (PEP 599).
+    # Python linux packages will be built inside Docker 'manylinux' containers (PEP 599) for
+    # all Python binaries, defined in the settings file.
+    
     # Docker containers will be run by the external shell script, depending on target architecture.
     python_package_build_command = ["./tools/run_manylinux_docker.sh"]
 
-    # So the only one Python host installation, defined in the settings file, is needed:
-    python_paths = list(python_settings.values())[0]
-
-    # Enable Python package to build Python extension module.
-    enable_python_package = "true"
-
-    # Collect all predefined parameters:
-    build_parameters = [
-        "-Pbuild_release=true",
-        "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
-        "-Ppython.include_path=%s" % (python_paths["include_path"]),
-        f"-Penable_python_package={enable_python_package}"
-    ]
-
     # Run JS artifact build first:
     gradle_js_build_command = [gradle_script_name, "js-package:build", "-Parchitecture=x86_64"]
-    run_command(gradle_js_build_command + build_parameters)
+    run_command(gradle_js_build_command)
 
-    # Run Python 'manylinux' packages build for x64 architecture:
-    build_python_packages(python_package_build_command, "x86_64")
+    # For each of supported architectures run manylinux build for all Python binaries,
+    # defined in the settings file.
+    for architecture in ["arm64", "x86_64"]:
+        for python_paths in python_settings.values():
+             # Collect all predefined parameters:
+            build_parameters = [
+                "-Pbuild_release=true",
+                "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
+                "-Ppython.include_path=%s" % (python_paths["include_path"]),
+                f"-Penable_python_package=true",
+                "-Parchitecture=%s" % architecture
+            ]
 
-    # Clean Python Extension artifacts before next Python packages build.
-    # Clean is required due to the fact that only one Native target can be built at once.
-    print_message("Clean Python extension artifacts before next build...")
-    run_command(python_extension_clean_command)
+            # Get current Python version in format 'cp3XX':
+            cpython_version = get_command_output([f"{python_paths["bin_path"]}/python",
+                                                  "-c",
+                                                  "import sys; print(f'cp{sys.version_info.major}{sys.version_info.minor}')"])
 
-    # Run Python 'manylinux' packages build for arm64 architecture:
-    build_python_packages(python_package_build_command, "arm64")
+            # Run Python 'manylinux' package build:
+            build_python_packages(python_package_build_command + [architecture, cpython_version])
+
+            # And clean Python Extension artifacts before the next iteration:
+            run_command(python_extension_clean_command)
+
+
 elif system == "Darwin" or system == "Windows":
     # For another systems (Windows, Mac), Python package will be built by Gradle task
     # for all Python binaries, defined in the settings file.
-    # Enable Python Extension and packages build by Gradle:
-    enable_python_package = "true"
 
     # Define Gradle command for Python packages build:
     python_package_build_command = [gradle_script_name, "python-package-build:build"]
@@ -172,7 +172,7 @@ elif system == "Darwin" or system == "Windows":
             "-Pbuild_release=true",
             "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
             "-Ppython.include_path=%s" % (python_paths["include_path"]),
-            f"-Penable_python_package={enable_python_package}",
+            f"-Penable_python_package=true",
             "-Parchitecture=%s" % (get_python_architecture(python_paths["bin_path"]))
         ]
 
