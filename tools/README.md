@@ -26,8 +26,8 @@ it also can be run manually from the project root:
 ```
 ./tools/run_manylinux_docker.sh <architecture> <cpython_version>
 ```
-where `<arch>` is `x86_64` or `arm64`, and `<cpython_version>` - Python version in `cp3XX` format.
-For example: run build for Python 3.11 and arm64:
+where `<arch>` is `x86_64` or `arm64`, and `<cpython_version>` - Python version in `cp3XX` format.<br>
+For example, run build for Python 3.11 and arm64:
 ```
 ./tools/run_manylinux_docker.sh arm64 cp311
 ```

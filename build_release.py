@@ -90,7 +90,7 @@ def build_python_packages(build_command):
 
 
 def get_python_architecture(python_bin_path):
-    # Hadles and returns Python architecture.
+    # Handles and returns Python architecture.
     supported_architectures = ["arm64", "x86_64", "AMD64"]
     current_python_architecture = get_command_output([f"{python_bin_path}/python", "-c", "import platform; print(platform.machine())"])
     if current_python_architecture in supported_architectures:
@@ -109,7 +109,7 @@ system = platform.system()
 
 # Define basic gradle commands for project build:
 if system == "Windows":
-    # For Windows Gradle scipt should be called with another path and name:
+    # For Windows Gradle script should be called with another path and name:
     gradle_script_name = ".\\gradlew.bat"
 elif system == "Linux" or system == "Darwin":
     # For Linux and Mac the standard name:
@@ -137,7 +137,7 @@ if system == "Linux":
     # defined in the settings file.
     for architecture in ["arm64", "x86_64"]:
         for python_paths in python_settings.values():
-             # Collect all predefined parameters:
+            # Collect all predefined parameters:
             build_parameters = [
                 "-Pbuild_release=true",
                 "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
