@@ -22,10 +22,7 @@ object PlotSizeUtil {
 
         return when (PlotConfig.figSpecKind(figureSpec)) {
 
-            FigKind.GG_BUNCH_SPEC -> {
-                // Don't scale GGBunch.
-                PlotSizeHelper.plotBunchSize(figureSpec)
-            }
+            FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
 
             FigKind.SUBPLOTS_SPEC -> {
                 // Subplots figure has flexible size.

@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.spec.transform.migration
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
-import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransformUtil
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
@@ -41,10 +40,8 @@ import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
  * ]
 </pre> *
  *
+ * Note: this migration is no longer needed, but we keep it for reference, just in case we need another migration.
  *
- *
- *
- * ToDo: add test
  */
 class MoveGeomPropertiesToLayerMigration : SpecChange {
 
@@ -63,11 +60,8 @@ class MoveGeomPropertiesToLayerMigration : SpecChange {
     }
 
     companion object {
-        fun specSelector(isGGBunch: Boolean): SpecSelector {
+        fun specSelector(): SpecSelector {
             val parts = ArrayList<String>()
-            if (isGGBunch) {
-                parts.addAll(PlotSpecTransformUtil.GGBUNCH_KEY_PARTS.toList())
-            }
             parts.add(Plot.LAYERS)
             return SpecSelector.from(parts)  // apply to each element in 'layers' list (i.e. to layer spec)
         }

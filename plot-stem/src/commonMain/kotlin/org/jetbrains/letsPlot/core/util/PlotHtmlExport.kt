@@ -125,9 +125,7 @@ object PlotHtmlExport {
                     )
                 }
 
-                FigKind.GG_BUNCH_SPEC -> {
-                    PlotSizeHelper.plotBunchSize(plotSpec)
-                }
+                FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
             }
         } catch (e: RuntimeException) {
             return null

@@ -8,19 +8,18 @@ package org.jetbrains.letsPlot.core.spec.back.transform
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
-import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
-import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
-import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.CorrPlotSpecChange
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.QQPlotSpecChange
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.WaterfallPlotSpecChange
+import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
+import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
+import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 
 object PlotConfigBackendTransforms {
     fun migrationTransform(): PlotSpecTransform {
-        // ToDo: remove after all input is updated (demo, test, sci ide)
         return PlotSpecTransform.builderForRawSpec()
             .change(
-                MoveGeomPropertiesToLayerMigration.specSelector(false),
+                MoveGeomPropertiesToLayerMigration.specSelector(),
                 MoveGeomPropertiesToLayerMigration()
             )
             .build()

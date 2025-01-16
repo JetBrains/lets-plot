@@ -51,7 +51,7 @@ object PlotImageExport {
 
 
     /**
-     * @param plotSpec Raw specification of a plot or GGBunch.
+     * @param plotSpec Raw specification of a plot.
      * @param format Output image format. PNG, TIFF or JPEG (supports quality parameter).
      * @param scalingFactor Factor for output image resolution.
      * @param targetDPI A resolution value to put in the output image metadata. NaN - leave the metadata empty.
