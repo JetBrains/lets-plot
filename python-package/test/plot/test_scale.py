@@ -145,3 +145,31 @@ def test_scale_color_discrete():
     assert as_dict['scale_mapper_kind'] == 'brewer'
     assert as_dict['palette'] == 'Set1'
     assert as_dict['discrete'] is True
+
+
+def test_scale_continuous():
+    spec = gg.ggplot() + gg.scale_continuous(['x', 'y'])
+
+    assert spec.as_dict()['scales'] == [
+        { 'aesthetic': 'x' },
+        { 'aesthetic': 'y' }
+    ]
+
+
+def test_scale_continuous_with_expand():
+    spec = gg.ggplot() + gg.scale_continuous(['x', 'y'], expand=[0, 0])
+
+    assert spec.as_dict()['scales'] == [
+        { 'aesthetic': 'x', 'expand': [0, 0] },
+        { 'aesthetic': 'y', 'expand': [0, 0] }
+    ]
+
+
+def test_scale_continuous_with_single_aes():
+    spec = gg.ggplot() + gg.scale_continuous('x')
+
+    assert spec.as_dict()['scales'] == [
+        { 'aesthetic': 'x' }
+    ]
+
+
