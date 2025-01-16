@@ -12,7 +12,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, g
 #
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
-           'geom_histogram', 'geom_dotplot', 'geom_bin2d',
+           'geom_histogram', 'geom_dotplot', 'geom_bin2d', 'geom_hex',
            'geom_tile', 'geom_raster',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
@@ -1405,6 +1405,32 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     """
     return _geom('bin2d',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 drop=drop,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
+             tooltips=None,
+             bins=None,
+             binwidth=None,
+             drop=None,
+             color_by=None, fill_by=None,
+             **other_args):
+    # TODO: docstrings
+    return _geom('hex',
                  mapping=mapping,
                  data=data,
                  stat=stat,

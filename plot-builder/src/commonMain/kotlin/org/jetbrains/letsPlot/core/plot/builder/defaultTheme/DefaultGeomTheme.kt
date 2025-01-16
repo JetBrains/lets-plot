@@ -70,7 +70,8 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.PIE -> PIE_SIZE
 
                 GeomKind.TILE,
-                GeomKind.BIN_2D -> ZERO_LINE_WIDTH
+                GeomKind.BIN_2D,
+                GeomKind.HEX -> ZERO_LINE_WIDTH
 
                 else -> COMMON_LINE_WIDTH
             }
@@ -86,7 +87,8 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.BAR,
                 GeomKind.PIE,
                 GeomKind.TILE,
-                GeomKind.BIN_2D -> colorTheme.paper()
+                GeomKind.BIN_2D,
+                GeomKind.HEX -> colorTheme.paper()
 
                 GeomKind.CONTOURF,
                 GeomKind.DENSITY2DF -> Color.TRANSPARENT
@@ -118,7 +120,8 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.HISTOGRAM,
                 GeomKind.SMOOTH,
                 GeomKind.TILE,
-                GeomKind.BIN_2D -> colorTheme.pen()
+                GeomKind.BIN_2D,
+                GeomKind.HEX -> colorTheme.pen()
 
                 else -> colorTheme.paper()
             }

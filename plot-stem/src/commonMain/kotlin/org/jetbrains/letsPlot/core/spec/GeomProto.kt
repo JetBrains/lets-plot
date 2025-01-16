@@ -43,6 +43,7 @@ class GeomProto(val geomKind: GeomKind) {
         return when (geomKind) {
             TILE,
             BIN_2D,
+            HEX,
             CONTOUR,
             CONTOURF,
             DENSITY2D,
@@ -67,6 +68,7 @@ class GeomProto(val geomKind: GeomKind) {
             DOT_PLOT -> DefaultSampling.DOT_PLOT
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
+            HEX -> DefaultSampling.HEX
             ERROR_BAR -> DefaultSampling.ERROR_BAR
             CROSS_BAR -> DefaultSampling.CROSS_BAR
             LINE_RANGE -> DefaultSampling.LINE_RANGE
@@ -202,6 +204,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[Q_Q_2_LINE] = qq2LineDefaults()
             DEFAULTS[FREQPOLY] = freqpolyDefaults()
             DEFAULTS[BIN_2D] = bin2dDefaults()
+            DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
         }
 
@@ -350,6 +353,12 @@ class GeomProto(val geomKind: GeomKind) {
         private fun bin2dDefaults(): Map<String, Any> {
             return mapOf(
                 Layer.STAT to "bin2d"
+            )
+        }
+
+        private fun hexDefaults(): Map<String, Any> {
+            return mapOf(
+                Layer.STAT to "identity" // TODO: replace with 'hex' stat later
             )
         }
 

@@ -92,6 +92,13 @@ class GeomProvider internal constructor(
             ) { Bin2dGeom() }
         }
 
+        fun hex(): GeomProvider {
+            return GeomProvider(
+                GeomKind.HEX,
+                HexGeom.HANDLES_GROUPS
+            ) { HexGeom() }
+        }
+
         fun errorBar(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.ERROR_BAR,

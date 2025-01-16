@@ -41,6 +41,7 @@ object DefaultSampling {
     // points
     val TILE = POINT    // optimized
     val BIN_2D = POINT
+    val HEX = POINT
     val JITTER = POINT
     val Q_Q = POINT
     val PIE = POINT

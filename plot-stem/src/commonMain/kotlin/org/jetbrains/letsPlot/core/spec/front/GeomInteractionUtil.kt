@@ -239,6 +239,7 @@ object GeomInteractionUtil {
             GeomKind.BOX_PLOT,
             GeomKind.CROSS_BAR,
             GeomKind.Y_DOT_PLOT,
+            GeomKind.HEX,
             GeomKind.BIN_2D,
             GeomKind.TILE -> return GeomTooltipSetup.bivariateFunction(
                 GeomTooltipSetup.AREA_GEOM,
@@ -444,6 +445,7 @@ object GeomInteractionUtil {
             GeomKind.CONTOUR,
             GeomKind.CONTOURF,
             GeomKind.BIN_2D,
+            GeomKind.HEX,
             GeomKind.DENSITY,
             GeomKind.DENSITY2D,
             GeomKind.DENSITY2DF,

@@ -33,6 +33,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
         PROVIDER[GeomKind.TILE] = GeomProvider.tile()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
+        PROVIDER[GeomKind.HEX] = GeomProvider.hex()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
         PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
         PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()
