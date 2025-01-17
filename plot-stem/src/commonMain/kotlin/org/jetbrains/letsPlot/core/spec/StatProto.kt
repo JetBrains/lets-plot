@@ -68,6 +68,8 @@ object StatProto {
                 )
             }
 
+            StatKind.BINHEX -> return BinHexStat() // TODO: Use parameters
+
             StatKind.DOTPLOT -> return configureDotplotStat(options)
 
             StatKind.CONTOUR -> {

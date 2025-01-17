@@ -358,7 +358,7 @@ class GeomProto(val geomKind: GeomKind) {
 
         private fun hexDefaults(): Map<String, Any> {
             return mapOf(
-                Layer.STAT to "identity" // TODO: replace with 'hex' stat later
+                Layer.STAT to "binhex"
             )
         }
 
