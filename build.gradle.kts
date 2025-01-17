@@ -47,85 +47,18 @@ allprojects {
     }
 }
 
-
-// Read build settings from commandline parameters (for build_release.py script):
-fun readPropertiesFromParameters() {
-    val properties = Properties()
-    if (project.hasProperty("enable_python_package")) {
-        properties["enable_python_package"] = project.property("enable_python_package")
-    }
-    if (properties.getProperty("enable_python_package").toBoolean()) {
-        properties["python.bin_path"] = project.property("python.bin_path")
-        properties["python.include_path"] = project.property("python.include_path")
-    }
-    if (!os.isWindows) {
-        properties["architecture"] = project.property("architecture")
-    }
-    for (property in properties) {
-        extra[property.key as String] = property.value
-    }
-}
-
-// Read build settings from local.properties:
-fun readPropertiesFromFile() {
-    val properties = Properties()
-    val localPropsFileName = "local.properties"
-
-    if (project.file(localPropsFileName).exists()) {
-        properties.load(project.file(localPropsFileName).inputStream())
-    } else {
-        throw FileNotFoundException(
-            "$localPropsFileName file not found!\n" +
-                    "Check ${localPropsFileName}_template file for the template."
-        )
-    }
-
-    if (!os.isWindows) {
-        // Only 64bit version can be built for Windows, so the arch parameter is not needed and may not be set.
-        assert(properties["architecture"] != null)
-    }
-
-    if (properties.getProperty("enable_python_package").toBoolean()) {
-        val pythonBinPath = properties["python.bin_path"]
-        val pythonIncludePath = properties["python.include_path"]
-
-        assert(pythonBinPath != null)
-        assert(pythonIncludePath != null)
-
-        if (!os.isWindows) {
-            val execResult = providers.exec {
-                commandLine(
-                    "${pythonBinPath}/python",
-                    "-c",
-                    "import platform; print(platform.machine())"
-                )
-            }
-            val getArchOutput = execResult.standardOutput.asText.get()
-
-            val currentPythonArch = getArchOutput.toString().trim()
-            if (currentPythonArch != properties["architecture"]) {
-                throw IllegalArgumentException(
-                    "Project and Python architectures don't match!\n" +
-                            " - Value, from your '${localPropsFileName}' file: ${properties["architecture"]}\n" +
-                            " - Your Python architecture: ${currentPythonArch}\n" +
-                            "Check your '${localPropsFileName}' file."
-                )
-            }
-        }
-    }
-    for (property in properties) {
-        extra[property.key as String] = property.value
-    }
-}
-
+// Get project build settings.
 // For build_release.py settings will be read from commandline parameters.
 // In other cases, settings will be read from local.properties.
+var localProperties: Properties
 if (project.hasProperty("build_release")) {
-    readPropertiesFromParameters()
+    localProperties = readPropertiesFromParameters(project)
 } else {
-    readPropertiesFromFile()
+    localProperties = readLocalPropertiesFile()
 }
-
+for (property in localProperties) {
+    extra[property.key as String] = property.value
+}
 
 // Maven publication settings:
 // define local Maven Repository path:
