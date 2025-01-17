@@ -36,6 +36,7 @@ interface Context2d {
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
+    fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double)
     fun save()
     fun restore()
     fun setFillStyle(color: Color?)
@@ -60,7 +61,8 @@ interface Context2d {
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun setLineDash(lineDash: DoubleArray)
     fun setLineDashOffset(lineDashOffset: Double)
-    fun measureText(str: String): Double
+    fun measureTextWidth(str: String): Double
+    fun measureText(str: String): TextMetrics
 
     // https://github.com/d3/d3/blob/9364923ee2b35ec2eb80ffc4bdac12a7930097fc/src/svg/line.js#L236
     fun drawBezierCurve(points: List<Vec<*>>) {

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Font
 import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
 import java.awt.font.GlyphVector
@@ -213,6 +214,12 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath.append(path, true)
     }
 
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
+        val ellipse2D = Ellipse2D.Double(x - radiusX, y - radiusY, radiusX * 2, radiusY * 2)
+        val path = Path2D.Double(ellipse2D, graphics.transform)
+        currentPath.append(path, true)
+    }
+
     override fun save() {
         stack.add(state.copy())
     }
@@ -349,8 +356,16 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.stroke = state.stroke
     }
 
-    override fun measureText(str: String): Double {
+    override fun measureTextWidth(str: String): Double {
         return graphics.glyphVector(str).visualBounds.width
+    }
+
+    override fun measureText(str: String): TextMetrics {
+        return TextMetrics(
+            ascent = graphics.fontMetrics.ascent.toDouble(),
+            descent = graphics.fontMetrics.descent.toDouble(),
+            bbox = graphics.glyphVector(str).visualBounds.let { DoubleRectangle.XYWH(it.x, it.y, it.width, it.height) }
+        )
     }
 
     private companion object {

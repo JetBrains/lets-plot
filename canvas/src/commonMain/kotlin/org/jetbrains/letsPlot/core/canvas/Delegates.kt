@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.canvas
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
@@ -32,6 +32,7 @@ class Context2dDelegate : Context2d {
     override fun moveTo(x: Double, y: Double) { }
     override fun lineTo(x: Double, y: Double) { }
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { }
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) { }
     override fun save() { }
     override fun restore() { }
     override fun setFillStyle(color: Color?) { }
@@ -56,7 +57,7 @@ class Context2dDelegate : Context2d {
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { }
     override fun setLineDash(lineDash: DoubleArray) { }
     override fun setLineDashOffset(lineDashOffset: Double) { }
-    override fun measureText(str: String): Double { return 0.0}
+    override fun measureTextWidth(str: String): Double { return 0.0}
 }
 
 class CanvasDelegate(

@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.*
 
 typealias JfxFont = Font
 typealias JfxFontWeight = javafx.scene.text.FontWeight
@@ -157,6 +156,13 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.arc(x, y, radius, radius, -start, -length )
     }
 
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
+        myContext2d.beginPath()
+        myContext2d.moveTo(x + radiusX, y)
+        myContext2d.arc(x, y, radiusX, radiusY, 0.0, 360.0)
+        myContext2d.closePath()
+    }
+
     override fun save() {
         myContext2d.save()
     }
@@ -264,7 +270,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.lineDashOffset = lineDashOffset
     }
 
-    override fun measureText(str: String): Double {
+    override fun measureTextWidth(str: String): Double {
         val text = Text(str)
         text.font = myContext2d.font
         return text.layoutBounds.width

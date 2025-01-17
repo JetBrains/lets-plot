@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.platf.w3c.canvas
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.DomSnapshot
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineCap
@@ -16,6 +15,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineJoin
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextAlign
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextBaseLine
 import org.w3c.dom.*
+import kotlin.math.PI
 
 internal class DomContext2d(
     private val ctx: CanvasRenderingContext2D
@@ -103,6 +103,14 @@ internal class DomContext2d(
         ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
 
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
+        ctx.ellipse(x, y, radiusX, radiusY, 0.0, 0.0, 2 * PI)
+    }
+    override fun measureText(str: String): org.jetbrains.letsPlot.core.canvas.TextMetrics {
+        return org.jetbrains.letsPlot.core.canvas.TextMetrics(
+            actx.measureText(str).width
+    }
+
     override fun save() = ctx.save()
     override fun restore() = ctx.restore()
     override fun setFillStyle(color: Color?) {
@@ -182,6 +190,6 @@ internal class DomContext2d(
     override fun setLineDashOffset(lineDashOffset: Double) {
         ctx.lineDashOffset = lineDashOffset
     }
-    override fun measureText(str: String): Double = ctx.measureText(str).width
+    override fun measureTextWidth(str: String): Double = ctx.measureText(str).width
     override fun clearRect(rect: DoubleRectangle) = ctx.clearRect(rect.left, rect.top, rect.width, rect.height)
 }
