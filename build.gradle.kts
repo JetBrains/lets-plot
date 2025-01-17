@@ -156,6 +156,10 @@ val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
     group=letsPlotTaskGroup
 }
 
+val buildJvmModules by tasks.registering {
+    group=letsPlotTaskGroup
+}
+
 // Generating JavaDoc task for each publication task.
 // Fixes "Task ':canvas:publishJsPublicationToMavenRepository' uses this output of task ':canvas:signJvmPublication'
 // without declaring an explicit or implicit dependency" error.
@@ -274,6 +278,16 @@ subprojects {
 // Configure Maven publication for Lets-Plot Core modules.
 subprojects {
     if(name in multiPlatformCoreModulesForPublish + jvmCoreModulesForPublish) {
+
+        // Add JVM subprojects build tasks to buildJvmModules mets-task.
+        val subproject = project.findProject(":$name")
+        if (subproject != null) {
+            val subprojectBuildTask = subproject.tasks.getByName("build")
+            buildJvmModules.configure {
+                dependsOn += subprojectBuildTask
+            }
+        }
+
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
         // Do not publish 'native' targets:
