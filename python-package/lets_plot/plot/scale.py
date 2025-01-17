@@ -664,7 +664,7 @@ def _is_color_scale(aesthetic):
 
 def scale_continuous(aesthetic, *,
                      name=None, breaks=None, labels=None, lablim=None,
-                     limits=None, na_value=None, guide=None, trans=None, format=None,
+                     limits=None, expand=None, na_value=None, guide=None, trans=None, format=None,
                      scale_mapper_kind=None,
                      **kwargs):
     """
@@ -687,6 +687,10 @@ def scale_continuous(aesthetic, *,
         The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
     guide
@@ -733,6 +737,22 @@ def scale_continuous(aesthetic, *,
             coord_cartesian() + \\
             ggsize(600, 200)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+
+        d = {
+            'x': [0, 1, 2],
+            'y': [0, 1, 2]
+        }
+        ggplot(d) + \\
+            geom_point(aes(x='x', y='y'), size=15) + \\
+            scale_continuous(['x','y'], expand=[0, 0]) #  no expansion - points right on the edges
     """
     if _is_color_scale(aesthetic):
         scale_mapper_kind = 'color_gradient' if scale_mapper_kind is None else scale_mapper_kind
@@ -743,6 +763,7 @@ def scale_continuous(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
+                  expand=expand,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -1924,7 +1945,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 def scale_discrete(aesthetic, *,
                    direction=None,
-                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                   name=None, breaks=None, labels=None, lablim=None,
+                   limits=None, expand=None, na_value=None, guide=None, format=None,
                    scale_mapper_kind=None,
                    **kwargs):
     """
@@ -1951,6 +1973,10 @@ def scale_discrete(aesthetic, *,
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
     guide
@@ -1997,6 +2023,22 @@ def scale_discrete(aesthetic, *,
         ggplot() + geom_point(aes(x, y, color=z, fill=z), shape=21, size=4) + \\
             scale_discrete(aesthetic=['color', 'fill'], guide='none')
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+
+        d = {
+            'x': [0, 1, 2],
+            'y': [0, 1, 2]
+        }
+        ggplot(d) + \\
+            geom_point(aes(x='x', y='y'), size=15) + \\
+            scale_discrete(['x','y'], expand=[0, 0]) #  no expansion - points right on the edges
     """
     return _scale(aesthetic=aesthetic,
                   name=name,
@@ -2004,6 +2046,7 @@ def scale_discrete(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
+                  expand=expand,
                   na_value=na_value,
                   guide=guide,
                   format=format,
