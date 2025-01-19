@@ -58,6 +58,7 @@ class Context2dDelegate : Context2d {
     override fun setLineDash(lineDash: DoubleArray) { }
     override fun setLineDashOffset(lineDashOffset: Double) { }
     override fun measureTextWidth(str: String): Double { return 0.0}
+    override fun measureText(str: String): TextMetrics { return TextMetrics(0.0, 0.0, DoubleRectangle.LTRB(0, 0, 0, 0)) }
 }
 
 class CanvasDelegate(

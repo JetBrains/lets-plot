@@ -276,6 +276,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         return text.layoutBounds.width
     }
 
+    override fun measureText(str: String): TextMetrics {
+        TODO("Not yet implemented")
+    }
+
     override fun clearRect(rect: DoubleRectangle) {
         myContext2d.clearRect(rect.left, rect.top, rect.width, rect.height)
     }
