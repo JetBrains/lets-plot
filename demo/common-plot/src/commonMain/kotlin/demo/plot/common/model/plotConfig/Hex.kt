@@ -55,8 +55,8 @@ class Hex {
                 'text': 'Basic hex plot\nstat = default'
               },
               'data': {
-                'x': [-1, -1, 1, 1, 1],
-                'y': [-1, 1, -1, 1, 1]
+                'x': [-1, -1, 1, 1, 1, 0.000, 1.00, -0.5],
+                'y': [-1, 1, -1, 1, 1, 0.395, 0.32, 0]
               },
               'mapping': {
                 'x': 'x',
@@ -69,9 +69,10 @@ class Hex {
                 {
                   'geom': 'point',
                   'shape': 21,
-                  'size': 5,
+                  'size': 4,
                   'color': 'black',
-                  'fill': 'orange'
+                  'fill': 'orange',
+                  'alpha': 0.5
                 }
               ]
             }
