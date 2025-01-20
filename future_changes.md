@@ -1,6 +1,7 @@
-## [4.5.3] - 2024-mm-dd
+## [4.5.3] - 2025-mm-dd
 
 ### Added
+- `spacer` parameter in `image_matrix()`
 
 ### Changed
 

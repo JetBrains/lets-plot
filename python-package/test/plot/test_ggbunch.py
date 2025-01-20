@@ -33,12 +33,12 @@ expected_regions = {
     ({'regions': [(0.1, 1.1, 0.3, 1.1)]}, expected_regions),
     ({'regions': [[0.1, 1.1, 0.3, 1.1]]}, expected_regions),
 ])
-def test_gggrid(kwargs, expected):
+def test_ggbunch(kwargs, expected):
     regions = kwargs.get('regions', [])
     p = gg.ggplot(data={})
     if regions:
-        spec = gg.ggbunch([p], *regions)
+        spec = gg.ggbunch([p], regions)
     else:
-        spec = gg.ggbunch([p])
+        spec = gg.ggbunch([p], [])
 
     assert spec.as_dict() == expected

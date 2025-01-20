@@ -14,6 +14,6 @@ def test_gggrid_ggsize():
 
 
 def test_ggbunch_ggsize():
-    spec = gg.ggbunch([gg.ggplot()]) + gg.ggsize(5, 10)
+    spec = gg.ggbunch([gg.ggplot()], []) + gg.ggsize(5, 10)
     assert 'ggsize' in spec.as_dict()
     assert spec.as_dict()['ggsize'] == {'height': 10, 'width': 5}

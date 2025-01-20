@@ -13,7 +13,7 @@ __all__ = ['ggbunch']
 
 
 def ggbunch(plots: List,
-            *regions: Tuple[float, float, float, float]
+            regions: List[Tuple[float, float, float, float]]
             ) -> SupPlotsSpec:
     """
     Combine several plots into a single figure with custom layout.
@@ -25,7 +25,7 @@ def ggbunch(plots: List,
         - a plot specification
         - a subplots specification
         - None
-    *regions : Tuple[float, float, float, float]
+    regions : List[Tuple[float, float, float, float]]
         Layout parameters for each plot. Each region is specified as
         (x, y, width, height) where:
         - x, y: Position of the plot's top-left corner in relative coordinates
@@ -56,8 +56,8 @@ def ggbunch(plots: List,
             geom_density() + theme_bw() + theme(axis='blank', panel_grid='blank')
         ggbunch(
             [p1, p2],
-            (0, 0, 1, 1),
-            (0.5, 0.1, 0.3, 0.3)
+            [(0, 0, 1, 1),
+             (0.5, 0.1, 0.3, 0.3)]
         ) + ggsize(400, 300)
 
     """
@@ -76,7 +76,7 @@ def ggbunch(plots: List,
         if any(x <= 0 for x in region[2:]):
             raise ValueError(f"Region {i} sizes must be positive: {region}")
 
-    # Convert *regions (tuple of tuples) to list of lists
+    # Convert regions tuples to lists
     regions_list = [list(r) for r in regions]
     layout = SupPlotsLayoutSpec(
         name="free",
