@@ -13,7 +13,7 @@ __all__ = ['ggbunch']
 
 
 def ggbunch(plots: List,
-            regions: List[Tuple[float, float, float, float]]
+            regions: List[Tuple[float, float, float, float, float, float]]
             ) -> SupPlotsSpec:
     """
     Combine several plots into a single figure with custom layout.
@@ -25,13 +25,14 @@ def ggbunch(plots: List,
         - a plot specification
         - a subplots specification
         - None
-    regions : List[Tuple[float, float, float, float]]
+    regions : List[Tuple]
         Layout parameters for each plot. Each region is specified as
-        (x, y, width, height) where:
+        (x, y, width, height, dx, dy) where:
         - x, y: Position of the plot's top-left corner in relative coordinates
           ([0,0] is top-left corner, [1,1] is bottom-right corner of the container)
         - width, height: Size of the plot relative to container dimensions
-          (1.0 equals full container width/height)
+          (1 equal to the full container width/height)
+        - dx, dy: Pixel offsets to move the region (defaults to 0)
 
     Returns
     -------
@@ -67,13 +68,13 @@ def ggbunch(plots: List,
 
     # Validate provided regions
     for i, region in enumerate(regions):
-        if len(region) != 4:
-            raise ValueError(f"Region {i} must have exactly 4 values, got {len(region)}")
+        if len(region) not in (4, 6):
+            raise ValueError(f"Region {i} must have 4 or 6 values, got {len(region)}")
         if not all(isinstance(x, Number) for x in region):
             raise ValueError(f"Region {i} contains non-numeric values: {region}")
 
         # Validate size is positive
-        if any(x <= 0 for x in region[2:]):
+        if any(x <= 0 for x in region[2:4]):
             raise ValueError(f"Region {i} sizes must be positive: {region}")
 
     # Convert regions tuples to lists
