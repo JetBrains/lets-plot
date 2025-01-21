@@ -179,6 +179,7 @@ subprojects {
         "plot-base",
         "plot-builder",
         "plot-stem",
+        "plot-raster",
         "platf-native",
         "demo-and-test-shared"
     )
