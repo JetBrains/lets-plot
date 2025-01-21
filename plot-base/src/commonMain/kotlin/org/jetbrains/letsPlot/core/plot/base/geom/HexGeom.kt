@@ -55,6 +55,7 @@ class HexGeom : GeomBase() {
                     DoubleVector(origin.x, origin.y + height / sqrt(3.0)),
                     DoubleVector(origin.x - width / 2, origin.y + height / (2.0 * sqrt(3.0))),
                     DoubleVector(origin.x - width / 2, origin.y - height / (2.0 * sqrt(3.0))),
+                    DoubleVector(origin.x, origin.y - height / sqrt(3.0)), // Close the hexagon
                 )
             }
 

@@ -68,7 +68,8 @@ class HexagonsHelper(
                     decorateSlimShape(slimShape, p)
                     slimShape.appendTo(group)
                 } else {
-                    val clientHex = hex.mapNotNull { toClient(it, p) }.takeIf { it.size == 6 } ?: continue
+                    // Correct hexagon should have 7 points, including the closing one.
+                    val clientHex = hex.mapNotNull { toClient(it, p) }.takeIf { it.size == 7 } ?: continue
 
                     onGeometry(p, clientHex)
 
