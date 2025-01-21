@@ -6,7 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isBeyondPrecision
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -15,8 +18,16 @@ import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-// TODO: Add parameters as in the Bin2dStat
-class BinHexStat : BaseStat(DEF_MAPPING) {
+class BinHexStat(
+    binCountX: Int = DEF_BINS,
+    binCountY: Int = DEF_BINS,
+    binWidthX: Double? = DEF_BINWIDTH,
+    binWidthY: Double? = DEF_BINWIDTH,
+    private val drop: Boolean = DEF_DROP
+) : BaseStat(DEF_MAPPING) {
+    private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
+    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY)
+
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
@@ -26,17 +37,43 @@ class BinHexStat : BaseStat(DEF_MAPPING) {
             return withEmptyStatValues()
         }
 
+        val xRange = statCtx.overallXRange()
+        val yRange = statCtx.overallYRange()
+        if (xRange == null || yRange == null) {
+            return withEmptyStatValues()
+        }
+
+        // initial bin width and count
+
+        val xRangeInit = adjustRangeInitial(xRange)
+        val yRangeInit = adjustRangeInitial(yRange)
+
+        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX)
+        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY)
+
+        // final bin width and count
+
+        val xRangeFinal = adjustRangeFinal(xRange, xCountAndWidthInit.width)
+        val yRangeFinal = adjustRangeFinal(yRange, yCountAndWidthInit.width)
+
+        val xCountAndWidthFinal = BinStatUtil.binCountAndWidth(xRangeFinal.length, binOptionsX)
+        val yCountAndWidthFinal = BinStatUtil.binCountAndWidth(yRangeFinal.length, binOptionsY)
+
+        val countTotal = xCountAndWidthFinal.count * yCountAndWidthFinal.count
+        val densityNormalizingFactor =
+            densityNormalizingFactor(xRangeFinal.length, yRangeFinal.length, countTotal)
+
         val binsData = computeBins(
             data.getNumeric(TransformVar.X),
             data.getNumeric(TransformVar.Y),
-            -1.5, // TODO
-            -1.5, // TODO
-            3, // TODO
-            3, // TODO
-            1.0, // TODO
-            1.0, // TODO
+            xRangeFinal.lowerEnd,
+            yRangeFinal.lowerEnd,
+            xCountAndWidthFinal.count,
+            yCountAndWidthFinal.count,
+            xCountAndWidthFinal.width,
+            yCountAndWidthFinal.width,
             BinStatUtil.weightAtIndex(data),
-            1.0 // TODO
+            densityNormalizingFactor
         )
 
         return DataFrame.Builder()
@@ -67,8 +104,8 @@ class BinHexStat : BaseStat(DEF_MAPPING) {
         val counts = ArrayList<Double>()
         val densities = ArrayList<Double>()
 
-        val x0 = xStart + binWidth / 2
-        val y0 = yStart + binHeight / 2
+        val x0 = xStart + binWidth / 2.0
+        val y0 = yStart + binHeight / 2.0
         for (xIndex in 0 until binCountX) {
             for (yIndex in 0 until binCountY) {
                 val binIndexKey = Pair(xIndex, yIndex)
@@ -77,10 +114,14 @@ class BinHexStat : BaseStat(DEF_MAPPING) {
                     count = countByBinIndexKey[binIndexKey]!!
                 }
 
+                if (drop && count == 0.0) {
+                    continue
+                }
+
                 if (yIndex % 2 == 0) {
                     xs.add(x0 + xIndex * binWidth)
                 } else {
-                    xs.add(x0 + xIndex * binWidth + binWidth / 2)
+                    xs.add(x0 + xIndex * binWidth + binWidth / 2.0)
                 }
                 ys.add(y0 + yIndex * binHeight)
                 counts.add(count)
@@ -105,7 +146,7 @@ class BinHexStat : BaseStat(DEF_MAPPING) {
             p: DoubleVector
         ): Pair<Int, Int> {
             val j = floor((p.y - yStart) / binHeight).toInt()
-            val hexXStart = xStart + (j % 2) * binWidth / 2
+            val hexXStart = xStart + (j % 2) * binWidth / 2.0
             val i = floor((p.x - hexXStart) / binWidth).toInt()
             return Pair(i, j)
         }
@@ -177,10 +218,42 @@ class BinHexStat : BaseStat(DEF_MAPPING) {
     )
 
     companion object {
+        const val DEF_BINS = 30
+        val DEF_BINWIDTH: Double? = null
+        const val DEF_DROP = true
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.FILL to Stats.COUNT
         )
+
+        private fun adjustRangeInitial(r: DoubleSpan): DoubleSpan {
+            // span can't be 0
+            return ensureApplicableRange(r)
+        }
+
+        private fun adjustRangeFinal(r: DoubleSpan, binWidth: Double): DoubleSpan {
+            return if (isBeyondPrecision(r)) {
+                // 0 span always becomes 1
+                r.expanded(0.5)
+            } else {
+                // Expand range by half of bin width (arbitrary choise - can be any positive num) to
+                // avoid data-points on the marginal bin margines.
+                val exp = binWidth / 2.0
+                r.expanded(exp)
+            }
+        }
+
+        private fun densityNormalizingFactor(
+            xSpan: Double,
+            ySpan: Double,
+            count: Int
+        ): Double {
+            // density should integrate to 1.0
+            val area = xSpan * ySpan
+            val binArea = area / count
+            return 1.0 / binArea
+        }
     }
 }

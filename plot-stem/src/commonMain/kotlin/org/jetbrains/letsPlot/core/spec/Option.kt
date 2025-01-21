@@ -441,6 +441,12 @@ object Option {
             const val DROP = "drop"
         }
 
+        object BinHex {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val DROP = "drop"
+        }
+
         object Contour {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"

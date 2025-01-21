@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.stat.*
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin2d
+import org.jetbrains.letsPlot.core.spec.Option.Stat.BinHex
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Boxplot
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Contour
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density
@@ -68,7 +69,24 @@ object StatProto {
                 )
             }
 
-            StatKind.BINHEX -> return BinHexStat() // TODO: Use parameters
+            StatKind.BINHEX -> {
+                val (binCountX, binCountY) = options.getNumPairDef(
+                    BinHex.BINS,
+                    Pair(BinHexStat.DEF_BINS, BinHexStat.DEF_BINS)
+                )
+                val (binWidthX, binWidthY) = options.getNumQPairDef(
+                    BinHex.BINWIDTH,
+                    Pair(BinHexStat.DEF_BINWIDTH, BinHexStat.DEF_BINWIDTH)
+                )
+
+                return BinHexStat(
+                    binCountX = binCountX.toInt(),
+                    binCountY = binCountY.toInt(),
+                    binWidthX = binWidthX?.toDouble(),
+                    binWidthY = binWidthY?.toDouble(),
+                    drop = options.getBoolean(BinHex.DROP, def = BinHexStat.DEF_DROP)
+                )
+            }
 
             StatKind.DOTPLOT -> return configureDotplotStat(options)
 
