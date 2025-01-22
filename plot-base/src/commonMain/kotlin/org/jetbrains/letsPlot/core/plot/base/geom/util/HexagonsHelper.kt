@@ -10,10 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
-import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
+import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 
 class HexagonsHelper(
     private val myAesthetics: Aesthetics,
@@ -21,7 +18,7 @@ class HexagonsHelper(
     coord: CoordinateSystem,
     ctx: GeomContext,
     private val geometryFactory: (DataPointAesthetics) -> List<DoubleVector>?
-) : GeomHelper(pos, coord, ctx) {
+) : LinesHelper(pos, coord, ctx) {
     fun createSvgHexHelper(): SvgHexHelper {
         return SvgHexHelper()
     }
@@ -39,9 +36,9 @@ class HexagonsHelper(
             onGeometry = handler
         }
 
-        fun createSlimHexagons(): SvgSlimGroup {
+        fun createHexagons(): List<LinePath> {
             val pointCount = myAesthetics.dataPointCount()
-            val group = SvgSlimElements.g(pointCount)
+            val hexagons: MutableList<LinePath> = mutableListOf()
 
             for (index in 0 until pointCount) {
                 val p = myAesthetics.dataPointAt(index)
@@ -64,22 +61,22 @@ class HexagonsHelper(
 
                     onGeometry(p, simplified)
 
-                    val slimShape = SvgSlimElements.path(SvgPathDataBuilder().lineString(simplified).build())
-                    decorateSlimShape(slimShape, p)
-                    slimShape.appendTo(group)
+                    val element = LinePath.polygon(simplified)
+                    decorate(element, p, true)
+                    hexagons.add(element)
                 } else {
                     // Correct hexagon should have 7 points, including the closing one.
                     val clientHex = hex.mapNotNull { toClient(it, p) }.takeIf { it.size == 7 } ?: continue
 
                     onGeometry(p, clientHex)
 
-                    val slimShape = SvgSlimElements.path(SvgPathDataBuilder().lineString(clientHex).build())
-                    decorateSlimShape(slimShape, p)
-                    slimShape.appendTo(group)
+                    val element = LinePath.polygon(clientHex)
+                    decorate(element, p, true)
+                    hexagons.add(element)
                 }
 
             }
-            return group
+            return hexagons
         }
     }
 }

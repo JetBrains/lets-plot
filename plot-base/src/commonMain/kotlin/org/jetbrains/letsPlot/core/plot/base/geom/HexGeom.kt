@@ -29,9 +29,9 @@ class HexGeom : GeomBase() {
                 tooltipHelper.addTarget(p, hex)
             }
         }
-
-        val slimGroup = svgHexHelper.createSlimHexagons()
-        root.add(wrap(slimGroup))
+        svgHexHelper.createHexagons().forEach { hexLinePath ->
+            root.add(hexLinePath.rootGroup)
+        }
     }
 
     companion object {
