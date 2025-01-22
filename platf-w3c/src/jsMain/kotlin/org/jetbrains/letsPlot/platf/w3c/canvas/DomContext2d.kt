@@ -107,8 +107,7 @@ internal class DomContext2d(
         ctx.ellipse(x, y, radiusX, radiusY, 0.0, 0.0, 2 * PI)
     }
     override fun measureText(str: String): org.jetbrains.letsPlot.core.canvas.TextMetrics {
-        return org.jetbrains.letsPlot.core.canvas.TextMetrics(
-            actx.measureText(str).width
+        TODO("measureText")
     }
 
     override fun save() = ctx.save()

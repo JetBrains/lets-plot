@@ -175,6 +175,7 @@ fun getJarJavaDocsTask(distributeName:String): TaskProvider<Jar> {
 subprojects {
     val pythonExtensionModules = listOf(
         "commons",
+        "canvas",
         "datamodel",
         "plot-base",
         "plot-builder",

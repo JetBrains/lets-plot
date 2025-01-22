@@ -13,7 +13,6 @@ kotlin {
     js {
         browser {}
     }
-    linuxX64()
 
     sourceSets {
         commonMain {

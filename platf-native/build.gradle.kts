@@ -30,6 +30,12 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(project(":demo-and-test-shared"))
+                implementation(project(":canvas"))
+                implementation(project(":plot-raster"))
+                implementation("com.squareup.okio:okio:3.9.0")
+                implementation("org.jetbrains.skiko:skiko:0.8.18")
+                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+
             }
         }
     }

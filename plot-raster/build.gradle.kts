@@ -5,19 +5,15 @@
 
 plugins {
     kotlin("multiplatform")
-    //id("com.android.library")
     `maven-publish`
     signing
 }
 
-//val letsPlotVersion = extra["letsPlot.version"] as String
-//val kotlinLoggingVersion = extra["kotlinLogging.version"] as String
-//val assertjVersion = extra["assertj.version"] as String
+val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+val assertjVersion = extra["assertj_version"] as String
 
 kotlin {
-    //androidTarget {
-    //    publishLibraryVariants("release")
-    //}
+    jvm()
 
     sourceSets {
         commonMain {
@@ -28,28 +24,25 @@ kotlin {
                 compileOnly(project(":plot-base"))
                 compileOnly(project(":plot-stem"))
                 compileOnly(project(":plot-builder"))
+                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 
-//        named("jvmMain") {
-//            dependencies {
-////                compileOnly("org.jetbrains.skiko:skiko-awt:$skikoVersion")
-//                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-//            }
-//        }
+        named("jvmTest") {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.assertj:assertj-core:$assertjVersion")
+                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 
-//        named("jvmTest") {
-//            dependencies {
-//                implementation(kotlin("test"))
-//                implementation("org.assertj:assertj-core:$assertjVersion")
-//                implementation("org.jetbrains.lets-plot:commons:$letsPlotVersion")
-//                implementation("org.jetbrains.lets-plot:canvas:$letsPlotVersion")
-//                implementation("org.jetbrains.lets-plot:datamodel:$letsPlotVersion")
-//                implementation("org.jetbrains.lets-plot:platf-awt:$letsPlotVersion")
-//                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
-//                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-//            }
-//        }
+                implementation(project(":platf-awt"))
+                implementation(project(":canvas"))
+                implementation(project(":commons"))
+                implementation(project(":datamodel"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-stem"))
+                implementation(project(":plot-builder"))
+            }
+        }
 //
 //        nativeMain() {
 //            dependencies {
