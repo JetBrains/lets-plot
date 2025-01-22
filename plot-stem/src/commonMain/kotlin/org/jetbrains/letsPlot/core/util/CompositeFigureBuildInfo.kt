@@ -67,14 +67,14 @@ internal class CompositeFigureBuildInfo constructor(
     }
 
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
-        val plotMargins = theme.plot().plotMargins()
+        val plotLayoutMargins = theme.plot().layoutMargins()
         val leftTop = DoubleVector(
-            plotMargins.left,
-            plotMargins.top,
+            plotLayoutMargins.left,
+            plotLayoutMargins.top,
         )
         val marginsSize = DoubleVector(
-            plotMargins.width,
-            plotMargins.height,
+            plotLayoutMargins.width,
+            plotLayoutMargins.height,
         )
         val outerSize = bounds.dimension
         val elementsBounts = DoubleRectangle(leftTop, outerSize.subtract(marginsSize))

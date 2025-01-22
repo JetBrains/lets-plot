@@ -144,10 +144,6 @@ internal class FigureToHtml(
             val rootSvgSvg: SvgSvgElement = svgRoot.svg
             val domSVGSVG: SVGSVGElement = mapSvgToSVG(rootSvgSvg)
             val rootNode: Node = if (origin == null) {
-//                setupRootHTMLElement(
-//                    parentElement,
-//                    svgRoot.bounds.dimension
-//                )
                 domSVGSVG
             } else {
                 // Not a root - put in "container" with absolute positioning.

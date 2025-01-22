@@ -68,23 +68,28 @@ class DefaultTheme internal constructor(
 
     override fun colors(): ColorTheme = colors
 
+    /**
+     * Makes a 'theme' to be applied to sub-plots in composite figure.
+     */
     override fun toInherited(containerTheme: Theme): Theme {
         if (!(containerTheme is DefaultTheme)) return this  // can't inherit
 
         val inheritedOptions = containerTheme.options.mapValues { (k, v) ->
-            // Inherit all but color and size of container's background rect.
             when (k) {
                 ThemeOption.PLOT_BKGR_RECT -> {
                     mapOf(
+                        // Inherit background 'fill' color.
                         BLANK to !containerTheme.plot.showBackground(),
                         FILL to containerTheme.plot.backgroundFill(),
+                        // Do not inherit conteiner's border.
                         COLOR to this.plot.backgroundColor(),
                         SIZE to this.plot.backgroundStrokeWidth(),
                         LINETYPE to this.plot.backgroundLineType()
                     )
                 }
 
-                ThemeOption.PLOT_MARGIN -> with (this.plot.plotMargins()) {
+                ThemeOption.PLOT_MARGIN -> with(this.plot.plotMargins()) {
+                    // Do not inherit conteiner's margins.
                     mapOf(
                         Margin.TOP to top,
                         Margin.RIGHT to right,

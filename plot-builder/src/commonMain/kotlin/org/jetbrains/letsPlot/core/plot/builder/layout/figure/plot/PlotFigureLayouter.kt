@@ -146,12 +146,12 @@ internal class PlotFigureLayouter(
         val figureLayoutedBounds = if (figurePreferredSize == null) {
             DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
         } else {
-            val plotMargins = theme.plot().plotMargins()
+            val plotLayoutMargins = theme.plot().layoutMargins()
 
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
             // center the overall rect (without margins)
             val figureOverallSize = figureLayoutedSize.add(
-                DoubleVector(plotMargins.width, plotMargins.height)
+                DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height)
             )
             val delta = figurePreferredBounds.center.subtract(
                 DoubleRectangle(figurePreferredBounds.origin, figureOverallSize).center
@@ -159,7 +159,7 @@ internal class PlotFigureLayouter(
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
             val plotOuterOrigin = figurePreferredBounds.origin
                 .add(deltaApplied)
-                .add(DoubleVector(plotMargins.left, plotMargins.top)) // apply margins inside the overall rect
+                .add(DoubleVector(plotLayoutMargins.left, plotLayoutMargins.top)) // apply margins inside the overall rect
 
             DoubleRectangle(
                 plotOuterOrigin,

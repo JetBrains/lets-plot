@@ -240,7 +240,7 @@ class PlotSvgComponent constructor(
         }
 
         if (plotTheme.showBackground()) {
-            val plotInset = plotTheme.plotMargins() - Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
+            val plotInset = plotTheme.plotMargins() + Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
             val backgroundRect = plotInset.inflateRect(figureLayoutInfo.figureLayoutedBounds)
 
             val backgroundAreaPath = SvgPathDataBuilder().rect(backgroundRect)

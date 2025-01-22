@@ -33,5 +33,8 @@ interface Theme {
 
     fun colors(): ColorTheme
 
+    /**
+     * Makes a 'theme' to be applied to sub-plots in composite figure.
+     */
     fun toInherited(containerTheme: Theme): Theme
 }

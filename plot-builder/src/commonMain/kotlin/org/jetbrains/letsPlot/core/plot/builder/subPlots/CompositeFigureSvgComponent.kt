@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.subPlots
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -25,7 +26,9 @@ class CompositeFigureSvgComponent constructor(
         val plotTheme = theme.plot()
         if (plotTheme.showBackground()) {
             val r = DoubleRectangle(DoubleVector.ZERO, size)
-            add(SvgRectElement(r).apply {
+            val plotInset = Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
+            val backgroundRect = plotInset.shrinkRect(r)
+            add(SvgRectElement(backgroundRect).apply {
                 fillColor().set(plotTheme.backgroundFill())
                 strokeColor().set(plotTheme.backgroundColor())
                 strokeWidth().set(plotTheme.backgroundStrokeWidth())
