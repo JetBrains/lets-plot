@@ -161,8 +161,8 @@ def image_matrix(image_data_array,
             )
 
     return ggbunch(
-        figures,
-        *regions
+        plots=figures,
+        regions=regions
     ) + ggsize(
         bunch_width,
         bunch_height
