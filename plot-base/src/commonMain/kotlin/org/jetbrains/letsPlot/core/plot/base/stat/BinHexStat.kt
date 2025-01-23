@@ -177,48 +177,6 @@ class BinHexStat(
             return hexIds.filter { p -> p.first >= 0 && p.second >= 0 }.toSet()
         }
 
-        fun isPointInHexagon(
-            p: DoubleVector,
-            hexagonIndex: Pair<Int, Int>
-        ): Boolean {
-            val halfHexHeight = 2.0 * binHeight / 3.0
-            val center = DoubleVector(
-                xStart + binWidth / 2.0 + if (hexagonIndex.second % 2 == 0)
-                    hexagonIndex.first * binWidth
-                else
-                    hexagonIndex.first * binWidth + binWidth / 2.0,
-                yStart + binHeight / 2.0 + hexagonIndex.second * binHeight
-            )
-            val q = p.subtract(center)
-            val v1 = DoubleVector(0.0, halfHexHeight)
-            val v2 = DoubleVector(binWidth / 2.0, halfHexHeight / 2.0)
-            val v3 = DoubleVector(binWidth / 2.0, -halfHexHeight / 2.0)
-            val v4 = DoubleVector(0.0, -halfHexHeight)
-            val v5 = DoubleVector(-binWidth / 2.0, -halfHexHeight / 2.0)
-            val v6 = DoubleVector(-binWidth / 2.0, halfHexHeight / 2.0)
-            // line(v1, v2):
-            val slope12 = (v2.y - v1.y) / (v2.x - v1.x)
-            val intercept12 = v1.y - slope12 * v1.x
-            val in12 = q.y < slope12 * q.x + intercept12
-            // line(v2, v3):
-            val in23 = q.x < binWidth / 2.0
-            // line(v3, v4):
-            val slope34 = (v4.y - v3.y) / (v4.x - v3.x)
-            val intercept34 = v3.y - slope34 * v3.x
-            val in34 = q.y >= slope34 * q.x + intercept34
-            // line(v4, v5):
-            val slope45 = (v5.y - v4.y) / (v5.x - v4.x)
-            val intercept45 = v4.y - slope45 * v4.x
-            val in45 = q.y >= slope45 * q.x + intercept45
-            // line(v5, v6):
-            val in56 = q.x >= -binWidth / 2.0
-            // line(v6, v1):
-            val slope61 = (v1.y - v6.y) / (v1.x - v6.x)
-            val intercept61 = v6.y - slope61 * v6.x
-            val in61 = q.y < slope61 * q.x + intercept61
-            return in12 && in23 && in34 && in45 && in56 && in61
-        }
-
         fun distanceToHexCenter(
             p: DoubleVector,
             hexagonIndex: Pair<Int, Int>
