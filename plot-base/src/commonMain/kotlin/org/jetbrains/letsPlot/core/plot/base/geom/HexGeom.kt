@@ -6,13 +6,15 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HexagonTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HexagonsHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import kotlin.math.sqrt
 
-class HexGeom : GeomBase() {
+class HexGeom : GeomBase(), WithWidth, WithHeight {
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -21,7 +23,7 @@ class HexGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val tooltipHelper = HexagonTooltipHelper(ctx)
-        val helper = HexagonsHelper(aesthetics, pos, coord, ctx, clientHexByDataPoint(ctx))
+        val helper = HexagonsHelper(aesthetics, pos, coord, ctx, clientHexByDataPoint())
         val svgHexHelper = helper.createSvgHexHelper()
         svgHexHelper.setResamplingEnabled(!coord.isLinear)
         svgHexHelper.onGeometry { p, hex ->
@@ -37,15 +39,12 @@ class HexGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun clientHexByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> List<DoubleVector>? {
+        private fun clientHexByDataPoint(): (DataPointAesthetics) -> List<DoubleVector>? {
             fun factory(p: DataPointAesthetics): List<DoubleVector>? {
                 val x = p.finiteOrNull(Aes.X) ?: return null
                 val y = p.finiteOrNull(Aes.Y) ?: return null
-                val w = p.finiteOrNull(Aes.WIDTH) ?: return null
-                val h = p.finiteOrNull(Aes.HEIGHT) ?: return null
-
-                val width = w * 2 * ctx.getResolution(Aes.X) // Without the coefficient 2 * resolution, the hexagon will not be stretched to fill all available area
-                val height = h * 2.0 / sqrt(3.0) * ctx.getResolution(Aes.Y) // The same as above
+                val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+                val height = p.finiteOrNull(Aes.HEIGHT)?.let { 2.0 * it / sqrt(3.0) } ?: return null
 
                 val origin = DoubleVector(x, y)
                 return listOf(
@@ -60,6 +59,47 @@ class HexGeom : GeomBase() {
             }
 
             return ::factory
+        }
+    }
+
+    override fun widthSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return sizeSpan(p, coordAes, Aes.WIDTH)
+    }
+
+    override fun heightSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return sizeSpan(p, coordAes, Aes.HEIGHT)
+    }
+
+    private fun sizeSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        sizeAes: Aes<Double>,
+    ): DoubleSpan? {
+        val loc = p[coordAes]
+        val size = p[sizeAes]
+        return if (SeriesUtil.allFinite(loc, size)) {
+            loc!!
+            val expand = if (sizeAes == Aes.WIDTH) {
+                size!! / 2.0
+            } else {
+                size!! / sqrt(3.0)
+            }
+            DoubleSpan(
+                loc - expand,
+                loc + expand
+            )
+        } else {
+            null
         }
     }
 }

@@ -20,7 +20,8 @@ class Hex {
         val data = mapOf<String, List<*>>(
             "x" to listOf(-.5, .5, 0),
             "y" to listOf(0, 0, sqrt(3.0) / 2.0),
-            "g" to listOf("a", "b", "c")
+            "g" to listOf("a", "b", "c"),
+            "h" to List(3) { sqrt(3.0) / 2.0 }
         )
         val spec = """
             {
@@ -31,7 +32,8 @@ class Hex {
               'mapping': {
                 'x': 'x',
                 'y': 'y',
-                'fill': 'g'
+                'fill': 'g',
+                'height': 'h'
               },
               'layers': [
                 {

@@ -81,6 +81,8 @@ class BinHexStat(
             .putNumeric(Stats.Y, binsData.y)
             .putNumeric(Stats.COUNT, binsData.count)
             .putNumeric(Stats.DENSITY, binsData.density)
+            .putNumeric(Stats.WIDTH, List(binsData.x.size) { xCountAndWidthFinal.width })
+            .putNumeric(Stats.HEIGHT, List(binsData.x.size) { yCountAndWidthFinal.width })
             .build()
     }
 
@@ -225,7 +227,9 @@ class BinHexStat(
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.FILL to Stats.COUNT
+            Aes.FILL to Stats.COUNT,
+            Aes.WIDTH to Stats.WIDTH,
+            Aes.HEIGHT to Stats.HEIGHT
         )
 
         private fun adjustRangeInitial(r: DoubleSpan): DoubleSpan {
