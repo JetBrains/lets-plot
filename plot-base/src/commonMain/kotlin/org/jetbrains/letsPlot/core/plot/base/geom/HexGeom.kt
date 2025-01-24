@@ -44,7 +44,7 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
                 val x = p.finiteOrNull(Aes.X) ?: return null
                 val y = p.finiteOrNull(Aes.Y) ?: return null
                 val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-                val height = p.finiteOrNull(Aes.HEIGHT)?.let { 2.0 * it / sqrt(3.0) } ?: return null
+                val height = p.finiteOrNull(Aes.HEIGHT) ?: return null
 
                 val origin = DoubleVector(x, y)
                 return listOf(

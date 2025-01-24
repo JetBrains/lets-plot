@@ -82,7 +82,7 @@ class BinHexStat(
             .putNumeric(Stats.COUNT, binsData.count)
             .putNumeric(Stats.DENSITY, binsData.density)
             .putNumeric(Stats.WIDTH, List(binsData.x.size) { xCountAndWidthFinal.width })
-            .putNumeric(Stats.HEIGHT, List(binsData.x.size) { yCountAndWidthFinal.width })
+            .putNumeric(Stats.HEIGHT, List(binsData.x.size) { yCountAndWidthFinal.width * 2.0 / sqrt(3.0) })
             .build()
     }
 

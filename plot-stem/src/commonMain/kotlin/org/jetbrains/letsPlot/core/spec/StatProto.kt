@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
+import kotlin.math.sqrt
 
 object StatProto {
 
@@ -83,7 +84,7 @@ object StatProto {
                     binCountX = binCountX.toInt(),
                     binCountY = binCountY.toInt(),
                     binWidthX = binWidthX?.toDouble(),
-                    binWidthY = binWidthY?.toDouble(),
+                    binWidthY = binWidthY?.let { it.toDouble() * 3.0 / (2.0 * sqrt(3.0)) },
                     drop = options.getBoolean(BinHex.DROP, def = BinHexStat.DEF_DROP)
                 )
             }
