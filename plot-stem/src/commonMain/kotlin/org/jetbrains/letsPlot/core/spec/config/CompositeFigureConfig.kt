@@ -19,7 +19,12 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGr
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
+import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Free
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.COL_WIDTHS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.FIT_CELL_ASPECT_RATIO
@@ -49,6 +54,13 @@ class CompositeFigureConfig constructor(
     internal val elementConfigs: List<OptionsAccessor?>
     internal val layout: CompositeFigureLayout
     internal val theme: Theme
+
+    internal val title: String?
+        get() = getMap(TITLE)[TITLE_TEXT] as String?
+    internal val subtitle: String?
+        get() = getMap(TITLE)[SUBTITLE_TEXT] as String?
+    internal val caption: String?
+        get() = getMap(CAPTION)[CAPTION_TEXT] as String?
 
     init {
         val fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -161,9 +173,10 @@ class CompositeFigureConfig constructor(
 
         val regionOptionsList = layoutOptions.getList(Free.REGIONS)
         val (regions, offsets) = regionOptionsList.map { region ->
-            check(region is List<*>
-                    && region.size in listOf(4, 6)
-                    && region.all { it is Number }) {
+            check(
+                region is List<*>
+                        && region.size in listOf(4, 6)
+                        && region.all { it is Number }) {
                 "'region' in 'free' layout must be a list of 4 or 6 numbers, was: $region}"
             }
             @Suppress("UNCHECKED_CAST")
