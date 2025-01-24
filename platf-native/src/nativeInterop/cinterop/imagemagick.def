@@ -1,0 +1,3 @@
+headers = /usr/local/include/ImageMagick-7/MagickWand/MagickWand.h
+linkerOpts = -L/home/ikupriyanov/Downloads/output/lib -lpng -lMagickCore-7.Q16HDRI -lMagickWand-7.Q16HDRI -lz
+package = MagickWand

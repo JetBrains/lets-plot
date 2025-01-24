@@ -21,7 +21,8 @@ this_system = platform.system()
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
 
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
-                                   kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
+                                   kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic',
+                                   )
 python_package = 'lets_plot'
 
 
@@ -66,8 +67,8 @@ elif this_system == 'Windows':
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 elif this_system == 'Linux':
-    static_link_libraries_list += ['stdc++']
-    extra_link = ['-lz']
+    static_link_libraries_list += ['stdc++', 'fontconfig', 'z']
+    extra_link = ['-L/home/ikupriyanov/Downloads/output/lib', '-lMagickWand-7.Q16HDRI', '-lMagickCore-7.Q16HDRI', '-lpng']
 
 else:
     raise ValueError("Unsupported platform.")

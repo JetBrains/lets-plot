@@ -12,16 +12,21 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.FileNotFoundException
 import java.util.*
+import kotlin.plus
 
 plugins {
     kotlin("multiplatform") apply false
     kotlin("js") apply false
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
-    id ("org.openjfx.javafxplugin") version "0.1.0" apply false
+    id("org.openjfx.javafxplugin") version "0.1.0" apply false
 }
 
 
-fun ExtraPropertiesExtension.getOrNull(name: String): Any? = if (has(name)) { get(name) } else { null }
+fun ExtraPropertiesExtension.getOrNull(name: String): Any? = if (has(name)) {
+    get(name)
+} else {
+    null
+}
 
 
 val os: OperatingSystem = OperatingSystem.current()
@@ -131,9 +136,9 @@ if (project.hasProperty("build_release")) {
 // define local Maven Repository path:
 val localMavenRepository by extra { "$rootDir/.maven-publish-dev-repo" }
 // define Sonatype nexus repository manager settings:
-val sonatypeUsername = extra.getOrNull("sonatype.username")?: ""
-val sonatypePassword = extra.getOrNull("sonatype.password")?: ""
-val sonatypeProfileID = extra.getOrNull("sonatype.profileID")?: ""
+val sonatypeUsername = extra.getOrNull("sonatype.username") ?: ""
+val sonatypePassword = extra.getOrNull("sonatype.password") ?: ""
+val sonatypeProfileID = extra.getOrNull("sonatype.profileID") ?: ""
 
 nexusPublishing {
     repositories {
@@ -149,11 +154,11 @@ nexusPublishing {
 
 // Publish some sub-projects as Kotlin Multi-project libraries.
 val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
-    group=letsPlotTaskGroup
+    group = letsPlotTaskGroup
 }
 
 val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
-    group=letsPlotTaskGroup
+    group = letsPlotTaskGroup
 }
 
 // Generating JavaDoc task for each publication task.
@@ -163,7 +168,7 @@ val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
 //  - https://github.com/gradle-nexus/publish-plugin/issues/208
 //  - https://github.com/gradle/gradle/issues/26091
 //
-fun getJarJavaDocsTask(distributeName:String): TaskProvider<Jar> {
+fun getJarJavaDocsTask(distributeName: String): TaskProvider<Jar> {
     return tasks.register<Jar>("${distributeName}JarJavaDoc") {
         archiveClassifier.set("javadoc")
         from("$rootDir/README.md")
@@ -204,7 +209,52 @@ subprojects {
                     linuxX64()
                     linuxArm64()
                 } else if (projectArchitecture == "x86_64") {
-                    linuxX64()
+                    if (name == "platf-native") {
+                        linuxX64 {
+                            compilations.forEach {
+                                println("compilation: ${project.name}.$it")
+                            }
+                            compilations.forEach {
+                                it.apply {
+                                    val imagemagick by cinterops.creating {
+                                        compilerOpts(
+                                            "-I/usr/local/include/ImageMagick-7/",
+                                            "-DMAGICKCORE_HDRI_ENABLE=1"
+                                        )
+                                        defFile = file("src/nativeInterop/cinterop/imagemagick.def")
+                                    }
+                                }
+                            }
+                            // Configure linker options for all binaries, including tests
+                            binaries {
+                                // Apply linker options to all binaries
+                                all {
+                                    println("linkerOpts: ${project.name}.$this")
+                                    linkerOpts += listOf(
+                                        "-L/home/ikupriyanov/Downloads/output/lib",
+                                        "-lfontconfig",
+                                        "-lpng"
+                                    )
+                                }
+
+                                // Configure a static library
+                                staticLib {
+                                    // Add any additional linker options if needed
+                                }
+
+                                // Ensure test binaries inherit the same linker options
+                                //test {
+                                //    linkerOpts += listOf(
+                                //        "-L/home/ikupriyanov/Downloads/output/lib",
+                                //        "-lfontconfig",
+                                //        "-lpng"
+                                //    )
+                                //}
+                            }
+                        }
+                    } else {
+                        linuxX64()
+                    }
                 }
             } else if (os.isWindows) {
                 mingwX64()
@@ -247,7 +297,7 @@ val jvmCoreModulesForPublish = listOf(
 )
 
 subprojects {
-    if(name in jvmCoreModulesForPublish) {
+    if (name in jvmCoreModulesForPublish) {
         apply(plugin = "org.jetbrains.kotlin.jvm")
         apply(plugin = "maven-publish")
 
@@ -275,7 +325,7 @@ subprojects {
 
 // Configure Maven publication for Lets-Plot Core modules.
 subprojects {
-    if(name in multiPlatformCoreModulesForPublish + jvmCoreModulesForPublish) {
+    if (name in multiPlatformCoreModulesForPublish + jvmCoreModulesForPublish) {
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
         // Do not publish 'native' targets:
@@ -286,7 +336,8 @@ subprojects {
             "jvm",
             "js",
             "kotlinMultiplatform",
-            "metadata")
+            "metadata"
+        )
 
         configure<PublishingExtension> {
             publications {
