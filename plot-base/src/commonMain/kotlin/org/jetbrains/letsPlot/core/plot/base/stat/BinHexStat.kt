@@ -76,13 +76,16 @@ class BinHexStat(
             densityNormalizingFactor
         )
 
+        val binHeight = yCountAndWidthFinal.width // distance between centers of two adjacent hexagons in y direction
+        val hexHeight = 4.0 * binHeight / 3.0 // height of hexagon in coordinate system
+        val height = hexHeight * sqrt(3.0) / 2.0 // height of geometry HexGeom that corresponds to hexagon of height `hexHeight`
         return DataFrame.Builder()
             .putNumeric(Stats.X, binsData.x)
             .putNumeric(Stats.Y, binsData.y)
             .putNumeric(Stats.COUNT, binsData.count)
             .putNumeric(Stats.DENSITY, binsData.density)
             .putNumeric(Stats.WIDTH, List(binsData.x.size) { xCountAndWidthFinal.width })
-            .putNumeric(Stats.HEIGHT, List(binsData.x.size) { yCountAndWidthFinal.width * 2.0 / sqrt(3.0) })
+            .putNumeric(Stats.HEIGHT, List(binsData.x.size) { height })
             .build()
     }
 
@@ -94,7 +97,7 @@ class BinHexStat(
         binCountX: Int,
         binCountY: Int,
         binWidth: Double,
-        binHeight: Double,
+        binHeight: Double, // distance between centers of two adjacent hexagons in y direction
         weightAtIndex: (Int) -> Double,
         densityNormalizingFactor: Double
     ): BinsHexData {

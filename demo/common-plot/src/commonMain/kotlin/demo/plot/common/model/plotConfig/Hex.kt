@@ -17,23 +17,21 @@ class Hex {
     }
 
     private fun basicIdentity(): MutableMap<String, Any> {
-        val data = mapOf<String, List<*>>(
-            "x" to listOf(-.5, .5, 0),
-            "y" to listOf(0, 0, 3.0 / 4.0),
-            "g" to listOf("a", "b", "c"),
-            "h" to List(3) { sqrt(3.0) / 2.0 }
-        )
         val spec = """
             {
               'kind': 'plot',
               'ggtitle': {
                 'text': 'Basic hex plot\nstat = identity'
               },
+              'data': {
+                'x': [-0.5, 0.5, 0],
+                'y': [0, 0, ${sqrt(3.0) / 2.0}],
+                'g': ['a', 'b', 'c']
+              },
               'mapping': {
                 'x': 'x',
                 'y': 'y',
-                'fill': 'g',
-                'height': 'h'
+                'fill': 'g'
               },
               'layers': [
                 {
@@ -44,9 +42,7 @@ class Hex {
             }
         """.trimIndent()
 
-        val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = data
-        return plotSpec
+        return HashMap(parsePlotSpec(spec))
     }
 
     private fun basicWithStat(): MutableMap<String, Any> {
@@ -67,7 +63,7 @@ class Hex {
               'layers': [
                 {
                   'geom': 'hex',
-                  'binwidth': [1, ${sqrt(3.0) / 2.0}]
+                  'binwidth': [1, ${sqrt(3.0) * 2.0 / 3.0}]
                 },
                 {
                   'geom': 'point',
