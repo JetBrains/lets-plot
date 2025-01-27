@@ -18,8 +18,8 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import kotlin.math.max
 
-internal object PlotLayoutUtil {
-    fun plotInsets(plotInset: Thickness) = Insets(plotInset.leftTop, plotInset.rightBottom)
+object PlotLayoutUtil {
+    internal fun plotInsets(plotInset: Thickness) = Insets(plotInset.leftTop, plotInset.rightBottom)
 
     private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
         if (text.isEmpty()) {
@@ -55,21 +55,37 @@ internal object PlotLayoutUtil {
         return titleThickness(title, labelSpec, margin = margins.height)
     }
 
-    fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
+    internal fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
         return plotLayoutInfo.tiles.map { it.getAbsoluteOuterGeomBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
             r0.union(r1)
         }
     }
 
-    fun overallTileBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
+    internal fun overallTileBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
         return plotLayoutInfo.tiles.map { it.getAbsoluteBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
             r0.union(r1)
         }
     }
 
-    fun subtractTitlesAndLegends(
+    fun boundsWithoutTitleAndCaption(
+        outerBounds: DoubleRectangle,
+        title: String?,
+        subtitle: String?,
+        caption: String?,
+        theme: Theme,
+    ): DoubleRectangle {
+        val titleDelta = titleSizeDelta(title, subtitle, theme.plot())
+        val captionDelta = captionSizeDelta(caption, theme.plot())
+        val sizeDelta = titleDelta.add(captionDelta)
+        return DoubleRectangle(
+            origin = outerBounds.origin.add(titleDelta),
+            dimension = outerBounds.dimension.subtract(sizeDelta)
+        )
+    }
+
+    internal fun subtractTitlesAndLegends(
         baseSize: DoubleVector,
         title: String?,
         subtitle: String?,
@@ -99,7 +115,7 @@ internal object PlotLayoutUtil {
         )
     }
 
-    fun addTitlesAndLegends(
+    internal fun addTitlesAndLegends(
         base: DoubleVector,
         title: String?,
         subtitle: String?,
@@ -148,7 +164,7 @@ internal object PlotLayoutUtil {
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
-    fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {
+    internal fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {
         return DoubleVector(
             0.0,
             titleThickness(title, PlotLabelSpecFactory.plotTitle(theme), theme.titleMargins()) +
@@ -156,14 +172,14 @@ internal object PlotLayoutUtil {
         )
     }
 
-    fun captionSizeDelta(caption: String?, theme: PlotTheme): DoubleVector {
+    internal fun captionSizeDelta(caption: String?, theme: PlotTheme): DoubleVector {
         return DoubleVector(
             0.0,
             titleThickness(caption, PlotLabelSpecFactory.plotCaption(theme), theme.captionMargins())
         )
     }
 
-    fun axisMarginDimensions(theme: Theme, flippedAxis: Boolean): DoubleVector {
+    internal fun axisMarginDimensions(theme: Theme, flippedAxis: Boolean): DoubleVector {
         val width = theme.verticalAxis(flippedAxis).titleMargins().width
         val height = theme.horizontalAxis(flippedAxis).titleMargins().height
         return DoubleVector(width, height)
@@ -193,7 +209,7 @@ internal object PlotLayoutUtil {
         }
     }
 
-    fun axisTitlesOriginOffset(
+    internal fun axisTitlesOriginOffset(
         hAxisTitleInfo: Pair<String?, LabelSpec>,
         vAxisTitleInfo: Pair<String?, LabelSpec>,
         hasTopAxisTitle: Boolean,
@@ -241,11 +257,12 @@ internal object PlotLayoutUtil {
         return when (theme.position()) {
             LegendPosition.LEFT,
             LegendPosition.RIGHT -> DoubleVector(size.x + spacing, 0.0)
+
             else -> DoubleVector(0.0, size.y + spacing)
         }
     }
 
-    fun legendBlockLeftTopDelta(
+    internal fun legendBlockLeftTopDelta(
         legendsBlockInfo: LegendsBlockInfo,
         theme: LegendTheme
     ): DoubleVector {

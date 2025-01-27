@@ -11,8 +11,10 @@ import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 
@@ -20,6 +22,9 @@ internal class CompositeFigureBuildInfo constructor(
     private val elements: List<FigureBuildInfo?>,
     private val layout: CompositeFigureLayout,
     override val bounds: DoubleRectangle,
+    private val title: String?,
+    private val subtitle: String?,
+    private val caption: String?,
     private val theme: Theme,
     override val computationMessages: List<String>,
 ) : FigureBuildInfo {
@@ -47,7 +52,17 @@ internal class CompositeFigureBuildInfo constructor(
             it.createSvgRoot()
         }
 
-        val svgComponent = CompositeFigureSvgComponent(elementSvgRoots, bounds.dimension, theme)
+        val overalSize = layoutInfo.figureSize
+        val elementsAreaBounds = layoutInfo.geomAreaBounds
+        val svgComponent = CompositeFigureSvgComponent(
+            elementSvgRoots,
+//            bounds.dimension,
+            overalSize,
+            elementsAreaBounds,
+            title, subtitle, caption,
+            theme = theme,
+            styleSheet = Style.fromTheme(theme, flippedAxis = false),
+        )
         return CompositeFigureSvgRoot(svgComponent, bounds)
     }
 
@@ -60,6 +75,7 @@ internal class CompositeFigureBuildInfo constructor(
                 elements,
                 layout,
                 bounds,
+                title, subtitle, caption,
                 theme,
                 computationMessages
             )
@@ -67,31 +83,34 @@ internal class CompositeFigureBuildInfo constructor(
     }
 
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
-        val plotLayoutMargins = theme.plot().layoutMargins()
-        val leftTop = DoubleVector(
-            plotLayoutMargins.left,
-            plotLayoutMargins.top,
-        )
-        val marginsSize = DoubleVector(
-            plotLayoutMargins.width,
-            plotLayoutMargins.height,
-        )
-        val outerSize = bounds.dimension
-        val elementsBounts = DoubleRectangle(leftTop, outerSize.subtract(marginsSize))
-        val layoutedElements = layout.doLayout(elementsBounts, elements)
+        val plotTheme = theme.plot()
 
-        val geomBounds = layoutedElements.filterNotNull().map {
-            it.layoutInfo.geomAreaBounds
+        // Layout inner positions relative to left-top of the figure.
+        val contextBounds = DoubleRectangle(DoubleVector.ZERO, bounds.dimension)
+        val withoutMargins = plotTheme.layoutMargins().shrinkRect(contextBounds)
+        val withoutTitles = PlotLayoutUtil.boundsWithoutTitleAndCaption(
+            outerBounds = withoutMargins,
+            title, subtitle, caption, theme
+        )
+        val elementsAreaBounds = plotTheme.plotInset().shrinkRect(withoutTitles)
+
+        val layoutedElements = layout.doLayout(elementsAreaBounds, elements)
+        val layoutedElementsAreaBounds = layoutedElements.filterNotNull().map {
+            it.bounds
         }.reduce { acc, el -> acc.union(el) }
 
         return CompositeFigureBuildInfo(
             elements = layoutedElements,
             layout,
             bounds,
+            title, subtitle, caption,
             theme,
             computationMessages
         ).apply {
-            this._layoutInfo = FigureLayoutInfo(outerSize, geomBounds)
+            this._layoutInfo = FigureLayoutInfo(
+                figureSize = contextBounds.dimension,
+                geomAreaBounds = layoutedElementsAreaBounds
+            )
         }
     }
 
@@ -104,6 +123,7 @@ internal class CompositeFigureBuildInfo constructor(
             elements,
             layout,
             DoubleRectangle(DoubleVector.ZERO, size),
+            title, subtitle, caption,
             theme,
             computationMessages
         )

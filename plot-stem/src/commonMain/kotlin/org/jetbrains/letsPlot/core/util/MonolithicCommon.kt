@@ -214,6 +214,9 @@ object MonolithicCommon {
             elements = elements,
             layout = compositeFigureLayout,
             bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            title = config.title,
+            subtitle = config.subtitle,
+            caption = config.caption,
             theme = config.theme,
             computationMessages
         )

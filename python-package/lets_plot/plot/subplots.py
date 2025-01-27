@@ -67,7 +67,7 @@ class SupPlotsSpec(FeatureSpec):
                 supplots = supplots.__add__(spec)
             return supplots
 
-        elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme", "ggtoolbar"]:
+        elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme", "ggtitle", "caption", "ggtoolbar"]:
 
             supplots = SupPlotsSpec.duplicate(self)
             # ToDo: duplication!
