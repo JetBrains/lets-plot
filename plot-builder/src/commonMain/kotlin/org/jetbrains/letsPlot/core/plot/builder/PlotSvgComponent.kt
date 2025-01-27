@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
-import org.jetbrains.letsPlot.commons.event.Event
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -18,16 +17,22 @@ import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
-import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionElementAndTextBounds
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.createTextRectangle
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawCaptionDebugInfo
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawSubtitleDebugInfo
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawTitleDebugInfo
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.subtitleElementAndTextBounds
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.textBoundingBox
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.titleElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxesLayout
@@ -39,9 +44,9 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotSvgComponent constructor(
@@ -240,7 +245,7 @@ class PlotSvgComponent constructor(
         }
 
         if (plotTheme.showBackground()) {
-            val plotInset = plotTheme.plotMargins() - Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
+            val plotInset = plotTheme.plotMargins() + Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
             val backgroundRect = plotInset.inflateRect(figureLayoutInfo.figureLayoutedBounds)
 
             val backgroundAreaPath = SvgPathDataBuilder().rect(backgroundRect)
@@ -274,113 +279,41 @@ class PlotSvgComponent constructor(
         //   xxxElementRect - rectangle for element, including margins
         //   xxxTextRect - for text only
 
-        fun textRectangle(elementRect: DoubleRectangle, margins: Thickness) = createTextRectangle(
-            elementRect,
-            topMargin = margins.top,
-            rightMargin = margins.right,
-            bottomMargin = margins.bottom,
-            leftMargin = margins.left
+        val (plotTitleElementRect, plotTitleTextRect) = titleElementAndTextBounds(
+            title,
+            plotOuterBounds,
+            geomAreaBounds,
+            plotTheme
         )
-
-        val titleAlignmentArea = when (plotTheme.titlePosition()) {
-            TitlePosition.PANEL -> geomAreaBounds
-            TitlePosition.PLOT -> plotOuterBounds
-        }
-        val plotTitleElementRect = title?.let {
-            DoubleRectangle(
-                titleAlignmentArea.left,
-                plotOuterBounds.top,
-                titleAlignmentArea.width,
-                PlotLayoutUtil.titleThickness(
-                    title,
-                    PlotLabelSpecFactory.plotTitle(plotTheme),
-                    plotTheme.titleMargins()
-                )
-            )
-        }
-        val plotTitleTextRect = plotTitleElementRect?.let { textRectangle(it, plotTheme.titleMargins()) }
         if (DEBUG_DRAWING) {
-            plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
-            plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
-            plotTitleTextRect?.let {
-                drawDebugRect(
-                    textBoundingBox(
-                        title!!,
-                        it,
-                        PlotLabelSpecFactory.plotTitle(plotTheme),
-                        plotTheme.titleJustification()
-                    ),
-                    Color.DARK_GREEN
-                )
-            }
+            drawTitleDebugInfo(this, caption, plotTitleElementRect, plotTitleTextRect, plotTheme)
         }
 
-        val subtitleElementRect = subtitle?.let {
-            DoubleRectangle(
-                titleAlignmentArea.left,
-                plotTitleElementRect?.bottom ?: plotOuterBounds.top,
-                titleAlignmentArea.width,
-                PlotLayoutUtil.titleThickness(
-                    subtitle,
-                    PlotLabelSpecFactory.plotSubtitle(plotTheme),
-                    plotTheme.subtitleMargins()
-                )
-            )
-        }
-        val subtitleTextRect = subtitleElementRect?.let { textRectangle(it, plotTheme.subtitleMargins()) }
+        val (subtitleElementRect, subtitleTextRect) = subtitleElementAndTextBounds(
+            subtitle,
+            plotOuterBounds,
+            geomAreaBounds,
+            plotTitleElementRect,
+            plotTheme
+        )
         if (DEBUG_DRAWING) {
-            subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
-            subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
-            subtitleTextRect?.let {
-                drawDebugRect(
-                    textBoundingBox(
-                        subtitle!!,
-                        it,
-                        PlotLabelSpecFactory.plotSubtitle(plotTheme),
-                        plotTheme.subtitleJustification()
-                    ),
-                    Color.DARK_GREEN
-                )
-            }
+            drawSubtitleDebugInfo(this, subtitle, subtitleElementRect, subtitleTextRect, plotTheme)
         }
 
-        val captionAlignmentArea = when (plotTheme.captionPosition()) {
-            TitlePosition.PANEL -> geomAreaBounds
-            TitlePosition.PLOT -> plotOuterBounds
-        }
-        val captionElementRect = caption?.let {
-            val captionRectHeight = PlotLayoutUtil.titleThickness(
-                caption,
-                PlotLabelSpecFactory.plotCaption(plotTheme),
-                plotTheme.captionMargins()
-            )
-            DoubleRectangle(
-                captionAlignmentArea.left,
-                plotOuterBounds.bottom - captionRectHeight,
-                captionAlignmentArea.width,
-                captionRectHeight
-            )
-        }
-        val captionTextRect = captionElementRect?.let { textRectangle(it, plotTheme.captionMargins()) }
+        val (captionElementRect, captionTextRect) = captionElementAndTextBounds(
+            caption,
+            plotOuterBounds,
+            geomAreaBounds,
+            plotTheme
+        )
         if (DEBUG_DRAWING) {
-            captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
-            captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
-            captionTextRect?.let {
-                drawDebugRect(
-                    textBoundingBox(
-                        caption!!,
-                        it,
-                        PlotLabelSpecFactory.plotCaption(plotTheme),
-                        plotTheme.captionJustification()
-                    ),
-                    Color.DARK_GREEN
-                )
-            }
+            drawCaptionDebugInfo(this, caption, captionElementRect, captionTextRect, plotTheme)
         }
 
         // add plot title
         plotTitleTextRect?.let {
             addTitle(
+                svgComponent = this,
                 title,
                 labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
                 justification = plotTheme.titleJustification(),
@@ -391,6 +324,7 @@ class PlotSvgComponent constructor(
         // add plot subtitle
         subtitleTextRect?.let {
             addTitle(
+                svgComponent = this,
                 subtitle,
                 labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
                 justification = plotTheme.subtitleJustification(),
@@ -458,7 +392,8 @@ class PlotSvgComponent constructor(
         // add caption
         captionTextRect?.let {
             addTitle(
-                title = caption,
+                svgComponent = this,
+                text = caption,
                 labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
                 justification = plotTheme.captionJustification(),
                 boundRect = it,
@@ -468,19 +403,6 @@ class PlotSvgComponent constructor(
 
         add(backgroundBorder)
     }
-
-    private fun createTextRectangle(
-        elementRect: DoubleRectangle,
-        topMargin: Double = 0.0,
-        rightMargin: Double = 0.0,
-        bottomMargin: Double = 0.0,
-        leftMargin: Double = 0.0
-    ) = DoubleRectangle(
-        elementRect.left + leftMargin,
-        elementRect.top + topMargin,
-        elementRect.width - (rightMargin + leftMargin),
-        elementRect.height - (topMargin + bottomMargin)
-    )
 
     private fun addAxisTitle(
         text: String,
@@ -570,6 +492,7 @@ class PlotSvgComponent constructor(
         }
 
         addTitle(
+            svgComponent = this,
             text,
             labelSpec,
             justification,
@@ -586,84 +509,6 @@ class PlotSvgComponent constructor(
                 Color.DARK_GREEN
             )
         }
-    }
-
-    private fun addTitle(
-        title: String?,
-        labelSpec: LabelSpec,
-        justification: TextJustification,
-        boundRect: DoubleRectangle,
-        rotation: TextRotation? = null,
-        className: String
-    ) {
-        if (title == null) return
-
-        val lineHeight = labelSpec.height()
-        val titleLabel = MultilineLabel(title)
-        titleLabel.addClassName(className)
-        val (position, hAnchor) = applyJustification(
-            boundRect,
-            textSize = PlotLayoutUtil.textDimensions(title, labelSpec),
-            lineHeight,
-            justification,
-            rotation
-        )
-        titleLabel.setLineHeight(lineHeight)
-        titleLabel.setHorizontalAnchor(hAnchor)
-        titleLabel.moveTo(position)
-        rotation?.angle?.let(titleLabel::rotate)
-        add(titleLabel)
-    }
-
-    // for debug drawing
-    private fun textBoundingBox(
-        text: String,
-        boundRect: DoubleRectangle,
-        labelSpec: LabelSpec,
-        justification: TextJustification,
-        orientation: Orientation = Orientation.TOP,
-    ): DoubleRectangle {
-        val textDimensions = PlotLayoutUtil.textDimensions(text, labelSpec)
-        return if (orientation.isHorizontal) {
-            val x = (boundRect.left + boundRect.width * justification.x) - when {
-                justification.x < 0.5 -> 0.0                        // left horizontal anchor is used
-                justification.x == 0.5 -> textDimensions.x / 2      // middle
-                else -> textDimensions.x                            // right
-            }
-            DoubleRectangle(x, boundRect.center.y - textDimensions.y / 2, textDimensions.x, textDimensions.y)
-        } else {
-            val y = (boundRect.bottom - boundRect.height * justification.x) - when {
-                justification.x < 0.5 -> textDimensions.x
-                justification.x == 0.5 -> textDimensions.x / 2
-                else -> 0.0
-            }
-            DoubleRectangle(boundRect.center.x - textDimensions.y / 2, y, textDimensions.y, textDimensions.x)
-        }
-    }
-
-    private fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
-        val rect = SvgRectElement(r)
-        rect.strokeColor().set(color)
-        rect.strokeWidth().set(1.0)
-        rect.fillOpacity().set(0.0)
-        message?.run {
-            onMouseMove(rect, "$message: $r")
-        }
-        add(rect)
-    }
-
-    /**
-     * Only used when DEBUG_DRAWING is ON.
-     *
-     * Doesn't seem to work any longer
-     */
-    private fun onMouseMove(e: SvgElement, message: String) {
-        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
-            SvgEventHandler<Event> {
-            override fun handle(node: SvgNode, e: Event) {
-                println(message)
-            }
-        })
     }
 
     companion object {

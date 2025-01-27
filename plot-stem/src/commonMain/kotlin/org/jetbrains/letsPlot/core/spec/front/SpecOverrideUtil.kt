@@ -30,8 +30,7 @@ object SpecOverrideUtil {
                 )
             }
 
-            FigKind.GG_BUNCH_SPEC ->
-                plotSpec // spec-override not supported
+            FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
         }
     }
 

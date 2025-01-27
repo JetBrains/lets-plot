@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.Composit
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
-import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
@@ -89,46 +88,8 @@ object MonolithicCommon {
                 )
             )
 
-            FigKind.GG_BUNCH_SPEC -> buildGGBunchFromProcessedSpecs(
-                plotSpec,
-                sizingPolicy
-            )
+            FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
         }
-    }
-
-    private fun buildGGBunchFromProcessedSpecs(
-        bunchSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
-    ): PlotsBuildResult {
-
-        val naturalSize = PlotSizeHelper.plotBunchSize(bunchSpec)
-        val neededSize = sizingPolicy?.resize(naturalSize) ?: naturalSize
-
-        val scalingCoef = neededSize.x / naturalSize.x
-
-        val bunchConfig = BunchConfig(bunchSpec)
-        if (bunchConfig.bunchItems.isEmpty()) return PlotsBuildResult.Error(
-            "No plots in the bunch"
-        )
-
-        val buildInfos = ArrayList<FigureBuildInfo>()
-        for (bunchItem in bunchConfig.bunchItems) {
-            val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
-            val itemSize = PlotSizeHelper.bunchItemSize(bunchItem)
-            val itemBounds = DoubleRectangle(
-                DoubleVector(bunchItem.x, bunchItem.y).mul(scalingCoef),
-                itemSize.mul(scalingCoef)
-            )
-
-            val plotFigureBuildInfo = buildSinglePlotFromProcessedSpecs(
-                plotSpec,
-                sizingPolicy = SizingPolicy.fixed(itemSize.x, itemSize.y),
-            ).withBounds(itemBounds)
-
-            buildInfos.add(plotFigureBuildInfo)
-        }
-
-        return PlotsBuildResult.Success(buildInfos)
     }
 
     private fun buildSinglePlotFromProcessedSpecs(
@@ -253,6 +214,9 @@ object MonolithicCommon {
             elements = elements,
             layout = compositeFigureLayout,
             bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            title = config.title,
+            subtitle = config.subtitle,
+            caption = config.caption,
             theme = config.theme,
             computationMessages
         )
@@ -269,7 +233,7 @@ object MonolithicCommon {
 
     /**
      * Applies all transformations to the plot specifications.
-     * @param plotSpec: raw specifications of a single plot or GGBunch
+     * @param plotSpec: raw specifications of a plot
      */
     fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         // Internal use: testing

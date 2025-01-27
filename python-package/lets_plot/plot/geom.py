@@ -4679,7 +4679,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
@@ -4687,13 +4687,17 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         np.random.seed(42)
         x = np.random.normal(size=1000)
         p = ggplot({'x': x}, aes(x='x'))
-        bunch = GGBunch()
-        for i, bw in enumerate([.1, .2, .4]):
-            for j, n in enumerate([16, 64, 256]):
-                bunch.add_plot(p + geom_density(kernel='epanechikov', bw=bw, n=n) + \\
-                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
-                               j * 300, i * 200, 300, 200)
-        bunch.show()
+        bandwidths = [0.1, 0.2, 0.4]
+        sample_sizes = [16, 64, 256]
+        plots = [
+            p + geom_density(
+                kernel='epanechikov', bw=bw, n=n
+            ) + ggtitle(f'bw={bw}, n={n}')
+            for bw in bandwidths
+            for n in sample_sizes
+        ]
+
+        gggrid(plots, ncol=3) + ggsize(900, 600)
 
     |
 
@@ -4708,13 +4712,15 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         x = np.random.normal(size=1000)
         y = np.sign(x)
         p = ggplot({'x': x, 'y': y}, aes(x='x'))
-        bunch = GGBunch()
-        for i, adjust in [(i, .5 * (1 + i)) for i in range(3)]:
-            bunch.add_plot(p + geom_density(aes(weight='y'), kernel='cosine', \\
-                                            adjust=adjust) + \\
-                               ggtitle('adjust={0}'.format(adjust)),
-                           i * 300, 0, 300, 200)
-        bunch.show()
+        adjustments = [0.5 * (1 + i) for i in range(3)]
+        plots = [
+            p + geom_density(aes(weight='y'),
+                kernel='cosine', adjust=adjust
+            ) + ggtitle(f'adjust={adjust}')
+            for adjust in adjustments
+        ]
+
+        gggrid(plots) + ggsize(800, 200)
 
     """
     return _geom('density',
@@ -4874,7 +4880,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 13
 
         import numpy as np
         from lets_plot import *
@@ -4884,19 +4890,23 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
-        bunch = GGBunch()
-        for i, bw in enumerate([.2, .4]):
-            for j, n in enumerate([16, 256]):
-                bunch.add_plot(p + geom_density2d(kernel='epanechikov', bw=bw, n=n) + \\
-                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        bandwidths = [0.2, 0.4]
+        sample_sizes = [16, 256]
+        plots = [
+            p + geom_density2d(kernel='epanechikov',
+                               bw=bw, n=n
+            ) + ggtitle(f'bw={bw}, n={n}')
+            for bw in bandwidths
+            for n in sample_sizes
+        ]
+
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-13
+        :emphasize-lines: 13-14
 
         import numpy as np
         from lets_plot import *
@@ -4906,14 +4916,18 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
-        bunch = GGBunch()
-        for i, adjust in enumerate([1.5, 2.5]):
-            for j, bins in enumerate([5, 15]):
-                bunch.add_plot(p + geom_density2d(kernel='cosine', \\
-                                                  adjust=adjust, bins=bins) + \\
-                                   ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        adjustments = [1.5, 2.5]
+        bin_counts = [5, 15]
+        plots = [
+            p + geom_density2d(kernel='cosine',
+                adjust=adjust,
+                bins=bins
+            ) + ggtitle(f'adjust={adjust}, bins={bins}')
+            for adjust in adjustments
+            for bins in bin_counts
+        ]
+
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
@@ -5100,7 +5114,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-13
+        :emphasize-lines: 13
 
         import numpy as np
         from lets_plot import *
@@ -5110,14 +5124,16 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        bunch = GGBunch()
-        for i, bw in enumerate([.2, .4]):
-            for j, n in enumerate([16, 256]):
-                bunch.add_plot(p + geom_density2df(kernel='epanechikov', bw=bw, n=n, \\
-                                                   size=.5, color='white') + \\
-                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        bandwidths = [0.2, 0.4]
+        sample_sizes = [16, 256]
+        plots = [
+            p + geom_density2df(kernel='epanechikov', size=.5, color='white',
+                               bw=bw, n=n
+            ) + ggtitle(f'bw={bw}, n={n}')
+            for bw in bandwidths
+            for n in sample_sizes
+        ]
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
@@ -5133,15 +5149,18 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        bunch = GGBunch()
-        for i, adjust in enumerate([1.5, 2.5]):
-            for j, bins in enumerate([5, 15]):
-                bunch.add_plot(p + geom_density2df(kernel='cosine', \\
-                                                   size=.5, color='white', \\
-                                                   adjust=adjust, bins=bins) + \\
-                                   ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        adjustments = [1.5, 2.5]
+        bin_counts = [5, 15]
+        plots = [
+            p + geom_density2df(kernel='cosine', size=.5, color='white',
+                adjust=adjust,
+                bins=bins
+            ) + ggtitle(f'adjust={adjust}, bins={bins}')
+            for adjust in adjustments
+            for bins in bin_counts
+        ]
+
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 

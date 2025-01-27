@@ -33,12 +33,16 @@ class GGBunchNew {
         |                 ${onePlotSpecStr("blue")},
         |                 ${onePlotSpecStr("red")},
         |                 ${onePlotSpecStr("magenta")}
-        |            ]
+        |            ],
+        |   'ggtitle': {
+        |     'text': 'This is the Title',
+        |     'subtitle': 'This is the subtitle'
+        |   },
+        |   'caption': {
+        |     'text': 'This is the caption'
+        |   }
         |}
         """.trimMargin()
-//        |       { 'origin': [0, 0], 'size': [0.5, 0.5] },
-//        |       { 'origin': [0.5, 0], 'size': [0.5, 0.5] },
-//        |       { 'origin': [0, 0.5], 'size': [0.5, 0.5] }
         return parsePlotSpec(spec)
     }
 
@@ -59,9 +63,6 @@ class GGBunchNew {
         |            ]
         |}
         """.trimMargin()
-//        |       { 'origin': [0, 0], 'size': [0.5, 0.5] },
-//        |       { 'origin': [0.5, 0], 'size': [0.5, 0.5] },
-//        |       { 'origin': [0, 0.5], 'size': [0.5, 0.5] }
         return parsePlotSpec(spec)
     }
 

@@ -10,17 +10,17 @@ import org.jetbrains.letsPlot.core.spec.*
 object LiveMapUtil {
     object Tiles {
         val production = mapOf(
-                "kind" to "vector_lets_plot",
-                "url" to "wss://tiles.datalore.jetbrains.com/",
-                "theme" to "color",
-                "attribution" to "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            "kind" to "vector_lets_plot",
+            "url" to "wss://tiles.datalore.jetbrains.com/",
+            "theme" to "color",
+            "attribution" to "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
         )
 
         val productionDark = mapOf(
-                "kind" to "vector_lets_plot",
-                "url" to "wss://tiles.datalore.jetbrains.com/",
-                "theme" to "dark",
-                "attribution" to "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            "kind" to "vector_lets_plot",
+            "url" to "wss://tiles.datalore.jetbrains.com/",
+            "theme" to "dark",
+            "attribution" to "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
         )
 
         val dev = mapOf(
@@ -58,24 +58,24 @@ object LiveMapUtil {
         )
     }
 
-    fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any> = Tiles.production, force: Boolean = false) = apply {
-        fun update(plotSpec: Map<*, *>) {
-            try {
-                val liveMapSpec = plotSpec.getList("layers")!!.asMaps().first()
-                if (force || Option.Geom.LiveMap.TILES !in liveMapSpec) {
-                    liveMapSpec.asMutable()[Option.Geom.LiveMap.TILES] = tilesSpec
-                }
+    fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any> = Tiles.production, force: Boolean = false) =
+        apply {
+            fun update(plotSpec: Map<*, *>) {
+                try {
+                    val liveMapSpec = plotSpec.getList("layers")!!.asMaps().first()
+                    if (force || Option.Geom.LiveMap.TILES !in liveMapSpec) {
+                        liveMapSpec.asMutable()[Option.Geom.LiveMap.TILES] = tilesSpec
+                    }
 
-            } catch (e: Exception) {
-                println(e)
+                } catch (e: Exception) {
+                    println(e)
+                }
+            }
+
+            when (val specKind = get(Option.Meta.KIND)) {
+                Option.Meta.Kind.PLOT -> update(this)
+                Option.Meta.Kind.SUBPLOTS -> getMaps(Option.SubPlots.FIGURES)!!.forEach(::update)
+                else -> error("Unsupported: $specKind")
             }
         }
-
-        when(val specKind = get(Option.Meta.KIND)) {
-            Option.Meta.Kind.PLOT -> update(this)
-            Option.Meta.Kind.SUBPLOTS -> getMaps(Option.SubPlots.FIGURES)!!.forEach(::update)
-            Option.Meta.Kind.GG_BUNCH -> getMaps(Option.GGBunch.ITEMS)!!.map { it.getMap(Option.GGBunch.Item.FEATURE_SPEC)!! }.forEach(::update)
-            else -> error("Unknown spec kind: $specKind")
-        }
-    }
 }

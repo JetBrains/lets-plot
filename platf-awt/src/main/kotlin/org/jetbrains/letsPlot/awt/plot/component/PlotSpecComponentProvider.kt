@@ -7,8 +7,6 @@ package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.spec.FigKind
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
 import org.jetbrains.letsPlot.core.util.PlotSizeUtil.preferredFigureSize
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
@@ -56,19 +54,21 @@ abstract class PlotSpecComponentProvider(
             computationMessagesHandler
         )
 
-        val isGGBunch =
-            !PlotConfig.isFailure(processedSpec) && PlotConfig.figSpecKind(processedSpec) == FigKind.GG_BUNCH_SPEC
-        return if (isGGBunch) {
-            // GGBunch is always 'original' size => add a scroll pane.
-            val scrollPane = createScrollPane(plotComponent)
-            containerSize?.run {
-                scrollPane.preferredSize = containerSize
-                scrollPane.size = containerSize
-            }
-            scrollPane
-        } else {
-            plotComponent
-        }
+        // ToDo: create 'scrollPane' if 'sizing policy' is 'fixed'.
+//        val isGGBunch =
+//            !PlotConfig.isFailure(processedSpec) && PlotConfig.figSpecKind(processedSpec) == FigKind.GG_BUNCH_SPEC
+//        return if (isGGBunch) {
+//            // GGBunch is always 'original' size => add a scroll pane.
+//            val scrollPane = createScrollPane(plotComponent)
+//            containerSize?.run {
+//                scrollPane.preferredSize = containerSize
+//                scrollPane.size = containerSize
+//            }
+//            scrollPane
+//        } else {
+//            plotComponent
+//        }
+        return plotComponent
     }
 
     /**

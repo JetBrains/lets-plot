@@ -65,7 +65,7 @@ internal object PlotConfigUtil {
     private fun enumPlots(figSpec: Map<String, Any>, plotSpecHandler: (Map<String, Any>) -> Unit) {
         when (PlotConfig.figSpecKind(figSpec)) {
             FigKind.PLOT_SPEC -> plotSpecHandler(figSpec)
-            FigKind.GG_BUNCH_SPEC -> BunchConfig(figSpec).bunchItems.forEach { plotSpecHandler(it.featureSpec) }
+            FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
             FigKind.SUBPLOTS_SPEC -> {
                 OptionsAccessor(figSpec)
                     .getList(Option.SubPlots.FIGURES)
@@ -110,7 +110,7 @@ internal object PlotConfigUtil {
             dataByLayer,
         )
 
-        val varBindings = bindingsByLayer.flatMap { it }
+        val varBindings = bindingsByLayer.flatten()
         val variablesByMappedAes = associateAesWithMappedVariables(varBindings)
 
         return PlotAesBindingSetup(

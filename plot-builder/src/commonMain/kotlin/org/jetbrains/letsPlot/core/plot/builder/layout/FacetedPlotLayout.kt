@@ -40,12 +40,12 @@ internal class FacetedPlotLayout(
     }
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val plotMargins = plotTheme.plotMargins()
+        val plotLayoutMargins = plotTheme.layoutMargins()
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (insets.left + insets.right),
             preferredSize.y - (insets.top + insets.bottom)
         )
-            .subtract(DoubleVector(plotMargins.width, plotMargins.height))
+            .subtract(DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height))
 
         val facetTiles = facets.tileInfos()
 
@@ -226,7 +226,7 @@ internal class FacetedPlotLayout(
             )
 
             val xLabels = when (facetsTheme.horizontalFacetStrip().showStrip()) {
-                 true -> {
+                true -> {
                     val colHeights = facetColTabHeights[facetTile.row] ?: facetTile.colLabs.map {
                         facetLabelSize(
                             it,
@@ -236,6 +236,7 @@ internal class FacetedPlotLayout(
                     }
                     facetTile.colLabs.zip(colHeights)
                 }
+
                 false -> emptyList()
             }
             val yLabel = when (facetsTheme.verticalFacetStrip().showStrip()) {

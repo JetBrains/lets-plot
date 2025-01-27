@@ -40,4 +40,13 @@ interface PlotTheme {
 
     fun titlePosition(): TitlePosition
     fun captionPosition(): TitlePosition
+
+    fun layoutMargins(): Thickness {
+        return if (showBackground()) {
+            // Include border thickness
+            plotMargins() + Thickness.uniform(backgroundStrokeWidth())
+        } else {
+            plotMargins()
+        }
+    }
 }

@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.awt.util.RGBEncoderAwt
 
 object PlotSvgExport {
     /**
-     * @param plotSpec Raw specification of a plot or GGBunch.
-     * @param plotSize Desired plot size. Has no effect on GGBunch.
+     * @param plotSpec Raw specification of a plot.
+     * @param plotSize Desired plot size.
      * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
      */
     @Suppress("MemberVisibilityCanBePrivate")

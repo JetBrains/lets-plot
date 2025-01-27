@@ -90,10 +90,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, lablim=None, li
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=None,
                   format=format,
                   #
                   solid=solid)
@@ -192,10 +190,8 @@ def scale_manual(aesthetic, values, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=None,
                   format=format,
                   #
                   values=values)
@@ -668,7 +664,7 @@ def _is_color_scale(aesthetic):
 
 def scale_continuous(aesthetic, *,
                      name=None, breaks=None, labels=None, lablim=None,
-                     limits=None, na_value=None, guide=None, trans=None, format=None,
+                     limits=None, expand=None, na_value=None, guide=None, trans=None, format=None,
                      scale_mapper_kind=None,
                      **kwargs):
     """
@@ -691,6 +687,10 @@ def scale_continuous(aesthetic, *,
         The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
     guide
@@ -737,6 +737,22 @@ def scale_continuous(aesthetic, *,
             coord_cartesian() + \\
             ggsize(600, 200)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+
+        d = {
+            'x': [0, 1, 2],
+            'y': [0, 1, 2]
+        }
+        ggplot(d) + \\
+            geom_point(aes(x='x', y='y'), size=15) + \\
+            scale_continuous(['x','y'], expand=[0, 0]) #  no expansion - points right on the edges
     """
     if _is_color_scale(aesthetic):
         scale_mapper_kind = 'color_gradient' if scale_mapper_kind is None else scale_mapper_kind
@@ -747,7 +763,7 @@ def scale_continuous(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
+                  expand=expand,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -992,7 +1008,6 @@ def scale_gradient(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -1242,7 +1257,6 @@ def scale_gradient2(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -1498,7 +1512,6 @@ def scale_gradientn(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -1746,7 +1759,6 @@ def scale_hue(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -1933,7 +1945,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 def scale_discrete(aesthetic, *,
                    direction=None,
-                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                   name=None, breaks=None, labels=None, lablim=None,
+                   limits=None, expand=None, na_value=None, guide=None, format=None,
                    scale_mapper_kind=None,
                    **kwargs):
     """
@@ -1960,6 +1973,10 @@ def scale_discrete(aesthetic, *,
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
     guide
@@ -2006,6 +2023,22 @@ def scale_discrete(aesthetic, *,
         ggplot() + geom_point(aes(x, y, color=z, fill=z), shape=21, size=4) + \\
             scale_discrete(aesthetic=['color', 'fill'], guide='none')
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+
+        d = {
+            'x': [0, 1, 2],
+            'y': [0, 1, 2]
+        }
+        ggplot(d) + \\
+            geom_point(aes(x='x', y='y'), size=15) + \\
+            scale_discrete(['x','y'], expand=[0, 0]) #  no expansion - points right on the edges
     """
     return _scale(aesthetic=aesthetic,
                   name=name,
@@ -2013,7 +2046,7 @@ def scale_discrete(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
+                  expand=expand,
                   na_value=na_value,
                   guide=guide,
                   format=format,
@@ -2266,7 +2299,6 @@ def scale_grey(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -2550,7 +2582,6 @@ def scale_brewer(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -2858,7 +2889,6 @@ def scale_viridis(aesthetic, *,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -3146,7 +3176,6 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, lablim=None, li
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -3221,7 +3250,6 @@ def scale_size(range=None, name=None, breaks=None, labels=None, lablim=None, lim
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -3300,7 +3328,6 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, lablim=N
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -3375,7 +3402,6 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, lablim=None
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
@@ -3449,7 +3475,6 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, lablim=None, l
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
-                  expand=None,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,

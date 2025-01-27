@@ -19,7 +19,12 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGr
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
+import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Free
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.COL_WIDTHS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.FIT_CELL_ASPECT_RATIO
@@ -49,6 +54,13 @@ class CompositeFigureConfig constructor(
     internal val elementConfigs: List<OptionsAccessor?>
     internal val layout: CompositeFigureLayout
     internal val theme: Theme
+
+    internal val title: String?
+        get() = getMap(TITLE)[TITLE_TEXT] as String?
+    internal val subtitle: String?
+        get() = getMap(TITLE)[SUBTITLE_TEXT] as String?
+    internal val caption: String?
+        get() = getMap(CAPTION)[CAPTION_TEXT] as String?
 
     init {
         val fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -160,20 +172,30 @@ class CompositeFigureConfig constructor(
     ): CompositeFigureLayout {
 
         val regionOptionsList = layoutOptions.getList(Free.REGIONS)
-        val regions = regionOptionsList.map { region ->
-            check(region is List<*> && region.size == 4 && region.all { it is Number }) {
-                "A 'region' in 'free' layout should be a list of 4 numbers but was: $region"
+        val (regions, offsets) = regionOptionsList.map { region ->
+            check(
+                region is List<*>
+                        && region.size in listOf(4, 6)
+                        && region.all { it is Number }) {
+                "'region' in 'free' layout must be a list of 4 or 6 numbers, was: $region}"
             }
             @Suppress("UNCHECKED_CAST")
             region as List<Number>
-            DoubleRectangle.XYWH(
-                x = region[0].toDouble(),
-                y = region[1].toDouble(),
-                width = region[2].toDouble(),
-                height = region[3].toDouble()
-            )
-        }
 
-        return CompositeFigureFreeLayout(regions, elementsCount)
+            Pair(
+                DoubleRectangle.XYWH(
+                    x = region[0].toDouble(),
+                    y = region[1].toDouble(),
+                    width = region[2].toDouble(),
+                    height = region[3].toDouble()
+                ),
+                DoubleVector(
+                    x = if (region.size > 4) region[4].toDouble() else 0.0,
+                    y = if (region.size > 5) region[5].toDouble() else 0.0
+                )
+            )
+        }.unzip()
+
+        return CompositeFigureFreeLayout(regions, offsets, elementsCount)
     }
 }

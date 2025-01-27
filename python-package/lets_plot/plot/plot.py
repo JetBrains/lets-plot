@@ -142,6 +142,9 @@ def ggsize(width, height):
 
 class GGBunch(FeatureSpec):
     """
+    Class `GGBunch` is deprecated and will be removed in future releases.
+    Please, use function `ggbunch()` to combine several plots into a single figure with custom layout.
+
     Collection of plots created by ggplot function.
     Use method `add_plot()` to add plot to 'bunch'.
     Each plot can have arbitrary location and size.
@@ -176,6 +179,10 @@ class GGBunch(FeatureSpec):
         """
         super().__init__('ggbunch', None)
         self.items = []
+        print("\n(!) WARN: class GGBunch is deprecated and will be removed in future releases.\n\n"
+              "  Please, use function ggbunch() to combine several plots into\n"
+              "  a single figure with custom layout.\n")
+
 
     def add_plot(self, plot_spec: PlotSpec, x, y, width=None, height=None):
         """

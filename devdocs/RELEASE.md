@@ -63,7 +63,6 @@ Put `local.properties` in the project root. See `local.properties.template` for 
 
 File must be in the YAML format and contain paths to bin and include directories for
 each Python version: from 3.8 to 3.13.
-For **Linux**, it is enough to point one Python version.
 
 **Example:**
 

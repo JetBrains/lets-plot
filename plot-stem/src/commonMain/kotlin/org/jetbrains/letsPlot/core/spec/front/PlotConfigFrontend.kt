@@ -10,14 +10,11 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
-import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptions
-import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
-import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 
 class PlotConfigFrontend private constructor(
     opts: Map<String, Any>,
@@ -43,25 +40,7 @@ class PlotConfigFrontend private constructor(
 
     companion object {
         fun processTransform(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-            @Suppress("NAME_SHADOWING")
-            var plotSpec = plotSpec
-            val isGGBunch = !isFailure(plotSpec) && figSpecKind(plotSpec) == FigKind.GG_BUNCH_SPEC
-
-            plotSpec = PlotSpecTransform.builderForRawSpec()
-                .build()
-                .apply(plotSpec)
-
-            // migration to new schema of plot specs
-            // needed to support 'saved output' in old format
-            // remove after reasonable period of time (24 Sep, 2018)
-            val migrations = PlotSpecTransform.builderForRawSpec()
-                .change(
-                    MoveGeomPropertiesToLayerMigration.specSelector(isGGBunch),
-                    MoveGeomPropertiesToLayerMigration()
-                )
-                .build()
-
-            plotSpec = migrations.apply(plotSpec)
+            // No 'frontend' transform is needed at the moment.
             return plotSpec
         }
 
