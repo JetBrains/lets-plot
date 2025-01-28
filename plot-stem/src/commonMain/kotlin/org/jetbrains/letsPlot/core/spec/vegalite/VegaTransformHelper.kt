@@ -6,14 +6,13 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import org.jetbrains.letsPlot.core.spec.getMaps
-import org.jetbrains.letsPlot.core.spec.getString
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
-import org.jetbrains.letsPlot.core.spec.read
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Aggregate
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Transform
 
 class TransformResult internal constructor(
@@ -37,9 +36,9 @@ object VegaTransformHelper {
                 else -> return@run
             }
 
-            encodings.entries.forEach { (channel, encoding) ->
-                channel as String
-                encoding as Map<*, *>
+            Channels.forEach { channel ->
+                val encoding = encodings.getMap(channel) ?: return@forEach
+
                 if (channel == statInputChannel) {
                     encodingAdj.add(listOf(channel, Encoding.TYPE) to Encoding.Types.QUANTITATIVE)
                 }
@@ -50,15 +49,13 @@ object VegaTransformHelper {
                 }
             }
 
-            val binDefinition = xBinDefinition ?: yBinDefinition!!
+
             return TransformResult(
                 binStat {
-                    (binDefinition as? Map<*, *>)?.forEach { (key, value) ->
-                        when (key) {
-                            Transform.Bin.MAXBINS -> bins = (value as? Number)?.toInt()
-                            Transform.Bin.STEP -> binWidth = (value as? Number)?.toDouble()
-                            else -> println("Unsupported bin parameter: $key")
-                        }
+                    val binDefinition = (xBinDefinition ?: yBinDefinition!!) as? Map<*, *>
+                    binDefinition?.let {
+                        bins = binDefinition.getInt(Transform.Bin.MAXBINS)
+                        binWidth = binDefinition.getDouble(Transform.Bin.STEP)
                     }
                 },
                 "y".takeIf { statInputChannel == Channel.Y },
@@ -94,15 +91,14 @@ object VegaTransformHelper {
 
             val origVar = densityTransform.getString(Transform.Density.DENSITY) ?: return@run
 
-            val statInputChannel = encodings
-                .entries
-                .filter { (channel, _) -> channel == Channel.X || channel == Channel.Y }
-                .singleOrNull { (_, encoding) -> (encoding as Map<*, *>)[Encoding.FIELD] == Transform.Density.VAR_VALUE }
-                ?.key
+            val statInputChannel = when {
+                encodings.read(Channel.X, Encoding.FIELD) == Transform.Density.VAR_VALUE -> Channel.X
+                encodings.read(Channel.Y, Encoding.FIELD) == Transform.Density.VAR_VALUE -> Channel.Y
+                else -> null
+            }
 
-            encodings.entries.forEach { (channel, encoding) ->
-                channel as String
-                encoding as Map<*, *>
+            Channels.map { channel ->
+                val encoding = encodings.getMap(channel) ?: return@map
 
                 when (encoding[Encoding.FIELD]) {
                     Transform.Density.VAR_DENSITY -> encodingAdj.add(listOf(channel, Encoding.FIELD) to Stats.DENSITY.name)

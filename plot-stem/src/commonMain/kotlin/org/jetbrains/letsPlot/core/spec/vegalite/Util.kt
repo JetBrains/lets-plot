@@ -9,9 +9,11 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
@@ -53,6 +55,8 @@ internal object Util {
 
     fun isContinuous(channel: String, encoding: Map<*, *>): Boolean {
         val channelEncoding = encoding.getMap(channel) ?: return false
+        if (channel == Channel.LONGITUDE) return true
+        if (channel == Channel.LATITUDE) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.QUANTITATIVE) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.TEMPORAL) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.ORDINAL) return false
@@ -75,13 +79,12 @@ internal object Util {
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
-        return encoding.entries.map { (channel, encoding) ->
-                channel as? String ?: return@map emptyList()
-                encoding as? Map<*, *> ?: return@map emptyList()
-                val field = encoding.getString(Encoding.FIELD) ?: return@map emptyList()
-                val aesthetics = channelToAes(channel, customChannelMapping)
-                aesthetics.map { aes -> aes to field}
-            }
+
+        return Channels.map { channel ->
+            val field = encoding.getString(channel, Encoding.FIELD) ?: return@map emptyList()
+            val aesthetics = channelToAes(channel, customChannelMapping)
+            aesthetics.map { aes -> aes to field }
+        }
             .flatten()
             .fold(Mapping(groupingVar)) { mapping, (aes, field) -> mapping + (aes to field) }
     }
@@ -100,7 +103,9 @@ internal object Util {
             Channel.SIZE to Aes.SIZE,
             Channel.ANGLE to Aes.ANGLE,
             Channel.SHAPE to Aes.SHAPE,
-            Channel.TEXT to Aes.LABEL
+            Channel.TEXT to Aes.LABEL,
+            Channel.LONGITUDE to Aes.X,
+            Channel.LATITUDE to Aes.Y,
         ).groupBy { (ch, _) -> ch }
 
         @Suppress("NAME_SHADOWING")
@@ -113,8 +118,9 @@ internal object Util {
     }
 
     fun LayerOptions.applyConstants(markSpec: Map<*, *>, customChannelMapping: List<Pair<String, Aes<*>>>) {
-        markSpec.forEach { (prop, value) ->
-            channelToAes(prop.toString(), customChannelMapping)
+        Channels.forEach { channel ->
+            val value = markSpec[channel] ?: return@forEach
+            channelToAes(channel, customChannelMapping)
                 .forEach { aes ->
                     const(aes, value)
                 }
@@ -129,10 +135,9 @@ internal object Util {
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        encodingVegaSpec.entries.forEach { (channel, encoding) ->
-            channel as? String ?: return@forEach
-            encoding as? Map<*, *> ?: return@forEach
-
+        Channels.forEach { channel ->
+            val encoding = encodingVegaSpec.getMap(channel) ?: return@forEach
+            // as? Map<*, *> ?: return@forEach
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
                 // Yet need to check sorting and other options - they may affect series_meta or mapping_meta
@@ -249,14 +254,15 @@ internal object Util {
         val newXDomain = union(plotOptions.coord?.xLim, domain(Channel.X))
         val newYDomain = union(plotOptions.coord?.yLim, domain(Channel.Y))
 
-        if (newXDomain != null || newYDomain != null) {
-            if (plotOptions.coord == null) {
-                plotOptions.coord = coord {
-                    name = CARTESIAN
-                }
-            }
+        val coordName = when {
+            Channel.LONGITUDE in encoding -> CoordName.MAP
+            Channel.LATITUDE in encoding -> CoordName.MAP
+            else -> null
+        }
 
-            plotOptions.coord!!.apply {
+        if (newXDomain != null || newYDomain != null || coordName != null) {
+            (plotOptions.coord ?: CoordOptions()).apply {
+                name = coordName ?: CARTESIAN
                 xLim = newXDomain
                 yLim = newYDomain
             }

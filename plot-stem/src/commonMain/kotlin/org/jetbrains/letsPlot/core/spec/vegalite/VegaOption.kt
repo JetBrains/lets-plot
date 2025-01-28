@@ -89,20 +89,31 @@ internal object VegaOption {
             const val CENTER = "center"
         }
 
+        val Channels = setOf(
+            Channel.X, Channel.Y, Channel.X2, Channel.Y2,
+            Channel.LATITUDE, Channel.LONGITUDE,
+            Channel.COLOR, Channel.FILL, Channel.OPACITY,
+            Channel.STROKE, Channel.SIZE,
+            Channel.ANGLE,
+            Channel.SHAPE,
+            Channel.TEXT,
+            Channel.DETAIL,
+            Channel.X_OFFSET, Channel.Y_OFFSET,
+            Channel.ERROR_X
+        )
         object Channel {
             const val X = "x"
             const val Y = "y"
             const val X2 = "x2"
             const val Y2 = "y2"
 
+            const val LATITUDE = "latitude"
+            const val LONGITUDE = "longitude"
+
             const val COLOR = "color"
             const val FILL = "fill"
             const val OPACITY = "opacity"
-            const val FILL_OPACITY = "fillOpacity"
             const val STROKE = "stroke"
-            const val STROKE_OPACITY = "strokeOpacity"
-            const val STROKE_WIDTH = "strokeWidth"
-            const val STROKE_DASH = "strokeDash"
             const val SIZE = "size"
             const val ANGLE = "angle"
             const val SHAPE = "shape"
