@@ -261,7 +261,7 @@ internal object Util {
         }
 
         if (newXDomain != null || newYDomain != null || coordName != null) {
-            (plotOptions.coord ?: CoordOptions()).apply {
+            plotOptions.coord = (plotOptions.coord ?: CoordOptions()).apply {
                 name = coordName ?: CARTESIAN
                 xLim = newXDomain
                 yLim = newYDomain
