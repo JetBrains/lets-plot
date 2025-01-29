@@ -84,7 +84,7 @@ object StatProto {
                     binCountX = binCountX.toInt(),
                     binCountY = binCountY.toInt(),
                     binWidthX = binWidthX?.toDouble(),
-                    binWidthY = binWidthY?.let { it.toDouble() * 3.0 / (2.0 * sqrt(3.0)) },
+                    binWidthY = binWidthY?.toDouble(),
                     drop = options.getBoolean(BinHex.DROP, def = BinHexStat.DEF_DROP)
                 )
             }

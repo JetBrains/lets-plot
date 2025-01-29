@@ -27,7 +27,7 @@ class BinHexStat(
     private val drop: Boolean = DEF_DROP
 ) : BaseStat(DEF_MAPPING) {
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
-    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY)
+    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY?.let { it * 3.0 / (2.0 * sqrt(3.0))})
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
