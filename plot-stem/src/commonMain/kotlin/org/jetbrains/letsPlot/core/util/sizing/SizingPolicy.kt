@@ -99,15 +99,6 @@ class SizingPolicy(
         }
     }
 
-    fun withFixedWidth(width: Double): SizingPolicy {
-        return SizingPolicy(
-            widthMode = FIXED,
-            width = width,
-            heightMode = this.heightMode,
-            height = this.height,
-        )
-    }
-
     fun withUpdate(
         options: Map<*, *>,
     ): SizingPolicy {
@@ -131,6 +122,15 @@ class SizingPolicy(
             return SizingPolicy(
                 NOTEBOOK_WIDTH_MODE, NOTEBOOK_HEIGHT_MODE,
                 width = null,
+                height = null,
+            )
+        }
+
+        fun dataloreReportCell(width: Double): SizingPolicy {
+            return SizingPolicy(
+                widthMode = FIXED,
+                width = width,
+                heightMode = SCALED,
                 height = null,
             )
         }

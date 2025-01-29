@@ -139,7 +139,7 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val messagesDiv = document.createElement("div") as HTMLDivElement
     parentElement.appendChild(messagesDiv)
 
-    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
+    val sizingPolicyInitial = when (val o = options[SizingOption.KEY]) {
         is Map<*, *> -> SizingPolicy.create(o)
         else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
     }
@@ -148,11 +148,17 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val datalorePreferredWidth: Double? =
         parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
 
+    val sizingPolicy = if (datalorePreferredWidth != null) {
+        // Replace whatever sizing policy
+        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
+    } else {
+        sizingPolicyInitial
+    }
+
     return buildPlotFromProcessedSpecsIntern(
         processedSpec,
         wrapperDiv,
         sizingPolicy,
-        datalorePreferredWidth,
         MessageHandler(messagesDiv),
     )
 }
@@ -164,16 +170,8 @@ internal fun buildPlotFromProcessedSpecsIntern(
     plotSpec: Map<String, Any>,
     wrapperElement: HTMLElement,
     sizingPolicy: SizingPolicy,
-    datalorePreferredWidth: Double?,
     messageHandler: MessageHandler
 ): FigureModelJs? {
-
-    @Suppress("NAME_SHADOWING")
-    val sizingPolicy = if (datalorePreferredWidth != null) {
-        sizingPolicy.withFixedWidth(datalorePreferredWidth)
-    } else {
-        sizingPolicy
-    }
 
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
@@ -196,7 +194,6 @@ internal fun buildPlotFromProcessedSpecsIntern(
         plotSpec,
         MonolithicParameters(
             wrapperElement,
-            datalorePreferredWidth,
             messageHandler.toMute(),
         ),
         sizingPolicy,
