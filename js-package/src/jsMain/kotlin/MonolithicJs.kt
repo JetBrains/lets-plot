@@ -6,10 +6,7 @@
 /* root package */
 
 import kotlinx.browser.document
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
@@ -189,60 +186,23 @@ internal fun buildPlotFromProcessedSpecsIntern(
     }
 
     val success = buildResult as Success
-    val computationMessages = success.buildInfos.flatMap { it.computationMessages }
+    val computationMessages = success.buildInfo.computationMessages
     computationMessages.forEach {
         messageHandler.showInfo(it)
     }
 
-    val figureModel = if (success.buildInfos.size == 1) {
-        // a single figure
-        val buildInfo = success.buildInfos[0]
-        val result = FigureToHtml(buildInfo, wrapperElement).eval(isRoot = true)
-        FigureModelJs(
-            plotSpec,
-            MonolithicParameters(
-                wrapperElement,
-                datalorePreferredWidth,
-                messageHandler.toMute(),
-            ),
-            sizingPolicy,
-            result.toolEventDispatcher,
-            result.figureRegistration
-        )
-    } else {
-        // a bunch
-        buildGGBunchComponent(success.buildInfos, wrapperElement)
-        null
-    }
-
-    return figureModel
-}
-
-private fun buildGGBunchComponent(
-    plotInfos: List<FigureBuildInfo>,
-    parentElement: HTMLElement,
-) {
-    val bunchBounds = plotInfos.map { it.bounds }
-        .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-            acc.union(bounds)
-        }
-
-    FigureToHtml.setupRootHTMLElement(
-        parentElement,
-        bunchBounds.dimension
+    val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
+    return FigureModelJs(
+        plotSpec,
+        MonolithicParameters(
+            wrapperElement,
+            datalorePreferredWidth,
+            messageHandler.toMute(),
+        ),
+        sizingPolicy,
+        result.toolEventDispatcher,
+        result.figureRegistration
     )
-
-    for (plotInfo in plotInfos) {
-        val origin = plotInfo.bounds.origin
-        val itemContainerElement = FigureToHtml.createContainerElement(origin)
-        parentElement.appendChild(itemContainerElement)
-
-        FigureToHtml(
-            buildInfo = plotInfo,
-            parentElement = itemContainerElement,
-        ).eval(isRoot = false)
-
-    }
 }
 
 private fun handleException(e: RuntimeException, messageHandler: MessageHandler) {
@@ -256,7 +216,6 @@ private fun handleException(e: RuntimeException, messageHandler: MessageHandler)
 internal class MessageHandler(
     private val messagesDiv: HTMLElement,
 ) {
-
     private var mute: Boolean = false
 
     fun showError(message: String) {
