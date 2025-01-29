@@ -30,7 +30,7 @@ object BinStatUtil {
         } else List(dataLength) { 1.0 }
     }
 
-    fun binCountAndWidth(dataRange: Double, binOptions: BinOptions): CountAndWidth {
+    fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, extraExpand: Boolean = false): CountAndWidth {
         var binCount = binOptions.binCount
         val binWidth: Double
         if (binOptions.hasBinWidth()) {
@@ -39,7 +39,11 @@ object BinStatUtil {
             count = min(MAX_BIN_COUNT.toDouble(), count)
             binCount = ceil(count).toInt()
         } else {
-            binWidth = dataRange / binCount
+            binWidth = if (extraExpand) {
+                dataRange / max(1, binCount - 1)
+            } else {
+                dataRange / binCount
+            }
         }
         return CountAndWidth(binCount, binWidth)
     }

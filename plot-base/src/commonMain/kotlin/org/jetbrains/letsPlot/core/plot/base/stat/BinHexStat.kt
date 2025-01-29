@@ -49,19 +49,21 @@ class BinHexStat(
         val xRangeInit = adjustRangeInitial(xRange)
         val yRangeInit = adjustRangeInitial(yRange)
 
-        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX)
-        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY)
+        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX, true)
+        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY, true)
 
         // final bin width and count
 
-        val xRangeAdjusted = adjustRangeFinal(xRange, xCountAndWidthInit.width)
-        val yRangeAdjusted = adjustRangeFinal(yRange, yCountAndWidthInit.width)
+        val (xWidthInit, xExpandCenter) = if (!binOptionsX.hasBinWidth() && xCountAndWidthInit.count == 1 && yCountAndWidthInit.count > 1) {
+            Pair(xCountAndWidthInit.width * 2.0, -0.75)
+        } else {
+            Pair(xCountAndWidthInit.width, 0.0)
+        }
+        val xRangeFinal = adjustRangeFinal(xRange, xWidthInit, expandCenter = xExpandCenter)
+        val yRangeFinal = adjustRangeFinal(yRange, yCountAndWidthInit.width)
 
-        val xCountAndWidthFinal = BinStatUtil.binCountAndWidth(xRangeAdjusted.length, binOptionsX)
-        val yCountAndWidthFinal = BinStatUtil.binCountAndWidth(yRangeAdjusted.length, binOptionsY)
-
-        val xRangeFinal = adjustRangeFinal(xRange, xCountAndWidthFinal.width)
-        val yRangeFinal = adjustRangeFinal(yRange, yCountAndWidthFinal.width)
+        val xCountAndWidthFinal = BinStatUtil.binCountAndWidth(xRangeFinal.length, binOptionsX)
+        val yCountAndWidthFinal = BinStatUtil.binCountAndWidth(yRangeFinal.length, binOptionsY)
 
         val countTotal = xCountAndWidthFinal.count * yCountAndWidthFinal.count
         val densityNormalizingFactor =
@@ -115,15 +117,15 @@ class BinHexStat(
 
         val x0 = xStart + binWidth / 2.0
         val y0 = yStart + binHeight / 2.0
-        for (yIndex in 0 .. binCountY) {
-            for (xIndex in 0 .. binCountX) {
+        for (yIndex in 0 until binCountY) {
+            for (xIndex in 0 until binCountX) {
                 val binIndexKey = Pair(xIndex, yIndex)
                 var count = 0.0
                 if (countByBinIndexKey.containsKey(binIndexKey)) {
                     count = countByBinIndexKey[binIndexKey]!!
                 }
 
-                if (count == 0.0 && (drop || xIndex == binCountX || yIndex == binCountY)) {
+                if (count == 0.0 && drop) {
                     continue
                 }
 
@@ -280,8 +282,10 @@ class BinHexStat(
             return ensureApplicableRange(r)
         }
 
-        private fun adjustRangeFinal(r: DoubleSpan, binWidth: Double): DoubleSpan {
+        private fun adjustRangeFinal(r: DoubleSpan, binWidth: Double, expandCenter: Double = 0.0): DoubleSpan {
             return r.expanded(binWidth / 2.0).let {
+                DoubleSpan(it.lowerEnd + expandCenter * binWidth / 2.0, it.upperEnd + expandCenter * binWidth / 2.0)
+            }.let {
                 if (isBeyondPrecision(it)) {
                     // 0 span always becomes 1
                     it.expanded(0.5)
