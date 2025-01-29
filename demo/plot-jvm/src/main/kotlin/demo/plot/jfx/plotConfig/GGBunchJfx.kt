@@ -11,9 +11,8 @@ import demo.plot.common.model.plotConfig.GGBunch
 fun main() {
     with(GGBunch()) {
         PlotSpecsDemoWindowJfx(
-            "GGBunch",
+            "ggbunch()",
             plotSpecList()
         ).open()
     }
 }
-

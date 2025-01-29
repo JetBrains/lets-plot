@@ -12,10 +12,9 @@ object GGBunchSvg {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGBunch()) {
-            @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList()
             PlotSvgDemoUtil.show(
-                "GGBunch",
+                "ggbunch()",
                 plotSpecList,
                 DoubleVector(600.0, 600.0)
             )
