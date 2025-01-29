@@ -86,17 +86,13 @@ internal class FigureToAwt(
             )
         }
 
-//        val rootFigureBounds = toJBounds(svgRoot.bounds)
         val rootJComponentBounds = toJBounds(
             DoubleRectangle(DoubleVector.ZERO, svgRoot.bounds.dimension)
         )
         val rootFigureDim = rootJComponentBounds.size
         rootJPanel.preferredSize = rootFigureDim
-        rootJPanel.minimumSize = rootFigureDim
-        rootJPanel.maximumSize = rootFigureDim
 
         val rootJComponent: JComponent = svgComponentFactory(svgRoot.svg)
-//        rootJComponent.bounds = rootFigureBounds
         rootJComponent.bounds = rootJComponentBounds
         rootJPanel.add(rootJComponent)
 

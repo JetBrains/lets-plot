@@ -56,7 +56,6 @@ internal class CompositeFigureBuildInfo constructor(
         val elementsAreaBounds = layoutInfo.geomAreaBounds
         val svgComponent = CompositeFigureSvgComponent(
             elementSvgRoots,
-//            bounds.dimension,
             overalSize,
             elementsAreaBounds,
             title, subtitle, caption,
@@ -95,9 +94,10 @@ internal class CompositeFigureBuildInfo constructor(
         val elementsAreaBounds = plotTheme.plotInset().shrinkRect(withoutTitles)
 
         val layoutedElements = layout.doLayout(elementsAreaBounds, elements)
-        val layoutedElementsAreaBounds = layoutedElements.filterNotNull().map {
-            it.bounds
-        }.reduce { acc, el -> acc.union(el) }
+        val layoutedElementsAreaBounds = layoutedElements.filterNotNull()
+            .map { it.bounds }
+            .reduceOrNull { acc, el -> acc.union(el) }
+            ?: contextBounds
 
         return CompositeFigureBuildInfo(
             elements = layoutedElements,

@@ -14,7 +14,7 @@ fun main() {
         PlotViewerWindowBatik(
             "ggbunch()",
             rawSpec = plotSpecList.first(),
-//                windowSize = Dimension(400, 300)
+//            windowSize = Dimension(400, 300)
         ).open()
     }
 }
