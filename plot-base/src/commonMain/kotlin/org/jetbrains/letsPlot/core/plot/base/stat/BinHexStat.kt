@@ -28,7 +28,7 @@ class BinHexStat(
     private val drop: Boolean = DEF_DROP
 ) : BaseStat(DEF_MAPPING) {
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
-    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY?.let { it * 3.0 / (2.0 * sqrt(3.0))})
+    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY?.let { it * HEIGHT_TO_BINHEIGHT})
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
@@ -56,7 +56,7 @@ class BinHexStat(
         // final bin width and count
 
         val (xWidthInit, xExpandCenter) = if (!binOptionsX.hasBinWidth() && xCountAndWidthInit.count == 1 && yCountAndWidthInit.count > 1) {
-            Pair(xCountAndWidthInit.width * 2.0, -0.75)
+            Pair(xCountAndWidthInit.width * 2.0, -0.75) // double the width and shift the center to the left when there is only one bin in x direction
         } else {
             Pair(xCountAndWidthInit.width, 0.0)
         }
@@ -70,9 +70,7 @@ class BinHexStat(
         val densityNormalizingFactor =
             densityNormalizingFactor(xRangeFinal.length, yRangeFinal.length, countTotal)
 
-        val binHeight = yCountAndWidthFinal.width // distance between centers of two adjacent hexagons in y direction
-        val hexHeight = 4.0 * binHeight / 3.0 // height of hexagon in coordinate system
-        val height = hexHeight * sqrt(3.0) / 2.0 // height of geometry HexGeom that corresponds to hexagon of height `hexHeight`
+        val height = yCountAndWidthFinal.width * BINHEIGHT_TO_HEIGHT
 
         // If the hexagons are too flattened, floating-point arithmetic errors can occur, so computeBins() assumes the hexagons are regular
         val ratio = xCountAndWidthFinal.width / height
@@ -111,7 +109,7 @@ class BinHexStat(
         weightAtIndex: (Int) -> Double,
         densityNormalizingFactor: Double
     ): BinsHexData {
-        require(abs(binWidth / binHeight - 2.0 * sqrt(3.0) / 3.0) < EPSILON) { "Hexagons are not regular" }
+        require(abs(binWidth / binHeight - BINHEIGHT_TO_HEIGHT) < EPSILON) { "Hexagons are not regular" }
         val countByBinIndexKey = computeCounts(xValues, yValues, xStart, yStart, binWidth, binHeight, weightAtIndex)
         val totalCount = countByBinIndexKey.values.sum()
 
@@ -273,6 +271,17 @@ class BinHexStat(
         const val DEF_DROP = true
 
         private const val EPSILON = 1e-6
+
+        /*
+        Let `binHeight` be the vertical distance between the centres of adjacent hexagons in coordinates.
+        Then the hexagon height in coordinates is `hexHeight = 4 * binHeight / 3`.
+        This height should be equal to `2 / sqrt(3)` if the user specifies `height = 1` (because `2 / sqrt(3)` is
+        the diameter of the circumcircle of a regular hexagon when the diameter of the inscribed circle is 1).
+        So, `height = hexHeight * sqrt(3) / 2 = binHeight * (2 * sqrt(3)) / 3`.
+        These constants are used throughout the calculations.
+        */
+        private val HEIGHT_TO_BINHEIGHT = 3.0 / (2.0 * sqrt(3.0))
+        private val BINHEIGHT_TO_HEIGHT = 2.0 * sqrt(3.0) / 3.0
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

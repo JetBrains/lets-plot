@@ -36,32 +36,6 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    companion object {
-        const val HANDLES_GROUPS = false
-
-        private fun clientHexByDataPoint(): (DataPointAesthetics) -> List<DoubleVector>? {
-            fun factory(p: DataPointAesthetics): List<DoubleVector>? {
-                val x = p.finiteOrNull(Aes.X) ?: return null
-                val y = p.finiteOrNull(Aes.Y) ?: return null
-                val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-                val height = p.finiteOrNull(Aes.HEIGHT) ?: return null
-
-                val origin = DoubleVector(x, y)
-                return listOf(
-                    DoubleVector(origin.x, origin.y - height / sqrt(3.0)),
-                    DoubleVector(origin.x + width / 2, origin.y - height / (2.0 * sqrt(3.0))),
-                    DoubleVector(origin.x + width / 2, origin.y + height / (2.0 * sqrt(3.0))),
-                    DoubleVector(origin.x, origin.y + height / sqrt(3.0)),
-                    DoubleVector(origin.x - width / 2, origin.y + height / (2.0 * sqrt(3.0))),
-                    DoubleVector(origin.x - width / 2, origin.y - height / (2.0 * sqrt(3.0))),
-                    DoubleVector(origin.x, origin.y - height / sqrt(3.0)), // Close the hexagon
-                )
-            }
-
-            return ::factory
-        }
-    }
-
     override fun widthSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
@@ -100,6 +74,34 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
             )
         } else {
             null
+        }
+    }
+
+    companion object {
+        const val HANDLES_GROUPS = false
+
+        private val HALF_HEX_HEIGHT = 1.0 / sqrt(3.0)
+
+        private fun clientHexByDataPoint(): (DataPointAesthetics) -> List<DoubleVector>? {
+            fun factory(p: DataPointAesthetics): List<DoubleVector>? {
+                val x = p.finiteOrNull(Aes.X) ?: return null
+                val y = p.finiteOrNull(Aes.Y) ?: return null
+                val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+                val height = p.finiteOrNull(Aes.HEIGHT) ?: return null
+
+                val origin = DoubleVector(x, y)
+                return listOf(
+                    DoubleVector(origin.x, origin.y - height * HALF_HEX_HEIGHT),
+                    DoubleVector(origin.x + width / 2, origin.y - height * HALF_HEX_HEIGHT / 2.0),
+                    DoubleVector(origin.x + width / 2, origin.y + height * HALF_HEX_HEIGHT / 2.0),
+                    DoubleVector(origin.x, origin.y + height / sqrt(3.0)),
+                    DoubleVector(origin.x - width / 2, origin.y + height * HALF_HEX_HEIGHT / 2.0),
+                    DoubleVector(origin.x - width / 2, origin.y - height * HALF_HEX_HEIGHT / 2.0),
+                    DoubleVector(origin.x, origin.y - height * HALF_HEX_HEIGHT), // Close the hexagon
+                )
+            }
+
+            return ::factory
         }
     }
 }
