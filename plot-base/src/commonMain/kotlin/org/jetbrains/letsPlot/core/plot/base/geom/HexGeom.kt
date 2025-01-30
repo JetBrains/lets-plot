@@ -66,7 +66,7 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
             val expand = if (sizeAes == Aes.WIDTH) {
                 size!! / 2.0
             } else {
-                size!! / sqrt(3.0)
+                size!! * HALF_HEX_HEIGHT
             }
             DoubleSpan(
                 loc - expand,
