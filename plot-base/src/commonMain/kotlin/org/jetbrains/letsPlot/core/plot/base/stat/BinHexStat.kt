@@ -28,7 +28,7 @@ class BinHexStat(
     private val drop: Boolean = DEF_DROP
 ) : BaseStat(DEF_MAPPING) {
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
-    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY?.let { it * HEIGHT_TO_BINHEIGHT})
+    private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY?.let { it * HEIGHT_TO_BINHEIGHT })
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
@@ -45,7 +45,7 @@ class BinHexStat(
             return withEmptyStatValues()
         }
 
-        // initial bin width and count
+        // Initial bin width and count
 
         val xRangeInit = adjustRangeInitial(xRange)
         val yRangeInit = adjustRangeInitial(yRange)
@@ -53,10 +53,15 @@ class BinHexStat(
         val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX, true)
         val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY, true)
 
-        // final bin width and count
+        // Final bin width and count
 
         val (xWidthInit, xExpandCenter) = if (!binOptionsX.hasBinWidth() && xCountAndWidthInit.count == 1 && yCountAndWidthInit.count > 1) {
-            Pair(xCountAndWidthInit.width * 2.0, -0.75) // double the width and shift the center to the left when there is only one bin in x direction
+            /*
+            Double the width and shift the centre to the left if there is only one bin in the x direction,
+            since in this case the initial binwidth is the same as the x range,
+            but due to the specific stacking of hexagons all data must fit into half of one hexagon
+            */
+            Pair(xCountAndWidthInit.width * 2.0, -0.75)
         } else {
             Pair(xCountAndWidthInit.width, 0.0)
         }
@@ -89,7 +94,7 @@ class BinHexStat(
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, binsData.x)
-            .putNumeric(Stats.Y, binsData.y.map { y -> y / ratio })
+            .putNumeric(Stats.Y, binsData.y.map { y -> y / ratio }) // In the result, the y-coordinates need to be flattened back
             .putNumeric(Stats.COUNT, binsData.count)
             .putNumeric(Stats.DENSITY, binsData.density)
             .putNumeric(Stats.WIDTH, List(binsData.x.size) { xCountAndWidthFinal.width })
@@ -105,11 +110,11 @@ class BinHexStat(
         binCountX: Int,
         binCountY: Int,
         binWidth: Double,
-        binHeight: Double, // distance between centers of two adjacent hexagons in y direction
+        binHeight: Double,
         weightAtIndex: (Int) -> Double,
         densityNormalizingFactor: Double
     ): BinsHexData {
-        require(abs(binWidth / binHeight - BINHEIGHT_TO_HEIGHT) < EPSILON) { "Hexagons are not regular" }
+        require(abs(binWidth / binHeight - BINHEIGHT_TO_HEIGHT) < EPSILON) { "Hexagons should be regular" }
         val countByBinIndexKey = computeCounts(xValues, yValues, xStart, yStart, binWidth, binHeight, weightAtIndex)
         val totalCount = countByBinIndexKey.values.sum()
 
@@ -156,7 +161,8 @@ class BinHexStat(
         binHeight: Double,
         weightAtIndex: (Int) -> Double,
     ): Map<Pair<Int, Int>, Double> {
-        fun getRawGridIndex(
+        // Index as if the tiling were done with rectangles - a first approximation to the true index
+        fun getCoarseGridIndex(
             p: DoubleVector
         ): Pair<Int, Int> {
             val j = floor((p.y - yStart) / binHeight).toInt()
@@ -165,6 +171,7 @@ class BinHexStat(
             return Pair(i, j)
         }
 
+        // The true index is either the coarse index or one of its six nearest neighbours
         fun hexWithNeighbours(
             hexagonIndex: Pair<Int, Int>
         ): Set<Pair<Int, Int>> {
@@ -195,7 +202,7 @@ class BinHexStat(
             p: DoubleVector,
             hexagonIndex: Pair<Int, Int>
         ): Boolean {
-            val epsilon = min(binWidth, binHeight) * EPSILON // points on the half of the border are considered to be inside with this epsilon
+            val epsilon = min(binWidth, binHeight) * EPSILON // Points on the top-right half of the border are considered to be inside with this epsilon
             val halfHexHeight = 2.0 * binHeight / 3.0
             val center = DoubleVector(
                 xStart + binWidth / 2.0 + if (hexagonIndex.second % 2 == 0)
@@ -242,13 +249,13 @@ class BinHexStat(
             if (!SeriesUtil.allFinite(x, y)) {
                 continue
             }
-            val suspectedHexagons = hexWithNeighbours(getRawGridIndex(DoubleVector(x!!, y!!)))
+            val suspectedHexagons = hexWithNeighbours(getCoarseGridIndex(DoubleVector(x!!, y!!)))
             val hexIndexKey = suspectedHexagons
                 .filter { isPointInHexagon(DoubleVector(x, y), it) }
                 .sortedWith(compareBy(
                     { -it.second }, // To prefer hexagons with bigger y
                     { -it.first } // To prefer hexagons with bigger x
-                )).firstOrNull() // Point on the border could be in two hexagons because of epsilon, so we take the top-right hexagon
+                )).firstOrNull() // Point on the border could be in two or three hexagons because of epsilon, so we take the top-right hexagon
                 ?: throw IllegalStateException("No hexagon found for point ($x, $y)") // If algorithm is correct, this should never happen
             if (!countByBinIndexKey.containsKey(hexIndexKey)) {
                 countByBinIndexKey[hexIndexKey] = 0.0
@@ -292,7 +299,7 @@ class BinHexStat(
         )
 
         private fun adjustRangeInitial(r: DoubleSpan): DoubleSpan {
-            // span can't be 0
+            // Span can't be 0
             return ensureApplicableRange(r)
         }
 
@@ -314,7 +321,7 @@ class BinHexStat(
             ySpan: Double,
             count: Int
         ): Double {
-            // density should integrate to 1.0
+            // Density should integrate to 1.0
             val area = xSpan * ySpan
             val binArea = area / count
             return 1.0 / binArea
