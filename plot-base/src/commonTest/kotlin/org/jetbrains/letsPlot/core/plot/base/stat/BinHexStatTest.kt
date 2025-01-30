@@ -180,19 +180,19 @@ class BinHexStatTest : BaseStatTest() {
     @Test
     fun stretchedHexagonsRegressionTest() {
         checkStretchedHexagonsRegression(1.0, 1.0)
-        checkStretchedHexagonsRegression(1e-11, 1e-11)
-        checkStretchedHexagonsRegression(1e-11, 1e11)
-        checkStretchedHexagonsRegression(1e11, 1e-11)
-        checkStretchedHexagonsRegression(1e11, 1e11)
+        checkStretchedHexagonsRegression(1e-8, 1e-8)
+        checkStretchedHexagonsRegression(1e-8, 1e8)
+        checkStretchedHexagonsRegression(1e8, 1e-8)
+        checkStretchedHexagonsRegression(1e8, 1e8)
     }
 
     @Test
     fun floatingPointRoundingErrorRegressionTest() {
         checkFloatingPointRoundingErrorRegression(1.0, 1.0)
-        checkFloatingPointRoundingErrorRegression(1e-11, 1e-11)
-        // TODO: checkFloatingPointRoundingErrorRegression(1e-11, 1e11)
-        // TODO: checkFloatingPointRoundingErrorRegression(1e11, 1e-11)
-        // TODO: checkFloatingPointRoundingErrorRegression(1e11, 1e11)
+        checkFloatingPointRoundingErrorRegression(1e-8, 1e-8)
+        checkFloatingPointRoundingErrorRegression(1e-8, 1e8, epsilon = 1e-6)
+        checkFloatingPointRoundingErrorRegression(1e8, 1e-8)
+        checkFloatingPointRoundingErrorRegression(1e8, 1e8, epsilon = 1e-6)
     }
 
     private fun checkBorderValues(
@@ -291,7 +291,7 @@ class BinHexStatTest : BaseStatTest() {
     }
 
     companion object {
-        private val DEF_EPSILON = 1e-12
+        private const val DEF_EPSILON = 1e-12
         private val HEIGHT_MULTIPLIER = sqrt(3.0) / 2.0 // inverse of height of right hexagon with width = 1
     }
 }

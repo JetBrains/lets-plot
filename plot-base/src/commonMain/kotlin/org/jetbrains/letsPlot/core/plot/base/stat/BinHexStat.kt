@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.min
 import kotlin.math.sqrt
@@ -69,25 +70,28 @@ class BinHexStat(
         val densityNormalizingFactor =
             densityNormalizingFactor(xRangeFinal.length, yRangeFinal.length, countTotal)
 
-        val binsData = computeBins(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y),
-            xRangeFinal.lowerEnd,
-            yRangeFinal.lowerEnd,
-            xCountAndWidthFinal.count,
-            yCountAndWidthFinal.count,
-            xCountAndWidthFinal.width,
-            yCountAndWidthFinal.width,
-            BinStatUtil.weightAtIndex(data),
-            densityNormalizingFactor
-        )
-
         val binHeight = yCountAndWidthFinal.width // distance between centers of two adjacent hexagons in y direction
         val hexHeight = 4.0 * binHeight / 3.0 // height of hexagon in coordinate system
         val height = hexHeight * sqrt(3.0) / 2.0 // height of geometry HexGeom that corresponds to hexagon of height `hexHeight`
+
+        // If the hexagons are too flattened, floating-point arithmetic errors can occur, so computeBins() assumes the hexagons are regular
+        val ratio = xCountAndWidthFinal.width / height
+        val binsData = computeBins(
+            data.getNumeric(TransformVar.X),
+            data.getNumeric(TransformVar.Y).map { y -> y?.let { it * ratio} },
+            xRangeFinal.lowerEnd,
+            yRangeFinal.lowerEnd * ratio,
+            xCountAndWidthFinal.count,
+            yCountAndWidthFinal.count,
+            xCountAndWidthFinal.width,
+            yCountAndWidthFinal.width * ratio,
+            BinStatUtil.weightAtIndex(data),
+            densityNormalizingFactor,
+        )
+
         return DataFrame.Builder()
             .putNumeric(Stats.X, binsData.x)
-            .putNumeric(Stats.Y, binsData.y)
+            .putNumeric(Stats.Y, binsData.y.map { y -> y / ratio })
             .putNumeric(Stats.COUNT, binsData.count)
             .putNumeric(Stats.DENSITY, binsData.density)
             .putNumeric(Stats.WIDTH, List(binsData.x.size) { xCountAndWidthFinal.width })
@@ -107,6 +111,7 @@ class BinHexStat(
         weightAtIndex: (Int) -> Double,
         densityNormalizingFactor: Double
     ): BinsHexData {
+        require(abs(binWidth / binHeight - 2.0 * sqrt(3.0) / 3.0) < EPSILON) { "Hexagons are not regular" }
         val countByBinIndexKey = computeCounts(xValues, yValues, xStart, yStart, binWidth, binHeight, weightAtIndex)
         val totalCount = countByBinIndexKey.values.sum()
 
