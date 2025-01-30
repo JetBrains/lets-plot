@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object MonolithicCommon {
@@ -25,12 +26,12 @@ object MonolithicCommon {
     /**
      * Static SVG export
      */
-    fun buildSvgImagesFromRawSpecs(
+    fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
-    ): List<String> {
+    ): String {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
         val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
@@ -44,16 +45,34 @@ object MonolithicCommon {
         }
 
         val success = buildResult as PlotsBuildResult.Success
-        val computationMessages = success.buildInfos.flatMap { it.computationMessages }
+        val computationMessages = success.buildInfo.computationMessages
         if (computationMessages.isNotEmpty()) {
             computationMessagesHandler(computationMessages)
         }
 
-        return success.buildInfos.map { buildInfo ->
-            FigureToPlainSvg(buildInfo).eval()
-        }.map { svgToString.render(it) }
+        val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
+        return svgToString.render(svg)
     }
 
+    /**
+     * Static SVG export
+     */
+    @Deprecated(
+        message = "Use buildSvgImageFromRawSpecs instead",
+        replaceWith = ReplaceWith("buildSvgImageFromRawSpecs(plotSpec, plotSize, svgToString, computationMessagesHandler)")
+    )
+    fun buildSvgImagesFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        svgToString: SvgToString,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): List<String> {
+        return listOf(
+            buildSvgImageFromRawSpecs(
+                plotSpec, plotSize, svgToString, computationMessagesHandler
+            )
+        )
+    }
 
     fun buildPlotsFromProcessedSpecs(
         plotSpec: Map<String, Any>,
@@ -70,21 +89,17 @@ object MonolithicCommon {
         return when (PlotConfig.figSpecKind(plotSpec)) {
             FigKind.PLOT_SPEC -> {
                 PlotsBuildResult.Success(
-                    listOf(
-                        buildSinglePlotFromProcessedSpecs(
-                            plotSpec,
-                            sizingPolicy
-                        )
+                    buildSinglePlotFromProcessedSpecs(
+                        plotSpec,
+                        sizingPolicy
                     )
                 )
             }
 
             FigKind.SUBPLOTS_SPEC -> PlotsBuildResult.Success(
-                listOf(
-                    buildCompositeFigureFromProcessedSpecs(
-                        plotSpec,
-                        sizingPolicy
-                    )
+                buildCompositeFigureFromProcessedSpecs(
+                    plotSpec,
+                    sizingPolicy
                 )
             )
 
@@ -269,7 +284,7 @@ object MonolithicCommon {
         class Error(val error: String) : PlotsBuildResult()
 
         class Success(
-            val buildInfos: List<FigureBuildInfo>
+            val buildInfo: FigureBuildInfo
         ) : PlotsBuildResult()
     }
 }

@@ -13,14 +13,14 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import java.io.StringWriter
 
 object PlotSvgDemoUtil {
-    private const val DEMO_PROJECT = "demo-plot"
+    private const val DEMO_PROJECT_PATH = "demo/plot-browser"
 
     fun show(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector = DoubleVector(400.0, 300.0)
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 plotSpecList,

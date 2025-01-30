@@ -1,10 +1,16 @@
 ## [4.5.3] - 2025-mm-dd
 
 ### Added
-- `spacer` parameter in `image_matrix()`
+- `ggbunch()` function: combining plots with custom layout.
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+                                                                                                                       
+- Support for plot **title, subtitle, saption, margins** and **insets** in `gggrid()` and `ggbunch()`. 
+- `spacer` parameter in `image_matrix()`.
 
 ### Changed
 
+- [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
 - Axis breaks: changed default `lower_exp_bound` to -7 and `upper_exp_bound` to 6 (same as in `theme(...)`).
 
 ### Fixed

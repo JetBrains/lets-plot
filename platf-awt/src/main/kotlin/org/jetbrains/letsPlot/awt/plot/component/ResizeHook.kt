@@ -62,8 +62,8 @@ internal class ResizeHook(
 //        check(!(plotScrollPane is JScrollPane)) { "Unexpected JScrollPane" }
         check(plotScrollPane == null) { "Unexpected JScrollPane" }
 
-        // Either updating an existing "single" plot or
-        // creating a new plot (single or GGBunch) for a first time.
+        // Either updating an existing plot or
+        // creating a new plot for a first time.
         val preferredSize: Dimension = plotPreferredSize(containerSize)
         if (lastPreferredSize != preferredSize) {
 

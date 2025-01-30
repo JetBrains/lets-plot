@@ -8,12 +8,11 @@ package demo.plot.browser.plotConfig
 import demo.plot.common.model.plotConfig.GGBunch
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
-fun main(args: Array<String>) {
+fun main() {
     with(GGBunch()) {
-        @Suppress("UNCHECKED_CAST")
         val plotSpecList = plotSpecList()
         PlotConfigBrowserDemoUtil.show(
-            "GGBunch",
+            "ggbunch()",
             plotSpecList,
             DoubleVector(600.0, 600.0)
         )

@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.getList
 import org.jetbrains.letsPlot.core.spec.plotson.toJson
+import org.jetbrains.letsPlot.core.spec.write
 
 object VegaConfig {
     fun isVegaLiteSpec(opts: Map<String, Any>): Boolean {
@@ -15,6 +17,16 @@ object VegaConfig {
     }
 
     fun toLetsPlotSpec(vegaSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
+        if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
+            val compactData = vegaSpec.getList(VegaOption.DATA, VegaOption.Data.VALUES)?.take(20) ?: emptyList()
+
+            val compactVegaSpec = vegaSpec.toMutableMap().apply { // copy
+                write(VegaOption.DATA, VegaOption.Data.VALUES) { compactData }
+            }
+
+            println(JsonSupport.formatJson(compactVegaSpec, pretty = true))
+        }
+
         val plotOptions = VegaPlotConverter.convert(vegaSpec)
 
         return plotOptions.toJson().also {

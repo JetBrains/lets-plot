@@ -79,7 +79,6 @@ class FigureModelJs internal constructor(
             plotSpec,
             monolithicParameters.wrapperElement,
             sizingPolicy,
-            monolithicParameters.datalorePreferredWidth,
             monolithicParameters.messageHandler,
         )
 
@@ -119,6 +118,5 @@ class FigureModelJs internal constructor(
 
 internal class MonolithicParameters(
     val wrapperElement: HTMLElement,
-    val datalorePreferredWidth: Double?,
     val messageHandler: MessageHandler,
 )

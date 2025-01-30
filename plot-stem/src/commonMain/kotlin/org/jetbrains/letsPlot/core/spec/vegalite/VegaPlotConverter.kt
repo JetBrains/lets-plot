@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 
 internal class VegaPlotConverter private constructor(
@@ -45,17 +46,22 @@ internal class VegaPlotConverter private constructor(
             VegaPlotKind.MULTI_LAYER -> {
                 vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEachIndexed { i, it ->
                     val combinedEncoding = mutableMapOf<String, Any>()
+                    vegaPlotSpec.getMap(VegaOption.ENCODING)?.let { encodings ->
+                        Channels.forEach { channel ->
+                            val encoding = encodings.getMap(channel) ?: return@forEach
+                            combinedEncoding.write(channel) { encoding }
 
-                    vegaPlotSpec.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
-                        combinedEncoding.write(channel) { encoding }
-
-                        // Encoding spec was moved from the plot to the layer, where it’s used.
-                        // Visit all plot encoding options to prevent them from appearing as unused in the summary
-                        (encoding as Map<*, *>).getPaths()
+                            // Encoding spec was moved from the plot to the layer, where it’s used.
+                            // Visit all plot encoding options to prevent them from appearing as unused in the summary
+                            //(encoding as Map<*, *>).getPaths()
+                        }
                     }
 
-                    it.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
-                        combinedEncoding.write(channel) { encoding }
+                    it.getMap(VegaOption.ENCODING)?.let { encodings ->
+                        Channels.forEach { channel ->
+                            val encoding = encodings.getMap(channel) ?: return@forEach
+                            combinedEncoding.write(channel) { encoding }
+                        }
                     }
 
                     processLayerSpec(it, combinedEncoding, accessLogger.nested(listOf(VegaOption.LAYER, i)))
@@ -140,7 +146,7 @@ internal class VegaPlotConverter private constructor(
                             COLOR to Aes.COLOR
                         )
                     )
-                } else if (encoding.any { (channel, _) -> channel == X2 }) {
+                } else if (X2 in encoding) {
                     appendLayer(
                         geom = GeomKind.CROSS_BAR,
                         channelMapping = listOf(
@@ -151,7 +157,7 @@ internal class VegaPlotConverter private constructor(
                             COLOR to Aes.COLOR
                         )
                     )
-                } else if (encoding.any { (channel, _) -> channel == Y2 }) {
+                } else if (Y2 in encoding) {
                     appendLayer(
                         geom = GeomKind.CROSS_BAR,
                         channelMapping = listOf(

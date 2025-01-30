@@ -11,7 +11,6 @@ object GGGridSvg {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGGrid()) {
-            @Suppress("UNCHECKED_CAST")
             (PlotSvgDemoUtil.show(
                 "Plot Grid",
                 plotSpecList(),
