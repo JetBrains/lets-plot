@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import java.io.StringWriter
 
 object PlotConfigBrowserDemoUtil {
-    private const val DEMO_PROJECT = "demo/plot-browser"
+    private const val DEMO_PROJECT_PATH = "demo/plot-browser"
     private const val ROOT_ELEMENT_ID = "root"
 
     fun show(
@@ -24,7 +24,7 @@ object PlotConfigBrowserDemoUtil {
         applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 plotSpecList,

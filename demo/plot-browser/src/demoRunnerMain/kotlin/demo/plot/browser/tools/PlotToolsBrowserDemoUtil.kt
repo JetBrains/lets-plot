@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJ
 import java.io.StringWriter
 
 internal object PlotToolsBrowserDemoUtil {
-    private const val DEMO_PROJECT = "demo/plot"
+    private const val DEMO_PROJECT_PATH = "demo/plot-browser"
     private const val ROOT_ELEMENT_ID = "root"
 
     fun show(
@@ -23,7 +23,7 @@ internal object PlotToolsBrowserDemoUtil {
         applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 listOf(plotSpec),
@@ -90,23 +90,32 @@ internal object PlotToolsBrowserDemoUtil {
                 script {
                     type = "text/javascript"
                     unsafe {
-                        +"""
-                        |
-                        |var plotSpec = $plotSpecJs;
-                        |var rootElement = document.getElementById("root");
-                        |
-                        |// Toolbar
-                        |var toolbar = new LetsPlot.tools.DefaultToolbar();
-                        |rootElement.appendChild(toolbar.getElement());
-                        |
-                        |var parentElement = document.createElement('div');
-                        |rootElement.appendChild(parentElement);
-                        |var fig = LetsPlot.$plotFun(plotSpec, ${plotSize.x}, ${plotSize.y}, parentElement);
-                        |
-                        |toolbar.bind(fig);
-                        |
+                       +"""
+                       |  
+                       |  var plotSpec = $plotSpecJs;
+                       |  var rootElement = document.getElementById("root");
+                       |  
+                       |  // Toolbar
+                       |  var toolbar = new LetsPlot.tools.DefaultToolbar();
+                       |  rootElement.appendChild(toolbar.getElement());
+                       |  
+                       |  var parentElement = document.createElement('div');
+                       |  rootElement.appendChild(parentElement);
+                       |  
+                       |  var options = {
+                       |      sizing: {
+                       |          width_mode: "fixed",
+                       |          height_mode: "fixed",
+                       |          width: ${plotSize.x},
+                       |          height: ${plotSize.y},
+                       |      }
+                       |  };
+                       |  
+                       |  var fig = LetsPlot.$plotFun(plotSpec, -1, -1, parentElement, options);
+                       |  
+                       |  toolbar.bind(fig);
+                       |  
                     """.trimMargin()
-
                     }
                 }
             }
