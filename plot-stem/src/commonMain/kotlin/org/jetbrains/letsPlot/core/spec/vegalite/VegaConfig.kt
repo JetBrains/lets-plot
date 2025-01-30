@@ -17,28 +17,25 @@ object VegaConfig {
     }
 
     fun toLetsPlotSpec(vegaSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
+        val plotOptions = VegaPlotConverter.convert(vegaSpec)
+        val plotSpec = plotOptions.toJson()
+
         if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
             val compactData = vegaSpec.getList(VegaOption.DATA, VegaOption.Data.VALUES)?.take(20) ?: emptyList()
-
             val compactVegaSpec = vegaSpec.toMutableMap().apply { // copy
                 write(VegaOption.DATA, VegaOption.Data.VALUES) { compactData }
             }
-
             println(JsonSupport.formatJson(compactVegaSpec, pretty = true))
-        }
 
-        val plotOptions = VegaPlotConverter.convert(vegaSpec)
 
-        return plotOptions.toJson().also {
-            if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
-                plotOptions.data = plotOptions.data?.mapValues { (_, values) -> values.take(5) }
-                plotOptions.layerOptions?.forEach { layerOptions ->
-                    layerOptions.data = layerOptions.data?.mapValues { (_, values) -> values.take(5) }
-                }
-
-                println(JsonSupport.formatJson(plotOptions.toJson(), pretty = true))
+            plotOptions.data = plotOptions.data?.mapValues { (_, values) -> values.take(5) }
+            plotOptions.layerOptions?.forEach { layerOptions ->
+                layerOptions.data = layerOptions.data?.mapValues { (_, values) -> values.take(5) }
             }
+            println(JsonSupport.formatJson(plotOptions.toJson(), pretty = true))
         }
+
+        return plotSpec
     }
 
     internal fun getPlotKind(opts: Map<*, *>): VegaPlotKind {

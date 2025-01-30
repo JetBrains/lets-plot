@@ -26,7 +26,7 @@ class ScaleOptions : Options() {
     var midpoint: Double? by map(Option.Scale.MIDPOINT)
     var isDiscrete: Boolean? by map(Option.Scale.DISCRETE_DOMAIN)
     var isReverse: Boolean? by map(Option.Scale.DISCRETE_DOMAIN_REVERSE)
-    var guide: String? by map(Option.Scale.GUIDE)
+    var guide: GuideOptions? by map(Option.Scale.GUIDE)
 }
 
 fun scale(block: ScaleOptions.() -> Unit) = ScaleOptions().apply(block)

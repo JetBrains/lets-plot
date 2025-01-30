@@ -5,12 +5,15 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
+import org.jetbrains.letsPlot.core.spec.plotson.GuideOptions.Companion.guide
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
@@ -18,6 +21,12 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
+    fun getChannelDefinitions(encoding: Map<*, *>): Map<String, Map<*, *>> {
+        return Channels
+            .filter(encoding::containsKey)
+            .associateWith { channel -> encoding.getMap(channel) ?: emptyMap() }
+    }
+
     internal fun readMark(spec: Any): Pair<String, Map<*, *>> {
         val options = when (spec) {
             is String -> mapOf(VegaOption.Mark.TYPE to spec)
@@ -87,6 +96,30 @@ internal object Util {
         }
             .flatten()
             .fold(Mapping(groupingVar)) { mapping, (aes, field) -> mapping + (aes to field) }
+    }
+
+    fun transformPlotGuides(
+        plotGuides: Map<Aes<*>, GuideOptions>?,
+        encoding: Map<*, *>,
+        customChannelMapping: List<Pair<String, Aes<*>>>
+    ): Map<Aes<*>, GuideOptions>? {
+        val titleByAes = getChannelDefinitions(encoding)
+            .mapKeys { (channel, _) -> channelToAes(channel, customChannelMapping).firstOrNull() }
+            .mapValues { (_, definition) -> definition.getString(Encoding.TITLE) }
+            .filterNotNullKeys()
+            .filterNotNullValues()
+
+        if (titleByAes.isEmpty()) return plotGuides
+
+        // First merge titleByAes with plotGuides
+        val mergedGuides = titleByAes.mapValues { guide { } } + (plotGuides ?: emptyMap())
+
+        // Set titles for both existing plotGuides and newly created ones from titleByAes
+        mergedGuides.forEach { (aes, guide) ->
+            guide.title = titleByAes[aes]
+        }
+
+        return mergedGuides
     }
 
     private fun channelToAes(

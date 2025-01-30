@@ -53,7 +53,7 @@ internal class VegaPlotConverter private constructor(
 
                             // Encoding spec was moved from the plot to the layer, where it’s used.
                             // Visit all plot encoding options to prevent them from appearing as unused in the summary
-                            //(encoding as Map<*, *>).getPaths()
+                            (encoding as Map<*, *>).getPaths()
                         }
                     }
 
@@ -69,7 +69,7 @@ internal class VegaPlotConverter private constructor(
             }
         }
 
-        if (vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
+        if (true || vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
             val summary = accessLogger
                 .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
                 .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
@@ -120,6 +120,7 @@ internal class VegaPlotConverter private constructor(
 
                     stat = transformResult?.stat
                     orientation = transformResult?.orientation
+                    plotOptions.guides = Util.transformPlotGuides(plotOptions.guides, encoding, channelMapping)
 
                     mapping = Util.transformMappings(encoding, channelMapping)
                     position = Util.transformPositionAdjust(encoding, stat)
