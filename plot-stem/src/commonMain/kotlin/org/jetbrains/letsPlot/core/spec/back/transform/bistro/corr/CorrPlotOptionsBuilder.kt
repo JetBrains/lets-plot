@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_BREWER
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_GRADIENT2
@@ -336,7 +335,7 @@ class CorrPlotOptionsBuilder private constructor(
                     aes = Aes.SIZE
                     mapperKind = MapperKind.IDENTITY
                     naValue = 0
-                    guide = Option.Guide.NONE
+                    guide = GuideOptions.none()
                 },
                 scale {
                     aes = Aes.X
