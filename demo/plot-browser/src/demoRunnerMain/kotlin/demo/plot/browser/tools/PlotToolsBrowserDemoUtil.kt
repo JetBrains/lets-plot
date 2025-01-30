@@ -47,9 +47,9 @@ internal object PlotToolsBrowserDemoUtil {
     ): String {
 
         val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
-            "buildPlotFromProcessedSpecs"
-        } else {
             "buildPlotFromRawSpecs"
+        } else {
+            "buildPlotFromProcessedSpecs"
         }
 
         val plotSpecJs = mapToJsObjectInitializer(plotSpecList.first())
@@ -90,7 +90,7 @@ internal object PlotToolsBrowserDemoUtil {
                 script {
                     type = "text/javascript"
                     unsafe {
-                       +"""
+                        +"""
                        |  
                        |  var plotSpec = $plotSpecJs;
                        |  var rootElement = document.getElementById("root");
