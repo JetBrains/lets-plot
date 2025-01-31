@@ -34,12 +34,14 @@ object SpecOverrideUtil {
         }
     }
 
-    private fun findBySpecId(specId: String?, specOverrideList: List<Map<String, Any>>): Map<String, Any>? {
-        if (specId == null) return null
+    private fun specOverrideToApply(specId: String, specOverrideList: List<Map<String, Any>>): Map<String, Any>? {
+        // Find spec override specifically for the given plot spec
         val forSpecId = specOverrideList.firstOrNull {
             val targetId = it[FigureModelOptions.TARGET_ID]
             targetId == specId
         }
+        // Also try to find spec override applicabel to all plot specs in the figure.
+        // Such spec override doesn't have "target id".
         val forAll = specOverrideList.firstOrNull {
             !it.containsKey(FigureModelOptions.TARGET_ID)
         }
@@ -51,8 +53,11 @@ object SpecOverrideUtil {
         plotSpec: Map<String, Any>,
         specOverrideList: List<Map<String, Any>>
     ): Map<String, Any> {
-        val specId = plotSpec[Plot.SPEC_ID] as? String
-        val specOverrideToApply = findBySpecId(specId, specOverrideList)
+        val specId = (plotSpec[Plot.SPEC_ID] as? String) ?: throw IllegalStateException(
+            "${Plot.SPEC_ID} missing from plot specifications. " +
+                    "Possible cause: specifications were not processed by the backend preprocessor."
+        )
+        val specOverrideToApply = specOverrideToApply(specId, specOverrideList)
         return specOverrideToApply?.let {
             plotSpec + mapOf(Plot.SPEC_OVERRIDE to it)
         } ?: plotSpec
