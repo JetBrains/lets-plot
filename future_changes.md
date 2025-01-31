@@ -6,6 +6,11 @@
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
                                                                                                                        
 - Support for plot **title, subtitle, saption, margins** and **insets** in `gggrid()` and `ggbunch()`. 
+
+- `geom_hex()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
+
 - `spacer` parameter in `image_matrix()`.
 
 ### Changed
