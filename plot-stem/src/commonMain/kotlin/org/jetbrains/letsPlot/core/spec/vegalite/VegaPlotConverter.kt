@@ -128,7 +128,7 @@ internal class VegaPlotConverter private constructor(
 
                     Util.transformCoordinateSystem(encoding, plotOptions)
 
-                    applyConstants(markVegaSpec, channelMapping)
+                    applyConstants(layerSpec, channelMapping, mapping!!)
                 }
                 .apply(block)
 
