@@ -42,7 +42,18 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return sizeSpan(p, coordAes, Aes.WIDTH)
+        val loc = p[coordAes]
+        val size = p[Aes.WIDTH]
+        return if (SeriesUtil.allFinite(loc, size)) {
+            loc!!
+            val expand = size!! / 2.0
+            DoubleSpan(
+                loc - expand,
+                loc + expand
+            )
+        } else {
+            null
+        }
     }
 
     override fun heightSpan(
@@ -51,23 +62,11 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return sizeSpan(p, coordAes, Aes.HEIGHT)
-    }
-
-    private fun sizeSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        sizeAes: Aes<Double>,
-    ): DoubleSpan? {
         val loc = p[coordAes]
-        val size = p[sizeAes]
+        val size = p[Aes.HEIGHT]
         return if (SeriesUtil.allFinite(loc, size)) {
             loc!!
-            val expand = if (sizeAes == Aes.WIDTH) {
-                size!! / 2.0
-            } else {
-                size!! * HALF_HEX_HEIGHT
-            }
+            val expand = size!! * HALF_HEX_HEIGHT
             DoubleSpan(
                 loc - expand,
                 loc + expand
