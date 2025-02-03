@@ -22,70 +22,60 @@ class HexagonsHelper(
     ctx: GeomContext,
     private val geometryFactory: (DataPointAesthetics) -> List<DoubleVector>?
 ) : LinesHelper(pos, coord, ctx) {
-    fun createSvgHexHelper(): SvgHexHelper {
-        return SvgHexHelper()
-    }
+    private var myResamplingEnabled = false
+    private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
 
-    inner class SvgHexHelper {
-        private var myResamplingEnabled = false
-        private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
+    fun createHexagons(): List<LinePath> {
+        val pointCount = myAesthetics.dataPointCount()
+        val hexagons: MutableList<LinePath> = mutableListOf()
 
-        fun setResamplingEnabled(b: Boolean) {
-            myResamplingEnabled = b
-        }
+        for (index in 0 until pointCount) {
+            val p = myAesthetics.dataPointAt(index)
+            val hex = geometryFactory(p) ?: continue
 
-        fun createHexagons(): List<LinePath> {
-            val pointCount = myAesthetics.dataPointCount()
-            val hexagons: MutableList<LinePath> = mutableListOf()
+            if (myResamplingEnabled) {
+                val polyHex = resample(
+                    precision = myResamplingPrecision,
+                    points = hex
+                ) { toClient(it, p) }
 
-            for (index in 0 until pointCount) {
-                val p = myAesthetics.dataPointAt(index)
-                val hex = geometryFactory(p) ?: continue
-
-                if (myResamplingEnabled) {
-                    val polyHex = resample(
-                        precision = myResamplingPrecision,
-                        points = hex
-                    ) { toClient(it, p) }
-
-                    // Resampling of a tiny hexagon still can produce a very small polygon - simplify it.
-                    val simplified = PolylineSimplifier.douglasPeucker(polyHex).setWeightLimit(PolylineSimplifier.DOUGLAS_PEUCKER_PIXEL_THRESHOLD).points.let {
-                        if (it.size != 1) {
-                            println("HexagonsHelper: expected a single path, but got ${it.size}")
-                        }
-
-                        it.firstOrNull() ?: emptyList()
+                // Resampling of a tiny hexagon still can produce a very small polygon - simplify it.
+                val simplified = PolylineSimplifier.douglasPeucker(polyHex).setWeightLimit(PolylineSimplifier.DOUGLAS_PEUCKER_PIXEL_THRESHOLD).points.let {
+                    if (it.size != 1) {
+                        println("HexagonsHelper: expected a single path, but got ${it.size}")
                     }
 
-                    val element = LinePath.polygon(simplified)
-                    decorate(element, p, true)
-                    hexagons.add(element)
-
-                    createTooltips(p, simplified)
-                } else {
-                    // Correct hexagon should have 7 points, including the closing one.
-                    val clientHex = hex.mapNotNull { toClient(it, p) }.takeIf { it.size == 7 } ?: continue
-
-                    val element = LinePath.polygon(clientHex)
-                    decorate(element, p, true)
-                    hexagons.add(element)
-
-                    createTooltips(p, clientHex)
+                    it.firstOrNull() ?: emptyList()
                 }
 
-            }
-            return hexagons
-        }
+                val element = LinePath.polygon(simplified)
+                decorate(element, p, true)
+                hexagons.add(element)
 
-        private fun createTooltips(p: DataPointAesthetics, hex: List<DoubleVector>) {
-            ctx.targetCollector.addPolygon(
-                hex,
-                p.index(),
-                GeomTargetCollector.TooltipParams(
-                    markerColors = createColorMarkerMapper(null, ctx)(p)
-                ),
-                tooltipKind = CURSOR_TOOLTIP
-            )
+                createTooltips(p, simplified)
+            } else {
+                // Correct hexagon should have 7 points, including the closing one.
+                val clientHex = hex.mapNotNull { toClient(it, p) }.takeIf { it.size == 7 } ?: continue
+
+                val element = LinePath.polygon(clientHex)
+                decorate(element, p, true)
+                hexagons.add(element)
+
+                createTooltips(p, clientHex)
+            }
+
         }
+        return hexagons
+    }
+
+    private fun createTooltips(p: DataPointAesthetics, hex: List<DoubleVector>) {
+        ctx.targetCollector.addPolygon(
+            hex,
+            p.index(),
+            GeomTargetCollector.TooltipParams(
+                markerColors = createColorMarkerMapper(null, ctx)(p)
+            ),
+            tooltipKind = CURSOR_TOOLTIP
+        )
     }
 }

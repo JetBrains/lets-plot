@@ -22,9 +22,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val helper = HexagonsHelper(aesthetics, pos, coord, ctx, clientHexByDataPoint())
-        val svgHexHelper = helper.createSvgHexHelper()
-        svgHexHelper.setResamplingEnabled(!coord.isLinear)
-        svgHexHelper.createHexagons().forEach { hexLinePath ->
+        helper.setResamplingEnabled(!coord.isLinear)
+        helper.createHexagons().forEach { hexLinePath ->
             root.add(hexLinePath.rootGroup)
         }
     }
