@@ -6,13 +6,13 @@
 package demoAndTestShared
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots
 
 object SimpleTestSpecs {
     fun simplePointLayer(): MutableMap<String, Any> {
@@ -38,31 +38,27 @@ object SimpleTestSpecs {
     }
 
     fun simpleBunch(geoms: List<Map<String, Any?>>): MutableMap<String, Any> {
-        val itemsList = ArrayList<Map<String, Any>>()
-        val ggBunch = mutableMapOf<String, Any>(
-            Meta.KIND to Kind.GG_BUNCH,
-            Option.GGBunch.ITEMS to itemsList
-        )
-
-        for (geom in geoms) {
+        val figures = geoms.map { geom ->
             // Single-layer plot
-            val plotSpec =
-                mutableMapOf(
-                    Meta.KIND to Kind.PLOT,
-                    PlotBase.MAPPING to emptyMap<Any, Any>(),
-                    Plot.LAYERS to listOf(
-                        geom
-                    )
-                )
-
-            itemsList.add(
-                mapOf(
-                    Option.GGBunch.Item.X to 0.0,
-                    Option.GGBunch.Item.Y to 0.0,
-                    Option.GGBunch.Item.FEATURE_SPEC to plotSpec
+            mutableMapOf(
+                Meta.KIND to Kind.PLOT,
+                PlotBase.MAPPING to emptyMap<Any, Any>(),
+                Plot.LAYERS to listOf(
+                    geom
                 )
             )
         }
+
+        val ggBunch = mutableMapOf<String, Any>(
+            Meta.KIND to Kind.SUBPLOTS,
+            SubPlots.FIGURES to figures,
+            SubPlots.LAYOUT to mapOf(
+                Meta.NAME to SubPlots.Layout.SUBPLOTS_FREE,
+                SubPlots.Free.REGIONS to listOf(
+                    listOf(0, 0, 0.5, 0.5) // 'regions' are optional
+                ),
+            ),
+        )
 
         return ggBunch
     }
