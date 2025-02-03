@@ -10,12 +10,10 @@ import javax.swing.JComponent
 
 class MyPlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
-    preserveAspectRatio: Boolean,
     executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : DefaultPlotComponentProviderBatik(
     processedSpec = processedSpec,
-    preserveAspectRatio = preserveAspectRatio,
     executor = executor,
     computationMessagesHandler = computationMessagesHandler
 ) {

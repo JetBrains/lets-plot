@@ -25,16 +25,17 @@ object PlotSizeHelper {
      */
     fun singlePlotSize(
         plotSpec: Map<*, *>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
         facets: PlotFacets,
         containsLiveMap: Boolean
     ): DoubleVector {
-        if (sizingPolicy != null && sizingPolicy.isFixedDefined()) {
-            return sizingPolicy.getFixedDefined()
+        if (sizingPolicy.isFixedSize()) {
+            return sizingPolicy.getFixedSize()
         }
 
         val defaultSize = singlePlotSizeDefault(plotSpec, facets, containsLiveMap)
-        return sizingPolicy?.resize(defaultSize) ?: defaultSize
+        return sizingPolicy.resize(defaultSize, containerSize)
     }
 
     /**
@@ -59,14 +60,15 @@ object PlotSizeHelper {
      */
     fun compositeFigureSize(
         config: CompositeFigureConfig,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
     ): DoubleVector {
-        if (sizingPolicy != null && sizingPolicy.isFixedDefined()) {
-            return sizingPolicy.getFixedDefined()
+        if (sizingPolicy.isFixedSize()) {
+            return sizingPolicy.getFixedSize()
         }
 
         val defaultSize = compositeFigureSizeDefault(config)
-        return sizingPolicy?.resize(defaultSize) ?: defaultSize
+        return sizingPolicy.resize(defaultSize, containerSize)
     }
 
     /**

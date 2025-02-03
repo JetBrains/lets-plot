@@ -16,12 +16,10 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
  */
 open class DefaultPlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
-    preserveAspectRatio: Boolean,
     executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotSpecComponentProvider(
     processedSpec = processedSpec,
-    preserveAspectRatio = preserveAspectRatio,
     svgComponentFactory = SVG_COMPONENT_FACTORY_BATIK,
     executor = executor,
     computationMessagesHandler = computationMessagesHandler

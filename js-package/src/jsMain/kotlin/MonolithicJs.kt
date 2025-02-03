@@ -6,8 +6,11 @@
 /* root package */
 
 import kotlinx.browser.document
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_VIEW_TOOLBOX_HTML
 import org.jetbrains.letsPlot.core.spec.FailureHandler
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
@@ -19,6 +22,8 @@ import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.get
+import tools.DefaultToolbarJs
+import tools.DefaultToolbarJs.Companion.EXPECTED_TOOLBAR_HEIGHT
 
 private val LOG = PortableLogging.logger("MonolithicJs")
 
@@ -124,43 +129,80 @@ fun buildPlotFromProcessedSpecs(
 
 private fun buildPlotFromProcessedSpecsPrivate(
     processedSpec: Map<String, Any>,
-    parentElement: HTMLElement,
+    containerDiv: HTMLElement,
     options: Map<String, Any>
 ): FigureModelJs? {
+
+    val showToolbar = PLOT_VIEW_TOOLBOX_HTML || processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
+    var (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
+        // Wrapper for toolbar and chart
+        var outputDiv = document.createElement("div")
+        outputDiv.setAttribute("style", "display: inline-block;");
+        containerDiv.appendChild(outputDiv);
+
+        // Toolbar
+        var toolbar = DefaultToolbarJs();
+        outputDiv.appendChild(toolbar.getElement());
+
+        // Plot
+        var plotContainer = document.createElement("div") as HTMLElement;
+        outputDiv.appendChild(plotContainer);
+        Pair(plotContainer, toolbar)
+    } else {
+        Pair(containerDiv, null)
+    }
+
     // Plot wrapper:
     // - will get `width` and `height` style attributes according to the plot dimensions
     //      (computed later, see: FigureToHtml.eval())
     // - will serve as an 'event target' for interactive tools
     // - will persist through the figure rebuilds via `FigureModel.updateView()`
     val wrapperDiv = document.createElement("div") as HTMLDivElement
-    parentElement.appendChild(wrapperDiv)
+    plotContainer.appendChild(wrapperDiv)
 
     // Messages div
+    // ToDo: messages should not affect size of 'container'.
     val messagesDiv = document.createElement("div") as HTMLDivElement
-    parentElement.appendChild(messagesDiv)
+    plotContainer.appendChild(messagesDiv)
 
-    val sizingPolicyInitial = when (val o = options[SizingOption.KEY]) {
+    // Sizing policy
+
+    // Datalore specific option - not compatible with reactive sizing.
+    val datalorePreferredWidth: Double? =
+        plotContainer.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
+
+    val sizingPolicy = if (datalorePreferredWidth != null) {
+        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
+    } else when (val o = options[SizingOption.KEY]) {
         is Map<*, *> -> SizingPolicy.create(o)
         else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
     }
 
-    // Datalore specific option - not compatible with reactive sizing.
-    val datalorePreferredWidth: Double? =
-        parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-
-    val sizingPolicy = if (datalorePreferredWidth != null) {
-        // Replace whatever sizing policy
-        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
-    } else {
-        sizingPolicyInitial
+    val containerSize: () -> DoubleVector = {
+        val height = if (showToolbar) {
+            maxOf(0.0, (containerDiv.clientHeight - EXPECTED_TOOLBAR_HEIGHT).toDouble())
+        } else {
+            containerDiv.clientHeight.toDouble()
+        }
+        DoubleVector(
+            containerDiv.clientWidth.toDouble(),
+            height
+        )
     }
 
-    return buildPlotFromProcessedSpecsIntern(
+    val figureModelJs = buildPlotFromProcessedSpecsIntern(
         processedSpec,
         wrapperDiv,
+        containerSize,
         sizingPolicy,
         MessageHandler(messagesDiv),
     )
+
+    if (toolbar != null && figureModelJs != null) {
+        toolbar.bind(figureModelJs);
+    }
+
+    return figureModelJs
 }
 
 /**
@@ -169,12 +211,14 @@ private fun buildPlotFromProcessedSpecsPrivate(
 internal fun buildPlotFromProcessedSpecsIntern(
     plotSpec: Map<String, Any>,
     wrapperElement: HTMLElement,
+    containerSize: () -> DoubleVector,
     sizingPolicy: SizingPolicy,
     messageHandler: MessageHandler
 ): FigureModelJs? {
 
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
+        containerSize.invoke(),
         sizingPolicy
     )
     if (buildResult.isError) {
@@ -192,11 +236,10 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
     return FigureModelJs(
         plotSpec,
-        MonolithicParameters(
-            wrapperElement,
-            messageHandler.toMute(),
-        ),
+        wrapperElement,
+        containerSize,
         sizingPolicy,
+        messageHandler.toMute(),
         result.toolEventDispatcher,
         result.figureRegistration
     )

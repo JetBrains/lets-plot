@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.jfx.plot.component.DefaultSwingContextJfx
 import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
 import java.awt.Dimension
@@ -37,6 +38,7 @@ class PlotResizableDemoWindowJfx(
         return PlotPanel(
             plotComponentProvider = MyPlotComponentProvider(plotAssembler, plotSize),
             preferredSizeFromPlot = true,
+            sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
             repaintDelay = 100,
             applicationContext = DefaultSwingContextJfx()
         )
@@ -46,19 +48,22 @@ class PlotResizableDemoWindowJfx(
         private val plotAssembler: PlotAssembler,
         private val plotInitialSize: DoubleVector,
     ) : PlotComponentProvider {
-        override fun getPreferredSize(containerSize: Dimension): Dimension {
-            return containerSize
-        }
 
-        override fun createComponent(containerSize: Dimension?, specOverrideList: List<Map<String, Any>>): JComponent {
-            val plotSize = if (containerSize != null) {
-                DoubleVector(
-                    containerSize.getWidth(),
-                    containerSize.getHeight()
-                )
-            } else {
-                plotInitialSize
-            }
+        override fun createComponent(
+            containerSize: Dimension?,
+            sizingPolicy: SizingPolicy,
+            specOverrideList: List<Map<String, Any>>
+        ): JComponent {
+
+            val plotSize = sizingPolicy.resize(
+                figureSizeDefault = plotInitialSize,
+                containerSize = containerSize?.let {
+                    DoubleVector(
+                        it.getWidth(),
+                        it.getHeight()
+                    )
+                }
+            )
 
             val layoutInfo = plotAssembler.layoutByOuterSize(plotSize)
 

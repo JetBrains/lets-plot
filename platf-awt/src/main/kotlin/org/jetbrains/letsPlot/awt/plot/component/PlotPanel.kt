@@ -5,8 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane
 open class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
+    private val sizingPolicy: SizingPolicy,
     repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
@@ -54,7 +56,7 @@ open class PlotPanel(
         val providedComponent = if (preferredSizeFromPlot) {
             // Build the plot component now with its default size.
             // So that the container could take plot's preferred size in account.
-            rebuildProvidedComponent(null)
+            rebuildProvidedComponent(null, sizingPolicy)
         } else {
             null
         }
@@ -65,6 +67,7 @@ open class PlotPanel(
             plotComponentFactory = { containerSize: Dimension, specOverrideList: List<Map<String, Any>> ->
                 rebuildProvidedComponent(
                     containerSize,
+                    sizingPolicy,
                     specOverrideList
                 )
             },
@@ -76,7 +79,6 @@ open class PlotPanel(
                 plotPanel = this,
                 skipFirstResizeEvent = providedComponent != null,
                 plotScrollPane = if (providedComponent is JScrollPane) providedComponent else null,
-                plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
                 figureModel = figureModel,
                 applicationContext = applicationContext,
                 repaintDelay = repaintDelay
@@ -120,10 +122,15 @@ open class PlotPanel(
 
     private fun rebuildProvidedComponent(
         containerSize: Dimension?,
+        sizingPolicy: SizingPolicy,
         specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent {
         removeAll()
-        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize, specOverrideList)
+        val providedComponent: JComponent = plotComponentProvider.createComponent(
+            containerSize,
+            sizingPolicy,
+            specOverrideList
+        )
 
         // notify
         plotComponentCreated(actualPlotComponentFromProvidedComponent(providedComponent))

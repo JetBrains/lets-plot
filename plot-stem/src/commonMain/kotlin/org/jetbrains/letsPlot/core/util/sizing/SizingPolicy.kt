@@ -18,22 +18,25 @@ import kotlin.math.min
 
 private val LOG = PortableLogging.logger("Lets-Plot SizingPolicy")
 
-/**
- * width and height are required for fit, min and fixed modes, and also when both modeas are 'scales'
- */
 class SizingPolicy(
-    val widthMode: SizingMode,
-    val heightMode: SizingMode,
-    val width: Double?,
-    val height: Double?,
+    private val widthMode: SizingMode,
+    private val heightMode: SizingMode,
+    private val width: Double?,
+    private val height: Double?,
 ) {
+
+    // avoid division by zero
     private fun normalize(v: Double): Double = max(1.0, v)
 
-    fun isFixedDefined() = widthMode == FIXED && heightMode == FIXED && width != null && height != null
+    fun isFixedSize(): Boolean {
+        // 'fixed size' - no need to know figure size or container sise.
+        return widthMode == FIXED && heightMode == FIXED
+                && width != null && height != null
+    }
 
-    fun getFixedDefined(): DoubleVector {
-        check(isFixedDefined()) {
-            "Undefined fixed size: $this"
+    fun getFixedSize(): DoubleVector {
+        check(isFixedSize()) {
+            "Not a fixed size policy: $this"
         }
 
         return DoubleVector(
@@ -42,60 +45,48 @@ class SizingPolicy(
         )
     }
 
-    fun resize(figureSize: DoubleVector): DoubleVector {
-        // avoid division by zero
+    fun resize(figureSizeDefault: DoubleVector, containerSize: DoubleVector?): DoubleVector {
         @Suppress("NAME_SHADOWING")
-        val figureSize = DoubleVector(
-            normalize(figureSize.x),
-            normalize(figureSize.y),
-        )
+        val containerSize = containerSize ?: figureSizeDefault
 
-        val definedWidth = width?.let { normalize(it) }
-        val definedHeight = height?.let { normalize(it) }
+        // width, height if provided by the policy override the container size.
+        val policyWidth = width ?: containerSize.x
+        val policyHeight = height ?: containerSize.y
 
-        if (widthMode == SCALED && heightMode == SCALED) {
-            require(definedWidth != null && definedHeight != null) {
-                "Both 'width' and 'height' are required when both sides scaled: $this"
+        return if (widthMode == SCALED && heightMode == SCALED) {
+            // Fit in container and preserve figure aspect ratio.
+            return DoubleRectangle(DoubleVector.ZERO, DoubleVector(policyWidth, policyHeight))
+                .shrinkToAspectRatio(figureSizeDefault)
+                .dimension
+        } else {
+            val widthFixed = when (widthMode) {
+                FIXED -> width ?: figureSizeDefault.x
+                FIT -> policyWidth
+                MIN -> min(figureSizeDefault.x, policyWidth)
+                SCALED -> null
             }
 
-            val containerSize = DoubleVector(
-                x = normalize(definedWidth),
-                y = normalize(definedHeight),
-            )
-            // Fit in container and preserve figure aspect ratio.
-            return DoubleRectangle(DoubleVector.ZERO, containerSize)
-                .shrinkToAspectRatio(figureSize)
-                .dimension
+            val heightFixed = when (heightMode) {
+                FIXED -> height ?: figureSizeDefault.y
+                FIT -> policyHeight
+                MIN -> min(figureSizeDefault.y, policyHeight)
+                SCALED -> null
+            }
 
-        }
-
-        val widthFixed = when (widthMode) {
-            FIT -> definedWidth ?: throw IllegalArgumentException("Undefined `width`: $this")
-            MIN -> definedWidth?.let { min(figureSize.x, definedWidth) } ?: figureSize.x
-            SCALED -> null
-            FIXED -> definedWidth ?: figureSize.x
-        }
-
-        val heightFixed = when (heightMode) {
-            FIT -> definedHeight ?: throw IllegalArgumentException("Undefined `height`: $this")
-            MIN -> definedHeight?.let { min(figureSize.y, definedHeight) } ?: figureSize.y
-            SCALED -> null
-            FIXED -> definedHeight ?: figureSize.y
-        }
-
-        return if (widthFixed != null && heightFixed != null) {
-            DoubleVector(widthFixed, heightFixed)
-        } else if (widthFixed != null) {
-            // scale height
-            val height = widthFixed / figureSize.x * figureSize.y
-            DoubleVector(widthFixed, height)
-        } else if (heightFixed != null) {
-            // scale width
-            val width = heightFixed / figureSize.y * figureSize.x
-            DoubleVector(width, heightFixed)
-        } else {
-            // Impossible!
-            figureSize
+            if (widthFixed != null && heightFixed != null) {
+                DoubleVector(widthFixed, heightFixed)
+            } else if (widthFixed != null) {
+                // scale height
+                val height = widthFixed / normalize(figureSizeDefault.x) * figureSizeDefault.y
+                DoubleVector(widthFixed, height)
+            } else if (heightFixed != null) {
+                // scale width
+                val width = heightFixed / normalize(figureSizeDefault.y) * figureSizeDefault.x
+                DoubleVector(width, heightFixed)
+            } else {
+                // Never occures.
+                throw IllegalArgumentException("Unable to determine size with sizing policy: $this")
+            }
         }
     }
 
@@ -141,6 +132,25 @@ class SizingPolicy(
                 heightMode = FIXED,
                 width = max(0.0, width),
                 height = max(0.0, height),
+            )
+        }
+
+        fun keepFigureDefaultSize(): SizingPolicy {
+            return SizingPolicy(
+                widthMode = FIXED,
+                heightMode = FIXED,
+                width = null,
+                height = null,
+            )
+        }
+
+        fun fitContainerSize(preserveAspectRatio: Boolean): SizingPolicy {
+            val mode = if (preserveAspectRatio) SCALED else FIT
+            return SizingPolicy(
+                widthMode = mode,
+                heightMode = mode,
+                width = null,
+                height = null,
             )
         }
 

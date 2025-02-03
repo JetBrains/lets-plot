@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.batik.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 open class DefaultPlotPanelBatik(
     processedSpec: MutableMap<String, Any>,
@@ -16,10 +17,10 @@ open class DefaultPlotPanelBatik(
 ) : PlotPanel(
     plotComponentProvider = DefaultPlotComponentProviderBatik(
         processedSpec = processedSpec,
-        preserveAspectRatio = preserveAspectRatio,
         executor = DefaultSwingContextBatik.AWT_EDT_EXECUTOR,
         computationMessagesHandler = computationMessagesHandler
     ),
+    sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio),
     preferredSizeFromPlot = preferredSizeFromPlot,
     repaintDelay = repaintDelay,
     applicationContext = DefaultSwingContextBatik()

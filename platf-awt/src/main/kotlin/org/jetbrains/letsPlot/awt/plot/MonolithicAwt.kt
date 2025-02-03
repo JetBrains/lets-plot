@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import java.awt.Dimension
 import javax.swing.JComponent
 
 private val LOG = PortableLogging.logger("MonolithicAwt")
@@ -19,7 +20,8 @@ private val LOG = PortableLogging.logger("MonolithicAwt")
 object MonolithicAwt {
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?,
+        containerSize: Dimension?,
+        sizingPolicy: SizingPolicy,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         errorMessageComponentFactory: (String) -> JComponent = DefaultErrorMessageComponent.factory,
@@ -31,7 +33,8 @@ object MonolithicAwt {
             val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
             buildPlotFromProcessedSpecs(
                 plotSpec,
-                plotSize,
+                containerSize,
+                sizingPolicy,
                 svgComponentFactory,
                 executor,
                 errorMessageComponentFactory = errorMessageComponentFactory,
@@ -44,7 +47,8 @@ object MonolithicAwt {
 
     fun buildPlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?,
+        containerSize: Dimension?,
+        sizingPolicy: SizingPolicy,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         errorMessageComponentFactory: (message: String) -> JComponent = DefaultErrorMessageComponent.factory,
@@ -52,9 +56,16 @@ object MonolithicAwt {
     ): JComponent {
 
         return try {
-            val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
+            val containerSizeDV = containerSize?.let {
+                DoubleVector(
+                    it.width.toDouble(),
+                    it.height.toDouble()
+                )
+            }
+
             val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
                 plotSpec,
+                containerSizeDV,
                 sizingPolicy
             )
             if (buildResult.isError) {
@@ -67,7 +78,8 @@ object MonolithicAwt {
             computationMessagesHandler(computationMessages)
             return FigureToAwt(
                 success.buildInfo,
-                svgComponentFactory, executor
+                svgComponentFactory,
+                executor
             ).eval()
 
         } catch (e: RuntimeException) {
