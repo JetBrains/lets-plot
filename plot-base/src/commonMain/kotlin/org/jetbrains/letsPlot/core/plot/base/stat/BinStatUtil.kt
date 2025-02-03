@@ -40,9 +40,9 @@ object BinStatUtil {
             binCount = ceil(count).toInt()
         } else {
             binWidth = if (extraExpand) {
-                dataRange / max(1, binCount - 1)
+                dataRange / max(1, binCount - 1) // Select the binWidth so that half of the width extends beyond the data range on each side
             } else {
-                dataRange / binCount
+                dataRange / binCount // Select the binWidth just enough to ensure that the data area is covered
             }
         }
         return CountAndWidth(binCount, binWidth)

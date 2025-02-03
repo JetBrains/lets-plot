@@ -50,8 +50,12 @@ class BinHexStat(
         val xRangeInit = adjustRangeInitial(xRange)
         val yRangeInit = adjustRangeInitial(yRange)
 
-        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX, true)
-        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY, true)
+        /*
+        Use the `extraExpand` parameter to cover not only the entire data range with bins, but also a reserve - so that
+        half a hexagon protrudes from each side of the range, as required by the hexagonal coverage of a rectangle area.
+        */
+        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX, extraExpand = true)
+        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY, extraExpand = true)
 
         // Final bin width and count
 
