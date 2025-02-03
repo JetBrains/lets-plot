@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HexagonTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HexagonsHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import kotlin.math.sqrt
@@ -22,15 +21,9 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val tooltipHelper = HexagonTooltipHelper(ctx)
         val helper = HexagonsHelper(aesthetics, pos, coord, ctx, clientHexByDataPoint())
         val svgHexHelper = helper.createSvgHexHelper()
         svgHexHelper.setResamplingEnabled(!coord.isLinear)
-        svgHexHelper.onGeometry { p, hex ->
-            if (hex != null) {
-                tooltipHelper.addTarget(p, hex)
-            }
-        }
         svgHexHelper.createHexagons().forEach { hexLinePath ->
             root.add(hexLinePath.rootGroup)
         }

@@ -10,7 +10,10 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
 
 class HexagonsHelper(
     private val myAesthetics: Aesthetics,
@@ -24,16 +27,11 @@ class HexagonsHelper(
     }
 
     inner class SvgHexHelper {
-        private var onGeometry: (DataPointAesthetics, List<DoubleVector>?) -> Unit = { _, _ -> }
         private var myResamplingEnabled = false
         private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
 
         fun setResamplingEnabled(b: Boolean) {
             myResamplingEnabled = b
-        }
-
-        fun onGeometry(handler: (DataPointAesthetics, List<DoubleVector>?) -> Unit) {
-            onGeometry = handler
         }
 
         fun createHexagons(): List<LinePath> {
@@ -59,24 +57,35 @@ class HexagonsHelper(
                         it.firstOrNull() ?: emptyList()
                     }
 
-                    onGeometry(p, simplified)
-
                     val element = LinePath.polygon(simplified)
                     decorate(element, p, true)
                     hexagons.add(element)
+
+                    createTooltips(p, simplified)
                 } else {
                     // Correct hexagon should have 7 points, including the closing one.
                     val clientHex = hex.mapNotNull { toClient(it, p) }.takeIf { it.size == 7 } ?: continue
 
-                    onGeometry(p, clientHex)
-
                     val element = LinePath.polygon(clientHex)
                     decorate(element, p, true)
                     hexagons.add(element)
+
+                    createTooltips(p, clientHex)
                 }
 
             }
             return hexagons
+        }
+
+        private fun createTooltips(p: DataPointAesthetics, hex: List<DoubleVector>) {
+            ctx.targetCollector.addPolygon(
+                hex,
+                p.index(),
+                GeomTargetCollector.TooltipParams(
+                    markerColors = createColorMarkerMapper(null, ctx)(p)
+                ),
+                tooltipKind = CURSOR_TOOLTIP
+            )
         }
     }
 }
