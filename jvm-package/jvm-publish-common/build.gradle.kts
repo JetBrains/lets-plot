@@ -37,7 +37,6 @@ val pomDependencies = listOf(
     listOf(project.group, "plot-base-jvm", project.version),
     listOf(project.group, "plot-builder-jvm", project.version),
     listOf(project.group, "plot-stem-jvm", project.version),
-    listOf(project.group, "deprecated-in-v4-jvm", project.version),
     // Kotlin logging.
     listOf("io.github.microutils", "kotlin-logging", kotlinLoggingVersion)
 )
