@@ -9,9 +9,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
+import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotSizeHelper {
@@ -97,6 +100,34 @@ object PlotSizeHelper {
             return null
         }
         return DoubleVector(width, height)
+    }
+
+    fun figureSizeDefault(
+        figureSpec: Map<String, Any>,
+    ): DoubleVector {
+        if (PlotConfig.isFailure(figureSpec)) {
+            return DEF_PLOT_SIZE
+        }
+        return when (PlotConfig.figSpecKind(figureSpec)) {
+            FigKind.PLOT_SPEC -> {
+                val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
+                PlotSizeHelper.singlePlotSizeDefault(
+                    figureSpec,
+                    config.facets,
+                    config.containsLiveMap
+                )
+            }
+
+            FigKind.SUBPLOTS_SPEC -> {
+                val compositeFigureConfig = CompositeFigureConfig(figureSpec, containerTheme = null) {
+                    // ignore message when computing a figure size.
+                }
+
+                PlotSizeHelper.compositeFigureSizeDefault(compositeFigureConfig)
+            }
+
+            FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
+        }
     }
 
 }
