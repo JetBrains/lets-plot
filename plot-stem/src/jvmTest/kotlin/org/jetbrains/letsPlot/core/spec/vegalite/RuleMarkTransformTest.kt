@@ -53,6 +53,7 @@ class RuleMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.H_LINE)),
+            entry(toOption(Aes.SIZE), 2.0),
             entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.MAPPING, mapOf(
@@ -104,6 +105,7 @@ class RuleMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.V_LINE)),
+            entry(toOption(Aes.SIZE), 2.0),
             entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.MAPPING, mapOf(
