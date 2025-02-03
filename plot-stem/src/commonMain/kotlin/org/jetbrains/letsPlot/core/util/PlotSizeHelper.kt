@@ -5,17 +5,13 @@
 
 package org.jetbrains.letsPlot.core.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
-import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotSizeHelper {
@@ -81,38 +77,6 @@ object PlotSizeHelper {
         return specifiedFigureSize ?: config.layout.defaultSize()
     }
 
-    private fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
-        val bunchConfig = BunchConfig(bunchSpec)
-        if (bunchConfig.bunchItems.isEmpty()) {
-            throw IllegalArgumentException("No plots in the bunch")
-        }
-
-        val plotBounds = ArrayList<DoubleRectangle>()
-        for (bunchItem in bunchConfig.bunchItems) {
-            plotBounds.add(
-                DoubleRectangle(
-                    DoubleVector(bunchItem.x, bunchItem.y),
-                    bunchItemSize(bunchItem)
-                )
-            )
-        }
-        return plotBounds
-    }
-
-    /**
-     * Expects 'processed specs' (aka client specs)
-     */
-    internal fun bunchItemSize(bunchItem: BunchConfig.BunchItem): DoubleVector {
-        return if (bunchItem.hasSize()) {
-            bunchItem.size
-        } else {
-            singlePlotSizeDefault(
-                bunchItem.featureSpec,
-                PlotFacets.UNDEFINED, false
-            )
-        }
-    }
-
     private fun defaultFacetedPlotSize(ncol: Int, nrow: Int): DoubleVector {
         val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / ncol)
         val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / nrow)
@@ -135,18 +99,4 @@ object PlotSizeHelper {
         return DoubleVector(width, height)
     }
 
-    fun plotBunchSize(plotBunchFpec: Map<String, Any>): DoubleVector {
-        require(PlotConfig.figSpecKind(plotBunchFpec) == FigKind.GG_BUNCH_SPEC) {
-            "Plot Bunch is expected but was kind: ${PlotConfig.figSpecKind(plotBunchFpec)}"
-        }
-        return plotBunchSize(bunchItemBoundsList(plotBunchFpec))
-    }
-
-    private fun plotBunchSize(bunchItemBoundsIterable: Iterable<DoubleRectangle>): DoubleVector {
-        return bunchItemBoundsIterable
-            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-                acc.union(bounds)
-            }
-            .dimension
-    }
 }
