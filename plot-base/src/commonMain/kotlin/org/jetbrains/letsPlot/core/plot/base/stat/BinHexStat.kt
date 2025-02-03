@@ -128,10 +128,7 @@ class BinHexStat(
         for (yIndex in 0 until binCountY) {
             for (xIndex in 0 until binCountX) {
                 val binIndexKey = Pair(xIndex, yIndex)
-                var count = 0.0
-                if (countByBinIndexKey.containsKey(binIndexKey)) {
-                    count = countByBinIndexKey[binIndexKey]!!
-                }
+                val count = countByBinIndexKey[binIndexKey] ?: 0.0
 
                 if (count == 0.0 && drop) {
                     continue
