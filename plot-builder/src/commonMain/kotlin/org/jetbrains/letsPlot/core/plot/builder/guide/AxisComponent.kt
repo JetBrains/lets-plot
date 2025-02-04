@@ -160,6 +160,8 @@ class AxisComponent(
         horizontalAnchor: Text.HorizontalAnchor? = null,
         verticalAnchor: Text.VerticalAnchor? = null,
         val rotationDegree: Double = 0.0,
+        val hJust: Double? = null,
+        val vJust: Double? = null,
         private val additionalOffsets: List<DoubleVector>? = null
     ) {
         val horizontalAnchor: Text.HorizontalAnchor = horizontalAnchor ?: when (orientation) {

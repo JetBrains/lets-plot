@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -197,6 +196,8 @@ internal class PolarFrameOfReference(
             horizontalAnchor = axisInfo.tickLabelHorizontalAnchor,
             verticalAnchor = axisInfo.tickLabelVerticalAnchor,
             rotationDegree = axisInfo.tickLabelRotationAngle,
+            hJust = axisInfo.tickLabelHJust,
+            vJust = axisInfo.tickLabelVJust,
             additionalOffsets = axisInfo.tickLabelAdditionalOffsets
         )
 

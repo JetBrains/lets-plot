@@ -116,6 +116,14 @@ internal class DefaultAxisTheme(
         return getNumber(getElemValue(textKey), Elem.ANGLE)
     }
 
+    override fun labelHJust(): Double {
+        return getNumber(getElemValue(textKey), Elem.HJUST)
+    }
+
+    override fun labelVJust(): Double {
+        return getNumber(getElemValue(textKey), Elem.VJUST)
+    }
+
     override fun tooltipFill(): Color {
         return getColor(getElemValue(tooltipFillKey), Elem.FILL)
     }

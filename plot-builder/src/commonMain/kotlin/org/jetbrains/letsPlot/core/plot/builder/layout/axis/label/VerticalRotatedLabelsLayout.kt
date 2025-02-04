@@ -57,6 +57,8 @@ internal class VerticalRotatedLabelsLayout(
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(Text.VerticalAnchor.CENTER)
             .labelRotationAngle(-myRotationAngle)
+            .hJust(theme.labelHJust())
+            .vJust(theme.labelVJust())
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelBoundsList(labelBoundsList.map(::alignToLabelMargin)) // for debug drawing
             .build()
