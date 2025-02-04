@@ -12,27 +12,6 @@ import kotlin.math.abs
 
 object MathUtil {
 
-    internal fun polygonContainsCoordinate(points: List<DoubleVector>, coord: DoubleVector): Boolean {
-        var intersectionCount = 0
-
-        for (i in 1 until points.size) {
-            val start = points[i - 1]
-            val end = points[i]
-
-            if (start.y >= coord.y && end.y >= coord.y || start.y < coord.y && end.y < coord.y) {
-                continue
-            }
-
-            val x = start.x + (coord.y - start.y) * (end.x - start.x) / (end.y - start.y)
-
-            if (x <= coord.x) {
-                intersectionCount++
-            }
-        }
-
-        return intersectionCount % 2 != 0
-    }
-
     fun liesOnSegment(p1: DoubleVector, p2: DoubleVector, c: DoubleVector, epsilon: Double): Boolean {
         return DoubleSegment(p1, p2).distance(c) < epsilon
     }
