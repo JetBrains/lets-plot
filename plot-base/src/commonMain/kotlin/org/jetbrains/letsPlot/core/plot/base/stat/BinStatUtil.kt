@@ -30,7 +30,7 @@ object BinStatUtil {
         } else List(dataLength) { 1.0 }
     }
 
-    fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, extraExpand: Boolean = false): CountAndWidth {
+    fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, countToWidth: (Double, Int) -> Double = ::countToWidth): CountAndWidth {
         var binCount = binOptions.binCount
         val binWidth: Double
         if (binOptions.hasBinWidth()) {
@@ -39,11 +39,7 @@ object BinStatUtil {
             count = min(MAX_BIN_COUNT.toDouble(), count)
             binCount = ceil(count).toInt()
         } else {
-            binWidth = if (extraExpand) {
-                dataRange / max(1, binCount - 1) // Select the binWidth so that half of the width extends beyond the data range on each side
-            } else {
-                dataRange / binCount // Select the binWidth just enough to ensure that the data area is covered
-            }
+            binWidth = countToWidth(dataRange, binCount)
         }
         return CountAndWidth(binCount, binWidth)
     }
@@ -158,6 +154,11 @@ object BinStatUtil {
         startX += offset
 
         return Triple(binCount, binWidth, startX)
+    }
+
+    // Default method to calculate bin width by bin count
+    private fun countToWidth(dataRange: Double, binCount: Int): Double {
+        return dataRange / binCount
     }
 
     private fun computeSummaryBins(

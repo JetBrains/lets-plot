@@ -15,10 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import kotlin.math.abs
-import kotlin.math.floor
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class BinHexStat(
     binCountX: Int = DEF_BINS,
@@ -51,11 +48,12 @@ class BinHexStat(
         val yRangeInit = adjustRangeInitial(yRange)
 
         /*
-        Use the `extraExpand` parameter to cover not only the entire data range with bins, but also a reserve - so that
+        Use custom countToWidth() calculator to cover not only the entire data range with bins, but also a reserve - so that
         half a hexagon protrudes from each side of the range, as required by the hexagonal coverage of a rectangle area.
         */
-        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX, extraExpand = true)
-        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY, extraExpand = true)
+        val countToWidth: (Double, Int) -> Double = { dataRange, binCount -> dataRange / max(1, binCount - 1) }
+        val xCountAndWidthInit = BinStatUtil.binCountAndWidth(xRangeInit.length, binOptionsX, countToWidth = countToWidth)
+        val yCountAndWidthInit = BinStatUtil.binCountAndWidth(yRangeInit.length, binOptionsY, countToWidth = countToWidth)
 
         // Final bin width and count
 
