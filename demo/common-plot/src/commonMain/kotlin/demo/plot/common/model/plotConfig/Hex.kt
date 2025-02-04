@@ -6,13 +6,15 @@
 package demo.plot.common.model.plotConfig
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.math.sqrt
 
 class Hex {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basicIdentity(),
-            basicWithStat()
+            basicWithStat(),
+            pointOnBorder(0)
         )
     }
 
@@ -25,7 +27,7 @@ class Hex {
               },
               'data': {
                 'x': [-0.5, 0.5, 0],
-                'y': [0, 0, ${sqrt(3.0) / 2.0}],
+                'y': [0, 0, ${1.0 / HEX_HEIGHT}],
                 'g': ['a', 'b', 'c']
               },
               'mapping': {
@@ -54,7 +56,7 @@ class Hex {
               },
               'data': {
                 'x': [-1, -1, 1, 0.95, 1.05, 0.000, 1.00, -0.5],
-                'y': [${listOf(-1.0, 1.0, -1.0, 0.95, 1.05, 1.0/3.0, 1.0/3.0, 0.0).map { it * sqrt(3.0) / 2.0 }.joinToString(", ")}]
+                'y': [${listOf(-1.0, 1.0, -1.0, 0.95, 1.05, 1.0/3.0, 1.0/3.0, 0.0).map { it / HEX_HEIGHT }.joinToString(", ")}]
               },
               'mapping': {
                 'x': 'x',
@@ -77,5 +79,84 @@ class Hex {
         """.trimIndent()
 
         return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun pointOnBorder(pointId: Int): MutableMap<String, Any> {
+        val halfHexHeight = HEX_HEIGHT / 2.0
+        val coordinates = listOf(
+            DoubleVector(0.0, halfHexHeight),
+            DoubleVector(0.25, 0.75 * halfHexHeight),
+            DoubleVector(0.5, 0.5 * halfHexHeight),
+            DoubleVector(0.5, 0.0),
+            DoubleVector(0.5, -0.5 * halfHexHeight),
+            DoubleVector(0.25, -0.75 * halfHexHeight),
+            DoubleVector(0.0, -halfHexHeight),
+            DoubleVector(-0.25, -0.75 * halfHexHeight),
+            DoubleVector(-0.5, -0.5 * halfHexHeight),
+            DoubleVector(-0.5, 0.0),
+            DoubleVector(-0.5, 0.5 * halfHexHeight),
+            DoubleVector(-0.25, 0.75 * halfHexHeight),
+        )
+        val x = coordinates[pointId % coordinates.size].x
+        val y = coordinates[pointId % coordinates.size].y
+        val spec = """
+            {
+              'kind': 'plot',
+              'ggtitle': {
+                'text': 'Point on border'
+              },
+              'data': {
+                'x': [-1, 0, -1.5, -0.5, 0.5, -1, 0, $x],
+                'y': [${listOf(-1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 1.0).map { it / HEX_HEIGHT }.joinToString(", ")}, $y],
+                'g': ['a', 'a', 'a', 'a', 'a', 'a', 'a', 'b']
+              },
+              'mapping': {
+                'x': 'x',
+                'y': 'y'
+              },
+              'layers': [
+                {
+                  'mapping': {
+                    'paint_a': '..count..'
+                  },
+                  'geom': 'hex',
+                  'binwidth': [1, 1],
+                  'size': 0.5,
+                  'color': 'black',
+                  'fill_by': 'paint_a'
+                },
+                {
+                  'mapping': {
+                    'paint_b': 'g'
+                  },
+                  'geom': 'point',
+                  'shape': 21,
+                  'size': 4,
+                  'color': 'black',
+                  'fill_by': 'paint_b'
+                }
+              ],
+              'scales': [
+                {
+                  'aesthetic': 'paint_a',
+                  'scale_mapper_kind' : 'color_gradient',
+                  'low': '#253494',
+                  'high': '#ffffcc',
+                  'guide': 'none'
+                },
+                {
+                  'aesthetic': 'paint_b',
+                  'values': ['white', 'red'],
+                  'guide': 'none'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    companion object {
+        val HEX_HEIGHT = 2.0 / sqrt(3.0) // height of right hexagon with width = 1
     }
 }
