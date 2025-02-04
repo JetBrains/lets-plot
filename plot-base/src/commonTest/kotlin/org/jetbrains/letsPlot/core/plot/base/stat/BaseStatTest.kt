@@ -31,8 +31,13 @@ open class BaseStatTest {
         return builder.build()
     }
 
-    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
-        assertTrue(statDf.has(variable), "Has var " + variable.name)
+    protected fun checkStatVarSize(
+        statDf: DataFrame,
+        variable: DataFrame.Variable,
+        expectedSize: Int,
+    ) {
+        checkStatVar(statDf, variable)
+        assertEquals(expectedSize, statDf[variable].size, "Size var " + variable.name)
     }
 
     protected fun checkStatVarValues(
@@ -41,8 +46,7 @@ open class BaseStatTest {
         expectedValues: List<Double?>,
         epsilon: Double? = null
     ) {
-        checkStatVar(statDf, variable)
-        assertEquals(expectedValues.size, statDf[variable].size, "Size var " + variable.name)
+        checkStatVarSize(statDf, variable, expectedValues.size)
         for (i in expectedValues.indices)
             if (epsilon == null)
                 assertEquals(expectedValues[i], statDf[variable][i], "Get var " + variable.name)
@@ -95,5 +99,9 @@ open class BaseStatTest {
                 checkStatVarValues(statDf, stat.getDefaultMapping(aes), emptyList())
             }
         }
+    }
+
+    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
+        assertTrue(statDf.has(variable), "Has var " + variable.name)
     }
 }

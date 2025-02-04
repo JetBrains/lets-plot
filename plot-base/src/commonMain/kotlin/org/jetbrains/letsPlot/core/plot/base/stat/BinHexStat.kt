@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.areEqual
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
@@ -15,9 +14,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import kotlin.math.abs
 import kotlin.math.floor
-import kotlin.math.min
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 class BinHexStat(
@@ -199,20 +199,22 @@ class BinHexStat(
             return hexIds.filter { p -> p.first >= 0 && p.second >= 0 }.toSet()
         }
 
-        fun isPointInHexagon(
-            p: DoubleVector,
-            hexagonIndex: Pair<Int, Int>
-        ): Boolean {
-            val epsilon = min(binWidth, binHeight) * EPSILON // Points on the top-right half of the border are considered to be inside with this epsilon
-            val halfHexHeight = 2.0 * binHeight / 3.0
-            val center = DoubleVector(
+        fun getHexagonCenter(hexagonIndex: Pair<Int, Int>): DoubleVector {
+            return DoubleVector(
                 xStart + binWidth / 2.0 + if (hexagonIndex.second % 2 == 0)
                     hexagonIndex.first * binWidth
                 else
                     hexagonIndex.first * binWidth + binWidth / 2.0,
                 yStart + binHeight / 2.0 + hexagonIndex.second * binHeight
             )
-            val q = p.subtract(center)
+        }
+
+        fun isPointInHexagon(
+            p: DoubleVector,
+            hexagonIndex: Pair<Int, Int>
+        ): Boolean {
+            val halfHexHeight = 2.0 * binHeight / 3.0
+            val q = p.subtract(getHexagonCenter(hexagonIndex))
             val v1 = DoubleVector(0.0, halfHexHeight)
             val v2 = DoubleVector(binWidth / 2.0, halfHexHeight / 2.0)
             val v3 = DoubleVector(binWidth / 2.0, -halfHexHeight / 2.0)
@@ -220,27 +222,36 @@ class BinHexStat(
             val v5 = DoubleVector(-binWidth / 2.0, -halfHexHeight / 2.0)
             val v6 = DoubleVector(-binWidth / 2.0, halfHexHeight / 2.0)
             // Check that q is in Hexagon(v1, v2, v3, v4, v5, v6):
-            // line(v1, v2):
-            val slope12 = (v2.y - v1.y) / (v2.x - v1.x)
-            val intercept12 = v1.y - slope12 * v1.x
-            val in12 = q.y < slope12 * q.x + intercept12
-            // line(v2, v3):
-            val in23 = q.x < binWidth / 2.0
-            // line(v3, v4):
-            val slope34 = (v4.y - v3.y) / (v4.x - v3.x)
-            val intercept34 = v3.y - slope34 * v3.x
-            val in34 = q.y > slope34 * q.x + intercept34 || areEqual(q.y, slope34 * q.x + intercept34, epsilon)
-            // line(v4, v5):
-            val slope45 = (v5.y - v4.y) / (v5.x - v4.x)
-            val intercept45 = v4.y - slope45 * v4.x
-            val in45 = q.y > slope45 * q.x + intercept45 || areEqual(q.y, slope45 * q.x + intercept45, epsilon)
-            // line(v5, v6):
-            val in56 = q.x > -binWidth / 2.0 || areEqual(q.x, -binWidth / 2.0, epsilon)
-            // line(v6, v1):
-            val slope61 = (v1.y - v6.y) / (v1.x - v6.x)
-            val intercept61 = v6.y - slope61 * v6.x
-            val in61 = q.y < slope61 * q.x + intercept61
-            return in12 && in23 && in34 && in45 && in56 && in61
+            return ringContainsCoordinate<Double>(listOf(v1, v2, v3, v4, v5, v6, v1).map { Vec(it.x, it.y) }, Vec(q.x, q.y))
+        }
+
+        fun distanceToHexagonCenter(
+            p: DoubleVector,
+            hexagonIndex: Pair<Int, Int>
+        ): Double {
+            val center = getHexagonCenter(hexagonIndex)
+            return sqrt((p.x - center.x).pow(2) + (p.y - center.y).pow(2))
+        }
+
+        fun getAllTouchingHexagons(
+            p: DoubleVector,
+            allHexagons: Set<Pair<Int, Int>>
+        ): Set<Pair<Int, Int>> {
+            /*
+            Among all available hexagons, the neighbors of a point are those that have the minimum distance from their centers to it.
+            If we compare these distances with each other, they may not be exactly equal (due to floating-point arithmetic errors),
+            but the target values differ from the others by an order of magnitude comparable to the size of the hexagon.
+            So if all distances to the centers are divided by the minimum of these distances, the target numbers will be close to 1,
+            and the rest will be noticeably larger.
+            */
+            val sortedHexagonsWithDistances = allHexagons
+                .map { hexagonIndex -> Pair(hexagonIndex, distanceToHexagonCenter(p, hexagonIndex)) }
+                .sortedBy { it.second }
+            val minimalDistance = sortedHexagonsWithDistances.first().second
+            return sortedHexagonsWithDistances
+                .takeWhile { abs(it.second / minimalDistance - 1.0) < EPSILON }
+                .map { it.first }
+                .toSet()
         }
 
         val countByBinIndexKey = HashMap<Pair<Int, Int>, Double>()
@@ -250,14 +261,15 @@ class BinHexStat(
             if (!SeriesUtil.allFinite(x, y)) {
                 continue
             }
-            val suspectedHexagons = hexWithNeighbours(getCoarseGridIndex(DoubleVector(x!!, y!!)))
-            val hexIndexKey = suspectedHexagons
-                .filter { isPointInHexagon(DoubleVector(x, y), it) }
-                .sortedWith(compareBy(
-                    { -it.second }, // To prefer hexagons with bigger y
-                    { -it.first } // To prefer hexagons with bigger x
-                )).firstOrNull() // Point on the border could be in two or three hexagons because of epsilon, so we take the top-right hexagon
-                ?: throw IllegalStateException("No hexagon found for point ($x, $y)") // If algorithm is correct, this should never happen
+            val p = DoubleVector(x!!, y!!)
+            val suspectedHexagons = hexWithNeighbours(getCoarseGridIndex(p))
+            val hexIndexKey = suspectedHexagons.firstOrNull { isPointInHexagon(p, it) } ?:
+                getAllTouchingHexagons(p, suspectedHexagons) // If the point is not in any of the suspected hexagons it means that point is on the border between hexagons
+                    .sortedWith(compareBy(
+                        { it.second }, // To prefer the hexagons with smaller y-index
+                        { -it.first } // To prefer the hexagons with larger x-index
+                    )).firstOrNull() // Point on the border belongs to the few hexagons, so we take the bottom-right one
+            require(hexIndexKey != null) { "Unexpected state: no hexagon found for point ($x, $y)" }
             if (!countByBinIndexKey.containsKey(hexIndexKey)) {
                 countByBinIndexKey[hexIndexKey] = 0.0
             }
@@ -278,7 +290,7 @@ class BinHexStat(
         val DEF_BINWIDTH: Double? = null
         const val DEF_DROP = true
 
-        private const val EPSILON = 1e-6
+        private const val EPSILON = 1e-4
 
         /*
         Let `binHeight` be the vertical distance between the centres of adjacent hexagons in coordinates.
@@ -326,6 +338,26 @@ class BinHexStat(
             val area = xSpan * ySpan
             val binArea = area / count
             return 1.0 / binArea
+        }
+
+        // Function from the org.jetbrains.letsPlot.livemap.chart.polygon.PolygonLocator (not available for now)
+        // TODO: Should be replaced with the final version of the function which is not in master yet
+        fun <TypeT> ringContainsCoordinate(ring: List<Vec<TypeT>>, coord: Vec<TypeT>): Boolean {
+            var intersectionCount = 0
+            for (i in 1 until ring.size) {
+                val start = i - 1
+                if (ring[start].y >= coord.y && ring[i].y >= coord.y ||
+                    ring[start].y < coord.y && ring[i].y < coord.y
+                ) {
+                    continue
+                }
+                val x: Double = ring[start].x + (coord.y - ring[start].y) *
+                        (ring[i].x - ring[start].x) / (ring[i].y - ring[start].y)
+                if (x <= coord.x) {
+                    intersectionCount++
+                }
+            }
+            return intersectionCount % 2 != 0
         }
     }
 }
