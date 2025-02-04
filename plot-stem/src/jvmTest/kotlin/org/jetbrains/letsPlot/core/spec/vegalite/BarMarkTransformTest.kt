@@ -225,14 +225,14 @@ class BarMarkTransformTest {
             ),
             entry(
                 PlotBase.DATA, mapOf(
-                    "g" to listOf(1.0, 2.0, 4.0, 2.0, 1.0),
+                    Stats.COUNT.name to listOf(1.0, 2.0, 4.0, 2.0, 1.0),
                     "v" to listOf(0.0, 1.0, 2.0, 3.0, 4.0),
                 )
             ),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.X) to "v",
-                    toOption(Aes.Y) to "g"
+                    toOption(Aes.Y) to Stats.COUNT.name
                 )
             ),
             entry(Layer.STAT, StatKind.COUNT.name.lowercase())

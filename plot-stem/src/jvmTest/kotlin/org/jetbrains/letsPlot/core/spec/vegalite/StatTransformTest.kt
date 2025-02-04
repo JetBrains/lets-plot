@@ -28,6 +28,51 @@ import org.junit.Test
 import java.util.Map.entry
 
 class StatTransformTest {
+    @Test
+    fun `count ignores field`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "mark": {
+                |    "type": "bar",
+                |    "tooltip": { "content": "encoding" }
+                |  },
+                |  "encoding": {
+                |    "x": { "field": "race", "type": "nominal" },
+                |    "y": { "aggregate": "count", "field": "race", "type": "quantitative" },
+                |    "color": { "field": "type", "type": "nominal" }
+                |  },
+                |  "params": [
+                |    { "name": "p0", "select": "interval", "bind": "scales" }
+                |  ],
+                |  "data": {
+                |    "values": [
+                |      { "race": "Latino", "type": "Officer-involved shooting" }, 
+                |      { "race": "Latino", "type": "Not riot-related" }, 
+                |      { "race": "Latino", "type": "Homicide" }, 
+                |      { "race": "Black", "type": "Officer-involved shooting" }, 
+                |      { "race": "Black", "type": "Death" }, 
+                |      { "race": "Latino", "type": "Officer-involved shooting" }, 
+                |      { "race": "Black", "type": "Death" }, 
+                |      { "race": "White", "type": "Homicide" }, 
+                |      { "race": "Latino", "type": "Homicide" }
+                |    ]
+                |  }
+                |}
+                
+            """.trimMargin()
+        ).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec)
+
+        assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
+            entry("race", listOf("Latino", "Black", "Latino", "Latino", "White", "Black")),
+            entry("type", listOf("Officer-involved shooting", "Officer-involved shooting", "Not riot-related", "Homicide", "Homicide", "Death")),
+            entry("..count..", listOf(2.0, 1.0, 1.0, 2.0, 1.0, 2.0)),
+        )
+    }
 
     @Test
     fun `bin source axis without type should be continuous`() {
