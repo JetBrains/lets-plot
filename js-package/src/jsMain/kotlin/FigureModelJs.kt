@@ -3,6 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -21,8 +22,10 @@ import org.w3c.dom.HTMLElement
 @JsExport
 class FigureModelJs internal constructor(
     private val processedPlotSpec: Map<String, Any>,
-    private val monolithicParameters: MonolithicParameters,
+    private val wrapperElement: HTMLElement,
+    private val containerSize: () -> DoubleVector,
     private var sizingPolicy: SizingPolicy,
+    private val messageHandler: MessageHandler,
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
@@ -77,9 +80,10 @@ class FigureModelJs internal constructor(
 //        LOG.info { "New sizing policy: $sizingPolicy" }
         val newFigureModel = buildPlotFromProcessedSpecsIntern(
             plotSpec,
-            monolithicParameters.wrapperElement,
+            wrapperElement,
+            containerSize,
             sizingPolicy,
-            monolithicParameters.messageHandler,
+            messageHandler,
         )
 
         if (newFigureModel == null) return  // something went wrong.
@@ -115,8 +119,3 @@ class FigureModelJs internal constructor(
         private val LOG = PortableLogging.logger("FigureModelJs")
     }
 }
-
-internal class MonolithicParameters(
-    val wrapperElement: HTMLElement,
-    val messageHandler: MessageHandler,
-)

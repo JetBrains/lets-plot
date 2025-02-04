@@ -14,10 +14,12 @@ import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.plotson.GuideOptions.Companion.guide
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.ENCODING
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
@@ -103,20 +105,37 @@ internal object Util {
         encoding: Map<*, *>,
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): Map<Aes<*>, GuideOptions>? {
-        val titleByAes = getChannelDefinitions(encoding)
-            .mapKeys { (channel, _) -> channelToAes(channel, customChannelMapping).firstOrNull() }
-            .mapValues { (_, definition) -> definition.getString(Encoding.TITLE) }
-            .filterNotNullKeys()
-            .filterNotNullValues()
+        val generatedTitles = run {
+            val titleByAes = getChannelDefinitions(encoding)
+                .mapKeys { (channel, _) -> channelToAes(channel, customChannelMapping).firstOrNull() }
+                .mapValues { (_, definition) -> definition.getString(Encoding.TITLE) }
+                .filterNotNullKeys()
+                .filterNotNullValues()
 
-        if (titleByAes.isEmpty()) return plotGuides
+            if (titleByAes.isEmpty()) return plotGuides
 
-        // First merge titleByAes with plotGuides
-        val mergedGuides = titleByAes.mapValues { guide { } } + (plotGuides ?: emptyMap())
+            // fix cases when single channel is mapped to multiple aesthetics
+            // E.g., COLOR mapped to fill/color, but only fill has a title.
+            // LP will build two guides, because one have a title and another doesn't.
+            // To merge them into one guide we need give explicit names to all aesthetics.
 
-        // Set titles for both existing plotGuides and newly created ones from titleByAes
+            val colorTitle = titleByAes[Aes.COLOR]
+            val fillTitle = titleByAes[Aes.FILL]
+
+            val dupColorTitle = when {
+                colorTitle != null && fillTitle == null -> mapOf(Aes.FILL to colorTitle)
+                colorTitle == null && fillTitle != null -> mapOf(Aes.COLOR to fillTitle)
+                else -> emptyMap()
+            }
+
+            // Titles set by user override generated titles
+            titleByAes + dupColorTitle
+        }
+
+        val mergedGuides = generatedTitles.mapValues { guide { } } + (plotGuides ?: emptyMap())
+
         mergedGuides.forEach { (aes, guide) ->
-            guide.title = titleByAes[aes]
+            guide.title = generatedTitles[aes]
         }
 
         return mergedGuides
@@ -150,14 +169,28 @@ internal object Util {
         return channelToAes[channel] ?: emptyList()
     }
 
-    fun LayerOptions.applyConstants(markSpec: Map<*, *>, customChannelMapping: List<Pair<String, Aes<*>>>) {
-        Channels.forEach { channel ->
-            val value = markSpec[channel] ?: return@forEach
-            channelToAes(channel, customChannelMapping)
-                .forEach { aes ->
-                    const(aes, value)
-                }
+    fun LayerOptions.applyConstants(
+        layerSpec: Map<*, *>,
+        customChannelMapping: List<Pair<String, Aes<*>>>,
+        mapping: Mapping
+    ) {
+        fun readChannel(map: Map<*, *>, vararg path: Any): Map<Aes<*>, Any> {
+            return Channels
+                .filter { channel -> map.has(channel, *path) }
+                .map { channel -> channelToAes(channel, customChannelMapping) to map.read(channel, *path)!! }
+                .flatMap { (aesthetics, value) -> aesthetics.map { aes -> aes to value } }
+                .toMap()
         }
+
+        val markSpec = layerSpec.getMap(VegaOption.MARK) ?: emptyMap()
+        val markChannelProps = readChannel(markSpec)
+
+        val encoding = layerSpec.getMap(ENCODING) ?: emptyMap()
+        val encodingChannelValues = readChannel(encoding, VALUE)
+
+        val constants = (markChannelProps + encodingChannelValues - mapping.aesthetics.keys)
+
+        constants.forEach { (aes, value) -> const(aes, value) }
     }
 
     // Data should be in columnar format, not in Vega format, i.e., a list of values rather than a list of objects.

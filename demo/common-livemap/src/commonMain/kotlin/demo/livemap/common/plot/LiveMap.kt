@@ -1926,7 +1926,7 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-    private fun georeference() : MutableMap<String, Any> {
+    private fun georeference(): MutableMap<String, Any> {
         val spec = """
             |{
             |  "kind": "plot",
@@ -2229,39 +2229,38 @@ class LiveMap {
 
     fun bunch(): MutableMap<String, Any> {
         val spec = """{
-                "kind": "ggbunch", 
-                "items": [
+                "ggsize": {"width": 800, "height": 400},
+                "kind": "subplots", 
+                "figures": [
                     {
-                        "x": 0, 
-                        "y": 0, 
-                        "feature_spec": {
-                            "kind": "plot", 
-                            "layers": [
-                                {
-                                    "geom": "livemap", 
-                                    "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                                }
-                            ]
-                        }
+                        "kind": "plot", 
+                        "layers": [
+                            {
+                                "geom": "livemap", 
+                                "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
+                            }
+                        ]
                     }, 
                     {
-                        "x": 0, 
-                        "y": 400, 
-                        "feature_spec": {
-                            "kind": "plot", 
-                            "layers": [
-                                {
-                                    "geom": "livemap", 
-                                    "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                                }
-                            ]
-                        }
+                        "kind": "plot", 
+                        "layers": [
+                            {
+                                "geom": "livemap", 
+                                "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
+                            }
+                        ]
                     }
-                ]
+                ],
+                "layout": {
+                    "name": "free",
+                    "regions": [
+                            [0, 0, 0.5, 1], 
+                            [0.5, 0, 0.5, 1]
+                        ]
+                }
             }""".trimIndent()
 
         return parsePlotSpec(spec)
-
     }
 
     fun facet(): MutableMap<String, Any> {

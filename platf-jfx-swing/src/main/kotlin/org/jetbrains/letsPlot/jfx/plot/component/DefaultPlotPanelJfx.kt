@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.jfx.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 open class DefaultPlotPanelJfx(
     processedSpec: MutableMap<String, Any>,
@@ -16,11 +17,11 @@ open class DefaultPlotPanelJfx(
 ) : PlotPanel(
     plotComponentProvider = DefaultPlotComponentProviderJfx(
         processedSpec = processedSpec,
-        preserveAspectRatio = preserveAspectRatio,
         executor = DefaultSwingContextJfx.JFX_EDT_EXECUTOR,
         computationMessagesHandler = computationMessagesHandler
     ),
     preferredSizeFromPlot = preferredSizeFromPlot,
+    sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio),
     repaintDelay = repaintDelay,
     applicationContext = DefaultSwingContextJfx()
 )

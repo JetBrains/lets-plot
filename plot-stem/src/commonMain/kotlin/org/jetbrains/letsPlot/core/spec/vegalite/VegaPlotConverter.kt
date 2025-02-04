@@ -69,7 +69,7 @@ internal class VegaPlotConverter private constructor(
             }
         }
 
-        if (true || vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
+        if (vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
             val summary = accessLogger
                 .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
                 .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
@@ -128,7 +128,7 @@ internal class VegaPlotConverter private constructor(
 
                     Util.transformCoordinateSystem(encoding, plotOptions)
 
-                    applyConstants(markVegaSpec, channelMapping)
+                    applyConstants(layerSpec, channelMapping, mapping!!)
                 }
                 .apply(block)
 

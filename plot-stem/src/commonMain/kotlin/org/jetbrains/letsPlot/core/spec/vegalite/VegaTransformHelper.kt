@@ -72,14 +72,26 @@ object VegaTransformHelper {
                 error("Both x and y aggregates are not supported")
             }
 
-            val aggregate = xAggregate ?: yAggregate ?: return@run
+            val aggregate = xAggregate
+                ?: yAggregate
+                ?: return@run
+
             // layer orientation implicit inference works fine for agg, not need to pass it explicitly
-            return when (aggregate) {
-                Aggregate.COUNT -> TransformResult(countStat(), encodingAdjustment = null)
-                Aggregate.SUM -> TransformResult(summaryStat { f = AggFunction.SUM }, encodingAdjustment = null)
-                Aggregate.MEAN -> TransformResult(summaryStat { f = AggFunction.MEAN }, encodingAdjustment = null)
+            val stat = when (aggregate) {
+                Aggregate.COUNT -> {
+                    val channel = if (xAggregate != null) Channel.X else Channel.Y
+                    encodingAdj.add(listOf(channel, Encoding.FIELD) to Stats.COUNT.name)
+                    countStat()
+                }
+                Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
+                Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
                 else -> error("Unsupported aggregate function: $aggregate")
             }
+
+            return TransformResult(
+                stat,
+                encodingAdjustment = encodingAdj
+            )
         }
 
 

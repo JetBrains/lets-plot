@@ -5,13 +5,14 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.awt.Dimension
 import javax.swing.JComponent
 
 interface PlotComponentProvider {
-    fun getPreferredSize(containerSize: Dimension): Dimension
     fun createComponent(
         containerSize: Dimension?,
+        sizingPolicy: SizingPolicy,
         specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent
 }

@@ -26,7 +26,7 @@ internal class PlotSvgExportTest {
     @Ignore
     fun svgFromSinglePlot() {
         val svgImage = PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = rawSpec_SinglePlot(),
+            plotSpec = rawSpecSinglePlot(),
             plotSize = DoubleVector(400.0, 300.0)
         )
 
@@ -40,7 +40,7 @@ internal class PlotSvgExportTest {
     @Ignore
     fun svgFromGGBunch() {
         val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = rawSpec_GGBunch(),
+            plotSpec = rawSpecGGBunch(),
             plotSize = DoubleVector(400.0, 300.0)  // Ignored
         )
 

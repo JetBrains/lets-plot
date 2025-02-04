@@ -10,6 +10,7 @@ import demoAndTestShared.SimpleTestSpecs.simplePlot
 import demoAndTestShared.SimpleTestSpecs.simplePointLayer
 import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
 import org.jetbrains.letsPlot.jfx.util.runOnFxThread
@@ -56,7 +57,8 @@ class JfxPlotComponentTest {
         private fun buildPlotFromRawSpecs(plotSpec: MutableMap<String, Any>): JComponent {
             val component = MonolithicAwt.buildPlotFromRawSpecs(
                 plotSpec = plotSpec,
-                plotSize = null,
+                containerSize = null,
+                sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                 svgComponentFactory = COMPONENT_FACTORY,
                 executor = AWT_EDT_EXECUTOR
             ) {

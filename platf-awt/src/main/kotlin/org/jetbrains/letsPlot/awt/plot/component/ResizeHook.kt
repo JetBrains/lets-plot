@@ -15,7 +15,6 @@ internal class ResizeHook(
     private val plotPanel: PlotPanel,
     skipFirstResizeEvent: Boolean,
     private var plotScrollPane: JScrollPane?,
-    private val plotPreferredSize: (Dimension) -> Dimension,
     private val figureModel: PlotPanelFigureModel,
     private val applicationContext: ApplicationContext,
     repaintDelay: Int // ms
@@ -23,7 +22,7 @@ internal class ResizeHook(
 ) : ComponentAdapter() {
     private var skipThisRun = skipFirstResizeEvent
 
-    private var lastPreferredSize: Dimension? = null
+    private var lastContainerSize: Dimension? = null
 
     private val refreshTimer: Timer = Timer(repaintDelay) {
         rebuildPlotComponent()
@@ -41,7 +40,6 @@ internal class ResizeHook(
 
         refreshTimer.stop()
 
-//        if (plotScrollPane is JScrollPane) {
         if (plotScrollPane != null) {
             plotScrollPane?.preferredSize = e?.component?.size
             plotScrollPane?.size = e?.component?.size
@@ -59,17 +57,15 @@ internal class ResizeHook(
         if (containerSize == null) return
 
         // We don't rebuild plot component on re-size if it's a scroll panel.
-//        check(!(plotScrollPane is JScrollPane)) { "Unexpected JScrollPane" }
         check(plotScrollPane == null) { "Unexpected JScrollPane" }
 
         // Either updating an existing plot or
         // creating a new plot for a first time.
-        val preferredSize: Dimension = plotPreferredSize(containerSize)
-        if (lastPreferredSize != preferredSize) {
+        if (lastContainerSize != containerSize) {
 
             // Rebuild plot if it actually has changed in size.
             applicationContext.runWriteAction(Runnable {
-                lastPreferredSize = preferredSize
+                lastContainerSize = containerSize
             })
 
             figureModel.rebuildPlotComponent(

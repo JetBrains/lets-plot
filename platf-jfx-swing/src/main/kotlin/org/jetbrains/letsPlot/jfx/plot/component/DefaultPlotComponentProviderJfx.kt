@@ -12,12 +12,10 @@ import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
 
 open class DefaultPlotComponentProviderJfx(
     processedSpec: MutableMap<String, Any>,
-    preserveAspectRatio: Boolean,
     executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotSpecComponentProvider(
     processedSpec = processedSpec,
-    preserveAspectRatio = preserveAspectRatio,
     svgComponentFactory = SVG_COMPONENT_FACTORY_JFX,
     executor = executor,
     computationMessagesHandler = computationMessagesHandler

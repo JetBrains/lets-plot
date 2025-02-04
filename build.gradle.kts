@@ -223,8 +223,7 @@ val multiPlatformCoreModulesForPublish = listOf(
     "plot-base",
     "plot-builder",
     "plot-stem",
-    "plot-livemap",
-    "deprecated-in-v4"
+    "plot-livemap"
 )
 
 subprojects {

@@ -35,8 +35,11 @@ object MonolithicCommon {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
         val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
+            ?: SizingPolicy.keepFigureDefaultSize()
+
         val buildResult = buildPlotsFromProcessedSpecs(
             plotSpec,
+            containerSize = null,
             sizingPolicy
         )
         if (buildResult.isError) {
@@ -76,7 +79,8 @@ object MonolithicCommon {
 
     fun buildPlotsFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
 
@@ -91,6 +95,7 @@ object MonolithicCommon {
                 PlotsBuildResult.Success(
                     buildSinglePlotFromProcessedSpecs(
                         plotSpec,
+                        containerSize,
                         sizingPolicy
                     )
                 )
@@ -99,6 +104,7 @@ object MonolithicCommon {
             FigKind.SUBPLOTS_SPEC -> PlotsBuildResult.Success(
                 buildCompositeFigureFromProcessedSpecs(
                     plotSpec,
+                    containerSize,
                     sizingPolicy
                 )
             )
@@ -109,7 +115,8 @@ object MonolithicCommon {
 
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val config = PlotConfigFrontend.create(
@@ -121,7 +128,8 @@ object MonolithicCommon {
 
         return buildSinglePlot(
             config,
-            sizingPolicy = sizingPolicy,
+            containerSize,
+            sizingPolicy,
             sharedContinuousDomainX = null,  // only applicable to "composite figures"
             sharedContinuousDomainY = null,
             computationMessages
@@ -130,7 +138,8 @@ object MonolithicCommon {
 
     private fun buildSinglePlot(
         config: PlotConfigFrontend,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
         sharedContinuousDomainX: DoubleSpan?,
         sharedContinuousDomainY: DoubleSpan?,
         computationMessages: List<String>
@@ -138,7 +147,8 @@ object MonolithicCommon {
 
         val preferredSize = PlotSizeHelper.singlePlotSize(
             plotSpec = config.toMap(),
-            sizingPolicy = sizingPolicy,
+            containerSize,
+            sizingPolicy,
             config.facets,
             config.containsLiveMap
         )
@@ -158,7 +168,8 @@ object MonolithicCommon {
 
     private fun buildCompositeFigureFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
     ): CompositeFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val compositeFigureConfig = CompositeFigureConfig(plotSpec, containerTheme = null) {
@@ -167,7 +178,8 @@ object MonolithicCommon {
 
         val preferredSize = PlotSizeHelper.compositeFigureSize(
             compositeFigureConfig,
-            sizingPolicy,
+            containerSize,
+            sizingPolicy
         )
 
         return buildCompositeFigure(
@@ -206,7 +218,9 @@ object MonolithicCommon {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
-                        sizingPolicy = null, // Doesn't matter - will be updateed by sub-plots layout.
+                        // Sizing doesn't matter - will be updateed by sub-plots layout.
+                        containerSize = null,
+                        sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                         sharedContinuousDomainX = sharedXDomains?.get(index),
                         sharedContinuousDomainY = sharedYDomains?.get(index),
                         computationMessages = emptyList()  // No "own messages" when a part of a composite.

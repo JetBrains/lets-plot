@@ -6,9 +6,8 @@
 package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
-import org.jetbrains.letsPlot.core.util.PlotSizeUtil.preferredFigureSize
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -17,7 +16,6 @@ import javax.swing.ScrollPaneConstants
 
 abstract class PlotSpecComponentProvider(
     private val processedSpec: MutableMap<String, Any>,
-    private val preserveAspectRatio: Boolean,
     private val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val computationMessagesHandler: (List<String>) -> Unit
@@ -27,27 +25,19 @@ abstract class PlotSpecComponentProvider(
         createErrorMessageComponent(errorMessage)
     }
 
-    override fun getPreferredSize(containerSize: Dimension): Dimension {
-        val outerSize = DoubleVector(containerSize.width.toDouble(), containerSize.height.toDouble())
-        return preferredFigureSize(processedSpec, preserveAspectRatio, outerSize).let {
-            Dimension(
-                it.x.toInt(),
-                it.y.toInt()
-            )
-        }
-    }
-
-    override fun createComponent(containerSize: Dimension?, specOverrideList: List<Map<String, Any>>): JComponent {
-        val plotSize = containerSize?.let {
-            val preferredSize = getPreferredSize(containerSize)
-            DoubleVector(preferredSize.width.toDouble(), preferredSize.height.toDouble())
-        }
+    override fun createComponent(
+        containerSize: Dimension?,
+        sizingPolicy: SizingPolicy,
+        specOverrideList: List<Map<String, Any>>
+    ): JComponent {
 
         val plotSpec = SpecOverrideUtil.applySpecOverride(processedSpec, specOverrideList)
             .toMutableMap() // ToDo: get rid of "mutable"
 
         val plotComponent = createPlotComponent(
-            plotSpec, plotSize,
+            plotSpec,
+            containerSize,
+            sizingPolicy,
             svgComponentFactory,
             executor,
             errorMessageComponentFactory,
@@ -97,7 +87,8 @@ abstract class PlotSpecComponentProvider(
     companion object {
         private fun createPlotComponent(
             figureSpecProcessed: MutableMap<String, Any>,
-            preferredSize: DoubleVector?,
+            containerSize: Dimension?,
+            sizingPolicy: SizingPolicy,
             svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
             executor: (() -> Unit) -> Unit,
             errorMessageComponentFactory: (message: String) -> JComponent,
@@ -105,7 +96,8 @@ abstract class PlotSpecComponentProvider(
         ): JComponent {
             return MonolithicAwt.buildPlotFromProcessedSpecs(
                 plotSpec = figureSpecProcessed,
-                plotSize = preferredSize,
+                containerSize,
+                sizingPolicy,
                 svgComponentFactory = svgComponentFactory,
                 executor = executor,
                 errorMessageComponentFactory = errorMessageComponentFactory,

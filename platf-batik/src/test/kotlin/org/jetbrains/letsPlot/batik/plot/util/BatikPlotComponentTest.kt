@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.leftButton
 import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.noButton
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.*
@@ -62,7 +63,12 @@ class BatikPlotComponentTest {
 
         val component = BatikMapperComponent(svgRoot, BATIK_MESSAGE_CALLBACK)
 
-        fun dispatch(id: Int, x: Int, y: Int, button: Int = AWTMouseEvent.NOBUTTON): List<Pair<SvgEventSpec, MouseEvent>> {
+        fun dispatch(
+            id: Int,
+            x: Int,
+            y: Int,
+            button: Int = AWTMouseEvent.NOBUTTON
+        ): List<Pair<SvgEventSpec, MouseEvent>> {
             eventsLog.clear()
             component.dispatchEvent(AWTMouseEvent(component, id, 1L, 0, x, y, 1, false, button))
             return eventsLog.toList()
@@ -155,8 +161,8 @@ class BatikPlotComponentTest {
         private fun buildPlotFromRawSpecs(plotSpec: MutableMap<String, Any>): JComponent {
             val component = MonolithicAwt.buildPlotFromRawSpecs(
                 plotSpec = plotSpec,
-                plotSize = null,
-//                plotMaxWidth = null,
+                containerSize = null,
+                sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                 svgComponentFactory = COMPONENT_FACTORY,
                 executor = AWT_EDT_EXECUTOR
             ) {
