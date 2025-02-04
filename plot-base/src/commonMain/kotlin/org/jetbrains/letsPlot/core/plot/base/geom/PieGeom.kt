@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
@@ -340,21 +339,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         const val HANDLES_GROUPS = false
     }
 
-    private fun dimensionSpan(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {
-        val loc = p[coordAes]
-        val size = p[Aes.SIZE]
-        return if (SeriesUtil.allFinite(loc, size)) {
-            loc!!
-            val expand = size!! / 2.0
-            DoubleSpan(
-                loc - expand,
-                loc + expand
-            )
-        } else {
-            null
-        }
-    }
-
     override fun widthSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
@@ -362,7 +346,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         isDiscrete: Boolean
     ): DoubleSpan? {
         if (!isDiscrete) return null
-        return dimensionSpan(p, coordAes)
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0)
     }
 
     override fun heightSpan(
@@ -372,6 +356,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         isDiscrete: Boolean
     ): DoubleSpan? {
         if (!isDiscrete) return null
-        return dimensionSpan(p, coordAes)
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0)
     }
 }

@@ -118,23 +118,11 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
     }
 
     override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
-        val sizeAes = Aes.HEIGHT
-        val scaledResolution = resolution * this.scale
-
-        val loc = p[coordAes]
-        val size = p[sizeAes]
-
-        return if (SeriesUtil.allFinite(loc, size)) {
-            loc!!
-            val expand = scaledResolution * size!!
-            if (size >= this.minHeight) {
-                DoubleSpan(loc, loc + expand)
-            } else {
-                null
-            }
-        } else {
-            null
-        }
+        val loc = p.finiteOrNull(coordAes) ?: return null
+        val size = p.finiteOrNull(Aes.HEIGHT) ?: return null
+        if (size < this.minHeight) return null
+        val expand = resolution * this.scale * size
+        return DoubleSpan(loc, loc + expand)
     }
 
     companion object {

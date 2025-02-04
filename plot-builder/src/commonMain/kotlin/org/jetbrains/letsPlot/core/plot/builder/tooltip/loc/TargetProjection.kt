@@ -8,13 +8,13 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles.boundingBox
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.polygonContainsCoordinate
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.calculateArea
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.*
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.polygonContainsCoordinate
 import kotlin.math.max
 import kotlin.math.min
 

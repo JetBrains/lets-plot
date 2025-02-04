@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.PointDimensionsUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.WithHeight
 import org.jetbrains.letsPlot.core.plot.base.geom.WithWidth
 import org.jetbrains.letsPlot.core.plot.base.geom.util.YOrientationAesthetics
@@ -300,7 +300,7 @@ object PositionalScalesUtil {
                 Aes.WIDTH in renderedAes -> {
                     val resolution = geomCtx.getResolution(widthAxis)
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        PointDimensionsUtil.dimensionSpan(
+                        DimensionsUtil.dimensionSpan(
                             p,
                             widthAxis,
                             Aes.WIDTH,
@@ -323,7 +323,7 @@ object PositionalScalesUtil {
                 Aes.HEIGHT in renderedAes -> {
                     val resolution = geomCtx.getResolution(heightAxis)
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        PointDimensionsUtil.dimensionSpan(
+                        DimensionsUtil.dimensionSpan(
                             p,
                             heightAxis,
                             Aes.HEIGHT,
