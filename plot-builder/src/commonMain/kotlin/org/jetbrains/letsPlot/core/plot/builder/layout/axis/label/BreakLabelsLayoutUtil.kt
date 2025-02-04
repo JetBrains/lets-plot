@@ -175,9 +175,9 @@ internal object BreakLabelsLayoutUtil {
         val angle = toRadians(degreeAngle)
         val sin = sin(angle)
         val cos = cos(angle)
-        val w = abs(labelNormalSize.x * cos) + abs(labelNormalSize.y * sin)
-        val h = abs(labelNormalSize.x * sin) + abs(labelNormalSize.y * cos)
-        val x = -(abs(labelNormalSize.x * cos) + abs(labelNormalSize.y * sin))
+        val w = sqrt((labelNormalSize.x * cos).pow(2) + abs(labelNormalSize.y * sin).pow(2))
+        val h = sqrt((labelNormalSize.y * cos).pow(2) + abs(labelNormalSize.x * sin).pow(2))
+        val x = 0.0
         val y = 0.0
 
         return DoubleRectangle(x, y, w, h)
