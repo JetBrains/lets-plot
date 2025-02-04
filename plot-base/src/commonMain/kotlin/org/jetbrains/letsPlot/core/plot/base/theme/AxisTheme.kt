@@ -47,6 +47,10 @@ interface AxisTheme {
 
     fun labelAngle(): Double
 
+    fun labelHJust(): Double
+
+    fun labelVJust(): Double
+
     fun tickMarkWidth(): Double
 
     fun tickMarkLength(): Double

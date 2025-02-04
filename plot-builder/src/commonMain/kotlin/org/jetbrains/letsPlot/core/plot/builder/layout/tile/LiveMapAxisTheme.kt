@@ -61,6 +61,14 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun labelAngle(): Double = Double.NaN
 
+    override fun labelHJust(): Double {
+        TODO("Not yet implemented")
+    }
+
+    override fun labelVJust(): Double {
+        TODO("Not yet implemented")
+    }
+
     override fun tickMarkWidth() = 1.0
 
     override fun tickMarkLength() = 4.0
