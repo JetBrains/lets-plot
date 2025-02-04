@@ -223,7 +223,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
     }
 
     override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
-        return PointDimensionsUtil.dimensionSpan(
+        return DimensionsUtil.dimensionSpan(
             p,
             coordAes,
             sizeAes = Aes.BINWIDTH,

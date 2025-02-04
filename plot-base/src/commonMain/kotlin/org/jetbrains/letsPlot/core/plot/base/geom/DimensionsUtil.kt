@@ -8,28 +8,20 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
-object PointDimensionsUtil {
+object DimensionsUtil {
     fun dimensionSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         sizeAes: Aes<Double>,
         resolution: Double
     ): DoubleSpan? {
-
-        val loc = p[coordAes]
-        val size = p[sizeAes]
-
-        return if (SeriesUtil.allFinite(loc, size)) {
-            loc!!
-            val expand = resolution * size!! / 2
-            DoubleSpan(
-                loc - expand,
-                loc + expand
-            )
-        } else {
-            null
-        }
+        val loc = p.finiteOrNull(coordAes) ?: return null
+        val size = p.finiteOrNull(sizeAes) ?: return null
+        val expand = resolution * size / 2.0
+        return DoubleSpan(
+            loc - expand,
+            loc + expand
+        )
     }
 }
