@@ -44,30 +44,60 @@ internal class VerticalRotatedLabelsLayout(
         }
             ?: // labels can be empty so bounds may be null, it is safe to use empty rect
             DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+	    
+        val maxLabelWidth = labelBoundsList.maxOf { it.width }
 
-        // add additional offsets for labels
-        val xOffset: (DoubleRectangle) -> Double = when (orientation) {
-            Orientation.LEFT -> { d: DoubleRectangle -> -d.width / 2 }
-            Orientation.RIGHT -> { d: DoubleRectangle -> d.width / 2 }
+        val orientationSign = when (orientation) {
+            Orientation.LEFT -> -1.0
+            Orientation.RIGHT -> 1.0
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
-        val labelAdditionalOffsets = labelBoundsList.map { DoubleVector(xOffset(it), 0.0) }
+
+        val vjust = theme.labelVJust()
+        val hjust = theme.labelHJust()
+
+        val xBBoxOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
+            orientationSign * (maxLabelWidth - rect.width) * (1.0 - hjust)
+        }
+
+        val yBBoxOffset: (DoubleRectangle) -> Double = { d: DoubleRectangle ->
+            d.height * (-vjust)
+        }
+
+        val xOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
+            ((maxLabelWidth - rect.width) * (1 - hjust) + rect.width / 2) * orientationSign
+        }
+
+        val yOffset: (DoubleRectangle) -> Double = { d: DoubleRectangle ->
+            d.height * (0.5 - vjust)
+        }
+
+        val labelAdditionalOffsets = labelBoundsList.map {
+            DoubleVector(xOffset(it), yOffset(it))
+        }
+
+        val horizontalAnchor = Text.HorizontalAnchor.MIDDLE
+        val verticalAnchor = Text.VerticalAnchor.CENTER
+
+        val adjustedLabelBoundsList = labelBoundsList.map {
+            val origin = DoubleVector( it.origin.x + xBBoxOffset(it), yBBoxOffset(it) + it.origin.y)
+            DoubleRectangle(origin, it.dimension)
+        }
 
         return createAxisLabelsLayoutInfoBuilder(bounds, overlap)
-            .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            .labelVerticalAnchor(Text.VerticalAnchor.CENTER)
+            .labelHorizontalAnchor(horizontalAnchor)
+            .labelVerticalAnchor(verticalAnchor)
             .labelRotationAngle(-myRotationAngle)
             .hJust(theme.labelHJust())
             .vJust(theme.labelVJust())
             .labelAdditionalOffsets(labelAdditionalOffsets)
-            .labelBoundsList(labelBoundsList.map(::alignToLabelMargin)) // for debug drawing
+            .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin)) // for debug drawing
             .build()
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         return BreakLabelsLayoutUtil.rotatedLabelBounds(labelNormalSize, myRotationAngle).let {
-            // make vertical centered
-            DoubleRectangle(0.0, -it.height / 2, it.width, it.height)
+            DoubleRectangle(0.0, 0.0, it.width, it.height)
         }
     }
 }
