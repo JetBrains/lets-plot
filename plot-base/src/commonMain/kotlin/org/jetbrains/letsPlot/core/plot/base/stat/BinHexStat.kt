@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.polygonContainsCoordinate
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
@@ -14,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.pow
@@ -222,7 +222,7 @@ class BinHexStat(
             val v5 = DoubleVector(-binWidth / 2.0, -halfHexHeight / 2.0)
             val v6 = DoubleVector(-binWidth / 2.0, halfHexHeight / 2.0)
             // Check that q is in Hexagon(v1, v2, v3, v4, v5, v6):
-            return ringContainsCoordinate<Double>(listOf(v1, v2, v3, v4, v5, v6, v1).map { Vec(it.x, it.y) }, Vec(q.x, q.y))
+            return polygonContainsCoordinate(listOf(v1, v2, v3, v4, v5, v6, v1), q)
         }
 
         fun distanceToHexagonCenter(
@@ -338,26 +338,6 @@ class BinHexStat(
             val area = xSpan * ySpan
             val binArea = area / count
             return 1.0 / binArea
-        }
-
-        // Function from the org.jetbrains.letsPlot.livemap.chart.polygon.PolygonLocator (not available for now)
-        // TODO: Should be replaced with the final version of the function which is not in master yet
-        fun <TypeT> ringContainsCoordinate(ring: List<Vec<TypeT>>, coord: Vec<TypeT>): Boolean {
-            var intersectionCount = 0
-            for (i in 1 until ring.size) {
-                val start = i - 1
-                if (ring[start].y >= coord.y && ring[i].y >= coord.y ||
-                    ring[start].y < coord.y && ring[i].y < coord.y
-                ) {
-                    continue
-                }
-                val x: Double = ring[start].x + (coord.y - ring[start].y) *
-                        (ring[i].x - ring[start].x) / (ring[i].y - ring[start].y)
-                if (x <= coord.x) {
-                    intersectionCount++
-                }
-            }
-            return intersectionCount % 2 != 0
         }
     }
 }
