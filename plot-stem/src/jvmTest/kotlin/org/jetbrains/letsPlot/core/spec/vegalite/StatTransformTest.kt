@@ -24,10 +24,69 @@ import org.jetbrains.letsPlot.core.spec.StatKind
 import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.getMap
+import org.junit.Ignore
 import org.junit.Test
 import java.util.Map.entry
 
 class StatTransformTest {
+
+    @Ignore
+    @Test
+    fun `timeUnit - basic case`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |    "mark": {
+                |        "type": "boxplot", 
+                |        "tooltip": { "content": "encoding" }
+                |    }, 
+                |    "encoding": {
+                |        "x": { "timeUnit": "year", "field": "date", "type": "temporal" }, 
+                |        "y": { "field": "temp", "type": "quantitative" }
+                |    }, 
+                |    "params": [
+                |        { "name": "p0", "select": "interval", "bind": "scales" }
+                |    ], 
+                |    "data": {
+                |        "values": [
+                |            { "date": 1262304000000, "temp": 39.4 }, 
+                |            { "date": 1262307600000, "temp": 39.2 }, 
+                |            { "date": 1262311200000, "temp": 39 }, 
+                |            { "date": 1262314800000, "temp": 38.9 }, 
+                |            { "date": 1262318400000, "temp": 38.8 }, 
+                |            { "date": 1262322000000, "temp": 38.7 }, 
+                |            { "date": 1262325600000, "temp": 38.7 }, 
+                |            { "date": 1262329200000, "temp": 38.6 }, 
+                |            { "date": 1262332800000, "temp": 38.7 }, 
+                |            { "date": 1262336400000, "temp": 39.2 }, 
+                |            { "date": 1262340000000, "temp": 40.1 }, 
+                |            { "date": 1262343600000, "temp": 41.3 }, 
+                |            { "date": 1262347200000, "temp": 42.5 }, 
+                |            { "date": 1262350800000, "temp": 43.2 }, 
+                |            { "date": 1262354400000, "temp": 43.5 }, 
+                |            { "date": 1262358000000, "temp": 43.3 }, 
+                |            { "date": 1262361600000, "temp": 42.7 }, 
+                |            { "date": 1262365200000, "temp": 41.7 }, 
+                |            { "date": 1262368800000, "temp": 41.2 }, 
+                |            { "date": 1262372400000, "temp": 40.9 }
+                |        ]
+                |    }
+                |}                
+            """.trimMargin()
+        ).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
+            entry("..lower..", listOf(38.849999999999994)),
+            entry("..middle..", listOf(39.75)),
+            entry("..upper..", listOf(42.1)),
+            entry("..ymax..", listOf(43.5)),
+            entry("..ymin..", listOf(38.6)),
+            entry("date", listOf(1.2623004E12)),
+        )
+    }
+
     @Test
     fun `count ignores field`() {
         val vegaSpec = parseJson(
@@ -64,8 +123,6 @@ class StatTransformTest {
         ).asMutable()
 
         val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
-
-        assertThat(spec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
             entry("race", listOf("Latino", "Black", "Latino", "Latino", "White", "Black")),
