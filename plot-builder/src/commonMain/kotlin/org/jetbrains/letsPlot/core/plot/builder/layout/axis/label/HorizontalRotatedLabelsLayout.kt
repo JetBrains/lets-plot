@@ -58,7 +58,11 @@ internal class HorizontalRotatedLabelsLayout(
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
-        val vjust = theme.labelVJust()
+        val vjust = if (theme.labelVJust().isNaN()) {
+            if (orientation == Orientation.TOP) 0.0 else 1.0
+        } else {
+            theme.labelVJust()
+        }
         val hjust = theme.labelHJust()
         val angle = theme.labelAngle()
 
@@ -180,5 +184,4 @@ internal class HorizontalRotatedLabelsLayout(
             horizontalAnchor != Text.HorizontalAnchor.MIDDLE -> 0.0
             else -> 0.5
         }
-
 }

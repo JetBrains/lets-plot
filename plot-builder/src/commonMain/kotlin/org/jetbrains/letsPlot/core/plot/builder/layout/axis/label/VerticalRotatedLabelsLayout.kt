@@ -54,7 +54,11 @@ internal class VerticalRotatedLabelsLayout(
         }
 
         val vjust = theme.labelVJust()
-        val hjust = theme.labelHJust()
+        val hjust = if (theme.labelHJust().isNaN()) {
+            if (orientation == Orientation.RIGHT) 0.0 else 1.0
+        } else {
+            theme.labelHJust()
+        }
 
         val xBBoxOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
             orientationSign * (maxLabelWidth - rect.width) * (1.0 - hjust)
