@@ -18,6 +18,32 @@ import java.util.Map.entry
 
 class ThemingTest {
     @Test
+    fun `only title`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "mark": "point",
+                |  
+                |  "data": { "values": [ { "a": 1, "b": 2 } ]  },
+                |  "encoding": { 
+                |    "x": { "field": "a" },
+                |    "y": { "field": "b" }
+                |  },
+                |  "title": "My Chart"
+                |}
+            """.trimMargin()
+        ).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec.getMap(Option.Plot.TITLE)).isEqualTo(
+            mapOf(
+                Option.Plot.TITLE_TEXT to "My Chart"
+            )
+        )
+    }
+
+    @Test
     fun `title and caption`() {
         val vegaSpec = parseJson(
             """

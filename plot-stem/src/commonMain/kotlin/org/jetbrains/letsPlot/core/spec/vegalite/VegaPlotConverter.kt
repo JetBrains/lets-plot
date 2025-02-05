@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Title
 
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpecMap: MutableMap<String, Any?>
@@ -38,10 +37,7 @@ internal class VegaPlotConverter private constructor(
     private val plotOptions = PlotOptions()
 
     private fun convert(): PlotOptions {
-        plotOptions.title = title {
-            titleText = vegaPlotSpec.getString(VegaOption.TITLE, Title.TEXT)
-            subtitleText = vegaPlotSpec.getString(VegaOption.TITLE, Title.SUBTITLE)
-        }
+        plotOptions.title = Util.transformTitle(vegaPlotSpec[VegaOption.TITLE])
 
         when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
             VegaPlotKind.SINGLE_LAYER -> {

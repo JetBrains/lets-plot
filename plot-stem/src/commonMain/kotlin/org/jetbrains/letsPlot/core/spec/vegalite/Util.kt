@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.TimeUnit
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Title
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
@@ -41,6 +42,21 @@ internal object Util {
 
         val mark = options.getString(VegaOption.Mark.TYPE) ?: error("Mark type is not specified")
         return Pair(mark, options)
+    }
+
+    fun transformTitle(vegaTitle: Any?): TitleOptions? {
+        return when (vegaTitle) {
+            is String -> title {
+                titleText = vegaTitle
+            }
+
+            is Map<*, *> -> title {
+                titleText = vegaTitle.getString(Title.TEXT)
+                subtitleText = vegaTitle.getString(Title.SUBTITLE)
+            }
+
+            else -> null
+        }
     }
 
     fun transformData(vegaData: Map<String, Any>): Map<String, List<Any?>> {
