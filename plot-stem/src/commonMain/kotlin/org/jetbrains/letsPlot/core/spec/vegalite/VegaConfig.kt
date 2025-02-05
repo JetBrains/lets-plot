@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getList
 import org.jetbrains.letsPlot.core.spec.plotson.toJson
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Data
 import org.jetbrains.letsPlot.core.spec.write
 
 object VegaConfig {
@@ -17,17 +18,19 @@ object VegaConfig {
     }
 
     fun toLetsPlotSpec(vegaSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
+        if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
+            // deep copy data to avoid modification of the original data
+            val specCopy = vegaSpec.let(JsonSupport::formatJson).let(JsonSupport::parseJson)
+
+            val compactData = specCopy.getList(VegaOption.DATA, Data.VALUES)?.take(20) ?: emptyList()
+            specCopy.write(VegaOption.DATA, Data.VALUES) { compactData }
+            println(JsonSupport.formatJson(specCopy, pretty = true))
+        }
+
         val plotOptions = VegaPlotConverter.convert(vegaSpec)
         val plotSpec = plotOptions.toJson()
 
         if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
-            val compactData = vegaSpec.getList(VegaOption.DATA, VegaOption.Data.VALUES)?.take(20) ?: emptyList()
-            val compactVegaSpec = vegaSpec.toMutableMap().apply { // copy
-                write(VegaOption.DATA, VegaOption.Data.VALUES) { compactData }
-            }
-            println(JsonSupport.formatJson(compactVegaSpec, pretty = true))
-
-
             plotOptions.data = plotOptions.data?.mapValues { (_, values) -> values.take(5) }
             plotOptions.layerOptions?.forEach { layerOptions ->
                 layerOptions.data = layerOptions.data?.mapValues { (_, values) -> values.take(5) }
