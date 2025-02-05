@@ -12,10 +12,40 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.getMap
 import org.junit.Test
 import java.util.Map.entry
 
-class ThemeTransformTest {
+class ThemingTest {
+    @Test
+    fun `title and caption`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "mark": "point",
+                |  
+                |  "data": { "values": [ { "a": 1, "b": 2 } ]  },
+                |  "encoding": { 
+                |    "x": { "field": "a" },
+                |    "y": { "field": "b" }
+                |  },
+                |  "title": {
+                |    "text": "My Chart",
+                |    "subtitle": "This is a chart"
+                |  }
+                |}
+            """.trimMargin()
+        ).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec.getMap(Option.Plot.TITLE)).isEqualTo(
+            mapOf(
+                Option.Plot.TITLE_TEXT to "My Chart",
+                Option.Plot.SUBTITLE_TEXT to "This is a chart"
+            )
+        )
+    }
 
     @Test
     fun `fill and color should produce same title to combine legend into one`() {

@@ -20,7 +20,7 @@ class PlotOptions : Options(
     var layerOptions: List<LayerOptions>? by map(Plot.LAYERS)
     var scaleOptions: List<ScaleOptions>? by map(Plot.SCALES)
     var guides: Map<Aes<*>, GuideOptions>? by map(Plot.GUIDES)
-    var title: String? by map(Plot.TITLE)
+    var title: TitleOptions? by map(Plot.TITLE)
     var coord: CoordOptions? by map(Plot.COORD)
     var themeOptions: ThemeOptions? by map(Plot.THEME)
     var size: Size? by map(Plot.SIZE)

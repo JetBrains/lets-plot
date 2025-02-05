@@ -23,6 +23,7 @@ internal object VegaOption {
     const val HCONCAT = "hconcat"
     const val REPEAT = "repeat"
     const val ENCODING = "encoding"
+    const val TITLE = "title"
 
     const val CONFIG = "config"
 
@@ -191,4 +192,8 @@ internal object VegaOption {
         }
     }
 
+    object Title {
+        const val TEXT = "text"
+        const val SUBTITLE = "subtitle"
+    }
 }
