@@ -19,10 +19,10 @@ import kotlin.math.min
 private val LOG = PortableLogging.logger("Lets-Plot SizingPolicy")
 
 class SizingPolicy(
-    private val widthMode: SizingMode,
-    private val heightMode: SizingMode,
-    private val width: Double?,
-    private val height: Double?,
+    val widthMode: SizingMode,
+    val heightMode: SizingMode,
+    val width: Double? = null,
+    val height: Double? = null,
 ) {
 
     // avoid division by zero

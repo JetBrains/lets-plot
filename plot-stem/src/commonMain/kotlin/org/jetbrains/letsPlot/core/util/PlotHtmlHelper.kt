@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.util.sizing.SizingMode
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotHtmlHelper {
     private val LOG = PortableLogging.logger(PlotHtmlHelper::class)
@@ -104,56 +106,72 @@ object PlotHtmlHelper {
         val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
         return dynamicDisplayHtml(
-            plotSpecJs
+            plotSpecJs,
+            SizingPolicy(SizingMode.MIN, SizingMode.SCALED)
         )
     }
 
     private fun dynamicDisplayHtml(
-        plotSpecAsJsObjectInitializer: String
+        plotSpecAsJsObjectInitializer: String,
+        sizingPolicy: SizingPolicy
     ): String {
         val outputId = randomString(6)
         return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |   
-            |   (function() {
-            |   // ----------
-            |   
-            |   var containerDiv = document.getElementById("$outputId");
-            |   var observer = new ResizeObserver(function(entries) {
-            |       for (let entry of entries) {
-            |           if (entry.contentBoxSize && 
-            |               entry.contentBoxSize[0].inlineSize > 0) {
-            |           
-            |               // Render plot
-            |               if (observer) {
-            |                   observer.disconnect();
-            |                   observer = null;
-            |               }
-            |               var plotSpec=$plotSpecAsJsObjectInitializer;
-            |               window.letsPlotCall(function() {
-            |       
-            |                   var options = {
-            |                       sizing: {
-            |                           width_mode: "min",
-            |                           height_mode: "scaled",
-            |                       }
-            |                   };
-            |                   var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
-            |               });
-            |               
-            |               break;
-            |           }
-            |       }
-            |   });
-            |   
-            |   observer.observe(containerDiv);
-            |   
-            |   // ----------
-            |   })();
-            |   
-            |   </script>
-        """.trimMargin()
+        |   <div id="$outputId"></div>
+        |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
+        |   
+        |   (function() {
+        |   // ----------
+        |   
+        |   const sizingPolicy = {
+        |       width_mode: "${sizingPolicy.widthMode}",
+        |       height_mode: "${sizingPolicy.heightMode}",
+        |       width: ${sizingPolicy.width}, 
+        |       height: ${sizingPolicy.height} 
+        |   };
+        |   
+        |   const containerDiv = document.getElementById("$outputId");
+        |   
+        |   function renderPlot() {
+        |       const options = {
+        |           sizing: sizingPolicy
+        |       };
+        |       const plotSpec = $plotSpecAsJsObjectInitializer;
+        |       window.letsPlotCall(function() {
+        |           LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
+        |       });
+        |   }
+        |   
+        |   const noWait = 
+        |       sizingPolicy.width_mode === 'FIXED' && 
+        |       (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED');
+        |   
+        |   if (noWait) {
+        |       renderPlot();
+        |   } else {
+        |       // Wait for container to assume a size.
+        |       var observer = new ResizeObserver(function(entries) {
+        |           for (let entry of entries) {
+        |               if (entry.contentBoxSize && 
+        |                   entry.contentBoxSize[0].inlineSize > 0) {
+        |                   if (observer) {
+        |                       observer.disconnect();
+        |                       observer = null;
+        |                   }
+        |                   renderPlot();
+        |                   break;
+        |               }
+        |           }
+        |       });
+        |       
+        |       observer.observe(containerDiv);
+        |   }
+        |   
+        |   // ----------
+        |   })();
+        |   
+        |   </script>
+    """.trimMargin()
     }
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
@@ -180,99 +198,75 @@ object PlotHtmlHelper {
         }
 
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return when (size) {
-            null ->
-                staticDisplayHtmlWithRelativeSizing(
-                    plotSpecJs
-                )
-
-            else ->
-                staticDisplayHtmlWithFixedSizing(
-                    plotSpecJs,
-                    size
-                )
+        val sizingPolicy = when (size) {
+            null -> SizingPolicy.notebookCell()
+            else -> SizingPolicy.fixed(size.x, size.y)
         }
+        return staticDisplayHtml(
+            plotSpecJs,
+            sizingPolicy
+        )
     }
 
-    private fun staticDisplayHtmlWithFixedSizing(
+    private fun staticDisplayHtml(
         plotSpecAsJsObjectInitializer: String,
-        size: DoubleVector
+        sizingPolicy: SizingPolicy
     ): String {
         val outputId = randomString(6)
-        return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |   
-            |   (function() {
-            |   // ----------
-            |   
-            |       var plotSpec=$plotSpecAsJsObjectInitializer;
-            |       var containerDiv = document.getElementById("$outputId");
-            |               
-            |       var options = {
-            |           sizing: {
-            |               width_mode: "fixed",
-            |               height_mode: "fixed",
-            |               width: ${size.x},
-            |               height: ${size.y}
-            |           }
-            |       };
-            |       var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
-            |       if (toolbar) {
-            |         toolbar.bind(fig);
-            |       }
-            |       
-            |   // ----------
-            |   })();
-            |   
-            |   </script>
-        """.trimMargin()
-    }
 
-    private fun staticDisplayHtmlWithRelativeSizing(
-        plotSpecAsJsObjectInitializer: String
-    ): String {
-        val outputId = randomString(6)
         return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |   
-            |   (function() {
-            |   // ----------
-            |   
-            |   var containerDiv = document.getElementById("$outputId");
-            |   var observer = new ResizeObserver(function(entries) {
-            |       for (let entry of entries) {
-            |           if (entry.contentBoxSize && 
-            |               entry.contentBoxSize[0].inlineSize > 0) {
-            |           
-            |               // Render plot
-            |               if (observer) {
-            |                   observer.disconnect();
-            |                   observer = null;
-            |               }
-            |
-            |               var plotSpec=$plotSpecAsJsObjectInitializer;
-            |       
-            |               var options = {
-            |                   sizing: {
-            |                       width_mode: "min",
-            |                       height_mode: "scaled"
-            |                   }
-            |               };
-            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
-            |               
-            |               break;
-            |           }
-            |       }
-            |   });
-            |   
-            |   observer.observe(containerDiv);
-            |   
-            |   // ----------
-            |   })();
-            |   
-            |   </script>
-        """.trimMargin()
+        |   <div id="$outputId"></div>
+        |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
+        |   
+        |   (function() {
+        |   // ----------
+        |   
+        |   const sizingPolicy = {
+        |       width_mode: "${sizingPolicy.widthMode}",
+        |       height_mode: "${sizingPolicy.heightMode}",
+        |       width: ${sizingPolicy.width}, 
+        |       height: ${sizingPolicy.height} 
+        |   };
+        |   
+        |   const containerDiv = document.getElementById("$outputId");
+        |   
+        |   function renderPlot() {
+        |       const options = {
+        |           sizing: sizingPolicy
+        |       };
+        |       const plotSpec = $plotSpecAsJsObjectInitializer;
+        |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
+        |   }
+        |   
+        |   const noWait = 
+        |       sizingPolicy.width_mode === 'FIXED' && 
+        |       (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED');
+        |   
+        |   if (noWait) {
+        |       renderPlot();
+        |   } else {
+        |       // Wait for container to assume a size.
+        |       var observer = new ResizeObserver(function(entries) {
+        |           for (let entry of entries) {
+        |               if (entry.contentBoxSize && 
+        |                   entry.contentBoxSize[0].inlineSize > 0) {
+        |                   if (observer) {
+        |                       observer.disconnect();
+        |                       observer = null;
+        |                   }
+        |                   renderPlot();
+        |                   break;
+        |               }
+        |           }
+        |       });
+        |       
+        |       observer.observe(containerDiv);
+        |   }
+        |   
+        |   // ----------
+        |   })();
+        |   
+        |   </script>
+    """.trimMargin()
     }
 }
