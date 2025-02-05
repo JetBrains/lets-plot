@@ -14,6 +14,7 @@ enum class GeomKind {
     DOT_PLOT,
     TILE,
     BIN_2D,
+    HEX,
     MAP,
     ERROR_BAR,
     CROSS_BAR,

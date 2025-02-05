@@ -12,7 +12,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, g
 #
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
-           'geom_histogram', 'geom_dotplot', 'geom_bin2d',
+           'geom_histogram', 'geom_dotplot', 'geom_bin2d', 'geom_hex',
            'geom_tile', 'geom_raster',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
@@ -1405,6 +1405,173 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     """
     return _geom('bin2d',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 drop=drop,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
+             tooltips=None,
+             bins=None,
+             binwidth=None,
+             drop=None,
+             color_by=None, fill_by=None,
+             **other_args):
+    """
+    Apply a hexagonal grid to the plane, count observations in each cell (hexagonal bin) of the grid,
+    and map the count to the fill color of the cell (hexagonal tile).
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='binhex'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    bins : list of int, default=[30, 30]
+        Number of hexagonal bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+    binwidth : list of float
+        The width of the hexagonal bins in both directions, vertical and horizontal.
+        Override `bins`. The default is to use bin widths that cover the entire range of the data.
+    drop : bool, default=True
+        Specify whether to remove all hexagonal bins with 0 counts.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+
+    Computed variables:
+
+    - ..count.. : number of points with coordinates in the same hexagonal bin.
+
+    `geom_hex()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - size : line width, default=0 (i.e. tiles outline initially is not visible).
+    - weight : used by 'binhex' stat to compute weighted sum instead of simple count.
+    - width : width of the hexagon.
+    - height : the real height of the hexagon will be 2/sqrt(3) times this value, so with width=height the hexagon will be the regular.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        mean = np.zeros(2)
+        cov = np.eye(2)
+        x, y = np.random.multivariate_normal(mean, cov, 1000).T
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_hex()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-14
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 5000
+        x = np.random.uniform(-2, 2, size=n)
+        y = np.random.normal(scale=.5, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_hex(aes(fill='..density..'), binwidth=[.25, .24], \\
+                     tooltips=layer_tooltips().format('@x', '.2f')
+                             .format('@y', '.2f').line('(@x, @y)')
+                             .line('count|@..count..')
+                             .format('@..density..', '.3f')
+                             .line('density|@..density..')) + \\
+            scale_fill_gradient(low='black', high='red')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        mean = np.zeros(2)
+        cov = [[1, .5],
+               [.5, 1]]
+        x, y = np.random.multivariate_normal(mean, cov, 500).T
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_hex(aes(alpha='..count..'), bins=[20, 20], \\
+                     fill='darkgreen') + \\
+            geom_point(size=1.5, shape=21, color='white', \\
+                       fill='darkgreen') + \\
+            ggsize(600, 450)
+
+    """
+    return _geom('hex',
                  mapping=mapping,
                  data=data,
                  stat=stat,

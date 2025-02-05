@@ -43,7 +43,7 @@ object LayerConverter {
                 SPOKE -> MapLayerKind.PATH to dataPointsConverter.toSpoke(layer.geom as SpokeGeom)
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
-                DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
+                DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon() // TODO: Add hex later
                 PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom as PieGeom)
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }

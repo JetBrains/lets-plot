@@ -120,7 +120,8 @@ object GeomMeta {
             )
 
             GeomKind.TILE,
-            GeomKind.BIN_2D -> listOf(
+            GeomKind.BIN_2D,
+            GeomKind.HEX -> listOf(
                 Aes.X, Aes.Y,
                 Aes.WIDTH,
                 Aes.HEIGHT,

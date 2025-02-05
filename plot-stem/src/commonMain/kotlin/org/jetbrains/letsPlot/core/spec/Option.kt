@@ -441,6 +441,12 @@ object Option {
             const val DROP = "drop"
         }
 
+        object BinHex {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val DROP = "drop"
+        }
+
         object Contour {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
@@ -950,6 +956,7 @@ object Option {
         private const val DOT_PLOT = "dotplot"
         private const val TILE = "tile"
         private const val BIN_2D = "bin2d"
+        private const val HEX = "hex"
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
         private const val CROSS_BAR = "crossbar"
@@ -1005,6 +1012,7 @@ object Option {
             map[Y_DOT_PLOT] = GeomKind.Y_DOT_PLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
+            map[HEX] = GeomKind.HEX
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
             map[CROSS_BAR] = GeomKind.CROSS_BAR

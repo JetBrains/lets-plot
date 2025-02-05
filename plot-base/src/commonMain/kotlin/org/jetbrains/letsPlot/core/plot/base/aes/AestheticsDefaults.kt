@@ -150,6 +150,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.HISTOGRAM,
                 GeomKind.TILE,
                 GeomKind.BIN_2D,
+                GeomKind.HEX,
                 GeomKind.MAP,
                 GeomKind.LINE_RANGE,
                 GeomKind.POINT_RANGE,
