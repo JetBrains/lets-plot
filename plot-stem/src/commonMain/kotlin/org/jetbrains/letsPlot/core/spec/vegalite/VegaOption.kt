@@ -51,6 +51,19 @@ internal object VegaOption {
         const val TOOLTIP = "tooltip"
         const val FORMAT_TYPE = "formatType"
 
+        object TimeUnit {
+            const val YEAR = "year"
+            const val QUARTER = "quarter"
+            const val MONTH = "month"
+            const val DATE = "date"
+            const val WEEK = "week"
+            const val DAY = "day"
+            const val HOURS = "hours"
+            const val MINUTES = "minutes"
+            const val SECONDS = "seconds"
+            const val MILLISECONDS = "milliseconds"
+        }
+
         object Aggregate {
             const val COUNT = "count"
             const val VALID = "valid"

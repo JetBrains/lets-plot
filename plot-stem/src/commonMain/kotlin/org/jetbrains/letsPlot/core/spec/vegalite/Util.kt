@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
+import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
@@ -19,6 +21,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.TimeUnit
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
@@ -211,15 +214,12 @@ internal object Util {
             }
 
             val field = encoding.getString(Encoding.FIELD) ?: return@forEach
-            if (encoding[Encoding.TYPE] == Encoding.Types.TEMPORAL
-                || encoding.contains(Encoding.TIMEUNIT)
-            ) {
+            if (encoding[Encoding.TYPE] == Encoding.Types.TEMPORAL || encoding.contains(Encoding.TIMEUNIT)) {
                 dataMeta.appendSeriesAnnotation {
                     type = SeriesAnnotationOptions.Types.DATE_TIME
                     column = field
                 }
             }
-
 
             if (!isContinuous(channel, encodingVegaSpec)) {
                 if (data?.get(field)?.all { it is String } != true) {
@@ -243,6 +243,31 @@ internal object Util {
 
         return dataMeta
     }
+
+    fun applyTimeUnit(
+        data: Map<String, List<Any?>>,
+        encodingVegaSpec: Map<*, *>
+    ): Map<String, List<Any?>> {
+        Channels.forEach { channel ->
+            val field = encodingVegaSpec.getString(channel, Encoding.FIELD) ?: return@forEach
+            val timeUnit = encodingVegaSpec.getString(channel, Encoding.TIMEUNIT) ?: return@forEach
+            val timeSeries = data[field] ?: return@forEach
+
+            val adjustedTimeSeries = timeSeries.map {
+                val epoch = (it as? Number) ?: return@map null
+
+                val instant = Instant(epoch.toLong())
+                val dateTime = UTC.toDateTime(instant)
+                val adjustedDateTime = applyTimeUnit(dateTime, timeUnit)
+                UTC.toInstant(adjustedDateTime).timeSinceEpoch
+            }
+
+            data.write(field) { adjustedTimeSeries }
+        }
+
+        return data
+    }
+
 
     fun transformPositionAdjust(encodings: Map<*, *>, stat: StatOptions?): PositionOptions? {
         run {
@@ -333,5 +358,28 @@ internal object Util {
                 yLim = newYDomain
             }
         }
+    }
+
+    internal fun applyTimeUnit(dateTime: DateTime, unitsTemplate: String): DateTime {
+        var year = 0
+        var month = Month.JANUARY
+        var day = 1
+        var hours = 0
+        var minutes = 0
+        var seconds = 0
+        var ms = 0
+
+        if (TimeUnit.YEAR in unitsTemplate) year = dateTime.year
+        if (TimeUnit.MONTH in unitsTemplate) month = Month.values()[dateTime.month.ordinal()]
+        if (TimeUnit.DAY in unitsTemplate) day = dateTime.day
+        if (TimeUnit.HOURS in unitsTemplate) hours = dateTime.time.hours
+        if (TimeUnit.MINUTES in unitsTemplate) minutes = dateTime.time.minutes
+        if (TimeUnit.SECONDS in unitsTemplate) seconds = dateTime.time.hours
+        if (TimeUnit.MILLISECONDS in unitsTemplate) ms = dateTime.time.milliseconds
+
+        return DateTime(
+            Date(day = day, month = month, year = year),
+            Time(hours = hours, minutes = minutes, seconds = seconds, milliseconds = ms)
+        )
     }
 }

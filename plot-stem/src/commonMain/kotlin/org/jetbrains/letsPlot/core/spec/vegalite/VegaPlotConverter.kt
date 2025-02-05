@@ -107,15 +107,12 @@ internal class VegaPlotConverter private constructor(
                 .apply {
                     this.geom = geom
                     data = when {
-                        VegaOption.DATA !in layerSpec -> Util.transformData(
-                            vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
-                        )
-
+                        !layerSpec.contains(VegaOption.DATA) -> Util.transformData(vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap())
+                        layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpec.getMap(VegaOption.DATA)!!.typed()) // data is specified
                         layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                        layerSpec[VegaOption.DATA] != null -> Util.transformData(
-                            layerSpecMap.getMap(VegaOption.DATA)!!.typed()
-                        ) // data is specified
                         else -> error("Unsupported data specification")
+                    }.let {
+                        Util.applyTimeUnit(it, encoding)
                     }
 
                     stat = transformResult?.stat

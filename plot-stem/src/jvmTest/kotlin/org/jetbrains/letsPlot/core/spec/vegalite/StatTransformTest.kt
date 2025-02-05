@@ -24,13 +24,11 @@ import org.jetbrains.letsPlot.core.spec.StatKind
 import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.getMap
-import org.junit.Ignore
 import org.junit.Test
 import java.util.Map.entry
 
 class StatTransformTest {
 
-    @Ignore
     @Test
     fun `timeUnit - basic case`() {
         val vegaSpec = parseJson(
@@ -83,7 +81,7 @@ class StatTransformTest {
             entry("..upper..", listOf(42.1)),
             entry("..ymax..", listOf(43.5)),
             entry("..ymin..", listOf(38.6)),
-            entry("date", listOf(1.2623004E12)),
+            entry("date", listOf(1.262304E12)),
         )
     }
 
