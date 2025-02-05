@@ -16,10 +16,7 @@ open class ScaleLabelJustification {
 
         return justifications.flatMap { hJust ->
             justifications.map { vJust ->
-                if (axis_position == "left" || axis_position == "right")
-                    axisWithVLabelAngles(yPosition = axis_position, yAngle = angle, yHJust = hJust, yVJust = vJust)
-                else
-                    axisWithHLabelAngles(xPosition = axis_position, xAngle = angle, xHJust = hJust, xVJust = vJust)
+                specWithAxis(position = axis_position, angle = angle, hJust = hJust, vJust = vJust)
             }
         }
     }
@@ -28,6 +25,7 @@ open class ScaleLabelJustification {
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
             map["x"] = listOf("OXXXXXXX", "OOOOO", "It's lXXX", "XOOOOXXX")
+            map["xa"] = listOf("1", "2", "3", "4") // do not overcrowd the x-axis when testing y-axis
             map["y"] = listOf(500, 1000, 500, 0)
             return map
         }
@@ -39,9 +37,10 @@ open class ScaleLabelJustification {
                     ""
         }
 
-        private fun layerMapping(): String {
+        private fun layerMapping(postition: String): String {
+            val xMapping = if (postition == "top" || postition == "bottom") "x" else "xa"
             return "   'mapping': {" +
-                    "             'x': 'x'," +
+                    "             'x': '$xMapping'," +
                     "             'y': 'y'" +
                     "           }," +
                     "   'layers': [" +
@@ -54,53 +53,36 @@ open class ScaleLabelJustification {
                     ""
         }
 
-        private fun axisWithHLabelAngles(
-            xPosition: String,
-            xAngle: Double,
-            xHJust: Double,
-            xVJust: Double,
+        private fun specWithAxis(
+            position: String,
+            angle: Double,
+            hJust: Double,
+            vJust: Double
         ): MutableMap<String, Any> {
-            val spec = """
-                {
-                    'kind': 'plot',
-                    'theme': {
-                       'name': 'classic',
-                       'axis_text_x': { 'angle' : $xAngle, 'hjust' : $xHJust, 'vjust' : $xVJust, 'blank': false }
-                    },
-                    ${title("x: $xAngle°, h$xHJust, v$xVJust")},
-                    'ggsize': {'width': 400, 'height': 320},
-                    ${layerMapping()},                    
-                    'scales': [
-                          {'aesthetic': 'x', 'position': '$xPosition'}
-                    ]
-                }
-            """.trimIndent()
-            val plotSpec = HashMap(parsePlotSpec(spec))
-            plotSpec["data"] = data()
-            return plotSpec
-        }
+            val axis = when (position) {
+                "left", "right" -> "y"
+                "top", "bottom" -> "x"
+                else -> throw IllegalArgumentException("Axis must be 'x' or 'y'")
+            }
 
-        private fun axisWithVLabelAngles(
-            yPosition: String,
-            yAngle: Double,
-            yHJust: Double,
-            yVJust: Double,
-        ): MutableMap<String, Any> {
+            val axisTextKey = "axis_text_$axis"
             val spec = """
-                {
-                    'kind': 'plot',
-                    'theme': {
-                       'name': 'classic',
-                       'axis_text_y': { 'angle' : $yAngle, 'hjust' : $yHJust, 'vjust' : $yVJust, 'blank': false }
-                    },
-                    ${title("y: $yAngle°, h$yHJust, v$yVJust")},
-                    'ggsize': {'width': 400, 'height': 320},
-                    ${layerMapping()},                    
-                    'scales': [
-                          {'aesthetic': 'y', 'position': '$yPosition'}
-                    ]
-                }
+            {
+                'kind': 'plot',
+                'theme': {
+                   'name': 'classic',
+                   'axis_title': { 'blank': true },
+                   '$axisTextKey': { 'angle': $angle, 'hjust': $hJust, 'vjust': $vJust, 'blank': false }
+                },
+                ${title("$axis: $angle°, h$hJust, v$vJust")},
+                'ggsize': {'width': 360, 'height': 300},
+                ${layerMapping(position)},                    
+                'scales': [
+                      {'aesthetic': '$axis', 'position': '$position'}
+                ]
+            }
             """.trimIndent()
+
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = data()
             return plotSpec
