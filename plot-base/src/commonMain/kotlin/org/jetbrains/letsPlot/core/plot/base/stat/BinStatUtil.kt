@@ -30,7 +30,7 @@ object BinStatUtil {
         } else List(dataLength) { 1.0 }
     }
 
-    fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, countToWidth: (Double, Int) -> Double = ::countToWidth): CountAndWidth {
+    fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, countToWidth: (Double, Int) -> Double = ::defaultBinWidthCalculator): CountAndWidth {
         var binCount = binOptions.binCount
         val binWidth: Double
         if (binOptions.hasBinWidth()) {
@@ -156,8 +156,7 @@ object BinStatUtil {
         return Triple(binCount, binWidth, startX)
     }
 
-    // Default method to calculate bin width by bin count
-    private fun countToWidth(dataRange: Double, binCount: Int): Double {
+    private fun defaultBinWidthCalculator(dataRange: Double, binCount: Int): Double {
         return dataRange / binCount
     }
 
