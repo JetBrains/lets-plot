@@ -6,16 +6,18 @@
 package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.livemap.api.*
 
 
@@ -64,6 +66,8 @@ object LayerConverter {
                 index,
                 layerKind,
                 layer.geomKind,
+                layer.pos,
+                GeomContextBuilder().aesthetics(layer.aesthetics).build(),
                 dataPointLiveMapAesthetics,
                 sizeScalingRange,
                 alphaScalingEnabled = sizeScalingRange.last != 0
@@ -75,6 +79,8 @@ object LayerConverter {
         layerIdx: Int,
         layerKind: MapLayerKind,
         plotLayerKind: GeomKind,
+        layerPositionAdjustment: PositionAdjustment,
+        geomContext: GeomContext,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         sizeScalingRange: IntRange?,
         alphaScalingEnabled: Boolean,
@@ -180,7 +186,7 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     text {
                         index = it.index
-                        point = it.point
+                        point = it.point?.let { p -> layerPositionAdjustment.translate(p.toDoubleVector(), it.myP, geomContext).toVec()}
                         fillColor = if (plotLayerKind == LABEL) it.fillColor else Color.TRANSPARENT
                         strokeColor = if (plotLayerKind == LABEL && !it.alphaStroke) {
                             it.myP.color()!!
