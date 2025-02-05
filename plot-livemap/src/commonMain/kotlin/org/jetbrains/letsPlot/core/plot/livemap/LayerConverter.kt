@@ -186,7 +186,7 @@ object LayerConverter {
                 liveMapDataPoints.forEach {
                     text {
                         index = it.index
-                        point = it.point?.let { p -> layerPositionAdjustment.translate(p.toDoubleVector(), it.myP, geomContext).toVec()}
+                        point = layerPositionAdjustment.translate(it.point.toDoubleVector(), it.myP, geomContext).toVec()
                         fillColor = if (plotLayerKind == LABEL) it.fillColor else Color.TRANSPARENT
                         strokeColor = if (plotLayerKind == LABEL && !it.alphaStroke) {
                             it.myP.color()!!

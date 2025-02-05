@@ -54,7 +54,7 @@ class TextEntityBuilder(
     private val myFactory: FeatureEntityFactory
 ) {
     var index: Int = 0
-    var point: Vec<LonLat>? = null
+    var point: Vec<LonLat> = LonLat.ZERO_VEC
 
     var fillColor: Color = Color.TRANSPARENT
     var strokeColor: Color = Color.BLACK
@@ -97,10 +97,7 @@ class TextEntityBuilder(
             lineheight
         )
 
-        return when {
-            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_text", point!!)
-            else -> error("Can't create text entity. Coord is null.")
-        }
+        return myFactory.createStaticFeatureWithLocation("map_ent_s_text", point)
             .setInitializer { worldPoint ->
                 +RenderableComponent().apply {
                     renderer = TextRenderer()

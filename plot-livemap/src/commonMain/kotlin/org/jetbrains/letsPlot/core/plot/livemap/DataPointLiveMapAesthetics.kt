@@ -73,9 +73,9 @@ internal class DataPointLiveMapAesthetics {
             field = value?.map(::trimLonLat)
         }
 
-    var point: Vec<LonLat>? = null
+    var point: Vec<LonLat> = LonLat.ZERO_VEC
         set(value) {
-            field = value?.let(::trimLonLat)
+            field = trimLonLat(value)
         }
 
     var flat: Boolean = false

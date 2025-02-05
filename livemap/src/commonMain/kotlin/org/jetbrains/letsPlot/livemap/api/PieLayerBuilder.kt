@@ -58,7 +58,7 @@ class PieEntityBuilder(
     var alphaScalingEnabled: Boolean = false
 
     var layerIndex: Int? = null
-    var point: Vec<LonLat>? = null
+    var point: Vec<LonLat> = LonLat.ZERO_VEC
 
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
@@ -73,39 +73,37 @@ class PieEntityBuilder(
     var explodes: List<Double>? = null
 
     fun build(): EcsEntity {
-        return when {
-            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_pie_sector", point!!)
-            else -> error("Can't create pieSector entity. Coord is null.")
-        }.run {
-            myFactory.incrementLayerPointsTotalCount(1)
-            setInitializer { worldPoint ->
-                if (layerIndex != null) {
-                    +IndexComponent(layerIndex!!, 0)
+        return myFactory.createStaticFeatureWithLocation("map_ent_s_pie_sector", point)
+            .run {
+                myFactory.incrementLayerPointsTotalCount(1)
+                setInitializer { worldPoint ->
+                    if (layerIndex != null) {
+                        +IndexComponent(layerIndex!!, 0)
+                    }
+                    +LocatorComponent(Locator)
+                    +RenderableComponent().apply {
+                        renderer = Renderer()
+                    }
+                    +ChartElementComponent().apply {
+                        sizeScalingRange = this@PieEntityBuilder.sizeScalingRange
+                        alphaScalingEnabled = this@PieEntityBuilder.alphaScalingEnabled
+                    }
+                    + PieSpecComponent().apply {
+                        indices = this@PieEntityBuilder.indices
+                        sliceValues = this@PieEntityBuilder.values
+                        radius = this@PieEntityBuilder.radius
+                        holeSize = this@PieEntityBuilder.holeSize
+                        fillColors = this@PieEntityBuilder.fillColors
+                        strokeColors = this@PieEntityBuilder.strokeColors
+                        strokeWidths = this@PieEntityBuilder.strokeWidths
+                        strokeSide = this@PieEntityBuilder.strokeSide
+                        spacerColor = this@PieEntityBuilder.spacerColor
+                        spacerWidth = this@PieEntityBuilder.spacerWidth
+                        explodeValues = this@PieEntityBuilder.explodes
+                    }
+                    +WorldOriginComponent(worldPoint)
+                    +ScreenDimensionComponent()
                 }
-                +LocatorComponent(Locator)
-                +RenderableComponent().apply {
-                    renderer = Renderer()
-                }
-                +ChartElementComponent().apply {
-                    sizeScalingRange = this@PieEntityBuilder.sizeScalingRange
-                    alphaScalingEnabled = this@PieEntityBuilder.alphaScalingEnabled
-                }
-                + PieSpecComponent().apply {
-                    indices = this@PieEntityBuilder.indices
-                    sliceValues = this@PieEntityBuilder.values
-                    radius = this@PieEntityBuilder.radius
-                    holeSize = this@PieEntityBuilder.holeSize
-                    fillColors = this@PieEntityBuilder.fillColors
-                    strokeColors = this@PieEntityBuilder.strokeColors
-                    strokeWidths = this@PieEntityBuilder.strokeWidths
-                    strokeSide = this@PieEntityBuilder.strokeSide
-                    spacerColor = this@PieEntityBuilder.spacerColor
-                    spacerWidth = this@PieEntityBuilder.spacerWidth
-                    explodeValues = this@PieEntityBuilder.explodes
-                }
-                +WorldOriginComponent(worldPoint)
-                +ScreenDimensionComponent()
             }
-        }
     }
 }
