@@ -113,7 +113,9 @@ object PlotHtmlHelper {
 
     private fun dynamicDisplayHtml(
         plotSpecAsJsObjectInitializer: String,
-        sizingPolicy: SizingPolicy
+        sizingPolicy: SizingPolicy,
+        forceImmediateRender: Boolean = false,
+        responsive: Boolean = false
     ): String {
         val outputId = randomString(6)
         return """
@@ -122,6 +124,9 @@ object PlotHtmlHelper {
         |   
         |   (function() {
         |   // ----------
+        |   
+        |   const forceImmediateRender = ${forceImmediateRender};
+        |   const responsive = ${responsive};
         |   
         |   const sizingPolicy = {
         |       width_mode: "${sizingPolicy.widthMode}",
@@ -142,24 +147,30 @@ object PlotHtmlHelper {
         |       });
         |   }
         |   
-        |   const noWait = 
-        |       sizingPolicy.width_mode === 'FIXED' && 
-        |       (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED');
+        |   const renderImmediately = 
+        |       forceImmediateRender || (
+        |           sizingPolicy.width_mode === 'FIXED' && 
+        |           (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED')
+        |       );
         |   
-        |   if (noWait) {
+        |   if (renderImmediately) {
         |       renderPlot();
-        |   } else {
-        |       // Wait for container to assume a size.
+        |   }
+        |   
+        |   if (!renderImmediately || responsive) {
+        |       // Set up observer for initial sizing or continuous monitoring
         |       var observer = new ResizeObserver(function(entries) {
         |           for (let entry of entries) {
         |               if (entry.contentBoxSize && 
         |                   entry.contentBoxSize[0].inlineSize > 0) {
-        |                   if (observer) {
+        |                   if (!responsive && observer) {
         |                       observer.disconnect();
         |                       observer = null;
         |                   }
         |                   renderPlot();
-        |                   break;
+        |                   if (!responsive) {
+        |                       break;
+        |                   }
         |               }
         |           }
         |       });
@@ -208,9 +219,12 @@ object PlotHtmlHelper {
         )
     }
 
+
     private fun staticDisplayHtml(
         plotSpecAsJsObjectInitializer: String,
-        sizingPolicy: SizingPolicy
+        sizingPolicy: SizingPolicy,
+        forceImmediateRender: Boolean = false,
+        responsive: Boolean = false
     ): String {
         val outputId = randomString(6)
 
@@ -220,6 +234,9 @@ object PlotHtmlHelper {
         |   
         |   (function() {
         |   // ----------
+        |   
+        |   const forceImmediateRender = ${forceImmediateRender};
+        |   const responsive = ${responsive};
         |   
         |   let sizingPolicy = {
         |       width_mode: "${sizingPolicy.widthMode}",
@@ -247,24 +264,30 @@ object PlotHtmlHelper {
         |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
         |   }
         |   
-        |   const noWait = 
-        |       sizingPolicy.width_mode === 'FIXED' && 
-        |       (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED');
+        |   const renderImmediately = 
+        |       forceImmediateRender || (
+        |           sizingPolicy.width_mode === 'FIXED' && 
+        |           (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED')
+        |       );
         |   
-        |   if (noWait) {
+        |   if (renderImmediately) {
         |       renderPlot();
-        |   } else {
-        |       // Wait for container to assume a size.
+        |   }
+        |   
+        |   if (!renderImmediately || responsive) {
+        |       // Set up observer for initial sizing or continuous monitoring
         |       var observer = new ResizeObserver(function(entries) {
         |           for (let entry of entries) {
         |               if (entry.contentBoxSize && 
         |                   entry.contentBoxSize[0].inlineSize > 0) {
-        |                   if (observer) {
+        |                   if (!responsive && observer) {
         |                       observer.disconnect();
         |                       observer = null;
         |                   }
         |                   renderPlot();
-        |                   break;
+        |                   if (!responsive) {
+        |                       break;
+        |                   }
         |               }
         |           }
         |       });
