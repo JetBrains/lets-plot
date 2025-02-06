@@ -132,7 +132,19 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
-                ErrorBarGeom(isVertical(ctx, geomKind.name))
+                ErrorBarGeom(isVertical(ctx, geomKind.name)).apply {
+                    val option = Option.Geom.ErrorBar.WIDTH_UNIT
+                    this.widthUnit = layerConfig.getString(option)?.lowercase()?.let {
+                        when (it) {
+                            "geom" -> ErrorBarGeom.DimensionUnit.GEOM
+                            "px" -> ErrorBarGeom.DimensionUnit.PIXEL
+                            else -> throw IllegalArgumentException(
+                                "Unsupported value for $option parameter: '$it'. " +
+                                "Use one of: geom, px."
+                            )
+                        }
+                    } ?: ErrorBarGeom.DEF_WIDTH_UNIT
+                }
             }
 
             GeomKind.LINE_RANGE -> GeomProvider.lineRange { ctx ->

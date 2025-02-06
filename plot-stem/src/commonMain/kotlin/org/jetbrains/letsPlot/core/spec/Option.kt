@@ -261,6 +261,10 @@ object Option {
             const val GEO_POSITIONS = "map"
         }
 
+        object ErrorBar {
+            const val WIDTH_UNIT = "width_unit"
+        }
+
         object CrossBar {
             const val FATTEN = "fatten"
         }

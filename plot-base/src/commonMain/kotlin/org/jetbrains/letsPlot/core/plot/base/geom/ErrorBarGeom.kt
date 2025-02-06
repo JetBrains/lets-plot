@@ -19,6 +19,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
+    var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
+
     private val flipHelper = FlippableGeomHelper(isVertical)
 
     private fun afterRotation(aes: Aes<Double>): Aes<Double> {
@@ -62,7 +64,10 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             val ymax = p.finiteOrNull(maxAes) ?: continue
             val w = p.finiteOrNull(widthAes) ?: continue
 
-            val width = w * ctx.getResolution(xAes)
+            val width = when (widthUnit) {
+                DimensionUnit.GEOM -> w * ctx.getResolution(xAes)
+                DimensionUnit.PIXEL -> w / coord.unitSize(DoubleVector(1.0, 0.0)).x
+            }
             val height = ymax - ymin
 
             val rect = DoubleRectangle(x - width / 2, ymin, width, height)
@@ -107,6 +112,10 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         return ::factory
     }
 
+    enum class DimensionUnit {
+        GEOM, PIXEL
+    }
+
     internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
@@ -123,6 +132,8 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
     }
 
     companion object {
+        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.GEOM
+
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()
             segments.forEach { segment ->
