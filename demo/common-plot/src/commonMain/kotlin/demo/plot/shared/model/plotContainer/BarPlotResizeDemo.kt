@@ -79,7 +79,7 @@ class BarPlotResizeDemo private constructor(
         val layer = layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
-            .build(data, scaleByAes, scaleMappersNP)
+            .build(data, null, scaleByAes, scaleMappersNP)
 
 
         val geomTiles = SimplePlotGeomTiles(

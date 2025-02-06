@@ -113,11 +113,11 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.TILE -> GeomProvider.tile {
-                val dimensionUnit: (String) -> TileGeom.DimensionUnit? = { option ->
+                val dimensionUnit: (String) -> DimensionUnit? = { option ->
                     layerConfig.getString(option)?.lowercase()?.let {
                         when (it) {
-                            "geom" -> TileGeom.DimensionUnit.GEOM
-                            "axis" -> TileGeom.DimensionUnit.AXIS
+                            "geom" -> DimensionUnit.GEOM
+                            "axis" -> DimensionUnit.AXIS
                             else -> throw IllegalArgumentException(
                                 "Unsupported value for $option parameter: '$it'. " +
                                 "Use one of: geom, axis."

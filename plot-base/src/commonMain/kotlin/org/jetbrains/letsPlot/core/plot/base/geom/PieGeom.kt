@@ -343,7 +343,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        unit: DimensionUnit
     ): DoubleSpan? {
         if (!isDiscrete) return null
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0)
@@ -353,7 +354,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        unit: DimensionUnit
     ): DoubleSpan? {
         if (!isDiscrete) return null
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0)

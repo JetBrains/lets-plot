@@ -51,7 +51,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        unit: DimensionUnit
     ): DoubleSpan? {
         return calculateSpan(p, coordAes, Aes.X)
     }
@@ -60,7 +61,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        unit: DimensionUnit
     ): DoubleSpan? {
         return calculateSpan(p, coordAes, Aes.Y)
     }

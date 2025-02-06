@@ -32,7 +32,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        unit: DimensionUnit
     ): DoubleSpan? {
         val loc = p.finiteOrNull(coordAes) ?: return null
         val size = p.finiteOrNull(Aes.WIDTH) ?: return null
@@ -44,7 +45,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        unit: DimensionUnit
     ): DoubleSpan? {
         val loc = p.finiteOrNull(coordAes) ?: return null
         val size = p.finiteOrNull(Aes.HEIGHT) ?: return null

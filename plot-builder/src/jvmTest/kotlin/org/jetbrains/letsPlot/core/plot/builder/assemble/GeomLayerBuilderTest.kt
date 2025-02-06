@@ -88,7 +88,7 @@ class GeomLayerBuilderTest {
 //                .addConstantAes(Aes.ALPHA, 0.5)
             .addBinding(bindings[0])
             .addBinding(bindings[1])
-            .build(data, scaleByAes, scaleMappersNP)
+            .build(data, null, scaleByAes, scaleMappersNP)
 
 
         assertTrue(histogramLayer.hasBinding(Aes.X))

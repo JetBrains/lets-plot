@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -101,8 +102,21 @@ internal object PlotTilesConfig {
         }
 
         val geomLayers: List<GeomLayer> = geomLayerBuildersByLayer.mapIndexed { layerIndex, layerBuilder ->
+            val dimenstionUnit: ((String) -> DimensionUnit?) = { option ->
+                layerConfigs[layerIndex].getString(option)?.lowercase()?.let {
+                    when (it) {
+                        "geom" -> DimensionUnit.GEOM
+                        "axis" -> DimensionUnit.AXIS
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for $option parameter: '$it'. " +
+                                    "Use one of: geom, axis."
+                        )
+                    }
+                }
+            }
             layerBuilder.build(
                 layerConfigs[layerIndex].combinedData,
+                dimenstionUnit,
                 scalesByLayerBeforeFacets[layerIndex],
                 mappersNP
             )
@@ -180,8 +194,21 @@ internal object PlotTilesConfig {
                     tileLayerAdjustedDiscreteTransformY
                 )
 
+                val dimenstionUnit: ((String) -> DimensionUnit?) = { option ->
+                    layerConfigs[layerIndex].getString(option)?.lowercase()?.let {
+                        when (it) {
+                            "geom" -> DimensionUnit.GEOM
+                            "axis" -> DimensionUnit.AXIS
+                            else -> throw IllegalArgumentException(
+                                "Unsupported value for $option parameter: '$it'. " +
+                                "Use one of: geom, axis."
+                            )
+                        }
+                    }
+                }
                 geomLayerBuildersByLayer[layerIndex].build(
                     layerData,
+                    dimenstionUnit,
                     tileLayerScales,
                     mappersByAesNP,
                 )

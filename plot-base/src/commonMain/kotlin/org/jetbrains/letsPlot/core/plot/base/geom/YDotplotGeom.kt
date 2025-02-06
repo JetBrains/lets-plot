@@ -161,7 +161,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
         LEFT, RIGHT, CENTER, CENTERWHOLE
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean, unit: DimensionUnit): DoubleSpan? {
         return DimensionsUtil.dimensionSpan(
             p,
             coordAes,
