@@ -222,6 +222,17 @@ internal object Util {
                 }
             }
 
+            // In Vega-Lite, time unit automatically converts the field to discrete
+            if (encoding.contains(Encoding.TIMEUNIT)) {
+                dataMeta.appendMappingAnnotation {
+                    aes = channelToAes(channel, customChannelMapping).firstOrNull()
+                    annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
+                    parameters {
+                        label = field
+                    }
+                }
+            }
+
             if (!isContinuous(channel, encodingVegaSpec)) {
                 if (data?.get(field)?.all { it is String } != true) {
                     // lp treats strings as discrete by default
