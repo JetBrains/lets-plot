@@ -21,13 +21,14 @@ import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.get
 import tools.DefaultToolbarJs
 import tools.DefaultToolbarJs.Companion.EXPECTED_TOOLBAR_HEIGHT
 
 private val LOG = PortableLogging.logger("MonolithicJs")
 
-// key for data attibute <body data-lets-plot-preferred-width='700'>
+// Key for the data attibute <body data-lets-plot-preferred-width='700'>
+// Used in Datalore reports to control size of the plot.
+// See generated "static display html".
 private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 
 /**
@@ -167,13 +168,20 @@ private fun buildPlotFromProcessedSpecsPrivate(
 
     // Sizing policy
 
-    // Datalore specific option - not compatible with reactive sizing.
-    val datalorePreferredWidth: Double? =
-        plotContainer.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-
-    val sizingPolicy = if (datalorePreferredWidth != null) {
-        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
-    } else when (val o = options[SizingOption.KEY]) {
+    // ---
+    // The "letsPlotPreferredWidth" attribute is now tested in the generated "static display html".
+    // ---
+//    // Datalore specific option - not compatible with reactive sizing.
+//    val datalorePreferredWidth: Double? =
+//        plotContainer.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
+//
+//    val sizingPolicy = if (datalorePreferredWidth != null) {
+//        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
+//    } else when (val o = options[SizingOption.KEY]) {
+//        is Map<*, *> -> SizingPolicy.create(o)
+//        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
+//    }
+    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
         is Map<*, *> -> SizingPolicy.create(o)
         else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
     }

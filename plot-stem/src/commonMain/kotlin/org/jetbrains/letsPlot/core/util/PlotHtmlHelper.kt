@@ -221,12 +221,21 @@ object PlotHtmlHelper {
         |   (function() {
         |   // ----------
         |   
-        |   const sizingPolicy = {
+        |   let sizingPolicy = {
         |       width_mode: "${sizingPolicy.widthMode}",
         |       height_mode: "${sizingPolicy.heightMode}",
         |       width: ${sizingPolicy.width}, 
         |       height: ${sizingPolicy.height} 
         |   };
+        |   
+        |   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+        |   if (preferredWidth !== undefined) {
+        |       sizingPolicy = {
+        |           width_mode: 'FIXED',
+        |           height_mode: 'SCALED',
+        |           width: parseFloat(preferredWidth)
+        |       };
+        |   }
         |   
         |   const containerDiv = document.getElementById("$outputId");
         |   
