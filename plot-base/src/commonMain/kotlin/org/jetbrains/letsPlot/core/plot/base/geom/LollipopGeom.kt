@@ -90,8 +90,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean,
-        unit: DimensionUnit
+        isDiscrete: Boolean
     ): DoubleSpan? {
         val loc = p.toLocation(Aes.X, Aes.Y) ?: return null
 
@@ -103,8 +102,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean,
-        unit: DimensionUnit
+        isDiscrete: Boolean
     ): DoubleSpan? {
         val loc = p.toLocation(Aes.X, Aes.Y) ?: return null
 

@@ -222,7 +222,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
         UP, DOWN, CENTER, CENTERWHOLE
     }
 
-    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean, unit: DimensionUnit): DoubleSpan? {
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
         return DimensionsUtil.dimensionSpan(
             p,
             coordAes,

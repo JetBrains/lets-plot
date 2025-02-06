@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
@@ -176,7 +175,6 @@ class GeomLayerBuilder(
 
     fun build(
         data: DataFrame,
-        dimenstionUnit: ((String) -> DimensionUnit?)?,
         scaleMap: Map<Aes<*>, Scale>,
         scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
     ): GeomLayer {
@@ -239,7 +237,6 @@ class GeomLayerBuilder(
         val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
         return MyGeomLayer(
             data,
-            dimenstionUnit,
             geomProvider,
             myGeomTheme,
             posProvider,
@@ -271,7 +268,6 @@ class GeomLayerBuilder(
 
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
-        override val dimensionUnit: ((String) -> DimensionUnit?)?,
         geomProvider: GeomProvider,
         geomTheme: GeomTheme,
         override val posProvider: PosProvider,

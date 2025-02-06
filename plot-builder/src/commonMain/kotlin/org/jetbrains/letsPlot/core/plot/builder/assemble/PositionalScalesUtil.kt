@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.geom.DimensionsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.WithHeight
 import org.jetbrains.letsPlot.core.plot.base.geom.WithWidth
@@ -293,9 +292,8 @@ object PositionalScalesUtil {
                 geom is WithWidth -> {
                     val resolution = geomCtx.getResolution(widthAxis)
                     val isDiscrete = !layer.scaleMap.getValue(widthAxis).isContinuousDomain
-                    val widthUnit = layer.dimensionUnit?.let { it("width_unit") } ?: DimensionUnit.GEOM
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        geom.widthSpan(p, widthAxis, resolution, isDiscrete, widthUnit)
+                        geom.widthSpan(p, widthAxis, resolution, isDiscrete)
                     }
                 }
 
@@ -317,9 +315,8 @@ object PositionalScalesUtil {
                 geom is WithHeight -> {
                     val resolution = geomCtx.getResolution(heightAxis)
                     val isDiscrete = !layer.scaleMap.getValue(heightAxis).isContinuousDomain
-                    val heightUnit = layer.dimensionUnit?.let { it("height_unit") } ?: DimensionUnit.GEOM
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        geom.heightSpan(p, heightAxis, resolution, isDiscrete, heightUnit)
+                        geom.heightSpan(p, heightAxis, resolution, isDiscrete)
                     }
                 }
 

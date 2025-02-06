@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
-import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
@@ -21,8 +20,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 
 interface GeomLayer {
     val dataFrame: DataFrame
-
-    val dimensionUnit: ((String) -> DimensionUnit?)?
 
     val group: (Int) -> Int
 

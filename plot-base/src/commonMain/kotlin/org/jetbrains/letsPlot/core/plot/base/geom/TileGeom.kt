@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
@@ -17,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_T
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).
  */
-open class TileGeom : GeomBase(), WithWidth, WithHeight {
+open class TileGeom : GeomBase() {
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
     var heightUnit: DimensionUnit = DEF_HEIGHT_UNIT
 
@@ -44,36 +43,8 @@ open class TileGeom : GeomBase(), WithWidth, WithHeight {
         root.add(wrap(slimGroup))
     }
 
-    override fun widthSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean,
-        unit: DimensionUnit
-    ): DoubleSpan? {
-        val loc = p.finiteOrNull(coordAes) ?: return null
-        val size = p.finiteOrNull(Aes.WIDTH) ?: return null
-        val expand = when (unit) {
-            DimensionUnit.GEOM -> size * resolution / 2.0
-            DimensionUnit.AXIS -> size / 2.0
-        }
-        return DoubleSpan(loc - expand, loc + expand)
-    }
-
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean,
-        unit: DimensionUnit
-    ): DoubleSpan? {
-        val loc = p.finiteOrNull(coordAes) ?: return null
-        val size = p.finiteOrNull(Aes.HEIGHT) ?: return null
-        val expand = when (unit) {
-            DimensionUnit.GEOM -> size * resolution / 2.0
-            DimensionUnit.AXIS -> size / 2.0
-        }
-        return DoubleSpan(loc - expand, loc + expand)
+    enum class DimensionUnit {
+        GEOM, AXIS
     }
 
     companion object {
