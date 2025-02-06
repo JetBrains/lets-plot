@@ -36,6 +36,13 @@ def _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alph
             color=color, size=size, alpha=alpha,
             show_legend=show_legend
         )
+    if geom_kind == 'hex':
+        return geom_hex(
+            aes(fill=('..count..' if color_by is None else color_by)),
+            bins=bins2d, binwidth=binwidth2d,
+            color=color, size=size, alpha=alpha,
+            show_legend=show_legend
+        )
     if geom_kind == 'density2d':
         return geom_density2d(
             aes(color=('..group..' if color_by is None else color_by)),
