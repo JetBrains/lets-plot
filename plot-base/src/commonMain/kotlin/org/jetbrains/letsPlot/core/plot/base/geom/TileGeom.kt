@@ -17,6 +17,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_T
  * geom_tile uses the center of the tile and its size (x, y, width, height).
  */
 open class TileGeom : GeomBase() {
+    var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
+    var heightUnit: DimensionUnit = DEF_HEIGHT_UNIT
 
     override fun buildIntern(
         root: SvgRoot,
@@ -26,7 +28,7 @@ open class TileGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipKind = CURSOR_TOOLTIP)
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx))
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx, widthUnit, heightUnit))
         val svgRectHelper = helper.createSvgRectHelper()
         svgRectHelper.setResamplingEnabled(!coord.isLinear)
         svgRectHelper.onGeometry { p, rect, polygon ->
@@ -41,18 +43,35 @@ open class TileGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
+    enum class DimensionUnit {
+        GEOM, AXIS
+    }
+
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun clientRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.GEOM
+        val DEF_HEIGHT_UNIT: DimensionUnit = DimensionUnit.GEOM
+
+        private fun clientRectByDataPoint(
+            ctx: GeomContext,
+            widthUnit: DimensionUnit,
+            heightUnit: DimensionUnit
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
                 val x = p.finiteOrNull(Aes.X) ?: return null
                 val y = p.finiteOrNull(Aes.Y) ?: return null
                 val w = p.finiteOrNull(Aes.WIDTH) ?: return null
                 val h = p.finiteOrNull(Aes.HEIGHT) ?: return null
 
-                val width = w * ctx.getResolution(Aes.X)
-                val height = h * ctx.getResolution(Aes.Y)
+                val width = when (widthUnit) {
+                    DimensionUnit.GEOM -> w * ctx.getResolution(Aes.X)
+                    DimensionUnit.AXIS -> w
+                }
+                val height = when (heightUnit) {
+                    DimensionUnit.GEOM -> h * ctx.getResolution(Aes.Y)
+                    DimensionUnit.AXIS -> h
+                }
 
                 val origin = DoubleVector(x - width / 2, y - height / 2)
                 val dimensions = DoubleVector(width, height)

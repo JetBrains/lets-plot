@@ -252,6 +252,11 @@ object Option {
             const val METHOD = "method"
         }
 
+        object Tile {
+            const val WIDTH_UNIT = "width_unit"
+            const val HEIGHT_UNIT = "height_unit"
+        }
+
         object Choropleth {
             const val GEO_POSITIONS = "map"
         }

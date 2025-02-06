@@ -78,11 +78,12 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun tile(): GeomProvider {
+        fun tile(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.TILE,
-                TileGeom.HANDLES_GROUPS
-            ) { TileGeom() }
+                TileGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
         fun bin2d(): GeomProvider {

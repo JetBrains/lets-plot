@@ -31,7 +31,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
-        PROVIDER[GeomKind.TILE] = GeomProvider.tile()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
         PROVIDER[GeomKind.HEX] = GeomProvider.hex()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
@@ -111,6 +110,25 @@ internal object GeomProviderFactory {
                     geom.method = DotplotStat.Method.safeValueOf(layerConfig.getString(Option.Geom.Dotplot.METHOD)!!)
                 }
                 geom
+            }
+
+            GeomKind.TILE -> GeomProvider.tile {
+                val dimensionUnit: (String) -> TileGeom.DimensionUnit? = { option ->
+                    layerConfig.getString(option)?.lowercase()?.let {
+                        when (it) {
+                            "geom" -> TileGeom.DimensionUnit.GEOM
+                            "axis" -> TileGeom.DimensionUnit.AXIS
+                            else -> throw IllegalArgumentException(
+                                "Unsupported value for $option parameter: '$it'. " +
+                                "Use one of: geom, axis."
+                            )
+                        }
+                    }
+                }
+                TileGeom().apply {
+                    this.widthUnit = dimensionUnit(Option.Geom.Tile.WIDTH_UNIT) ?: TileGeom.DEF_WIDTH_UNIT
+                    this.heightUnit = dimensionUnit(Option.Geom.Tile.HEIGHT_UNIT) ?: TileGeom.DEF_HEIGHT_UNIT
+                }
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
