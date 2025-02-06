@@ -58,49 +58,57 @@ internal class HorizontalRotatedLabelsLayout(
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
-        val vjust = if (theme.labelVJust().isNaN()) {
-            if (orientation == Orientation.TOP) 0.0 else 1.0
-        } else {
-            theme.labelVJust()
-        }
-        val hjust = theme.labelHJust()
         val angle = theme.labelAngle()
-
         val radAngle = toRadians(angle)
         val sinA = sin(radAngle)
         val cosA = cos(radAngle)
         val isVertical = abs(cosA) < 1e-6
         val isUpsideDown = cosA < 0
         val isHorizontal = abs(sinA) < 1e-6 && !isUpsideDown
-
         val isLabelDirectedFromTick = when (orientation) {
             Orientation.TOP -> sinA > 0
             Orientation.BOTTOM -> sinA < 0
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
+        val vJust = if (theme.labelVJust().isNaN()) {
+            if (orientation == Orientation.BOTTOM) 1.0 else 0.0
+        } else {
+            theme.labelVJust()
+        }
+
+        val hJust = if (theme.labelHJust().isNaN()) {
+            when {
+                isHorizontal || isVertical -> 0.5
+                isLabelDirectedFromTick -> 0.0
+                else -> 1.0
+            }
+        } else {
+            theme.labelHJust()
+        }
+
         val horizontalAnchor = when {
-            isVertical -> hAnchorForVerticalLabels(vjust, angle)
+            isVertical -> hAnchorForVerticalLabels(vJust, angle)
             isUpsideDown -> Text.HorizontalAnchor.MIDDLE
-            hjust == 0.0 && (isHorizontal || isLabelDirectedFromTick) -> Text.HorizontalAnchor.LEFT
-            hjust == 1.0 && (isHorizontal || !isLabelDirectedFromTick) -> Text.HorizontalAnchor.RIGHT
+            hJust == 0.0 && (isHorizontal || isLabelDirectedFromTick) -> Text.HorizontalAnchor.LEFT
+            hJust == 1.0 && (isHorizontal || !isLabelDirectedFromTick) -> Text.HorizontalAnchor.RIGHT
             else -> Text.HorizontalAnchor.MIDDLE
         }
 
         val isCornerCase = !isHorizontal && horizontalAnchor != Text.HorizontalAnchor.MIDDLE
 
         val yBBoxOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
-            orientationSign * maxLabelHeight / 2 + (maxLabelHeight - rect.height) * (0.5 - vjust)
+            orientationSign * maxLabelHeight / 2 + (maxLabelHeight - rect.height) * (0.5 - vJust)
         }
 
-        val xBBoxOffset: (DoubleRectangle) -> Double = { d: DoubleRectangle ->
-            d.width * (0.5 - theme.labelHJust())
+        val xBBoxOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
+            rect.width * (0.5 - hJust)
         }
 
         val verticalAnchor = when {
-            isVertical -> vAnchorForVerticalLabels(hjust, angle)
-            isHorizontal && vjust == 0.0 -> Text.VerticalAnchor.BOTTOM
-            isHorizontal && vjust == 1.0 -> Text.VerticalAnchor.TOP
+            isVertical -> vAnchorForVerticalLabels(hJust, angle)
+            isHorizontal && vJust == 0.0 -> Text.VerticalAnchor.BOTTOM
+            isHorizontal && vJust == 1.0 -> Text.VerticalAnchor.TOP
             isCornerCase && orientation == Orientation.BOTTOM -> Text.VerticalAnchor.TOP
             isCornerCase && orientation == Orientation.TOP -> Text.VerticalAnchor.BOTTOM
             else -> Text.VerticalAnchor.CENTER
@@ -111,7 +119,7 @@ internal class HorizontalRotatedLabelsLayout(
         val yOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
             when {
                 isVertical && horizontalAnchor != Text.HorizontalAnchor.MIDDLE -> yOffsetSpecial
-                isCornerCase -> orientationSign * (maxLabelHeight - rect.height) * (1 - vjust)
+                isCornerCase -> (maxLabelHeight - rect.height) * ((orientationSign + 1) / 2 - vJust)
                 isHorizontal && verticalAnchor == Text.VerticalAnchor.TOP -> (1.0 - orientationSign) * yBBoxOffset(rect)
                 isHorizontal && verticalAnchor == Text.VerticalAnchor.BOTTOM -> (orientationSign + 1.0) * yBBoxOffset(rect)
                 else -> yBBoxOffset(rect)
@@ -140,8 +148,8 @@ internal class HorizontalRotatedLabelsLayout(
             .labelHorizontalAnchor(horizontalAnchor)
             .labelVerticalAnchor(verticalAnchor)
             .labelRotationAngle(-myRotationAngle)
-            .hJust(theme.labelHJust())
-            .vJust(theme.labelVJust())
+            .hJust(hJust)
+            .vJust(vJust)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin)) // for debug drawing
             .build()
