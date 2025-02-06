@@ -25,7 +25,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Title
 
 internal object Util {
-    fun getChannelDefinitions(encoding: Map<*, *>): Map<String, Map<*, *>> {
+    fun getDefinedChannelEncodings(encoding: Map<*, *>): Map<String, Map<*, *>> {
         return Channels
             .filter(encoding::containsKey)
             .associateWith { channel -> encoding.getMap(channel) ?: emptyMap() }
@@ -95,8 +95,8 @@ internal object Util {
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
 
-        return Channels.map { channel ->
-            val field = encoding.getString(channel, Encoding.FIELD) ?: return@map emptyList()
+        return getDefinedChannelEncodings(encoding).map { (channel, enc) ->
+            val field = enc.getString(Encoding.FIELD) ?: return@map emptyList()
             val aesthetics = channelToAes(channel, customChannelMapping)
             aesthetics.map { aes -> aes to field }
         }
@@ -110,7 +110,7 @@ internal object Util {
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): Map<Aes<*>, GuideOptions>? {
         val generatedTitles = run {
-            val titleByAes = getChannelDefinitions(encoding)
+            val titleByAes = getDefinedChannelEncodings(encoding)
                 .mapKeys { (channel, _) -> channelToAes(channel, customChannelMapping).firstOrNull() }
                 .mapValues { (_, definition) -> definition.getString(Encoding.TITLE) }
                 .filterNotNullKeys()
@@ -222,7 +222,7 @@ internal object Util {
                 }
             }
 
-            // In Vega-Lite, time unit automatically converts the field to discrete
+            //In Vega-Lite, applying a time unit automatically converts the field to discrete
             if (encoding.contains(Encoding.TIMEUNIT)) {
                 dataMeta.appendMappingAnnotation {
                     aes = channelToAes(channel, customChannelMapping).firstOrNull()
