@@ -434,7 +434,14 @@ class BarMarkTransformTest {
         val vegaSpec = parseJson(
             """
             |{
-            |  "data": { "url": "data/population.json"},
+            |  "data": { 
+            |    "values": [
+            |      {"year":1850,"age":0,"sex":1,"people":1483789},
+            |      {"year":1850,"age":0,"sex":2,"people":1450376},
+            |      {"year":1850,"age":5,"sex":1,"people":1411067},
+            |      {"year":1850,"age":5,"sex":2,"people":1359668}
+            |   ]
+            |  },
             |  "encoding": {
             |    "y": {"field": "age"}
             |  },

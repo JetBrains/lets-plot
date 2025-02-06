@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
-import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
@@ -24,7 +23,6 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.TimeUnit
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Title
-import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
     fun getChannelDefinitions(encoding: Map<*, *>): Map<String, Map<*, *>> {
@@ -60,20 +58,7 @@ internal object Util {
     }
 
     fun transformData(vegaData: Map<String, Any>): Map<String, List<Any?>> {
-        val data = if (VegaOption.Data.URL in vegaData) {
-            val url = vegaData.getString(VegaOption.Data.URL) ?: error("URL is not specified")
-            val json = when (url) {
-                "data/penguins.json" -> Penguins.json
-                "data/cars.json" -> Cars.json
-                "data/seattle-weather.csv" -> SeattleWeather.json
-                "data/population.json" -> Population.json
-                "data/barley.json" -> Barley.json
-                "data/stocks.csv" -> Stocks.json
-                else -> error("Unsupported URL: $url")
-            }
-            mapOf(VegaOption.Data.VALUES to JsonSupport.parse(json))
-        } else vegaData
-        val rows = data.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
+        val rows = vegaData.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
         val columnKeys = rows.flatMap { it.keys.filterNotNull() }.distinct().map(Any::toString)
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
@@ -270,9 +255,8 @@ internal object Util {
             val timeSeries = data[field] ?: return@forEach
 
             val adjustedTimeSeries = timeSeries.map {
-                val epoch = (it as? Number) ?: return@map null
-
-                val instant = Instant(epoch.toLong())
+                if (it !is Number) return@map null
+                val instant = Instant(it.toLong())
                 val dateTime = UTC.toDateTime(instant)
                 val adjustedDateTime = applyTimeUnit(dateTime, timeUnit)
                 UTC.toInstant(adjustedDateTime).timeSinceEpoch

@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.*
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
@@ -68,7 +67,14 @@ class TextMarkTransformTest {
         val vegaSpec = parseJson(
             """
             |{
-            |  "data": { "url": "data/population.json"},
+            |  "data": { 
+            |    "values": [
+            |      {"year":1850,"age":0,"sex":1,"people":1483789},
+            |      {"year":1850,"age":0,"sex":2,"people":1450376},
+            |      {"year":1850,"age":5,"sex":1,"people":1411067},
+            |      {"year":1850,"age":5,"sex":2,"people":1359668}
+            |   ]
+            |  },
             |  "encoding": {
             |    "y": {"field": "age"}
             |  },
