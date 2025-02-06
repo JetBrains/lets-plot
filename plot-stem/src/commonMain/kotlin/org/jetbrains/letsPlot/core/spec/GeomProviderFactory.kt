@@ -116,11 +116,11 @@ internal object GeomProviderFactory {
                 val dimensionUnit: (String) -> TileGeom.DimensionUnit? = { option ->
                     layerConfig.getString(option)?.lowercase()?.let {
                         when (it) {
-                            "geom" -> TileGeom.DimensionUnit.GEOM
-                            "axis" -> TileGeom.DimensionUnit.AXIS
+                            "res" -> TileGeom.DimensionUnit.RESOLUTION
+                            "scale" -> TileGeom.DimensionUnit.SCALE
                             else -> throw IllegalArgumentException(
                                 "Unsupported value for $option parameter: '$it'. " +
-                                "Use one of: geom, axis."
+                                "Use one of: res, scale."
                             )
                         }
                     }
@@ -136,11 +136,11 @@ internal object GeomProviderFactory {
                     val option = Option.Geom.ErrorBar.WIDTH_UNIT
                     this.widthUnit = layerConfig.getString(option)?.lowercase()?.let {
                         when (it) {
-                            "geom" -> ErrorBarGeom.DimensionUnit.GEOM
+                            "res" -> ErrorBarGeom.DimensionUnit.RESOLUTION
                             "px" -> ErrorBarGeom.DimensionUnit.PIXEL
                             else -> throw IllegalArgumentException(
                                 "Unsupported value for $option parameter: '$it'. " +
-                                "Use one of: geom, px."
+                                "Use one of: res, px."
                             )
                         }
                     } ?: ErrorBarGeom.DEF_WIDTH_UNIT

@@ -11,7 +11,7 @@ class Tile {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            customSize(0.5, 4.0, "geom", "axis")
+            customSize(0.5, 4.0, "res", "scale")
         )
     }
 

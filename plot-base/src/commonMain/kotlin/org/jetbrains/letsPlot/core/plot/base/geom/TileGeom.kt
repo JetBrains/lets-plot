@@ -44,14 +44,14 @@ open class TileGeom : GeomBase() {
     }
 
     enum class DimensionUnit {
-        GEOM, AXIS
+        RESOLUTION, SCALE
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.GEOM
-        val DEF_HEIGHT_UNIT: DimensionUnit = DimensionUnit.GEOM
+        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
+        val DEF_HEIGHT_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun clientRectByDataPoint(
             ctx: GeomContext,
@@ -65,12 +65,12 @@ open class TileGeom : GeomBase() {
                 val h = p.finiteOrNull(Aes.HEIGHT) ?: return null
 
                 val width = when (widthUnit) {
-                    DimensionUnit.GEOM -> w * ctx.getResolution(Aes.X)
-                    DimensionUnit.AXIS -> w
+                    DimensionUnit.RESOLUTION -> w * ctx.getResolution(Aes.X)
+                    DimensionUnit.SCALE -> w
                 }
                 val height = when (heightUnit) {
-                    DimensionUnit.GEOM -> h * ctx.getResolution(Aes.Y)
-                    DimensionUnit.AXIS -> h
+                    DimensionUnit.RESOLUTION -> h * ctx.getResolution(Aes.Y)
+                    DimensionUnit.SCALE -> h
                 }
 
                 val origin = DoubleVector(x - width / 2, y - height / 2)

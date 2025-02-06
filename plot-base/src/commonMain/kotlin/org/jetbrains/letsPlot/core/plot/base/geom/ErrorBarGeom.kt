@@ -65,7 +65,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             val w = p.finiteOrNull(widthAes) ?: continue
 
             val width = when (widthUnit) {
-                DimensionUnit.GEOM -> w * ctx.getResolution(xAes)
+                DimensionUnit.RESOLUTION -> w * ctx.getResolution(xAes)
                 DimensionUnit.PIXEL -> w / coord.unitSize(DoubleVector(1.0, 0.0)).x
             }
             val height = ymax - ymin
@@ -113,7 +113,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
     }
 
     enum class DimensionUnit {
-        GEOM, PIXEL
+        RESOLUTION, PIXEL
     }
 
     internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {
@@ -132,7 +132,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
     }
 
     companion object {
-        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.GEOM
+        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()
