@@ -160,16 +160,12 @@ class SizingPolicy(
             val width = (options[WIDTH] as? Number)?.toDouble()
             val height = (options[HEIGHT] as? Number)?.toDouble()
 
-            val defaultFixed = width != null && height != null
-            val defaultWidthMode = if (defaultFixed) FIXED else NOTEBOOK_WIDTH_MODE
-            val defaultHeightMode = if (defaultFixed) FIXED else NOTEBOOK_HEIGHT_MODE
-
-            val widthMode = sizingMode(options, WIDTH_MODE) ?: defaultWidthMode
-            val heightMode = sizingMode(options, HEIGHT_MODE) ?: defaultHeightMode
+            val widthMode = sizingMode(options, WIDTH_MODE) ?: if (width != null) FIXED else null
+            val heightMode = sizingMode(options, HEIGHT_MODE) ?: if (height != null) FIXED else null
 
             return SizingPolicy(
-                widthMode = widthMode,
-                heightMode = heightMode,
+                widthMode = widthMode ?: NOTEBOOK_WIDTH_MODE,
+                heightMode = heightMode ?: NOTEBOOK_HEIGHT_MODE,
                 width = width,
                 height = height,
             )
