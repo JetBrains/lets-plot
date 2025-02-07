@@ -66,7 +66,7 @@ elif this_system == 'Windows':
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 elif this_system == 'Linux':
-    static_link_libraries_list += ['stdc++', 'fontconfig', 'z']
+    static_link_libraries_list += ['stdc++']
     extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickCore-7.Q16HDRI', '-lMagickWand-7.Q16HDRI']
 
 else:
