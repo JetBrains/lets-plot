@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HexagonsHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -57,7 +56,7 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
 
         private val HALF_HEX_HEIGHT = 1.0 / sqrt(3.0)
 
-        private fun clientHexByDataPoint(): (DataPointAesthetics) -> List<DoubleVector>? {
+        fun clientHexByDataPoint(): (DataPointAesthetics) -> List<DoubleVector>? {
             fun factory(p: DataPointAesthetics): List<DoubleVector>? {
                 val x = p.finiteOrNull(Aes.X) ?: return null
                 val y = p.finiteOrNull(Aes.Y) ?: return null

@@ -72,6 +72,7 @@ internal class DataPointsConverter(
     fun toPie(geom: PieGeom) = pieConverter(geom)
     fun toCurve(geom: CurveGeom) = mySinglePathFeatureConverter.curve(geom)
     fun toSpoke(geom: SpokeGeom) = mySinglePathFeatureConverter.spoke(geom)
+    fun toHex() = mySinglePathFeatureConverter.hex()
 
     private abstract class PathFeatureConverterBase(
         val aesthetics: Aesthetics
@@ -250,6 +251,12 @@ internal class DataPointsConverter(
                 val (_, geometry) = elementHelper.createSpoke(base, angle, radius, geom.pivot.factor, it) ?: return@process emptyList()
                 geometry
             }
+        }
+
+        fun hex(): List<DataPointLiveMapAesthetics> {
+            return process(isClosed = true, dataPointToGeometry = { p ->
+                HexGeom.clientHexByDataPoint().invoke(p) ?: emptyList()
+            })
         }
 
         private fun process(
