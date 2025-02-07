@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
+import kotlin.math.sqrt
 
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpecMap: MutableMap<String, Any?>
@@ -194,7 +195,11 @@ internal class VegaPlotConverter private constructor(
 
 
             Mark.Types.LINE, Mark.Types.TRAIL -> appendLayer(GeomKind.LINE)
-            Mark.Types.POINT -> appendLayer(GeomKind.POINT)
+            Mark.Types.POINT -> appendLayer(GeomKind.POINT) {
+                // In Vega-Lite constant size represents the pixel area of the marks, while in Lets-Plot it's the diameter
+                // So, we need to convert the area to the diameter
+                size = size?.let(::sqrt)
+            }
             Mark.Types.AREA -> appendLayer(
                 channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
             ) {
