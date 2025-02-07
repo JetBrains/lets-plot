@@ -129,4 +129,27 @@ class TextLayer : LayerOptions(GeomKind.TEXT) {
     }
 }
 
+class LiveMapLayer : LayerOptions(GeomKind.LIVE_MAP) {
+    var tiles: TileOptions? by map(Geom.LiveMap.TILES)
+
+    class TileOptions : Options() {
+        var kind: String? by map(Geom.LiveMap.Tile.KIND)
+        var url: String? by map(Geom.LiveMap.Tile.URL)
+        var theme: String? by map(Geom.LiveMap.Tile.THEME)
+        var attribution: String? by map(Geom.LiveMap.Tile.ATTRIBUTION)
+
+    }
+
+    companion object {
+        fun vectorTiles(theme: String = Geom.LiveMap.Tile.THEME_COLOR) = TileOptions().apply {
+            kind = Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT
+            this.theme = theme
+            attribution = "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            url = "wss://tiles.datalore.jetbrains.com"
+        }
+
+        fun liveMap(block: LiveMapLayer.() -> Unit) = LiveMapLayer().apply(block)
+    }
+}
+
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)

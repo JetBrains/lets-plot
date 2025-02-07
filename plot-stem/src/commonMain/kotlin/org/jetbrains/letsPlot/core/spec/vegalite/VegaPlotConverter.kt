@@ -11,7 +11,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.liveMap
+import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.vectorTiles
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
@@ -35,6 +38,7 @@ internal class VegaPlotConverter private constructor(
     }
 
     private val plotOptions = PlotOptions()
+    private var useLiveMap = false
 
     private fun convert(): PlotOptions {
         plotOptions.title = Util.transformTitle(vegaPlotSpec[VegaOption.TITLE])
@@ -79,6 +83,10 @@ internal class VegaPlotConverter private constructor(
             plotOptions.computationMessages = summary
         }
 
+        if (useLiveMap) {
+            plotOptions.layerOptions = listOf(liveMap { tiles = vectorTiles() }) + plotOptions.layerOptions!!
+        }
+
         return plotOptions
     }
 
@@ -89,6 +97,10 @@ internal class VegaPlotConverter private constructor(
     ) {
         val layerSpec: Map<*, *> = TraceableMapWrapper(layerSpecMap, accessLogger)
         val encoding = TraceableMapWrapper(combinedEncodingSpecMap, accessLogger.nested(listOf(VegaOption.ENCODING)))
+
+        if (Channel.LATITUDE in encoding || Channel.LONGITUDE in encoding) {
+            useLiveMap = true
+        }
 
         val (markType, markVegaSpecMap) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
         val markVegaSpec = TraceableMapWrapper(markVegaSpecMap, accessLogger.nested(listOf(VegaOption.MARK)))

@@ -205,8 +205,7 @@ internal object Util {
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        Channels.forEach { channel ->
-            val encoding = encodingVegaSpec.getMap(channel) ?: return@forEach
+        getDefinedChannelEncodings(encodingVegaSpec).forEach { (channel, encoding) ->
             // as? Map<*, *> ?: return@forEach
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
