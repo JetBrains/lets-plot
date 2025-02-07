@@ -17,12 +17,11 @@ kn_platform_build_dir = {
 this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(this_dir)
 this_system = platform.system()
-
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
-
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
                                    kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic',
                                    )
+imagemagick_lib_path = os.environ.get('LP_IMAGEMAGICK_PATH', '/usr/local')
 python_package = 'lets_plot'
 
 
@@ -55,7 +54,7 @@ with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
 static_link_libraries_list = ['lets_plot_python_extension']
 
 if this_system == 'Darwin':
-    extra_link = []
+    extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickCore-7.Q16HDRI', '-lMagickWand-7.Q16HDRI']
 
 elif this_system == 'Windows':
     static_link_libraries_list += ['stdc++']
@@ -68,7 +67,7 @@ elif this_system == 'Windows':
 
 elif this_system == 'Linux':
     static_link_libraries_list += ['stdc++', 'fontconfig', 'z']
-    extra_link = ['-L/home/ikupriyanov/Downloads/output/lib', '-lMagickWand-7.Q16HDRI', '-lMagickCore-7.Q16HDRI', '-lpng']
+    extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickCore-7.Q16HDRI', '-lMagickWand-7.Q16HDRI']
 
 else:
     raise ValueError("Unsupported platform.")
