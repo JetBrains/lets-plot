@@ -23,22 +23,12 @@ import kotlin.test.assertEquals
 class AreaGeomTest {
     @Test
     fun pointsAreOrderedByX() {
-        val xs = listOf(1.0, 3.0, 2.0)
-        val ys = listOf(4.0, 5.0, 2.0)
-        val list: (List<Double>) -> ((Int) -> Double) = { l -> { i -> l[i] } }
-        val aes = AestheticsBuilder(3)
-            .x(list(xs))
-            .y(list(ys))
-            .build()
-        val domainX = aes.range(Aes.X)!!
-        val domainY = aes.range(Aes.Y)!!
-        val coord = Coords.DemoAndTest.create(
-            DoubleSpan(domainX.lowerEnd, domainX.upperEnd),
-            DoubleSpan(domainY.lowerEnd, domainY.upperEnd),
-            DoubleVector(400.0, 300.0)
+        val aes = buildAesthetics(
+            xs = listOf(1.0, 3.0, 2.0),
+            ys = listOf(4.0, 5.0, 2.0)
         )
-
         val svgRoot = DummyRoot()
+        val coord = getCoordinateSystem(aes)
 
         AreaGeom().build(svgRoot, aes, PositionAdjustments.identity(), coord, EmptyGeomContext())
 
@@ -48,20 +38,42 @@ class AreaGeomTest {
         assertEquals(svgPathExpectedList, svgPathList)
     }
 
-    // To compare paths regardless of whether the numbers composing them are integers or doubles
-    private data class PathElement(val action: Char?, val value: Double?) {
-        companion object {
-            fun byString(str: String): List<PathElement> {
-                return str.split(" ").map { element ->
-                    val action = element[0].takeIf { it.isLetter() }
-                    val valueStr = action?.let { element.substring(1) } ?: element
-                    val value = if (valueStr != "") {
-                        valueStr.toDouble()
-                    } else {
-                        null
-                    }
-                    PathElement(action, value)
+    private fun buildAesthetics(xs: List<Double>, ys: List<Double>): Aesthetics {
+        assertEquals(xs.size, ys.size, "xs and ys must have the same length")
+        return AestheticsBuilder(xs.size)
+            .x(list(xs))
+            .y(list(ys))
+            .build()
+    }
+
+    private fun getCoordinateSystem(aes: Aesthetics): CoordinateSystem {
+        val domainX = aes.range(Aes.X)!!
+        val domainY = aes.range(Aes.Y)!!
+        return Coords.DemoAndTest.create(
+            DoubleSpan(domainX.lowerEnd, domainX.upperEnd),
+            DoubleSpan(domainY.lowerEnd, domainY.upperEnd),
+            DoubleVector(400.0, 300.0)
+        )
+    }
+
+    private fun list(l: List<Double>): (Int) -> Double {
+        return { i -> l[i] }
+    }
+}
+
+// To compare paths regardless of whether the numbers composing them are integers or doubles
+private data class PathElement(val action: Char?, val value: Double?) {
+    companion object {
+        fun byString(str: String): List<PathElement> {
+            return str.split(" ").map { element ->
+                val action = element[0].takeIf { it.isLetter() }
+                val valueStr = action?.let { element.substring(1) } ?: element
+                val value = if (valueStr != "") {
+                    valueStr.toDouble()
+                } else {
+                    null
                 }
+                PathElement(action, value)
             }
         }
     }
