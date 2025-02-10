@@ -25,3 +25,4 @@
 - gggrid: allow title and other labels for the entire figure [[#715](https://github.com/JetBrains/lets-plot/issues/715)].
 - GGbunch: overall title [[#321](https://github.com/JetBrains/lets-plot/issues/321)].
 - Livemap: parameters nudge_x and nudge_y have no effect on geom_text or geom_label [[#1048](https://github.com/JetBrains/lets-plot/issues/1048)].
+- Livemap: Add zooming-in for geom_text()/geom_label() [[#1059](https://github.com/JetBrains/lets-plot/issues/1059)].
