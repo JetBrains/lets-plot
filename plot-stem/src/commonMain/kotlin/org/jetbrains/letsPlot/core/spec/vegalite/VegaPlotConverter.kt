@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.livemap.SUPPORTED_LAYERS
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
@@ -84,7 +85,10 @@ internal class VegaPlotConverter private constructor(
             plotOptions.computationMessages = summary
         }
 
-        if (useLiveMap) {
+        if (useLiveMap
+            && (plotOptions.layerOptions?.size ?: 0) > 0
+            && plotOptions.layerOptions!!.all { it.geom in SUPPORTED_LAYERS } == true
+        ) {
             plotOptions.layerOptions = listOf(liveMap { tiles = vectorTiles() }) + plotOptions.layerOptions!!
         }
 
