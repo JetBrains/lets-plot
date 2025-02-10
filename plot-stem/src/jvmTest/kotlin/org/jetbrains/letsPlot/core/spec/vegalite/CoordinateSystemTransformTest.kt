@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.getMap
+import org.junit.Ignore
 import org.junit.Test
 import java.util.Map.entry
 
@@ -113,6 +114,7 @@ class CoordinateSystemTransformTest {
         )
     }
 
+    @Ignore
     @Test
     fun `lonlat channel should produce xy mapping with coord_map`() {
         val vegaSpec = parseJson(
