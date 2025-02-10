@@ -39,27 +39,10 @@ class AreaGeomTest {
         AreaGeom().build(svgRoot, aes, PositionAdjustments.identity(), coord, EmptyGeomContext())
 
         val svgPath = (svgRoot.content[0] as SvgGElement).children()[0] as SvgPathElement
-        val svgPathList = PathElement.byString(svgPath.d().get().toString().trim())
-        val svgPathExpectedList = PathElement.byString("M0.0 100.0 L0.0 100.0 L200.0 300.0 L400.0 0.0 L400.0 500.0 L200.0 500.0 L0.0 500.0 Z")
-        assertEquals(svgPathExpectedList, svgPathList)
-    }
-}
-
-// To compare paths regardless of whether the numbers composing them are integers or doubles
-private data class PathElement(val action: Char?, val value: Double?) {
-    companion object {
-        fun byString(str: String): List<PathElement> {
-            return str.split(" ").map { element ->
-                val action = element[0].takeIf { it.isLetter() }
-                val valueStr = action?.let { element.substring(1) } ?: element
-                val value = if (valueStr != "") {
-                    valueStr.toDouble()
-                } else {
-                    null
-                }
-                PathElement(action, value)
-            }
-        }
+        val svgPathStr = svgPath.d().get().toString().trim()
+            .replace(".0 ", " ") // remove trailing zeros
+        val svgPathExpectedStr = "M0 100 L0 100 L200 300 L400 0 L400 500 L200 500 L0 500 Z"
+        assertEquals(svgPathExpectedStr, svgPathStr)
     }
 }
 
