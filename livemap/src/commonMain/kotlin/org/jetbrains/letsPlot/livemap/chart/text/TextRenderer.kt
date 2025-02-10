@@ -21,16 +21,20 @@ import org.jetbrains.letsPlot.livemap.mapengine.translate
 class TextRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val chartElementComponent = entity.get<ChartElementComponent>()
-        val textSpec = entity.get<TextSpecComponent>().textSpec
+        val textSpecComponent = entity.get<TextSpecComponent>()
+        val textSpec = textSpecComponent.textSpec
 
         val textPosition: Vec<Client>
+
+        val font = textSpecComponent.scaledFont(chartElementComponent.scalingSizeFactor)
 
         ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
         ctx.rotate(textSpec.angle)
 
         if (textSpec.drawBorder) {
-            val rectangle = textSpec.rectangle
-            drawRoundedRectangle(rectangle, textSpec.labelRadius * rectangle.height, ctx)
+            val rectangle = textSpecComponent.scaledRectangle(chartElementComponent.scalingSizeFactor)
+            val labelRadius = textSpec.labelRadius
+            drawRoundedRectangle(rectangle, labelRadius * rectangle.height, ctx)
 
             if (chartElementComponent.fillColor != null) {
                 ctx.setFillStyle(chartElementComponent.scaledFillColor())
@@ -38,36 +42,41 @@ class TextRenderer : Renderer {
             }
             if (chartElementComponent.strokeColor != null && textSpec.labelSize != 0.0) {
                 ctx.setStrokeStyle(chartElementComponent.strokeColor)
-                ctx.setLineWidth(textSpec.labelSize)
+                ctx.setLineWidth(textSpecComponent.scaledLabelSize(chartElementComponent.scalingSizeFactor))
                 ctx.stroke()
             }
 
+            val padding = textSpecComponent.scaledPadding(chartElementComponent.scalingSizeFactor)
             val xPosition = when (textSpec.hjust) {
-                0.0 -> textSpec.padding
-                1.0 -> -textSpec.padding
+                0.0 -> padding
+                1.0 -> -padding
                 else -> 0.0
             }
             textPosition = explicitVec(
                 xPosition,
-                rectangle.origin.y + textSpec.padding + textSpec.font.fontSize * 0.8 // top-align the first line
+                rectangle.origin.y + padding + font.fontSize * 0.8 // top-align the first line
             )
         } else {
-            val yPosition = with(textSpec) {
-                when (vjust) {
+            val textSize = textSpecComponent.scaledTextSize(chartElementComponent.scalingSizeFactor)
+
+            val yPosition =
+                when (textSpec.vjust) {
                     0.0 -> font.fontSize * 0.7
                     1.0 -> -textSize.y + font.fontSize
                     else -> -textSize.y / 2 + font.fontSize * 0.8
                 }
-            }
+
             textPosition = explicitVec(0.0, yPosition)
         }
 
-        ctx.setFont(textSpec.font)
+        ctx.setFont(font)
         ctx.setFillStyle(chartElementComponent.strokeColor)
 
         ctx.setTextAlign(textSpec.textAlign)
+
+        val lineHeight = textSpecComponent.scaledLineHeight(chartElementComponent.scalingSizeFactor)
         textSpec.lines.forEachIndexed { index, line ->
-            ctx.fillText(line, textPosition.x, textPosition.y + textSpec.lineHeight * index)
+            ctx.fillText(line, textPosition.x, textPosition.y + lineHeight * index)
         }
     }
 
@@ -76,7 +85,7 @@ class TextRenderer : Renderer {
             beginPath()
             with(rect) {
                 // Ensure normal radius
-                val r = minOf(radius, rect.width / 2, rect.height / 2)
+                val r = minOf(radius, width / 2, height / 2)
 
                 moveTo(right - r, bottom)
                 bezierCurveTo(

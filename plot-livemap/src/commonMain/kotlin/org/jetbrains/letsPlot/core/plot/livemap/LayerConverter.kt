@@ -186,6 +186,8 @@ object LayerConverter {
             MapLayerKind.TEXT -> texts {
                 liveMapDataPoints.forEach {
                     text {
+                        this.sizeScalingRange = sizeScalingRange
+                        this.alphaScalingEnabled = alphaScalingEnabled
                         index = it.index
                         point = layerPositionAdjustment.translate(it.point.toDoubleVector(), it.myP, geomContext).toVec()
                         fillColor = if (plotLayerKind == LABEL) it.fillColor else Color.TRANSPARENT
