@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
-import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
@@ -24,10 +23,9 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.TimeUnit
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Title
-import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
-    fun getChannelDefinitions(encoding: Map<*, *>): Map<String, Map<*, *>> {
+    fun getDefinedChannelEncodings(encoding: Map<*, *>): Map<String, Map<*, *>> {
         return Channels
             .filter(encoding::containsKey)
             .associateWith { channel -> encoding.getMap(channel) ?: emptyMap() }
@@ -60,20 +58,7 @@ internal object Util {
     }
 
     fun transformData(vegaData: Map<String, Any>): Map<String, List<Any?>> {
-        val data = if (VegaOption.Data.URL in vegaData) {
-            val url = vegaData.getString(VegaOption.Data.URL) ?: error("URL is not specified")
-            val json = when (url) {
-                "data/penguins.json" -> Penguins.json
-                "data/cars.json" -> Cars.json
-                "data/seattle-weather.csv" -> SeattleWeather.json
-                "data/population.json" -> Population.json
-                "data/barley.json" -> Barley.json
-                "data/stocks.csv" -> Stocks.json
-                else -> error("Unsupported URL: $url")
-            }
-            mapOf(VegaOption.Data.VALUES to JsonSupport.parse(json))
-        } else vegaData
-        val rows = data.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
+        val rows = vegaData.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
         val columnKeys = rows.flatMap { it.keys.filterNotNull() }.distinct().map(Any::toString)
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
@@ -110,8 +95,8 @@ internal object Util {
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
 
-        return Channels.map { channel ->
-            val field = encoding.getString(channel, Encoding.FIELD) ?: return@map emptyList()
+        return getDefinedChannelEncodings(encoding).map { (channel, enc) ->
+            val field = enc.getString(Encoding.FIELD) ?: return@map emptyList()
             val aesthetics = channelToAes(channel, customChannelMapping)
             aesthetics.map { aes -> aes to field }
         }
@@ -125,7 +110,7 @@ internal object Util {
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): Map<Aes<*>, GuideOptions>? {
         val generatedTitles = run {
-            val titleByAes = getChannelDefinitions(encoding)
+            val titleByAes = getDefinedChannelEncodings(encoding)
                 .mapKeys { (channel, _) -> channelToAes(channel, customChannelMapping).firstOrNull() }
                 .mapValues { (_, definition) -> definition.getString(Encoding.TITLE) }
                 .filterNotNullKeys()
@@ -220,8 +205,7 @@ internal object Util {
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        Channels.forEach { channel ->
-            val encoding = encodingVegaSpec.getMap(channel) ?: return@forEach
+        getDefinedChannelEncodings(encodingVegaSpec).forEach { (channel, encoding) ->
             // as? Map<*, *> ?: return@forEach
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
@@ -234,6 +218,17 @@ internal object Util {
                 dataMeta.appendSeriesAnnotation {
                     type = SeriesAnnotationOptions.Types.DATE_TIME
                     column = field
+                }
+            }
+
+            //In Vega-Lite, applying a time unit automatically converts the field to discrete
+            if (encoding.contains(Encoding.TIMEUNIT)) {
+                dataMeta.appendMappingAnnotation {
+                    aes = channelToAes(channel, customChannelMapping).firstOrNull()
+                    annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
+                    parameters {
+                        label = field
+                    }
                 }
             }
 
@@ -270,9 +265,8 @@ internal object Util {
             val timeSeries = data[field] ?: return@forEach
 
             val adjustedTimeSeries = timeSeries.map {
-                val epoch = (it as? Number) ?: return@map null
-
-                val instant = Instant(epoch.toLong())
+                if (it !is Number) return@map null
+                val instant = Instant(it.toLong())
                 val dateTime = UTC.toDateTime(instant)
                 val adjustedDateTime = applyTimeUnit(dateTime, timeUnit)
                 UTC.toInstant(adjustedDateTime).timeSinceEpoch

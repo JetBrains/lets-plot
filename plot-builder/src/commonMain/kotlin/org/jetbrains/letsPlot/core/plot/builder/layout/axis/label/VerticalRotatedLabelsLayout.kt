@@ -8,11 +8,13 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
+import kotlin.math.*
 
 internal class VerticalRotatedLabelsLayout(
     orientation: Orientation,
@@ -47,33 +49,53 @@ internal class VerticalRotatedLabelsLayout(
 	    
         val maxLabelWidth = labelBoundsList.maxOf { it.width }
 
+        val angle = theme.labelAngle()
+        val radAngle = toRadians(angle)
+        val sinA = sin(radAngle)
+        val cosA = cos(radAngle)
+        val isVertical = abs(cosA) < 1e-6
+        val isUpsideDown = cosA < 0
+        val isHorizontal = abs(sinA) < 1e-6 && !isUpsideDown
+
         val orientationSign = when (orientation) {
             Orientation.LEFT -> -1.0
             Orientation.RIGHT -> 1.0
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
-        val vjust = theme.labelVJust()
-        val hjust = if (theme.labelHJust().isNaN()) {
-            if (orientation == Orientation.RIGHT) 0.0 else 1.0
+        val vJust = if (theme.labelVJust().isNaN()) {
+            when {
+                isVertical || isHorizontal -> 0.5
+                orientation == Orientation.LEFT && sinA > 0 -> 0.0
+                orientation == Orientation.LEFT && sinA < 0 -> 1.0
+                orientation == Orientation.RIGHT && sinA > 0 -> 1.0
+                orientation == Orientation.RIGHT && sinA < 0 -> 0.0
+                else -> 0.0
+            }
+        } else {
+            theme.labelVJust()
+        }
+
+        val hJust = if (theme.labelHJust().isNaN()) {
+            if (orientation == Orientation.RIGHT) 1.0 else 0.0
         } else {
             theme.labelHJust()
         }
 
         val xBBoxOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
-            orientationSign * (maxLabelWidth - rect.width) * (1.0 - hjust)
+            (maxLabelWidth - rect.width) * ((orientationSign + 1.0) / 2 - hJust)
         }
 
-        val yBBoxOffset: (DoubleRectangle) -> Double = { d: DoubleRectangle ->
-            d.height * (-vjust)
+        val yBBoxOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
+            rect.height * (-vJust)
         }
 
         val xOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
-            ((maxLabelWidth - rect.width) * (1 - hjust) + rect.width / 2) * orientationSign
+            xBBoxOffset(rect).let { it + orientationSign * rect.width / 2 }
         }
 
-        val yOffset: (DoubleRectangle) -> Double = { d: DoubleRectangle ->
-            d.height * (0.5 - vjust)
+        val yOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
+            rect.height * (0.5 - vJust)
         }
 
         val labelAdditionalOffsets = labelBoundsList.map {
@@ -92,8 +114,8 @@ internal class VerticalRotatedLabelsLayout(
             .labelHorizontalAnchor(horizontalAnchor)
             .labelVerticalAnchor(verticalAnchor)
             .labelRotationAngle(-myRotationAngle)
-            .hJust(theme.labelHJust())
-            .vJust(theme.labelVJust())
+            .hJust(hJust)
+            .vJust(vJust)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin)) // for debug drawing
             .build()

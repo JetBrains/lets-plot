@@ -53,19 +53,9 @@ class TextSpec(
         else -> TextAlign.CENTER
     }
     val padding = font.fontSize * labelPadding
-    val rectangle: DoubleRectangle
 
     init {
         dimension = rotateTextSize(textSize.mul(2.0), angle)
-
-        val width = textSize.x + padding * 2
-        val height = textSize.y + padding * 2
-        rectangle = DoubleRectangle(
-            -width * hjust,
-            -height * vjust,
-            width,
-            height
-        )
     }
 
     private fun rotateTextSize(textSize: DoubleVector, angle: Double): Vec<Client> {

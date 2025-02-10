@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.chart
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
@@ -53,6 +54,24 @@ class ChartElementComponent : EcsComponent {
 
 class TextSpecComponent : EcsComponent {
     lateinit var textSpec: TextSpec
+
+    fun scaledFont(scalingSizeFactor: Double) = textSpec.font.copy(fontSize = textSpec.font.fontSize * scalingSizeFactor)
+    fun scaledLineHeight(scalingSizeFactor: Double) = textSpec.lineHeight * scalingSizeFactor
+    fun scaledTextSize(scalingSizeFactor: Double) = textSpec.textSize.mul(scalingSizeFactor)
+    fun scaledPadding(scalingSizeFactor: Double) = textSpec.padding * scalingSizeFactor
+    fun scaledRectangle(scalingSizeFactor: Double): DoubleRectangle {
+        return with (textSpec) {
+            val width = (textSize.x + padding * 2) * scalingSizeFactor
+            val height = (textSize.y + padding * 2) * scalingSizeFactor
+            DoubleRectangle(
+                -width * hjust,
+                -height * vjust,
+                width,
+                height
+           )
+        }
+    }
+    fun scaledLabelSize(scalingSizeFactor: Double) = textSpec.labelSize * scalingSizeFactor
 }
 
 class PointComponent : EcsComponent {

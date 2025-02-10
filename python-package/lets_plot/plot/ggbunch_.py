@@ -22,17 +22,18 @@ def ggbunch(plots: List,
     ----------
     plots : List
         A list where each element is one of:
+
         - a plot specification
         - a subplots specification
         - None
+
     regions : List[Tuple]
         Layout parameters for each plot. Each region is specified as
         (x, y, width, height, dx, dy) where:
-        - x, y: Position of the plot's top-left corner in relative coordinates
-          ([0,0] is top-left corner, [1,1] is bottom-right corner of the container)
-        - width, height: Size of the plot relative to container dimensions
-          (1 equal to the full container width/height)
-        - dx, dy: Pixel offsets to move the region (defaults to 0)
+
+        - x, y: Position of the plot's top-left corner in relative coordinates ([0,0] is top-left corner, [1,1] is bottom-right corner of the container).
+        - width, height: Size of the plot relative to container dimensions (1 equal to the full container width/height).
+        - dx, dy: Pixel offsets to move the region (defaults to 0).
 
     Returns
     -------
@@ -43,17 +44,16 @@ def ggbunch(plots: List,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 10-14
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
         data = {'x': np.random.gamma(2.0, size=100)}
-        p1 = ggplot(data, aes(x='x')) + \
+        p1 = ggplot(data, aes(x='x')) + \\
             geom_histogram(aes(color='x', fill='x'))
-                gggrid(plot_list, ncol=1) + ggsize(400, 300)
-        p2 = ggplot(data, aes(x='x')) + \
+        p2 = ggplot(data, aes(x='x')) + \\
             geom_density() + theme_bw() + theme(axis='blank', panel_grid='blank')
         ggbunch(
             [p1, p2],

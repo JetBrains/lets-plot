@@ -79,6 +79,15 @@ class ErrorBandMarkTransformTest {
                 "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
             )),
             entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "Year"
+                        )
+                    )
+                ),
                 Meta.SeriesAnnotation.TAG to listOf(
                     mapOf(
                         Meta.SeriesAnnotation.COLUMN to "Year",
@@ -140,6 +149,15 @@ class ErrorBandMarkTransformTest {
                 "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
             )),
             entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.Y),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "Year"
+                        )
+                    )
+                ),
                 Meta.SeriesAnnotation.TAG to listOf(
                     mapOf(
                         Meta.SeriesAnnotation.COLUMN to "Year",

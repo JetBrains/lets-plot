@@ -132,13 +132,13 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             AXIS_TEXT_X to mapOf(
-                Elem.HJUST to 0.5,
+                Elem.HJUST to Double.NaN,
                 Elem.VJUST to Double.NaN,
             ),
 
             AXIS_TEXT_Y to mapOf(
                 Elem.HJUST to Double.NaN,
-                Elem.VJUST to 0.5,
+                Elem.VJUST to Double.NaN,
             ),
 
             AXIS_TITLE to mapOf(

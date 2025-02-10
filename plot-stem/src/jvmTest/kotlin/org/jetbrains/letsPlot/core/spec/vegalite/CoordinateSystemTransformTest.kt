@@ -140,6 +140,17 @@ class CoordinateSystemTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMap(Plot.COORD)).containsOnly(entry(Option.Meta.NAME, CoordName.MAP))
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.LIVE_MAP)),
+            entry(PlotBase.DATA, empty()),
+            entry(Option.Geom.LiveMap.TILES, mapOf(
+                Option.Geom.LiveMap.Tile.KIND to Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT,
+                Option.Geom.LiveMap.Tile.THEME to Option.Geom.LiveMap.Tile.THEME_COLOR,
+                Option.Geom.LiveMap.Tile.URL to "wss://tiles.datalore.jetbrains.com",
+                Option.Geom.LiveMap.Tile.ATTRIBUTION to "<a href=\"https://lets-plot.org\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>.",
+            )
+            )
+        )
+        assertThat(plotSpec.getMap(Plot.LAYERS, 1)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(
                 PlotBase.DATA, mapOf<String, List<Any?>>(

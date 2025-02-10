@@ -56,6 +56,9 @@ class TextEntityBuilder(
     var index: Int = 0
     var point: Vec<LonLat> = LonLat.ZERO_VEC
 
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
+
     var fillColor: Color = Color.TRANSPARENT
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
@@ -103,6 +106,9 @@ class TextEntityBuilder(
                     renderer = TextRenderer()
                 }
                 +ChartElementComponent().apply {
+                    sizeScalingRange = this@TextEntityBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@TextEntityBuilder.alphaScalingEnabled
+
                     fillColor = this@TextEntityBuilder.fillColor
                     strokeColor = this@TextEntityBuilder.strokeColor
                     strokeWidth = this@TextEntityBuilder.strokeWidth

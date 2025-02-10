@@ -9,21 +9,39 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
-import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
-import org.jetbrains.letsPlot.core.spec.getMap
-import org.jetbrains.letsPlot.core.spec.getMaps
-import org.jetbrains.letsPlot.core.spec.typed
 import org.junit.Test
 import java.util.Map.entry
 
 class PointMarkTransformTest {
+
+    @Test
+    fun `const size should be square rooted`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "mark": "point",
+                |  
+                |  "data": { "values": [ { "a": 1 } ]  },
+                |  "encoding": { 
+                |    "x": { "field": "a" },
+                |     "size": { "value": 100 }
+                |  }
+                |}
+        """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getDouble(Plot.LAYERS, 0, toOption(Aes.SIZE))).isEqualTo(10.0)
+    }
 
     @Test
     fun typeAsString() {

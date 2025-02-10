@@ -11,7 +11,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.liveMap
+import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.vectorTiles
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
@@ -20,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
+import kotlin.math.sqrt
 
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpecMap: MutableMap<String, Any?>
@@ -35,6 +39,7 @@ internal class VegaPlotConverter private constructor(
     }
 
     private val plotOptions = PlotOptions()
+    private var useLiveMap = false
 
     private fun convert(): PlotOptions {
         plotOptions.title = Util.transformTitle(vegaPlotSpec[VegaOption.TITLE])
@@ -79,6 +84,10 @@ internal class VegaPlotConverter private constructor(
             plotOptions.computationMessages = summary
         }
 
+        if (useLiveMap) {
+            plotOptions.layerOptions = listOf(liveMap { tiles = vectorTiles() }) + plotOptions.layerOptions!!
+        }
+
         return plotOptions
     }
 
@@ -89,6 +98,10 @@ internal class VegaPlotConverter private constructor(
     ) {
         val layerSpec: Map<*, *> = TraceableMapWrapper(layerSpecMap, accessLogger)
         val encoding = TraceableMapWrapper(combinedEncodingSpecMap, accessLogger.nested(listOf(VegaOption.ENCODING)))
+
+        if (Channel.LATITUDE in encoding || Channel.LONGITUDE in encoding) {
+            useLiveMap = true
+        }
 
         val (markType, markVegaSpecMap) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
         val markVegaSpec = TraceableMapWrapper(markVegaSpecMap, accessLogger.nested(listOf(VegaOption.MARK)))
@@ -182,7 +195,11 @@ internal class VegaPlotConverter private constructor(
 
 
             Mark.Types.LINE, Mark.Types.TRAIL -> appendLayer(GeomKind.LINE)
-            Mark.Types.POINT -> appendLayer(GeomKind.POINT)
+            Mark.Types.POINT -> appendLayer(GeomKind.POINT) {
+                // In Vega-Lite constant size represents the pixel area of the marks, while in Lets-Plot it's the diameter
+                // So, we need to convert the area to the diameter
+                size = size?.let(::sqrt)
+            }
             Mark.Types.AREA -> appendLayer(
                 channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
             ) {
