@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -23,12 +23,18 @@ import kotlin.test.assertEquals
 class AreaGeomTest {
     @Test
     fun pointsAreOrderedByX() {
-        val aes = buildAesthetics(
-            xs = listOf(1.0, 3.0, 2.0),
-            ys = listOf(4.0, 5.0, 2.0)
+        val xs = listOf(1.0, 3.0, 2.0)
+        val ys = listOf(4.0, 5.0, 2.0)
+        val aes = AestheticsBuilder(xs.size)
+            .x(list(xs))
+            .y(list(ys))
+            .build()
+        val coord = Coords.DemoAndTest.create(
+            aes.range(Aes.X)!!,
+            aes.range(Aes.Y)!!,
+            DoubleVector(400.0, 300.0)
         )
         val svgRoot = DummyRoot()
-        val coord = getCoordinateSystem(aes)
 
         AreaGeom().build(svgRoot, aes, PositionAdjustments.identity(), coord, EmptyGeomContext())
 
@@ -36,28 +42,6 @@ class AreaGeomTest {
         val svgPathList = PathElement.byString(svgPath.d().get().toString().trim())
         val svgPathExpectedList = PathElement.byString("M0.0 100.0 L0.0 100.0 L200.0 300.0 L400.0 0.0 L400.0 500.0 L200.0 500.0 L0.0 500.0 Z")
         assertEquals(svgPathExpectedList, svgPathList)
-    }
-
-    private fun buildAesthetics(xs: List<Double>, ys: List<Double>): Aesthetics {
-        assertEquals(xs.size, ys.size, "xs and ys must have the same length")
-        return AestheticsBuilder(xs.size)
-            .x(list(xs))
-            .y(list(ys))
-            .build()
-    }
-
-    private fun getCoordinateSystem(aes: Aesthetics): CoordinateSystem {
-        val domainX = aes.range(Aes.X)!!
-        val domainY = aes.range(Aes.Y)!!
-        return Coords.DemoAndTest.create(
-            DoubleSpan(domainX.lowerEnd, domainX.upperEnd),
-            DoubleSpan(domainY.lowerEnd, domainY.upperEnd),
-            DoubleVector(400.0, 300.0)
-        )
-    }
-
-    private fun list(l: List<Double>): (Int) -> Double {
-        return { i -> l[i] }
     }
 }
 
