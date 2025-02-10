@@ -12,11 +12,16 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
 
 - `spacer` parameter in `image_matrix()`.
+- `hjust` and `vjust` parameters for axis labels.
+  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
+ 
 
 ### Changed
 
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
 - Axis breaks: changed default `lower_exp_bound` to -7 and `upper_exp_bound` to 6 (same as in `theme(...)`).
+- Axis labels: changed default justification for rotated labels.
 
 ### Fixed
 - Tooltip should not cover and hide the geometry that it provides info for [[#1275](https://github.com/JetBrains/lets-plot/issues/1275)].
