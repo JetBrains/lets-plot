@@ -5,19 +5,19 @@
 
 package org.jetbrains.letsPlot.livemap
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import org.jetbrains.letsPlot.commons.registration.Disposable
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
@@ -87,7 +87,7 @@ class LiveMap(
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
-    private var myInitialized: Boolean = false
+    private var myInitialized: Boolean = false // TODO: remove this flag
     private lateinit var myEcsController: EcsController
     private lateinit var myContext: LiveMapContext
     private lateinit var myLayerRenderingSystem: LayersRenderingSystem
@@ -347,8 +347,10 @@ class LiveMap(
     }
 
     override fun dispose() {
-        myTimerReg.dispose()
-        myEcsController.dispose()
+        if (myInitialized) {
+            myTimerReg.dispose()
+            myEcsController.dispose()
+        }
     }
 
     private class UpdateController(
