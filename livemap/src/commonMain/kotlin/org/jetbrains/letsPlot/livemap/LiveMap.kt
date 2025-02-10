@@ -87,7 +87,6 @@ class LiveMap(
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
-    private var myInitialized: Boolean = false // TODO: remove this flag
     private lateinit var myEcsController: EcsController
     private lateinit var myContext: LiveMapContext
     private lateinit var myLayerRenderingSystem: LayersRenderingSystem
@@ -132,9 +131,10 @@ class LiveMap(
         )
         myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         myUiService = UiService(myComponentManager, myTextMeasurer)
+        init(myComponentManager)
 
         val updateController = UpdateController(
-            { dt -> animationHandler(myComponentManager, dt) },
+            { dt -> animationHandler(dt) },
             myDevParams.read(UPDATE_PAUSE_MS).toLong(),
             myDevParams.read(UPDATE_TIME_MULTIPLIER)
         )
@@ -146,19 +146,10 @@ class LiveMap(
     }
 
     fun hoverObjects(): List<HoverObject> {
-        if (!myInitialized) {
-            return emptyList()
-        }
-
-        return myComponentManager.getSingleton<SearchResultComponent>().hoverObjects
+        return myComponentManager.tryGetSingleton<SearchResultComponent>()?.hoverObjects ?: emptyList()
     }
 
-    private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
-        if (!myInitialized) {
-            init(componentManager)
-            myInitialized = true
-        }
-
+    private fun animationHandler(dt: Long): Boolean {
         myEcsController.update(dt.toDouble())
 
         myDiagnostics.update(dt)
@@ -347,10 +338,8 @@ class LiveMap(
     }
 
     override fun dispose() {
-        if (myInitialized) {
-            myTimerReg.dispose()
-            myEcsController.dispose()
-        }
+        myTimerReg.dispose()
+        myEcsController.dispose()
     }
 
     private class UpdateController(
