@@ -105,84 +105,11 @@ object PlotHtmlHelper {
         @Suppress("NAME_SHADOWING")
         val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return dynamicDisplayHtml(
+        return getDisplayHtmlForProcessedSpecs(
             plotSpecJs,
-            SizingPolicy(SizingMode.MIN, SizingMode.SCALED)
+            SizingPolicy(SizingMode.MIN, SizingMode.SCALED),
+            dynamicScriptLoading = true
         )
-    }
-
-    private fun dynamicDisplayHtml(
-        plotSpecAsJsObjectInitializer: String,
-        sizingPolicy: SizingPolicy,
-        forceImmediateRender: Boolean = false,
-        responsive: Boolean = false
-    ): String {
-        val outputId = randomString(6)
-        return """
-        |   <div id="$outputId"></div>
-        |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-        |   
-        |   (function() {
-        |   // ----------
-        |   
-        |   const forceImmediateRender = ${forceImmediateRender};
-        |   const responsive = ${responsive};
-        |   
-        |   const sizingPolicy = {
-        |       width_mode: "${sizingPolicy.widthMode}",
-        |       height_mode: "${sizingPolicy.heightMode}",
-        |       width: ${sizingPolicy.width}, 
-        |       height: ${sizingPolicy.height} 
-        |   };
-        |   
-        |   const containerDiv = document.getElementById("$outputId");
-        |   
-        |   function renderPlot() {
-        |       const options = {
-        |           sizing: sizingPolicy
-        |       };
-        |       const plotSpec = $plotSpecAsJsObjectInitializer;
-        |       window.letsPlotCall(function() {
-        |           LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
-        |       });
-        |   }
-        |   
-        |   const renderImmediately = 
-        |       forceImmediateRender || (
-        |           sizingPolicy.width_mode === 'FIXED' && 
-        |           (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED')
-        |       );
-        |   
-        |   if (renderImmediately) {
-        |       renderPlot();
-        |   }
-        |   
-        |   if (!renderImmediately || responsive) {
-        |       // Set up observer for initial sizing or continuous monitoring
-        |       var observer = new ResizeObserver(function(entries) {
-        |           for (let entry of entries) {
-        |               if (entry.contentBoxSize && 
-        |                   entry.contentBoxSize[0].inlineSize > 0) {
-        |                   if (!responsive && observer) {
-        |                       observer.disconnect();
-        |                       observer = null;
-        |                   }
-        |                   renderPlot();
-        |                   if (!responsive) {
-        |                       break;
-        |                   }
-        |               }
-        |           }
-        |       });
-        |       
-        |       observer.observe(containerDiv);
-        |   }
-        |   
-        |   // ----------
-        |   })();
-        |   
-        |   </script>
-    """.trimMargin()
     }
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
@@ -213,18 +140,20 @@ object PlotHtmlHelper {
             null -> SizingPolicy.notebookCell()
             else -> SizingPolicy.fixed(size.x, size.y)
         }
-        return staticDisplayHtml(
+
+        return getDisplayHtmlForProcessedSpecs(
             plotSpecJs,
-            sizingPolicy
+            sizingPolicy,
+            dynamicScriptLoading = false
         )
     }
 
-
-    private fun staticDisplayHtml(
+    private fun getDisplayHtmlForProcessedSpecs(
         plotSpecAsJsObjectInitializer: String,
         sizingPolicy: SizingPolicy,
+        dynamicScriptLoading: Boolean,
         forceImmediateRender: Boolean = false,
-        responsive: Boolean = false
+        responsive: Boolean = false,
     ): String {
         val outputId = randomString(6)
 
@@ -261,7 +190,10 @@ object PlotHtmlHelper {
         |           sizing: sizingPolicy
         |       };
         |       const plotSpec = $plotSpecAsJsObjectInitializer;
-        |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
+        |       ${
+            if (dynamicScriptLoading) "window.letsPlotCall(function() { LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options); });"
+            else "LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);"
+        }
         |   }
         |   
         |   const renderImmediately = 
