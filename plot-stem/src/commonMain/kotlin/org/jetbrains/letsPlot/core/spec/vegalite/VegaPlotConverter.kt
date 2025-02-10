@@ -89,7 +89,15 @@ internal class VegaPlotConverter private constructor(
             && (plotOptions.layerOptions?.size ?: 0) > 0
             && plotOptions.layerOptions!!.all { it.geom in SUPPORTED_LAYERS } == true
         ) {
-            plotOptions.layerOptions = listOf(liveMap { tiles = vectorTiles() }) + plotOptions.layerOptions!!
+            val liveMapLayer = liveMap {
+                tiles = vectorTiles()
+
+                // never scale points/lines etc
+                constSizeZoomin = 0
+                dataSizeZoomin = 0
+            }
+
+            plotOptions.layerOptions = listOf(liveMapLayer) + plotOptions.layerOptions!!
         }
 
         return plotOptions
