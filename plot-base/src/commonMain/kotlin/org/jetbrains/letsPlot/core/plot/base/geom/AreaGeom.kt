@@ -45,7 +45,7 @@ open class AreaGeom : GeomBase() {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
+        val dataPoints = GeomUtil.withDefined(dataPoints(aesthetics), Aes.X, Aes.Y)
         val closePath = helper.meetsRadarPlotReq()
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
