@@ -29,10 +29,6 @@ kotlin {
         }
     }
 
-    target.binaries.all {
-        linkerOpts += listOf("-L${rootProject.project.extra["imagemagick_lib_path"]}/lib/")
-    }
-
     sourceSets {
         all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
