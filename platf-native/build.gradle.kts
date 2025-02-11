@@ -23,14 +23,13 @@ kotlin {
         else -> throw Exception("Unsupported platform! Check project settings.")
     }
 
-    target.compilations.forEach {
-        it.apply {
-            val imageMagick by cinterops.creating {
-                compilerOpts += listOf("-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7")
-            }
+    target.compilations.getByName("main") {
+        val imageMagick by cinterops.creating {
+            compilerOpts += listOf("-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7")
         }
     }
-    target.binaries.all {
+
+    target.binaries.staticLib {
         linkerOpts += listOf("-L${rootProject.project.extra["imagemagick_lib_path"]}/lib/")
     }
 
