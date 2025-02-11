@@ -6,10 +6,7 @@
 package org.jetbrains.letsPlot.nat.util
 
 import MagickWand.*
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CValues
-import kotlinx.cinterop.cstr
-import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.jetbrains.letsPlot.nat.encoding.RGBEncoderNative
@@ -71,17 +68,42 @@ fun testImageWand() {
         DrawSetFont(draw, "DejaVu-Sans-Bold") // Use font name
         DrawSetFontSize(draw, 36.0) // Set font size
 
-        memScoped {
-            val text: CValues<ByteVar> = "Hello, MagicWand!".cstr // Convert to C string
-            //DrawAnnotation(draw, 150.0, 300.0, text.getPointer(this)) // Get pointer within scope
+        val text = "Hello, Kotlin/Native and ImageMagick!"
+
+        // Correct way to pass the string to DrawAnnotation:
+        val utf8Bytes: UByteArray = text.encodeToByteArray().toUByteArray() // Convert to UTF-8 ByteArray
+
+        utf8Bytes.usePinned { pinned ->
+            DrawAnnotation(draw, 150.0, 300.0, pinned.addressOf(0))
         }
 
         // Apply the drawing to the MagickWand
         MagickDrawImage(wand, draw)
 
+        memScoped {
+            val numFormats = alloc<ULongVar>() // Allocate space for the output parameter
+
+            val formats = MagickQueryFormats("*", numFormats.ptr) // Corrected call
+            if (formats == null) {
+                println("Failed to retrieve available formats")
+            } else {
+                val formatList = (0 until numFormats.value.toInt()).map { index ->
+                    formats[index]?.toKString() ?: "Unknown"
+                }
+                println("Supported Formats: $formatList")
+            }
+        }
+
         // Save the image to a file
         val outputFilename = "output_with_text.png"
+        MagickSetImageFormat(wand, "PNG")
         if (MagickWriteImage(wand, outputFilename) == MagickFalse) {
+            memScoped {
+                val severity = alloc<ExceptionTypeVar>() // Allocate memory for severity
+                val messagePtr = MagickGetException(wand, severity.ptr) // Get exception message pointer
+                println(messagePtr?.toKString() ?: "Unknown error") // Convert to Kotlin string
+
+            }
             throw RuntimeException("Failed to write image")
         }
 
