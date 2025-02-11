@@ -67,7 +67,7 @@ elif this_system == 'Windows':
 
 elif this_system == 'Linux':
     static_link_libraries_list += ['stdc++']
-    extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickCore-7.Q16HDRI', '-lMagickWand-7.Q16HDRI', '-lpng', '-lz']
+    extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickWand-7.Q16HDRI', '-lMagickCore-7.Q16HDRI', '-lpng', '-lz']
 
 else:
     raise ValueError("Unsupported platform.")
