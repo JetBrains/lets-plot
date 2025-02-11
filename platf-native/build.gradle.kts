@@ -29,7 +29,7 @@ kotlin {
         }
     }
 
-    target.binaries.staticLib {
+    target.binaries.all {
         linkerOpts += listOf("-L${rootProject.project.extra["imagemagick_lib_path"]}/lib/")
     }
 
