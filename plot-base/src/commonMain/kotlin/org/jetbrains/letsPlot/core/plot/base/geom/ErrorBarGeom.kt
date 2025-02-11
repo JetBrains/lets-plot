@@ -53,7 +53,6 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         val xAes = afterRotation(Aes.X)
         val minAes = afterRotation(Aes.YMIN)
         val maxAes = afterRotation(Aes.YMAX)
-        val widthAes = afterRotation(Aes.WIDTH)
 
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
@@ -62,15 +61,8 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             val x = p.finiteOrNull(xAes) ?: continue
             val ymin = p.finiteOrNull(minAes) ?: continue
             val ymax = p.finiteOrNull(maxAes) ?: continue
-            val w = p.finiteOrNull(widthAes) ?: continue
 
-            val width = when (widthUnit) {
-                DimensionUnit.RESOLUTION -> w * ctx.getResolution(xAes)
-                DimensionUnit.PIXEL -> {
-                    val unitSize = coord.unitSize(DoubleVector(1.0, 0.0)).x
-                    w / unitSize
-                }
-            }
+            val width = widthOrNull(p, ctx, coord) ?: continue
             val height = ymax - ymin
 
             val rect = DoubleRectangle(x - width / 2, ymin, width, height)
@@ -82,7 +74,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         flipHelper.buildHints(
             listOf(minAes, maxAes),
             aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper),
+            clientRectByDataPoint(ctx, coord, geomHelper),
             { HintColorUtil.colorWithAlpha(it) },
             colorMarkerMapper = colorsByDataPoint
         )
@@ -90,20 +82,19 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
 
     private fun clientRectByDataPoint(
         ctx: GeomContext,
+        coord: CoordinateSystem,
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
             val xAes = afterRotation(Aes.X)
             val minAes = afterRotation(Aes.YMIN)
             val maxAes = afterRotation(Aes.YMAX)
-            val widthAes = afterRotation(Aes.WIDTH)
 
             val x = p.finiteOrNull(xAes) ?: return null
             val ymin = p.finiteOrNull(minAes) ?: return null
             val ymax = p.finiteOrNull(maxAes) ?: return null
-            val w = p.finiteOrNull(widthAes) ?: return null
+            val width = widthOrNull(p, ctx, coord) ?: return null
 
-            val width = w * ctx.getResolution(xAes)
             val height = ymax - ymin
             val rect = geomHelper.toClient(
                 afterRotation(DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)),
@@ -113,6 +104,25 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         }
 
         return ::factory
+    }
+
+    private fun widthOrNull(
+        p: DataPointAesthetics,
+        ctx: GeomContext,
+        coord: CoordinateSystem
+    ): Double? {
+        val widthAes = afterRotation(Aes.WIDTH)
+        val width = p.finiteOrNull(widthAes) ?: return null
+        return when (widthUnit) {
+            DimensionUnit.RESOLUTION -> {
+                val xAes = afterRotation(Aes.X)
+                width * ctx.getResolution(xAes)
+            }
+            DimensionUnit.PIXEL -> {
+                val unitSize = coord.unitSize(DoubleVector(1.0, 0.0)).x
+                width / unitSize
+            }
+        }
     }
 
     enum class DimensionUnit {
