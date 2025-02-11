@@ -257,7 +257,7 @@ class ErrorBar {
             {
               'kind': 'plot',
               'data': {
-                'x': [-1, 0, 1],
+                'x': [-2, 0, 2],
                 'ymin': [-2, -1, 0],
                 'ymax': [0, 1, 2]
               },
@@ -279,7 +279,7 @@ class ErrorBar {
               'coord': {
                 'name': 'cartesian',
                 'flip': false,
-                'xlim': [-1.2, 1.2]
+                'xlim': [-3, 3]
               }
             }
         """.trimIndent()

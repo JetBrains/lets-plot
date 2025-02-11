@@ -14,13 +14,12 @@ import org.jetbrains.letsPlot.commons.intern.util.ArrowSupport
 import org.jetbrains.letsPlot.commons.intern.util.curve
 import org.jetbrains.letsPlot.commons.intern.util.padLineString
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Companion.toArrowAes
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Type.CLOSED
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
@@ -352,6 +351,25 @@ open class GeomHelper(
             if (!hasArrow) return 0.0
 
             return newVer
+        }
+    }
+
+    fun transformDimensionValue(
+        value: Double,
+        unit: DimensionUnit,
+        axisAes: Aes<Double>
+    ): Double {
+        return when (unit) {
+            RESOLUTION -> value * ctx.getResolution(axisAes)
+            IDENTITY -> value
+            PIXEL -> {
+                val unitSize = when (axisAes) {
+                    Aes.X -> coord.unitSize(DoubleVector(1.0, 0.0)).x
+                    Aes.Y -> coord.unitSize(DoubleVector(0.0, 1.0)).y
+                    else -> error("Unsupported axis aes: $axisAes")
+                }
+                value / unitSize
+            }
         }
     }
 

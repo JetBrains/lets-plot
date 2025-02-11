@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -27,8 +28,9 @@ open class TileGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
         val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipKind = CURSOR_TOOLTIP)
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx, widthUnit, heightUnit))
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(widthUnit, heightUnit, geomHelper))
         val svgRectHelper = helper.createSvgRectHelper()
         svgRectHelper.setResamplingEnabled(!coord.isLinear)
         svgRectHelper.onGeometry { p, rect, polygon ->
@@ -43,10 +45,6 @@ open class TileGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
-    enum class DimensionUnit {
-        RESOLUTION, IDENTITY
-    }
-
     companion object {
         const val HANDLES_GROUPS = false
 
@@ -54,9 +52,9 @@ open class TileGeom : GeomBase() {
         val DEF_HEIGHT_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun clientRectByDataPoint(
-            ctx: GeomContext,
             widthUnit: DimensionUnit,
-            heightUnit: DimensionUnit
+            heightUnit: DimensionUnit,
+            helper: GeomHelper
         ): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
                 val x = p.finiteOrNull(Aes.X) ?: return null
@@ -64,14 +62,8 @@ open class TileGeom : GeomBase() {
                 val w = p.finiteOrNull(Aes.WIDTH) ?: return null
                 val h = p.finiteOrNull(Aes.HEIGHT) ?: return null
 
-                val width = when (widthUnit) {
-                    DimensionUnit.RESOLUTION -> w * ctx.getResolution(Aes.X)
-                    DimensionUnit.IDENTITY -> w
-                }
-                val height = when (heightUnit) {
-                    DimensionUnit.RESOLUTION -> h * ctx.getResolution(Aes.Y)
-                    DimensionUnit.IDENTITY -> h
-                }
+                val width = helper.transformDimensionValue(w, widthUnit, Aes.X)
+                val height = helper.transformDimensionValue(h, heightUnit, Aes.Y)
 
                 val origin = DoubleVector(x - width / 2, y - height / 2)
                 val dimensions = DoubleVector(width, height)

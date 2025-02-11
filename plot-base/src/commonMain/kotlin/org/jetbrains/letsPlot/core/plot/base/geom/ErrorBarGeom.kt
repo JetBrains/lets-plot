@@ -62,7 +62,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             val ymin = p.finiteOrNull(minAes) ?: continue
             val ymax = p.finiteOrNull(maxAes) ?: continue
 
-            val width = widthOrNull(p, ctx, coord) ?: continue
+            val width = widthOrNull(p, geomHelper) ?: continue
             val height = ymax - ymin
 
             val rect = DoubleRectangle(x - width / 2, ymin, width, height)
@@ -74,15 +74,13 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         flipHelper.buildHints(
             listOf(minAes, maxAes),
             aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, coord, geomHelper),
+            clientRectByDataPoint(geomHelper),
             { HintColorUtil.colorWithAlpha(it) },
             colorMarkerMapper = colorsByDataPoint
         )
     }
 
     private fun clientRectByDataPoint(
-        ctx: GeomContext,
-        coord: CoordinateSystem,
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
@@ -93,7 +91,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             val x = p.finiteOrNull(xAes) ?: return null
             val ymin = p.finiteOrNull(minAes) ?: return null
             val ymax = p.finiteOrNull(maxAes) ?: return null
-            val width = widthOrNull(p, ctx, coord) ?: return null
+            val width = widthOrNull(p, geomHelper) ?: return null
 
             val height = ymax - ymin
             val rect = geomHelper.toClient(
@@ -108,25 +106,11 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
 
     private fun widthOrNull(
         p: DataPointAesthetics,
-        ctx: GeomContext,
-        coord: CoordinateSystem
+        helper: GeomHelper
     ): Double? {
         val widthAes = afterRotation(Aes.WIDTH)
         val width = p.finiteOrNull(widthAes) ?: return null
-        return when (widthUnit) {
-            DimensionUnit.RESOLUTION -> {
-                val xAes = afterRotation(Aes.X)
-                width * ctx.getResolution(xAes)
-            }
-            DimensionUnit.PIXEL -> {
-                val unitSize = coord.unitSize(DoubleVector(1.0, 0.0)).x
-                width / unitSize
-            }
-        }
-    }
-
-    enum class DimensionUnit {
-        RESOLUTION, PIXEL
+        return helper.transformDimensionValue(width, widthUnit, afterRotation(Aes.X))
     }
 
     internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {

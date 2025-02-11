@@ -113,37 +113,15 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.TILE -> GeomProvider.tile {
-                val dimensionUnit: (String) -> TileGeom.DimensionUnit? = { option ->
-                    layerConfig.getString(option)?.lowercase()?.let {
-                        when (it) {
-                            "res" -> TileGeom.DimensionUnit.RESOLUTION
-                            "identity" -> TileGeom.DimensionUnit.IDENTITY
-                            else -> throw IllegalArgumentException(
-                                "Unsupported value for $option parameter: '$it'. " +
-                                "Use one of: res, identity."
-                            )
-                        }
-                    }
-                }
                 TileGeom().apply {
-                    this.widthUnit = dimensionUnit(Option.Geom.Tile.WIDTH_UNIT) ?: TileGeom.DEF_WIDTH_UNIT
-                    this.heightUnit = dimensionUnit(Option.Geom.Tile.HEIGHT_UNIT) ?: TileGeom.DEF_HEIGHT_UNIT
+                    this.widthUnit = dimensionUnit(layerConfig, Option.Geom.Tile.WIDTH_UNIT) ?: TileGeom.DEF_WIDTH_UNIT
+                    this.heightUnit = dimensionUnit(layerConfig, Option.Geom.Tile.HEIGHT_UNIT) ?: TileGeom.DEF_HEIGHT_UNIT
                 }
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
                 ErrorBarGeom(isVertical(ctx, geomKind.name)).apply {
-                    val option = Option.Geom.ErrorBar.WIDTH_UNIT
-                    this.widthUnit = layerConfig.getString(option)?.lowercase()?.let {
-                        when (it) {
-                            "res" -> ErrorBarGeom.DimensionUnit.RESOLUTION
-                            "px" -> ErrorBarGeom.DimensionUnit.PIXEL
-                            else -> throw IllegalArgumentException(
-                                "Unsupported value for $option parameter: '$it'. " +
-                                "Use one of: res, px."
-                            )
-                        }
-                    } ?: ErrorBarGeom.DEF_WIDTH_UNIT
+                    this.widthUnit = dimensionUnit(layerConfig, Option.Geom.ErrorBar.WIDTH_UNIT) ?: ErrorBarGeom.DEF_WIDTH_UNIT
                 }
             }
 
@@ -463,4 +441,17 @@ internal object GeomProviderFactory {
         return isVertical
     }
 
+    private fun dimensionUnit(layerConfig: LayerConfig, option: String): DimensionUnit? {
+        return layerConfig.getString(option)?.lowercase()?.let {
+            when (it) {
+                "res" -> DimensionUnit.RESOLUTION
+                "identity" -> DimensionUnit.IDENTITY
+                "px" -> DimensionUnit.PIXEL
+                else -> throw IllegalArgumentException(
+                    "Unsupported value for $option parameter: '$it'. " +
+                    "Use one of: res, identity, px."
+                )
+            }
+        }
+    }
 }
