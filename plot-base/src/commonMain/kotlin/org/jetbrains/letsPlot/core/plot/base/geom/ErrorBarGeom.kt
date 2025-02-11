@@ -68,8 +68,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
                 DimensionUnit.RESOLUTION -> w * ctx.getResolution(xAes)
                 DimensionUnit.PIXEL -> {
                     val unitSize = coord.unitSize(DoubleVector(1.0, 0.0)).x
-                    val pxInUnit = 1.2
-                    w / (pxInUnit * unitSize)
+                    w / unitSize
                 }
             }
             val height = ymax - ymin
