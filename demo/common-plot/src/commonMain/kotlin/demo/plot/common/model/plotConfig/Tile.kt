@@ -11,7 +11,7 @@ class Tile {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            customSize(0.5, 4.0, "res", "scale")
+            customSize(0.5, 4.0, "res", "identity")
         )
     }
 
@@ -69,7 +69,14 @@ class Tile {
                   'width_unit': '$widthUnit',
                   'height_unit': '$heightUnit'
                 }
-              ]
+              ],
+              'coord': {
+                'name': 'fixed',
+                'ratio': 1,
+                'flip': false,
+                'xlim': [-7, 7],
+                'ylim': [-7, 7]
+              }
             }
         """.trimIndent()
 

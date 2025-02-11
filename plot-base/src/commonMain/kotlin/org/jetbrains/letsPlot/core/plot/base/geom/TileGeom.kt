@@ -44,7 +44,7 @@ open class TileGeom : GeomBase() {
     }
 
     enum class DimensionUnit {
-        RESOLUTION, SCALE
+        RESOLUTION, IDENTITY
     }
 
     companion object {
@@ -66,11 +66,11 @@ open class TileGeom : GeomBase() {
 
                 val width = when (widthUnit) {
                     DimensionUnit.RESOLUTION -> w * ctx.getResolution(Aes.X)
-                    DimensionUnit.SCALE -> w
+                    DimensionUnit.IDENTITY -> w
                 }
                 val height = when (heightUnit) {
                     DimensionUnit.RESOLUTION -> h * ctx.getResolution(Aes.Y)
-                    DimensionUnit.SCALE -> h
+                    DimensionUnit.IDENTITY -> h
                 }
 
                 val origin = DoubleVector(x - width / 2, y - height / 2)

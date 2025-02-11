@@ -117,10 +117,10 @@ internal object GeomProviderFactory {
                     layerConfig.getString(option)?.lowercase()?.let {
                         when (it) {
                             "res" -> TileGeom.DimensionUnit.RESOLUTION
-                            "scale" -> TileGeom.DimensionUnit.SCALE
+                            "identity" -> TileGeom.DimensionUnit.IDENTITY
                             else -> throw IllegalArgumentException(
                                 "Unsupported value for $option parameter: '$it'. " +
-                                "Use one of: res, scale."
+                                "Use one of: res, identity."
                             )
                         }
                     }
