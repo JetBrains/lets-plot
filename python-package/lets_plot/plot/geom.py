@@ -1427,6 +1427,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              bins=None,
              binwidth=None,
              drop=None,
+             width_unit=None, height_unit=None,
              color_by=None, fill_by=None,
              **other_args):
     """
@@ -1473,6 +1474,24 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Override `bins`. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
         Specify whether to remove all hexagonal bins with 0 counts.
+    width_unit : {'res', 'identity', 'point', 'px'}, default='identity'
+        Unit for width of the hexagon.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'point': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
+    height_unit : {'res', 'identity', 'point', 'px'}, default='identity'
+        Unit for height of the hexagon.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
+        - 'point': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1584,6 +1603,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  bins=bins,
                  binwidth=binwidth,
                  drop=drop,
+                 width_unit=width_unit, height_unit=height_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -1626,6 +1646,24 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    width_unit : {'res', 'identity', 'point', 'px'}, default='res'
+        Unit for width of the tile.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'point': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
+    height_unit : {'res', 'identity', 'point', 'px'}, default='res'
+        Unit for height of the tile.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
+        - 'point': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1841,7 +1879,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                   manual_key=None,
                   sampling=None, tooltips=None,
-                  width_unit=None,
+                  width_unit=None, height_unit=None,
                   color_by=None,
                   **other_args):
     """
@@ -1881,6 +1919,24 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    width_unit : {'res', 'identity', 'point', 'px'}, default='res'
+        Unit for the whisker width of the vertical error bar.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'point': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
+    height_unit : {'res', 'identity', 'point', 'px'}, default='res'
+        Unit for the whisker height of the horizontal error bar.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
+        - 'point': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -1983,6 +2039,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  width_unit=width_unit,
+                 height_unit=height_unit,
                  color_by=color_by,
                  **other_args)
 
