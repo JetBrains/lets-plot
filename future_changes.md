@@ -15,7 +15,10 @@
 - `hjust` and `vjust` parameters for axis labels.
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
- 
+
+- Parameters `width_unit` and `height_unit` in `geom_errorbar()`, `geom_tile()` and `geom_hex()` [[#1288](https://github.com/JetBrains/lets-plot/issues/1288)]:
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
 ### Changed
 
