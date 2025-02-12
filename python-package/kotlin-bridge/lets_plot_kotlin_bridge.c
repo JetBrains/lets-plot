@@ -48,10 +48,53 @@ static PyObject* export_html(PyObject* self, PyObject* args) {
     return html;
 }
 
+static PyObject* get_static_configure_html(PyObject* self, PyObject* scriptUrl) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
+
+    if (!PyUnicode_Check(scriptUrl)) {
+        PyErr_SetString(PyExc_TypeError, "string argument expected");
+        return NULL;
+    }
+
+    const char* scriptUrlStr = PyUnicode_AsUTF8(scriptUrl);
+    PyObject* html = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateStaticConfigureHtml(reprGen, (void*)scriptUrlStr);
+    return html;
+}
+
+static PyObject* get_display_html_for_raw_spec(PyObject* self, PyObject* args) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
+
+    PyObject *plotSpecDict;
+    PyObject *sizingOptionsDict;
+    int dynamicScriptLoading;
+    int forceImmediateRender;
+    int responsive;
+
+    PyArg_ParseTuple(args, "OOppp", 
+        &plotSpecDict,
+        &sizingOptionsDict,
+        &dynamicScriptLoading,
+        &forceImmediateRender,
+        &responsive
+    );
+
+    PyObject* html = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateDisplayHtmlForRawSpec(
+        reprGen,
+        plotSpecDict,
+        sizingOptionsDict,
+        dynamicScriptLoading,
+        forceImmediateRender,
+        responsive
+    );
+    return html;
+}
+
 static PyMethodDef module_methods[] = {
    { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },
    { "export_svg", (PyCFunction)export_svg, METH_VARARGS, "Generates SVG representing plot." },
    { "export_html", (PyCFunction)export_html, METH_VARARGS, "Generates HTML page showing plot." },
+   { "get_static_configure_html", (PyCFunction)get_static_configure_html, METH_O, "Generates static HTML configuration." },
+   { "get_display_html_for_raw_spec", (PyCFunction)get_display_html_for_raw_spec, METH_VARARGS, "Generates display HTML for raw plot spec." },
    { NULL }
 };
 
