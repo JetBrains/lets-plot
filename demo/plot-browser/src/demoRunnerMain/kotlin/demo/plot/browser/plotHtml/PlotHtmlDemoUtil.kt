@@ -10,6 +10,9 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
+import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
+import org.jetbrains.letsPlot.core.util.sizing.SizingMode
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.io.StringWriter
 
 object PlotHtmlDemoUtil {
@@ -19,7 +22,7 @@ object PlotHtmlDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector? = null,
-        preferredWidth: Double? = null
+        preferredWidth: Double? = null,
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
@@ -39,9 +42,20 @@ object PlotHtmlDemoUtil {
         preferredWidth: Double?
     ): String {
 
+        val responsiveDemo = plotSize == null && preferredWidth == null
+        val width100pct = responsiveDemo
+
+        val scriptUrl = BrowserDemoUtil.getPlotLibPath(dev = false)
+        val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
+
         val writer = StringWriter().appendHTML().html {
             lang = "en"
             head {
+                unsafe {
+                    +"""
+                        ${if (responsiveDemo) configureHtml else ""}
+                    """.trimIndent()
+                }
                 title(title)
                 style {
                     unsafe {
@@ -49,7 +63,7 @@ object PlotHtmlDemoUtil {
                             div.demo {
                                 border: 1px solid orange;
                                 margin: 20px;
-                                display: inline-block;
+                                ${if (responsiveDemo) "" else "display: inline-block;"}
                             }
                             body { 
                                 background-color:lightgrey
@@ -68,7 +82,7 @@ object PlotHtmlDemoUtil {
                             iframe {
                                 val plotHtml = PlotHtmlExport.buildHtmlFromRawSpecs(
                                     plotSpec,
-                                    scriptUrl = BrowserDemoUtil.getPlotLibPath(dev = false),
+                                    scriptUrl = scriptUrl,
                                     iFrame = false,  // Don't create iframe in the content
                                     plotSize = plotSize
                                 )
@@ -82,16 +96,32 @@ object PlotHtmlDemoUtil {
 //                                attributes["style"] = "border: none; width: 100%; height: 100%;"
                             }
                         }
-                    } else {
+                    } else if (plotSize != null) {
                         // Original behavior with automatic iframe creation
                         div("demo") {
                             unsafe {
                                 +PlotHtmlExport.buildHtmlFromRawSpecs(
                                     plotSpec,
-                                    scriptUrl = BrowserDemoUtil.getPlotLibPath(dev = false),
+                                    scriptUrl = scriptUrl,
                                     iFrame = true,
                                     plotSize = plotSize
                                 )
+                            }
+                        }
+                    } else {
+                        // Demo responsive mode: plot takes the entire width of the browser window.
+                        val displayHtml = PlotHtmlHelper.getDisplayHtmlForRawSpec(
+                            plotSpec,
+                            SizingPolicy(SizingMode.FIT, SizingMode.SCALED),
+                            dynamicScriptLoading = false,
+                            forceImmediateRender = false,
+                            responsive = true,
+                            removeComputationMessages = false,
+                            logComputationMessages = false
+                        )
+                        div("demo") {
+                            unsafe {
+                                +displayHtml
                             }
                         }
                     }

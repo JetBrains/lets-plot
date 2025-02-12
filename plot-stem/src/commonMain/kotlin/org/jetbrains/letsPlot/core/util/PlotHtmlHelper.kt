@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
-import org.jetbrains.letsPlot.core.util.sizing.SizingMode
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotHtmlHelper {
@@ -101,88 +100,15 @@ object PlotHtmlHelper {
     }
 
     fun getDynamicDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>): String {
-        // server-side transforms: statistics, sampling, etc.
-        @Suppress("NAME_SHADOWING")
-        val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
-        val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return dynamicDisplayHtml(
-            plotSpecJs,
-            SizingPolicy(SizingMode.MIN, SizingMode.SCALED)
+        return getDisplayHtmlForRawSpec(
+            plotSpec,
+            SizingPolicy.notebookCell(),
+            dynamicScriptLoading = true,
+            forceImmediateRender = false,
+            responsive = false,
+            removeComputationMessages = false,
+            logComputationMessages = false,
         )
-    }
-
-    private fun dynamicDisplayHtml(
-        plotSpecAsJsObjectInitializer: String,
-        sizingPolicy: SizingPolicy,
-        forceImmediateRender: Boolean = false,
-        responsive: Boolean = false
-    ): String {
-        val outputId = randomString(6)
-        return """
-        |   <div id="$outputId"></div>
-        |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-        |   
-        |   (function() {
-        |   // ----------
-        |   
-        |   const forceImmediateRender = ${forceImmediateRender};
-        |   const responsive = ${responsive};
-        |   
-        |   const sizingPolicy = {
-        |       width_mode: "${sizingPolicy.widthMode}",
-        |       height_mode: "${sizingPolicy.heightMode}",
-        |       width: ${sizingPolicy.width}, 
-        |       height: ${sizingPolicy.height} 
-        |   };
-        |   
-        |   const containerDiv = document.getElementById("$outputId");
-        |   
-        |   function renderPlot() {
-        |       const options = {
-        |           sizing: sizingPolicy
-        |       };
-        |       const plotSpec = $plotSpecAsJsObjectInitializer;
-        |       window.letsPlotCall(function() {
-        |           LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
-        |       });
-        |   }
-        |   
-        |   const renderImmediately = 
-        |       forceImmediateRender || (
-        |           sizingPolicy.width_mode === 'FIXED' && 
-        |           (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED')
-        |       );
-        |   
-        |   if (renderImmediately) {
-        |       renderPlot();
-        |   }
-        |   
-        |   if (!renderImmediately || responsive) {
-        |       // Set up observer for initial sizing or continuous monitoring
-        |       var observer = new ResizeObserver(function(entries) {
-        |           for (let entry of entries) {
-        |               if (entry.contentBoxSize && 
-        |                   entry.contentBoxSize[0].inlineSize > 0) {
-        |                   if (!responsive && observer) {
-        |                       observer.disconnect();
-        |                       observer = null;
-        |                   }
-        |                   renderPlot();
-        |                   if (!responsive) {
-        |                       break;
-        |                   }
-        |               }
-        |           }
-        |       });
-        |       
-        |       observer.observe(containerDiv);
-        |   }
-        |   
-        |   // ----------
-        |   })();
-        |   
-        |   </script>
-    """.trimMargin()
     }
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
@@ -194,6 +120,32 @@ object PlotHtmlHelper {
         size: DoubleVector? = null,
         removeComputationMessages: Boolean = false,
         logComputationMessages: Boolean = false
+    ): String {
+        val sizingPolicy = when (size) {
+            null -> SizingPolicy.notebookCell()
+            else -> SizingPolicy.fixed(size.x, size.y)
+        }
+
+        return getDisplayHtmlForRawSpec(
+            plotSpec,
+            sizingPolicy,
+            dynamicScriptLoading = false,
+            forceImmediateRender = false,
+            responsive = false,
+            removeComputationMessages = removeComputationMessages,
+            logComputationMessages = logComputationMessages
+        )
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun getDisplayHtmlForRawSpec(
+        plotSpec: MutableMap<String, Any>,
+        sizingPolicy: SizingPolicy,
+        dynamicScriptLoading: Boolean,
+        forceImmediateRender: Boolean,
+        responsive: Boolean,
+        removeComputationMessages: Boolean,
+        logComputationMessages: Boolean
     ): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
@@ -209,22 +161,21 @@ object PlotHtmlHelper {
         }
 
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        val sizingPolicy = when (size) {
-            null -> SizingPolicy.notebookCell()
-            else -> SizingPolicy.fixed(size.x, size.y)
-        }
-        return staticDisplayHtml(
+        return getDisplayHtmlForProcessedSpecs(
             plotSpecJs,
-            sizingPolicy
+            sizingPolicy,
+            dynamicScriptLoading = dynamicScriptLoading,
+            forceImmediateRender = forceImmediateRender,
+            responsive = responsive,
         )
     }
 
-
-    private fun staticDisplayHtml(
+    private fun getDisplayHtmlForProcessedSpecs(
         plotSpecAsJsObjectInitializer: String,
         sizingPolicy: SizingPolicy,
-        forceImmediateRender: Boolean = false,
-        responsive: Boolean = false
+        dynamicScriptLoading: Boolean,
+        forceImmediateRender: Boolean,
+        responsive: Boolean,
     ): String {
         val outputId = randomString(6)
 
@@ -255,13 +206,25 @@ object PlotHtmlHelper {
         |   }
         |   
         |   const containerDiv = document.getElementById("$outputId");
+        |   let fig = null;
         |   
         |   function renderPlot() {
         |       const options = {
         |           sizing: sizingPolicy
         |       };
-        |       const plotSpec = $plotSpecAsJsObjectInitializer;
-        |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);
+        |       
+        |       if (fig === null) {
+        |           const plotSpec = $plotSpecAsJsObjectInitializer;
+        |           ${
+            if (dynamicScriptLoading)
+                "window.letsPlotCall(function() { " +
+                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options); });"
+            else
+                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);"
+        }
+        |       } else {
+        |           fig.updateView({});
+        |       }
         |   }
         |   
         |   const renderImmediately = 

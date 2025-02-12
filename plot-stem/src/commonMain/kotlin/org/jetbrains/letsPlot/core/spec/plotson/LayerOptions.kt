@@ -131,6 +131,8 @@ class TextLayer : LayerOptions(GeomKind.TEXT) {
 
 class LiveMapLayer : LayerOptions(GeomKind.LIVE_MAP) {
     var tiles: TileOptions? by map(Geom.LiveMap.TILES)
+    var constSizeZoomin: Int? by map(Geom.LiveMap.CONST_SIZE_ZOOMIN)
+    var dataSizeZoomin: Int? by map(Geom.LiveMap.DATA_SIZE_ZOOMIN)
 
     class TileOptions : Options() {
         var kind: String? by map(Geom.LiveMap.Tile.KIND)

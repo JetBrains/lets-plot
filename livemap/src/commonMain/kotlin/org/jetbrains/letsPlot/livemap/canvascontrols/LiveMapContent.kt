@@ -12,13 +12,18 @@ import org.jetbrains.letsPlot.livemap.LiveMap
 class LiveMapContent(
     private val liveMap: LiveMap
 ) : CanvasContent {
+    private var shown = false
 
     override fun show(parentControl: CanvasControl) {
         liveMap.draw(parentControl)
+        shown = true
     }
 
     override fun hide() {
-        liveMap.dispose()
+        if (shown) {
+            liveMap.dispose()
+            shown = false
+        }
     }
 
     fun addErrorHandler(handler: (Throwable) -> Unit): Registration {

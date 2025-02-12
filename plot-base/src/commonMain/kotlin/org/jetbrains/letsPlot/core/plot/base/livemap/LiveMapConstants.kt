@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.livemap
 
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+
 interface LivemapConstants {
 
     enum class Theme {
@@ -20,3 +22,13 @@ interface LivemapConstants {
         CONIC
     }
 }
+
+val SUPPORTED_LAYERS = setOf(
+    GeomKind.POINT,
+    GeomKind.H_LINE, GeomKind.V_LINE, GeomKind.SEGMENT, GeomKind.CURVE, GeomKind.SPOKE,
+    GeomKind.RECT, GeomKind.TILE, GeomKind.BIN_2D, GeomKind.HEX,
+    GeomKind.DENSITY2D, GeomKind.CONTOUR, GeomKind.PATH,
+    GeomKind.TEXT, GeomKind.LABEL,
+    GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.MAP,
+    GeomKind.PIE
+)

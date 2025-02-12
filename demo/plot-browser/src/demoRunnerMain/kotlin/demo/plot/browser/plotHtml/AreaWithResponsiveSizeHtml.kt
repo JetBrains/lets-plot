@@ -6,14 +6,13 @@
 package demo.plot.browser.plotHtml
 
 import demo.plot.common.model.plotConfig.Area
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
-object AreaWithDefaultSizeHtml {
+object AreaWithResponsiveSizeHtml {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Area()) {
             (PlotHtmlDemoUtil.show(
-                "Area plot (default size)",
+                "Area plot (responsive size)",
                 plotSpecList(),
                 plotSize = null,
                 preferredWidth = null

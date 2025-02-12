@@ -63,7 +63,7 @@ class CoordinateSystemTransformTest {
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(Option.Plot.COORD)).containsOnly(
-            entry(Option.Meta.NAME, Option.CoordName.CARTESIAN),
+            entry(Meta.NAME, Option.CoordName.CARTESIAN),
             entry(Option.Coord.X_LIM, listOf(300.0, 450.0)),
             entry(Option.Coord.Y_LIM, listOf(1.5, 3.0))
         )
@@ -107,7 +107,7 @@ class CoordinateSystemTransformTest {
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(Option.Plot.COORD)).containsOnly(
-            entry(Option.Meta.NAME, Option.CoordName.CARTESIAN),
+            entry(Meta.NAME, Option.CoordName.CARTESIAN),
             entry(Option.Coord.X_LIM, listOf(300.0, null)),
             entry(Option.Coord.Y_LIM, listOf(null, 3.0))
         )
@@ -138,9 +138,11 @@ class CoordinateSystemTransformTest {
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
-        assertThat(plotSpec.getMap(Plot.COORD)).containsOnly(entry(Option.Meta.NAME, CoordName.MAP))
+        assertThat(plotSpec.getMap(Plot.COORD)).containsOnly(entry(Meta.NAME, CoordName.MAP))
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.LIVE_MAP)),
+            entry(Option.Geom.LiveMap.CONST_SIZE_ZOOMIN, 0),
+            entry(Option.Geom.LiveMap.DATA_SIZE_ZOOMIN, 0),
             entry(PlotBase.DATA, empty()),
             entry(Option.Geom.LiveMap.TILES, mapOf(
                 Option.Geom.LiveMap.Tile.KIND to Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT,

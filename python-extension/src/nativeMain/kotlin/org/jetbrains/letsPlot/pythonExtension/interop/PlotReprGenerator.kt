@@ -12,6 +12,7 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 
@@ -67,6 +68,46 @@ object PlotReprGenerator {
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
             Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}");
+        }
+    }
+
+    fun generateStaticConfigureHtml(
+        scriptUrlCStr: CPointer<ByteVar>,
+    ): CPointer<PyObject>? {
+        return try {
+            val scriptUrl = scriptUrlCStr.toKString()
+            val html = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
+            Py_BuildValue("s", html)
+        } catch (e: Throwable) {
+            Py_BuildValue("s", "generateStaticConfigureHtml() - Exception: ${e.message}");
+        }
+    }
+
+    fun generateDisplayHtmlForRawSpec(
+        plotSpecDict: CPointer<PyObject>,
+        sizingOptionsDict: CPointer<PyObject>,
+        dynamicScriptLoading: Int,
+        forceImmediateRender: Int,
+        responsive: Int
+    ): CPointer<PyObject>? {
+        return try {
+            val plotSpecMap = pyDictToMap(plotSpecDict)
+            val sizingOptionsMap = pyDictToMap(sizingOptionsDict)
+            val sizingPolicy = SizingPolicy.create(sizingOptionsMap)
+
+            @Suppress("UNCHECKED_CAST")
+            val html = PlotHtmlHelper.getDisplayHtmlForRawSpec(
+                plotSpec = plotSpecMap as MutableMap<String, Any>,
+                sizingPolicy = sizingPolicy,
+                dynamicScriptLoading = dynamicScriptLoading == 1,
+                forceImmediateRender = forceImmediateRender == 1,
+                responsive = responsive == 1,
+                removeComputationMessages = false,
+                logComputationMessages = false
+            )
+            Py_BuildValue("s", html)
+        } catch (e: Throwable) {
+            Py_BuildValue("s", "generateDisplayHtmlForRawSpec() - Exception: ${e.message}")
         }
     }
 }
