@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
-    var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
+    var dimensionUnit: DimensionUnit = DEF_DIMENSION_UNIT
 
     private val flipHelper = FlippableGeomHelper(isVertical)
 
@@ -110,7 +110,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
     ): Double? {
         val widthAes = afterRotation(Aes.WIDTH)
         val width = p.finiteOrNull(widthAes) ?: return null
-        return helper.transformDimensionValue(width, widthUnit, afterRotation(Aes.X))
+        return helper.transformDimensionValue(width, dimensionUnit, afterRotation(Aes.X))
     }
 
     internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {
@@ -129,7 +129,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
     }
 
     companion object {
-        val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
+        val DEF_DIMENSION_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()
