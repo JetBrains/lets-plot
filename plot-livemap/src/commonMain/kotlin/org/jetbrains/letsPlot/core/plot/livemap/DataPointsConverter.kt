@@ -254,8 +254,10 @@ internal class DataPointsConverter(
         }
 
         fun hex(): List<DataPointLiveMapAesthetics> {
+            val transformWidthToUnits: (Double) -> Double = { it }
+            val transformHeightToUnits: (Double) -> Double = { it }
             return process(isClosed = true, dataPointToGeometry = { p ->
-                HexGeom.clientHexByDataPoint().invoke(p) ?: emptyList()
+                HexGeom.clientHexByDataPoint(transformWidthToUnits, transformHeightToUnits).invoke(p) ?: emptyList()
             })
         }
 

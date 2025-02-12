@@ -32,7 +32,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
-        PROVIDER[GeomKind.HEX] = GeomProvider.hex()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
         PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
         PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()
@@ -116,6 +115,13 @@ internal object GeomProviderFactory {
                 TileGeom().apply {
                     this.widthUnit = dimensionUnit(layerConfig, Option.Geom.Tile.WIDTH_UNIT) ?: TileGeom.DEF_WIDTH_UNIT
                     this.heightUnit = dimensionUnit(layerConfig, Option.Geom.Tile.HEIGHT_UNIT) ?: TileGeom.DEF_HEIGHT_UNIT
+                }
+            }
+
+            GeomKind.HEX -> GeomProvider.hex {
+                HexGeom().apply {
+                    this.widthUnit = dimensionUnit(layerConfig, Option.Geom.Hex.WIDTH_UNIT) ?: HexGeom.DEF_WIDTH_UNIT
+                    this.heightUnit = dimensionUnit(layerConfig, Option.Geom.Hex.HEIGHT_UNIT) ?: HexGeom.DEF_HEIGHT_UNIT
                 }
             }
 
