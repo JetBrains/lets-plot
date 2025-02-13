@@ -189,7 +189,7 @@ object PlotHtmlHelper {
         |   const forceImmediateRender = ${forceImmediateRender};
         |   const responsive = ${responsive};
         |   
-        |   let sizingPolicy = {
+        |   let sizing = {
         |       width_mode: "${sizingPolicy.widthMode}",
         |       height_mode: "${sizingPolicy.heightMode}",
         |       width: ${sizingPolicy.width}, 
@@ -198,7 +198,7 @@ object PlotHtmlHelper {
         |   
         |   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
         |   if (preferredWidth !== undefined) {
-        |       sizingPolicy = {
+        |       sizing = {
         |           width_mode: 'FIXED',
         |           height_mode: 'SCALED',
         |           width: parseFloat(preferredWidth)
@@ -209,18 +209,14 @@ object PlotHtmlHelper {
         |   let fig = null;
         |   
         |   function renderPlot() {
-        |       const options = {
-        |           sizing: sizingPolicy
-        |       };
-        |       
         |       if (fig === null) {
         |           const plotSpec = $plotSpecAsJsObjectInitializer;
         |           ${
             if (dynamicScriptLoading)
                 "window.letsPlotCall(function() { " +
-                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, options); });"
+                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });"
             else
-                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, options);"
+                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing);"
         }
         |       } else {
         |           fig.updateView({});
@@ -229,8 +225,8 @@ object PlotHtmlHelper {
         |   
         |   const renderImmediately = 
         |       forceImmediateRender || (
-        |           sizingPolicy.width_mode === 'FIXED' && 
-        |           (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED')
+        |           sizing.width_mode === 'FIXED' && 
+        |           (sizing.height_mode === 'FIXED' || sizing.height_mode === 'SCALED')
         |       );
         |   
         |   if (renderImmediately) {

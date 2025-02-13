@@ -102,16 +102,12 @@ internal object PlotToolsBrowserDemoUtil {
                        |  var parentElement = document.createElement('div');
                        |  rootElement.appendChild(parentElement);
                        |  
-                       |  var options = {
-                       |      sizing: {
-                       |          width_mode: "fixed",
-                       |          height_mode: "fixed",
-                       |          width: ${plotSize.x},
-                       |          height: ${plotSize.y},
-                       |      }
+                       |  const sizing = {
+                       |      width: ${plotSize.x},
+                       |      height: ${plotSize.y}
                        |  };
                        |  
-                       |  var fig = LetsPlot.$plotFun(plotSpec, parentElement, options);
+                       |  var fig = LetsPlot.$plotFun(plotSpec, parentElement, sizing);
                        |  
                        |  toolbar.bind(fig);
                        |  

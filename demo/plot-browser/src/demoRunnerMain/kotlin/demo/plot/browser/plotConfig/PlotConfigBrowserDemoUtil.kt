@@ -104,14 +104,12 @@ object PlotConfigBrowserDemoUtil {
                         |
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   var options = {
-                        |       sizing: {
-                        |           width: ${plotSize.x},
-                        |           height: ${plotSize.y}
-                        |       }
+                        |   const sizing = {
+                        |       width: ${plotSize.x},
+                        |       height: ${plotSize.y}
                         |   };
                         |   
-                        |   LetsPlot.$plotFun(spec, parentElement, options);
+                        |   LetsPlot.$plotFun(spec, parentElement, sizing);
                         |});
                     """.trimMargin()
 

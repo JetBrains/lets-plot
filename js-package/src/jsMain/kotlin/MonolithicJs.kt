@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
-import org.jetbrains.letsPlot.core.util.sizing.SizingOption
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLDivElement
@@ -42,12 +41,14 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 fun buildPlotFromRawSpecs(
     plotSpecJs: dynamic,
     parentElement: HTMLElement,
+    sizingJs: dynamic,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+        val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
         val options: Map<String, Any> = if (optionsJs != null) {
             dynamicObjectToMap(optionsJs)
         } else {
@@ -57,6 +58,7 @@ fun buildPlotFromRawSpecs(
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
+            sizingOptions,
             options
         )
     } catch (e: RuntimeException) {
@@ -89,6 +91,7 @@ fun buildPlotFromRawSpecs(
 fun buildPlotFromProcessedSpecs(
     plotSpecJs: dynamic,
     parentElement: HTMLElement,
+    sizingJs: dynamic,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
@@ -97,6 +100,7 @@ fun buildPlotFromProcessedSpecs(
         // we apply "frontend" transforms anyway, just to be sure that
         // we are going to use a truly processed specs.
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
+        val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
         val options: Map<String, Any> = if (optionsJs != null) {
             dynamicObjectToMap(optionsJs)
         } else {
@@ -106,6 +110,7 @@ fun buildPlotFromProcessedSpecs(
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
+            sizingOptions,
             options
         )
     } catch (e: RuntimeException) {
@@ -117,6 +122,7 @@ fun buildPlotFromProcessedSpecs(
 private fun buildPlotFromProcessedSpecsPrivate(
     processedSpec: Map<String, Any>,
     containerDiv: HTMLElement,
+    sizingOptions: Map<String, Any>,
     options: Map<String, Any>
 ): FigureModelJs? {
 
@@ -155,7 +161,8 @@ private fun buildPlotFromProcessedSpecsPrivate(
     // Sizing policy
 
     // ---
-    // The "letsPlotPreferredWidth" attribute is now tested in the generated "static display html".
+    // The "letsPlotPreferredWidth" attribute is now processed in the generated HTML.
+    // See: PlotHtmlHelper.kt
     // ---
 //    // Datalore specific option - not compatible with reactive sizing.
 //    val datalorePreferredWidth: Double? =
@@ -167,10 +174,13 @@ private fun buildPlotFromProcessedSpecsPrivate(
 //        is Map<*, *> -> SizingPolicy.create(o)
 //        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
 //    }
-    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
-        is Map<*, *> -> SizingPolicy.create(o)
-        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
-    }
+
+//    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
+//        is Map<*, *> -> SizingPolicy.create(o)
+//        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
+//    }
+
+    val sizingPolicy = SizingPolicy.create(sizingOptions)
 
     val containerSize: () -> DoubleVector = {
         val height = if (showToolbar) {
