@@ -218,9 +218,9 @@ object PlotHtmlHelper {
         |           ${
             if (dynamicScriptLoading)
                 "window.letsPlotCall(function() { " +
-                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options); });"
+                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, options); });"
             else
-                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);"
+                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, options);"
         }
         |       } else {
         |           fig.updateView({});

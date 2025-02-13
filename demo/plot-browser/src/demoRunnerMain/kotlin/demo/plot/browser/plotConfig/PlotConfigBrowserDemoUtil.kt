@@ -48,9 +48,9 @@ object PlotConfigBrowserDemoUtil {
     ): String {
 
         val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
-            "buildPlotFromProcessedSpecs"
-        } else {
             "buildPlotFromRawSpecs"
+        } else {
+            "buildPlotFromProcessedSpecs"
         }
 
         val plotSpecListJs = StringBuilder("[\n")
@@ -111,7 +111,7 @@ object PlotConfigBrowserDemoUtil {
                         |       }
                         |   };
                         |   
-                        |   LetsPlot.$plotFun(spec, -1, -1, parentElement, options);
+                        |   LetsPlot.$plotFun(spec, parentElement, options);
                         |});
                     """.trimMargin()
 

@@ -41,15 +41,10 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 @JsExport
 fun buildPlotFromRawSpecs(
     plotSpecJs: dynamic,
-    width: Double,              // deprecated - do not use!!!
-    height: Double,             // deprecated - do not use!!!
     parentElement: HTMLElement,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
-        check(width < 0) { "Do not use 'width' parameter: deprecated." }
-        check(height < 0) { "Do not use 'height' parameter: deprecated." }
-
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
@@ -64,7 +59,6 @@ fun buildPlotFromRawSpecs(
             parentElement,
             options
         )
-
     } catch (e: RuntimeException) {
         handleException(e, MessageHandler(parentElement))
         null
@@ -76,10 +70,8 @@ fun buildPlotFromRawSpecs(
  * `processed specs` are plot specs processed by datalore plot backend.
  *
  * @param plotSpecJs plot specifications (a dictionary)
- * @param width number, if > 0, plot will assume given fixed width in px.
- * @param height number, if > 0, plot will assume given fixed height in px.
  * @param parentElement DOM element to add the plot to.
- *      If fixed `width/height` aren't provided, the plot size will be determined using `clientWidth` of the parent element.
+ *      The plot size will be determined using `clientWidth` of the parent element.
  * @param optionsJs miscellaneous settings.
  *      For example, set max width to 500px:
  *                          optionsJs = {
@@ -89,7 +81,6 @@ fun buildPlotFromRawSpecs(
  *                                  width: 500
  *                              }
  *                          };
- *
  */
 @OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
@@ -97,15 +88,10 @@ fun buildPlotFromRawSpecs(
 @JsExport
 fun buildPlotFromProcessedSpecs(
     plotSpecJs: dynamic,
-    width: Double,              // deprecated - do not use!!!
-    height: Double,             // deprecated - do not use!!!
     parentElement: HTMLElement,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
-        check(width < 0) { "Do not use 'width' parameter: deprecated." }
-        check(height < 0) { "Do not use 'height' parameter: deprecated." }
-
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // Though the "plotSpec" might contain already "processed" specs,
         // we apply "frontend" transforms anyway, just to be sure that

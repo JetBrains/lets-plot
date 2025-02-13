@@ -111,7 +111,7 @@ internal object PlotToolsBrowserDemoUtil {
                        |      }
                        |  };
                        |  
-                       |  var fig = LetsPlot.$plotFun(plotSpec, -1, -1, parentElement, options);
+                       |  var fig = LetsPlot.$plotFun(plotSpec, parentElement, options);
                        |  
                        |  toolbar.bind(fig);
                        |  
