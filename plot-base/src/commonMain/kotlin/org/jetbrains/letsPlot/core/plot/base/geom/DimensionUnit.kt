@@ -6,5 +6,5 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 enum class DimensionUnit {
-    RESOLUTION, IDENTITY, POINT, PIXEL
+    RESOLUTION, IDENTITY, SIZE, PIXEL
 }

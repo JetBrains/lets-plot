@@ -15,7 +15,7 @@ class Hex {
             basicIdentity(),
             basicWithStat(),
             pointOnBorder(0),
-            customSize(40.0, 40.0, "point", "point"),
+            customSize(40.0, 40.0, "size", "size"),
         )
     }
 
@@ -164,8 +164,8 @@ class Hex {
         heightUnit: String
     ): MutableMap<String, Any> {
         val pointSize = when {
-            widthUnit == "point" -> width
-            heightUnit == "point" -> height
+            widthUnit == "size" -> width
+            heightUnit == "size" -> height
             else -> 4.0
         }
         val spec = """

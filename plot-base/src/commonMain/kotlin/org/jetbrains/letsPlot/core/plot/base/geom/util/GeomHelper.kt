@@ -372,7 +372,7 @@ open class GeomHelper(
         return when (unit) {
             RESOLUTION -> value * ctx.getResolution(axisAes) // 1 corresponds to the resolution along the axis, i.e. the minimum distance between data points
             IDENTITY -> value // 1 corresponds to the distance from 0 to 1 on the axis
-            POINT -> {
+            SIZE -> {
                 // 1 corresponds to the diameter of a point of size 1 (in standard point size units)
                 value * AesScaling.POINT_UNIT_SIZE / unitSize
             }

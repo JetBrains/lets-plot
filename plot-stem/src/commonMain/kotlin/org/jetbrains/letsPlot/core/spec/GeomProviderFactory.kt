@@ -457,11 +457,11 @@ internal object GeomProviderFactory {
             when (it) {
                 "res" -> DimensionUnit.RESOLUTION
                 "identity" -> DimensionUnit.IDENTITY
-                "point" -> DimensionUnit.POINT
+                "size" -> DimensionUnit.SIZE
                 "px" -> DimensionUnit.PIXEL
                 else -> throw IllegalArgumentException(
                     "Unsupported value for $option parameter: '$it'. " +
-                    "Use one of: res, identity, point, px."
+                    "Use one of: res, identity, size, px."
                 )
             }
         }
