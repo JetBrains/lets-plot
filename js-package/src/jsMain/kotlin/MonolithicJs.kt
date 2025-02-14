@@ -27,7 +27,7 @@ private val LOG = PortableLogging.logger("MonolithicJs")
 
 // Key for the data attibute <body data-lets-plot-preferred-width='700'>
 // Used in Datalore reports to control size of the plot.
-// See generated "static display html".
+// See generated HTML (PlotHtmlHelper.kt)
 private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 
 /**
@@ -48,6 +48,8 @@ fun buildPlotFromRawSpecs(
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+
+        @Suppress("DuplicatedCode")
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
         val options: Map<String, Any> = if (optionsJs != null) {
             dynamicObjectToMap(optionsJs)
@@ -157,6 +159,7 @@ private fun buildPlotFromProcessedSpecsPrivate(
     // ToDo: messages should not affect size of 'container'.
     val messagesDiv = document.createElement("div") as HTMLDivElement
     plotContainer.appendChild(messagesDiv)
+    val messageHandler = MessageHandler(messagesDiv)
 
     // Sizing policy
 
@@ -199,7 +202,7 @@ private fun buildPlotFromProcessedSpecsPrivate(
         wrapperDiv,
         containerSize,
         sizingPolicy,
-        MessageHandler(messagesDiv),
+        messageHandler
     )
 
     if (toolbar != null && figureModelJs != null) {
@@ -233,9 +236,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
 
     val success = buildResult as Success
     val computationMessages = success.buildInfo.computationMessages
-    computationMessages.forEach {
-        messageHandler.showInfo(it)
-    }
+    messageHandler.showComputationMessages(computationMessages)
 
     val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
     return FigureModelJs(
@@ -266,8 +267,10 @@ internal class MessageHandler(
         showText(message, "lets-plot-message-error", "color:darkred;")
     }
 
-    fun showInfo(message: String) {
-        showText(message, "lets-plot-message-info", "color:darkblue;")
+    fun showComputationMessages(messages: List<String>) {
+        messages.forEach {
+            showText(it, "lets-plot-message-info", "color:darkblue;")
+        }
     }
 
     private fun showText(message: String, className: String, style: String) {
