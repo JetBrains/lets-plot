@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotHtmlHelper {
@@ -149,7 +148,6 @@ object PlotHtmlHelper {
     ): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
-//        val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
         val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
 
         if (logComputationMessages) {

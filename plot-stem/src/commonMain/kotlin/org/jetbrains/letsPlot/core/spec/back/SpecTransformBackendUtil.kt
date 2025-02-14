@@ -19,14 +19,9 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 object SpecTransformBackendUtil {
     private val LOG = PortableLogging.logger(SpecTransformBackendUtil::class)
 
-
-    fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
-        return processTransform(plotSpecRaw, false)
-    }
-
     internal fun processTransform(
         plotSpecRaw: MutableMap<String, Any>,
-        simulateFailure: Boolean
+        simulateFailure: Boolean = false
     ): MutableMap<String, Any> {
         var vegaLiteConverterSummary: List<*>? = null
 

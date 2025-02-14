@@ -10,7 +10,7 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.io.StringWriter
 
 object PlotConfigBrowserDemoUtil {
@@ -53,7 +53,7 @@ object PlotConfigBrowserDemoUtil {
         for (spec in plotSpecList) {
             @Suppress("NAME_SHADOWING")
             val spec = if (applyBackendTransform) {
-                SpecTransformBackendUtil.processTransform(spec)
+                MonolithicCommon.processRawSpecs(spec, frontendOnly = false)
             } else {
                 spec  // raw: JS is going to apply transform on the client side
             }

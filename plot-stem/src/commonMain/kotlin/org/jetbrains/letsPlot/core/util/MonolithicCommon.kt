@@ -265,7 +265,7 @@ object MonolithicCommon {
      * @param plotSpec: raw specifications of a plot
      */
     fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-        // Internal use: error simulation for testing.
+        // Internal use: error simulation (for testing).
         if (plotSpec["kind"]?.toString() == Option.Meta.Kind.ERROR_GEN) {
             return SpecTransformBackendUtil.processTransform(plotSpec, simulateFailure = true)
         }
