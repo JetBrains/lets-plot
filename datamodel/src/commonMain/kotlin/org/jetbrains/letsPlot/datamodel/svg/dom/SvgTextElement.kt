@@ -125,6 +125,14 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         return getAttribute(TEXT_DY)
     }
 
+    override fun fontWeight(): Property<String?> {
+        return getAttribute(SvgTextContent.FONT_WEIGHT)
+    }
+
+    override fun fontStyle(): Property<String?> {
+        return getAttribute(SvgTextContent.FONT_STYLE)
+    }
+
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer()!!.invertTransform(this, point)
     }
