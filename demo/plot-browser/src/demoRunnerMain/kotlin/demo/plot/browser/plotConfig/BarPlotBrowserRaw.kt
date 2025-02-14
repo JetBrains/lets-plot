@@ -9,11 +9,9 @@ import demo.plot.common.model.plotConfig.BarPlot
 
 fun main() {
     with(BarPlot()) {
-        @Suppress("UNCHECKED_CAST")
         (PlotConfigBrowserDemoUtil.show(
             "Bar plot",
             plotSpecList(),
-//            demoComponentSize,
             applyBackendTransform = false
         ))
     }

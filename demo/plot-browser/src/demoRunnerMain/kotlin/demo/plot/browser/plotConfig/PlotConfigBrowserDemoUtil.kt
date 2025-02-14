@@ -47,12 +47,6 @@ object PlotConfigBrowserDemoUtil {
         backgroundColor: String
     ): String {
 
-        val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
-            "buildPlotFromRawSpecs"
-        } else {
-            "buildPlotFromProcessedSpecs"
-        }
-
         val plotSpecListJs = StringBuilder("[\n")
 
         var first = true
@@ -67,6 +61,13 @@ object PlotConfigBrowserDemoUtil {
             plotSpecListJs.append(mapToJsObjectInitializer(spec))
         }
         plotSpecListJs.append("\n]")
+
+        val plotFun = if (applyBackendTransform) {
+            "buildPlotFromProcessedSpecs"
+        } else {
+            // Do "backend transform" in JS.
+            "buildPlotFromRawSpecs"
+        }
 
         val writer = StringWriter().appendHTML().html {
             lang = "en"
