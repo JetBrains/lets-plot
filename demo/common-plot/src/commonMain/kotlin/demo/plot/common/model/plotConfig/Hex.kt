@@ -15,7 +15,7 @@ class Hex {
             basicIdentity(),
             basicWithStat(),
             pointOnBorder(0),
-            customSize(40.0, 40.0, "size", "size"),
+            customSize(85.0, 85.0, "size", "size"),
         )
     }
 
@@ -198,14 +198,7 @@ class Hex {
                   'size': $pointSize,
                   'color': 'orange'
                 }
-              ],
-              'coord': {
-                'name': 'fixed',
-                'ratio': 1,
-                'flip': false,
-                'xlim': [-6, 6],
-                'ylim': [-${4.0 / HEX_HEIGHT}, ${8.0 / HEX_HEIGHT}]
-              }
+              ]
             }
         """.trimIndent()
 

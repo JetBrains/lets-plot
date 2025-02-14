@@ -41,9 +41,16 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         isDiscrete: Boolean
     ): DoubleSpan? {
         val loc = p.finiteOrNull(coordAes) ?: return null
-        val size = p.finiteOrNull(Aes.WIDTH) ?: return null
-        val expand = size / 2.0
-        return DoubleSpan(loc - expand, loc + expand)
+        val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+        val expand = when (widthUnit) {
+            DimensionUnit.RESOLUTION -> width * resolution / 2.0
+            DimensionUnit.IDENTITY -> width / 2.0
+            else -> resolution // If the units are "absolute" (e.g. pixels), we consider the width to be equal to 2
+        }
+        return DoubleSpan(
+            loc - expand,
+            loc + expand
+        )
     }
 
     override fun heightSpan(
@@ -53,9 +60,16 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         isDiscrete: Boolean
     ): DoubleSpan? {
         val loc = p.finiteOrNull(coordAes) ?: return null
-        val size = p.finiteOrNull(Aes.HEIGHT) ?: return null
-        val expand = size * HALF_HEX_HEIGHT
-        return DoubleSpan(loc - expand, loc + expand)
+        val height = p.finiteOrNull(Aes.HEIGHT) ?: return null
+        val expand = when (heightUnit) {
+            DimensionUnit.RESOLUTION -> height * resolution * HALF_HEX_HEIGHT
+            DimensionUnit.IDENTITY -> height * HALF_HEX_HEIGHT
+            else -> resolution * HALF_HEX_HEIGHT // If the units are "absolute" (e.g. pixels), we consider the height to be equal to 1
+        }
+        return DoubleSpan(
+            loc - expand,
+            loc + expand
+        )
     }
 
     companion object {

@@ -346,7 +346,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         isDiscrete: Boolean
     ): DoubleSpan? {
         if (!isDiscrete) return null
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0)
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0, DimensionUnit.RESOLUTION)
     }
 
     override fun heightSpan(
@@ -356,6 +356,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         isDiscrete: Boolean
     ): DoubleSpan? {
         if (!isDiscrete) return null
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0)
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.SIZE, 1.0, DimensionUnit.RESOLUTION)
     }
 }

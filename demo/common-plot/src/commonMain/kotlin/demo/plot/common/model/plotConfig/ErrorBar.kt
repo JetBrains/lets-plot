@@ -18,7 +18,7 @@ class ErrorBar {
             linerange(),
             withBars(), horizontalWithBars(),
             horizontalErrorBar(), horizontalErrorBarFlipped(),
-            customWidth(20.0, "px")
+            customWidth(20.0, "size")
         )
     }
 
@@ -275,12 +275,7 @@ class ErrorBar {
                   'width': $width,
                   'width_unit': '$widthUnit'
                 }
-              ],
-              'coord': {
-                'name': 'cartesian',
-                'flip': false,
-                'xlim': [-3, 3]
-              }
+              ]
             }
         """.trimIndent()
 

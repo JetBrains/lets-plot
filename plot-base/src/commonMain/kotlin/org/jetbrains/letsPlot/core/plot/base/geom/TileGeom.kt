@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
@@ -17,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_T
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).
  */
-open class TileGeom : GeomBase() {
+open class TileGeom : GeomBase(), WithWidth, WithHeight {
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
     var heightUnit: DimensionUnit = DEF_HEIGHT_UNIT
 
@@ -43,6 +44,24 @@ open class TileGeom : GeomBase() {
 
         val slimGroup = svgRectHelper.createSlimRectangles()
         root.add(wrap(slimGroup))
+    }
+
+    override fun widthSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
+    }
+
+    override fun heightSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.HEIGHT, resolution, heightUnit)
     }
 
     companion object {
