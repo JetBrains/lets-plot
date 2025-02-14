@@ -47,7 +47,7 @@ fun buildPlotFromRawSpecs(
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
-        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec)
 
         @Suppress("DuplicatedCode")
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)

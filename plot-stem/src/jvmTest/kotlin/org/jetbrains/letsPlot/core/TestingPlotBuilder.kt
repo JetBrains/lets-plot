@@ -58,7 +58,7 @@ internal object TestingPlotBuilder {
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
 
         @Suppress("NAME_SHADOWING")
-        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
             throw IllegalArgumentException(errorMessage)

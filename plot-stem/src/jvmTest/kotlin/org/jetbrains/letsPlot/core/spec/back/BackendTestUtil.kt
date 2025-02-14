@@ -31,7 +31,7 @@ object BackendTestUtil {
     }
 
     fun backendSpecTransform(plotSpec: MutableMap<String, Any>): Map<String, Any> {
-        return MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+        return MonolithicCommon.processRawSpecs(plotSpec)
     }
 
     /**

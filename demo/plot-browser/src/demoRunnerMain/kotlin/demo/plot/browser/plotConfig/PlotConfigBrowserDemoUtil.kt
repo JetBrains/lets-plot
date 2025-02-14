@@ -53,7 +53,7 @@ object PlotConfigBrowserDemoUtil {
         for (spec in plotSpecList) {
             @Suppress("NAME_SHADOWING")
             val spec = if (applyBackendTransform) {
-                MonolithicCommon.processRawSpecs(spec, frontendOnly = false)
+                MonolithicCommon.processRawSpecs(spec)
             } else {
                 spec  // raw: JS is going to apply transform on the client side
             }

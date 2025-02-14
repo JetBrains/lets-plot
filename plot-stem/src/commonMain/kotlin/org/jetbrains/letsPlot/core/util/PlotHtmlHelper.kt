@@ -148,7 +148,7 @@ object PlotHtmlHelper {
     ): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
-        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
 
         if (logComputationMessages) {
             PlotConfigUtil.findComputationMessages(plotSpec).forEach { LOG.info { "[when HTML generating] $it" } }

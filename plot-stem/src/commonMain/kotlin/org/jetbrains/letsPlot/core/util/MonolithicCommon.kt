@@ -33,7 +33,7 @@ object MonolithicCommon {
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         @Suppress("NAME_SHADOWING")
-        val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
+        val plotSpec = processRawSpecs(plotSpec)
         val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
             ?: SizingPolicy.keepFigureDefaultSize()
 
@@ -263,8 +263,12 @@ object MonolithicCommon {
     /**
      * Applies all transformations to the plot specifications.
      * @param plotSpec: raw specifications of a plot
+     * @param frontendOnly: if False, apply 'backend' transform as well as `frontend` transform.
      */
-    fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+    fun processRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        frontendOnly: Boolean = false
+    ): MutableMap<String, Any> {
         // Internal use: error simulation (for testing).
         if (plotSpec["kind"]?.toString() == Option.Meta.Kind.ERROR_GEN) {
             return SpecTransformBackendUtil.processTransform(plotSpec, simulateFailure = true)
