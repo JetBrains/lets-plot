@@ -14,7 +14,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse('')`() {
         assertEquals(
-            expected = g(),
+            expected = g { },
             actual = parse("")
         )
     }
@@ -62,7 +62,11 @@ class MarkdownAsteriskTest {
     @Test
     fun `pase(_foo_)`() {
         assertEquals(
-            expected = g(Node.Emph(), Node.Text("foo"), Node.CloseEmph()),
+            expected = g {
+                i {
+                    text("foo")
+                }
+            },
             actual = parse("*foo*")
         )
     }
@@ -70,21 +74,21 @@ class MarkdownAsteriskTest {
     @Test
     fun `pase(__foo_)`() {
         assertEquals(
-            expected = Node.Group(Node.Text("*"), Node.Emph(), Node.Text("foo"), Node.CloseEmph()),
+            expected = Node.Group(Node.Text("*"), Node.Emph, Node.Text("foo"), Node.CloseEmph),
             actual = parse("**foo*")
         )
     }
 
     @Test
-    fun `parse(___baz___)`(){
+    fun `parse(___baz___)`() {
         assertEquals(
             expected = Node.Group(
                 listOf(
-                    Node.Emph(),
-                    Node.Strong(),
+                    Node.Emph,
+                    Node.Strong,
                     Node.Text("baz"),
-                    Node.CloseStrong(),
-                    Node.CloseEmph()
+                    Node.CloseStrong,
+                    Node.CloseEmph
                 )
             ),
             actual = parse("***baz***")
@@ -92,24 +96,24 @@ class MarkdownAsteriskTest {
     }
 
     @Test
-    fun `parse(_foo___bar_____baz___)`(){
+    fun `parse(_foo___bar_____baz___)`() {
         assertEquals(
             expected = Node.Group(
                 listOf(
-                    Node.Emph(),
+                    Node.Emph,
                     Node.Text("foo"),
-                    Node.CloseEmph(),
+                    Node.CloseEmph,
                     Node.Text(" "),
 
-                    Node.Strong(),
+                    Node.Strong,
                     Node.Text("bar"),
-                    Node.CloseStrong(),
+                    Node.CloseStrong,
                     Node.Text(" "),
-                    Node.Emph(),
-                    Node.Strong(),
+                    Node.Emph,
+                    Node.Strong,
                     Node.Text("baz"),
-                    Node.CloseStrong(),
-                    Node.CloseEmph()
+                    Node.CloseStrong,
+                    Node.CloseEmph
                 )
             ),
             actual = parse("*foo* **bar** ***baz***")
@@ -119,13 +123,14 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(foo_bar_baz)`() {
         assertEquals(
-            expected = Node.Group(
-                listOf(
-                    Node.Text("foo"),
-                    Node.Emph("bar"),
-                    Node.Text("baz")
-                )
-            ),
+            expected = g {
+                text("foo")
+                i {
+                    text("bar")
+                }
+                text("baz")
+            }
+            ,
             actual = parse("foo*bar*baz")
         )
     }
@@ -157,10 +162,12 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(foo-_(bar)_)`() {
         assertEquals(
-            expected = Node.Group(
-                Node.Text("foo-"),
-                Node.Emph("(bar)"),
-            ),
+            expected = g {
+                text("foo-")
+                i {
+                    text("(bar)")
+                }
+            },
             actual = parse("foo-*(bar)*")
         )
     }
@@ -168,10 +175,14 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(___foo__ bar_)`() {
         assertEquals(
-            expected = Node.Group(
-                Node.BoldItalic("foo"),
-                Node.Emph(" bar"),
-            ),
+            expected = g {
+                i {
+                    b {
+                        text("foo")
+                    }
+                    text(" bar")
+                }
+            },
             actual = parse("***foo** bar*")
         )
     }
@@ -179,24 +190,38 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_bar __foo___)`() {
         assertEquals(
-            expected = Node.Group(
-                Node.Emph("bar "),
-                Node.BoldItalic("foo"),
-            ),
+            expected = g {
+                i {
+                    text("bar ")
+                    b {
+                        text("foo")
+                    }
+                }
+            },
             actual = parse("*bar **foo***")
         )
     }
 
 }
 
-fun g(vararg nodes: Node): Node.Group {
-    return Node.Group(nodes.toList())
+fun g(block: MutableList<Node>.() -> Unit): Node.Group {
+    val nodes = mutableListOf<Node>()
+    nodes.apply(block)
+    return Node.Group(nodes)
 }
 
-fun emph(text: String): List<Node> {
-    return listOf(Node.Emph(), Node.Text(text), Node.CloseEmph())
+fun MutableList<Node>.i(block: MutableList<Node>.() -> Unit) {
+    add(Node.Emph)
+    apply(block)
+    add(Node.CloseEmph)
 }
 
-fun strong(text: String): List<Node> {
-    return listOf(Node.Strong(), Node.Text(text), Node.CloseStrong())
+fun MutableList<Node>.b(block: MutableList<Node>.() -> Unit) {
+    add(Node.Strong)
+    apply(block)
+    add(Node.CloseStrong)
+}
+
+fun MutableList<Node>.text(text: String) {
+    add(Node.Text(text))
 }

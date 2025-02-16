@@ -54,7 +54,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `pase(_foo_)`() {
         assertEquals(
-            expected = Node.Emph("foo"),
+            expected = g { i { text("foo") } },
             actual = parse("_foo_")
         )
     }
@@ -62,7 +62,10 @@ class MarkdownUnderscoreTest {
     @Test
     fun `pase(__foo_)`() {
         assertEquals(
-            expected = Node.Group(Node.Text("_"), Node.Emph("foo")),
+            expected = g {
+                text("_")
+                i { text("foo") }
+            },
             actual = parse("__foo_")
         )
     }
@@ -70,15 +73,13 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(_foo___bar_____baz___)`(){
         assertEquals(
-            expected = Node.Group(
-                listOf(
-                    Node.Emph("foo"),
-                    Node.Text(" "),
-                    Node.Strong("bar"),
-                    Node.Text(" "),
-                    Node.BoldItalic("baz")
-                )
-            ),
+            expected = g {
+                i { text ("foo") }
+                text(" ")
+                b { text("bar") }
+                text(" ")
+                i { b { text("baz") } }
+            },
             actual = parse("_foo_ __bar__ ___baz___")
         )
     }
@@ -134,10 +135,12 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(foo-_(bar)_)`() {
         assertEquals(
-            expected = Node.Group(
-                Node.Text("foo-"),
-                Node.Emph("(bar)"),
-            ),
+            expected = g {
+                text("foo-")
+                i {
+                    text("(bar)")
+                }
+            },
             actual = parse("foo-_(bar)_")
         )
     }

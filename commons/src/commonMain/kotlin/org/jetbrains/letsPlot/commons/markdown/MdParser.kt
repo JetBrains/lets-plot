@@ -66,7 +66,29 @@ internal class MdParser private constructor(
             processEmphasis(delimiters, nodes)
         }
 
-        return nodes
+        return joinTextNodes(nodes)
+    }
+
+    private fun joinTextNodes(nodes: List<Node>): MutableList<Node> {
+        val res = mutableListOf<Node>()
+        var i = 0
+        while (i < nodes.size) {
+            if (nodes[i] is Node.Text) {
+                val start = i
+                while (i < nodes.size && nodes[i] is Node.Text) {
+                    i++
+                }
+                val end = i
+                val text = nodes.subList(start, end).joinToString("") { (it as Node.Text).text }
+
+                res.add(Node.Text(text))
+            } else {
+                res.add(nodes[i])
+                i++
+            }
+        }
+
+        return res
     }
 
     private fun processEmphasis(
@@ -112,8 +134,8 @@ internal class MdParser private constructor(
 
             if (opener != null) {
                 val strong = opener.count >= 2 && closer.count >= 2
-                nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Node.Strong("") else Node.Emph(""))
-                nodes.add(nodes.indexOfFirst { it === closer.node }, if (strong) Node.CloseStrong("") else Node.CloseEmph(""))
+                nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Node.Strong else Node.Emph)
+                nodes.add(nodes.indexOfFirst { it === closer.node }, if (strong) Node.CloseStrong else Node.CloseEmph)
                 val toRemoveStart = infos.indexOf(opener) + 1
                 val toRemoveEnd = infos.indexOf(closer) - 1
 
@@ -150,8 +172,8 @@ internal class MdParser private constructor(
             buffer.clear()
             return when {
                 isBold && isItalic -> Node.BoldItalic(text)
-                isBold -> Node.Strong(text)
-                isItalic -> Node.Emph(text)
+                isBold -> Node.Strong
+                isItalic -> Node.Emph
                 else -> Node.Text(text)
             }
         }
