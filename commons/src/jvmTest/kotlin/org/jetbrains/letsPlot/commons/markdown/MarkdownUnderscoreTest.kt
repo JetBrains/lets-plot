@@ -54,7 +54,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `pase(_foo_)`() {
         assertEquals(
-            expected = g { i { text("foo") } },
+            expected = g { emph { text("foo") } },
             actual = parse("_foo_")
         )
     }
@@ -64,7 +64,7 @@ class MarkdownUnderscoreTest {
         assertEquals(
             expected = g {
                 text("_")
-                i { text("foo") }
+                emph { text("foo") }
             },
             actual = parse("__foo_")
         )
@@ -74,11 +74,11 @@ class MarkdownUnderscoreTest {
     fun `parse(_foo___bar_____baz___)`(){
         assertEquals(
             expected = g {
-                i { text ("foo") }
+                emph { text ("foo") }
                 text(" ")
-                b { text("bar") }
+                strong { text("bar") }
                 text(" ")
-                i { b { text("baz") } }
+                emph { strong { text("baz") } }
             },
             actual = parse("_foo_ __bar__ ___baz___")
         )
@@ -137,7 +137,7 @@ class MarkdownUnderscoreTest {
         assertEquals(
             expected = g {
                 text("foo-")
-                i {
+                emph {
                     text("(bar)")
                 }
             },

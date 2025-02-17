@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
-import org.jetbrains.letsPlot.commons.markdown.Node
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -33,17 +32,17 @@ internal class MarkdownEx : Term {
 
             val rootNode = Markdown.parse(text)
 
-            if (rootNode is Node.Group) {
-                return rootNode.children.map { node ->
-                    when (node) {
-                        is Node.Text -> Text(node.text)
-                        is Node.Strong -> BoldText(node.text)
-                        is Node.Emph -> ItalicText(node.text)
-                        is Node.BoldItalic -> BoldItalicText(node.text)
-                        else -> throw IllegalArgumentException("Unsupported node type: $node")
-                    }
-                }
-            }
+            //if (rootNode is Node.Group) {
+            //    return rootNode.children.map { node ->
+            //        when (node) {
+            //            is Node.Text -> Text(node.text)
+            //            is Node.Strong -> BoldText(node.text)
+            //            is Node.Emph -> ItalicText(node.text)
+            //            is Node.BoldItalic -> BoldItalicText(node.text)
+            //            else -> throw IllegalArgumentException("Unsupported node type: $node")
+            //        }
+            //    }
+            //}
 
             return listOf(Text(text))
         }

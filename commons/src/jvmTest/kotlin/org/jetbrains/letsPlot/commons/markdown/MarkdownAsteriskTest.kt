@@ -63,7 +63,7 @@ class MarkdownAsteriskTest {
     fun `pase(_foo_)`() {
         assertEquals(
             expected = g {
-                i {
+                emph {
                     text("foo")
                 }
             },
@@ -98,24 +98,13 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_foo___bar_____baz___)`() {
         assertEquals(
-            expected = Node.Group(
-                listOf(
-                    Node.Emph,
-                    Node.Text("foo"),
-                    Node.CloseEmph,
-                    Node.Text(" "),
-
-                    Node.Strong,
-                    Node.Text("bar"),
-                    Node.CloseStrong,
-                    Node.Text(" "),
-                    Node.Emph,
-                    Node.Strong,
-                    Node.Text("baz"),
-                    Node.CloseStrong,
-                    Node.CloseEmph
-                )
-            ),
+            expected = g {
+                emph { text("foo") }
+                text(" ")
+                strong { text("bar") }
+                text(" ")
+                emph { strong { text("baz") } }
+            },
             actual = parse("*foo* **bar** ***baz***")
         )
     }
@@ -125,7 +114,7 @@ class MarkdownAsteriskTest {
         assertEquals(
             expected = g {
                 text("foo")
-                i {
+                emph {
                     text("bar")
                 }
                 text("baz")
@@ -164,7 +153,7 @@ class MarkdownAsteriskTest {
         assertEquals(
             expected = g {
                 text("foo-")
-                i {
+                emph {
                     text("(bar)")
                 }
             },
@@ -176,8 +165,8 @@ class MarkdownAsteriskTest {
     fun `parse(___foo__ bar_)`() {
         assertEquals(
             expected = g {
-                i {
-                    b {
+                emph {
+                    strong {
                         text("foo")
                     }
                     text(" bar")
@@ -191,9 +180,9 @@ class MarkdownAsteriskTest {
     fun `parse(_bar __foo___)`() {
         assertEquals(
             expected = g {
-                i {
+                emph {
                     text("bar ")
-                    b {
+                    strong {
                         text("foo")
                     }
                 }
@@ -202,6 +191,23 @@ class MarkdownAsteriskTest {
         )
     }
 
+    @Test
+    fun `parse(_____Hello_world____)`() {
+        assertEquals(
+            expected = g {
+                text("**")
+                emph {
+                    strong {
+                        text("Hello")
+                        emph {
+                            text("world")
+                        }
+                    }
+                }
+            },
+            actual = parse("*****Hello*world****")
+        )
+    }
 }
 
 fun g(block: MutableList<Node>.() -> Unit): Node.Group {
@@ -210,13 +216,13 @@ fun g(block: MutableList<Node>.() -> Unit): Node.Group {
     return Node.Group(nodes)
 }
 
-fun MutableList<Node>.i(block: MutableList<Node>.() -> Unit) {
+fun MutableList<Node>.emph(block: MutableList<Node>.() -> Unit) {
     add(Node.Emph)
     apply(block)
     add(Node.CloseEmph)
 }
 
-fun MutableList<Node>.b(block: MutableList<Node>.() -> Unit) {
+fun MutableList<Node>.strong(block: MutableList<Node>.() -> Unit) {
     add(Node.Strong)
     apply(block)
     add(Node.CloseStrong)

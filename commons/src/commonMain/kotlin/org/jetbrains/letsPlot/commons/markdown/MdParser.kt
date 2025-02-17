@@ -25,6 +25,10 @@ internal class MdParser private constructor(
             count -= toDrop
             node.text = node.text.dropLast(toDrop)
         }
+
+        override fun toString(): String {
+            return "DelimiterInfo(token=$token, node=$node, count=$count, active=$active, opener=$opener, closer=$closer)"
+        }
     }
 
     private fun parse(): List<Node> {
@@ -34,33 +38,35 @@ internal class MdParser private constructor(
 
         while (i < tokens.size) {
             val token = tokens[i]
-            if (token.type == TokenType.ASTERISK || token.type == TokenType.UNDERSCORE) {
-                if (tokens.getOrNull(i - 1)?.type == token.type) {
-                    // Is not a run - previous token is a delimiter
-                    nodes += Node.Text(token.value)
-                    i++
-                    continue
-                }
+            if (token.type == TokenType.BACKSLASH) {
+                nodes += Node.Text(tokens[i + 1].value)
+                i += 2
+            } else
+                if (token.type == TokenType.ASTERISK || token.type == TokenType.UNDERSCORE) {
+                    if (tokens.getOrNull(i - 1)?.type == token.type) {
+                        // Is not a run - previous token is a delimiter
+                        nodes += Node.Text(token.value)
+                        i++
+                        continue
+                    }
 
-                val opener = canOpenEmphasis(i)
-                val closer = canCloseEmphasis(i)
-                if (!opener && !closer) {
-                    nodes += Node.Text(token.value)
-                    i++
+                    val opener = canOpenEmphasis(i)
+                    val closer = canCloseEmphasis(i)
+                    if (!opener && !closer) {
+                        nodes += Node.Text(token.value)
+                        i++
+                    } else {
+                        val count = delimiterRunLength(tokens, i)
+                        val text = Node.Text(tokens.subList(i, i + count).joinToString("") { it.value })
+                        delimiters.add(DelimiterInfo(token, text, count, opener = opener, closer = closer))
+                        nodes += text
+                        i += count
+                    }
                 } else {
-                    val count = delimiterRunLength(tokens, i)
-                    val text = Node.Text(tokens.subList(i, i + count).joinToString("") { it.value })
-                    delimiters.add(DelimiterInfo(token, text, count, opener = opener, closer = closer))
-                    nodes += text
-                    i += count
+                    nodes += Node.Text(token.value)
+                    i++
                 }
-            } else {
-                nodes += Node.Text(token.value)
-                i++
-            }
         }
-
-        println(delimiters.joinToString("\n"))
 
         if (delimiters.size > 1) {
             processEmphasis(delimiters, nodes)
@@ -91,20 +97,19 @@ internal class MdParser private constructor(
         return res
     }
 
-    private fun processEmphasis(
-        infos: MutableList<DelimiterInfo>,
-        nodes: MutableList<Node>,
-        stackBottom: Int? = null
-    ) {
+    // Reference:
+    // https://github.com/commonmark/cmark/blob/3460cd809b6dd311b58e92733ece2fc956224fd2/src/inlines.c#L651
+    private fun processEmphasis(infos: MutableList<DelimiterInfo>, nodes: MutableList<Node>, stackBottom: Int = 0) {
+        if (infos.isEmpty()) {
+            return
+        }
+
+        var currentPosition = if (stackBottom == null) 0 else stackBottom + 1
         var closer: DelimiterInfo? = null
-        var currentPosition = if (stackBottom == null) infos.lastIndex else stackBottom + 1
 
-        val openersBottom = mapOf(
-            TokenType.ASTERISK to (stackBottom ?: (0)),
-            TokenType.UNDERSCORE to (stackBottom ?: (0))
-        )
+        val openersBottom = mutableMapOf<Int, Int>()
 
-       while(true) {
+        while (true) {
             closer = null
             while (currentPosition < infos.size) {
                 val currentDelimiter = infos[currentPosition]
@@ -119,21 +124,32 @@ internal class MdParser private constructor(
                 return
             }
 
-            var lookBack = currentPosition - 1
+            var openerPosition = currentPosition - 1
 
-            var opener: DelimiterInfo? = null
+            var opener: DelimiterInfo? = infos.getOrNull(openerPosition)
+            var openerFound = false
 
-            while (lookBack >= (stackBottom ?: 0) && lookBack >= openersBottom[closer.token.type]!!) {
-                if (infos[lookBack].opener) {
-                    opener = infos[lookBack]
-                    break
+            val openerBottomIndex = toOpenerIndex(closer)
+
+            while (opener != null && openerPosition >= (openersBottom[openerBottomIndex] ?: stackBottom)) {
+                if (opener.opener && opener.token.type == closer.token.type) {
+                    if (!(closer.opener || opener.closer)
+                        || closer.count % 3 == 0
+                        || (opener.count + closer.count) % 3 != 0
+                    ) {
+                        openerFound = true
+                        break
+                    }
                 }
 
-                lookBack--
+                openerPosition--
+                opener = infos.getOrNull(openerPosition)
             }
 
-            if (opener != null) {
-                val strong = opener.count >= 2 && closer.count >= 2
+            val oldCloser = closer
+
+            if (openerFound) {
+                val strong = opener!!.count >= 2 && closer.count >= 2
                 nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Node.Strong else Node.Emph)
                 nodes.add(nodes.indexOfFirst { it === closer.node }, if (strong) Node.CloseStrong else Node.CloseEmph)
                 val toRemoveStart = infos.indexOf(opener) + 1
@@ -154,119 +170,26 @@ internal class MdParser private constructor(
                 if (closer.count == 0) {
                     infos.remove(closer)
                     nodes.remove(closer.node)
-                    currentPosition--
                 }
+                currentPosition--
+            } else {
+                currentPosition++
+                //infos.remove(closer)
+                openersBottom[toOpenerIndex(closer)] = currentPosition
             }
         }
-    }
-
-    private fun parseOld(): List<Node> {
-        return parse(0..tokens.size, false, false)
-    }
-
-    private fun parse(range: IntRange, isBold: Boolean, isItalic: Boolean): List<Node> {
-        val buffer = StringBuilder()
-
-        fun buildText(): Node {
-            val text = buffer.toString()
-            buffer.clear()
-            return when {
-                isBold && isItalic -> Node.BoldItalic(text)
-                isBold -> Node.Strong
-                isItalic -> Node.Emph
-                else -> Node.Text(text)
-            }
-        }
-
-        var i = range.start
-        val nodes = mutableListOf<Node>()
-
-        while (i < range.endInclusive) {
-            val token = tokens[i]
-            when (token.type) {
-                TokenType.TEXT -> buffer.append(token.value).also { i++ }
-                TokenType.WHITE_SPACE -> buffer.append(token.value).also { i++ }
-                TokenType.ASTERISK -> {
-                    val runLength = delimiterRunLength(tokens, i)
-                    val nextDelimiterRun = findNextDelimiterRun(tokens, i + runLength, TokenType.ASTERISK)
-
-                    if (canOpenEmphasis(i) && canCloseEmphasis(nextDelimiterRun)) {
-
-                        if (buffer.isNotEmpty()) {
-                            nodes += buildText()
-                        }
-
-                        val innerRange = (i + runLength) .. nextDelimiterRun
-                        val innerNode = parse(innerRange, runLength == 2 || runLength >= 3, runLength == 1 || runLength >= 3)
-                        nodes.addAll(innerNode)
-                        i = nextDelimiterRun + runLength
-                    } else {
-                        buffer.append(token.value)
-                        i++
-                    }
-                }
-
-                TokenType.UNDERSCORE -> {
-                    val runLength = delimiterRunLength(tokens, i)
-                    val nextDelimiterRun = findNextDelimiterRun(tokens, i + runLength, TokenType.UNDERSCORE)
-
-                    if (canOpenEmphasis(i) && canCloseEmphasis(nextDelimiterRun)) {
-
-                        if (buffer.isNotEmpty()) {
-                            nodes += buildText()
-                        }
-
-                        val innerRange = (i + runLength) .. nextDelimiterRun
-                        val innerNode = parse(innerRange, runLength == 2 || runLength >= 3, runLength == 1 || runLength >= 3)
-                        nodes.addAll(innerNode)
-                        i = nextDelimiterRun + runLength
-                    } else {
-                        buffer.append(token.value)
-                        i++
-                    }
-                }
-
-                TokenType.BACKSLASH -> {
-                    buffer.append(tokens[i + 1].value)
-                    i += 2
-                }
-
-                else -> error("Unexpected token: $token")
-            }
-        }
-
-        if (buffer.isNotEmpty()) {
-            nodes += buildText()
-        }
-
-        return nodes
-    }
-
-    // https://spec.commonmark.org/0.31.2/#delimiter-run
-    private fun findNextDelimiterRun(tokens: List<Token>, index: Int, token: TokenType): Int {
-        var cur = index
-        while (cur < tokens.size) {
-            if (tokens[cur].type == token) {
-                return cur
-            }
-            cur++
-        }
-        return -1
     }
 
     // https://spec.commonmark.org/0.31.2/#delimiter-run
     private fun delimiterRunLength(tokens: List<Token>, index: Int): Int {
         val token = tokens[index]
-        val nextToken = tokens.getOrNull(index + 1)
-        val nextNextToken = tokens.getOrNull(index + 2)
 
-        return when {
-            token.type == TokenType.ASTERISK && nextToken?.type == TokenType.ASTERISK && nextNextToken?.type == TokenType.ASTERISK -> 3
-            token.type == TokenType.UNDERSCORE && nextToken?.type == TokenType.UNDERSCORE && nextNextToken?.type == TokenType.UNDERSCORE -> 3
-            token.type == TokenType.ASTERISK && nextToken?.type == TokenType.ASTERISK -> 2
-            token.type == TokenType.UNDERSCORE && nextToken?.type == TokenType.UNDERSCORE -> 2
-            else -> 1
+        var i = index + 1
+        while (i < tokens.size && tokens[i].type == token.type) {
+            i++
         }
+
+        return i - index
     }
 
     // https://spec.commonmark.org/0.31.2/#can-open-emphasis
@@ -274,7 +197,7 @@ internal class MdParser private constructor(
         val token = tokens[index].type
 
         val leftFlankingDelimiterRun = isLeftFlankingDelimiterRun(tokens, index)
-        
+
         if (token == TokenType.ASTERISK) {
             return leftFlankingDelimiterRun
         }
@@ -282,7 +205,7 @@ internal class MdParser private constructor(
         if (token == TokenType.UNDERSCORE) {
             val rightFlankingDelimiterRun = false//isRightFlankingDelimiterRun(tokens, index)
             val precededByPunctuation = tokens.getOrNull(index - 1)?.type == TokenType.PUNCTUATION
-            
+
             val res = leftFlankingDelimiterRun
                     && (!rightFlankingDelimiterRun || (rightFlankingDelimiterRun && precededByPunctuation))
 
@@ -297,7 +220,7 @@ internal class MdParser private constructor(
         val token = tokens[index].type
 
         val rightFlankingDelimiterRun = isRightFlankingDelimiterRun(tokens, index)
-        
+
         if (token == TokenType.ASTERISK) {
             return rightFlankingDelimiterRun
         }
@@ -362,13 +285,20 @@ internal class MdParser private constructor(
         return false
     }
 
+    private fun toOpenerIndex(delimiter: DelimiterInfo): Int {
+        val type = delimiter.token.type.ordinal
+        val canOpen = 10 + if (delimiter.opener) 1 else 0
+        val mod3 = delimiter.count % 3
+
+        return type + (canOpen * 10) + (mod3 * 100)
+    }
+
+
     companion object {
         fun parse(tokens: List<Token>): List<Node> {
             return MdParser(tokens).parse()
         }
     }
-
-
 }
 
 
