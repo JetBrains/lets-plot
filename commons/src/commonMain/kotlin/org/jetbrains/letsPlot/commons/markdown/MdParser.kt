@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.commons.markdown
 
 import org.jetbrains.letsPlot.commons.markdown.MdLexer.Token
 import org.jetbrains.letsPlot.commons.markdown.MdLexer.TokenType
+import org.jetbrains.letsPlot.commons.markdown.Node.*
 
 // Reference: https://spec.commonmark.org/0.31.2/
 internal class MdParser private constructor(
@@ -17,8 +18,8 @@ internal class MdParser private constructor(
         val node: Node.Text,
         var count: Int,
         var active: Boolean = true,
-        val opener: Boolean,
-        val closer: Boolean
+        val canOpen: Boolean,
+        val canClose: Boolean
     ) {
         fun shrink(bool: Boolean) {
             val toDrop = (if (bool) 2 else 1).coerceAtMost(count)
@@ -27,7 +28,7 @@ internal class MdParser private constructor(
         }
 
         override fun toString(): String {
-            return "DelimiterInfo(token=$token, node=$node, count=$count, active=$active, opener=$opener, closer=$closer)"
+            return "DelimiterInfo(token=$token, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
         }
     }
 
@@ -58,7 +59,7 @@ internal class MdParser private constructor(
                     } else {
                         val count = delimiterRunLength(tokens, i)
                         val text = Node.Text(tokens.subList(i, i + count).joinToString("") { it.value })
-                        delimiters.add(DelimiterInfo(token, text, count, opener = opener, closer = closer))
+                        delimiters.add(DelimiterInfo(token, text, count, canOpen = opener, canClose = closer))
                         nodes += text
                         i += count
                     }
@@ -104,78 +105,61 @@ internal class MdParser private constructor(
             return
         }
 
-        var currentPosition = if (stackBottom == null) 0 else stackBottom + 1
-        var closer: DelimiterInfo? = null
-
         val openersBottom = mutableMapOf<Int, Int>()
 
-        while (true) {
-            closer = null
-            while (currentPosition < infos.size) {
-                val currentDelimiter = infos[currentPosition]
-                if (currentDelimiter.closer) {
-                    closer = currentDelimiter
-                    break
-                }
-                currentPosition++
-            }
+        var currentPosition = stackBottom
+        var closer: DelimiterInfo? = infos.getOrNull(currentPosition)
 
-            if (closer == null) {
-                return
-            }
+        while (closer != null) {
+            if (closer.canClose) {
 
-            var openerPosition = currentPosition - 1
+                val openerBottomIndex = closer.token.type.ordinal * 10 +
+                        (if (closer.canOpen) 3 else 0) +
+                        closer.count % 3
 
-            var opener: DelimiterInfo? = infos.getOrNull(openerPosition)
-            var openerFound = false
+                var openerPosition = currentPosition - 1
+                var opener = infos.getOrNull(openerPosition)
+                var openerFound = false
 
-            val openerBottomIndex = toOpenerIndex(closer)
-
-            while (opener != null && openerPosition >= (openersBottom[openerBottomIndex] ?: stackBottom)) {
-                if (opener.opener && opener.token.type == closer.token.type) {
-                    if (!(closer.opener || opener.closer)
-                        || closer.count % 3 == 0
-                        || (opener.count + closer.count) % 3 != 0
-                    ) {
-                        openerFound = true
-                        break
+                while (opener != null && openerPosition >= (openersBottom[openerBottomIndex] ?: stackBottom)) {
+                    if (opener.canOpen && opener.token.type == closer.token.type) {
+                        if (!(closer.canOpen || opener.canClose)
+                            || closer.count % 3 == 0
+                            || (opener.count + closer.count) % 3 != 0
+                        ) {
+                            openerFound = true
+                            break
+                        }
                     }
+                    opener = infos.getOrNull(--openerPosition)
                 }
 
-                openerPosition--
-                opener = infos.getOrNull(openerPosition)
-            }
+                if (openerFound) {
+                    val strong = opener!!.count >= 2 && closer.count >= 2
+                    nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Strong else Emph)
+                    nodes.add(nodes.indexOfFirst { it === closer!!.node }, if (strong) CloseStrong else CloseEmph)
 
-            val oldCloser = closer
+                    opener.shrink(strong)
+                    closer.shrink(strong)
+                    if (opener.count == 0) {
+                        infos.remove(opener)
+                        nodes.remove(opener.node)
+                    }
+                    if (closer.count == 0) {
+                        infos.remove(closer)
+                        nodes.remove(closer.node)
+                    }
 
-            if (openerFound) {
-                val strong = opener!!.count >= 2 && closer.count >= 2
-                nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Node.Strong else Node.Emph)
-                nodes.add(nodes.indexOfFirst { it === closer.node }, if (strong) Node.CloseStrong else Node.CloseEmph)
-                val toRemoveStart = infos.indexOf(opener) + 1
-                val toRemoveEnd = infos.indexOf(closer) - 1
-
-                if (toRemoveEnd - toRemoveStart > 0) {
-                    infos.subList(toRemoveStart, toRemoveEnd).clear()
+                    closer = infos.getOrNull(--currentPosition)
+                } else {
+                    openersBottom[openerBottomIndex] = currentPosition
+                    if (!closer.canOpen) {
+                        nodes.remove(closer.node)
+                    }
+                    closer = infos.getOrNull(++currentPosition)
                 }
-
-                opener.shrink(strong)
-                closer.shrink(strong)
-
-                if (opener.count == 0) {
-                    infos.remove(opener)
-                    nodes.remove(opener.node)
-                }
-
-                if (closer.count == 0) {
-                    infos.remove(closer)
-                    nodes.remove(closer.node)
-                }
-                currentPosition--
             } else {
-                currentPosition++
-                //infos.remove(closer)
-                openersBottom[toOpenerIndex(closer)] = currentPosition
+                closer = infos.getOrNull(++currentPosition)
             }
         }
     }
@@ -203,7 +187,7 @@ internal class MdParser private constructor(
         }
 
         if (token == TokenType.UNDERSCORE) {
-            val rightFlankingDelimiterRun = false//isRightFlankingDelimiterRun(tokens, index)
+            val rightFlankingDelimiterRun = isRightFlankingDelimiterRun(tokens, index)
             val precededByPunctuation = tokens.getOrNull(index - 1)?.type == TokenType.PUNCTUATION
 
             val res = leftFlankingDelimiterRun
@@ -283,14 +267,6 @@ internal class MdParser private constructor(
         }
 
         return false
-    }
-
-    private fun toOpenerIndex(delimiter: DelimiterInfo): Int {
-        val type = delimiter.token.type.ordinal
-        val canOpen = 10 + if (delimiter.opener) 1 else 0
-        val mod3 = delimiter.count % 3
-
-        return type + (canOpen * 10) + (mod3 * 100)
     }
 
 
