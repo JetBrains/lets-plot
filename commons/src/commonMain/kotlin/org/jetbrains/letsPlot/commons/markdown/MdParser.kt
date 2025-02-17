@@ -166,14 +166,8 @@ internal class MdParser private constructor(
 
     // https://spec.commonmark.org/0.31.2/#delimiter-run
     private fun delimiterRunLength(tokens: List<Token>, index: Int): Int {
-        val token = tokens[index]
-
-        var i = index + 1
-        while (i < tokens.size && tokens[i].type == token.type) {
-            i++
-        }
-
-        return i - index
+        val type = tokens[index].type
+        return tokens.asSequence().drop(index).takeWhile { it.type == type }.count()
     }
 
     // https://spec.commonmark.org/0.31.2/#can-open-emphasis

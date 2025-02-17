@@ -60,6 +60,7 @@ internal class MdLexer private constructor(
             TokenType.LINE_BREAK -> advance(1).let { createToken(token) }
             TokenType.WHITE_SPACE -> advance(1).let { createToken(token) }
             TokenType.BACKSLASH -> advance(1).let { createToken(token) }
+            TokenType.PUNCTUATION -> advance(1).let { createToken(token) }
             TokenType.TEXT -> {
                 readText()
                 createToken(token)
@@ -78,8 +79,13 @@ internal class MdLexer private constructor(
             matchToken(" ") -> TokenType.WHITE_SPACE
             matchToken("\n") -> TokenType.LINE_BREAK
             matchToken("\\") -> TokenType.BACKSLASH
+            isPunctuation(char) -> TokenType.PUNCTUATION
             else -> TokenType.TEXT
         }
+    }
+
+    private fun isPunctuation(ch: Char): Boolean {
+        return ch in setOf('!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~')
     }
 
     private fun matchToken(token: String): Boolean {
