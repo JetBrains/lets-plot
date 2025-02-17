@@ -28,8 +28,8 @@ internal class HorizontalVerticalLabelsLayout(
 
     val labelHorizontalAnchor: Text.HorizontalAnchor
         get() = when (orientation) {
-            TOP -> Text.HorizontalAnchor.RIGHT
-            BOTTOM -> Text.HorizontalAnchor.LEFT
+            TOP -> Text.HorizontalAnchor.LEFT
+            BOTTOM -> Text.HorizontalAnchor.RIGHT
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
@@ -56,7 +56,7 @@ internal class HorizontalVerticalLabelsLayout(
         return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
             .labelHorizontalAnchor(labelHorizontalAnchor)
             .labelVerticalAnchor(labelVerticalAnchor)
-            .labelRotationAngle(ROTATION_DEGREE)
+            .labelRotationAngle(-ROTATION_DEGREE)
             .build()
     }
 
