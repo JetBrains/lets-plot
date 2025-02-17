@@ -25,6 +25,9 @@ kotlin {
 
     target.compilations.getByName("main") {
         val imageMagick by cinterops.creating {
+            if (os.isWindows) {
+                compilerOpts += listOf("-D_LIB")
+            }
             compilerOpts += listOf("-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7")
         }
     }
