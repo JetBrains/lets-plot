@@ -22,7 +22,7 @@ object DimensionsUtil {
         val expand = when (unit) {
             DimensionUnit.RESOLUTION -> size * resolution / 2.0
             DimensionUnit.IDENTITY -> size / 2.0
-            else -> resolution / 2.0 // If the units are "absolute" (e.g. pixels), we consider the size to be equal to 1
+            else -> 0.0 // If the units are "absolute" (e.g. pixels), we don't use expand
         }
         return DoubleSpan(
             loc - expand,
