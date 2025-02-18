@@ -75,21 +75,19 @@ internal class OverlayMessageHandler(
         }
 
         // Create the "copy & clear" button
-        val copyAndClearButton = doc.createElement("a") as HTMLAnchorElement
+        val copyAndClearButton = doc.createElement("span") as HTMLSpanElement
         overlayDiv.appendChild(copyAndClearButton)
         copyAndClearButton.textContent = "copy & clear"
-        copyAndClearButton.href = "#" // Prevent default behavior
         copyAndClearButton.style.apply {
-            display = "block"  // To maintain block layout
+            cursor = "pointer"
+            display = "block"
             marginBottom = "8px"
             color = "#4572E8"
             fontSize = "10px"
             fontFamily = "monospace"
             textAlign = "left"
-            textDecoration = "none"
         }
 
-        // Add click handler
         copyAndClearButton.onclick = {
             // Copy text content to clipboard
             val textContent = messages.joinToString("\n")
