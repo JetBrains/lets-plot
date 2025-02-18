@@ -20,12 +20,16 @@ object PlotMessageDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         containerWidth: Double,
+        containerHeight: Double? = null,
+        sizing: SizingPolicy? = null
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 plotSpecList,
-                containerWidth
+                containerWidth,
+                containerHeight,
+                sizing,
             )
         }
     }
@@ -34,8 +38,13 @@ object PlotMessageDemoUtil {
     private fun getHtml(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
-        containerWidth: Double
+        containerWidth: Double,
+        containerHeight: Double? = null,
+        sizing: SizingPolicy?
     ): String {
+
+        @Suppress("NAME_SHADOWING")
+        val sizing = sizing ?: SizingPolicy(SizingMode.FIT, SizingMode.SCALED)
 
         val scriptUrl = BrowserDemoUtil.getPlotLibPath(dev = false)
         val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
@@ -54,6 +63,7 @@ object PlotMessageDemoUtil {
                                 border: 1px solid orange;
                                 margin: 20px;
                                 width: ${containerWidth}px;
+                                ${if (containerHeight != null) "height: ${containerHeight}px;" else ""}
                                 display: inline-block;
                             }
                             body { 
@@ -67,7 +77,7 @@ object PlotMessageDemoUtil {
                 for (plotSpec in plotSpecList) {
                     val displayHtml = PlotHtmlHelper.getDisplayHtmlForRawSpec(
                         plotSpec,
-                        SizingPolicy(SizingMode.FIT, SizingMode.SCALED),
+                        sizingPolicy = sizing,
                         dynamicScriptLoading = false,
                         forceImmediateRender = false,
                         responsive = false,

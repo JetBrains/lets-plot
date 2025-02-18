@@ -296,7 +296,8 @@ object MonolithicCommon {
             @Suppress("UNCHECKED_CAST")
             val numMessages = (it as Map<String, Any>).getValue(Option.CompMessagesGen.NUM_MESSAGES) as Number
             val simulatedMessages = List<String>(numMessages.toInt()) { i ->
-                "$i: Simulated computation message #${i + 1}"
+                val tail = List(i + 1) { " tail"}.joinToString()
+                "$i: Simulated computation message #${i + 1} - $tail"
             }
 
             plotSpec.remove(Option.CompMessagesGen.PLOT_FEATURE_NAME)
