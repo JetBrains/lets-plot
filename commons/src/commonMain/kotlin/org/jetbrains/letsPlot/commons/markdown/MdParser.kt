@@ -13,28 +13,10 @@ import org.jetbrains.letsPlot.commons.markdown.Node.*
 internal class MdParser private constructor(
     private val tokens: List<Token>
 ) {
-    class DelimiterInfo(
-        val tokenType: TokenType,
-        val node: Text,
-        var count: Int,
-        var active: Boolean = true,
-        val canOpen: Boolean,
-        val canClose: Boolean
-    ) {
-        fun shrink(bool: Boolean) {
-            val toDrop = (if (bool) 2 else 1).coerceAtMost(count)
-            count -= toDrop
-            node.text = node.text.dropLast(toDrop)
-        }
-
-        override fun toString(): String {
-            return "DelimiterInfo(tokenType=$tokenType, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
-        }
-    }
 
     private fun parse(): List<Node> {
         var i = 0
-        val delimiters = mutableListOf<DelimiterInfo>()
+        val delimiters = mutableListOf<DelimiterRun>()
         val nodes = mutableListOf<Node>()
 
         while (i < tokens.size) {
@@ -63,7 +45,7 @@ internal class MdParser private constructor(
                     nodes += text
 
                     if (canOpen || canClose) {
-                        delimiters += DelimiterInfo(token.type, text, count, canOpen = canOpen, canClose = canClose)
+                        delimiters += DelimiterRun(token.type, text, count, canOpen = canOpen, canClose = canClose)
                     }
                     i += count
                 }
@@ -101,7 +83,7 @@ internal class MdParser private constructor(
 
     // Reference:
     // https://github.com/commonmark/cmark/blob/3460cd809b6dd311b58e92733ece2fc956224fd2/src/inlines.c#L651
-    private fun processEmphasis(infos: MutableList<DelimiterInfo>, nodes: MutableList<Node>, stackBottom: Int = 0) {
+    private fun processEmphasis(infos: MutableList<DelimiterRun>, nodes: MutableList<Node>, stackBottom: Int = 0) {
         if (infos.isEmpty()) {
             return
         }
@@ -109,7 +91,7 @@ internal class MdParser private constructor(
         val openersBottom = mutableMapOf<Int, Int>()
 
         var currentPosition = stackBottom
-        var closer: DelimiterInfo? = infos.getOrNull(currentPosition)
+        var closer: DelimiterRun? = infos.getOrNull(currentPosition)
 
         while (closer != null) {
             if (closer.canClose) {

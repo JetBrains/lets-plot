@@ -42,28 +42,27 @@ internal class MdLexer private constructor(
         private set
 
 
-    internal fun createToken(type: TokenType): Token {
-        return Token(type, text.substring(tokenRange()))
-    }
-
     internal fun nextToken() {
         if (isFinished()) {
-            currentToken = createToken(TokenType.EOF)
+            currentToken = Token(TokenType.EOF, "")
             return
         }
 
         startToken()
 
-        when (val token = currentToken()) {
-            TokenType.ASTERISK -> advance(1).let { createToken(token) }
-            TokenType.UNDERSCORE -> advance(1).let { createToken(token) }
-            TokenType.LINE_BREAK -> advance(1).let { createToken(token) }
-            TokenType.WHITE_SPACE -> advance(1).let { createToken(token) }
-            TokenType.BACKSLASH -> advance(1).let { createToken(token) }
-            TokenType.PUNCTUATION -> advance(1).let { createToken(token) }
-            TokenType.TEXT -> advanceText().let { createToken(token) }
+        val token = currentToken()
+        when (token) {
+            TokenType.ASTERISK -> advance(1)
+            TokenType.UNDERSCORE -> advance(1)
+            TokenType.LINE_BREAK -> advance(1)
+            TokenType.WHITE_SPACE -> advance(1)
+            TokenType.BACKSLASH -> advance(1)
+            TokenType.PUNCTUATION -> advance(1)
+            TokenType.TEXT -> advanceText()
             else -> error("Unexpected token: $token")
-        }.also { currentToken = it }
+        }
+
+        currentToken = Token(token, text.substring(tokenStart, i))
     }
 
     private fun currentToken(): TokenType {
@@ -113,12 +112,7 @@ internal class MdLexer private constructor(
         i += n
     }
 
-    internal fun tokenValue(): String {
-        return text.substring(tokenStart, i)
-    }
-
     internal fun tokenRange(): IntRange {
         return tokenStart until i
     }
-
 }

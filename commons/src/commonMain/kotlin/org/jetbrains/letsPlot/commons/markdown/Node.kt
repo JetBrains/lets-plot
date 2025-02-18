@@ -14,6 +14,4 @@ abstract class Node {
     data object CloseStrong : Node()
     data object Emph : Node()
     data object CloseEmph : Node()
-    data class BoldItalic(val text: String) : Node()
-
 }
