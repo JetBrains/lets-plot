@@ -60,27 +60,32 @@ object RichText {
             .let { parse(it, Latex.Companion::parse) }
             .let { parse(it, Hyperlink::parse) }
 
-        val lines = mutableListOf<MutableList<Term>>()
-        lines.add(mutableListOf())
-        terms.forEach { term ->
-            if (term is Text) {
-                if ("\n" !in term.text) {
-                    lines.last().add(term)
-                    return@forEach
-                } else {
-                    lines += term.text.split("\n").map { mutableListOf(Text(it)) }
-                }
-            } else {
-                lines.last().add(term)
-            }
-        }
+        val lines = splitByNewLines(terms)
 
         val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
 
         return wrappedLines
     }
 
-    internal fun splitText(text: String, specialTerms: List<Pair<Term, IntRange>>): List<Term> {
+    private fun splitByNewLines(terms: List<Term>): List<List<Term>> {
+        val lines = mutableListOf<MutableList<Term>>(mutableListOf())
+        terms.forEach { term ->
+            if (term is Text && "\n" in term.text) {
+                val parts = term.text.split("\n")
+                val currentLineEnding = parts.first()
+                if (currentLineEnding.isNotEmpty()) { // starts with "\n" - do not add empty part to the line
+                    lines.last().add(Text(currentLineEnding))
+                }
+                val newLines = parts.drop(1)
+                newLines.forEach { lines.add(mutableListOf(Text(it))) }
+            } else {
+                lines.last().add(term)
+            }
+        }
+        return lines
+    }
+
+    internal fun fillTextTermGaps(text: String, specialTerms: List<Pair<Term, IntRange>>): List<Term> {
         fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
             if (toSubtract.isEmpty()) {
                 return listOf(range)

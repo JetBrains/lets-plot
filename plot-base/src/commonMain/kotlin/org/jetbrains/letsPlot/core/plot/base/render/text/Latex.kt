@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.splitText
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.math.pow
@@ -30,7 +30,7 @@ internal class Latex(
                 Latex(parse(Token.tokenize(text))) to range
             }.toList()
 
-            return splitText(text, formulas)
+            return fillTextTermGaps(text, formulas)
         }
 
         private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
