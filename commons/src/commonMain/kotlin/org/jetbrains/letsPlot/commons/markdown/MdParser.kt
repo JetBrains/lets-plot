@@ -14,8 +14,8 @@ internal class MdParser private constructor(
     private val tokens: List<Token>
 ) {
     class DelimiterInfo(
-        val token: Token,
-        val node: Node.Text,
+        val tokenType: TokenType,
+        val node: Text,
         var count: Int,
         var active: Boolean = true,
         val canOpen: Boolean,
@@ -28,7 +28,7 @@ internal class MdParser private constructor(
         }
 
         override fun toString(): String {
-            return "DelimiterInfo(token=$token, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
+            return "DelimiterInfo(tokenType=$tokenType, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
         }
     }
 
@@ -39,34 +39,40 @@ internal class MdParser private constructor(
 
         while (i < tokens.size) {
             val token = tokens[i]
-            if (token.type == TokenType.BACKSLASH) {
-                nodes += Node.Text(tokens[i + 1].value)
-                i += 2
-            } else
-                if (token.type == TokenType.ASTERISK || token.type == TokenType.UNDERSCORE) {
-                    if (tokens.getOrNull(i - 1)?.type == token.type) {
-                        // Is not a run - previous token is a delimiter
-                        nodes += Node.Text(token.value)
-                        i++
-                        continue
-                    }
+            when (token.type) {
+                TokenType.BACKSLASH -> {
+                    val nextToken = tokens.getOrNull(i + 1)
+                    nodes += when (nextToken) {
+                        null -> Text(token.value).also { i++ }
+                        else -> when (nextToken.type) {
+                            TokenType.ASTERISK,
+                            TokenType.UNDERSCORE,
+                            TokenType.BACKSLASH -> Text(nextToken.value).also { i += 2 }
 
-                    val opener = canOpenEmphasis(i)
-                    val closer = canCloseEmphasis(i)
-                    if (!opener && !closer) {
-                        nodes += Node.Text(token.value)
-                        i++
-                    } else {
-                        val count = delimiterRunLength(tokens, i)
-                        val text = Node.Text(tokens.subList(i, i + count).joinToString("") { it.value })
-                        delimiters.add(DelimiterInfo(token, text, count, canOpen = opener, canClose = closer))
-                        nodes += text
-                        i += count
+                            else -> Text(token.value).also { i++ } // output backslash as is
+                        }
                     }
-                } else {
-                    nodes += Node.Text(token.value)
+                }
+
+                TokenType.ASTERISK, TokenType.UNDERSCORE -> {
+                    val count = delimiterRunLength(tokens, i)
+                    val canOpen = canOpenEmphasis(i)
+                    val canClose = canCloseEmphasis(i)
+
+                    val text = Text(token.value.repeat(count))
+                    nodes += text
+
+                    if (canOpen || canClose) {
+                        delimiters += DelimiterInfo(token.type, text, count, canOpen = canOpen, canClose = canClose)
+                    }
+                    i += count
+                }
+
+                else -> {
+                    nodes += Text(token.value)
                     i++
                 }
+            }
         }
 
         if (delimiters.size > 1) {
@@ -76,26 +82,21 @@ internal class MdParser private constructor(
         return joinTextNodes(nodes)
     }
 
-    private fun joinTextNodes(nodes: List<Node>): MutableList<Node> {
-        val res = mutableListOf<Node>()
+    private fun joinTextNodes(nodes: MutableList<Node>): MutableList<Node> {
+        var currentTextNode: Text? = null
         var i = 0
-        while (i < nodes.size) {
-            if (nodes[i] is Node.Text) {
-                val start = i
-                while (i < nodes.size && nodes[i] is Node.Text) {
-                    i++
-                }
-                val end = i
-                val text = nodes.subList(start, end).joinToString("") { (it as Node.Text).text }
 
-                res.add(Node.Text(text))
-            } else {
-                res.add(nodes[i])
-                i++
+        while (i < nodes.size) {
+            when (val node = nodes[i] as? Text) {
+                null -> currentTextNode = null.also { i++ }
+                else -> when (currentTextNode) {
+                    null -> currentTextNode = node.also { i++ }
+                    else -> currentTextNode.text += node.text.also { nodes.removeAt(i) }
+                }
             }
         }
 
-        return res
+        return nodes
     }
 
     // Reference:
@@ -113,7 +114,7 @@ internal class MdParser private constructor(
         while (closer != null) {
             if (closer.canClose) {
 
-                val openerBottomIndex = closer.token.type.ordinal * 10 +
+                val openerBottomIndex = closer.tokenType.ordinal * 10 +
                         (if (closer.canOpen) 3 else 0) +
                         closer.count % 3
 
@@ -122,7 +123,7 @@ internal class MdParser private constructor(
                 var openerFound = false
 
                 while (opener != null && openerPosition >= (openersBottom[openerBottomIndex] ?: stackBottom)) {
-                    if (opener.canOpen && opener.token.type == closer.token.type) {
+                    if (opener.canOpen && opener.tokenType == closer.tokenType) {
                         if (!(closer.canOpen || opener.canClose)
                             || closer.count % 3 == 0
                             || (opener.count + closer.count) % 3 != 0
@@ -154,7 +155,7 @@ internal class MdParser private constructor(
                 } else {
                     openersBottom[openerBottomIndex] = currentPosition
                     if (!closer.canOpen) {
-                        nodes.remove(closer.node)
+                        //nodes.remove(closer.node)
                     }
                     closer = infos.getOrNull(++currentPosition)
                 }

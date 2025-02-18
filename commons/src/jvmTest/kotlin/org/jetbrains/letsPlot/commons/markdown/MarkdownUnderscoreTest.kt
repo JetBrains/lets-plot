@@ -120,7 +120,15 @@ class MarkdownUnderscoreTest {
     fun `parse(aa_'bb'_cc)`() {
         assertEquals(
             expected = Node.Text("aa_\"bb\"_cc"),
-            actual = parse("aa_\"bb\"_cc")
+            actual = parse("""aa_"bb"_cc""")
+        )
+    }
+
+    @Test
+    fun `parse(aa_'bb'cc)`() {
+        assertEquals(
+            expected = Node.Text("aa_\"bb\"cc"),
+            actual = parse("""aa_"bb"cc""")
         )
     }
 

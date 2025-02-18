@@ -20,6 +20,22 @@ class MarkdownAsteriskTest {
     }
 
     @Test
+    fun `parse(backslash)`() {
+        assertEquals(
+            expected = Node.Text("\\"),
+            actual = parse("\\")
+        )
+    }
+
+    @Test
+    fun `parse(backslashg)`() {
+        assertEquals(
+            expected = Node.Text("\\g"),
+            actual = parse("\\g")
+        )
+    }
+
+    @Test
     fun `parse(_)`() {
         assertEquals(
             expected = Node.Text("*"),

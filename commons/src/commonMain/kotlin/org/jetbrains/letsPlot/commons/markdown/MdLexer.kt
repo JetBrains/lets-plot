@@ -54,23 +54,19 @@ internal class MdLexer private constructor(
 
         startToken()
 
-        when (val token = parseToken()) {
+        when (val token = currentToken()) {
             TokenType.ASTERISK -> advance(1).let { createToken(token) }
             TokenType.UNDERSCORE -> advance(1).let { createToken(token) }
             TokenType.LINE_BREAK -> advance(1).let { createToken(token) }
             TokenType.WHITE_SPACE -> advance(1).let { createToken(token) }
             TokenType.BACKSLASH -> advance(1).let { createToken(token) }
             TokenType.PUNCTUATION -> advance(1).let { createToken(token) }
-            TokenType.TEXT -> {
-                readText()
-                createToken(token)
-            }
-
+            TokenType.TEXT -> advanceText().let { createToken(token) }
             else -> error("Unexpected token: $token")
         }.also { currentToken = it }
     }
 
-    private fun parseToken(): TokenType? {
+    private fun currentToken(): TokenType {
         val char = text[i]
         return when {
             char.isWhitespace() -> TokenType.WHITE_SPACE
@@ -103,8 +99,8 @@ internal class MdLexer private constructor(
         return i >= text.length
     }
 
-    private fun readText() {
-        while (!isFinished() && parseToken() == TokenType.TEXT) {
+    private fun advanceText() {
+        while (!isFinished() && currentToken() == TokenType.TEXT) {
             advance()
         }
     }
