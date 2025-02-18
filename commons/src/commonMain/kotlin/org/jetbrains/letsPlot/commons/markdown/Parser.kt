@@ -5,20 +5,19 @@
 
 package org.jetbrains.letsPlot.commons.markdown
 
-import org.jetbrains.letsPlot.commons.markdown.MdLexer.Token
-import org.jetbrains.letsPlot.commons.markdown.MdLexer.TokenType
+import org.jetbrains.letsPlot.commons.markdown.Lexer.Token
+import org.jetbrains.letsPlot.commons.markdown.Lexer.TokenType
 import org.jetbrains.letsPlot.commons.markdown.Node.*
 
 // Reference: https://spec.commonmark.org/0.31.2/
-internal class MdParser private constructor(
+internal class Parser private constructor(
     private val tokens: List<Token>
 ) {
-
     private fun parse(): List<Node> {
-        var i = 0
         val delimiters = mutableListOf<DelimiterRun>()
         val nodes = mutableListOf<Node>()
 
+        var i = 0
         while (i < tokens.size) {
             val token = tokens[i]
             when (token.type) {
@@ -29,9 +28,8 @@ internal class MdParser private constructor(
                         else -> when (nextToken.type) {
                             TokenType.ASTERISK,
                             TokenType.UNDERSCORE,
-                            TokenType.BACKSLASH -> Text(nextToken.value).also { i += 2 }
-
-                            else -> Text(token.value).also { i++ } // output backslash as is
+                            TokenType.BACKSLASH -> Text(nextToken.value).also { i += 2 } // escaping special characters
+                            else -> Text(token.value).also { i++ } // not escaping other characters
                         }
                     }
                 }
@@ -83,15 +81,15 @@ internal class MdParser private constructor(
 
     // Reference:
     // https://github.com/commonmark/cmark/blob/3460cd809b6dd311b58e92733ece2fc956224fd2/src/inlines.c#L651
-    private fun processEmphasis(infos: MutableList<DelimiterRun>, nodes: MutableList<Node>, stackBottom: Int = 0) {
-        if (infos.isEmpty()) {
+    private fun processEmphasis(delimiters: MutableList<DelimiterRun>, nodes: MutableList<Node>, stackBottom: Int = 0) {
+        if (delimiters.isEmpty()) {
             return
         }
 
         val openersBottom = mutableMapOf<Int, Int>()
 
-        var currentPosition = stackBottom
-        var closer: DelimiterRun? = infos.getOrNull(currentPosition)
+        var closerPosition = stackBottom
+        var closer: DelimiterRun? = delimiters.getOrNull(closerPosition)
 
         while (closer != null) {
             if (closer.canClose) {
@@ -100,8 +98,8 @@ internal class MdParser private constructor(
                         (if (closer.canOpen) 3 else 0) +
                         closer.count % 3
 
-                var openerPosition = currentPosition - 1
-                var opener = infos.getOrNull(openerPosition)
+                var openerPosition = closerPosition - 1
+                var opener = delimiters.getOrNull(openerPosition)
                 var openerFound = false
 
                 while (opener != null && openerPosition >= (openersBottom[openerBottomIndex] ?: stackBottom)) {
@@ -114,35 +112,35 @@ internal class MdParser private constructor(
                             break
                         }
                     }
-                    opener = infos.getOrNull(--openerPosition)
+                    opener = delimiters.getOrNull(--openerPosition)
                 }
 
                 if (openerFound) {
                     val strong = opener!!.count >= 2 && closer.count >= 2
-                    nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Strong else Emph)
-                    nodes.add(nodes.indexOfFirst { it === closer!!.node }, if (strong) CloseStrong else CloseEmph)
+                    nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Strong else Em)
+                    nodes.add(nodes.indexOfFirst { it === closer!!.node }, if (strong) CloseStrong else CloseEm)
 
                     opener.shrink(strong)
                     closer.shrink(strong)
                     if (opener.count == 0) {
-                        infos.remove(opener)
+                        delimiters.remove(opener)
                         nodes.remove(opener.node)
                     }
                     if (closer.count == 0) {
-                        infos.remove(closer)
+                        delimiters.remove(closer)
                         nodes.remove(closer.node)
                     }
 
-                    closer = infos.getOrNull(--currentPosition)
+                    closer = delimiters.getOrNull(--closerPosition)
                 } else {
-                    openersBottom[openerBottomIndex] = currentPosition
+                    openersBottom[openerBottomIndex] = closerPosition
                     if (!closer.canOpen) {
-                        //nodes.remove(closer.node)
+                        delimiters.remove(closer)
                     }
-                    closer = infos.getOrNull(++currentPosition)
+                    closer = delimiters.getOrNull(++closerPosition)
                 }
             } else {
-                closer = infos.getOrNull(++currentPosition)
+                closer = delimiters.getOrNull(++closerPosition)
             }
         }
     }
@@ -249,9 +247,7 @@ internal class MdParser private constructor(
 
     companion object {
         fun parse(tokens: List<Token>): List<Node> {
-            return MdParser(tokens).parse()
+            return Parser(tokens).parse()
         }
     }
 }
-
-

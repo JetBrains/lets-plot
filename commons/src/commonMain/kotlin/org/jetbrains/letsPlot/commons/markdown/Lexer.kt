@@ -5,23 +5,12 @@
 
 package org.jetbrains.letsPlot.commons.markdown
 
-internal class MdLexer private constructor(
+internal class Lexer private constructor(
     private val text: String
 ) {
-    internal enum class TokenType {
-        EOF,
-        BACKSLASH,
-        WHITE_SPACE,
-        PUNCTUATION,
-        TEXT,
-        ASTERISK,
-        UNDERSCORE,
-        LINE_BREAK,
-    }
-
     companion object {
         fun tokenize(text: String): List<Token> {
-            val lexer = MdLexer(text)
+            val lexer = Lexer(text)
             val tokens = mutableListOf<Token>()
             while (!lexer.isFinished()) {
                 lexer.nextToken()
@@ -31,18 +20,11 @@ internal class MdLexer private constructor(
         }
     }
 
-    data class Token(
-        val type: TokenType,
-        val value: String
-    )
-
     private var i = 0
     private var tokenStart = 0
-    lateinit var  currentToken: Token
-        private set
+    private lateinit var  currentToken: Token
 
-
-    internal fun nextToken() {
+    private fun nextToken() {
         if (isFinished()) {
             currentToken = Token(TokenType.EOF, "")
             return
@@ -52,11 +34,11 @@ internal class MdLexer private constructor(
 
         val token = currentToken()
         when (token) {
-            TokenType.ASTERISK -> advance(1)
-            TokenType.UNDERSCORE -> advance(1)
-            TokenType.LINE_BREAK -> advance(1)
-            TokenType.WHITE_SPACE -> advance(1)
-            TokenType.BACKSLASH -> advance(1)
+            TokenType.ASTERISK,
+            TokenType.UNDERSCORE,
+            TokenType.LINE_BREAK,
+            TokenType.WHITE_SPACE,
+            TokenType.BACKSLASH,
             TokenType.PUNCTUATION -> advance(1)
             TokenType.TEXT -> advanceText()
             else -> error("Unexpected token: $token")
@@ -94,7 +76,7 @@ internal class MdLexer private constructor(
         return false
     }
 
-    internal fun isFinished(): Boolean {
+    private fun isFinished(): Boolean {
         return i >= text.length
     }
 
@@ -112,7 +94,19 @@ internal class MdLexer private constructor(
         i += n
     }
 
-    internal fun tokenRange(): IntRange {
-        return tokenStart until i
+    internal enum class TokenType {
+        EOF,
+        BACKSLASH,
+        WHITE_SPACE,
+        PUNCTUATION,
+        TEXT,
+        ASTERISK,
+        UNDERSCORE,
+        LINE_BREAK,
     }
+
+    internal data class Token(
+        val type: TokenType,
+        val value: String
+    )
 }

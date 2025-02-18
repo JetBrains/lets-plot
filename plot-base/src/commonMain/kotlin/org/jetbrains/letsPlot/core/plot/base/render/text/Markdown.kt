@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 
-internal class MarkdownEx : Term {
+internal class Markdown : Term {
     override val visualCharCount: Int
         get() = TODO("Not yet implemented")
     override val svg: List<SvgElement>

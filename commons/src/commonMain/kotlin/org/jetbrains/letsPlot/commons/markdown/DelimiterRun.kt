@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.markdown
 
 internal class DelimiterRun(
-    val tokenType: MdLexer.TokenType,
+    val tokenType: Lexer.TokenType,
     val node: Node.Text,
     var count: Int,
     var active: Boolean = true,
@@ -20,6 +20,6 @@ internal class DelimiterRun(
     }
 
     override fun toString(): String {
-        return "DelimiterInfo(tokenType=$tokenType, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
+        return "DelimiterRun(tokenType=$tokenType, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
     }
 }

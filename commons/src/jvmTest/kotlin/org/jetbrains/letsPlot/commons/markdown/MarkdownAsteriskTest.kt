@@ -90,7 +90,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `pase(__foo_)`() {
         assertEquals(
-            expected = Node.Group(Node.Text("*"), Node.Emph, Node.Text("foo"), Node.CloseEmph),
+            expected = Node.Group(Node.Text("*"), Node.Em, Node.Text("foo"), Node.CloseEm),
             actual = parse("**foo*")
         )
     }
@@ -100,11 +100,11 @@ class MarkdownAsteriskTest {
         assertEquals(
             expected = Node.Group(
                 listOf(
-                    Node.Emph,
+                    Node.Em,
                     Node.Strong,
                     Node.Text("baz"),
                     Node.CloseStrong,
-                    Node.CloseEmph
+                    Node.CloseEm
                 )
             ),
             actual = parse("***baz***")
@@ -233,9 +233,9 @@ fun g(block: MutableList<Node>.() -> Unit): Node.Group {
 }
 
 fun MutableList<Node>.emph(block: MutableList<Node>.() -> Unit) {
-    add(Node.Emph)
+    add(Node.Em)
     apply(block)
-    add(Node.CloseEmph)
+    add(Node.CloseEm)
 }
 
 fun MutableList<Node>.strong(block: MutableList<Node>.() -> Unit) {

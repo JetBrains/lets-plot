@@ -57,7 +57,7 @@ object RichText {
         }
 
         val terms = listOf(Text(text))
-            //.let { parse(it, MarkdownEx::parse) }
+            //.let { parse(it, Markdown::parse) }
             .let { parse(it, Latex::parse) }
             .let { parse(it, Hyperlink::parse) }
 
