@@ -8,7 +8,11 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.IDENTITY
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.PIXEL
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.RESOLUTION
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.SIZE
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HexagonsHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import kotlin.math.sqrt
@@ -24,9 +28,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
-        val transformWidthToUnits: (Double) -> Double = { w -> geomHelper.transformDimensionValue(w, widthUnit, Aes.X) }
-        val transformHeightToUnits: (Double) -> Double = { h -> geomHelper.transformDimensionValue(h, heightUnit, Aes.Y) }
+        val transformWidthToUnits: (Double) -> Double = { w -> transformDimensionValue(w, widthUnit, Aes.X, coord, ctx) }
+        val transformHeightToUnits: (Double) -> Double = { h -> transformDimensionValue(h, heightUnit, Aes.Y, coord, ctx) }
         val helper = HexagonsHelper(aesthetics, pos, coord, ctx, clientHexByDataPoint(transformWidthToUnits, transformHeightToUnits))
         helper.setResamplingEnabled(!coord.isLinear)
         helper.createHexagons().forEach { hexLinePath ->
@@ -34,6 +37,7 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
+    // Almost the same as in DimensionsUtil.dimensionSpan, but with some differences specific to hex geom
     override fun widthSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
@@ -43,9 +47,9 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         val loc = p.finiteOrNull(coordAes) ?: return null
         val width = p.finiteOrNull(Aes.WIDTH) ?: return null
         val expand = when (widthUnit) {
-            DimensionUnit.RESOLUTION -> width * resolution / 2.0
-            DimensionUnit.IDENTITY -> width / 2.0
-            else -> resolution // If the units are "absolute" (e.g. pixels), we consider the width to be equal to 2
+            RESOLUTION -> width * resolution
+            IDENTITY -> width / 2.0
+            else -> 0.0 // If the units are "absolute" (e.g. pixels), we don't use expand
         }
         return DoubleSpan(
             loc - expand,
@@ -53,6 +57,7 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         )
     }
 
+    // Almost the same as in DimensionsUtil.dimensionSpan, but with some differences specific to hex geom
     override fun heightSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
@@ -62,9 +67,9 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         val loc = p.finiteOrNull(coordAes) ?: return null
         val height = p.finiteOrNull(Aes.HEIGHT) ?: return null
         val expand = when (heightUnit) {
-            DimensionUnit.RESOLUTION -> height * resolution * HALF_HEX_HEIGHT
-            DimensionUnit.IDENTITY -> height * HALF_HEX_HEIGHT
-            else -> resolution * HALF_HEX_HEIGHT // If the units are "absolute" (e.g. pixels), we consider the height to be equal to 1
+            RESOLUTION -> height * resolution * HALF_HEX_HEIGHT
+            IDENTITY -> height * HALF_HEX_HEIGHT
+            else -> 0.0 // If the units are "absolute" (e.g. pixels), we don't use expand
         }
         return DoubleSpan(
             loc - expand,
@@ -72,11 +77,39 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         )
     }
 
+    // Almost the same as in GeomHelper::transformDimensionValue, but with some differences specific to hex geom
+    private fun transformDimensionValue(
+        value: Double,
+        unit: DimensionUnit,
+        axisAes: Aes<Double>,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ): Double {
+        val unitSize = when (axisAes) {
+            Aes.X -> coord.unitSize(DoubleVector(1.0, 0.0)).x
+            Aes.Y -> coord.unitSize(DoubleVector(0.0, 1.0)).y
+            else -> error("Unsupported axis aes: $axisAes")
+        }
+        return when (unit) {
+            RESOLUTION -> {
+                val resolution = when (axisAes) {
+                    Aes.X -> ctx.getResolution(Aes.X)
+                    Aes.Y -> HALF_HEX_HEIGHT * ctx.getResolution(Aes.Y)
+                    else -> error("Unsupported axis aes: $axisAes")
+                }
+                2.0 * resolution * value
+            }
+            IDENTITY -> value
+            SIZE -> value * AesScaling.POINT_UNIT_SIZE / unitSize
+            PIXEL -> value / unitSize
+        }
+    }
+
     companion object {
         const val HANDLES_GROUPS = false
 
-        val DEF_WIDTH_UNIT = DimensionUnit.IDENTITY
-        val DEF_HEIGHT_UNIT = DimensionUnit.IDENTITY
+        val DEF_WIDTH_UNIT = IDENTITY
+        val DEF_HEIGHT_UNIT = IDENTITY
 
         private val HALF_HEX_HEIGHT = 1.0 / sqrt(3.0)
 

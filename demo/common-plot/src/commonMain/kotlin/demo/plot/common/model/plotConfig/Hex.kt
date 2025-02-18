@@ -15,7 +15,7 @@ class Hex {
             basicIdentity(),
             basicWithStat(),
             pointOnBorder(0),
-            customSize(85.0, 85.0, "size", "size"),
+            customSize(1.0, 1.0, "res", "res"),
         )
     }
 
