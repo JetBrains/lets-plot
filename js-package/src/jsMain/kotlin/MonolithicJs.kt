@@ -6,6 +6,8 @@
 /* root package */
 
 import kotlinx.browser.document
+import messages.OverlayMessageHandler
+import messages.SimpleMessageHandler
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_VIEW_TOOLBOX_HTML
@@ -15,11 +17,11 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
+import org.jetbrains.letsPlot.core.util.sizing.SizingMode.*
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLParagraphElement
 import tools.DefaultToolbarJs
 import tools.DefaultToolbarJs.Companion.EXPECTED_TOOLBAR_HEIGHT
 
@@ -64,7 +66,7 @@ fun buildPlotFromRawSpecs(
             options
         )
     } catch (e: RuntimeException) {
-        handleException(e, MessageHandler(parentElement))
+        handleException(e, SimpleMessageHandler(parentElement))
         null
     }
 }
@@ -116,7 +118,7 @@ fun buildPlotFromProcessedSpecs(
             options
         )
     } catch (e: RuntimeException) {
-        handleException(e, MessageHandler(parentElement))
+        handleException(e, SimpleMessageHandler(parentElement))
         null
     }
 }
@@ -131,8 +133,8 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val showToolbar = PLOT_VIEW_TOOLBOX_HTML || processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
     var (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
         // Wrapper for toolbar and chart
-        var outputDiv = document.createElement("div")
-        outputDiv.setAttribute("style", "display: inline-block;");
+        var outputDiv = document.createElement("div") as HTMLDivElement
+        outputDiv.style.display = "inline-block"
         containerDiv.appendChild(outputDiv);
 
         // Toolbar
@@ -141,9 +143,12 @@ private fun buildPlotFromProcessedSpecsPrivate(
 
         // Plot
         var plotContainer = document.createElement("div") as HTMLElement;
+        plotContainer.style.position = "relative"
         outputDiv.appendChild(plotContainer);
         Pair(plotContainer, toolbar)
     } else {
+        // We may want to use absolute child positioning later (see OverlayMessageHandler).
+        containerDiv.style.position = "relative"
         Pair(containerDiv, null)
     }
 
@@ -155,35 +160,23 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val wrapperDiv = document.createElement("div") as HTMLDivElement
     plotContainer.appendChild(wrapperDiv)
 
-    // Messages div
-    // ToDo: messages should not affect size of 'container'.
-    val messagesDiv = document.createElement("div") as HTMLDivElement
-    plotContainer.appendChild(messagesDiv)
-    val messageHandler = MessageHandler(messagesDiv)
-
     // Sizing policy
-
-    // ---
-    // The "letsPlotPreferredWidth" attribute is now processed in the generated HTML.
-    // See: PlotHtmlHelper.kt
-    // ---
-//    // Datalore specific option - not compatible with reactive sizing.
-//    val datalorePreferredWidth: Double? =
-//        plotContainer.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-//
-//    val sizingPolicy = if (datalorePreferredWidth != null) {
-//        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
-//    } else when (val o = options[SizingOption.KEY]) {
-//        is Map<*, *> -> SizingPolicy.create(o)
-//        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
-//    }
-
-//    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
-//        is Map<*, *> -> SizingPolicy.create(o)
-//        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
-//    }
-
     val sizingPolicy = SizingPolicy.create(sizingOptions)
+
+    val useContainerHeight = sizingPolicy.run {
+        heightMode in listOf(FIT, MIN) ||
+                widthMode == SCALED && heightMode == SCALED
+    }
+    if (useContainerHeight && containerDiv.clientHeight <= 0) {
+        containerDiv.style.height = "100%"
+    }
+
+    // Computation messages handling
+    val isHeightLimited = useContainerHeight || sizingPolicy.heightMode == FIXED
+    val messageHandler = createMessageHandler(
+        plotContainer,
+        isOverlay = isHeightLimited
+    )
 
     val containerSize: () -> DoubleVector = {
         val height = if (showToolbar) {
@@ -258,35 +251,12 @@ private fun handleException(e: RuntimeException, messageHandler: MessageHandler)
     }
 }
 
-internal class MessageHandler(
-    private val messagesDiv: HTMLElement,
-) {
-    private var mute: Boolean = false
-
-    fun showError(message: String) {
-        showText(message, "lets-plot-message-error", "color:darkred;")
-    }
-
-    fun showComputationMessages(messages: List<String>) {
-        messages.forEach {
-            showText(it, "lets-plot-message-info", "color:darkblue;")
-        }
-    }
-
-    private fun showText(message: String, className: String, style: String) {
-        if (mute) return
-
-        val paragraphElement = messagesDiv.ownerDocument!!.createElement("p") as HTMLParagraphElement
-
-        if (style.isNotBlank()) {
-            paragraphElement.setAttribute("style", style)
-        }
-        paragraphElement.textContent = message
-        paragraphElement.className = className
-        messagesDiv.appendChild(paragraphElement)
-    }
-
-    fun toMute(): MessageHandler {
-        return MessageHandler(messagesDiv).also { it.mute = true }
+private fun createMessageHandler(plotContainer: HTMLElement, isOverlay: Boolean): MessageHandler {
+    return if (isOverlay) {
+        OverlayMessageHandler(plotContainer)
+    } else {
+        val messagesDiv = document.createElement("div") as HTMLDivElement
+        plotContainer.appendChild(messagesDiv)
+        SimpleMessageHandler(messagesDiv)
     }
 }

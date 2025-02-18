@@ -7,13 +7,17 @@ package demo.plot.browser.plotMessage
 
 import demo.plot.common.model.plotConfig.BarPlot
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.util.sizing.SizingMode
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 fun main() {
     with(BarPlot()) {
         (PlotMessageDemoUtil.show(
-            "Computation messages",
+            "Computation messages (fixed scaled)",
             withComputationMessages(plotSpecList()),
-            containerWidth = 400.0
+            containerWidth = 400.0,
+            containerHeight = 200.0,
+            sizing = SizingPolicy(SizingMode.SCALED, SizingMode.SCALED)
         ))
     }
 }
