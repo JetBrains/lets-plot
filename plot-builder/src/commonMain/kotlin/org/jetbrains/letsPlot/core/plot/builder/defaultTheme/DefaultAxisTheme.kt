@@ -110,7 +110,7 @@ internal class DefaultAxisTheme(
         return getTextStyle(getElemValue(textKey))
     }
 
-    override fun rotateLabels() = !labelAngle().isNaN()
+    override fun rotateLabels() = !labelAngle().isNaN() || !labelHJust().isNaN() || !labelVJust().isNaN()
 
     override fun labelAngle(): Double {
         return getNumber(getElemValue(textKey), Elem.ANGLE)
