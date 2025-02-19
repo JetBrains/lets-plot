@@ -6,11 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.commons.values.FontFace
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.*
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
@@ -81,6 +77,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.HJUST to 0.0,
                 Elem.VJUST to 0.5,
                 Elem.COLOR to SymbolicColor.BLACK,
+                Elem.MARKDOWN to false
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,

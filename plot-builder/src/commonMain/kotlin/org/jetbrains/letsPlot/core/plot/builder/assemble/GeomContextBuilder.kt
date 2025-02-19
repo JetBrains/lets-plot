@@ -146,6 +146,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                     isBold = isBold,
                     isItalic = isItalic
                 ),
+                markdown = false
             ).dimensions(text)
         }
 

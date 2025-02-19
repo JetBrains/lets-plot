@@ -14,7 +14,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse('')`() {
         assertEquals(
-            expected = Node.Group(emptyList()),
+            expected = emptyList(),
             actual = parse("")
         )
     }
@@ -22,7 +22,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(_)`() {
         assertEquals(
-            expected = Node.Text("_"),
+            expected = p { text("_") },
             actual = parse("_")
         )
     }
@@ -30,7 +30,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(__)`() {
         assertEquals(
-            expected = Node.Text("__"),
+            expected = p { text("__") },
             actual = parse("__")
         )
     }
@@ -38,7 +38,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(foo)`() {
         assertEquals(
-            expected = Node.Text("foo"),
+            expected = p { text("foo") },
             actual = parse("foo")
         )
     }
@@ -46,7 +46,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(foo, bar!)`() {
         assertEquals(
-            expected = Node.Text("foo, bar!"),
+            expected = p { text("foo, bar!") },
             actual = parse("foo, bar!")
         )
     }
@@ -54,7 +54,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `pase(_foo_)`() {
         assertEquals(
-            expected = g { emph { text("foo") } },
+            expected = p { emph { text("foo") } },
             actual = parse("_foo_")
         )
     }
@@ -62,7 +62,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `pase(__foo_)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 text("_")
                 emph { text("foo") }
             },
@@ -73,7 +73,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(_foo___bar_____baz___)`(){
         assertEquals(
-            expected = g {
+            expected = p {
                 emph { text ("foo") }
                 text(" ")
                 strong { text("bar") }
@@ -87,7 +87,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(foo_bar_baz)`() {
         assertEquals(
-            expected = Node.Text("foo_bar_baz"),
+            expected = p { text("foo_bar_baz") },
             actual = parse("foo_bar_baz")
         )
     }
@@ -95,7 +95,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(a _ foo bar_)`() {
         assertEquals(
-            expected = Node.Text("a _ foo bar_"),
+            expected = p { text("a _ foo bar_") },
             actual = parse("a _ foo bar_")
         )
     }
@@ -103,7 +103,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(_ a _)`() {
         assertEquals(
-            expected = Node.Text("_ a _"),
+            expected = p { text("_ a _") },
             actual = parse("_ a _")
         )
     }
@@ -111,7 +111,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(+_a_)`() {
         assertEquals(
-            expected = Node.Text("_a_"),
+            expected = p { text("_a_") },
             actual = parse("\\_a_")
         )
     }
@@ -119,7 +119,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(aa_'bb'_cc)`() {
         assertEquals(
-            expected = Node.Text("aa_\"bb\"_cc"),
+            expected = p { text("aa_\"bb\"_cc") },
             actual = parse("""aa_"bb"_cc""")
         )
     }
@@ -127,7 +127,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(aa_'bb'cc)`() {
         assertEquals(
-            expected = Node.Text("aa_\"bb\"cc"),
+            expected = p { text("aa_\"bb\"cc") },
             actual = parse("""aa_"bb"cc""")
         )
     }
@@ -135,7 +135,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(5_6_78)`() {
         assertEquals(
-            expected = Node.Text("5_6_78"),
+            expected = p { text("5_6_78") },
             actual = parse("5_6_78")
         )
     }
@@ -143,7 +143,7 @@ class MarkdownUnderscoreTest {
     @Test
     fun `parse(foo-_(bar)_)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 text("foo-")
                 emph {
                     text("(bar)")

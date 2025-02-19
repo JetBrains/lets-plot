@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
+import org.jetbrains.letsPlot.commons.markdown.Node
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -30,27 +31,35 @@ internal class Markdown : Term {
                 return listOf(Text(""))
             }
 
-            val rootNode = Markdown.parse(text)
+            var emphasized = false
+            var bold = false
 
-            //if (rootNode is Node.Group) {
-            //    return rootNode.children.map { node ->
-            //        when (node) {
-            //            is Node.Text -> Text(node.text)
-            //            is Node.Strong -> BoldText(node.text)
-            //            is Node.Emph -> ItalicText(node.text)
-            //            is Node.BoldItalic -> BoldItalicText(node.text)
-            //            else -> throw IllegalArgumentException("Unsupported node type: $node")
-            //        }
-            //    }
-            //}
+            val nodes = Markdown.parse(text)
 
-            return listOf(Text(text))
+            val terms = nodes.mapNotNull { node ->
+                when (node) {
+                    is Node.Strong -> null.also { bold = true }
+                    is Node.Em -> null.also { emphasized = true }
+                    is Node.CloseStrong -> null.also { bold = false }
+                    is Node.CloseEm -> null.also { emphasized = false }
+                    is Node.Text -> {
+                        when {
+                            bold && emphasized -> BoldItalicText(node.text)
+                            bold -> BoldText(node.text)
+                            emphasized -> ItalicText(node.text)
+                            else -> Text(node.text)
+                        }
+                    }
+                    else -> throw IllegalArgumentException("Unsupported node type: $node")
+                }
+            }
+
+            return terms
         }
 
     }
 
-    class BoldText(text: String) : Term {
-        private val text = text.trim()
+    class BoldText(private val text: String) : Term {
         override val visualCharCount: Int
             get() = text.length
         override val svg: List<SvgElement>
@@ -66,8 +75,7 @@ internal class Markdown : Term {
         }
     }
 
-    class ItalicText(text: String) : Term {
-        private val text = text.trim()
+    class ItalicText(private val text: String) : Term {
         override val visualCharCount: Int
             get() = text.length
         override val svg: List<SvgElement>
@@ -83,8 +91,7 @@ internal class Markdown : Term {
         }
     }
 
-    class BoldItalicText(text: String) : Term {
-        private val text = text.trim()
+    class BoldItalicText(private val text: String) : Term {
         override val visualCharCount: Int
             get() = text.length
         override val svg: List<SvgElement>

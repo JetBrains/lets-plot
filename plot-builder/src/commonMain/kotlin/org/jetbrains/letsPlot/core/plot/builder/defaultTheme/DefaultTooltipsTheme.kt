@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
@@ -14,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal class DefaultTooltipsTheme(
     options: Map<String, Any>,
@@ -44,7 +44,7 @@ internal class DefaultTooltipsTheme(
 
     override fun labelStyle(): ThemeTextStyle {
         return with(textStyle()) {
-            ThemeTextStyle(family, FontFace.BOLD + face, size, color)
+            ThemeTextStyle(family, FontFace.BOLD + face, size, color, markdown)
         }
     }
 

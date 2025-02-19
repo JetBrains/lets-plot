@@ -67,6 +67,7 @@ class EmptyGeomContext : GeomContext {
                 isBold = isBold,
                 isItalic = isItalic
             ),
+            markdown = false
         ).dimensions(text)
     }
 }

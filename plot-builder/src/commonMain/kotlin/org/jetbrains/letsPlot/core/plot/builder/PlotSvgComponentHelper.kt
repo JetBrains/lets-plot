@@ -151,7 +151,7 @@ internal object PlotSvgComponentHelper {
         if (text == null) return
 
         val lineHeight = labelSpec.height()
-        val textLabel = MultilineLabel(text)
+        val textLabel = MultilineLabel(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
         val (position, hAnchor) = applyJustification(
             boundRect,

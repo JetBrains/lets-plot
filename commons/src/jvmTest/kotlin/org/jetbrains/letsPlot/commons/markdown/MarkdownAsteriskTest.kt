@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.commons.markdown
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown.parse
+import org.jetbrains.letsPlot.commons.markdown.Node.Text
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,7 +15,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse('')`() {
         assertEquals(
-            expected = g { },
+            expected = emptyList(),
             actual = parse("")
         )
     }
@@ -22,7 +23,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(backslash)`() {
         assertEquals(
-            expected = Node.Text("\\"),
+            expected = p { text("\\") },
             actual = parse("\\")
         )
     }
@@ -30,7 +31,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(backslashg)`() {
         assertEquals(
-            expected = Node.Text("\\g"),
+            expected = p { text("\\g") },
             actual = parse("\\g")
         )
     }
@@ -38,7 +39,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_)`() {
         assertEquals(
-            expected = Node.Text("*"),
+            expected = p { text("*") },
             actual = parse("*")
         )
     }
@@ -46,7 +47,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(__)`() {
         assertEquals(
-            expected = Node.Text("**"),
+            expected = p { text("**") },
             actual = parse("**")
         )
     }
@@ -54,7 +55,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse( _ )`() {
         assertEquals(
-            expected = Node.Text(" ** "),
+            expected = p { text(" ** ") },
             actual = parse(" ** ")
         )
     }
@@ -62,7 +63,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(foo)`() {
         assertEquals(
-            expected = Node.Text("foo"),
+            expected = p { text("foo") },
             actual = parse("foo")
         )
     }
@@ -70,7 +71,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(foo, bar!)`() {
         assertEquals(
-            expected = Node.Text("foo, bar!"),
+            expected = p { text("foo, bar!") },
             actual = parse("foo, bar!")
         )
     }
@@ -78,7 +79,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `pase(_foo_)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 emph {
                     text("foo")
                 }
@@ -90,7 +91,12 @@ class MarkdownAsteriskTest {
     @Test
     fun `pase(__foo_)`() {
         assertEquals(
-            expected = Node.Group(Node.Text("*"), Node.Em, Node.Text("foo"), Node.CloseEm),
+            expected = p {
+                text("*")
+                emph {
+                    text("foo")
+                }
+            },
             actual = parse("**foo*")
         )
     }
@@ -98,15 +104,13 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(___baz___)`() {
         assertEquals(
-            expected = Node.Group(
-                listOf(
-                    Node.Em,
-                    Node.Strong,
-                    Node.Text("baz"),
-                    Node.CloseStrong,
-                    Node.CloseEm
-                )
-            ),
+            expected = p {
+                emph {
+                    strong {
+                        text("baz")
+                    }
+                }
+            },
             actual = parse("***baz***")
         )
     }
@@ -114,7 +118,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_foo___bar_____baz___)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 emph { text("foo") }
                 text(" ")
                 strong { text("bar") }
@@ -128,7 +132,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(foo_bar_baz)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 text("foo")
                 emph {
                     text("bar")
@@ -143,7 +147,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(a _ foo bar_)`() {
         assertEquals(
-            expected = Node.Text("a * foo bar*"),
+            expected = p { text("a * foo bar*") },
             actual = parse("a * foo bar*")
         )
     }
@@ -151,7 +155,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_ a _)`() {
         assertEquals(
-            expected = Node.Text("* a *"),
+            expected = listOf(Text("* a *")),
             actual = parse("* a *")
         )
     }
@@ -159,7 +163,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(+_a_)`() {
         assertEquals(
-            expected = Node.Text("*a*"),
+            expected = p { text("*a*") },
             actual = parse("\\*a*")
         )
     }
@@ -167,7 +171,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(foo-_(bar)_)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 text("foo-")
                 emph {
                     text("(bar)")
@@ -180,7 +184,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(___foo__ bar_)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 emph {
                     strong {
                         text("foo")
@@ -195,7 +199,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_bar __foo___)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 emph {
                     text("bar ")
                     strong {
@@ -210,7 +214,7 @@ class MarkdownAsteriskTest {
     @Test
     fun `parse(_____Hello_world____)`() {
         assertEquals(
-            expected = g {
+            expected = p {
                 text("**")
                 emph {
                     strong {
@@ -226,10 +230,10 @@ class MarkdownAsteriskTest {
     }
 }
 
-fun g(block: MutableList<Node>.() -> Unit): Node.Group {
+fun p(block: MutableList<Node>.() -> Unit): List<Node> {
     val nodes = mutableListOf<Node>()
     nodes.apply(block)
-    return Node.Group(nodes)
+    return nodes
 }
 
 fun MutableList<Node>.emph(block: MutableList<Node>.() -> Unit) {
@@ -245,5 +249,5 @@ fun MutableList<Node>.strong(block: MutableList<Node>.() -> Unit) {
 }
 
 fun MutableList<Node>.text(text: String) {
-    add(Node.Text(text))
+    add(Text(text))
 }
