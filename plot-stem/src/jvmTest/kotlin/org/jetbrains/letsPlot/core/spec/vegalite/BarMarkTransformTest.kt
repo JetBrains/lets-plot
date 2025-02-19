@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.Option.Pos
 import org.jetbrains.letsPlot.core.spec.Option.Stat
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.junit.Test
 import java.util.Map.entry
 
@@ -39,7 +39,7 @@ class BarMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
@@ -80,7 +80,7 @@ class BarMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
@@ -122,7 +122,7 @@ class BarMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
@@ -169,7 +169,7 @@ class BarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -203,7 +203,7 @@ class BarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -257,7 +257,7 @@ class BarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -313,7 +313,7 @@ class BarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -380,7 +380,7 @@ class BarMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -420,7 +420,7 @@ class BarMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getString(Plot.LAYERS, 0, PlotBase.MAPPING, toOption(Aes.COLOR)))
             .isEqualTo("a")
@@ -462,7 +462,7 @@ class BarMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA)
             .usingRecursiveComparison()
@@ -543,7 +543,7 @@ class BarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
@@ -599,7 +599,7 @@ class BarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),

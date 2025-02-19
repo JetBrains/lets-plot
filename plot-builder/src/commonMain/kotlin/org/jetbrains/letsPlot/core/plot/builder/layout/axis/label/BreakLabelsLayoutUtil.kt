@@ -59,8 +59,7 @@ internal object BreakLabelsLayoutUtil {
             return VerticalRotatedLabelsLayout(
                 orientation,
                 breaks,
-                theme,
-                theme.labelAngle()
+                theme
             ).doLayout(axisDomain, axisLength)
         }
 

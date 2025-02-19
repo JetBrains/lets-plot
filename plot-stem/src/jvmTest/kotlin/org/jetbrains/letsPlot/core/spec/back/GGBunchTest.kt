@@ -41,7 +41,7 @@ class GGBunchTest {
         val ggBunch = simpleBunch(listOf(geom0, geom1))
 
         // Transform
-        val ggBunchTransformed = SpecTransformBackendUtil.processTransform(ggBunch)
+        val ggBunchTransformed = BackendTestUtil.backendSpecTransform(ggBunch)
 
         // Expected
         val geom0Exp = mapOf(

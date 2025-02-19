@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import java.util.Map.entry
 import kotlin.test.Test
@@ -46,7 +46,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        SpecTransformBackendUtil.processTransform(vegaSpec)
+        BackendTestUtil.backendSpecTransform(vegaSpec)
             .getMap(Plot.LAYERS, 0, PlotBase.DATA)
             .let {
                 assertThat(it).containsOnly(
@@ -75,7 +75,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).isEmpty()
@@ -99,7 +99,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
@@ -128,7 +128,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
@@ -159,7 +159,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
@@ -206,7 +206,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
@@ -267,7 +267,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
@@ -309,7 +309,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
@@ -353,7 +353,7 @@ class DataTransformTest {
         """.trimMargin()
         ).filterNotNullValues().asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
         spec.getMap(Plot.LAYERS, 0, PlotBase.MAPPING).let {
             assertThat(it).containsOnly(
                 entry(toOption(Aes.X), "A"),

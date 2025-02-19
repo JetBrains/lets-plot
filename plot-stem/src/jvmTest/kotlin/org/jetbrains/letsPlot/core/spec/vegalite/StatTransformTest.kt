@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat
 import org.jetbrains.letsPlot.core.spec.PosProto
 import org.jetbrains.letsPlot.core.spec.StatKind
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.junit.Test
 import java.util.Map.entry
@@ -70,17 +70,19 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.TEXT)),
             entry(Layer.STAT, fromStatKind(StatKind.COUNT)),
             entry(Meta.DATA_META, empty()),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "state",
-                toOption(Aes.Y) to Stats.COUNT.name,
-                toOption(Aes.LABEL) to Stats.COUNT.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "state",
+                    toOption(Aes.Y) to Stats.COUNT.name,
+                    toOption(Aes.LABEL) to Stats.COUNT.name,
+                )
+            ),
         )
     }
 
@@ -128,7 +130,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
             entry("..lower..", listOf(38.849999999999994)),
@@ -175,11 +177,21 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0, PlotBase.DATA)).containsOnly(
             entry("race", listOf("Latino", "Black", "Latino", "Latino", "White", "Black")),
-            entry("type", listOf("Officer-involved shooting", "Officer-involved shooting", "Not riot-related", "Homicide", "Homicide", "Death")),
+            entry(
+                "type",
+                listOf(
+                    "Officer-involved shooting",
+                    "Officer-involved shooting",
+                    "Not riot-related",
+                    "Homicide",
+                    "Homicide",
+                    "Death"
+                )
+            ),
             entry("..count..", listOf(2.0, 1.0, 1.0, 2.0, 1.0, 2.0)),
         )
     }
@@ -202,7 +214,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -211,12 +223,14 @@ class StatTransformTest {
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Stat.Bin.BINWIDTH, 1.0),
             entry(Meta.DATA_META, empty()), // All axis are continuous
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to Stats.COUNT.name,
-                toOption(Aes.COLOR) to Stats.COUNT.name,
-                toOption(Aes.FILL) to Stats.COUNT.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to Stats.COUNT.name,
+                    toOption(Aes.COLOR) to Stats.COUNT.name,
+                    toOption(Aes.FILL) to Stats.COUNT.name,
+                )
+            ),
         )
 
     }
@@ -239,7 +253,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -248,12 +262,14 @@ class StatTransformTest {
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Stat.Bin.BINWIDTH, 1.0),
             entry(Meta.DATA_META, empty()),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to Stats.COUNT.name,
-                toOption(Aes.COLOR) to Stats.COUNT.name,
-                toOption(Aes.FILL) to Stats.COUNT.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to Stats.COUNT.name,
+                    toOption(Aes.COLOR) to Stats.COUNT.name,
+                    toOption(Aes.FILL) to Stats.COUNT.name,
+                )
+            ),
         )
     }
 
@@ -293,7 +309,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -303,12 +319,14 @@ class StatTransformTest {
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
             entry(Meta.DATA_META, empty()),
             entry(toOption(Aes.SHAPE), 16),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to Stats.DENSITY.name,
-                toOption(Aes.COLOR) to Stats.DENSITY.name,
-                toOption(Aes.FILL) to Stats.DENSITY.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to Stats.DENSITY.name,
+                    toOption(Aes.COLOR) to Stats.DENSITY.name,
+                    toOption(Aes.FILL) to Stats.DENSITY.name,
+                )
+            ),
         )
     }
 
@@ -351,7 +369,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -361,12 +379,14 @@ class StatTransformTest {
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
             entry(Meta.DATA_META, empty()),
             entry(toOption(Aes.SHAPE), 16),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "value",
-                toOption(Aes.Y) to Stats.DENSITY.name,
-                toOption(Aes.COLOR) to "group",
-                toOption(Aes.FILL) to "group",
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "value",
+                    toOption(Aes.Y) to Stats.DENSITY.name,
+                    toOption(Aes.COLOR) to "group",
+                    toOption(Aes.FILL) to "group",
+                )
+            ),
         )
     }
 
@@ -410,7 +430,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -420,12 +440,14 @@ class StatTransformTest {
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
             entry(Meta.DATA_META, empty()),
             entry(toOption(Aes.SHAPE), 16),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "value",
-                toOption(Aes.Y) to Stats.DENSITY.name,
-                toOption(Aes.COLOR) to "group",
-                toOption(Aes.FILL) to "group",
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "value",
+                    toOption(Aes.Y) to Stats.DENSITY.name,
+                    toOption(Aes.COLOR) to "group",
+                    toOption(Aes.FILL) to "group",
+                )
+            ),
         )
     }
 
@@ -469,7 +491,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -479,12 +501,14 @@ class StatTransformTest {
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.IDENTITY)),
             entry(Meta.DATA_META, empty()),
             entry(toOption(Aes.SHAPE), 16),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "value",
-                toOption(Aes.Y) to Stats.DENSITY.name,
-                toOption(Aes.COLOR) to "group",
-                toOption(Aes.FILL) to "group",
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "value",
+                    toOption(Aes.Y) to Stats.DENSITY.name,
+                    toOption(Aes.COLOR) to "group",
+                    toOption(Aes.FILL) to "group",
+                )
+            ),
         )
     }
 
@@ -507,7 +531,7 @@ class StatTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -517,12 +541,14 @@ class StatTransformTest {
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Stat.Bin.BINWIDTH, 1.0),
             entry(Meta.DATA_META, empty()),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to Stats.COUNT.name,
-                toOption(Aes.Y) to "v",
-                toOption(Aes.COLOR) to Stats.COUNT.name,
-                toOption(Aes.FILL) to Stats.COUNT.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to Stats.COUNT.name,
+                    toOption(Aes.Y) to "v",
+                    toOption(Aes.COLOR) to Stats.COUNT.name,
+                    toOption(Aes.FILL) to Stats.COUNT.name,
+                )
+            ),
         )
     }
 
@@ -550,9 +576,10 @@ class StatTransformTest {
                 |    "color": { "field": "density", "type": "quantitative" }
                 |  }
                 |}                
-            """.trimMargin()).asMutable()
+            """.trimMargin()
+        ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -564,12 +591,14 @@ class StatTransformTest {
             entry(Layer.ORIENTATION, "y"),
             entry(Layer.STAT, StatKind.DENSITY.name.lowercase()),
             entry(Meta.DATA_META, empty()),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to Stats.DENSITY.name,
-                toOption(Aes.Y) to "v",
-                toOption(Aes.COLOR) to Stats.DENSITY.name,
-                toOption(Aes.FILL) to Stats.DENSITY.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to Stats.DENSITY.name,
+                    toOption(Aes.Y) to "v",
+                    toOption(Aes.COLOR) to Stats.DENSITY.name,
+                    toOption(Aes.FILL) to Stats.DENSITY.name,
+                )
+            ),
         )
     }
 
@@ -591,27 +620,30 @@ class StatTransformTest {
                 |    "x": {"field": "g", "aggregate": "sum"}
                 |  }
                 |}
-            """.trimMargin()).asMutable()
+            """.trimMargin()
+        ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
             entry(Layer.ORIENTATION, "y"),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.Y),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "v",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.Y),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "v",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )),
+            ),
             entry(
                 PlotBase.DATA, mapOf<String, List<Any?>>(
                     "..ymax.." to listOf(2.0, 2.0, 2.0, 2.0, 2.0),
@@ -620,10 +652,12 @@ class StatTransformTest {
                     "g" to listOf(2.0, 4.0, 8.0, 4.0, 2.0),
                 )
             ),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "g",
-                toOption(Aes.Y) to "v",
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "g",
+                    toOption(Aes.Y) to "v",
+                )
+            ),
             entry(Layer.STAT, StatKind.SUMMARY.name.lowercase()),
             entry(Stat.Summary.FUN, Stat.Summary.Functions.SUM)
         )

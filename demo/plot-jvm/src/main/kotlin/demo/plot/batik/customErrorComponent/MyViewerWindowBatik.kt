@@ -28,7 +28,7 @@ class MyViewerWindowBatik(
 ) {
 
     override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
+        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
         return object : DefaultPlotContentPane(
             processedSpec = processedSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,

@@ -7,10 +7,10 @@ package org.jetbrains.letsPlot.core
 
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 
@@ -58,7 +58,7 @@ internal object TestingPlotBuilder {
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
 
         @Suppress("NAME_SHADOWING")
-        val plotSpec = transformPlotSpec(plotSpec)
+        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
             throw IllegalArgumentException(errorMessage)
@@ -73,12 +73,5 @@ internal object TestingPlotBuilder {
         val assembler = PlotConfigFrontendUtil.createPlotAssembler(config)
         val layoutInfo = assembler.layoutByOuterSize(Defaults.DEF_PLOT_SIZE)
         return assembler.createPlot(layoutInfo)
-    }
-
-    private fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-        @Suppress("NAME_SHADOWING")
-        var plotSpec = plotSpec
-        plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
-        return PlotConfigFrontend.processTransform(plotSpec)
     }
 }

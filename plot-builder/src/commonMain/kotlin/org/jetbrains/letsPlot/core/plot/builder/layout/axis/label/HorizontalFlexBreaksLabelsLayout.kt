@@ -29,7 +29,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
     }
 
     override fun filterBreaks(axisDomain: DoubleSpan): AxisLabelsLayout {
-        // Only for scales eith "fixed" breaks.
+        // Only for scales with "fixed" breaks.
         return this
     }
 
@@ -77,8 +77,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             HorizontalRotatedLabelsLayout(
                 orientation,
                 breaks,
-                theme,
-                myRotationAngle
+                theme
             )
         } else {
             HorizontalSimpleLabelsLayout(

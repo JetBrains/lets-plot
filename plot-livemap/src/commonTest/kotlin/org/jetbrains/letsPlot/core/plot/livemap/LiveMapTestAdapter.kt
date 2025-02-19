@@ -27,7 +27,7 @@ class LiveMapTestAdapter(
     private val animationEventHandler: AnimationProvider.AnimationEventHandler
 
     init {
-        val processSpecs = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec), false)
+        val processSpecs = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec))
         val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
             processSpecs,
             containerSize = null,

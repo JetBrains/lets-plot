@@ -41,7 +41,7 @@ internal class Hyperlink private constructor(
                     Hyperlink(label, href) to match.range
                 }.toList()
 
-            return RichText.splitText(text, links)
+            return RichText.fillTextTermGaps(text, links)
         }
     }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.junit.Test
 import java.util.Map.entry
@@ -34,7 +34,7 @@ class ThemingTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Option.Plot.TITLE)).isEqualTo(
             mapOf(
@@ -63,7 +63,7 @@ class ThemingTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Option.Plot.TITLE)).isEqualTo(
             mapOf(
@@ -93,15 +93,17 @@ class ThemingTest {
         """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec).contains(
-            entry(Option.Plot.GUIDES, mapOf(
-                toOption(Aes.X) to mapOf(Option.Guide.TITLE to "Stock Symbol"),
-                toOption(Aes.Y) to mapOf(Option.Guide.TITLE to "Average Price"),
-                toOption(Aes.FILL) to mapOf(Option.Guide.TITLE to "Stock Symbol"),
-                toOption(Aes.COLOR) to mapOf(Option.Guide.TITLE to "Stock Symbol")
-            ))
+            entry(
+                Option.Plot.GUIDES, mapOf(
+                    toOption(Aes.X) to mapOf(Option.Guide.TITLE to "Stock Symbol"),
+                    toOption(Aes.Y) to mapOf(Option.Guide.TITLE to "Average Price"),
+                    toOption(Aes.FILL) to mapOf(Option.Guide.TITLE to "Stock Symbol"),
+                    toOption(Aes.COLOR) to mapOf(Option.Guide.TITLE to "Stock Symbol")
+                )
+            )
         )
     }
 
@@ -121,13 +123,15 @@ class ThemingTest {
         """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec).contains(
-            entry(Option.Plot.GUIDES, mapOf(
-                toOption(Aes.X) to mapOf(Option.Guide.TITLE to "A axis"),
-                toOption(Aes.Y) to mapOf(Option.Guide.TITLE to "B axis")
-            ))
+            entry(
+                Option.Plot.GUIDES, mapOf(
+                    toOption(Aes.X) to mapOf(Option.Guide.TITLE to "A axis"),
+                    toOption(Aes.Y) to mapOf(Option.Guide.TITLE to "B axis")
+                )
+            )
         )
 
     }

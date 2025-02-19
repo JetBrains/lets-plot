@@ -24,7 +24,7 @@ class TimeUnitTest {
             .isEqualTo(
                 DateTime(
                     Date(day = 1, month = Month.JANUARY, year = 2010),
-                    Time(hours = 0, minutes = 0, seconds = 0 )
+                    Time(hours = 0, minutes = 0, seconds = 0)
                 )
             )
     }
@@ -40,7 +40,7 @@ class TimeUnitTest {
             .isEqualTo(
                 DateTime(
                     Date(day = 1, month = Month.MARCH, year = 2010),
-                    Time(hours = 0, minutes = 0, seconds = 0 )
+                    Time(hours = 0, minutes = 0, seconds = 0)
                 )
             )
     }

@@ -19,13 +19,13 @@ import kotlin.math.*
 internal class HorizontalRotatedLabelsLayout(
     orientation: Orientation,
     breaks: ScaleBreaks,
-    theme: AxisTheme,
-    private val myRotationAngle: Double
+    theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
     breaks,
     theme
 ) {
+    private val myRotationAngle = theme.labelAngle().takeIf { !it.isNaN() } ?: 0.0
 
     override fun doLayout(
         axisDomain: DoubleSpan,
@@ -58,8 +58,7 @@ internal class HorizontalRotatedLabelsLayout(
             else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
-        val angle = theme.labelAngle()
-        val radAngle = toRadians(angle)
+        val radAngle = toRadians(myRotationAngle)
         val sinA = sin(radAngle)
         val cosA = cos(radAngle)
         val isVertical = abs(cosA) < 1e-6
@@ -88,7 +87,7 @@ internal class HorizontalRotatedLabelsLayout(
         }
 
         val horizontalAnchor = when {
-            isVertical -> hAnchorForVerticalLabels(vJust, angle)
+            isVertical -> hAnchorForVerticalLabels(vJust)
             isUpsideDown -> Text.HorizontalAnchor.MIDDLE
             hJust == 0.0 && (isHorizontal || isLabelDirectedFromTick) -> Text.HorizontalAnchor.LEFT
             hJust == 1.0 && (isHorizontal || !isLabelDirectedFromTick) -> Text.HorizontalAnchor.RIGHT
@@ -106,7 +105,7 @@ internal class HorizontalRotatedLabelsLayout(
         }
 
         val verticalAnchor = when {
-            isVertical -> vAnchorForVerticalLabels(hJust, angle)
+            isVertical -> vAnchorForVerticalLabels(hJust)
             isHorizontal && vJust == 0.0 -> Text.VerticalAnchor.BOTTOM
             isHorizontal && vJust == 1.0 -> Text.VerticalAnchor.TOP
             isCornerCase && orientation == Orientation.BOTTOM -> Text.VerticalAnchor.TOP
@@ -161,24 +160,24 @@ internal class HorizontalRotatedLabelsLayout(
         }
     }
 
-    private fun vAnchorForVerticalLabels(hjust: Double, angle: Double): Text.VerticalAnchor {
+    private fun vAnchorForVerticalLabels(hjust: Double): Text.VerticalAnchor {
         if (hjust != 0.0 && hjust != 1.0) {
             return Text.VerticalAnchor.CENTER
         }
 
-        return when (angle) {
+        return when (myRotationAngle) {
             90.0 -> if (hjust == 0.0) Text.VerticalAnchor.TOP else Text.VerticalAnchor.BOTTOM
             -90.0 -> if (hjust == 0.0) Text.VerticalAnchor.BOTTOM else Text.VerticalAnchor.TOP
             else -> Text.VerticalAnchor.CENTER
         }
     }
 
-    private fun hAnchorForVerticalLabels(vjust: Double, angle: Double): Text.HorizontalAnchor {
+    private fun hAnchorForVerticalLabels(vjust: Double): Text.HorizontalAnchor {
         if (vjust != 0.0 && vjust != 1.0) {
             return Text.HorizontalAnchor.MIDDLE
         }
 
-        return when (angle) {
+        return when (myRotationAngle) {
             90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
             -90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
             else -> Text.HorizontalAnchor.MIDDLE

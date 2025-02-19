@@ -6,6 +6,8 @@
 /* root package */
 
 import kotlinx.browser.document
+import messages.OverlayMessageHandler
+import messages.SimpleMessageHandler
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_VIEW_TOOLBOX_HTML
@@ -15,12 +17,11 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
-import org.jetbrains.letsPlot.core.util.sizing.SizingOption
+import org.jetbrains.letsPlot.core.util.sizing.SizingMode.*
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLParagraphElement
 import tools.DefaultToolbarJs
 import tools.DefaultToolbarJs.Companion.EXPECTED_TOOLBAR_HEIGHT
 
@@ -28,7 +29,7 @@ private val LOG = PortableLogging.logger("MonolithicJs")
 
 // Key for the data attibute <body data-lets-plot-preferred-width='700'>
 // Used in Datalore reports to control size of the plot.
-// See generated "static display html".
+// See generated HTML (PlotHtmlHelper.kt)
 private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 
 /**
@@ -41,18 +42,17 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 @JsExport
 fun buildPlotFromRawSpecs(
     plotSpecJs: dynamic,
-    width: Double,              // deprecated - do not use!!!
-    height: Double,             // deprecated - do not use!!!
     parentElement: HTMLElement,
+    sizingJs: dynamic,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
-        check(width < 0) { "Do not use 'width' parameter: deprecated." }
-        check(height < 0) { "Do not use 'height' parameter: deprecated." }
-
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
-        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec)
+
+        @Suppress("DuplicatedCode")
+        val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
         val options: Map<String, Any> = if (optionsJs != null) {
             dynamicObjectToMap(optionsJs)
         } else {
@@ -62,11 +62,11 @@ fun buildPlotFromRawSpecs(
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
+            sizingOptions,
             options
         )
-
     } catch (e: RuntimeException) {
-        handleException(e, MessageHandler(parentElement))
+        handleException(e, SimpleMessageHandler(parentElement))
         null
     }
 }
@@ -76,10 +76,8 @@ fun buildPlotFromRawSpecs(
  * `processed specs` are plot specs processed by datalore plot backend.
  *
  * @param plotSpecJs plot specifications (a dictionary)
- * @param width number, if > 0, plot will assume given fixed width in px.
- * @param height number, if > 0, plot will assume given fixed height in px.
  * @param parentElement DOM element to add the plot to.
- *      If fixed `width/height` aren't provided, the plot size will be determined using `clientWidth` of the parent element.
+ *      The plot size will be determined using `clientWidth` of the parent element.
  * @param optionsJs miscellaneous settings.
  *      For example, set max width to 500px:
  *                          optionsJs = {
@@ -89,7 +87,6 @@ fun buildPlotFromRawSpecs(
  *                                  width: 500
  *                              }
  *                          };
- *
  */
 @OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
@@ -97,20 +94,17 @@ fun buildPlotFromRawSpecs(
 @JsExport
 fun buildPlotFromProcessedSpecs(
     plotSpecJs: dynamic,
-    width: Double,              // deprecated - do not use!!!
-    height: Double,             // deprecated - do not use!!!
     parentElement: HTMLElement,
+    sizingJs: dynamic,
     optionsJs: dynamic = null
 ): FigureModelJs? {
     return try {
-        check(width < 0) { "Do not use 'width' parameter: deprecated." }
-        check(height < 0) { "Do not use 'height' parameter: deprecated." }
-
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // Though the "plotSpec" might contain already "processed" specs,
         // we apply "frontend" transforms anyway, just to be sure that
         // we are going to use a truly processed specs.
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
+        val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
         val options: Map<String, Any> = if (optionsJs != null) {
             dynamicObjectToMap(optionsJs)
         } else {
@@ -120,10 +114,11 @@ fun buildPlotFromProcessedSpecs(
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
+            sizingOptions,
             options
         )
     } catch (e: RuntimeException) {
-        handleException(e, MessageHandler(parentElement))
+        handleException(e, SimpleMessageHandler(parentElement))
         null
     }
 }
@@ -131,14 +126,15 @@ fun buildPlotFromProcessedSpecs(
 private fun buildPlotFromProcessedSpecsPrivate(
     processedSpec: Map<String, Any>,
     containerDiv: HTMLElement,
+    sizingOptions: Map<String, Any>,
     options: Map<String, Any>
 ): FigureModelJs? {
 
     val showToolbar = PLOT_VIEW_TOOLBOX_HTML || processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
     var (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
         // Wrapper for toolbar and chart
-        var outputDiv = document.createElement("div")
-        outputDiv.setAttribute("style", "display: inline-block;");
+        var outputDiv = document.createElement("div") as HTMLDivElement
+        outputDiv.style.display = "inline-block"
         containerDiv.appendChild(outputDiv);
 
         // Toolbar
@@ -147,9 +143,12 @@ private fun buildPlotFromProcessedSpecsPrivate(
 
         // Plot
         var plotContainer = document.createElement("div") as HTMLElement;
+        plotContainer.style.position = "relative"
         outputDiv.appendChild(plotContainer);
         Pair(plotContainer, toolbar)
     } else {
+        // We may want to use absolute child positioning later (see OverlayMessageHandler).
+        containerDiv.style.position = "relative"
         Pair(containerDiv, null)
     }
 
@@ -161,30 +160,23 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val wrapperDiv = document.createElement("div") as HTMLDivElement
     plotContainer.appendChild(wrapperDiv)
 
-    // Messages div
-    // ToDo: messages should not affect size of 'container'.
-    val messagesDiv = document.createElement("div") as HTMLDivElement
-    plotContainer.appendChild(messagesDiv)
-
     // Sizing policy
+    val sizingPolicy = SizingPolicy.create(sizingOptions)
 
-    // ---
-    // The "letsPlotPreferredWidth" attribute is now tested in the generated "static display html".
-    // ---
-//    // Datalore specific option - not compatible with reactive sizing.
-//    val datalorePreferredWidth: Double? =
-//        plotContainer.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-//
-//    val sizingPolicy = if (datalorePreferredWidth != null) {
-//        SizingPolicy.dataloreReportCell(datalorePreferredWidth)
-//    } else when (val o = options[SizingOption.KEY]) {
-//        is Map<*, *> -> SizingPolicy.create(o)
-//        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
-//    }
-    val sizingPolicy = when (val o = options[SizingOption.KEY]) {
-        is Map<*, *> -> SizingPolicy.create(o)
-        else -> SizingPolicy.notebookCell()   // default to 'notebook mode'.
+    val useContainerHeight = sizingPolicy.run {
+        heightMode in listOf(FIT, MIN) ||
+                widthMode == SCALED && heightMode == SCALED
     }
+    if (useContainerHeight && containerDiv.clientHeight <= 0) {
+        containerDiv.style.height = "100%"
+    }
+
+    // Computation messages handling
+    val isHeightLimited = useContainerHeight || sizingPolicy.heightMode == FIXED
+    val messageHandler = createMessageHandler(
+        plotContainer,
+        isOverlay = isHeightLimited
+    )
 
     val containerSize: () -> DoubleVector = {
         val height = if (showToolbar) {
@@ -203,7 +195,7 @@ private fun buildPlotFromProcessedSpecsPrivate(
         wrapperDiv,
         containerSize,
         sizingPolicy,
-        MessageHandler(messagesDiv),
+        messageHandler
     )
 
     if (toolbar != null && figureModelJs != null) {
@@ -237,9 +229,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
 
     val success = buildResult as Success
     val computationMessages = success.buildInfo.computationMessages
-    computationMessages.forEach {
-        messageHandler.showInfo(it)
-    }
+    messageHandler.showComputationMessages(computationMessages)
 
     val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
     return FigureModelJs(
@@ -261,33 +251,12 @@ private fun handleException(e: RuntimeException, messageHandler: MessageHandler)
     }
 }
 
-internal class MessageHandler(
-    private val messagesDiv: HTMLElement,
-) {
-    private var mute: Boolean = false
-
-    fun showError(message: String) {
-        showText(message, "lets-plot-message-error", "color:darkred;")
-    }
-
-    fun showInfo(message: String) {
-        showText(message, "lets-plot-message-info", "color:darkblue;")
-    }
-
-    private fun showText(message: String, className: String, style: String) {
-        if (mute) return
-
-        val paragraphElement = messagesDiv.ownerDocument!!.createElement("p") as HTMLParagraphElement
-
-        if (style.isNotBlank()) {
-            paragraphElement.setAttribute("style", style)
-        }
-        paragraphElement.textContent = message
-        paragraphElement.className = className
-        messagesDiv.appendChild(paragraphElement)
-    }
-
-    fun toMute(): MessageHandler {
-        return MessageHandler(messagesDiv).also { it.mute = true }
+private fun createMessageHandler(plotContainer: HTMLElement, isOverlay: Boolean): MessageHandler {
+    return if (isOverlay) {
+        OverlayMessageHandler(plotContainer)
+    } else {
+        val messagesDiv = document.createElement("div") as HTMLDivElement
+        plotContainer.appendChild(messagesDiv)
+        SimpleMessageHandler(messagesDiv)
     }
 }

@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.junit.Test
 import java.util.Map.entry
@@ -38,7 +38,7 @@ class TickMarkConverterTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(PlotBase.DATA, mapOf("a" to listOf(1.0), "b" to listOf(1.0))),
@@ -83,7 +83,7 @@ class TickMarkConverterTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(PlotBase.DATA, mapOf("a" to listOf(1.0), "b" to listOf(1.0))),
@@ -115,7 +115,7 @@ class TickMarkConverterTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(PlotBase.DATA, mapOf("a" to listOf(1.0), "b" to listOf(1.0))),
@@ -160,7 +160,7 @@ class TickMarkConverterTest {
             """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(PlotBase.DATA, mapOf("a" to listOf(1.0), "b" to listOf(1.0))),

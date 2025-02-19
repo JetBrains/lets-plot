@@ -30,7 +30,7 @@ object MonolithicAwt {
 
         return try {
             @Suppress("NAME_SHADOWING")
-            val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+            val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
             buildPlotFromProcessedSpecs(
                 plotSpec,
                 containerSize,

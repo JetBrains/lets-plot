@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.typed
 import java.util.Map.entry
@@ -82,20 +82,24 @@ class ErrorBarMarkTransformTest {
                 """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.ERROR_BAR)),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.XMIN) to "upper_yield",
-                toOption(Aes.XMAX) to "lower_yield",
-                toOption(Aes.Y) to "variety"
-            )),
-            entry(PlotBase.DATA, mapOf(
-                "lower_yield" to listOf(23.1311, 23.9503, 24.7778, 21.7823),
-                "upper_yield" to listOf(43.5522, 38.9775, 46.9167, 48.9732),
-                "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.XMIN) to "upper_yield",
+                    toOption(Aes.XMAX) to "lower_yield",
+                    toOption(Aes.Y) to "variety"
+                )
+            ),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "lower_yield" to listOf(23.1311, 23.9503, 24.7778, 21.7823),
+                    "upper_yield" to listOf(43.5522, 38.9775, 46.9167, 48.9732),
+                    "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
+                )
+            ),
             entry(Option.Meta.DATA_META, empty()),
         )
     }
@@ -159,20 +163,24 @@ class ErrorBarMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.ERROR_BAR)),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.YMIN) to "upper_yield",
-                toOption(Aes.YMAX) to "lower_yield",
-                toOption(Aes.X) to "variety"
-            )),
-            entry(PlotBase.DATA, mapOf(
-                "lower_yield" to listOf(23.1311, 23.9503, 24.7778, 21.7823),
-                "upper_yield" to listOf(43.5522, 38.9775, 46.9167, 48.9732),
-                "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.YMIN) to "upper_yield",
+                    toOption(Aes.YMAX) to "lower_yield",
+                    toOption(Aes.X) to "variety"
+                )
+            ),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "lower_yield" to listOf(23.1311, 23.9503, 24.7778, 21.7823),
+                    "upper_yield" to listOf(43.5522, 38.9775, 46.9167, 48.9732),
+                    "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
+                )
+            ),
             entry(Option.Meta.DATA_META, empty()),
         )
     }

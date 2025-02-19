@@ -20,7 +20,6 @@ internal object PlotToolsBrowserDemoUtil {
         title: String,
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector = DoubleVector(1000.0, 600.0),
-        applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
@@ -28,7 +27,6 @@ internal object PlotToolsBrowserDemoUtil {
                 title,
                 listOf(plotSpec),
                 plotSize,
-                applyBackendTransform,
                 backgroundColor
             )
         }
@@ -42,15 +40,8 @@ internal object PlotToolsBrowserDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector,
-        applyBackendTransform: Boolean,
         backgroundColor: String
     ): String {
-
-        val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
-            "buildPlotFromRawSpecs"
-        } else {
-            "buildPlotFromProcessedSpecs"
-        }
 
         val plotSpecJs = mapToJsObjectInitializer(plotSpecList.first())
 
@@ -102,16 +93,12 @@ internal object PlotToolsBrowserDemoUtil {
                        |  var parentElement = document.createElement('div');
                        |  rootElement.appendChild(parentElement);
                        |  
-                       |  var options = {
-                       |      sizing: {
-                       |          width_mode: "fixed",
-                       |          height_mode: "fixed",
-                       |          width: ${plotSize.x},
-                       |          height: ${plotSize.y},
-                       |      }
+                       |  const sizing = {
+                       |      width: ${plotSize.x},
+                       |      height: ${plotSize.y}
                        |  };
                        |  
-                       |  var fig = LetsPlot.$plotFun(plotSpec, -1, -1, parentElement, options);
+                       |  var fig = LetsPlot.buildPlotFromRawSpecs(plotSpec, parentElement, sizing);
                        |  
                        |  toolbar.bind(fig);
                        |  

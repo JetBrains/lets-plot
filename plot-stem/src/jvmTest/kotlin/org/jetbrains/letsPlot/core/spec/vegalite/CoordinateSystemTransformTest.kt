@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.junit.Test
 import java.util.Map.entry
@@ -60,7 +60,7 @@ class CoordinateSystemTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(Option.Plot.COORD)).containsOnly(
             entry(Meta.NAME, Option.CoordName.CARTESIAN),
@@ -104,7 +104,7 @@ class CoordinateSystemTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(Option.Plot.COORD)).containsOnly(
             entry(Meta.NAME, Option.CoordName.CARTESIAN),
@@ -132,9 +132,10 @@ class CoordinateSystemTransformTest {
                 |    "color": {"field": "z"}
                 |  }
                 |}
-            """.trimMargin()).asMutable()
+            """.trimMargin()
+        ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
@@ -144,12 +145,13 @@ class CoordinateSystemTransformTest {
             entry(Option.Geom.LiveMap.CONST_SIZE_ZOOMIN, 0),
             entry(Option.Geom.LiveMap.DATA_SIZE_ZOOMIN, 0),
             entry(PlotBase.DATA, empty()),
-            entry(Option.Geom.LiveMap.TILES, mapOf(
-                Option.Geom.LiveMap.Tile.KIND to Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT,
-                Option.Geom.LiveMap.Tile.THEME to Option.Geom.LiveMap.Tile.THEME_COLOR,
-                Option.Geom.LiveMap.Tile.URL to "wss://tiles.datalore.jetbrains.com",
-                Option.Geom.LiveMap.Tile.ATTRIBUTION to "<a href=\"https://lets-plot.org\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>.",
-            )
+            entry(
+                Option.Geom.LiveMap.TILES, mapOf(
+                    Option.Geom.LiveMap.Tile.KIND to Option.Geom.LiveMap.Tile.KIND_VECTOR_LETS_PLOT,
+                    Option.Geom.LiveMap.Tile.THEME to Option.Geom.LiveMap.Tile.THEME_COLOR,
+                    Option.Geom.LiveMap.Tile.URL to "wss://tiles.datalore.jetbrains.com",
+                    Option.Geom.LiveMap.Tile.ATTRIBUTION to "<a href=\"https://lets-plot.org\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>.",
+                )
             )
         )
         assertThat(plotSpec.getMap(Plot.LAYERS, 1)).containsOnly(
@@ -161,11 +163,13 @@ class CoordinateSystemTransformTest {
                     "z" to listOf("foo", "bar", "baz", "spam", "foobar")
                 )
             ),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "lon",
-                toOption(Aes.Y) to "lat",
-                toOption(Aes.COLOR) to "z"
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "lon",
+                    toOption(Aes.Y) to "lat",
+                    toOption(Aes.COLOR) to "z"
+                )
+            ),
             entry(Meta.DATA_META, empty()),
         )
     }

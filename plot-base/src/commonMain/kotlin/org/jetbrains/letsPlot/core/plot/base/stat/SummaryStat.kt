@@ -34,9 +34,6 @@ class SummaryStat(
         }
 
         val statData = buildStat(xs, ys)
-        if (statData.isEmpty()) {
-            return withEmptyStatValues()
-        }
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -54,7 +51,12 @@ class SummaryStat(
             .groupBy(keySelector = { it.first }, valueTransform = { it.second })
 
         if (binnedData.isEmpty()) {
-            return emptyMap()
+            return mapOf(
+                Stats.X to emptyList(),
+                Stats.Y to emptyList(),
+                Stats.Y_MIN to emptyList(),
+                Stats.Y_MAX to emptyList(),
+            )
         }
 
         val statX = ArrayList<Double>()

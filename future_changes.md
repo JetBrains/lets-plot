@@ -5,7 +5,7 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
                                                                                                                        
-- Support for plot **title, subtitle, saption, margins** and **insets** in `gggrid()` and `ggbunch()`. 
+- Support for plot **title, subtitle, caption, margins** and **insets** in `gggrid()` and `ggbunch()`. 
 
 - `geom_hex()`.
 
