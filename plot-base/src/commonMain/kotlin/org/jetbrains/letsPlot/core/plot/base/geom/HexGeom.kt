@@ -108,8 +108,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
     companion object {
         const val HANDLES_GROUPS = false
 
-        val DEF_WIDTH_UNIT = IDENTITY
-        val DEF_HEIGHT_UNIT = IDENTITY
+        val DEF_WIDTH_UNIT = RESOLUTION
+        val DEF_HEIGHT_UNIT = RESOLUTION
 
         private val HALF_HEX_HEIGHT = 1.0 / sqrt(3.0)
 

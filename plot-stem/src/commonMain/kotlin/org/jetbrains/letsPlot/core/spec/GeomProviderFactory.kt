@@ -120,22 +120,8 @@ internal object GeomProviderFactory {
 
             GeomKind.HEX -> GeomProvider.hex {
                 HexGeom().apply {
-                    val widthIsSpecified = layerConfig.constantsMap.containsKey(Aes.WIDTH) ||
-                                           layerConfig.varBindings.map { it.aes }.contains(Aes.WIDTH)
-                    val defWidthUnit = if (layerConfig.statKind == StatKind.IDENTITY && !widthIsSpecified) {
-                        DimensionUnit.RESOLUTION
-                    } else {
-                        HexGeom.DEF_WIDTH_UNIT
-                    }
-                    val heightIsSpecified = layerConfig.constantsMap.containsKey(Aes.HEIGHT) ||
-                                            layerConfig.varBindings.map { it.aes }.contains(Aes.HEIGHT)
-                    val defHeightUnit = if (layerConfig.statKind == StatKind.IDENTITY && !heightIsSpecified) {
-                        DimensionUnit.RESOLUTION
-                    } else {
-                        HexGeom.DEF_HEIGHT_UNIT
-                    }
-                    this.widthUnit = dimensionUnit(layerConfig, Option.Geom.Hex.WIDTH_UNIT) ?: defWidthUnit
-                    this.heightUnit = dimensionUnit(layerConfig, Option.Geom.Hex.HEIGHT_UNIT) ?: defHeightUnit
+                    this.widthUnit = dimensionUnit(layerConfig, Option.Geom.Hex.WIDTH_UNIT) ?: HexGeom.DEF_WIDTH_UNIT
+                    this.heightUnit = dimensionUnit(layerConfig, Option.Geom.Hex.HEIGHT_UNIT) ?: HexGeom.DEF_HEIGHT_UNIT
                 }
             }
 

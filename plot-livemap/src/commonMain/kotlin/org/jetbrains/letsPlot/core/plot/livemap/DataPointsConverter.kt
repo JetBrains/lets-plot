@@ -27,6 +27,7 @@ import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.sqrt
 
 internal class DataPointsConverter(
     private val layerIndex: Int,
@@ -254,8 +255,9 @@ internal class DataPointsConverter(
         }
 
         fun hex(): List<DataPointLiveMapAesthetics> {
-            val transformWidthToUnits: (Double) -> Double = { it }
-            val transformHeightToUnits: (Double) -> Double = { it }
+            val d = getMinXYNonZeroDistance(aesthetics)
+            val transformWidthToUnits: (Double) -> Double = { v -> 2.0 * d.x * v }
+            val transformHeightToUnits: (Double) -> Double = { v -> 2.0 / sqrt(3.0) * d.y * v }
             return process(isClosed = true, dataPointToGeometry = { p ->
                 HexGeom.clientHexByDataPoint(transformWidthToUnits, transformHeightToUnits).invoke(p) ?: emptyList()
             })
