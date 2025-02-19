@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.values.FontFace
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL

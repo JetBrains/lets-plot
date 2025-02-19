@@ -86,9 +86,16 @@ object Option {
         }
     }
 
+    // Error emulation.
     object ErrorGen {
         const val MESSAGE = "message" // str
         const val IS_INTERNAL = "is_internal" // bool
+    }
+
+    // Computation messages emulation.
+    object CompMessagesGen {
+        const val PLOT_FEATURE_NAME = "comp_messages_gen"
+        const val NUM_MESSAGES = "num_messages"
     }
 
     object GGBunch {

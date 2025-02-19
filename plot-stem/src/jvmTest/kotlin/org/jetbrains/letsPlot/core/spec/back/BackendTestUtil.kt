@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 
 
 object BackendTestUtil {
@@ -30,7 +31,7 @@ object BackendTestUtil {
     }
 
     fun backendSpecTransform(plotSpec: MutableMap<String, Any>): Map<String, Any> {
-        return SpecTransformBackendUtil.processTransform(plotSpec)
+        return MonolithicCommon.processRawSpecs(plotSpec)
     }
 
     /**

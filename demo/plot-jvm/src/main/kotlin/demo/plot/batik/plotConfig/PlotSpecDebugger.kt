@@ -107,7 +107,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         plotPanel.components.forEach(plotPanel::remove)
         plotPanel.add(DefaultPlotPanelBatik(
-            processedSpec = MonolithicCommon.processRawSpecs(spec, frontendOnly = false),
+            processedSpec = MonolithicCommon.processRawSpecs(spec),
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,

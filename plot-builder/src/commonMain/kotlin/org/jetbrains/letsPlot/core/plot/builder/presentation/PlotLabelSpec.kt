@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 
 class PlotLabelSpec(
     override val font: Font

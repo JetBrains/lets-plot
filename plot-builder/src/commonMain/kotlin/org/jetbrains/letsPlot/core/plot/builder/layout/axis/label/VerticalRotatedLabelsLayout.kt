@@ -20,12 +20,12 @@ internal class VerticalRotatedLabelsLayout(
     orientation: Orientation,
     breaks: ScaleBreaks,
     theme: AxisTheme,
-    private val myRotationAngle: Double
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
     breaks,
     theme
 ) {
+    private val myRotationAngle = theme.labelAngle().takeIf { !it.isNaN() } ?: 0.0
 
     override fun doLayout(
         axisDomain: DoubleSpan,
@@ -49,8 +49,7 @@ internal class VerticalRotatedLabelsLayout(
 	    
         val maxLabelWidth = labelBoundsList.maxOf { it.width }
 
-        val angle = theme.labelAngle()
-        val radAngle = toRadians(angle)
+        val radAngle = toRadians(myRotationAngle)
         val sinA = sin(radAngle)
         val cosA = cos(radAngle)
         val isVertical = abs(cosA) < 1e-6

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
@@ -16,7 +17,98 @@ import kotlin.test.Test
 
 class RichTextTermTest {
     @Test
-    fun simple() {
+    fun newLines() {
+        val richTextSvg = RichText.toSvg("Hello\nworld!")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("Hello"),
+            listOf("world!")
+        )
+    }
+
+    @Test
+    fun endsWithNewLine() {
+        val richTextSvg = RichText.toSvg("Hello\nworld!\n")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("Hello"),
+            listOf("world!"),
+            listOf("")
+        )
+    }
+
+    @Test
+    fun blankLineInMiddle() {
+        val richTextSvg = RichText.toSvg("Hello\n\nworld!")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("Hello"),
+            listOf(""),
+            listOf("world!")
+        )
+    }
+
+    @Test
+    fun wholeLineLink() {
+        val richTextSvg = RichText.toSvg("<a href=\"https://example.com\">link</a>\nnew line")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("link"),
+            listOf("new line")
+        )
+    }
+
+    @Test
+    fun linkInMiddleOfLine() {
+        val richTextSvg = RichText.toSvg("A <a href=\"https://example.com\">link</a> with\nnew\nline")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("A ", "link", " with"),
+            listOf("new"),
+            listOf("line"),
+        )
+    }
+
+    @Test
+    fun multilineWithLink() {
+        val richTextSvg = RichText.toSvg("Hello\nworld\nwith a <a href=\"https://example.com\">link</a>!\nhey")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("Hello"),
+            listOf("world"),
+            listOf("with a ", "link", "!"),
+            listOf("hey")
+        )
+    }
+
+    @Test
+    fun multilineWithTwoLinks() {
+        val richTextSvg = RichText.toSvg("Hello\nworld\nwith a <a href=\"https://example.com\">link</a> and <a href=\"https://example.com\">link2</a> !\nhey")
+
+        val textLines = richTextSvg.map(::extractTextLine)
+
+        assertThat(textLines).containsExactly(
+            listOf("Hello"),
+            listOf("world"),
+            listOf("with a ", "link", " and ", "link2", " !"),
+            listOf("hey")
+        )
+    }
+
+    @Test
+    fun singleTextLine() {
         val richTextSvg = RichText.toSvg("Hello, world!")
         assertThat(extractTextLine(richTextSvg.single())).containsExactly("Hello, world!")
     }

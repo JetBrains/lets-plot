@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotHtmlHelper {
@@ -149,7 +148,7 @@ object PlotHtmlHelper {
     ): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
-        val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
+        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
 
         if (logComputationMessages) {
             PlotConfigUtil.findComputationMessages(plotSpec).forEach { LOG.info { "[when HTML generating] $it" } }
@@ -189,7 +188,7 @@ object PlotHtmlHelper {
         |   const forceImmediateRender = ${forceImmediateRender};
         |   const responsive = ${responsive};
         |   
-        |   let sizingPolicy = {
+        |   let sizing = {
         |       width_mode: "${sizingPolicy.widthMode}",
         |       height_mode: "${sizingPolicy.heightMode}",
         |       width: ${sizingPolicy.width}, 
@@ -198,7 +197,7 @@ object PlotHtmlHelper {
         |   
         |   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
         |   if (preferredWidth !== undefined) {
-        |       sizingPolicy = {
+        |       sizing = {
         |           width_mode: 'FIXED',
         |           height_mode: 'SCALED',
         |           width: parseFloat(preferredWidth)
@@ -209,18 +208,14 @@ object PlotHtmlHelper {
         |   let fig = null;
         |   
         |   function renderPlot() {
-        |       const options = {
-        |           sizing: sizingPolicy
-        |       };
-        |       
         |       if (fig === null) {
         |           const plotSpec = $plotSpecAsJsObjectInitializer;
         |           ${
             if (dynamicScriptLoading)
                 "window.letsPlotCall(function() { " +
-                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options); });"
+                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });"
             else
-                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, containerDiv, options);"
+                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing);"
         }
         |       } else {
         |           fig.updateView({});
@@ -229,8 +224,8 @@ object PlotHtmlHelper {
         |   
         |   const renderImmediately = 
         |       forceImmediateRender || (
-        |           sizingPolicy.width_mode === 'FIXED' && 
-        |           (sizingPolicy.height_mode === 'FIXED' || sizingPolicy.height_mode === 'SCALED')
+        |           sizing.width_mode === 'FIXED' && 
+        |           (sizing.height_mode === 'FIXED' || sizing.height_mode === 'SCALED')
         |       );
         |   
         |   if (renderImmediately) {

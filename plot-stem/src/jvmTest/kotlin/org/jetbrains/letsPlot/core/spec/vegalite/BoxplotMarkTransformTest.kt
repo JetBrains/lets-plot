@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import java.util.Map.entry
 import kotlin.test.Test
 
@@ -43,7 +43,7 @@ class BoxplotMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BOX_PLOT)),
@@ -128,7 +128,7 @@ class BoxplotMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BOX_PLOT)),
@@ -238,7 +238,7 @@ class BoxplotMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BOX_PLOT)),
@@ -254,23 +254,25 @@ class BoxplotMarkTransformTest {
                 )
             ),
             entry(Layer.ORIENTATION, "y"),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.Y),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "date"
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.Y),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "date"
+                            )
+                        )
+                    ),
+                    Meta.SeriesAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.SeriesAnnotation.COLUMN to "date",
+                            Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME,
                         )
                     )
-                ),
-                Meta.SeriesAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.SeriesAnnotation.COLUMN to "date",
-                        Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME,
-                    )
                 )
-            ))
+            )
         )
     }
 }

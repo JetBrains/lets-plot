@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.typed
@@ -46,7 +46,7 @@ class RectMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
@@ -101,7 +101,7 @@ class RectMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RASTER)),
@@ -119,18 +119,20 @@ class RectMarkTransformTest {
                     toOption(Aes.FILL) to "mean_Horsepower"
                 )
             ),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.X),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "Cylinders",
-                            Meta.MappingAnnotation.ORDER to 1
-                        )
-                    ),
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "Cylinders",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
+                        ),
+                    )
                 )
-            ))
+            )
         )
     }
 }

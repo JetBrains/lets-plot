@@ -64,7 +64,7 @@ internal class HorizontalTiltedLabelsLayout(
         return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
             .labelHorizontalAnchor(labelHorizontalAnchor)
             .labelVerticalAnchor(labelVerticalAnchor)
-            .labelRotationAngle(angle)
+            .labelRotationAngle(-angle)
             .build()
     }
 
@@ -79,7 +79,7 @@ internal class HorizontalTiltedLabelsLayout(
 
     companion object {
         private const val MIN_DISTANCE = 5.0
-        private const val ROTATION_DEGREE = -30.0
+        private const val ROTATION_DEGREE = 30.0
 
         private val SIN = sin(toRadians(ROTATION_DEGREE))
         private val COS = cos(toRadians(ROTATION_DEGREE))

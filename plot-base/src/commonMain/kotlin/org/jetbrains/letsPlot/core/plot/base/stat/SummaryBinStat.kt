@@ -45,9 +45,6 @@ class SummaryBinStat(
         val rangeX = statCtx.overallXRange() ?: return withEmptyStatValues()
 
         val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, aggFunctions, rangeX, xPosKind, xPos, binOptions)
-        if (statData.isEmpty()) {
-            return withEmptyStatValues()
-        }
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
