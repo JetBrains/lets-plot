@@ -14,7 +14,8 @@ class Hex {
         return listOf(
             basicIdentity(),
             basicWithStat(),
-            pointOnBorder(0)
+            pointOnBorder(0),
+            customSize(1.0, 1.0, "res", "res"),
         )
     }
 
@@ -148,6 +149,54 @@ class Hex {
                   'aesthetic': 'paint_b',
                   'values': ['white', 'red'],
                   'guide': 'none'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun customSize(
+        width: Double,
+        height: Double,
+        widthUnit: String,
+        heightUnit: String
+    ): MutableMap<String, Any> {
+        val pointSize = when {
+            widthUnit == "size" -> width
+            heightUnit == "size" -> height
+            else -> 4.0
+        }
+        val spec = """
+            {
+              'kind': 'plot',
+              'ggtitle': {
+                'text': 'Custom size hex plot\nwidth=$width, width_unit=\"$widthUnit\"\nheight=$height, height_unit=\"$heightUnit\"'
+              },
+              'data': {
+                'x': [-2, 2, 0],
+                'y': [0, 0, ${4.0 / HEX_HEIGHT}],
+                'g': ['a', 'b', 'c']
+              },
+              'mapping': {
+                'x': 'x',
+                'y': 'y',
+                'fill': 'g'
+              },
+              'layers': [
+                {
+                  'geom': 'hex',
+                  'stat': 'identity',
+                  'width': $width,
+                  'height': $height,
+                  'width_unit': '$widthUnit',
+                  'height_unit': '$heightUnit'
+                },
+                {
+                  'geom': 'point',
+                  'size': $pointSize,
+                  'color': 'orange'
                 }
               ]
             }

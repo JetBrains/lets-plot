@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.stat.*
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin2d
 import org.jetbrains.letsPlot.core.spec.Option.Stat.BinHex
@@ -22,8 +23,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
+import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
-import kotlin.math.sqrt
 
 object StatProto {
 
@@ -36,13 +37,27 @@ object StatProto {
         }
     }
 
+    internal fun preferredCoordinateSystem(statKind: StatKind): CoordProvider? {
+        @Suppress("UNUSED_EXPRESSION")
+        return when (statKind) {
+//            BIN2D,
+//            BINHEX,
+//            CONTOUR,
+//            CONTOURF,
+//            DENSITY2D,
+//            DENSITY2DF -> CoordProviders.fixed(1.0)
+
+            else -> null
+        }
+    }
+
     internal fun createStat(statKind: StatKind, options: OptionsAccessor): Stat {
-        when (statKind) {
-            StatKind.IDENTITY -> return Stats.IDENTITY
-            StatKind.COUNT -> return Stats.count()
-            StatKind.COUNT2D -> return Stats.count2d()
-            StatKind.BIN -> {
-                return Stats.bin(
+        return when (statKind) {
+            IDENTITY -> Stats.IDENTITY
+            COUNT -> Stats.count()
+            COUNT2D -> Stats.count2d()
+            BIN -> {
+                Stats.bin(
                     binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
                     binWidth = options.getDouble(Bin.BINWIDTH),
                     center = options.getDouble(Bin.CENTER),
@@ -51,7 +66,7 @@ object StatProto {
                 )
             }
 
-            StatKind.BIN2D -> {
+            BIN2D -> {
                 val (binCountX, binCountY) = options.getNumPairDef(
                     Bin2d.BINS,
                     Pair(Bin2dStat.DEF_BINS, Bin2dStat.DEF_BINS)
@@ -61,7 +76,7 @@ object StatProto {
                     Pair(Bin2dStat.DEF_BINWIDTH, Bin2dStat.DEF_BINWIDTH)
                 )
 
-                return Bin2dStat(
+                Bin2dStat(
                     binCountX = binCountX.toInt(),
                     binCountY = binCountY.toInt(),
                     binWidthX = binWidthX?.toDouble(),
@@ -70,7 +85,7 @@ object StatProto {
                 )
             }
 
-            StatKind.BINHEX -> {
+            BINHEX -> {
                 val (binCountX, binCountY) = options.getNumPairDef(
                     BinHex.BINS,
                     Pair(BinHexStat.DEF_BINS, BinHexStat.DEF_BINS)
@@ -80,7 +95,7 @@ object StatProto {
                     Pair(BinHexStat.DEF_BINWIDTH, BinHexStat.DEF_BINWIDTH)
                 )
 
-                return BinHexStat(
+                BinHexStat(
                     binCountX = binCountX.toInt(),
                     binCountY = binCountY.toInt(),
                     binWidthX = binWidthX?.toDouble(),
@@ -89,69 +104,58 @@ object StatProto {
                 )
             }
 
-            StatKind.DOTPLOT -> return configureDotplotStat(options)
+            DOTPLOT -> configureDotplotStat(options)
 
-            StatKind.CONTOUR -> {
-                return ContourStat(
+            CONTOUR -> {
+                ContourStat(
                     binCount = options.getIntegerDef(Contour.BINS, ContourStat.DEF_BIN_COUNT),
                     binWidth = options.getDouble(Contour.BINWIDTH),
                 )
             }
 
-            StatKind.CONTOURF -> {
-                return ContourfStat(
+            CONTOURF -> {
+                ContourfStat(
                     binCount = options.getIntegerDef(Contour.BINS, ContourStat.DEF_BIN_COUNT),
                     binWidth = options.getDouble(Contour.BINWIDTH),
                 )
             }
 
-            StatKind.SMOOTH -> return configureSmoothStat(options)
+            SMOOTH -> configureSmoothStat(options)
 
-            StatKind.BOXPLOT -> {
-                return Stats.boxplot(
+            BOXPLOT -> {
+                Stats.boxplot(
                     whiskerIQRRatio = options.getDouble(Boxplot.COEF) ?: BoxplotStat.DEF_WHISKER_IQR_RATIO,
                     computeWidth = options.getBoolean(Boxplot.VARWIDTH, BoxplotStat.DEF_COMPUTE_WIDTH)
                 )
             }
 
-            StatKind.BOXPLOT_OUTLIER -> {
-                return Stats.boxplotOutlier(
+            BOXPLOT_OUTLIER -> {
+                Stats.boxplotOutlier(
                     whiskerIQRRatio = options.getDouble(Boxplot.COEF) ?: BoxplotStat.DEF_WHISKER_IQR_RATIO
                 )
             }
 
-            StatKind.DENSITYRIDGES -> return configureDensityRidgesStat(options)
-
-            StatKind.YDENSITY -> return configureYDensityStat(options)
-
-            StatKind.YDOTPLOT -> return configureYDotplotStat(options)
-
-            StatKind.DENSITY -> return configureDensityStat(options)
-
-            StatKind.DENSITY2D -> return configureDensity2dStat(options, false)
-
-            StatKind.DENSITY2DF -> return configureDensity2dStat(options, true)
-
-            StatKind.QQ -> return configureQQStat(options)
-
-            StatKind.QQ2 -> return Stats.qq2()
-
-            StatKind.QQ_LINE -> return configureQQLineStat(options)
-
-            StatKind.QQ2_LINE -> return configureQQ2LineStat(options)
+            DENSITYRIDGES -> configureDensityRidgesStat(options)
+            YDENSITY -> configureYDensityStat(options)
+            YDOTPLOT -> configureYDotplotStat(options)
+            DENSITY -> configureDensityStat(options)
+            DENSITY2D -> configureDensity2dStat(options, false)
+            DENSITY2DF -> configureDensity2dStat(options, true)
+            StatKind.QQ -> configureQQStat(options)
+            QQ2 -> Stats.qq2()
+            QQ_LINE -> configureQQLineStat(options)
+            QQ2_LINE -> configureQQ2LineStat(options)
 
             StatKind.ECDF -> {
-                return ECDFStat(
+                ECDFStat(
                     n = options.getInteger(ECDF.N),
                     padded = options.getBoolean(ECDF.PADDED, ECDFStat.DEF_PADDED)
                 )
             }
 
-            StatKind.SUM -> return Stats.sum()
-
-            StatKind.SUMMARY -> return configureSummaryStat(options)
-
-            StatKind.SUMMARYBIN -> return configureSummaryBinStat(options)
+            SUM -> Stats.sum()
+            SUMMARY -> configureSummaryStat(options)
+            SUMMARYBIN -> configureSummaryBinStat(options)
         }
     }
 
