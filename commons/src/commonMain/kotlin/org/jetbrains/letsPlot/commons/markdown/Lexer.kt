@@ -32,7 +32,7 @@ internal class Lexer private constructor(
 
         startToken()
 
-        val token = currentToken()
+        val token = peek()
         when (token) {
             TokenType.ASTERISK,
             TokenType.UNDERSCORE,
@@ -47,7 +47,7 @@ internal class Lexer private constructor(
         currentToken = Token(token, text.substring(tokenStart, i))
     }
 
-    private fun currentToken(): TokenType {
+    private fun peek(): TokenType {
         val char = text[i]
         return when {
             char.isWhitespace() -> TokenType.WHITE_SPACE
@@ -81,7 +81,7 @@ internal class Lexer private constructor(
     }
 
     private fun advanceText() {
-        while (!isFinished() && currentToken() == TokenType.TEXT) {
+        while (!isFinished() && peek() == TokenType.TEXT) {
             advance()
         }
     }

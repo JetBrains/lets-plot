@@ -8,7 +8,15 @@ package org.jetbrains.letsPlot.commons.markdown
 object Markdown {
     fun parse(text: String): List<Node> {
         val tokens = Lexer.tokenize(text)
-        return Parser.parse(tokens)
+        val nodes = Parser.parse(tokens)
+        return nodes
+        //val result =
+        //nodes.flatMap {
+        //    when (it) {
+        //        is Text -> Html.parse(it.text)
+        //        else -> listOf(it)
+        //    }
+        //}
     }
 }
 
