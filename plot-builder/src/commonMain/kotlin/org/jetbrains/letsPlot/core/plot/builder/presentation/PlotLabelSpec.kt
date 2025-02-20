@@ -18,12 +18,22 @@ class PlotLabelSpec(
         return DoubleVector(width(labelText), height())
     }
 
+    override fun multilineDimensions(labelText: String): DoubleVector {
+        return DoubleVector(width(labelText), multilineHeight(labelText))
+    }
+
     override fun width(labelText: String): Double {
         return RichText.estimateWidth(labelText, font, widthEstimator = ::widthCalculator)
     }
 
     override fun height(): Double {
         return font.size + 2 * LABEL_PADDING
+    }
+
+    override fun multilineHeight(labelText: String): Double {
+        labelText.count { it == '\n' }.let { newLinesCount ->
+            return height() + font.size * newLinesCount
+        }
     }
 
     companion object {
@@ -66,11 +76,19 @@ class PlotLabelSpec(
                 UNSUPPORTED("Dummy Label Spec")
             }
 
+            override fun multilineDimensions(labelText: String): DoubleVector {
+                UNSUPPORTED("Dummy Label Spec")
+            }
+
             override fun width(labelText: String): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
             override fun height(): Double {
+                UNSUPPORTED("Dummy Label Spec")
+            }
+
+            override fun multilineHeight(labelText: String): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

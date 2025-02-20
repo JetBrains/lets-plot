@@ -13,7 +13,11 @@ interface LabelSpec {
 
     fun dimensions(labelText: String): DoubleVector
 
+    fun multilineDimensions(labelText: String): DoubleVector
+
     fun width(labelText: String): Double
 
     fun height(): Double
+
+    fun multilineHeight(labelText: String): Double
 }
