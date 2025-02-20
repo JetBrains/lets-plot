@@ -25,7 +25,7 @@
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
 - Axis breaks: changed default `lower_exp_bound` to -7 and `upper_exp_bound` to 6 (same as in `theme(...)`).
 - Axis labels: changed default justification for rotated labels.
-- `geom_tile()`: default coordinate system changed from 'fixed' to 'cartesian'.
+- [**BREAKING**] geoms `tile, bin2d, contour, contourf, density2d, density2df` : default coordinate system changed from 'fixed' to 'cartesian'.
 
 ### Fixed
 - Tooltip should not cover and hide the geometry that it provides info for [[#1275](https://github.com/JetBrains/lets-plot/issues/1275)].

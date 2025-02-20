@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.stat.*
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin2d
 import org.jetbrains.letsPlot.core.spec.Option.Stat.BinHex
@@ -39,13 +38,14 @@ object StatProto {
     }
 
     internal fun preferredCoordinateSystem(statKind: StatKind): CoordProvider? {
+        @Suppress("UNUSED_EXPRESSION")
         return when (statKind) {
-            BIN2D,
-            BINHEX,
-            CONTOUR,
-            CONTOURF,
-            DENSITY2D,
-            DENSITY2DF -> CoordProviders.fixed(1.0)
+//            BIN2D,
+//            BINHEX,
+//            CONTOUR,
+//            CONTOURF,
+//            DENSITY2D,
+//            DENSITY2DF -> CoordProviders.fixed(1.0)
 
             else -> null
         }
