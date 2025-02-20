@@ -21,9 +21,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(-10.0, 10.0, 0.0, 20.0)),
                 Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }),
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 2.0, 1.0)),
-                Stats.WIDTH to checkValues(List(4) { 20.0 }),
-                Stats.HEIGHT to checkValues(List(4) { 20.0 })
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 2.0, 1.0))
             ),
             binWidthX = 20.0,
             binWidthY = 20.0
@@ -45,9 +43,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(0.0)),
                 Stats.Y to checkValues(listOf(0.0)),
-                Stats.COUNT to checkValues(listOf(1.0)),
-                Stats.WIDTH to checkValues(listOf(1.0)),
-                Stats.HEIGHT to checkValues(listOf(1.0))
+                Stats.COUNT to checkValues(listOf(1.0))
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -64,9 +60,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(0.0)),
                 Stats.Y to checkValues(listOf(0.0)),
-                Stats.COUNT to checkValues(listOf(1.0)),
-                Stats.WIDTH to checkValues(listOf(1.0)),
-                Stats.HEIGHT to checkValues(listOf(1.0))
+                Stats.COUNT to checkValues(listOf(1.0))
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -84,9 +78,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(-10.0, 10.0, 0.0, 20.0)),
                 Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }),
-                Stats.COUNT to checkValues(listOf(1.0, 4.0, 10.0, 16.0)),
-                Stats.WIDTH to checkValues(List(4) { 20.0 }),
-                Stats.HEIGHT to checkValues(List(4) { 20.0 })
+                Stats.COUNT to checkValues(listOf(1.0, 4.0, 10.0, 16.0))
             ),
             binWidthX = 20.0,
             binWidthY = 20.0
@@ -103,9 +95,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(-10.0, 10.0, 0.0, 20.0)),
                 Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }),
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 1.0)),
-                Stats.WIDTH to checkValues(List(4) { 20.0 }),
-                Stats.HEIGHT to checkValues(List(4) { 20.0 })
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 1.0))
             ),
             binCountX = 2,
             binCountY = 2
@@ -122,9 +112,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(-10.0, 10.0, -10.0, 10.0)),
                 Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }),
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 2.0)),
-                Stats.WIDTH to checkValues(List(4) { 10.0 }),
-                Stats.HEIGHT to checkValues(List(4) { 10.0 })
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 2.0))
             ),
             binWidthX = 10.0,
             binWidthY = 10.0
@@ -150,9 +138,7 @@ class BinHexStatTest : BaseStatTest() {
                 Stats.COUNT to checkValues(listOf(1.0, 0.0, 1.0, 0.0,
                                                   0.0, 0.0, 0.0, 0.0,
                                                   1.0, 0.0, 2.0, 0.0,
-                                                  0.0, 0.0, 0.0, 0.0)),
-                Stats.WIDTH to checkValues(List(16) { 10.0 }),
-                Stats.HEIGHT to checkValues(List(16) { 10.0 })
+                                                  0.0, 0.0, 0.0, 0.0))
             ),
             binWidthX = 10.0,
             binWidthY = 10.0,
@@ -212,9 +198,7 @@ class BinHexStatTest : BaseStatTest() {
                 Stats.Y to checkValues(listOf(-HEX_HEIGHT_INV, -HEX_HEIGHT_INV,
                                                0.0, 0.0, 0.0,
                                                HEX_HEIGHT_INV, HEX_HEIGHT_INV)),
-                Stats.COUNT to checkValues(expectedCounts),
-                Stats.WIDTH to checkValues(List(7) { 1.0 }),
-                Stats.HEIGHT to checkValues(List(7) { 1.0 })
+                Stats.COUNT to checkValues(expectedCounts)
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -233,9 +217,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(0.0, 1.0).map { it * xStretch }),
                 Stats.Y to checkValues(listOf(0.0, 0.0)),
-                Stats.COUNT to checkValues(listOf(2.0, 2.0)),
-                Stats.WIDTH to checkValues(List(2) { xStretch }),
-                Stats.HEIGHT to checkValues(List(2) { 2.0 * yStretch })
+                Stats.COUNT to checkValues(listOf(2.0, 2.0))
             ),
             binWidthX = xStretch,
             binWidthY = 2.0 * yStretch
@@ -254,9 +236,7 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to { statDf, variable -> checkStatVarSize(statDf, variable, 3) },
                 Stats.Y to { statDf, variable -> checkStatVarSize(statDf, variable, 3) },
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0)),
-                Stats.WIDTH to checkValues(List(3) { xStretch }),
-                Stats.HEIGHT to checkValues(List(3) { 2.0 * yStretch })
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0))
             ),
             binWidthX = xStretch,
             binWidthY = 2.0 * yStretch

@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
+import org.jetbrains.letsPlot.core.spec.StatProto
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.GuideConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor.Companion.over
@@ -138,11 +139,15 @@ object PlotConfigFrontendUtil {
             }
 
         // Coord provider
-        val preferredCoordProvider: CoordProvider? = config.layerConfigs.firstNotNullOfOrNull {
+        val statPreferredCoordProvider: CoordProvider? = config.layerConfigs.firstNotNullOfOrNull {
+            StatProto.preferredCoordinateSystem(it.statKind)
+        }
+        val geomPreferredCoordProvider: CoordProvider? = config.layerConfigs.firstNotNullOfOrNull {
             it.geomProto.preferredCoordinateSystem(it)
         }
 
-        val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
+        val defaultCoordProvider =
+            statPreferredCoordProvider ?: geomPreferredCoordProvider ?: CoordProviders.cartesian()
 
         val coordProvider = CoordConfig.createCoordProvider(
             config[Option.Plot.COORD],

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.pos.StackablePos
 import org.jetbrains.letsPlot.core.plot.base.pos.StackingMode
@@ -97,14 +98,28 @@ abstract class PosProvider {
             }
         }
 
-        fun nudge(width: Double?, height: Double?): PosProvider {
+        fun nudge(width: Double?, height: Double?, unit: String?): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.nudge(width, height)
+                    return PositionAdjustments.nudge(width, height, dimensionUnit(unit))
                 }
 
                 override fun handlesGroups(): Boolean {
                     return PositionAdjustments.Meta.NUDGE.handlesGroups()
+                }
+
+                private fun dimensionUnit(unit: String?): DimensionUnit {
+                    return when (unit) {
+//                            "res" -> DimensionUnit.RESOLUTION
+                            null, "identity" -> DimensionUnit.IDENTITY
+                            "size" -> DimensionUnit.SIZE
+                            "px" -> DimensionUnit.PIXEL
+                            else -> throw IllegalArgumentException(
+                                "Unsupported value for unit parameter: '$unit'. " +
+                                        "Use one of: identity, size, px."
+                            )
+                        }
+
                 }
             }
         }

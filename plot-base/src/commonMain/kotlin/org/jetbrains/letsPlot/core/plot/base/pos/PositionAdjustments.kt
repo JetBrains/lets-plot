@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 
 object PositionAdjustments {
 
@@ -55,8 +56,8 @@ object PositionAdjustments {
         return JitterPos(width, height, seed)
     }
 
-    fun nudge(width: Double?, height: Double?): PositionAdjustment {
-        return NudgePos(width, height)
+    fun nudge(width: Double?, height: Double?, unit: DimensionUnit): PositionAdjustment {
+        return NudgePos(width, height, unit)
     }
 
     fun jitterDodge(

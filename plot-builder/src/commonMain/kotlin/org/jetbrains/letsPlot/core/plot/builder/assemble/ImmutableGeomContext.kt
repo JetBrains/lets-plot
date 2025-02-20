@@ -37,6 +37,8 @@ interface ImmutableGeomContext : GeomContext {
 
         fun plotContext(plotContext: PlotContext): Builder
 
+        fun coordinateSystem(coordinateSystem: CoordinateSystem): Builder
+
         fun build(): ImmutableGeomContext
     }
 }

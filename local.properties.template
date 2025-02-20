@@ -14,8 +14,8 @@ enable_python_package=false
 # -------------------------------------------------------------------
 # Python settings
 # ---------
-#python.bin_path=
-#python.include_path=
+#python.bin_path=       # example: /opt/anaconda3/envs/dev-py312/bin
+#python.include_path=   # example: /opt/anaconda3/envs/dev-py312/include/python3.12
 
 # -------------------------------------------------------------------
 # PyPI settings

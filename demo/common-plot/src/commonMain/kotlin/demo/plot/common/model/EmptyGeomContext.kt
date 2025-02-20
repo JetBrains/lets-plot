@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
@@ -47,6 +44,10 @@ class EmptyGeomContext : GeomContext {
     }
 
     override fun getDefaultFormatter(varName: String): (Any) -> String {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
+    override fun getCoordinateSystem(): CoordinateSystem {
         throw IllegalStateException("Not available in an empty geom context")
     }
 

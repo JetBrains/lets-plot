@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.geom.DimensionsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.WithHeight
 import org.jetbrains.letsPlot.core.plot.base.geom.WithWidth
@@ -304,7 +305,8 @@ object PositionalScalesUtil {
                             p,
                             widthAxis,
                             Aes.WIDTH,
-                            resolution
+                            resolution,
+                            DimensionUnit.RESOLUTION
                         )
                     }
                 }
@@ -327,7 +329,8 @@ object PositionalScalesUtil {
                             p,
                             heightAxis,
                             Aes.HEIGHT,
-                            resolution
+                            resolution,
+                            DimensionUnit.RESOLUTION
                         )
                     }
                 }

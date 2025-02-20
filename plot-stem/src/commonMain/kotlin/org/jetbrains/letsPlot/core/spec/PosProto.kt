@@ -43,7 +43,8 @@ internal object PosProto {
 
             NUDGE -> PosProvider.nudge(
                 opts.getDouble(Pos.Nudge.WIDTH),
-                opts.getDouble(Pos.Nudge.HEIGHT)
+                opts.getDouble(Pos.Nudge.HEIGHT),
+                opts.getString(Pos.Nudge.UNIT),
             )
 
             JITTER_DODGE -> PosProvider.jitterDodge(

@@ -1,4 +1,4 @@
-# lets-plot Python package
+# Lets-Plot Python Package
 
 ## Requirements
 
@@ -21,11 +21,31 @@ To get this path you can run `python -c "from sysconfig import get_paths as gp; 
 
 ## Building
 
-Gradle `build` in the sibling project **python-package-build**
+There are two ways to build the Python package:
 
-or just run shell command (if the changes are only in the Python code):
+### 1. Full Build with Gradle
 
-`python -m build -w`
+This method builds both the Kotlin multiplatform binaries and the Python package:
+
+```bash
+./gradlew :python-package-build:build
+```
+
+**Note:** The target Python version for this build is determined by the configuration in `local.properties` file (see **Configuration** section above).
+
+### 2. Python Package Only Build
+
+If you've only made changes to Python code, you can rebuild just the Python wheel:
+
+```bash
+python -m build -w
+```
+
+**Prerequisites for Python build:**
+- Must be in the `python-package` directory
+- Need an active Python environment with the `build` package installed
+- The resulting wheel will target the Python version of your active environment
+
 
 ## Installing locally
 

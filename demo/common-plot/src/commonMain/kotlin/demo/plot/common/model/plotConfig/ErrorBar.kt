@@ -17,7 +17,8 @@ class ErrorBar {
             pointrange(),
             linerange(),
             withBars(), horizontalWithBars(),
-            horizontalErrorBar(), horizontalErrorBarFlipped()
+            horizontalErrorBar(), horizontalErrorBarFlipped(),
+            customWidth(20.0, "size")
         )
     }
 
@@ -249,5 +250,35 @@ class ErrorBar {
             |}
             """.trimMargin()
         return parsePlotSpec(spec)
+    }
+
+    private fun customWidth(width: Double, widthUnit: String): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'x': [-2, 0, 2],
+                'ymin': [-2, -1, 0],
+                'ymax': [0, 1, 2]
+              },
+              'mapping': {
+                'x': 'x',
+                'ymin': 'ymin',
+                'ymax': 'ymax'
+              },
+              'ggtitle': {
+                'text': 'Error bar with width=$width, width_unit=\"$widthUnit\"'
+              },
+              'layers': [
+                {
+                  'geom': 'errorbar',
+                  'width': $width,
+                  'width_unit': '$widthUnit'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
     }
 }

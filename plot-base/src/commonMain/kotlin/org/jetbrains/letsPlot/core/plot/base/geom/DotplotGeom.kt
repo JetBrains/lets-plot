@@ -227,7 +227,8 @@ open class DotplotGeom : GeomBase(), WithWidth {
             p,
             coordAes,
             sizeAes = Aes.BINWIDTH,
-            resolution
+            resolution,
+            unit = DimensionUnit.RESOLUTION
         )
     }
 

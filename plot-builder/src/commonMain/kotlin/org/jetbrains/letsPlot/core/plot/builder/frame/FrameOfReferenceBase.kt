@@ -205,6 +205,7 @@ internal abstract class FrameOfReferenceBase(
                 .annotation(rendererData.annotation)
                 .backgroundColor(backgroundColor)
                 .plotContext(plotContext)
+                .coordinateSystem(coord)
                 .build()
 
             val pos = rendererData.pos
