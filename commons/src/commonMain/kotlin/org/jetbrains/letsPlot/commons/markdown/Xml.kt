@@ -10,7 +10,12 @@ import org.jetbrains.letsPlot.commons.markdown.Xml.XmlNode.Text
 
 class Xml {
     sealed class XmlNode {
-        data class Element(val name: String, val attributes: Map<String, String>, val children: List<XmlNode>) : XmlNode()
+        data class Element(
+            val name: String,
+            val attributes: Map<String, String> = emptyMap(),
+            val children: List<XmlNode> = emptyList()
+        ) : XmlNode()
+
         data class Text(val content: String) : XmlNode()
     }
 
@@ -33,8 +38,8 @@ class Xml {
         }
     }
 
-    class Lexer(
-        private val input: String
+    private class Lexer(
+        val input: String
     ) {
         val peekToken: Token
             get() {
@@ -44,10 +49,10 @@ class Xml {
                 return token
             }
 
-        private var pos = 0
+        var pos = 0
 
         private fun peek(): Char? = input.getOrNull(pos)
-        private fun advance(n: Int = 1): Char? = input.getOrNull(pos++)
+        private fun advance(): Char? = input.getOrNull(pos++)
 
         fun nextToken(): Token {
             if (pos >= input.length) return Token.EOF
@@ -61,6 +66,7 @@ class Xml {
                         else -> Token.LT
                     }
                 }
+
                 '>' -> Token.GT.also { advance() }
                 '/' -> {
                     advance()
@@ -69,6 +75,7 @@ class Xml {
                         else -> Token.SLASH
                     }
                 }
+
                 '=' -> Token.EQUALS.also { advance() }
                 ' ', '\t' -> Token(TokenType.WHITESPACE, " ").also { advance() }
                 '"' -> {
@@ -78,6 +85,7 @@ class Xml {
 
                     token
                 }
+
                 else -> when {
                     c.isWhitespace() -> Token(TokenType.WHITESPACE, c.toString())
                     else -> Token(
@@ -103,99 +111,90 @@ class Xml {
         }
     }
 
-    class Parser(
+    private class Parser(
         val lexer: Lexer
     ) {
-        internal fun parse(): XmlNode {
+        fun parse(): XmlNode {
             return parseElement()
         }
 
+        private fun nextToken(skipSpaces: Boolean = false): Token {
+            if (skipSpaces) {
+                while (lexer.peekToken.type == TokenType.WHITESPACE) {
+                    lexer.nextToken()
+                }
+            }
+            return lexer.nextToken()
+        }
+
         private fun parseElement(): XmlNode {
-            check(lexer.nextToken() == Token.LT) { "Expected '<'" }
-            val name = parseElementName()
-            val attributes = parseAttributes()
+            val pos = lexer.pos
+            try {
+                check(nextToken() == Token.LT) { "Expected '<'" }
+                val name = parseElementName()
+                val attributes = parseAttributes()
 
-            while(lexer.peekToken.type == TokenType.WHITESPACE) {
-                lexer.nextToken()
+                if (parseSelfClosingElement()) {
+                    return Element(name, attributes, emptyList())
+                } else {
+                    check(nextToken() == Token.GT) { "Expected '>'" }
+                }
+
+                val children = parseChildren()
+
+                check(nextToken() == Token.LT_SLASH) { "Expected \"</\"" }
+                check(nextToken() == Token(TokenType.TEXT, name)) { "Expected element name" }
+                check(nextToken(skipSpaces = true) == Token.GT) { "Expected '>'" }
+
+                return Element(name, attributes, children)
+            } catch (e: Throwable) {
+                return Text(lexer.input.substring(pos, lexer.pos))
             }
-
-            if (lexer.peekToken == Token.SLASH_GT) {
-                lexer.nextToken()
-                return Element(name, attributes, emptyList())
-            }
-
-            if (parseSelfClosingElement()) {
-                return Element(name, attributes, emptyList())
-            }
-
-            val children = parseChildren()
-
-            check(lexer.nextToken() == Token.LT_SLASH) { "Expected \"</\"" }
-            check(lexer.nextToken() == Token(TokenType.TEXT, name)) { "Expected element name" }
-            check(lexer.nextToken() == Token.GT) { "Expected '>'" }
-
-            return Element(name, attributes, children)
         }
 
         private fun parseSelfClosingElement(): Boolean {
-            while (true) {
-                val token = lexer.nextToken()
-                return when (token.type) {
-                    TokenType.SLASH_GT -> true
-                    else -> false
-                }
+            while (lexer.peekToken.type == TokenType.WHITESPACE) {
+                nextToken()
             }
+
+            if (lexer.peekToken != Token.SLASH_GT) {
+                return false
+            }
+
+            nextToken()
+            return true
         }
 
         private fun parseChildren(): MutableList<XmlNode> {
             val children = mutableListOf<XmlNode>()
-            while (true) {
+            while (lexer.peekToken != Token.EOF) {
                 val token = lexer.peekToken
                 children += when (token.type) {
-                    TokenType.WHITESPACE,
-                    TokenType.TEXT,
-                    TokenType.QUOTED_STRING -> parseText()
+                    TokenType.LT_SLASH, TokenType.SLASH_GT, TokenType.EOF -> break
                     TokenType.LT -> parseElement()
-
-                    TokenType.LT_SLASH -> break
-                    TokenType.GT -> break
-                    TokenType.EOF -> break
-                    TokenType.SLASH -> TODO()
-                    TokenType.EQUALS -> TODO()
-                    TokenType.SLASH_GT -> TODO()
+                    else -> parseContent()
                 }
             }
             return children
         }
 
-
         private fun parseElementName(): String {
-            val token = lexer.nextToken()
+            val token = nextToken()
             if (token.type != TokenType.TEXT) error("Expected element name, but got: $token")
             return token.value
         }
 
         private fun parseAttributes(): Map<String, String> {
             val attributes = mutableMapOf<String, String>()
-            while (true) {
-                if (lexer.peekToken == Token.GT ||
-                    lexer.peekToken == Token.SLASH ||
-                    lexer.peekToken == Token.SLASH_GT
-                ) {
-                    break
-                }
-
-                val token = lexer.nextToken()
+            while (lexer.peekToken !in listOf(Token.GT, Token.SLASH_GT, Token.EOF)) {
+                val token = nextToken()
                 when (token.type) {
                     TokenType.WHITESPACE -> {}
                     TokenType.TEXT -> {
                         val key = token.value
-                        check(lexer.nextToken() == Token.EQUALS) { "Expected '=' after attribute name" }
-                        val value = lexer.nextToken()
-                        check(
-                            value.type == TokenType.TEXT ||
-                                    value.type == TokenType.QUOTED_STRING
-                        ) { "Expected string value" }
+                        check(nextToken(skipSpaces = true) == Token.EQUALS)
+                        val value = nextToken(skipSpaces = true)
+                        check(value.type in listOf(TokenType.TEXT, TokenType.QUOTED_STRING))
                         attributes[key] = value.value
                     }
 
@@ -206,18 +205,15 @@ class Xml {
             return attributes
         }
 
-        private fun parseText(): Text {
+        private fun parseContent(): Text {
             val buffer = StringBuilder()
-            while (true) {
+            while (lexer.peekToken != Token.EOF) {
                 val token = lexer.peekToken
                 when (token.type) {
-                    TokenType.WHITESPACE -> buffer.append(token.value)
-                    TokenType.TEXT -> buffer.append(token.value)
-                    TokenType.QUOTED_STRING -> buffer.append(token.value)
-
-                    else -> break
+                    TokenType.LT_SLASH, TokenType.LT, TokenType.EOF -> break
+                    else -> buffer.append(token.value)
                 }
-                lexer.nextToken()
+                nextToken()
             }
             return Text(buffer.toString())
         }
@@ -227,7 +223,23 @@ class Xml {
         fun parse(xml: String): XmlNode? {
             val lexer = Lexer(xml)
             val parser = Parser(lexer)
-            return parser.parse()
+            val doc = parser.parse()
+
+            return if (lexer.nextToken() != Token.EOF) {
+                // Parsing was not completed, add the rest of the input as text node
+                when (doc) {
+                    is Element -> Element(
+                        doc.name,
+                        doc.attributes,
+                        doc.children + Text(lexer.input.substring(lexer.pos))
+                    )
+
+                    is Text -> Text(doc.content + lexer.input.substring(lexer.pos))
+                }
+            } else {
+                doc
+            }
+
         }
     }
 }

@@ -9,6 +9,19 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class XmlTest {
+    @Test
+    fun simple() {
+        val xml = """<p>Hi</p>""".trimIndent()
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element(
+                name = "p",
+                children = listOf(Xml.XmlNode.Text("Hi"))
+            ),
+            actual = parsed
+        )
+    }
 
     @Test
     fun `hello, World!`() {
@@ -18,7 +31,6 @@ class XmlTest {
         assertEquals(
             expected = Xml.XmlNode.Element(
                 name = "p",
-                attributes = emptyMap(),
                 children = listOf(Xml.XmlNode.Text("Hello, world!"))
             ),
             actual = parsed
@@ -26,15 +38,14 @@ class XmlTest {
     }
 
     @Test
-    fun simple() {
-        val xml = """<p>Hi</p>""".trimIndent()
+    fun contentWithTokens() {
+        val xml = """<p>foo / = > bar</p>"""
 
         val parsed = parse(xml)
         assertEquals(
             expected = Xml.XmlNode.Element(
                 name = "p",
-                attributes = emptyMap(),
-                children = listOf(Xml.XmlNode.Text("Hi"))
+                children = listOf(Xml.XmlNode.Text("foo / = > bar"))
             ),
             actual = parsed
         )
@@ -46,11 +57,18 @@ class XmlTest {
 
         val parsed = parse(xml)
         assertEquals(
-            expected = Xml.XmlNode.Element(
-                name = "br",
-                attributes = emptyMap(),
-                children = emptyList()
-            ),
+            expected = Xml.XmlNode.Element("br"),
+            actual = parsed
+        )
+    }
+
+    @Test
+    fun selfClosingWithSpaces() {
+        val xml = """<br  />""".trimIndent()
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element("br"),
             actual = parsed
         )
     }
@@ -63,8 +81,7 @@ class XmlTest {
         assertEquals(
             expected = Xml.XmlNode.Element(
                 name = "img",
-                attributes = mapOf("src" to "foobar.png"),
-                children = emptyList()
+                attributes = mapOf("src" to "foobar.png")
             ),
             actual = parsed
         )
@@ -93,8 +110,7 @@ class XmlTest {
         assertEquals(
             expected = Xml.XmlNode.Element(
                 name = "formula",
-                attributes = mapOf("expression" to "a > 0"),
-                children = emptyList()
+                attributes = mapOf("expression" to "a > 0")
             ),
             actual = parsed
         )
@@ -121,11 +137,80 @@ class XmlTest {
         )
     }
 
+    @Test
+    fun extraSpacesEverywhere() {
+        val xml = """<p    style  = "color:red"   >  Hello  </p >""".trimIndent()
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element(
+                name = "p",
+                attributes = mapOf("style" to "color:red"),
+                children = listOf(Xml.XmlNode.Text("  Hello  "))
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
+    fun nested() {
+        val xml = """<p>press <button>send<img srd="send.png"/></button> button</p>"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element(
+                name = "p",
+                children = listOf(
+                    Xml.XmlNode.Text("press "),
+                    Xml.XmlNode.Element(
+                        name = "button",
+                        children = listOf(
+                            Xml.XmlNode.Text("send"),
+                            Xml.XmlNode.Element(
+                                name = "img",
+                                attributes = mapOf("srd" to "send.png"),
+                            )
+                        )
+                    ),
+                    Xml.XmlNode.Text(" button")
+                )
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
+    fun malformed() {
+        val xml = """<p> foo <b style="color:red"/> bar <p =foobar</p>"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element(
+                name = "p",
+                children = listOf(
+                    Xml.XmlNode.Text(" foo "),
+                    Xml.XmlNode.Element(name = "b", attributes = mapOf("style" to "color:red")),
+                    Xml.XmlNode.Text(" bar "),
+                    Xml.XmlNode.Text("<p ="),
+                    Xml.XmlNode.Text("foobar"),
+                )
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
+    fun `malformed - not closed`() {
+        val xml = """<br"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Text("<br"),
+            actual = parsed
+        )
+    }
+
     internal fun parse(xml: String): Xml.XmlNode? {
-        return if (false) {
-            Xml.parse(xml)
-        } else {
-             Xml.Parser(Xml.Lexer(xml)).parse()
-        }
+        return Xml.parse(xml)
     }
 }
