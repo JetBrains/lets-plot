@@ -83,8 +83,8 @@ class PolarCoordProvider(
 
         val thetaScaleMapper = Mappers.mul(normDomain.xRange(), 2.0 * PI)
         val rScaleMapper = Mappers.mul(normDomain.yRange(), min(clientSize.x, clientSize.y) / 2.0)
-        val thetaScaleFactor = 2.0 * PI / normDomain.xRange().length
-        val rScaleFactor = min(clientSize.x, clientSize.y) / 2.0 / normDomain.yRange().length
+        val inversedThetaScaleMapper = Mappers.mul(1 / thetaScaleMapper(1.0)!!)
+        val inversedRScaleMapper = Mappers.mul(1 / rScaleMapper(1.0)!!)
 
         val sign = if (clockwise) -1.0 else 1.0
         val startAngle = PI / 2.0 + sign * start
@@ -113,10 +113,10 @@ class PolarCoordProvider(
 
                 val adjustedTheta = (theta - startAngle) * sign
 
-                val x = adjustedTheta / thetaScaleFactor
-                val y = r / rScaleFactor
+                val x =  inversedThetaScaleMapper(adjustedTheta) ?: error("Unexpected: x is null")
+                val y = inversedRScaleMapper(r) ?: error("Unexpected: y is null")
 
-                return DoubleVector(x, y).flipIf(flipped).subtract(normOffset)
+                return DoubleVector(x, y).subtract(normOffset).flipIf(flipped)
             }
 
             override fun validDomain(): DoubleRectangle = adjustedDomain
