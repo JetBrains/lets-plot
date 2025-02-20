@@ -370,6 +370,7 @@ object Option {
             const val SIZE_UNIT = "size_unit"
             const val NUDGE_X = "nudge_x"
             const val NUDGE_Y = "nudge_y"
+            const val NUDGE_UNIT = "nudge_unit"
             const val CHECK_OVERLAP = "check_overlap"
         }
 
@@ -581,6 +582,7 @@ object Option {
         object Nudge {
             const val WIDTH = "x"
             const val HEIGHT = "y"
+            const val UNIT = "unit"
         }
 
         object JitterDodge {

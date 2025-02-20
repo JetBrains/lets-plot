@@ -143,7 +143,8 @@ class GeomProto(val geomKind: GeomKind) {
                 mapOf(
                     Meta.NAME to PosProto.NUDGE,
                     Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
-                    Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y)
+                    Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y),
+                    Pos.Nudge.UNIT to layerOptions.getString(Geom.Text.NUDGE_UNIT)
                 )
             } else {
                 PosProto.IDENTITY

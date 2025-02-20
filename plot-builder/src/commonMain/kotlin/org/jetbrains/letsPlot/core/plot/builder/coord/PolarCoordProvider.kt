@@ -14,10 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers.IDENTITY
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.*
 
 const val R_EXPAND = 0.15
 const val R_PADDING = 0.06
@@ -86,6 +83,8 @@ class PolarCoordProvider(
 
         val thetaScaleMapper = Mappers.mul(normDomain.xRange(), 2.0 * PI)
         val rScaleMapper = Mappers.mul(normDomain.yRange(), min(clientSize.x, clientSize.y) / 2.0)
+        val thetaScaleFactor = 2.0 * PI / normDomain.xRange().length
+        val rScaleFactor = min(clientSize.x, clientSize.y) / 2.0 / normDomain.yRange().length
 
         val sign = if (clockwise) -1.0 else 1.0
         val startAngle = PI / 2.0 + sign * start
@@ -106,8 +105,21 @@ class PolarCoordProvider(
                 return center.add(DoubleVector(x, y))
             }
 
-            override fun invert(v: DoubleVector): DoubleVector = TODO("Not yet implemented")
-            override fun validDomain(): DoubleRectangle = TODO("Not yet implemented")
+            override fun invert(v: DoubleVector): DoubleVector {
+                val normV = v.subtract(center)
+
+                val r = normV.length()
+                val theta = atan2(normV.y, normV.x)
+
+                val adjustedTheta = (theta - startAngle) * sign
+
+                val x = adjustedTheta / thetaScaleFactor
+                val y = r / rScaleFactor
+
+                return DoubleVector(x, y).flipIf(flipped).subtract(normOffset)
+            }
+
+            override fun validDomain(): DoubleRectangle = adjustedDomain
         }
         val clientBounds = DoubleRectangle(DoubleVector.ZERO, clientSize)
 

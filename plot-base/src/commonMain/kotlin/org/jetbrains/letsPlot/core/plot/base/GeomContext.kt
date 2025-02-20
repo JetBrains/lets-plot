@@ -45,4 +45,6 @@ interface GeomContext {
     // Simple formatter, based on the variable type (e.g. int -> "d", float -> "g", datetime -> "%d.%m.%y %H:%M:%S")
     // If type is not known, returns Any::toString
     fun getDefaultFormatter(varName: String): (Any) -> String
+
+    fun getCoordinateSystem(): CoordinateSystem?
 }
