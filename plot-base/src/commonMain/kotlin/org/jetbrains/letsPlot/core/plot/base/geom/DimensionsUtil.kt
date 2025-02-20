@@ -14,11 +14,17 @@ object DimensionsUtil {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         sizeAes: Aes<Double>,
-        resolution: Double
+        resolution: Double,
+        unit: DimensionUnit
     ): DoubleSpan? {
         val loc = p.finiteOrNull(coordAes) ?: return null
         val size = p.finiteOrNull(sizeAes) ?: return null
-        val expand = resolution * size / 2.0
+        val expand = when (unit) {
+            DimensionUnit.RESOLUTION -> size * resolution / 2.0
+            DimensionUnit.IDENTITY -> size / 2.0
+            DimensionUnit.SIZE -> 0.0
+            DimensionUnit.PIXEL -> 0.0
+        }
         return DoubleSpan(
             loc - expand,
             loc + expand

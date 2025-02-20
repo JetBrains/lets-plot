@@ -14,13 +14,12 @@ import org.jetbrains.letsPlot.commons.intern.util.ArrowSupport
 import org.jetbrains.letsPlot.commons.intern.util.curve
 import org.jetbrains.letsPlot.commons.intern.util.padLineString
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Companion.toArrowAes
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Type.CLOSED
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
@@ -352,6 +351,35 @@ open class GeomHelper(
             if (!hasArrow) return 0.0
 
             return newVer
+        }
+    }
+
+    /*
+    value - the value obtained from the dimension aesthetics (Aes.WIDTH or Aes.HEIGHT);
+    unit - units to which the value should be converted;
+    axisAes - axis along which the value size is considered
+    */
+    fun transformDimensionValue(
+        value: Double,
+        unit: DimensionUnit,
+        axisAes: Aes<Double>
+    ): Double {
+        val unitSize = when (axisAes) {
+            Aes.X -> coord.unitSize(DoubleVector(1.0, 0.0)).x
+            Aes.Y -> coord.unitSize(DoubleVector(0.0, 1.0)).y
+            else -> error("Unsupported axis aes: $axisAes")
+        }
+        return when (unit) {
+            RESOLUTION -> value * ctx.getResolution(axisAes) // 1 corresponds to the resolution along the axis, i.e. the minimum distance between data points
+            IDENTITY -> value // 1 corresponds to the distance from 0 to 1 on the axis
+            SIZE -> {
+                // 1 corresponds to the diameter of a point of size 1 (in standard point size units)
+                value * AesScaling.POINT_UNIT_SIZE / unitSize
+            }
+            PIXEL -> {
+                // 1 corresponds to 1 pixel
+                value / unitSize
+            }
         }
     }
 
