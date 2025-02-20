@@ -49,7 +49,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         val expand = when (widthUnit) {
             RESOLUTION -> width * resolution
             IDENTITY -> width / 2.0
-            else -> 0.0 // If the units are "absolute" (e.g. pixels), we don't use expand
+            SIZE -> 0.0
+            PIXEL -> 0.0
         }
         return DoubleSpan(
             loc - expand,
@@ -69,7 +70,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         val expand = when (heightUnit) {
             RESOLUTION -> height * resolution * HALF_HEX_HEIGHT
             IDENTITY -> height * HALF_HEX_HEIGHT
-            else -> 0.0 // If the units are "absolute" (e.g. pixels), we don't use expand
+            SIZE -> 0.0
+            PIXEL -> 0.0
         }
         return DoubleSpan(
             loc - expand,
