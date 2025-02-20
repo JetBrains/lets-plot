@@ -54,11 +54,16 @@ with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
 static_link_libraries_list = ['lets_plot_python_extension']
 
 if this_system == 'Darwin':
-    extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickWand-7.Q16HDRI', '-lMagickCore-7.Q16HDRI']
+    extra_link = [
+        f'-L{imagemagick_lib_path}/lib',
+        '-lMagickWand-7.Q16HDRI',
+        '-lMagickCore-7.Q16HDRI',
+        '-lpng',
+        '-lz'
+    ]
 
 elif this_system == 'Windows':
     static_link_libraries_list += ['stdc++']
-    # fix python package build with Kotlin v1.7.20 (and later) on Windows.
     extra_link = [
         '-static-libgcc',
         '-static',
@@ -79,7 +84,12 @@ elif this_system == 'Windows':
 
 elif this_system == 'Linux':
     static_link_libraries_list += ['stdc++']
-    extra_link = [f'-L{imagemagick_lib_path}/lib', '-lMagickWand-7.Q16HDRI', '-lMagickCore-7.Q16HDRI', '-lpng', '-lz']
+    extra_link = [
+        f'-L{imagemagick_lib_path}/lib',
+        '-lMagickWand-7.Q16HDRI',
+        '-lMagickCore-7.Q16HDRI',
+        '-lpng',
+        '-lz']
 
 else:
     raise ValueError("Unsupported platform.")
