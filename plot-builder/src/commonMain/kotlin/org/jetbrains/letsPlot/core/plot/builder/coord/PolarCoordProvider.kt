@@ -83,8 +83,9 @@ class PolarCoordProvider(
 
         val thetaScaleMapper = Mappers.mul(normDomain.xRange(), 2.0 * PI)
         val rScaleMapper = Mappers.mul(normDomain.yRange(), min(clientSize.x, clientSize.y) / 2.0)
-        val inversedThetaScaleMapper = Mappers.mul(1 / thetaScaleMapper(1.0)!!)
-        val inversedRScaleMapper = Mappers.mul(1 / rScaleMapper(1.0)!!)
+
+        val inversedThetaScaleMapper = Mappers.mul((1 / (thetaScaleMapper(1.0)!!)).takeIf { it.isFinite() } ?: 0.0)
+        val inversedRScaleMapper = Mappers.mul((1 / rScaleMapper(1.0)!!).takeIf { it.isFinite() } ?: 0.0)
 
         val sign = if (clockwise) -1.0 else 1.0
         val startAngle = PI / 2.0 + sign * start
