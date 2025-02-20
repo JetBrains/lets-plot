@@ -41,13 +41,13 @@ class GeomProto(val geomKind: GeomKind) {
 
     fun preferredCoordinateSystem(layerConfig: OptionsAccessor): CoordProvider? {
         return when (geomKind) {
-            TILE,
-            BIN_2D,
-            HEX,
-            CONTOUR,
-            CONTOURF,
-            DENSITY2D,
-            DENSITY2DF,
+//            TILE,
+//            BIN_2D,
+//            HEX,
+//            CONTOUR,
+//            CONTOURF,
+//            DENSITY2D,
+//            DENSITY2DF,
             RASTER,
             IMAGE -> CoordProviders.fixed(1.0)
 
@@ -107,7 +107,7 @@ class GeomProto(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE,
-            BLANK-> Samplings.NONE
+            BLANK -> Samplings.NONE
         }
     }
 

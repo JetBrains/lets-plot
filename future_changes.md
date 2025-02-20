@@ -22,6 +22,7 @@
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
 - Axis breaks: changed default `lower_exp_bound` to -7 and `upper_exp_bound` to 6 (same as in `theme(...)`).
 - Axis labels: changed default justification for rotated labels.
+- `geom_tile()`: default coordinate system changed from 'fixed' to 'cartesian'.
 
 ### Fixed
 - Tooltip should not cover and hide the geometry that it provides info for [[#1275](https://github.com/JetBrains/lets-plot/issues/1275)].
@@ -31,5 +32,6 @@
 - Broken `plot_background` in `gggrid` [[#1124](https://github.com/JetBrains/lets-plot/issues/1124)].
 - gggrid: allow title and other labels for the entire figure [[#715](https://github.com/JetBrains/lets-plot/issues/715)].
 - GGbunch: overall title [[#321](https://github.com/JetBrains/lets-plot/issues/321)].
+- Expand discrete axis according to tile size with geom_tile [[#1284](https://github.com/JetBrains/lets-plot/issues/1284)].
 - Livemap: parameters nudge_x and nudge_y have no effect on geom_text or geom_label [[#1048](https://github.com/JetBrains/lets-plot/issues/1048)].
 - Livemap: Add zooming-in for geom_text()/geom_label() [[#1059](https://github.com/JetBrains/lets-plot/issues/1059)].
