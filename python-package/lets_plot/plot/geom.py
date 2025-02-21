@@ -6529,7 +6529,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     spacer : float, default=0.0
-        Space to shorten a segment by moving the start/end.
+        Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6696,7 +6696,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     ncp : int, default=5
         The number of control points used to draw the curve. More control points creates a smoother curve.
     spacer : float, default=0.0
-        Space to shorten a curve by moving the start/end.
+        Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -7489,7 +7489,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     stroke_side : {'outer', 'inner', 'both'}, default='both'
         Define which arcs of pie sector should have a stroke.
     spacer_width : float, default=0.75
-        Line width between sectors.
+        Line width between sectors in pixels.
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
         Color for spacers between sectors. By default, the "paper" color is used.
