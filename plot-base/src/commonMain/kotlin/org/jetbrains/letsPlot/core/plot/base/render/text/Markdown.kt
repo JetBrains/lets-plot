@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
 import org.jetbrains.letsPlot.commons.markdown.Xml
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -26,6 +27,29 @@ internal class Markdown : Term {
     }
 
     companion object {
+        data class Context(
+            val bold: Boolean = false,
+            val italic: Boolean = false,
+            val color: Color? = null
+        )
+
+        private fun render(html: Xml.XmlNode, context: Context = Context()): List<Term> {
+            return when (html) {
+                is Xml.XmlNode.Text -> when {
+                    context.bold && context.italic -> listOf(BoldItalicText(html.content))
+                    context.bold -> listOf(BoldText(html.content))
+                    context.italic -> listOf(ItalicText(html.content))
+                    else -> listOf(Text(html.content))
+                }
+
+                is Xml.XmlNode.Element -> when (html.name) {
+                    "strong" -> html.children.flatMap { render(it, context.copy(bold = true)) }
+                    "em" -> html.children.flatMap { render(it, context.copy(italic = true)) }
+                    else -> html.children.flatMap { render(it, context) }
+                }
+            }
+        }
+
         fun parse(text: String): List<Term> {
             if (text.isEmpty()) {
                 return listOf(Text(""))
@@ -35,28 +59,8 @@ internal class Markdown : Term {
             var bold = false
 
             val html = Markdown.mdToHtml(text)
-            val nodes = Xml.parse(html)
-
-            //val terms = nodes?.mapNotNull { node ->
-            //    when (node) {
-            //        is Node.Strong -> null.also { bold = true }
-            //        is Node.Em -> null.also { emphasized = true }
-            //        is Node.CloseStrong -> null.also { bold = false }
-            //        is Node.CloseEm -> null.also { emphasized = false }
-            //        is Node.Text -> {
-            //            when {
-            //                bold && emphasized -> BoldItalicText(node.text)
-            //                bold -> BoldText(node.text)
-            //                emphasized -> ItalicText(node.text)
-            //                else -> Text(node.text)
-            //            }
-            //        }
-            //        else -> throw IllegalArgumentException("Unsupported node type: $node")
-            //    }
-            //}
-            //return terms
-
-            return listOf(Text(text))
+            val nodes = Xml.parse("<p>$html</p>") ?: return listOf(Text(""))
+            return render(nodes)
         }
 
     }
