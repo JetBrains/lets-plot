@@ -6,9 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
-import org.jetbrains.letsPlot.commons.markdown.Xml
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.commons.xml.Xml
+import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
@@ -33,16 +34,16 @@ internal class Markdown : Term {
             val color: Color? = null
         )
 
-        private fun render(html: Xml.XmlNode, context: Context = Context()): List<Term> {
+        private fun render(html: XmlNode, context: Context = Context()): List<Term> {
             return when (html) {
-                is Xml.XmlNode.Text -> when {
+                is XmlNode.Text -> when {
                     context.bold && context.italic -> listOf(BoldItalicText(html.content))
                     context.bold -> listOf(BoldText(html.content))
                     context.italic -> listOf(ItalicText(html.content))
                     else -> listOf(Text(html.content))
                 }
 
-                is Xml.XmlNode.Element -> when (html.name) {
+                is XmlNode.Element -> when (html.name) {
                     "strong" -> html.children.flatMap { render(it, context.copy(bold = true)) }
                     "em" -> html.children.flatMap { render(it, context.copy(italic = true)) }
                     else -> html.children.flatMap { render(it, context) }
@@ -55,12 +56,18 @@ internal class Markdown : Term {
                 return listOf(Text(""))
             }
 
-            var emphasized = false
-            var bold = false
-
             val html = Markdown.mdToHtml(text)
-            val nodes = Xml.parse("<p>$html</p>") ?: return listOf(Text(""))
-            return render(nodes)
+            val doc = Xml.parseSafe("<p>$html</p>") // wrap in <p> to make it a valid XML with a single root element
+                .let { (root, unparsed) ->
+                    if (unparsed.isEmpty()) return@let root
+
+                    when (root) {
+                        is XmlNode.Element -> root.copy(children = root.children + XmlNode.Text(unparsed))
+                        is XmlNode.Text -> root.copy(content = root.content + unparsed)
+                    }
+                }
+
+            return render(doc)
         }
 
     }

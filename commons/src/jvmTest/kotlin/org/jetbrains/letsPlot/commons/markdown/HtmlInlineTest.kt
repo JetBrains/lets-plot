@@ -32,6 +32,4 @@ class HtmlInlineTest {
             actual = Markdown.mdToHtml("""<span style="color:blue">blue text with <span style="color:red">**red**</span> inside</span>""")
         )
     }
-
-
 }
