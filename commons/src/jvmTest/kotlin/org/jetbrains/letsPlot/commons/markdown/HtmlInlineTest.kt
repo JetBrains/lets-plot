@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.markdown
 
-import org.jetbrains.letsPlot.commons.markdown.Markdown.parse
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -13,20 +12,26 @@ class HtmlInlineTest {
     @Test
     fun simple() {
         assertEquals(
-            expected = p {
-                text("<span style=\"color:blue\">some ")
-                emph { text("blue") }
-                text(" text</span>.")
-            },
-            actual = parse("<span style=\"color:blue\">some *blue* text</span>.")
+            expected = """some <span style="color:blue">blue</span> text""",
+            actual = Markdown.mdToHtml("""some <span style="color:blue">blue</span> text""")
         )
     }
 
     @Test
-    fun baz() {
-        val xml = """<text>   I see <br/> the world   </text>""".trimIndent()
-
-        val parsed = Xml.parse(xml)
-        println(parsed)
+    fun htmlWithEmphasis() {
+        assertEquals(
+            expected = """some <span style="color:blue"><em>blue</em></span> text""",
+            actual = Markdown.mdToHtml("""some <span style="color:blue">*blue*</span> text""")
+        )
     }
+
+    @Test
+    fun nestedHtml() {
+        assertEquals(
+            expected = """<span style="color:blue">blue text with <span style="color:red"><strong>red</strong></span> inside</span>""",
+            actual = Markdown.mdToHtml("""<span style="color:blue">blue text with <span style="color:red">**red**</span> inside</span>""")
+        )
+    }
+
+
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
-import org.jetbrains.letsPlot.commons.markdown.Node
+import org.jetbrains.letsPlot.commons.markdown.Xml
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -34,27 +34,29 @@ internal class Markdown : Term {
             var emphasized = false
             var bold = false
 
-            val nodes = Markdown.parse(text)
+            val html = Markdown.mdToHtml(text)
+            val nodes = Xml.parse(html)
 
-            val terms = nodes.mapNotNull { node ->
-                when (node) {
-                    is Node.Strong -> null.also { bold = true }
-                    is Node.Em -> null.also { emphasized = true }
-                    is Node.CloseStrong -> null.also { bold = false }
-                    is Node.CloseEm -> null.also { emphasized = false }
-                    is Node.Text -> {
-                        when {
-                            bold && emphasized -> BoldItalicText(node.text)
-                            bold -> BoldText(node.text)
-                            emphasized -> ItalicText(node.text)
-                            else -> Text(node.text)
-                        }
-                    }
-                    else -> throw IllegalArgumentException("Unsupported node type: $node")
-                }
-            }
+            //val terms = nodes?.mapNotNull { node ->
+            //    when (node) {
+            //        is Node.Strong -> null.also { bold = true }
+            //        is Node.Em -> null.also { emphasized = true }
+            //        is Node.CloseStrong -> null.also { bold = false }
+            //        is Node.CloseEm -> null.also { emphasized = false }
+            //        is Node.Text -> {
+            //            when {
+            //                bold && emphasized -> BoldItalicText(node.text)
+            //                bold -> BoldText(node.text)
+            //                emphasized -> ItalicText(node.text)
+            //                else -> Text(node.text)
+            //            }
+            //        }
+            //        else -> throw IllegalArgumentException("Unsupported node type: $node")
+            //    }
+            //}
+            //return terms
 
-            return terms
+            return listOf(Text(text))
         }
 
     }

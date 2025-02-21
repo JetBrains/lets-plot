@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.commons.markdown
 
 import org.jetbrains.letsPlot.commons.markdown.Lexer.Token
 import org.jetbrains.letsPlot.commons.markdown.Lexer.TokenType
-import org.jetbrains.letsPlot.commons.markdown.Node.*
+import org.jetbrains.letsPlot.commons.markdown.Parser.Node.*
 
 // Reference: https://spec.commonmark.org/0.31.2/
 internal class Parser private constructor(
@@ -246,8 +246,45 @@ internal class Parser private constructor(
 
 
     companion object {
-        fun parse(tokens: List<Token>): List<Node> {
-            return Parser(tokens).parse()
+        fun parse(tokens: List<Token>): String {
+            val nodes = Parser(tokens).parse()
+            return nodes.joinToString("") { node ->
+                when (node) {
+                    is Text -> node.text
+                    is Strong -> "<strong>"
+                    is CloseStrong -> "</strong>"
+                    is Em -> "<em>"
+                    is CloseEm -> "</em>"
+                }
+            }
         }
     }
+
+    sealed class Node {
+        data class Text(var text: String) : Node()
+        data object Strong : Node()
+        data object CloseStrong : Node()
+        data object Em : Node()
+        data object CloseEm : Node()
+    }
+
+    class DelimiterRun(
+        val tokenType: TokenType,
+        val node: Text,
+        var count: Int,
+        var active: Boolean = true,
+        val canOpen: Boolean,
+        val canClose: Boolean
+    ) {
+        fun shrink(bool: Boolean) {
+            val toDrop = (if (bool) 2 else 1).coerceAtMost(count)
+            count -= toDrop
+            node.text = node.text.dropLast(toDrop)
+        }
+
+        override fun toString(): String {
+            return "DelimiterRun(tokenType=$tokenType, node=$node, count=$count, active=$active, opener=$canOpen, closer=$canClose)"
+        }
+    }
+
 }

@@ -6,24 +6,8 @@
 package org.jetbrains.letsPlot.commons.markdown
 
 object Markdown {
-    fun parse(text: String): List<Node> {
+    fun mdToHtml(text: String): String {
         val tokens = Lexer.tokenize(text)
-        val nodes = Parser.parse(tokens)
-        return nodes
-        //val result =
-        //nodes.flatMap {
-        //    when (it) {
-        //        is Text -> Html.parse(it.text)
-        //        else -> listOf(it)
-        //    }
-        //}
+        return Parser.parse(tokens)
     }
-}
-
-abstract class Node {
-    data class Text(var text: String) : Node()
-    data object Strong : Node()
-    data object CloseStrong : Node()
-    data object Em : Node()
-    data object CloseEm : Node()
 }

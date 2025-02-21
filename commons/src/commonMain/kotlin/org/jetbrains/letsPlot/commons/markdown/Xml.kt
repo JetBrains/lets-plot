@@ -8,7 +8,29 @@ package org.jetbrains.letsPlot.commons.markdown
 import org.jetbrains.letsPlot.commons.markdown.Xml.XmlNode.Element
 import org.jetbrains.letsPlot.commons.markdown.Xml.XmlNode.Text
 
-class Xml {
+object Xml {
+    fun parse(xml: String): XmlNode? {
+        val lexer = Lexer(xml)
+        val parser = Parser(lexer)
+        val doc = parser.parse()
+
+        return if (lexer.nextToken() != Token.EOF) {
+            // Parsing was not completed, add the rest of the input as text node
+            when (doc) {
+                is Element -> Element(
+                    doc.name,
+                    doc.attributes,
+                    doc.children + Text(lexer.input.substring(lexer.tokenPos))
+                )
+
+                is Text -> Text(doc.content + lexer.input.substring(lexer.tokenPos))
+            }
+        } else {
+            doc
+        }
+
+    }
+
     sealed class XmlNode {
         data class Element(
             val name: String,
@@ -196,6 +218,7 @@ class Xml {
             return attributes
         }
 
+        // <tag>this is a content</tag>
         private fun parseContent(): Text {
             val buffer = StringBuilder()
             while (token() != Token.EOF) {
@@ -209,29 +232,5 @@ class Xml {
         }
 
         private fun token() = lexer.token
-    }
-
-    companion object {
-        fun parse(xml: String): XmlNode? {
-            val lexer = Lexer(xml)
-            val parser = Parser(lexer)
-            val doc = parser.parse()
-
-            return if (lexer.nextToken() != Token.EOF) {
-                // Parsing was not completed, add the rest of the input as text node
-                when (doc) {
-                    is Element -> Element(
-                        doc.name,
-                        doc.attributes,
-                        doc.children + Text(lexer.input.substring(lexer.tokenPos))
-                    )
-
-                    is Text -> Text(doc.content + lexer.input.substring(lexer.tokenPos))
-                }
-            } else {
-                doc
-            }
-
-        }
     }
 }
