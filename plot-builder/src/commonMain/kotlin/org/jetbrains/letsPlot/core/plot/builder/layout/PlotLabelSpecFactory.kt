@@ -6,11 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.*
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
@@ -40,7 +36,8 @@ object PlotLabelSpecFactory {
                 textStyle.size.toInt(), //?
                 textStyle.face.bold,
                 textStyle.face.italic
-            )
+            ),
+            textStyle.markdown
         )
     }
 }

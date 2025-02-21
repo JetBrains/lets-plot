@@ -11,7 +11,8 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 
 class PlotLabelSpec(
-    override val font: Font
+    override val font: Font,
+    override val markdown: Boolean = false
 ) : LabelSpec {
 
     override fun dimensions(labelText: String): DoubleVector {
@@ -19,7 +20,7 @@ class PlotLabelSpec(
     }
 
     override fun width(labelText: String): Double {
-        return RichText.estimateWidth(labelText, font, widthEstimator = ::widthCalculator)
+        return RichText.estimateWidth(labelText, font, markdown = markdown, widthEstimator = ::widthCalculator)
     }
 
     override fun height(): Double {
@@ -60,6 +61,9 @@ class PlotLabelSpec(
 
         val DUMMY: LabelSpec = object : LabelSpec {
             override val font: Font
+                get() = UNSUPPORTED("Dummy Label Spec")
+
+            override val markdown: Boolean
                 get() = UNSUPPORTED("Dummy Label Spec")
 
             override fun dimensions(labelText: String): DoubleVector {

@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Font
 
 interface LabelSpec {
     val font: Font
+    val markdown: Boolean
 
     fun dimensions(labelText: String): DoubleVector
 

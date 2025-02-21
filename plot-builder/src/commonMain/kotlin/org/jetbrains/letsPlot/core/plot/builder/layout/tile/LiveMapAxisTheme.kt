@@ -33,7 +33,8 @@ internal class LiveMapAxisTheme : AxisTheme {
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TITLE_FONT_SIZE,
-        color = Defaults.TEXT_COLOR
+        color = Defaults.TEXT_COLOR,
+        markdown = false
     )
 
     override fun titleJustification() = TextJustification(0.5, 1.0)
@@ -54,7 +55,8 @@ internal class LiveMapAxisTheme : AxisTheme {
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TICK_FONT_SIZE,
-        color = Defaults.TEXT_COLOR
+        color = Defaults.TEXT_COLOR,
+        markdown = false
     )
 
     override fun rotateLabels(): Boolean = false
@@ -87,6 +89,7 @@ internal class LiveMapAxisTheme : AxisTheme {
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
-        color = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
+        color = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR,
+        markdown = false
     )
 }
