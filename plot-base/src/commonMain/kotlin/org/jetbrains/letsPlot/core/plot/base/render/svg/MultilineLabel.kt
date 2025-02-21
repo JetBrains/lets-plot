@@ -18,9 +18,10 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 class MultilineLabel(
     val text: String,
-    wrapWidth: Int = -1
+    wrapWidth: Int = -1,
+    markdown: Boolean = false
 ) : SvgComponent() {
-    private val myLines: List<SvgTextElement> = RichText.toSvg(text, wrapWidth)
+    private val myLines: List<SvgTextElement> = RichText.toSvg(text, wrapWidth, markdown = markdown)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null

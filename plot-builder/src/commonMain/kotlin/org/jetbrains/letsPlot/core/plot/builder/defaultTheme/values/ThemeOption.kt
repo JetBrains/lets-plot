@@ -134,6 +134,7 @@ object ThemeOption {
         const val COLOR = "color"
         const val SIZE = "size"
         const val LINETYPE = "linetype"
+        const val MARKDOWN = "markdown"
         const val ARROW = "arrow"       // ToDo
 
         // text

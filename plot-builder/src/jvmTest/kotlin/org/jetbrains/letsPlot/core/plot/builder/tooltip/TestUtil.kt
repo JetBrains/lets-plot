@@ -68,7 +68,8 @@ object TestUtil {
             FontFamily.SERIF,
             FontFace.NORMAL,
             Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
-            LIGHT_TEXT_COLOR
+            LIGHT_TEXT_COLOR,
+            false
         )
     }
 

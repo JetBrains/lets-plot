@@ -10,6 +10,7 @@ __all__ = [
     "element_line",
     'element_rect',
     'element_text',
+    'element_markdown',
     'margin',
     'element_geom',
 ]
@@ -626,6 +627,83 @@ def element_text(
 
     """
     return locals()
+
+
+def element_markdown(
+        color=None,
+        family=None,
+        face=None,
+        size=None,
+        angle=None,
+        # ToDo: lineheight
+        hjust=None,
+        vjust=None,
+        margin=None,
+        blank=False,
+) -> dict:
+    """
+    Specify how non-data components of the plot are drawn.
+    This theme element draws texts with Markdown support.
+
+    Parameters
+    ----------
+    color : str
+        Text color.
+    family : str
+        Font family.
+    face : str
+        Font face ("plain", "italic", "bold", "bold_italic").
+    size : int
+        Text size in px.
+    angle : float
+        Angle to rotate the text (in degrees).
+    hjust : float
+        Horizontal justification (in [0, 1]).
+        0 - left-justified;
+        1 - right-justified;
+        0.5 - center-justified.
+        Can be used with values out of range, but behaviour is not specified.
+    vjust : float
+        Vertical justification (in [0, 1]).
+        0 - bottom-justified;
+        1 - top-justified;
+        0.5 - middle-justified.
+        Can be used with values out of range, but behaviour is not specified.
+    margin : number or list of numbers
+        Margins around the text.
+
+        The margin may be specified using a number or a list of numbers:
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
+        the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default side value for this element will be used.
+    blank : bool, default=False
+        If True - draws nothing, and assigns no space.
+
+    Returns
+    -------
+    `dict`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme(axis_text=element_text(color='#cb181d', face='bold_italic', margin=[5, 10]))
+
+    """
+    return {'markdown': True, **locals()}
 
 
 def margin(t=None, r=None, b=None, l=None):

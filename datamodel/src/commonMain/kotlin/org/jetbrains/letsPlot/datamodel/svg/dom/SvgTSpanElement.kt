@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.WritablePropert
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.FILL
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.FILL_OPACITY
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.FONT_WEIGHT
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE_WIDTH
@@ -97,5 +98,13 @@ class SvgTSpanElement() : SvgStylableElement(), SvgTextContent {
 
     override fun textDy(): Property<String?> {
         return getAttribute(TEXT_DY)
+    }
+
+    override fun fontWeight(): Property<String?> {
+        return getAttribute(FONT_WEIGHT)
+    }
+
+    override fun fontStyle(): Property<String?> {
+        return getAttribute(SvgTextContent.FONT_STYLE)
     }
 }

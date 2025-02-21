@@ -1253,10 +1253,6 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     Apply a rectangular grid to the plane, count observations in each cell (bin) of the grid,
     and map the count to the fill color of the cell (tile).
 
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
-
     Parameters
     ----------
     mapping : `FeatureSpec`
@@ -1433,10 +1429,6 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     """
     Apply a hexagonal grid to the plane, count observations in each cell (hexagonal bin) of the grid,
     and map the count to the fill color of the cell (hexagonal tile).
-
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -4882,7 +4874,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 10-11
 
         import numpy as np
         from lets_plot import *
@@ -4899,14 +4891,13 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
             for bw in bandwidths
             for n in sample_sizes
         ]
-
         gggrid(plots, ncol=3) + ggsize(900, 600)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 10-12
 
         import numpy as np
         from lets_plot import *
@@ -4917,12 +4908,12 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         p = ggplot({'x': x, 'y': y}, aes(x='x'))
         adjustments = [0.5 * (1 + i) for i in range(3)]
         plots = [
-            p + geom_density(aes(weight='y'),
+            p + geom_density(
+                aes(weight='y'),
                 kernel='cosine', adjust=adjust
             ) + ggtitle(f'adjust={adjust}')
             for adjust in adjustments
         ]
-
         gggrid(plots) + ggsize(800, 200)
 
     """
@@ -4955,10 +4946,6 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                    **other_args):
     """
     Display density function contour.
-
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -5083,7 +5070,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12-14
 
         import numpy as np
         from lets_plot import *
@@ -5096,20 +5083,20 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         bandwidths = [0.2, 0.4]
         sample_sizes = [16, 256]
         plots = [
-            p + geom_density2d(kernel='epanechikov',
-                               bw=bw, n=n
+            p + geom_density2d(
+                kernel='epanechikov',
+                bw=bw, n=n
             ) + ggtitle(f'bw={bw}, n={n}')
             for bw in bandwidths
             for n in sample_sizes
         ]
-
         gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13-14
+        :emphasize-lines: 12-15
 
         import numpy as np
         from lets_plot import *
@@ -5122,14 +5109,14 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         adjustments = [1.5, 2.5]
         bin_counts = [5, 15]
         plots = [
-            p + geom_density2d(kernel='cosine',
+            p + geom_density2d(
+                kernel='cosine',
                 adjust=adjust,
                 bins=bins
             ) + ggtitle(f'adjust={adjust}, bins={bins}')
             for adjust in adjustments
             for bins in bin_counts
         ]
-
         gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
@@ -5147,7 +5134,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
             geom_raster(aes(fill='..density..'), \\
-                       stat='density2d', contour=False, n=50) + \\
+                        stat='density2d', contour=False, n=50) + \\
             scale_fill_gradient(low='#49006a', high='#fff7f3')
 
     |
@@ -5195,10 +5182,6 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                     **other_args):
     """
     Fill density function contour.
-
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -5317,7 +5300,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12-15
 
         import numpy as np
         from lets_plot import *
@@ -5330,8 +5313,10 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         bandwidths = [0.2, 0.4]
         sample_sizes = [16, 256]
         plots = [
-            p + geom_density2df(kernel='epanechikov', size=.5, color='white',
-                               bw=bw, n=n
+            p + geom_density2df(
+                kernel='epanechikov',
+                size=.5, color='white',
+                bw=bw, n=n
             ) + ggtitle(f'bw={bw}, n={n}')
             for bw in bandwidths
             for n in sample_sizes
@@ -5342,7 +5327,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-14
+        :emphasize-lines: 12-15
 
         import numpy as np
         from lets_plot import *
@@ -5355,14 +5340,14 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         adjustments = [1.5, 2.5]
         bin_counts = [5, 15]
         plots = [
-            p + geom_density2df(kernel='cosine', size=.5, color='white',
+            p + geom_density2df(
+                kernel='cosine', size=.5, color='white',
                 adjust=adjust,
                 bins=bins
             ) + ggtitle(f'adjust={adjust}, bins={bins}')
             for adjust in adjustments
             for bins in bin_counts
         ]
-
         gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
@@ -6544,7 +6529,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     spacer : float, default=0.0
-        Space to shorten a segment by moving the start/end.
+        Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6711,7 +6696,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     ncp : int, default=5
         The number of control points used to draw the curve. More control points creates a smoother curve.
     spacer : float, default=0.0
-        Space to shorten a curve by moving the start/end.
+        Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -7504,7 +7489,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     stroke_side : {'outer', 'inner', 'both'}, default='both'
         Define which arcs of pie sector should have a stroke.
     spacer_width : float, default=0.75
-        Line width between sectors.
+        Line width between sectors in pixels.
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
         Color for spacers between sectors. By default, the "paper" color is used.

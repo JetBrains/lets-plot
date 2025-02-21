@@ -22,12 +22,12 @@ internal class Latex(
         node.estimateWidth(font, widthCalculator)
 
     companion object {
-        fun parse(text: String): List<Term> {
+        fun render(text: String): List<Term> {
             val formulas = extractFormulas(
                 text
             ).map { (formula, range) ->
                 val text = formula.replace("-", "−") // Use minus sign instead of hyphen
-                Latex(parse(Token.tokenize(text))) to range
+                Latex(render(Token.tokenize(text))) to range
             }.toList()
 
             return fillTextTermGaps(text, formulas)
@@ -125,7 +125,7 @@ internal class Latex(
         )
         private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
 
-        fun parse(tokens: Sequence<Token>): Term {
+        private fun render(tokens: Sequence<Token>): Term {
             return parseGroup(tokens.iterator(), level = 0)
         }
 

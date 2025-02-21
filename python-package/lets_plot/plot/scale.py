@@ -741,18 +741,18 @@ def scale_continuous(aesthetic, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         from lets_plot import *
         LetsPlot.setup_html()
-
-        d = {
+        data = {
             'x': [0, 1, 2],
             'y': [0, 1, 2]
         }
-        ggplot(d) + \\
+        ggplot(data) + \\
             geom_point(aes(x='x', y='y'), size=15) + \\
             scale_continuous(['x','y'], expand=[0, 0]) #  no expansion - points right on the edges
+
     """
     if _is_color_scale(aesthetic):
         scale_mapper_kind = 'color_gradient' if scale_mapper_kind is None else scale_mapper_kind
@@ -2027,18 +2027,18 @@ def scale_discrete(aesthetic, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         from lets_plot import *
         LetsPlot.setup_html()
-
-        d = {
+        data = {
             'x': [0, 1, 2],
             'y': [0, 1, 2]
         }
-        ggplot(d) + \\
+        ggplot(data) + \\
             geom_point(aes(x='x', y='y'), size=15) + \\
             scale_discrete(['x','y'], expand=[0, 0]) #  no expansion - points right on the edges
+
     """
     return _scale(aesthetic=aesthetic,
                   name=name,
