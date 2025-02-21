@@ -34,7 +34,7 @@ internal class Hyperlink private constructor(
     companion object {
         private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
 
-        fun parse(text: String): List<Term> {
+        fun render(text: String): List<Term> {
             val links = anchorTagRegex.findAll(text)
                 .map { match ->
                     val (href, label) = match.destructured

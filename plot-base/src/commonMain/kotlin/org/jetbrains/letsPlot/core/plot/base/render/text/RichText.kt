@@ -14,9 +14,10 @@ object RichText {
     fun toSvg(
         text: String,
         wrapLength: Int = -1,
-        maxLinesCount: Int = -1
+        maxLinesCount: Int = -1,
+        markdown: Boolean = false,
     ): List<SvgTextElement> {
-        val lines = parseText(text, wrapLength, maxLinesCount)
+        val lines = parseText(text, wrapLength, maxLinesCount, markdown)
 
         return lines.map { line ->
             SvgTextElement().apply {
@@ -30,9 +31,10 @@ object RichText {
         font: Font,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
+        markdown: Boolean = false,
         widthEstimator: (String, Font) -> Double,
     ): Double {
-        return parseText(text, wrapLength, maxLinesCount)
+        return parseText(text, wrapLength, maxLinesCount, markdown)
             .maxOfOrNull { line -> line.sumOf { term -> term.estimateWidth(font, widthEstimator) } }
             ?: 0.0
     }
@@ -46,8 +48,8 @@ object RichText {
         }
     }
 
-    private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
-        fun parse(str: List<Term>, parser: (String) -> List<Term>): List<Term> {
+    private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1, markdown: Boolean = false): List<List<Term>> {
+        fun render(str: List<Term>, parser: (String) -> List<Term>): List<Term> {
             return str.flatMap {
                 when (it) {
                     is Text -> parser(it.text)
@@ -57,8 +59,14 @@ object RichText {
         }
 
         val terms = listOf(Text(text))
-            .let { parse(it, Latex.Companion::parse) }
-            .let { parse(it, Hyperlink::parse) }
+            .let {
+                when (markdown) {
+                    true -> render(it, Markdown::render)
+                    false -> it
+                }
+            }
+            .let { render(it, Latex::render) }
+            .let { render(it, Hyperlink::render) }
 
         val lines = splitByNewLines(terms)
 
