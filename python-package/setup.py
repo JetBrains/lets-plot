@@ -89,7 +89,10 @@ elif this_system == 'Linux':
         '-lMagickWand-7.Q16HDRI',
         '-lMagickCore-7.Q16HDRI',
         '-lpng',
-        '-lz']
+        '-lz',
+        '-lX11',
+        '-lXext'
+    ]
 
 else:
     raise ValueError("Unsupported platform.")

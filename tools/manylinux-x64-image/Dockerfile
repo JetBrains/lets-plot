@@ -17,11 +17,11 @@ RUN cd /tmp/imagemagick-sources && CFLAGS="-fPIC" CXXFLAGS="-fPIC" ./configure \
                                        --with-jpeg=no \
                                        --without-webp \
                                        --without-jbig \
-                                       --with-png=no \
+                                       --with-png=yes \
                                        --with-openjp2=no \
                                        --with-bzlib=no \
                                        --without-tiff \
-                                       --with-zlib=no \
+                                       --with-zlib=yes \
                                        --with-zstd=no \
                                        --with-lzma=no \
                                        --with-xml=no
