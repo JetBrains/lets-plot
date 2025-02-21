@@ -16,6 +16,10 @@
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
 
+- multiline support for axis labels.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/multiline_axis_labels.ipynb).
+
 - Parameters `width_unit` and `height_unit` in `geom_errorbar()`, `geom_tile()` and `geom_hex()` [[#1288](https://github.com/JetBrains/lets-plot/issues/1288)]:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
@@ -25,6 +29,7 @@
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
 - Axis breaks: changed default `lower_exp_bound` to -7 and `upper_exp_bound` to 6 (same as in `theme(...)`).
 - Axis labels: changed default justification for rotated labels.
+- Axis labels: changed orientation of automatic vertical labels.
 - [**BREAKING**] geoms `tile, bin2d, contour, contourf, density2d, density2df` : default coordinate system changed from 'fixed' to 'cartesian'.
 
 ### Fixed
