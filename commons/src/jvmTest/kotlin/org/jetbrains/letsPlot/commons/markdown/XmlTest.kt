@@ -138,8 +138,38 @@ class XmlTest {
     }
 
     @Test
+    fun attrValueWithoutQuotes() {
+        val xml = """<p style=color:red>Hello</p>"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element(
+                name = "p",
+                attributes = mapOf("style" to "color:red"),
+                children = listOf(Xml.XmlNode.Text("Hello"))
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
+    fun twoAttributes() {
+        val xml = """<p style="color:red" class="foo">Hello</p>"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = Xml.XmlNode.Element(
+                name = "p",
+                attributes = mapOf("style" to "color:red", "class" to "foo"),
+                children = listOf(Xml.XmlNode.Text("Hello"))
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
     fun extraSpacesEverywhere() {
-        val xml = """<p    style  = "color:red"   >  Hello  </p >""".trimIndent()
+        val xml = """<p    style  = "color:red"  >  Hello  </p >""".trimIndent()
 
         val parsed = parse(xml)
         assertEquals(
@@ -154,7 +184,7 @@ class XmlTest {
 
     @Test
     fun nested() {
-        val xml = """<p>press <button>send<img srd="send.png"/></button> button</p>"""
+        val xml = """<p>press <button>send<img src="send.png"/></button> button</p>"""
 
         val parsed = parse(xml)
         assertEquals(
@@ -168,7 +198,7 @@ class XmlTest {
                             Xml.XmlNode.Text("send"),
                             Xml.XmlNode.Element(
                                 name = "img",
-                                attributes = mapOf("srd" to "send.png"),
+                                attributes = mapOf("src" to "send.png"),
                             )
                         )
                     ),

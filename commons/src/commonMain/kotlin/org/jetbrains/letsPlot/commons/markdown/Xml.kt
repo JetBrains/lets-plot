@@ -45,7 +45,7 @@ class Xml {
             private set
 
         var tokenPos = 0
-        private set
+            private set
 
         private var pos = 0
 
@@ -109,8 +109,7 @@ class Xml {
         private fun readUntil(predicate: List<(Char) -> Boolean>): String {
             val sb = StringBuilder()
             while (true) {
-                val c = peek()
-                if (c == null) break
+                val c = peek() ?: break
                 if (predicate.any { it(c) }) break
 
                 sb.append(advance())
@@ -127,34 +126,41 @@ class Xml {
         }
 
         private fun skipSpaces() {
-            while (lexer.token.type == TokenType.WHITESPACE) {
+            while (token().type == TokenType.WHITESPACE) {
                 lexer.nextToken()
             }
         }
 
-        private fun consumeToken(): Token {
-            return lexer.token.also { lexer.nextToken() }
+        private fun consumeToken(expectedType: TokenType? = null, skipSpaces: Boolean = false): Token {
+            val consumed = token().also { lexer.nextToken() }
+            if (expectedType != null) check(consumed.type == expectedType) { "Expected $expectedType, got $consumed" }
+            if (skipSpaces) skipSpaces()
+            return consumed
         }
 
         private fun parseElement(): XmlNode {
             val pos = lexer.tokenPos
             try {
-                check(consumeToken() == Token.LT) { "Expected '<'" }
-                val name = parseElementName()
+                consumeToken(TokenType.LT)
+                val name = consumeToken(TokenType.TEXT).value
+
+                skipSpaces()
+
                 val attributes = parseAttributes()
 
-                if (parseSelfClosingElement()) {
-                    return Element(name, attributes, emptyList())
-                } else {
-                    check(consumeToken() == Token.GT) { "Expected '>'" }
+                skipSpaces()
+
+                when (consumeToken()) {
+                    Token.SLASH_GT -> return Element(name, attributes)
+                    Token.GT -> {}
+                    else -> error("Expected '>' or '/>'")
                 }
 
                 val children = parseChildren()
 
-                check(consumeToken() == Token.LT_SLASH) { "Expected \"</\"" }
-                check(consumeToken() == Token(TokenType.TEXT, name)) { "Expected element name" }
-                skipSpaces()
-                check(consumeToken() == Token.GT) { "Expected '>'" }
+                consumeToken(TokenType.LT_SLASH)
+                consumeToken(TokenType.TEXT, skipSpaces = true)
+                consumeToken(TokenType.GT)
 
                 return Element(name, attributes, children)
             } catch (e: Throwable) {
@@ -162,54 +168,29 @@ class Xml {
             }
         }
 
-        private fun parseSelfClosingElement(): Boolean {
-            skipSpaces()
-
-            if (lexer.token != Token.SLASH_GT) {
-                return false
-            }
-
-            consumeToken()
-            return true
-        }
-
         private fun parseChildren(): MutableList<XmlNode> {
             val children = mutableListOf<XmlNode>()
-            while (lexer.token != Token.EOF) {
-                val token = lexer.token
-                children += when (token.type) {
-                    TokenType.LT_SLASH, TokenType.SLASH_GT, TokenType.EOF -> break
-                    TokenType.LT -> parseElement()
+            while (token() != Token.EOF) {
+                children += when (token()) {
+                    Token.LT_SLASH, Token.SLASH_GT -> break
+                    Token.LT -> parseElement()
                     else -> parseContent()
                 }
             }
             return children
         }
 
-        private fun parseElementName(): String {
-            val token = consumeToken()
-            if (token.type != TokenType.TEXT) error("Expected element name, but got: $token")
-            return token.value
-        }
-
         private fun parseAttributes(): Map<String, String> {
             val attributes = mutableMapOf<String, String>()
-            while (lexer.token !in listOf(Token.GT, Token.SLASH_GT, Token.EOF)) {
-                val token = consumeToken()
-                when (token.type) {
-                    TokenType.WHITESPACE -> {}
-                    TokenType.TEXT -> {
-                        val key = token.value
-                        skipSpaces()
-                        check(consumeToken() == Token.EQUALS)
-                        skipSpaces()
-                        val value = consumeToken()
-                        check(value.type in listOf(TokenType.TEXT, TokenType.QUOTED_STRING))
-                        attributes[key] = value.value
-                    }
+            while (token().type == TokenType.TEXT) {
+                val key = token().value
+                consumeToken(skipSpaces = true)
 
-                    else -> error("Unexpected token: $token")
-                }
+                consumeToken(TokenType.EQUALS, skipSpaces = true)
+
+                check(token().type in listOf(TokenType.TEXT, TokenType.QUOTED_STRING))
+                attributes[key] = token().value
+                consumeToken(skipSpaces = true)
             }
 
             return attributes
@@ -217,16 +198,17 @@ class Xml {
 
         private fun parseContent(): Text {
             val buffer = StringBuilder()
-            while (lexer.token != Token.EOF) {
-                val token = lexer.token
-                when (token.type) {
-                    TokenType.LT_SLASH, TokenType.LT, TokenType.EOF -> break
-                    else -> buffer.append(token.value)
+            while (token() != Token.EOF) {
+                when (token()) {
+                    Token.LT_SLASH, Token.LT, Token.EOF -> break
+                    else -> buffer.append(token().value)
                 }
                 consumeToken()
             }
             return Text(buffer.toString())
         }
+
+        private fun token() = lexer.token
     }
 
     companion object {
