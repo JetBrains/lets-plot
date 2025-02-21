@@ -5,13 +5,10 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 
-
-# Builds Docker image based on quay.io/pypa/manylinux2014_aarch64 which can
-#-be launched on x64 host. For details check 'tools/README.md'.
-
+# Builds Docker image based on quay.io/pypa/manylinux2014_aarch64 with bundled ImageMagick library,
+#-which can be launched on x64 host. For details check 'tools/README.md'.
 
 set -e
-
 
 echo "Updating base ARM manylinux image..."
 docker pull quay.io/pypa/manylinux2014_aarch64

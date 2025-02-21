@@ -7,6 +7,9 @@
 # Available values: 'arm64', 'x86_64'"
 architecture=x86_64
 
+# Add ImageMagick library path. If tou have installed it system wide, add path `/usr/local`.
+#imagemagick_lib_path=
+
 # Enable tasks responsible for building and publishing of lets-plot python package.
 # Set 'true' or 'false' here:
 enable_python_package=false
