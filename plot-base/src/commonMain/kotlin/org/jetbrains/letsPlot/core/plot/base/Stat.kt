@@ -14,6 +14,8 @@ interface Stat {
 
     fun consumes(): List<Aes<*>>
 
+    fun resolutionOrNull(aes: Aes<*>): Double?
+
     fun hasDefaultMapping(aes: Aes<*>): Boolean
 
     fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable

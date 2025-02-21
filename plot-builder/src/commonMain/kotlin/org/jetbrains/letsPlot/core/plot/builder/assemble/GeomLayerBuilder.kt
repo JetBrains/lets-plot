@@ -238,6 +238,7 @@ class GeomLayerBuilder(
         return MyGeomLayer(
             data,
             geomProvider,
+            stat,
             myGeomTheme,
             posProvider,
             groupingContext.groupMapper,
@@ -269,6 +270,7 @@ class GeomLayerBuilder(
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
+        override val stat: Stat,
         geomTheme: GeomTheme,
         override val posProvider: PosProvider,
         override val group: (Int) -> Int,

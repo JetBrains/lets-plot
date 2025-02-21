@@ -27,6 +27,8 @@ interface GeomLayer {
 
     val geom: Geom
 
+    val stat: Stat
+
     val posProvider: PosProvider
 
     val scaleMap: Map<Aes<*>, Scale>

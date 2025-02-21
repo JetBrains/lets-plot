@@ -16,6 +16,10 @@ abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Varia
         return dataAfterStat
     }
 
+    override fun resolutionOrNull(aes: Aes<*>): Double? {
+        return null
+    }
+
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return defaultMappings.containsKey(aes)
     }

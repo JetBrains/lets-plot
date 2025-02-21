@@ -29,6 +29,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var backgroundColor: Color = Color.WHITE
     private var plotContext: PlotContext = NullPlotContext
     private var coordinateSystem: CoordinateSystem? = null
+    private var stat: Stat? = null
 
     constructor()
 
@@ -100,6 +101,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun withStat(stat: Stat): ImmutableGeomContext.Builder {
+        this.stat = stat
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -111,6 +117,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val _aesBounds: DoubleRectangle? = b.aesBounds
         val defaultFormatters = b.defaultFormatters
         val _coordinateSystem = b.coordinateSystem
+        val stat = b.stat
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -121,10 +128,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 
         override fun getResolution(aes: Aes<Double>): Double {
-            var resolution = 0.0
-            if (aesthetics != null) {
-                resolution = aesthetics.resolution(aes, 0.0)
-            }
+            var resolution = stat?.resolutionOrNull(aes) ?: aesthetics?.resolution(aes, 0.0) ?: 0.0
             if (resolution <= SeriesUtil.TINY) {
                 resolution = 1.0
             }

@@ -41,6 +41,8 @@ class Bin2dStat(
 ) : BaseStat(DEF_MAPPING) {
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
     private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY)
+    private var binWidth: Double? = null
+    private var binHeight: Double? = null
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
@@ -77,6 +79,8 @@ class Bin2dStat(
         val densityNormalizingFactor =
             densityNormalizingFactor(xRangeFinal.length, yRangeFinal.length, countTotal)
 
+        binWidth = xCountAndWidthFinal.width
+        binHeight = yCountAndWidthFinal.width
         val binsData = computeBins(
             data.getNumeric(TransformVar.X),
             data.getNumeric(TransformVar.Y),
@@ -84,8 +88,8 @@ class Bin2dStat(
             yRangeFinal.lowerEnd,
             xCountAndWidthFinal.count,
             yCountAndWidthFinal.count,
-            xCountAndWidthFinal.width,
-            yCountAndWidthFinal.width,
+            binWidth!!,
+            binHeight!!,
             BinStatUtil.weightAtIndex(data),
             densityNormalizingFactor
         )
@@ -96,6 +100,14 @@ class Bin2dStat(
             .putNumeric(Stats.COUNT, binsData.count)
             .putNumeric(Stats.DENSITY, binsData.density)
             .build()
+    }
+
+    override fun resolutionOrNull(aes: Aes<*>): Double? {
+        return when (aes) {
+            Aes.X -> binWidth
+            Aes.Y -> binHeight
+            else -> null
+        }
     }
 
     private fun computeBins(
