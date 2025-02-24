@@ -146,7 +146,7 @@ class Bin2dStat(
                 }
 
                 if (drop && count == 0.0) {
-                    // resolution hack (similar to BinStat) - need at least two consecutive X values (along each axis), or size of the bin will be incorrect
+                    // resolution hack (similar to BinStat) - need at least two consecutive values (along each axis), or size of the bin will be incorrect
                     when {
                         xIndex == 0 && yIndex in setOf(1, 2) -> {
                             xs.add(Double.NaN)
