@@ -102,22 +102,22 @@ class Bin2dStatTest {
 
         val statDf = applyBin2dStat(df, 2, 2, drop = true)
 
-        // Only bins with count > 0
-        // expecting count = [1, 1]
-        MatcherAssert.assertThat(statDf.getNumeric(Stats.COUNT), Matchers.contains(1.0, 1.0))
+        // Only bins with count > 0, except that has indices (0, 1), (0, 2), (1, 0) and (2, 0)
+        // expecting count = [1, NaN, NaN, 1]
+        MatcherAssert.assertThat(statDf.getNumeric(Stats.COUNT), Matchers.contains(1.0, Double.NaN, Double.NaN, 1.0))
 
         // width == 0.75
-        // hight == 0.75 -> area == 0.5625
+        // height == 0.75 -> area == 0.5625
         val normFactor = 1 / 0.5625
         // If density sum / normFactor == 1 -> density sum == normFactor
         @Suppress("UNCHECKED_CAST")
-        val densitySum = (statDf.getNumeric(Stats.DENSITY) as List<Double>).sum()
+        val densitySum = (statDf.getNumeric(Stats.DENSITY) as List<Double>).filter { it.isFinite() }.sum()
         TestCase.assertEquals(normFactor, densitySum)
 
         // expecting density - 1/2 in first and last bins
         MatcherAssert.assertThat(
             statDf.getNumeric(Stats.DENSITY),
-            Matchers.contains(densitySum / 2, densitySum / 2)
+            Matchers.contains(densitySum / 2, Double.NaN, Double.NaN, densitySum / 2)
         )
     }
 
