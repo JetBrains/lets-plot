@@ -227,7 +227,7 @@ internal object BreakLabelsLayoutUtil {
     ): Int {
         val dims = labels.map { label ->
             if (rotationAngle != null) {
-                rotatedLabelBounds(tickLabelSpec.dimensions(label), rotationAngle).dimension
+                rotatedLabelBounds(tickLabelSpec.multilineDimensions(label), rotationAngle).dimension
             } else {
                 tickLabelSpec.dimensions(label)
             }

@@ -119,8 +119,8 @@ internal class HorizontalRotatedLabelsLayout(
             when {
                 isVertical && horizontalAnchor != Text.HorizontalAnchor.MIDDLE -> yOffsetSpecial
                 isCornerCase -> (maxLabelHeight - rect.height) * ((orientationSign + 1) / 2 - vJust)
-                isHorizontal && verticalAnchor == Text.VerticalAnchor.TOP -> (1.0 - orientationSign) * yBBoxOffset(rect)
-                isHorizontal && verticalAnchor == Text.VerticalAnchor.BOTTOM -> (orientationSign + 1.0) * yBBoxOffset(rect)
+                isHorizontal && verticalAnchor == Text.VerticalAnchor.TOP -> yBBoxOffset(rect) - rect.height / 2
+                isHorizontal && verticalAnchor == Text.VerticalAnchor.BOTTOM -> yBBoxOffset(rect) + rect.height / 2
                 else -> yBBoxOffset(rect)
             }
         }

@@ -24,7 +24,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
 ) {
 
     private fun labelBounds(labelLocation: DoubleVector, labelText: String): DoubleRectangle {
-        val dim = labelSpec.dimensions(labelText)
+        val dim = labelSpec.multilineDimensions(labelText)
         val labelBounds = labelBounds(dim)
         return labelBounds.add(labelLocation)
     }
