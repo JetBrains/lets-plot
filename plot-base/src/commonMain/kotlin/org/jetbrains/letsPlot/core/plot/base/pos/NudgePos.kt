@@ -26,19 +26,16 @@ internal class NudgePos(
             DimensionUnit.IDENTITY -> v.add(DoubleVector(width, height))
             DimensionUnit.SIZE -> {
                 val originClient = coord.toClient(v) ?: error("Failed to convert origin to client coordinates")
-                val unitSize = DoubleVector(
-                    coord.unitSize(DoubleVector(1.0, 0.0)).x,
-                    coord.unitSize(DoubleVector(0.0, 1.0)).y
-                )
+
                 val transformedOrigin = originClient.add(DoubleVector(
-                    width * AesScaling.POINT_UNIT_SIZE / unitSize.x,
-                    height * AesScaling.POINT_UNIT_SIZE / unitSize.y))
+                    width * AesScaling.POINT_UNIT_SIZE,
+                    -height * AesScaling.POINT_UNIT_SIZE))
 
                 coord.fromClient(transformedOrigin) ?: error("Failed to convert transformed origin from client coordinates")
             }
             DimensionUnit.PIXEL -> {
                 val originClient = coord.toClient(v) ?: error("Failed to convert origin to client coordinates")
-                val transformedOrigin = originClient.add(DoubleVector(width, height))
+                val transformedOrigin = originClient.add(DoubleVector(width, -height))
                 coord.fromClient(transformedOrigin) ?: error("Failed to convert transformed origin from client coordinates")
             }
         }
