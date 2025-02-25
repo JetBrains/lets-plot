@@ -58,9 +58,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(0.0, 1.0, null)
             ),
             expected = mapOf(
-                Stats.X to checkValues(listOf(0.0)),
-                Stats.Y to checkValues(listOf(0.0)),
-                Stats.COUNT to checkValues(listOf(1.0))
+                Stats.X to checkValues(listOf(0.0), slice = listOf(0)),
+                Stats.Y to checkValues(listOf(0.0), slice = listOf(0)),
+                Stats.COUNT to checkValues(listOf(1.0), slice = listOf(0))
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -110,9 +110,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(-10.0, 10.0, -10.0, 9.0, 11.0).map { it * HEX_HEIGHT_INV }
             ),
             expected = mapOf(
-                Stats.X to checkValues(listOf(-10.0, 10.0, -10.0, 10.0)),
-                Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }),
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 2.0))
+                Stats.X to checkValues(listOf(-10.0, 10.0, -10.0, 10.0), slice = listOf(0, 3, 6, 7)),
+                Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }, slice = listOf(0, 3, 6, 7)),
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 2.0), slice = listOf(0, 3, 6, 7))
             ),
             binWidthX = 10.0,
             binWidthY = 10.0
@@ -194,11 +194,11 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(-0.5, 0.5,
                                               -1.0, 0.0, 1.0,
-                                              -0.5, 0.5)),
+                                              -0.5, 0.5), slice = listOf(2, 3, 4, 5, 6, 7, 8)),
                 Stats.Y to checkValues(listOf(-HEX_HEIGHT_INV, -HEX_HEIGHT_INV,
                                                0.0, 0.0, 0.0,
-                                               HEX_HEIGHT_INV, HEX_HEIGHT_INV)),
-                Stats.COUNT to checkValues(expectedCounts)
+                                               HEX_HEIGHT_INV, HEX_HEIGHT_INV), slice = listOf(2, 3, 4, 5, 6, 7, 8)),
+                Stats.COUNT to checkValues(expectedCounts, slice = listOf(2, 3, 4, 5, 6, 7, 8))
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -215,9 +215,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(0.0, 1.0, 0.0, 1.0).map { it * yStretch }
             ),
             expected = mapOf(
-                Stats.X to checkValues(listOf(0.0, 1.0).map { it * xStretch }),
-                Stats.Y to checkValues(listOf(0.0, 0.0)),
-                Stats.COUNT to checkValues(listOf(2.0, 2.0))
+                Stats.X to checkValues(listOf(0.0, 1.0).map { it * xStretch }, slice = listOf(0, 1)),
+                Stats.Y to checkValues(listOf(0.0, 0.0), slice = listOf(0, 1)),
+                Stats.COUNT to checkValues(listOf(2.0, 2.0), slice = listOf(0, 1))
             ),
             binWidthX = xStretch,
             binWidthY = 2.0 * yStretch
@@ -234,9 +234,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(-6.0 * HEX_HEIGHT, 0.0, HEX_HEIGHT).map { it * yStretch }
             ),
             expected = mapOf(
-                Stats.X to { statDf, variable -> checkStatVarSize(statDf, variable, 3) },
-                Stats.Y to { statDf, variable -> checkStatVarSize(statDf, variable, 3) },
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0))
+                Stats.X to { statDf, variable -> checkStatVarSize(statDf, variable, 7) },
+                Stats.Y to { statDf, variable -> checkStatVarSize(statDf, variable, 7) },
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0), slice = listOf(0, 5, 6))
             ),
             binWidthX = xStretch,
             binWidthY = 2.0 * yStretch
@@ -245,10 +245,12 @@ class BinHexStatTest : BaseStatTest() {
 
     private fun checkValues(
         expectedValues: List<Double>,
-        epsilon: Double = DEF_EPSILON
+        epsilon: Double = DEF_EPSILON,
+        slice: Iterable<Int>? = null
     ): (DataFrame, DataFrame.Variable) -> Unit {
         return { statDf, variable ->
-            checkStatVarValues(statDf, variable, expectedValues, epsilon = epsilon)
+            val df = if (slice != null) statDf.slice(slice) else statDf
+            checkStatVarValues(df, variable, expectedValues, epsilon = epsilon)
         }
     }
 

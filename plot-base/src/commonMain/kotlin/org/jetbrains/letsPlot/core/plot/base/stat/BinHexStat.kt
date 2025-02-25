@@ -130,7 +130,22 @@ class BinHexStat(
                 val binIndexKey = Pair(xIndex, yIndex)
                 val count = countByBinIndexKey[binIndexKey] ?: 0.0
 
-                if (count == 0.0 && drop) {
+                if (drop && count == 0.0) {
+                    // resolution hack (similar to Bin2dStat) - need at least two consecutive values (along each axis), or size of the bin will be incorrect
+                    when {
+                        Pair(xIndex, yIndex) in setOf(Pair(0, 0), Pair(1, 0), Pair(0, 1)) -> {
+                            val x = if (yIndex % 2 == 0) {
+                                x0 + xIndex * binWidth
+                            } else {
+                                x0 + xIndex * binWidth + binWidth / 2.0
+                            }
+                            val y = y0 + yIndex * binHeight
+                            xs += listOf(x, Double.NaN)
+                            ys += listOf(Double.NaN, y)
+                            counts += listOf(Double.NaN, Double.NaN)
+                            densities += listOf(Double.NaN, Double.NaN)
+                        }
+                    }
                     continue
                 }
 
