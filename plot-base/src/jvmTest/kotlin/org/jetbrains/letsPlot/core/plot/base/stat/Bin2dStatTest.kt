@@ -102,7 +102,7 @@ class Bin2dStatTest {
 
         val statDf = applyBin2dStat(df, 2, 2, drop = true)
 
-        // Only bins with count > 0, except that has indices (0, 1), (0, 2), (1, 0) and (2, 0)
+        // Only bins with count > 0, except that has indices (0, 0), (0, 1) and (1, 0)
         // expecting count = [1, NaN, NaN, 1]
         MatcherAssert.assertThat(statDf.getNumeric(Stats.COUNT), Matchers.contains(1.0, Double.NaN, Double.NaN, 1.0))
 
