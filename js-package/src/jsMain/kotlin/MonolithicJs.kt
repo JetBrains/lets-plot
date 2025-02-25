@@ -33,8 +33,46 @@ private val LOG = PortableLogging.logger("MonolithicJs")
 private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 
 /**
- * The entry point to call in JS
- * `raw specs` are plot specs not processed by datalore plot backend
+ * Main entry point for creating plots from the JavaScript environment.
+ *
+ * Takes "raw" plot specifications (not processed by plot backend)
+ * and constructs the plot with the specified sizing configuration.
+ *
+ * The `sizingJs` parameter is a JavaScript object with the structure:
+ * {
+ *   width_mode: String    // "fixed", "min", "fit", or "scaled" (case-insensitive)
+ *   height_mode: String   // "fixed", "min", "fit", or "scaled" (case-insensitive)
+ *   width: Number         // optional
+ *   height: Number        // optional
+ * }
+ *
+ * Sizing modes:
+ *
+ * 1. FIXED mode:
+ *    - Uses the explicitly provided width/height values
+ *    - Falls back to the default figure size if no values provided
+ *    - Not responsive to container size
+ *
+ * 2. MIN mode:
+ *    Applies the smallest dimension among:
+ *    - The default figure size
+ *    - The specified width/height (if provided)
+ *    - The container size (if available)
+ *
+ * 3. FIT mode:
+ *    Uses either:
+ *    - The specified width/height if provided
+ *    - Otherwise uses container size if available
+ *    - Falls back to default figure size if neither is available
+ *
+ * 4. SCALED mode:
+ *    - Always preserves the figure's aspect ratio
+ *    - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode
+ *      and SCALED height adjusts to maintain aspect ratio
+ *    - Special case: when both width and height are SCALED:
+ *      * Requires container size to be available
+ *      * Fits figure within container while preserving aspect ratio
+ *
  */
 @OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
@@ -72,21 +110,46 @@ fun buildPlotFromRawSpecs(
 }
 
 /**
- * The entry point to call in JS
- * `processed specs` are plot specs processed by datalore plot backend.
+ * Main entry point for creating plots from the JavaScript environment.
  *
- * @param plotSpecJs plot specifications (a dictionary)
- * @param parentElement DOM element to add the plot to.
- *      The plot size will be determined using `clientWidth` of the parent element.
- * @param optionsJs miscellaneous settings.
- *      For example, set max width to 500px:
- *                          optionsJs = {
- *                              sizing: {
- *                                  width_mode: "min",
- *                                  height_mode: "scaled",
- *                                  width: 500
- *                              }
- *                          };
+ * Takes "processed" plot specifications (processed by plot backend)
+ * and constructs the plot with the specified sizing configuration.
+ *
+ * The `sizingJs` parameter is a JavaScript object with the structure:
+ * {
+ *   width_mode: String    // "fixed", "min", "fit", or "scaled" (case-insensitive)
+ *   height_mode: String   // "fixed", "min", "fit", or "scaled" (case-insensitive)
+ *   width: Number         // optional
+ *   height: Number        // optional
+ * }
+ *
+ * Sizing modes:
+ *
+ * 1. FIXED mode:
+ *    - Uses the explicitly provided width/height values
+ *    - Falls back to the default figure size if no values provided
+ *    - Not responsive to container size
+ *
+ * 2. MIN mode:
+ *    Applies the smallest dimension among:
+ *    - The default figure size
+ *    - The specified width/height (if provided)
+ *    - The container size (if available)
+ *
+ * 3. FIT mode:
+ *    Uses either:
+ *    - The specified width/height if provided
+ *    - Otherwise uses container size if available
+ *    - Falls back to default figure size if neither is available
+ *
+ * 4. SCALED mode:
+ *    - Always preserves the figure's aspect ratio
+ *    - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode
+ *      and SCALED height adjusts to maintain aspect ratio
+ *    - Special case: when both width and height are SCALED:
+ *      * Requires container size to be available
+ *      * Fits figure within container while preserving aspect ratio
+ *
  */
 @OptIn(ExperimentalJsExport::class)
 @Suppress("unused")

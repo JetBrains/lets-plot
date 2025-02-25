@@ -6,8 +6,8 @@ from typing import Dict
 
 import lets_plot_kotlin_bridge
 
-from ._type_utils import standardize_dict
 from ._global_settings import get_js_cdn_url
+from ._type_utils import standardize_dict
 
 
 def _generate_dynamic_display_html(plot_spec: Dict) -> str:
@@ -50,15 +50,16 @@ def _generate_static_configure_html() -> str:
 
 
 def _generate_display_html_for_raw_spec(
-    plot_spec: Dict,
-    sizing_options: Dict,
-    *,
-    dynamic_script_loading: bool = False,
-    force_immediate_render: bool = False,
-    responsive: bool = False
+        plot_spec: Dict,
+        sizing_options: Dict,
+        *,
+        dynamic_script_loading: bool = False,
+        force_immediate_render: bool = False,
+        responsive: bool = False
 ) -> str:
     """
-    Generate HTML for displaying a plot from raw specification with customizable options.
+    Generate HTML for displaying a plot from 'raw' specification (not processed by plot backend)
+    with customizable options.
 
     Parameters
     ----------
@@ -67,9 +68,14 @@ def _generate_display_html_for_raw_spec(
     sizing_options : Dict
         Dict containing sizing policy options (width_mode, height_mode, width, height).
     dynamic_script_loading : bool, default=False
-        If True, loads JS library dynamically; if False, expects static loading.
+        Controls how the generated JS code interacts with the lets-plot JS library.
+        If True, assumes the library will be loaded dynamically.
+        If False, assumes the library is already present in the page header (static loading).
     force_immediate_render : bool, default=False
+        Controls the timing of plot rendering.
         If True, forces immediate plot rendering.
+        If False, waits for ResizeObserver(JS) event and renders the plot after the plot
+        container is properly layouted in DOM.
     responsive : bool, default=False
         If True, makes the plot responsive to container size changes.
 
@@ -80,21 +86,42 @@ def _generate_display_html_for_raw_spec(
 
     Notes
     -----
-    The sizing_options dict supports the following keys:
-    - width_mode : str
-        One of: 'fit', 'min', 'scaled', 'fixed'
-    - height_mode : str
-        One of: 'fit', 'min', 'scaled', 'fixed'
-    - width : number, optional
-        The width value (used with 'fixed' mode).
-    - height : number, optional
-        The height value (used with 'fixed' mode).
+    The sizing_options dict supports the following structure:
+    {
+        'width_mode': str,     # 'fixed', 'min', 'fit', 'scaled' (case-insensitive)
+        'height_mode': str,    # 'fixed', 'min', 'fit', 'scaled' (case-insensitive)
+        'width': number,       # optional
+        'height': number       # optional
+    }
 
-    The modes determine how the plot dimensions are computed:
-    - 'fit': uses the container dimension
-    - 'min': uses the smaller of plot's own dimension or container dimension
-    - 'scaled': computes dimension to preserve plot's aspect ratio
-    - 'fixed': uses plot's own dimension (non-responsive)
+    Sizing modes determine how the plot dimensions are calculated:
+
+    1. FIXED mode:
+       - Uses the explicitly provided width/height values
+       - Falls back to the default figure size if no values provided
+       - Not responsive to container size
+
+    2. MIN mode:
+       Applies the smallest dimension among:
+       - The default figure size
+       - The specified width/height (if provided)
+       - The container size (if available)
+
+    3. FIT mode:
+       Uses either:
+       - The specified width/height if provided
+       - Otherwise uses container size if available
+       - Falls back to default figure size if neither is available
+
+    4. SCALED mode:
+       - Always preserves the figure's aspect ratio
+       - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode
+         and SCALED height adjusts to maintain aspect ratio
+       - Special case: when both width and height are SCALED:
+         * Requires container size to be available
+         * Fits figure within container while preserving aspect ratio
+         * Neither dimension is predetermined
+
     """
     plot_spec = _standardize_plot_spec(plot_spec)
     sizing_options = standardize_dict(sizing_options)

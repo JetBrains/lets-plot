@@ -24,6 +24,10 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
+- Markdown support for plot title, subtitle, caption, and axis labels [[#1256](https://github.com/JetBrains/lets-plot/issues/1256)].
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
+
 ### Changed
 
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.

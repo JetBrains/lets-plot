@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
+package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -17,8 +17,6 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.MappedDataAccessMock
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.createLocator
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LocatedTargetsPicker
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.TargetPrototype
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

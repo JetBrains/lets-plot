@@ -18,6 +18,44 @@ import kotlin.math.min
 
 private val LOG = PortableLogging.logger("Lets-Plot SizingPolicy")
 
+/**
+ * Controls the sizing behavior of plots by managing width and height dimensions
+ * according to different sizing modes.
+ *
+ * The policy determines how a plot's dimensions should be calculated based on:
+ * - The default figure size
+ * - The container size (if available)
+ * - The specified width and height values
+ * - The sizing modes for both width and height
+ *
+ * Sizing modes:
+ *
+ * 1. FIXED mode:
+ *    - Uses the explicitly provided width/height values
+ *    - Falls back to the default figure size if no values provided
+ *    - Not responsive to container size
+ *
+ * 2. MIN mode:
+ *    Applies the smallest dimension among:
+ *    - The default figure size
+ *    - The specified width/height (if provided)
+ *    - The container size (if available)
+ *
+ * 3. FIT mode:
+ *    Uses either:
+ *    - The specified width/height if provided
+ *    - Otherwise uses container size if available
+ *    - Falls back to default figure size if neither is available
+ *
+ * 4. SCALED mode:
+ *    - Always preserves the figure's aspect ratio
+ *    - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode
+ *      and SCALED height adjusts to maintain aspect ratio
+ *    - Special case: when both width and height are SCALED:
+ *      * Requires container size to be available
+ *      * Fits figure within container while preserving aspect ratio
+ *      
+ */
 class SizingPolicy(
     val widthMode: SizingMode,
     val heightMode: SizingMode,
