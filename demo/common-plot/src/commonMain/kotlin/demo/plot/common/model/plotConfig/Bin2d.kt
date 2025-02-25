@@ -15,7 +15,8 @@ open class Bin2d {
             setBinCount(),
             setBinWidth(),
             setBinWidth_Weight(),
-            setBinWidth_Weight_Density()
+            setBinWidth_Weight_Density(),
+            binWidthCheck()
         )
     }
 
@@ -161,6 +162,54 @@ open class Bin2d {
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
+        }
+
+        private fun binWidthCheck(): MutableMap<String, Any> {
+            val binWidth = 10.0
+            val binHeight = 10.0
+            val spec = """
+              {
+                'kind': 'plot',
+                'data': {
+                  'x': [0, 1, 9, 10],
+                  'y': [0, 19, 1, 0]
+                },
+                'mapping': {
+                  'x': 'x',
+                  'y': 'y'
+                },
+                'ggtitle': {
+                  'text': 'Tile size should be equal to [$binWidth, $binHeight]'
+                },
+                'layers': [
+                  {
+                    'geom': 'bin2d',
+                    'binwidth': [$binWidth, $binHeight],
+                    'size': 0.5
+                  },
+                  {
+                    'geom': 'point',
+                    'stat': 'bin2d',
+                    'binwidth': [$binWidth, $binHeight],
+                    'manual_key': {
+                      'label': 'Grid node'
+                    },
+                    'color': 'orange',
+                    'size': 5
+                  },
+                  {
+                    'geom': 'point',
+                    'manual_key': {
+                      'label': 'Raw data point'
+                    },
+                    'color': 'red',
+                    'size': 2.5
+                  }
+                ]
+              }
+            """.trimIndent()
+
+            return HashMap(parsePlotSpec(spec))
         }
     }
 }
