@@ -31,6 +31,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_SPACING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TICKS
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_ONTOP
@@ -183,6 +185,16 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_BOX_JUST to LegendBoxJustification.AUTO,
             LEGEND_BOX_SPACING to 5.0,
 
+            // Colorbar
+            LEGEND_TICKS_LENGTH to 4.0,
+            LEGEND_TICKS to mapOf(
+                Elem.SIZE to 1.0,
+// COLOR is undefined because tick color by default should inherit legend's background FILL color.
+//                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.LINETYPE to NamedLineType.SOLID
+            ),
+
+            
             FACET_STRIP_TEXT to mapOf(
                 Elem.HJUST to 0.5,
                 Elem.Margin.TOP to 3.0,

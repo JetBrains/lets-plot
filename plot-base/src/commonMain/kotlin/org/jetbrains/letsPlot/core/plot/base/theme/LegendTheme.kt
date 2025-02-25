@@ -7,11 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.*
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
@@ -21,6 +17,7 @@ interface LegendTheme {
      * Legend Keys Options
      */
     fun keySize(): DoubleVector
+
     // background underneath legend keys
     fun showKeyRect(): Boolean
     fun keyRectFill(): Color
@@ -66,4 +63,11 @@ interface LegendTheme {
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
     fun backgroundLineType(): LineType
+
+    // Colorbar tick-marks
+    fun showTickMarks(): Boolean
+    fun tickMarkColor(): Color
+    fun tickMarkLineType(): LineType
+    fun tickMarkWidth(): Double
+    fun tickMarkLength(): Double
 }

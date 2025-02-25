@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
@@ -22,7 +23,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import kotlin.math.max
 
 class ColorBarComponent(
-    override val spec: ColorBarComponentSpec
+    override val spec: ColorBarComponentSpec,
 ) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
@@ -45,31 +46,40 @@ class ColorBarComponent(
             horizontal -> barBounds.height
             else -> barBounds.width
         }
-        val tickLength = barThickness / 5
+//        val tickLength = barThickness / 5
+        val showTickMarks = theme.showTickMarks()
+        val tickLength = theme.tickMarkLength()
 
         val breakInfos = layout.breakInfos.iterator()
         for (brLabel in spec.breaks.labels) {
             val brInfo = breakInfos.next()
 
-            val tickLocation = brInfo.tickLocation
-            val tickMarkPoints = ArrayList<DoubleVector>()
-            if (horizontal) {
-                val tickX = barBounds.left + tickLocation
-                tickMarkPoints.add(DoubleVector(tickX, barBounds.top))
-                tickMarkPoints.add(DoubleVector(tickX, barBounds.top + tickLength))
-                tickMarkPoints.add(DoubleVector(tickX, barBounds.bottom - tickLength))
-                tickMarkPoints.add(DoubleVector(tickX, barBounds.bottom))
-            } else {
-                val tickY = barBounds.top + tickLocation
-                tickMarkPoints.add(DoubleVector(barBounds.left, tickY))
-                tickMarkPoints.add(DoubleVector(barBounds.left + tickLength, tickY))
-                tickMarkPoints.add(DoubleVector(barBounds.right - tickLength, tickY))
-                tickMarkPoints.add(DoubleVector(barBounds.right, tickY))
+            // Tickmarks (two per 1 break).
+            if (showTickMarks) {
+                val tickLocation = brInfo.tickLocation
+                val tickMarkPoints = if (horizontal) {
+                    val tickX = barBounds.left + tickLocation
+                    listOf(
+                        DoubleVector(tickX, barBounds.top),
+                        DoubleVector(tickX, barBounds.top + tickLength),
+                        DoubleVector(tickX, barBounds.bottom - tickLength),
+                        DoubleVector(tickX, barBounds.bottom),
+                    )
+                } else {
+                    val tickY = barBounds.top + tickLocation
+                    listOf(
+                        DoubleVector(barBounds.left, tickY),
+                        DoubleVector(barBounds.left + tickLength, tickY),
+                        DoubleVector(barBounds.right - tickLength, tickY),
+                        DoubleVector(barBounds.right, tickY),
+                    )
+                }
+
+                addTickMark(guideBarGroup, tickMarkPoints[0], tickMarkPoints[1])
+                addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
             }
 
-            addTickMark(guideBarGroup, tickMarkPoints[0], tickMarkPoints[1])
-            addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
-
+            // Label
             val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
             val label = MultilineLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
@@ -166,8 +176,10 @@ class ColorBarComponent(
 
     private fun addTickMark(g: SvgGElement, p0: DoubleVector, p1: DoubleVector) {
         val line = SvgLineElement(p0.x, p0.y, p1.x, p1.y)
-        line.strokeWidth().set(1.0)
-        line.strokeColor().set(theme.backgroundFill());
+        line.strokeWidth().set(theme.tickMarkWidth())
+//        line.strokeColor().set(theme.backgroundFill());
+        line.strokeColor().set(theme.tickMarkColor());
+        StrokeDashArraySupport.apply(line, theme.tickMarkWidth(), theme.tickMarkLineType())
         g.children().add(line)
     }
 }

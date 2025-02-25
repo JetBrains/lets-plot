@@ -112,6 +112,10 @@ object ThemeOption {
     const val LEGEND_BOX_JUST = "legend_box_just"
     const val LEGEND_BOX_SPACING = "legend_box_spacing"
 
+    // Colorbar tick-marks
+    const val LEGEND_TICKS = "legend_ticks"
+    const val LEGEND_TICKS_LENGTH = "legend_ticks_length"
+
     // Tooltip
     const val TOOLTIP_RECT = "tooltip"
     const val TOOLTIP_TEXT = "tooltip_text"

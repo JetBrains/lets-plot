@@ -49,12 +49,11 @@ def theme(*,
           legend_key_size=None, legend_key_width=None, legend_key_height=None,
           legend_key_spacing=None, legend_key_spacing_x=None, legend_key_spacing_y=None,
           legend_box=None, legend_box_just=None, legend_box_spacing=None,
-          # ToDo: other legend options...
+          legend_ticks=None, legend_ticks_length=None,
 
           panel_background=None,
           panel_border=None,
           panel_border_ontop=None,
-          # ToDo: other panel options...
 
           panel_grid=None,
           panel_grid_ontop=None,
@@ -222,6 +221,14 @@ def theme(*,
         Justification of each legend within the overall bounding box, when there are multiple legends.
     legend_box_spacing : float
         Spacing between plotting area and legend box.
+    legend_ticks : str or dict
+        Tick marks in colorbars.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify all tick mark parameters.
+        `legend_ticks_*` DOES NOT inherit from `line`.
+        By default, the colorbar tick marks are drawn with the same color as the colorbar background.
+    legend_ticks_length : float
+        Length of colorbar tick marks in px.
     panel_background : str or dict
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.

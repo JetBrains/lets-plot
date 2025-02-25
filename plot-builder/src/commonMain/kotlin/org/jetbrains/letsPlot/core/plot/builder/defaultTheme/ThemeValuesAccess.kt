@@ -86,6 +86,14 @@ internal open class ThemeValuesAccess(
         }
     }
 
+    protected fun getColorDef(elem: Map<String, Any>, key: String, defaultValue: Color): Color {
+        return if (elem.containsKey(key)) {
+            getColor(elem, key)
+        } else {
+            defaultValue
+        }
+    }
+
     protected fun getFontFace(elem: Map<String, Any>): FontFace {
         return when (val value = elem.getValue(Elem.FONT_FACE)) {
             is FontFace -> value
