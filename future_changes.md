@@ -1,32 +1,42 @@
 ## [4.5.3] - 2025-mm-dd
 
 ### Added
-- `ggbunch()` function: combining plots with custom layout.
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+- Grouping plots:
+  - `ggbunch()` function: combining plots with custom layout.
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
                                                                                                                        
-- Support for plot **title, subtitle, caption, margins** and **insets** in `gggrid()` and `ggbunch()`. 
-
-- `geom_hex()`.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
-
-- `spacer` parameter in `image_matrix()`.
-- `hjust` and `vjust` parameters for axis labels.
+  - Support for plot **title, subtitle, caption, margins** and **insets** in `gggrid()` and `ggbunch()`. 
   
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
+- Geometries:
+  - `geom_hex()` [[#556](https://github.com/JetBrains/lets-plot/issues/556)].
 
-- multiline support for axis labels.
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/multiline_axis_labels.ipynb).
+  - Parameters `width_unit` and `height_unit` in `geom_errorbar()`, `geom_tile()` and `geom_hex()` [[#1288](https://github.com/JetBrains/lets-plot/issues/1288)]:
 
-- Parameters `width_unit` and `height_unit` in `geom_errorbar()`, `geom_tile()` and `geom_hex()` [[#1288](https://github.com/JetBrains/lets-plot/issues/1288)]:
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
+- Texts and labels:
+  - `hjust` and `vjust` parameters for axis labels [[#1227](https://github.com/JetBrains/lets-plot/issues/1227)][[#1230](https://github.com/JetBrains/lets-plot/issues/1230)].
+  
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
 
-- Markdown support for plot title, subtitle, caption, and axis labels [[#1256](https://github.com/JetBrains/lets-plot/issues/1256)].
+  - multiline support for axis labels [[#948](https://github.com/JetBrains/lets-plot/issues/948)].
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/multiline_axis_labels.ipynb).
+
+  - Markdown support for plot **title**, **subtitle**, **caption**, and axis labels [[#1256](https://github.com/JetBrains/lets-plot/issues/1256)].
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
+
+- Theme:
+  - Parameters `legend_ticks` and `legend_ticks_length` for fine-grained control over colorbar tick marks [[#1262](https://github.com/JetBrains/lets-plot/issues/1262)].
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/theme_legend_ticks.ipynb).
+
+- Parameter `spacer` in `image_matrix()` function.
 
 ### Changed
 
