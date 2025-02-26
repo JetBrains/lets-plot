@@ -154,6 +154,21 @@ class XmlTest {
     }
 
     @Test
+    fun attrValueWithSingleQuotes() {
+        val xml = """<p style='color:red'>Hello</p>"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = XmlNode.Element(
+                name = "p",
+                attributes = mapOf("style" to "color:red"),
+                children = listOf(XmlNode.Text("Hello"))
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
     fun twoAttributes() {
         val xml = """<p style="color:red" class="foo">Hello</p>"""
 
@@ -204,6 +219,23 @@ class XmlTest {
                         )
                     ),
                     XmlNode.Text(" button")
+                )
+            ),
+            actual = parsed
+        )
+    }
+
+
+    @Test
+    fun newLine() {
+        val xml = "<p>foo\nbar</p>"
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = XmlNode.Element(
+                name = "p",
+                children = listOf(
+                    XmlNode.Text("foo\nbar")
                 )
             ),
             actual = parsed

@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.xml
 
+import org.jetbrains.letsPlot.commons.xml.TokenType.*
+
 internal class Lexer(
     val input: String
 ) {
@@ -53,21 +55,24 @@ internal class Lexer(
             }
 
             '=' -> Token.EQUALS.also { advance() }
-            ' ', '\t' -> Token(TokenType.WHITESPACE, " ").also { advance() }
             '"' -> {
                 advance() // consume opening quote
-                val token = Token(TokenType.QUOTED_STRING, readUntil(listOf(eq('"'))))
+                val token = Token(QUOTED_STRING, readUntil(listOf(eq('"'))))
+                advance() // consume closing quote
+
+                token
+            }
+            '\'' -> {
+                advance() // consume opening quote
+                val token = Token(QUOTED_STRING, readUntil(listOf(eq('\''))))
                 advance() // consume closing quote
 
                 token
             }
 
             else -> when {
-                c.isWhitespace() -> Token(TokenType.WHITESPACE, c.toString())
-                else -> Token(
-                    TokenType.TEXT,
-                    readUntil(listOf(eq('<'), eq('/'), eq('>'), eq('"'), eq('='), Char::isWhitespace))
-                )
+                c.isWhitespace() -> Token(WHITESPACE, c.toString()).also { advance() }
+                else -> Token(TEXT, readUntil(listOf(eq('<'), eq('/'), eq('>'), eq('"'), eq('='), Char::isWhitespace)))
             }
         }
     }
