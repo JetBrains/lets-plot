@@ -38,6 +38,13 @@ internal object Markdown {
         when (node) {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
+                if (node.name == "a") {
+                    val href = node.attributes["href"] ?: ""
+                    val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
+                    output += Hyperlink.HyperlinkElement(text, href)
+                    return output
+                }
+
                 if (node.name == "br") {
                     output += RichTextNode.LineBreak
                     return output
