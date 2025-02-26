@@ -21,6 +21,16 @@ internal class Parser private constructor(
         while (i < tokens.size) {
             val token = tokens[i]
             when (token.type) {
+                TokenType.LINE_BREAK -> {
+                    nodes += LineBreak
+                    i++
+                }
+
+                TokenType.SOFT_BREAK -> {
+                    nodes += SoftBreak
+                    i++
+                }
+
                 TokenType.BACKSLASH -> {
                     val nextToken = tokens.getOrNull(i + 1)
                     nodes += when (nextToken) {
@@ -255,6 +265,8 @@ internal class Parser private constructor(
                     is CloseStrong -> "</strong>"
                     is Em -> "<em>"
                     is CloseEm -> "</em>"
+                    is LineBreak -> "<br/>"
+                    is SoftBreak -> "<softbreak/>"
                 }
             }
         }
@@ -266,6 +278,8 @@ internal class Parser private constructor(
         data object CloseStrong : Node()
         data object Em : Node()
         data object CloseEm : Node()
+        data object LineBreak : Node()
+        data object SoftBreak : Node()
     }
 
     class DelimiterRun(

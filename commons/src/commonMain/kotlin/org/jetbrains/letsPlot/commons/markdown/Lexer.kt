@@ -34,14 +34,17 @@ internal class Lexer private constructor(
 
         val token = peek()
         when (token) {
+            TokenType.LINE_BREAK -> advance(3)
+
             TokenType.ASTERISK,
             TokenType.UNDERSCORE,
-            TokenType.LINE_BREAK,
+            TokenType.SOFT_BREAK,
             TokenType.WHITE_SPACE,
             TokenType.BACKSLASH,
             TokenType.PUNCTUATION -> advance(1)
+
             TokenType.TEXT -> advanceText()
-            else -> error("Unexpected token: $token")
+            TokenType.EOF -> {}
         }
 
         currentToken = Token(token, text.substring(tokenStart, i))
@@ -50,11 +53,12 @@ internal class Lexer private constructor(
     private fun peek(): TokenType {
         val char = text[i]
         return when {
+            matchToken("  \n") -> TokenType.LINE_BREAK
+            matchToken("\n") -> TokenType.SOFT_BREAK
             char.isWhitespace() -> TokenType.WHITE_SPACE
             matchToken("*") -> TokenType.ASTERISK
             matchToken("_") -> TokenType.UNDERSCORE
             matchToken(" ") -> TokenType.WHITE_SPACE
-            matchToken("\n") -> TokenType.LINE_BREAK
             matchToken("\\") -> TokenType.BACKSLASH
             isPunctuation(char) -> TokenType.PUNCTUATION
             else -> TokenType.TEXT
@@ -103,6 +107,7 @@ internal class Lexer private constructor(
         ASTERISK,
         UNDERSCORE,
         LINE_BREAK,
+        SOFT_BREAK,
     }
 
     internal data class Token(

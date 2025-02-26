@@ -35,28 +35,34 @@ object RichText {
     ): Double {
         val lines = parse(text, wrapLength, maxLinesCount, markdown)
         val widths = lines.map { line ->
-            line.sumOf { term -> (term as? Span)?.estimateWidth(font, widthEstimator) ?: 0.0 }
+            line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth(font, widthEstimator) ?: 0.0 }
         }
 
         return widths.maxOrNull() ?: 0.0
     }
 
-    private fun parse(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1, markdown: Boolean = false): List<List<RichTextNode>> {
+    private fun parse(
+        text: String,
+        wrapLength: Int = -1,
+        maxLinesCount: Int = -1,
+        markdown: Boolean = false
+    ): List<List<RichTextNode>> {
         fun parse(nodes: List<RichTextNode>, parser: (String) -> List<RichTextNode>): List<RichTextNode> {
             return nodes.flatMap { node ->
                 when (node) {
-                    is Text -> parser(node.text)
+                    is RichTextNode.Text -> parser(node.text)
                     else -> listOf(node)
                 }
             }
         }
 
-        val terms = listOf(Text(text))
+        val terms = listOf(RichTextNode.Text(text))
             .let { it.takeUnless { markdown } ?: parse(it, Markdown::parse) }
             .let { parse(it, Latex::parse) }
             .let { parse(it, Hyperlink::parse) }
+            .let { parseBreaks(it) }
 
-        val lines = splitByNewLines(terms)
+        val lines = buildLines(terms)
 
         val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
 
@@ -68,29 +74,70 @@ object RichText {
         return when {
             maxLinesCount < 0 -> wrappedLines
             wrappedLines.size < maxLinesCount -> wrappedLines
-            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(mutableListOf(Text("...")))
+            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(
+                mutableListOf(
+                    RichTextNode.Text(
+                        "..."
+                    )
+                )
+            )
         }
     }
 
-    private fun splitByNewLines(terms: List<RichTextNode>): List<List<RichTextNode>> {
-        val lines = mutableListOf<MutableList<RichTextNode>>(mutableListOf())
+    private fun parseBreaks(terms: List<RichTextNode>): List<RichTextNode> {
+        val result = mutableListOf<RichTextNode>()
         terms.forEach { term ->
-            if (term is Text && "\n" in term.text) {
-                val parts = term.text.split("\n")
-                val currentLineEnding = parts.first()
-                if (currentLineEnding.isNotEmpty()) { // starts with "\n" - do not add empty part to the line
-                    lines.last().add(Text(currentLineEnding))
+            if (term is RichTextNode.Text) {
+                val lines = term.text.split("\n")
+
+                lines.forEachIndexed { i, line ->
+                    if (line.isNotEmpty()) {
+                        result.add(RichTextNode.Text(line))
+                    }
+
+                    if (i != lines.lastIndex) {
+                        result.add(RichTextNode.LineBreak)
+                    }
                 }
-                val newLines = parts.drop(1)
-                newLines.forEach { lines.add(mutableListOf(Text(it))) }
+            } else {
+                result.add(term)
+            }
+        }
+        return result
+    }
+
+    private fun buildLines(terms: List<RichTextNode>): List<List<RichTextNode>> {
+        if (terms.isEmpty()) {
+            return emptyList()
+        }
+
+        var startNewLine = true
+        val lines = mutableListOf<MutableList<RichTextNode>>()
+
+        terms.forEach { term ->
+            if (startNewLine) {
+                lines.add(mutableListOf())
+                startNewLine = false
+            }
+
+            if (term is RichTextNode.LineBreak) {
+                startNewLine = true
             } else {
                 lines.last().add(term)
             }
         }
+
+        if (startNewLine) {
+            lines.add(mutableListOf())
+        }
+
         return lines
     }
 
-    internal fun fillTextTermGaps(text: String, specialTerms: List<Pair<Span, IntRange>>): List<Span> {
+    internal fun fillTextTermGaps(
+        text: String,
+        specialTerms: List<Pair<RichTextNode.Span, IntRange>>
+    ): List<RichTextNode.Span> {
         fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
             if (toSubtract.isEmpty()) {
                 return listOf(range)
@@ -107,7 +154,7 @@ object RichText {
         }
 
         val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
-            .map { pos -> Text(text.substring(pos)) to pos }
+            .map { pos -> RichTextNode.Text(text.substring(pos)) to pos }
         return (specialTerms + textTerms)
             .sortedBy { (_, termLocation) -> termLocation.first }
             .map { (term, _) -> term }
@@ -120,17 +167,19 @@ object RichText {
 
         val wrappedLines = mutableListOf(mutableListOf<RichTextNode>())
         line.forEach { term ->
-            val availableSpace = wrapLength - wrappedLines.last().sumOf { (it as? Span)?.visualCharCount ?: 0 }
+            val availableSpace =
+                wrapLength - wrappedLines.last().sumOf { (it as? RichTextNode.Span)?.visualCharCount ?: 0 }
             when {
-                term is Span && term.visualCharCount <= availableSpace -> wrappedLines.last().add(term)
-                term is Span && term.visualCharCount <= wrapLength -> wrappedLines.add(mutableListOf(term)) // no need to split
-                term !is Text -> wrappedLines.add(mutableListOf(term)) // can't fit in one line, but can't split power or link
+                term is RichTextNode.Span && term.visualCharCount <= availableSpace -> wrappedLines.last().add(term)
+                term is RichTextNode.Span && term.visualCharCount <= wrapLength -> wrappedLines.add(mutableListOf(term)) // no need to split
+                term !is RichTextNode.Text -> wrappedLines.add(mutableListOf(term)) // can't fit in one line, but can't split power or link
                 else -> { // split text
-                    wrappedLines.last().takeIf { availableSpace > 0 }?.add(Text(term.text.take(availableSpace)))
+                    wrappedLines.last().takeIf { availableSpace > 0 }
+                        ?.add(RichTextNode.Text(term.text.take(availableSpace)))
                     wrappedLines += term.text
                         .drop(availableSpace)
                         .chunked(wrapLength)
-                        .map { mutableListOf(Text(it)) }
+                        .map { mutableListOf(RichTextNode.Text(it)) }
                 }
             }
         }
@@ -139,29 +188,25 @@ object RichText {
     }
 
     private fun render(lines: List<List<RichTextNode>>): List<SvgTextElement> {
-        return lines.map { line ->
-            SvgTextElement().apply {
-                children().addAll(renderLine(line))
-            }
-        }
-    }
-
-    private fun renderLine(line: List<RichTextNode>): List<SvgElement> {
         val stack = mutableListOf(RenderState())
-        val svg = mutableListOf<SvgElement>()
-        line.forEach { term ->
-            when (term) {
-                is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
-                is RichTextNode.EmphasisStart -> stack.add(stack.last().copy(isItalic = true))
-                is RichTextNode.ColorStart -> stack.add(stack.last().copy(color = term.color))
-                is RichTextNode.StrongEnd,
-                is RichTextNode.EmphasisEnd,
-                is RichTextNode.ColorEnd -> stack.removeLast()
-                is Span -> svg += term.render(stack.last())
+        val svgLines = lines.map { line ->
+            val svg = mutableListOf<SvgElement>()
+            line.forEach { term ->
+                when (term) {
+                    is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
+                    is RichTextNode.EmphasisStart -> stack.add(stack.last().copy(isItalic = true))
+                    is RichTextNode.ColorStart -> stack.add(stack.last().copy(color = term.color))
+                    is RichTextNode.StrongEnd,
+                    is RichTextNode.EmphasisEnd,
+                    is RichTextNode.ColorEnd -> stack.removeLast()
+
+                    is RichTextNode.Span -> svg += term.render(stack.last())
+                }
             }
+            svg
         }
 
-        return svg
+        return svgLines.map { SvgTextElement().apply { children().addAll(it) } }
     }
 
     interface RichTextNode {
@@ -169,31 +214,37 @@ object RichText {
         object EmphasisEnd : RichTextNode
         object StrongStart : RichTextNode
         object StrongEnd : RichTextNode
-        class ColorStart(val color: Color) : RichTextNode
         object ColorEnd : RichTextNode
-    }
+        object LineBreak : RichTextNode
 
-    internal interface Span : RichTextNode {
-        val visualCharCount: Int // in chars, used for line wrapping
-
-        fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-        fun render(context: RenderState): List<SvgElement>
-        fun render(): List<SvgElement> = render(RenderState())
-    }
-
-    internal class Text(
-        val text: String,
-    ) : Span {
-        override val visualCharCount: Int = text.length
-
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return widthCalculator(text, font)
+        class ColorStart(val color: Color) : RichTextNode {
+            override fun toString() = "ColorStart(color=$color)"
         }
 
-        override fun render(context: RenderState): List<SvgElement> {
-            val tSpan = SvgTSpanElement(text)
-            context.apply(tSpan)
-            return listOf(tSpan)
+        interface Span : RichTextNode {
+            val visualCharCount: Int // in chars, used for line wrapping
+
+            fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+            fun render(context: RenderState): List<SvgElement>
+            fun render(): List<SvgElement> = render(RenderState())
+        }
+
+        class Text(
+            val text: String,
+        ) : Span {
+            override val visualCharCount: Int = text.length
+
+            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+                return widthCalculator(text, font)
+            }
+
+            override fun render(context: RenderState): List<SvgElement> {
+                val tSpan = SvgTSpanElement(text)
+                context.apply(tSpan)
+                return listOf(tSpan)
+            }
+
+            override fun toString() = "Text(text='$text')"
         }
     }
 }

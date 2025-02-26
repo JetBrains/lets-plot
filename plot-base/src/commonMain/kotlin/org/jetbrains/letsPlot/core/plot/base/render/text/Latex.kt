@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.Span
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -116,12 +115,12 @@ internal object Latex {
     )
     private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
 
-    private fun parse(tokens: Sequence<Token>): Span {
+    private fun parse(tokens: Sequence<Token>): RichTextNode.Span {
         return parseGroup(tokens.iterator(), level = 0)
     }
 
     private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
-        val nodes = mutableListOf<Span>()
+        val nodes = mutableListOf<RichTextNode.Span>()
         while (iterator.hasNext()) {
             val token = iterator.next()
             when (token) {
@@ -138,7 +137,7 @@ internal object Latex {
         return GroupNode(nodes)
     }
 
-    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int): Span {
+    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int): RichTextNode.Span {
         return when (val nextToken = iterator.next()) {
             is Token.OpenBrace -> parseGroup(iterator, level)
             is Token.Text -> TextNode(nextToken.content)
@@ -147,12 +146,12 @@ internal object Latex {
         }
     }
 
-    private fun parseCommand(token: Token.Command): Span {
+    private fun parseCommand(token: Token.Command): RichTextNode.Span {
         // For now, we just replace the command with its name if it's not a special symbol
         return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
     }
 
-    private fun getSvgForIndexNode(content: Span, level: Int, isSuperior: Boolean, ctx: RenderState): List<SvgElement> {
+    private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState): List<SvgElement> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -189,7 +188,7 @@ internal object Latex {
     }
 
     private fun estimateWidthForIndexNode(
-        content: Span,
+        content: RichTextNode.Span,
         level: Int,
         font: Font,
         widthCalculator: (String, Font) -> Double
@@ -306,8 +305,8 @@ internal object Latex {
     }
 
     private class LatexElement(
-        private val node: Span
-    ) : Span {
+        private val node: RichTextNode.Span
+    ) : RichTextNode.Span {
         override val visualCharCount: Int = node.visualCharCount
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
@@ -318,7 +317,7 @@ internal object Latex {
         }
     }
 
-    data class TextNode(val content: String) : Span {
+    data class TextNode(val content: String) : RichTextNode.Span {
         override val visualCharCount: Int = content.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(content, font)
@@ -329,7 +328,7 @@ internal object Latex {
         }
     }
 
-    data class GroupNode(val children: List<Span>) : Span {
+    data class GroupNode(val children: List<RichTextNode.Span>) : RichTextNode.Span {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
@@ -340,7 +339,7 @@ internal object Latex {
         }
     }
 
-    data class SuperscriptNode(val content: Span, val level: Int) : Span {
+    data class SuperscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level, font, widthCalculator)
@@ -350,7 +349,7 @@ internal object Latex {
         }
     }
 
-    data class SubscriptNode(val content: Span, val level: Int) : Span {
+    data class SubscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level, font, widthCalculator)

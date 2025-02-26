@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.Span
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -28,7 +27,7 @@ internal object Hyperlink {
     private class HyperlinkElement(
         private val text: String,
         private val href: String,
-    ) : Span {
+    ) : RichTextNode.Span {
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)
