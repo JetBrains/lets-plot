@@ -101,7 +101,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.Margin.BOTTOM to 4.0,
             ),
-//            TEXT_WIDTH_FACTOR to 1.0,
+
             PANEL_BORDER_RECT to ELEMENT_BLANK,
             PANEL_BORDER_ONTOP to true,
 

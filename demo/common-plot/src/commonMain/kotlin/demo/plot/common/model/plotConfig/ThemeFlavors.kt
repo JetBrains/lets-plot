@@ -9,8 +9,10 @@ import demoAndTestShared.parsePlotSpec
 
 class ThemeFlavors {
     fun plotSpecList(): List<MutableMap<String, Any>> {
-        return allThemesWithFlavor("solarized_light")
-        // return allFlavorsWithTheme(themeName = "grey", facets = true)
+//        return allThemesWithFlavor(flavorName = "solarized_light")
+        return allThemesWithFlavor(flavorName = null)
+//         return allFlavorsWithTheme(themeName = "grey", facets = false)
+//         return allFlavorsWithTheme(themeName = null, facets = false)
     }
 
     private fun allFlavorsWithTheme(themeName: String?, facets: Boolean = false) = listOf(
@@ -22,7 +24,7 @@ class ThemeFlavors {
         withTheme(themeName, flavor = "high_contrast_dark", facets),
     )
 
-    private fun allThemesWithFlavor(flavorName: String, facets: Boolean = false) = listOf(
+    private fun allThemesWithFlavor(flavorName: String?, facets: Boolean = false) = listOf(
         withTheme("classic", flavorName, facets),
         withTheme("light", flavorName, facets),
         withTheme("grey", flavorName, facets),
@@ -33,19 +35,20 @@ class ThemeFlavors {
     )
 
     private fun theme(name: String?, flavor: String?): String {
-        var result ="'theme': {"
-        result +=  " ${name?.let { "'name': '$name'" } ?: ""}"
-        result += if (name != null && flavor != null) ", " else ""
-        result +=  " ${flavor?.let { "'flavor': '$flavor'" } ?: ""} "
-        result += "}"
+        var result = """
+            "theme": {
+                ${name?.let { "\"name\": \"$name\"" } ?: ""}
+                ${if (name != null && flavor != null) ", " else ""}
+                ${flavor?.let { "\"flavor\": \"$flavor\"" } ?: ""}
+            }""".trimIndent()
         return result
     }
 
     private fun withTheme(themeName: String?, flavor: String? = null, facets: Boolean) = plot(
-            plotTitle = "Theme: ${themeName ?: "default"}. Flavor: $flavor",
-            theme = theme(themeName, flavor),
-            facets
-        )
+        plotTitle = "Theme: ${themeName ?: "default"}. Flavor: $flavor",
+        theme = theme(themeName, flavor),
+        facets
+    )
 
     private fun plot(plotTitle: String, theme: String, facets: Boolean): MutableMap<String, Any> {
         val spec = """
