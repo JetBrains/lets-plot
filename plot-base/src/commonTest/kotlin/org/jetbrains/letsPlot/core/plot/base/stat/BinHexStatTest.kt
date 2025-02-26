@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.math.sqrt
@@ -281,18 +283,13 @@ class BinHexStatTest : BaseStatTest() {
     }
 
     private fun filterFinite(df: DataFrame): DataFrame {
-        var indices = df[df.variables().first()].indices.toList()
-        for (variable in df.variables()) {
-            indices = indices.filter { i ->
-                val value = df[variable][i] as? Double
-                if (value != null) {
-                    value.isFinite()
-                } else {
-                    true // keep non-numeric values
-                }
+        val rows = (0 until df.rowCount()).toMutableSet()
+        df.variables().forEach { variable ->
+            if (df.isNumeric(variable)) {
+                rows -= df.getNumeric(variable).indicesOf { !SeriesUtil.isFinite(it) }.toSet()
             }
         }
-        return df.slice(indices)
+        return df.slice(rows)
     }
 
     companion object {
