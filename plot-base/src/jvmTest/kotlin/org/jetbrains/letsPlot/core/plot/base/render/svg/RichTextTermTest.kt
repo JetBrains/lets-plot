@@ -35,7 +35,7 @@ class RichTextTermTest {
         assertThat(textLines).containsExactly(
             listOf("Hello"),
             listOf("world!"),
-            listOf("")
+            listOf()
         )
     }
 
@@ -47,7 +47,7 @@ class RichTextTermTest {
 
         assertThat(textLines).containsExactly(
             listOf("Hello"),
-            listOf(""),
+            listOf(),
             listOf("world!")
         )
     }
@@ -132,7 +132,7 @@ class RichTextTermTest {
     @Test
     fun emptyText() {
         val richTextSvg = RichText.toSvg("")
-        assertThat(richTextSvg.single().stringParts()).containsExactly("")
+        assertThat(richTextSvg).isEmpty()
     }
 
     @Test

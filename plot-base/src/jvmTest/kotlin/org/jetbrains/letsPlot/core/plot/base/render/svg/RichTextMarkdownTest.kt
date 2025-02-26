@@ -125,9 +125,67 @@ class RichTextMarkdownTest {
     }
 
     @Test
-    fun newLine() {
-        val richTextSvg = RichText.toSvg("*Hello*,\n**world**", markdown = true)
+    fun softBreak() {
+        val richTextLines = RichText.toSvg("*Hello*,\n**world**", markdown = true)
 
-        assertThat(richTextSvg.tspans()).hasSize(2)
+        assertThat(richTextLines).hasSize(1)
+
+        val (hello, comma, softBreak, world) = richTextLines.single().tspans()
+
+        assertTSpan(hello, "Hello", italic = true)
+        assertTSpan(comma, ",")
+        assertTSpan(softBreak, " ")
+        assertTSpan(world, "world", bold = true)
+    }
+
+    @Test
+    fun lineBreakWithTag() {
+        val richTextLines = RichText.toSvg("*Hello*,<br/>**world**", markdown = true)
+
+        assertThat(richTextLines).hasSize(2)
+        assertThat(richTextLines[0].tspans()).hasSize(2)
+        assertThat(richTextLines[1].tspans()).hasSize(1)
+
+        val (hello, comma) = richTextLines[0].tspans()
+        val world = richTextLines[1].tspans().single()
+
+        assertTSpan(hello, "Hello", italic = true)
+        assertTSpan(comma, ",")
+        assertTSpan(world, "world", bold = true)
+    }
+
+    @Test
+    fun lineBreakWithSpaceSpaceNewLine() {
+        val richTextLines = RichText.toSvg("*Hello*,  \n**world**", markdown = true)
+
+        assertThat(richTextLines).hasSize(2)
+        assertThat(richTextLines[0].tspans()).hasSize(2)
+        assertThat(richTextLines[1].tspans()).hasSize(1)
+
+        val (hello, comma) = richTextLines[0].tspans()
+        val (world) = richTextLines[1].tspans()
+
+
+        assertTSpan(hello, "Hello", italic = true)
+        assertTSpan(comma, ",")
+        assertTSpan(world, "world", bold = true)
+    }
+
+    @Test
+    fun spanStyleForMultilineText() {
+        val richTextLines = RichText.toSvg("***<span style='color:red'>foo  \nbar  \nbaz</span>***", markdown = true)
+
+        assertThat(richTextLines).hasSize(3)
+        assertThat(richTextLines[0].tspans()).hasSize(1)
+        assertThat(richTextLines[1].tspans()).hasSize(1)
+        assertThat(richTextLines[2].tspans()).hasSize(1)
+
+        val (foo) = richTextLines[0].tspans()
+        val (bar) = richTextLines[1].tspans()
+        val (baz) = richTextLines[2].tspans()
+
+        assertTSpan(foo, "foo", color = "red", bold = true, italic = true)
+        assertTSpan(bar, "bar", color = "red", bold = true, italic = true)
+        assertTSpan(baz, "baz", color = "red", bold = true, italic = true)
     }
 }

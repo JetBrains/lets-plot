@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 internal object Markdown {
     fun parse(text: String): List<RichTextNode> {
         if (text.isEmpty()) {
-            return listOf(RichText.Text(""))
+            return listOf(RichTextNode.Text(""))
         }
 
         val html = Markdown.mdToHtml(text)
@@ -36,8 +36,18 @@ internal object Markdown {
         val output = mutableListOf<RichTextNode>()
 
         when (node) {
-            is XmlNode.Text -> output += RichText.Text(node.content)
+            is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
+                if (node.name == "br") {
+                    output += RichTextNode.LineBreak
+                    return output
+                }
+
+                if (node.name == "softbreak") {
+                    output += RichTextNode.Text(" ")
+                    return output
+                }
+
                 val (prefix, suffix) = when {
                     node.name == "em" -> RichTextNode.EmphasisStart to RichTextNode.EmphasisEnd
                     node.name == "strong" -> RichTextNode.StrongStart to RichTextNode.StrongEnd
