@@ -38,6 +38,8 @@
 
 - Parameter `spacer` in `image_matrix()` function.
 
+- 'transparent' color [[#1281](https://github.com/JetBrains/lets-plot/issues/1281)].
+
 ### Changed
 
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
