@@ -10,7 +10,7 @@ import demoAndTestShared.parsePlotSpec
 class ThemeFlavors {
     fun plotSpecList(): List<MutableMap<String, Any>> {
 //        return allThemesWithFlavor(flavorName = "solarized_light")
-        return allThemesWithFlavor(flavorName = null)
+        return allThemesWithFlavor(flavorName = null, facets = true)
 //         return allFlavorsWithTheme(themeName = "grey", facets = false)
 //         return allFlavorsWithTheme(themeName = null, facets = false)
     }
@@ -65,7 +65,7 @@ class ThemeFlavors {
                     "size": "y",
                     "fill": "y"
                 },
-                ${if (facets) "'facet':{ 'name': 'grid', 'y': 'y' }," else ""}
+                ${if (facets) "\"facet\":{ \"name\": \"grid\", \"y\": \"y\" }," else ""}
                 "ggtitle": {
                     "text": "$plotTitle",
                     "subtitle": "The plot subtitle"
