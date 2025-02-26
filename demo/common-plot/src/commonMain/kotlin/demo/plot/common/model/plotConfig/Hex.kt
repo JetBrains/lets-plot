@@ -16,6 +16,7 @@ class Hex {
             basicWithStat(),
             pointOnBorder(0),
             customSize(1.0, 1.0, "res", "res"),
+            binWidthCheck()
         )
     }
 
@@ -201,6 +202,55 @@ class Hex {
               ]
             }
         """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun binWidthCheck(): MutableMap<String, Any> {
+        val binWidth = 10.0
+        val hexHeight = 10.0
+        val binHeight = hexHeight / HEX_HEIGHT
+        val spec = """
+              {
+                'kind': 'plot',
+                'data': {
+                  'x': [0, 1, 9, 10],
+                  'y': [0, 19, 1, 0]
+                },
+                'mapping': {
+                  'x': 'x',
+                  'y': 'y'
+                },
+                'ggtitle': {
+                  'text': 'Hexagon size should be equal to [$binWidth, $hexHeight]'
+                },
+                'layers': [
+                  {
+                    'geom': 'hex',
+                    'binwidth': [$binWidth, $binHeight],
+                    'size': 0.5
+                  },
+                  {
+                    'geom': 'point',
+                    'stat': 'binhex',
+                    'binwidth': [$binWidth, $binHeight],
+                    'manual_key': {
+                      'label': 'Grid node'
+                    },
+                    'color': 'orange',
+                    'size': 5
+                  },
+                  {
+                    'geom': 'point',
+                    'manual_key': {
+                      'label': 'Raw data point'
+                    },
+                    'color': 'red',
+                    'size': 2.5
+                  }
+                ]
+              }
+            """.trimIndent()
 
         return HashMap(parsePlotSpec(spec))
     }

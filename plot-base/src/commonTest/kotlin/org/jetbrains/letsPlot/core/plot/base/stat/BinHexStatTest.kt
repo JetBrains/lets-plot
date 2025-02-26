@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.math.sqrt
@@ -58,9 +60,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(0.0, 1.0, null)
             ),
             expected = mapOf(
-                Stats.X to checkValues(listOf(0.0)),
-                Stats.Y to checkValues(listOf(0.0)),
-                Stats.COUNT to checkValues(listOf(1.0))
+                Stats.X to checkValues(listOf(0.0), filterFinite = true),
+                Stats.Y to checkValues(listOf(0.0), filterFinite = true),
+                Stats.COUNT to checkValues(listOf(1.0), filterFinite = true)
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -110,9 +112,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(-10.0, 10.0, -10.0, 9.0, 11.0).map { it * HEX_HEIGHT_INV }
             ),
             expected = mapOf(
-                Stats.X to checkValues(listOf(-10.0, 10.0, -10.0, 10.0)),
-                Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }),
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 2.0))
+                Stats.X to checkValues(listOf(-10.0, 10.0, -10.0, 10.0), filterFinite = true),
+                Stats.Y to checkValues(listOf(-10.0, -10.0, 10.0, 10.0).map { it * HEX_HEIGHT_INV }, filterFinite = true),
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0, 2.0), filterFinite = true)
             ),
             binWidthX = 10.0,
             binWidthY = 10.0
@@ -194,11 +196,13 @@ class BinHexStatTest : BaseStatTest() {
             expected = mapOf(
                 Stats.X to checkValues(listOf(-0.5, 0.5,
                                               -1.0, 0.0, 1.0,
-                                              -0.5, 0.5)),
+                                              -0.5, 0.5),
+                                       filterFinite = true),
                 Stats.Y to checkValues(listOf(-HEX_HEIGHT_INV, -HEX_HEIGHT_INV,
                                                0.0, 0.0, 0.0,
-                                               HEX_HEIGHT_INV, HEX_HEIGHT_INV)),
-                Stats.COUNT to checkValues(expectedCounts)
+                                               HEX_HEIGHT_INV, HEX_HEIGHT_INV),
+                                       filterFinite = true),
+                Stats.COUNT to checkValues(expectedCounts, filterFinite = true)
             ),
             binWidthX = 1.0,
             binWidthY = 1.0
@@ -215,9 +219,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(0.0, 1.0, 0.0, 1.0).map { it * yStretch }
             ),
             expected = mapOf(
-                Stats.X to checkValues(listOf(0.0, 1.0).map { it * xStretch }),
-                Stats.Y to checkValues(listOf(0.0, 0.0)),
-                Stats.COUNT to checkValues(listOf(2.0, 2.0))
+                Stats.X to checkValues(listOf(0.0, 1.0).map { it * xStretch }, filterFinite = true),
+                Stats.Y to checkValues(listOf(0.0, 0.0), filterFinite = true),
+                Stats.COUNT to checkValues(listOf(2.0, 2.0), filterFinite = true)
             ),
             binWidthX = xStretch,
             binWidthY = 2.0 * yStretch
@@ -234,9 +238,9 @@ class BinHexStatTest : BaseStatTest() {
                 TransformVar.Y to listOf(-6.0 * HEX_HEIGHT, 0.0, HEX_HEIGHT).map { it * yStretch }
             ),
             expected = mapOf(
-                Stats.X to { statDf, variable -> checkStatVarSize(statDf, variable, 3) },
-                Stats.Y to { statDf, variable -> checkStatVarSize(statDf, variable, 3) },
-                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0))
+                Stats.X to { statDf, variable -> checkStatVarSize(filterFinite(statDf), variable, 3) },
+                Stats.Y to { statDf, variable -> checkStatVarSize(filterFinite(statDf), variable, 3) },
+                Stats.COUNT to checkValues(listOf(1.0, 1.0, 1.0), filterFinite = true)
             ),
             binWidthX = xStretch,
             binWidthY = 2.0 * yStretch
@@ -245,10 +249,12 @@ class BinHexStatTest : BaseStatTest() {
 
     private fun checkValues(
         expectedValues: List<Double>,
-        epsilon: Double = DEF_EPSILON
+        epsilon: Double = DEF_EPSILON,
+        filterFinite: Boolean = false
     ): (DataFrame, DataFrame.Variable) -> Unit {
         return { statDf, variable ->
-            checkStatVarValues(statDf, variable, expectedValues, epsilon = epsilon)
+            val df = if (filterFinite) filterFinite(statDf) else statDf
+            checkStatVarValues(df, variable, expectedValues, epsilon = epsilon)
         }
     }
 
@@ -274,6 +280,16 @@ class BinHexStatTest : BaseStatTest() {
         for (variable in expected.keys) {
             expected.getValue(variable)(statDf, variable)
         }
+    }
+
+    private fun filterFinite(df: DataFrame): DataFrame {
+        val rows = (0 until df.rowCount()).toMutableSet()
+        df.variables().forEach { variable ->
+            if (df.isNumeric(variable)) {
+                rows -= df.getNumeric(variable).indicesOf { !SeriesUtil.isFinite(it) }.toSet()
+            }
+        }
+        return df.slice(rows)
     }
 
     companion object {
