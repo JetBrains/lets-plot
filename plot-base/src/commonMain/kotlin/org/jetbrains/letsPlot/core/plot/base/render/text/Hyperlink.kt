@@ -6,42 +6,47 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.Span
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 
-internal class Hyperlink private constructor(
-    private val text: String,
-    private val href: String,
-) : Term {
-    override val visualCharCount: Int = text.length
-    override val svg: List<SvgElement> = listOf(
-        SvgAElement().apply {
-            href().set(href)
-            xlinkHref().set(href)
-            children().add(
-                SvgTSpanElement(text).apply {
-                    addClass(RichText.HYPERLINK_ELEMENT_CLASS)
-                }
-            )
-        }
-    )
+internal object Hyperlink {
+    fun parse(text: String): List<RichTextNode> {
+        val links = anchorTagRegex.findAll(text)
+            .map { match ->
+                val (href, label) = match.destructured
+                HyperlinkElement(label, href) to match.range
+            }.toList()
 
-    override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-        return widthCalculator(text, font)
+        return RichText.fillTextTermGaps(text, links)
     }
 
-    companion object {
-        private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
+    private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
 
-        fun render(text: String): List<Term> {
-            val links = anchorTagRegex.findAll(text)
-                .map { match ->
-                    val (href, label) = match.destructured
-                    Hyperlink(label, href) to match.range
-                }.toList()
+    private class HyperlinkElement(
+        private val text: String,
+        private val href: String,
+    ) : Span {
+        override val visualCharCount: Int = text.length
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return widthCalculator(text, font)
+        }
 
-            return RichText.fillTextTermGaps(text, links)
+        override fun render(context: RenderState): List<SvgElement> {
+            return listOf(
+                SvgAElement().apply {
+                    href().set(href)
+                    xlinkHref().set(href)
+                    children().add(
+                        SvgTSpanElement(text).apply {
+                            addClass(RichText.HYPERLINK_ELEMENT_CLASS)
+                        }
+                    )
+                }
+            )
+
         }
     }
 }

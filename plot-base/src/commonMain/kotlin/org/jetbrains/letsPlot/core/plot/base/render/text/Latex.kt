@@ -6,209 +6,199 @@
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.Span
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-internal class Latex(
-    private val node: Term
-) : Term {
-    override val visualCharCount: Int = node.visualCharCount
-    override val svg: List<SvgElement> = node.svg
+internal object Latex {
+    fun parse(text: String): List<RichTextNode> {
+        val formulas = extractFormulas(text).map { (formula, range) ->
+            val text = formula.replace("-", "−") // Use minus sign instead of hyphen
+            LatexElement(parse(Token.tokenize(text))) to range
+        }.toList()
 
-    override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-        node.estimateWidth(font, widthCalculator)
-
-    companion object {
-        fun render(text: String): List<Term> {
-            val formulas = extractFormulas(
-                text
-            ).map { (formula, range) ->
-                val text = formula.replace("-", "−") // Use minus sign instead of hyphen
-                Latex(render(Token.tokenize(text))) to range
-            }.toList()
-
-            return fillTextTermGaps(text, formulas)
-        }
-
-        private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
-            val formulas = mutableListOf<Pair<String, IntRange>>()
-            var formulaStart = 0
-            for (i in 0 until text.length - 1) {
-                when (text.substring(i, i + 2)) {
-                    "\\(" -> {
-                        formulaStart = i + 2
-                    }
-
-                    "\\)" -> {
-                        val formula = text.substring(formulaStart, i)
-                        val range = IntRange(formulaStart - 2, i + 1)
-                        formulas.add(Pair(formula, range))
-                    }
-                }
-            }
-            return formulas
-        }
-
-        private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
-        private const val INDENT_SYMBOL = " "
-        private const val INDENT_SIZE_FACTOR = 0.1
-        private const val INDEX_SIZE_FACTOR = 0.7
-        private const val INDEX_RELATIVE_SHIFT = 0.4
-
-        private val GREEK_LETTERS = mapOf(
-            "Alpha" to "Α",
-            "Beta" to "Β",
-            "Gamma" to "Γ",
-            "Delta" to "Δ",
-            "Epsilon" to "Ε",
-            "Zeta" to "Ζ",
-            "Eta" to "Η",
-            "Theta" to "Θ",
-            "Iota" to "Ι",
-            "Kappa" to "Κ",
-            "Lambda" to "Λ",
-            "Mu" to "Μ",
-            "Nu" to "Ν",
-            "Xi" to "Ξ",
-            "Omicron" to "Ο",
-            "Pi" to "Π",
-            "Rho" to "Ρ",
-            "Sigma" to "Σ",
-            "Tau" to "Τ",
-            "Upsilon" to "Υ",
-            "Phi" to "Φ",
-            "Chi" to "Χ",
-            "Psi" to "Ψ",
-            "Omega" to "Ω",
-            "alpha" to "α",
-            "beta" to "β",
-            "gamma" to "γ",
-            "delta" to "δ",
-            "epsilon" to "ε",
-            "zeta" to "ζ",
-            "eta" to "η",
-            "theta" to "θ",
-            "iota" to "ι",
-            "kappa" to "κ",
-            "lambda" to "λ",
-            "mu" to "μ",
-            "nu" to "ν",
-            "xi" to "ξ",
-            "omicron" to "ο",
-            "pi" to "π",
-            "rho" to "ρ",
-            "sigma" to "σ",
-            "tau" to "τ",
-            "upsilon" to "υ",
-            "phi" to "φ",
-            "chi" to "χ",
-            "psi" to "ψ",
-            "omega" to "ω",
-        )
-        private val OPERATIONS = mapOf(
-            "pm" to "±",
-            "mp" to "∓",
-            "times" to "×",
-            "div" to "÷",
-            "cdot" to "·",
-        )
-        private val RELATIONS = mapOf(
-            "leq" to "≤",
-            "geq" to "≥",
-            "neq" to "≠",
-        )
-        private val MISCELLANEOUS = mapOf(
-            "infty" to "∞",
-        )
-        private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
-
-        private fun render(tokens: Sequence<Token>): Term {
-            return parseGroup(tokens.iterator(), level = 0)
-        }
-
-        private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
-            val nodes = mutableListOf<Term>()
-            while (iterator.hasNext()) {
-                val token = iterator.next()
-                when (token) {
-                    is Token.Command -> nodes.add(parseCommand(token)) // For now, we just replace the command with its name if it's not a special symbol
-                    is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
-                    is Token.CloseBrace -> break
-                    is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1), level))
-                    is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1), level))
-                    is Token.Text -> nodes.add(TextNode(token.content))
-                    is Token.Space -> continue
-                    is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
-                }
-            }
-            return GroupNode(nodes)
-        }
-
-        private fun parseSupOrSub(iterator: Iterator<Token>, level: Int): Term {
-            return when (val nextToken = iterator.next()) {
-                is Token.OpenBrace -> parseGroup(iterator, level)
-                is Token.Text -> TextNode(nextToken.content)
-                is Token.Command -> parseCommand(nextToken)
-                else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
-            }
-        }
-
-        private fun parseCommand(token: Token.Command): Term {
-            // For now, we just replace the command with its name if it's not a special symbol
-            return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
-        }
-
-        private fun getSvgForIndexNode(content: Term, level: Int, isSuperior: Boolean): List<SvgElement> {
-            val (shift, backShift) = if (isSuperior) {
-                "-" to ""
-            } else {
-                "" to "-"
-            }
-
-            val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-            }
-            val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
-            val indexTSpanElements = content.svg.mapIndexed { i, element ->
-                element.apply {
-                    if (getAttribute(SvgTSpanElement.FONT_SIZE).get() == null) {
-                        setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
-                    }
-                    if (i == 0) {
-                        setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
-                    }
-                }
-            }
-            // The following 'tspan' element is used to restore the baseline after the index
-            // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
-            // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
-            // Attribute 'baseline-shift' is better suited for such use case -
-            // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
-            // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                // Size of shift depends on the font size, and it should be equal to the superscript shift size
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
-                setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
-            }
-
-            return listOf(indentTSpan) + indexTSpanElements + restoreBaselineTSpan
-        }
-
-        private fun estimateWidthForIndexNode(
-            content: Term,
-            level: Int,
-            font: Font,
-            widthCalculator: (String, Font) -> Double
-        ): Double {
-            val indexFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
-            val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
-            return content.estimateWidth(indexFont, widthCalculator)
-        }
-
+        return fillTextTermGaps(text, formulas)
     }
+
+    private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
+        val formulas = mutableListOf<Pair<String, IntRange>>()
+        var formulaStart = 0
+        for (i in 0 until text.length - 1) {
+            when (text.substring(i, i + 2)) {
+                "\\(" -> {
+                    formulaStart = i + 2
+                }
+
+                "\\)" -> {
+                    val formula = text.substring(formulaStart, i)
+                    val range = IntRange(formulaStart - 2, i + 1)
+                    formulas.add(Pair(formula, range))
+                }
+            }
+        }
+        return formulas
+    }
+
+    private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
+    private const val INDENT_SYMBOL = " "
+    private const val INDENT_SIZE_FACTOR = 0.1
+    private const val INDEX_SIZE_FACTOR = 0.7
+    private const val INDEX_RELATIVE_SHIFT = 0.4
+
+    private val GREEK_LETTERS = mapOf(
+        "Alpha" to "Α",
+        "Beta" to "Β",
+        "Gamma" to "Γ",
+        "Delta" to "Δ",
+        "Epsilon" to "Ε",
+        "Zeta" to "Ζ",
+        "Eta" to "Η",
+        "Theta" to "Θ",
+        "Iota" to "Ι",
+        "Kappa" to "Κ",
+        "Lambda" to "Λ",
+        "Mu" to "Μ",
+        "Nu" to "Ν",
+        "Xi" to "Ξ",
+        "Omicron" to "Ο",
+        "Pi" to "Π",
+        "Rho" to "Ρ",
+        "Sigma" to "Σ",
+        "Tau" to "Τ",
+        "Upsilon" to "Υ",
+        "Phi" to "Φ",
+        "Chi" to "Χ",
+        "Psi" to "Ψ",
+        "Omega" to "Ω",
+        "alpha" to "α",
+        "beta" to "β",
+        "gamma" to "γ",
+        "delta" to "δ",
+        "epsilon" to "ε",
+        "zeta" to "ζ",
+        "eta" to "η",
+        "theta" to "θ",
+        "iota" to "ι",
+        "kappa" to "κ",
+        "lambda" to "λ",
+        "mu" to "μ",
+        "nu" to "ν",
+        "xi" to "ξ",
+        "omicron" to "ο",
+        "pi" to "π",
+        "rho" to "ρ",
+        "sigma" to "σ",
+        "tau" to "τ",
+        "upsilon" to "υ",
+        "phi" to "φ",
+        "chi" to "χ",
+        "psi" to "ψ",
+        "omega" to "ω",
+    )
+    private val OPERATIONS = mapOf(
+        "pm" to "±",
+        "mp" to "∓",
+        "times" to "×",
+        "div" to "÷",
+        "cdot" to "·",
+    )
+    private val RELATIONS = mapOf(
+        "leq" to "≤",
+        "geq" to "≥",
+        "neq" to "≠",
+    )
+    private val MISCELLANEOUS = mapOf(
+        "infty" to "∞",
+    )
+    private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
+
+    private fun parse(tokens: Sequence<Token>): Span {
+        return parseGroup(tokens.iterator(), level = 0)
+    }
+
+    private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
+        val nodes = mutableListOf<Span>()
+        while (iterator.hasNext()) {
+            val token = iterator.next()
+            when (token) {
+                is Token.Command -> nodes.add(parseCommand(token)) // For now, we just replace the command with its name if it's not a special symbol
+                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
+                is Token.CloseBrace -> break
+                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1), level))
+                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1), level))
+                is Token.Text -> nodes.add(TextNode(token.content))
+                is Token.Space -> continue
+                is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
+            }
+        }
+        return GroupNode(nodes)
+    }
+
+    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int): Span {
+        return when (val nextToken = iterator.next()) {
+            is Token.OpenBrace -> parseGroup(iterator, level)
+            is Token.Text -> TextNode(nextToken.content)
+            is Token.Command -> parseCommand(nextToken)
+            else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
+        }
+    }
+
+    private fun parseCommand(token: Token.Command): Span {
+        // For now, we just replace the command with its name if it's not a special symbol
+        return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
+    }
+
+    private fun getSvgForIndexNode(content: Span, level: Int, isSuperior: Boolean, ctx: RenderState): List<SvgElement> {
+        val (shift, backShift) = if (isSuperior) {
+            "-" to ""
+        } else {
+            "" to "-"
+        }
+
+        val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
+            setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
+        }
+        val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
+        val indexTSpanElements = content.render(ctx).mapIndexed { i, element ->
+            element.apply {
+                if (getAttribute(SvgTSpanElement.FONT_SIZE).get() == null) {
+                    setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
+                }
+                if (i == 0) {
+                    setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
+                }
+            }
+        }
+        // The following 'tspan' element is used to restore the baseline after the index
+        // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
+        // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
+        // Attribute 'baseline-shift' is better suited for such use case -
+        // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
+        // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
+        val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+            // Size of shift depends on the font size, and it should be equal to the superscript shift size
+            setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
+            setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
+        }
+
+        return listOf(ctx.apply(indentTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)
+    }
+
+    private fun estimateWidthForIndexNode(
+        content: Span,
+        level: Int,
+        font: Font,
+        widthCalculator: (String, Font) -> Double
+    ): Double {
+        val indexFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
+        val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
+        return content.estimateWidth(indexFont, widthCalculator)
+    }
+
 
     internal open class Token {
         data class Command(val name: String) : Token()
@@ -315,33 +305,58 @@ internal class Latex(
         }
     }
 
-    data class TextNode(val content: String) : Term {
+    private class LatexElement(
+        private val node: Span
+    ) : Span {
+        override val visualCharCount: Int = node.visualCharCount
+
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            node.estimateWidth(font, widthCalculator)
+
+        override fun render(context: RenderState): List<SvgElement> {
+            return node.render(context)
+        }
+    }
+
+    data class TextNode(val content: String) : Span {
         override val visualCharCount: Int = content.length
-        override val svg: List<SvgElement> = listOf(SvgTSpanElement(content))
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(content, font)
         }
-    }
 
-    data class GroupNode(val children: List<Term>) : Term {
-        override val visualCharCount: Int = children.sumOf { it.visualCharCount }
-        override val svg: List<SvgElement> = children.flatMap { it.svg }
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return children.sumOf { it.estimateWidth(font, widthCalculator) }
+        override fun render(context: RenderState): List<SvgElement> {
+            return listOf(context.apply(SvgTSpanElement(content)))
         }
     }
 
-    data class SuperscriptNode(val content: Term, val level: Int) : Term {
-        override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgElement> = getSvgForIndexNode(content, level, isSuperior = true)
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            estimateWidthForIndexNode(content, level, font, widthCalculator)
+    data class GroupNode(val children: List<Span>) : Span {
+        override val visualCharCount: Int = children.sumOf { it.visualCharCount }
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return children.sumOf { it.estimateWidth(font, widthCalculator) }
+        }
+
+        override fun render(context: RenderState): List<SvgElement> {
+            return children.flatMap { it.render(context) }
+        }
     }
 
-    data class SubscriptNode(val content: Term, val level: Int) : Term {
+    data class SuperscriptNode(val content: Span, val level: Int) : Span {
         override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgElement> = getSvgForIndexNode(content, level, isSuperior = false)
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level, font, widthCalculator)
+
+        override fun render(context: RenderState): List<SvgElement> {
+            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context)
+        }
+    }
+
+    data class SubscriptNode(val content: Span, val level: Int) : Span {
+        override val visualCharCount: Int = content.visualCharCount
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            estimateWidthForIndexNode(content, level, font, widthCalculator)
+
+        override fun render(context: RenderState): List<SvgElement> {
+            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context)
+        }
     }
 }
