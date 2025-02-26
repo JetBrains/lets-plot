@@ -7,12 +7,12 @@ package demo.plot.common.model.plotConfig
 
 import demoAndTestShared.parsePlotSpec
 
-class ThemeFlavors {
-    fun plotSpecList(): List<MutableMap<String, Any>> {
+class PrebuiltThemesAndFlavors {
+    fun plotSpecList(facets:Boolean): List<MutableMap<String, Any>> {
 //        return allThemesWithFlavor(flavorName = "solarized_light")
-        return allThemesWithFlavor(flavorName = null, facets = true)
-//         return allFlavorsWithTheme(themeName = "grey", facets = false)
-//         return allFlavorsWithTheme(themeName = null, facets = false)
+        return allThemesWithFlavor(flavorName = null, facets)
+//         return allFlavorsWithTheme(themeName = "grey", facets)
+//         return allFlavorsWithTheme(themeName = null, facets)
     }
 
     private fun allFlavorsWithTheme(themeName: String?, facets: Boolean = false) = listOf(

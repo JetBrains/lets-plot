@@ -6,13 +6,13 @@
 package demo.plot.batik.plotConfig
 
 import demo.common.utils.batik.PlotSpecsDemoWindowBatik
-import demo.plot.common.model.plotConfig.ThemeFlavors
+import demo.plot.common.model.plotConfig.PrebuiltThemesAndFlavors
 
 fun main() {
-    with(ThemeFlavors()) {
+    with(PrebuiltThemesAndFlavors()) {
         PlotSpecsDemoWindowBatik(
-            "Theme flavors",
-            plotSpecList()
+            "Prebuilt Themes / Flavors (facets)",
+            plotSpecList(facets = true)
         ).open()
     }
 }

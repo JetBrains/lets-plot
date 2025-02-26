@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
@@ -107,12 +108,10 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             LEGEND_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             AXIS_ONTOP to true,
@@ -194,7 +193,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.LINETYPE to NamedLineType.SOLID
             ),
 
-            
+
             FACET_STRIP_TEXT to mapOf(
                 Elem.HJUST to 0.5,
                 Elem.Margin.TOP to 3.0,
@@ -210,6 +209,11 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             TOOLTIP_TITLE_TEXT to mapOf(
                 Elem.FONT_FACE to FontFace.BOLD,
+            ),
+
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to SymbolicColor.WHITE,
+                Elem.FILL to SymbolicColor.BLACK,
             ),
 
             PLOT_MARGIN to mapOf(
