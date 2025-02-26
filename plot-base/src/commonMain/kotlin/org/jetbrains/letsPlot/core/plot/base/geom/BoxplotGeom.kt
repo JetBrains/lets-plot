@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BarTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
@@ -17,10 +18,11 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
-class BoxplotGeom : GeomBase() {
+class BoxplotGeom : GeomBase(), WithWidth {
 
     var fattenMidline: Double = DEF_FATTEN_MIDLINE
     var whiskerWidth: Double = DEF_WHISKER_WIDTH
+    var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
@@ -35,22 +37,30 @@ class BoxplotGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         BoxHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper, isHintRect = false)
+            clientRectByDataPoint(ctx, geomHelper, widthUnit, isHintRect = false)
         )
-        buildLines(root, aesthetics, ctx, geomHelper)
+        buildLines(root, aesthetics, geomHelper)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
+            clientRectByDataPoint(ctx, geomHelper, widthUnit, isHintRect = true),
             { colorWithAlpha(it) },
             defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
 
+    override fun widthSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
+    }
+
     private fun buildLines(
         root: SvgRoot,
         aesthetics: Aesthetics,
-        ctx: GeomContext,
         geomHelper: GeomHelper
     ) {
         BoxHelper.buildMidlines(
@@ -59,7 +69,7 @@ class BoxplotGeom : GeomBase() {
             xAes = Aes.X,
             middleAes = Aes.MIDDLE,
             sizeAes = Aes.WIDTH,
-            ctx,
+            widthUnit = widthUnit,
             geomHelper,
             fatten = fattenMidline,
             flip = false
@@ -68,9 +78,9 @@ class BoxplotGeom : GeomBase() {
         val elementHelper = geomHelper.createSvgElementHelper()
         for (p in aesthetics.dataPoints()) {
             val x = p.finiteOrNull(Aes.X) ?: continue
-            val width = p.finiteOrNull(Aes.WIDTH) ?: 0.0
+            val w = p.finiteOrNull(Aes.WIDTH) ?: 0.0
 
-            val halfWidth = width * ctx.getResolution(Aes.X) / 2
+            val halfWidth = geomHelper.transformDimensionValue(w, widthUnit, Aes.X) / 2
             val halfFenceWidth = halfWidth * whiskerWidth
 
             // lower whisker
@@ -118,6 +128,7 @@ class BoxplotGeom : GeomBase() {
     companion object {
         const val DEF_FATTEN_MIDLINE = 2.0
         const val DEF_WHISKER_WIDTH = 0.5
+        private val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
         const val HANDLES_GROUPS = false
 
         private val LEGEND_FACTORY = BoxHelper.legendFactory(true)
@@ -125,6 +136,7 @@ class BoxplotGeom : GeomBase() {
         private fun clientRectByDataPoint(
             ctx: GeomContext,
             geomHelper: GeomHelper,
+            widthUnit: DimensionUnit,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
@@ -133,7 +145,7 @@ class BoxplotGeom : GeomBase() {
                 val upper = p.finiteOrNull(Aes.UPPER) ?: return null
                 val w = p.finiteOrNull(Aes.WIDTH) ?: return null
 
-                val width = w * ctx.getResolution(Aes.X)
+                val width = geomHelper.transformDimensionValue(w, widthUnit, Aes.X)
                 val rect = DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower)
 
                 return geomHelper.toClient(rect, p)?.let {

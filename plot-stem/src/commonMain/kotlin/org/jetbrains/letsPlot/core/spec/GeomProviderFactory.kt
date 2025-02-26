@@ -127,12 +127,14 @@ internal object GeomProviderFactory {
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
                 ErrorBarGeom(isVertical(ctx, geomKind.name)).apply {
-                    val option = if (isVertical(ctx, geomKind.name)) {
+                    val dimensionUnitOption = if (isVertical(ctx, geomKind.name)) {
                         Option.Geom.ErrorBar.WIDTH_UNIT
                     } else {
                         Option.Geom.ErrorBar.HEIGHT_UNIT
                     }
-                    this.dimensionUnit = dimensionUnit(layerConfig, option) ?: ErrorBarGeom.DEF_DIMENSION_UNIT
+                    if (layerConfig.hasOwn(dimensionUnitOption)) {
+                        this.dimensionUnit = dimensionUnit(layerConfig, dimensionUnitOption)!!
+                    }
                 }
             }
 
@@ -148,6 +150,9 @@ internal object GeomProviderFactory {
                 val geom = CrossBarGeom(isVertical(ctx, geomKind.name))
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.CrossBar.FATTEN)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.CrossBar.WIDTH_UNIT)) {
+                    geom.widthUnit = dimensionUnit(layerConfig, Option.Geom.CrossBar.WIDTH_UNIT)!!
                 }
                 geom
             }
@@ -171,6 +176,9 @@ internal object GeomProviderFactory {
                 }
                 if (layerConfig.hasOwn(Option.Geom.Boxplot.WHISKER_WIDTH)) {
                     geom.whiskerWidth = layerConfig.getDouble(Option.Geom.Boxplot.WHISKER_WIDTH)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Boxplot.WIDTH_UNIT)) {
+                    geom.widthUnit = dimensionUnit(layerConfig, Option.Geom.Boxplot.WIDTH_UNIT)!!
                 }
                 geom
             }

@@ -280,6 +280,7 @@ object Option {
 
         object CrossBar {
             const val FATTEN = "fatten"
+            const val WIDTH_UNIT = "width_unit"
         }
 
         object PointRange {
@@ -289,6 +290,7 @@ object Option {
         object Boxplot {
             const val FATTEN = "fatten"
             const val WHISKER_WIDTH = "whisker_width"
+            const val WIDTH_UNIT = "width_unit"
         }
 
         object Area {

@@ -2039,6 +2039,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                   manual_key=None, sampling=None, tooltips=None,
                   fatten=None,
+                  width_unit=None,
                   color_by=None, fill_by=None,
                   **other_args):
     """
@@ -2080,6 +2081,15 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set tooltips='none' to hide tooltips from the layer.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for the width of the crossbar.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'size': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -2176,6 +2186,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
+                 width_unit=width_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -3606,6 +3617,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_shape=None, outlier_size=None, outlier_stroke=None,
                  varwidth=None,
                  whisker_width=None,
+                 width_unit=None,
                  color_by=None, fill_by=None,
                  **other_args):
     """
@@ -3663,6 +3675,15 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         of the number of observations in the groups.
     whisker_width : float, default=0.5
         A multiplicative factor applied to the box width to draw horizontal segments on whiskers.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for the width of the boxplot.
+        Possible values:
+
+        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'size': value 1 corresponds to the diameter of a point of size 1;
+        - 'px': value 1 corresponds to 1 pixel.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -3800,6 +3821,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           fatten=fatten,
                           varwidth=varwidth,
                           whisker_width=whisker_width,
+                          width_unit=width_unit,
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':

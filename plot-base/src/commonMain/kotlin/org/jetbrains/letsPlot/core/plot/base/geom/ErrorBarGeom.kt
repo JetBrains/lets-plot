@@ -148,7 +148,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
     }
 
     companion object {
-        val DEF_DIMENSION_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
+        private val DEF_DIMENSION_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()

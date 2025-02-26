@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
@@ -19,10 +20,11 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 class CrossBarGeom(
     private val isVertical: Boolean
-) : GeomBase() {
+) : GeomBase(), WithWidth, WithHeight {
 
     private val flipHelper = FlippableGeomHelper(isVertical)
     var fattenMidline: Double = 2.5
+    var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
@@ -58,7 +60,7 @@ class CrossBarGeom(
         val geomHelper = GeomHelper(pos, coord, ctx)
         BoxHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            rectFactory = clientRectByDataPoint(ctx, geomHelper)
+            rectFactory = clientRectByDataPoint(geomHelper)
         )
         BoxHelper.buildMidlines(
             root,
@@ -66,7 +68,7 @@ class CrossBarGeom(
             xAes = afterRotation(Aes.X),
             middleAes = afterRotation(Aes.Y),
             sizeAes = Aes.WIDTH, // do not flip as height is not defined for CrossBarGeom
-            ctx,
+            widthUnit = widthUnit,
             geomHelper,
             fatten = fattenMidline,
             flip = !isVertical
@@ -78,18 +80,34 @@ class CrossBarGeom(
             pos = pos,
             coord = coord,
             ctx = ctx,
-            clientRectFactory = clientRectByDataPoint(ctx, geomHelper),
+            clientRectFactory = clientRectByDataPoint(geomHelper),
             fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
             defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
 
+    override fun widthSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
+    }
+
+    override fun heightSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
+    }
+
     private fun clientRectByDataPoint(
-        ctx: GeomContext,
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
         val xAes = afterRotation(Aes.X)
-        val yAes = afterRotation(Aes.Y)
         val yMinAes = afterRotation(Aes.YMIN)
         val yMaxAes = afterRotation(Aes.YMAX)
         val widthAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
@@ -100,7 +118,7 @@ class CrossBarGeom(
             val ymax = p.finiteOrNull(yMaxAes) ?: return null
             val w = p.finiteOrNull(widthAes) ?: return null
 
-            val width = w * ctx.getResolution(xAes)
+            val width = geomHelper.transformDimensionValue(w, widthUnit, xAes)
             val origin = DoubleVector(x - width / 2, ymin)
             val dimension = DoubleVector(width, ymax - ymin)
             return DoubleRectangle(origin, dimension)
@@ -116,5 +134,6 @@ class CrossBarGeom(
     companion object {
         const val HANDLES_GROUPS = false
         private val LEGEND_FACTORY = BoxHelper.legendFactory(false)
+        private val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
     }
 }
