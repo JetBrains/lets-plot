@@ -29,6 +29,8 @@ object Colors {
     private val namedColors = (
             mapOf<String, Color>(
                 "transparent" to Color.TRANSPARENT,
+                "blank" to Color.TRANSPARENT,
+                "" to Color.TRANSPARENT,
                 "white" to Color.WHITE,
                 "black" to Color.BLACK,
                 "gray" to Color.GRAY,

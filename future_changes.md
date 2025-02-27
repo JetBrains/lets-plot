@@ -19,7 +19,7 @@
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
 - Texts and labels:
-  - `hjust` and `vjust` parameters for axis labels [[#1227](https://github.com/JetBrains/lets-plot/issues/1227)][[#1230](https://github.com/JetBrains/lets-plot/issues/1230)].
+  - `hjust` and `vjust` parameters for axis labels [[#1227](https://github.com/JetBrains/lets-plot/issues/1227)],[[#1230](https://github.com/JetBrains/lets-plot/issues/1230)].
   
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
 
@@ -38,7 +38,7 @@
 
 - Parameter `spacer` in `image_matrix()` function.
 
-- 'transparent' color [[#1281](https://github.com/JetBrains/lets-plot/issues/1281)].
+- `transparent`/`blank`/`''` color [[#1281](https://github.com/JetBrains/lets-plot/issues/1281)].
 
 ### Changed
 
