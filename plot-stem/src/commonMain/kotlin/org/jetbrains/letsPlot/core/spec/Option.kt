@@ -389,6 +389,8 @@ object Option {
             const val SPACER_COLOR = "spacer_color"
             const val STROKE_SIDE = "stroke_side"
             const val SIZE_UNIT = "size_unit"
+            const val START = "start"
+            const val DIRECTION = "direction"
         }
 
         object Lollipop {

@@ -7454,6 +7454,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              hole=None,
              stroke_side=None,
              spacer_width=None, spacer_color=None,
+             start=None, direction=None,
              size_unit=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -7515,6 +7516,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
         Color for spacers between sectors. By default, the "paper" color is used.
+    start : float, default=None
+        Specify the angle at which the first sector starts. Accept values between 0 and 360.
+        Default is a negative angle of the first sector.
+    direction : {1, -1}, default=1
+        Specify angle direction, 1=clockwise, -1=counter-clockwise.
     size_unit : {'x', 'y'}
         Relate the size of the pie chart to the length of the unit step along one of the axes.
         If None, no fitting is performed.
@@ -7694,6 +7700,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stroke_side=stroke_side,
                  spacer_width=spacer_width,
                  spacer_color=spacer_color,
+                 start=start, direction=direction,
                  size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)

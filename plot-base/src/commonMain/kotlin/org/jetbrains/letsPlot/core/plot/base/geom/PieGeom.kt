@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -36,6 +37,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     var spacerColor: Color = Color.WHITE
     var strokeSide: StrokeSide = StrokeSide.BOTH
     var sizeUnit: String? = null
+    var start: Double? = null
+    var clockWise: Boolean = true
 
     enum class StrokeSide {
         OUTER, INNER, BOTH;
@@ -232,16 +235,23 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         sizeUnitRatio: Double
     ): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }
+
         fun angle(p: DataPointAesthetics) = when (sum) {
             0.0 -> 1.0 / dataPoints.size
             else -> abs(p.slice()!!) / sum
         }.let { PI * 2.0 * it }
 
-        // the first slice goes to the left of 12 o'clock and others go clockwise
-        var currentAngle = -PI / 2.0
-        currentAngle -= angle(dataPoints.first())
+        val startAngle = if (start != null) {
+            toRadians(start!!)
+        } else {
+            // the first slice goes to the left of 12 o'clock and others go clockwise
+            angle(dataPoints.first()) * (if (clockWise) -1 else 1)
+        }
 
-        return dataPoints.mapNotNull { p ->
+        // Starts at 12 o'clock
+        var currentAngle = -PI / 2.0 + startAngle
+
+        return (dataPoints.takeIf { clockWise } ?: dataPoints.reversed()).mapNotNull { p ->
             val pieCenter = toLocation(p) ?: return@mapNotNull null
             Sector(
                 p = p,
