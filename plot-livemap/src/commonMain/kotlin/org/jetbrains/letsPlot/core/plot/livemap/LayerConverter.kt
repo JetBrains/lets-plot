@@ -5,9 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.livemap
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.canvas.FontStyle
@@ -16,8 +15,9 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.*
+import org.jetbrains.letsPlot.core.plot.base.pos.NudgePos
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
+import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.api.*
 
 
@@ -68,7 +68,6 @@ object LayerConverter {
                 layerKind,
                 layer.geomKind,
                 layer.pos,
-                GeomContextBuilder().aesthetics(layer.aesthetics).build(),
                 dataPointLiveMapAesthetics,
                 sizeScalingRange,
                 alphaScalingEnabled = sizeScalingRange.last != 0
@@ -81,7 +80,6 @@ object LayerConverter {
         layerKind: MapLayerKind,
         plotLayerKind: GeomKind,
         layerPositionAdjustment: PositionAdjustment,
-        geomContext: GeomContext,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         sizeScalingRange: IntRange?,
         alphaScalingEnabled: Boolean,
@@ -189,7 +187,7 @@ object LayerConverter {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
                         index = it.index
-                        point = layerPositionAdjustment.translate(it.point.toDoubleVector(), it.myP, geomContext).toVec()
+                        point = nudgePoint(layerPositionAdjustment, it.point)
                         fillColor = if (plotLayerKind == LABEL) it.fillColor else Color.TRANSPARENT
                         strokeColor = if (plotLayerKind == LABEL && !it.alphaStroke) {
                             it.myP.color()!!
@@ -208,6 +206,9 @@ object LayerConverter {
                         labelRadius = it.labelRadius
                         labelSize = it.labelSize
                         lineheight = it.lineheight
+
+                        nudgeClient = nudgeClient(layerPositionAdjustment)
+                        enableNudgeScaling = nudgeScaling(layerPositionAdjustment)
 
                         val fontFace = FontFace.fromString(it.fontface)
                         fontStyle = FontStyle.ITALIC.takeIf { fontFace.italic } ?: FontStyle.NORMAL
@@ -238,5 +239,23 @@ object LayerConverter {
                 }
             }
         }
+    }
+
+    private fun nudgePoint(position: PositionAdjustment, point: Vec<LonLat>): Vec<LonLat> {
+       if (position is NudgePos && position.unit == DimensionUnit.IDENTITY) {
+            return point.plus(position.adjustedDimension.toVec())
+        }
+        return point
+    }
+
+    private fun nudgeClient(position: PositionAdjustment): Vec<Client> {
+        if (position is NudgePos && (position.unit == DimensionUnit.SIZE || position.unit == DimensionUnit.PIXEL)) {
+            return position.adjustedDimension.toVec()
+        }
+        return Vec(0.0, 0.0)
+    }
+
+    private fun nudgeScaling(position: PositionAdjustment): Boolean {
+        return position is NudgePos && position.unit == DimensionUnit.SIZE
     }
 }

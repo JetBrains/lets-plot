@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.livemap.chart.text
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
@@ -28,7 +29,7 @@ class TextRenderer : Renderer {
 
         val font = textSpecComponent.scaledFont(chartElementComponent.scalingSizeFactor)
 
-        ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
+        ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin).plus(chartElementComponent.scaledNudge()))
         ctx.rotate(textSpec.angle)
 
         if (textSpec.drawBorder) {

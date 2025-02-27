@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 
-internal class NudgePos(
+class NudgePos(
     width: Double?,
     height: Double?,
-    private val unit: DimensionUnit
+    val unit: DimensionUnit
 ) : PositionAdjustment {
     private val width: Double = width ?: DEF_NUDGE_WIDTH
     private val height: Double = height ?: DEF_NUDGE_HEIGHT
@@ -23,19 +23,17 @@ internal class NudgePos(
 
         return when (unit) {
             DimensionUnit.RESOLUTION -> error("Unsupported unit: $unit")
-            DimensionUnit.IDENTITY -> v.add(DoubleVector(width, height))
+            DimensionUnit.IDENTITY -> v.add(adjustedDimension)
             DimensionUnit.SIZE -> {
                 val originClient = coord.toClient(v) ?: error("Failed to convert origin to client coordinates")
 
-                val transformedOrigin = originClient.add(DoubleVector(
-                    width * AesScaling.POINT_UNIT_SIZE,
-                    -height * AesScaling.POINT_UNIT_SIZE))
+                val transformedOrigin = originClient.add(adjustedDimension)
 
                 coord.fromClient(transformedOrigin) ?: error("Failed to convert transformed origin from client coordinates")
             }
             DimensionUnit.PIXEL -> {
                 val originClient = coord.toClient(v) ?: error("Failed to convert origin to client coordinates")
-                val transformedOrigin = originClient.add(DoubleVector(width, -height))
+                val transformedOrigin = originClient.add(adjustedDimension)
                 coord.fromClient(transformedOrigin) ?: error("Failed to convert transformed origin from client coordinates")
             }
         }
@@ -44,6 +42,14 @@ internal class NudgePos(
     override fun handlesGroups(): Boolean {
         return PositionAdjustments.Meta.NUDGE.handlesGroups()
     }
+
+    val adjustedDimension: DoubleVector
+        get() = when (unit) {
+            DimensionUnit.RESOLUTION -> error("Unsupported unit: $unit")
+            DimensionUnit.IDENTITY -> DoubleVector(width, height)
+            DimensionUnit.SIZE -> DoubleVector(width * AesScaling.POINT_UNIT_SIZE, -height * AesScaling.POINT_UNIT_SIZE)
+            DimensionUnit.PIXEL -> DoubleVector(width, -height)
+        }
 
     companion object {
         const val DEF_NUDGE_WIDTH = 0.0

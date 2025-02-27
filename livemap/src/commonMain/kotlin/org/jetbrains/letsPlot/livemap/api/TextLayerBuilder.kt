@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.TextSpecComponent
 import org.jetbrains.letsPlot.livemap.chart.text.TextRenderer
@@ -80,6 +81,9 @@ class TextEntityBuilder(
     var angle: Double = 0.0
     var lineheight: Double = 1.0
 
+    var nudgeClient: Vec<Client> = Vec(0.0, 0.0)
+    var enableNudgeScaling = false
+
     fun build(
         textMeasurer: TextMeasurer
     ): EcsEntity {
@@ -113,6 +117,9 @@ class TextEntityBuilder(
                     strokeColor = this@TextEntityBuilder.strokeColor
                     strokeWidth = this@TextEntityBuilder.strokeWidth
                     lineheight = this@TextEntityBuilder.lineheight
+
+                    nudgeClient = this@TextEntityBuilder.nudgeClient
+                    enableNudgeScaling = this@TextEntityBuilder.enableNudgeScaling
                 }
                 +TextSpecComponent().apply { this.textSpec = textSpec }
                 +WorldOriginComponent(worldPoint)

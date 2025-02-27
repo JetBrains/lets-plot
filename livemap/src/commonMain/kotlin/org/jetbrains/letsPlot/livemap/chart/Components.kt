@@ -42,6 +42,9 @@ class ChartElementComponent : EcsComponent {
     var scalingSizeFactor: Double = 1.0
     var scalingAlphaValue: Int? = null
 
+    var nudgeClient: Vec<Client> = Vec(0.0, 0.0)
+    var enableNudgeScaling: Boolean = false
+
     fun scaledStrokeColor() = alphaScaledColor(strokeColor!!, scalingAlphaValue)
     fun scaledFillColor() = alphaScaledColor(fillColor!!, scalingAlphaValue)
     fun scaledStrokeWidth() = strokeWidth * scalingSizeFactor
@@ -50,6 +53,10 @@ class ChartElementComponent : EcsComponent {
 
     fun scaledStartPadding() = startPadding * scalingSizeFactor
     fun scaledEndPadding() = endPadding * scalingSizeFactor
+
+    fun scaledNudge(): Vec<Client> {
+        return if (enableNudgeScaling) nudgeClient * scalingSizeFactor else nudgeClient
+    }
 }
 
 class TextSpecComponent : EcsComponent {
