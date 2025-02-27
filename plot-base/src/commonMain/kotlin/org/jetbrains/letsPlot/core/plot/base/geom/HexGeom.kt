@@ -28,8 +28,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val transformWidthToUnits: (Double) -> Double = { w -> transformDimensionValue(w, widthUnit, Aes.X, coord, ctx) }
-        val transformHeightToUnits: (Double) -> Double = { h -> transformDimensionValue(h, heightUnit, Aes.Y, coord, ctx) }
+        val transformWidthToUnits: (Double) -> Double = { w -> w * getUnitResolution(widthUnit, Aes.X, coord, ctx) }
+        val transformHeightToUnits: (Double) -> Double = { h -> h * getUnitResolution(heightUnit, Aes.Y, coord, ctx) }
         val helper = HexagonsHelper(aesthetics, pos, coord, ctx, clientHexByDataPoint(transformWidthToUnits, transformHeightToUnits))
         helper.setResamplingEnabled(!coord.isLinear)
         helper.createHexagons().forEach { hexLinePath ->
@@ -79,9 +79,8 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
         )
     }
 
-    // Almost the same as in GeomHelper::transformDimensionValue, but with some differences specific to hex geom
-    private fun transformDimensionValue(
-        value: Double,
+    // Almost the same as in GeomHelper::getUnitResolution, but with some differences specific to hex geom
+    private fun getUnitResolution(
         unit: DimensionUnit,
         axisAes: Aes<Double>,
         coord: CoordinateSystem,
@@ -99,11 +98,11 @@ class HexGeom : GeomBase(), WithWidth, WithHeight {
                     Aes.Y -> HALF_HEX_HEIGHT * ctx.getResolution(Aes.Y)
                     else -> error("Unsupported axis aes: $axisAes")
                 }
-                2.0 * resolution * value
+                2.0 * resolution
             }
-            IDENTITY -> value
-            SIZE -> value * AesScaling.POINT_UNIT_SIZE / unitSize
-            PIXEL -> value / unitSize
+            IDENTITY -> 1.0
+            SIZE -> AesScaling.POINT_UNIT_SIZE / unitSize
+            PIXEL -> 1.0 / unitSize
         }
     }
 

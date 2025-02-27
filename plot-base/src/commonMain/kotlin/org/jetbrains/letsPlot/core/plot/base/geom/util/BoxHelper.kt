@@ -49,7 +49,7 @@ object BoxHelper {
             val middle = p.finiteOrNull(middleAes) ?: continue
             val w = p.finiteOrNull(sizeAes) ?: continue
 
-            val width = geomHelper.transformDimensionValue(w, widthUnit, xAes)
+            val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
 
             val (line) = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle).flipIf(flip),

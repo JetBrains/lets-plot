@@ -119,7 +119,7 @@ class CrossBarGeom(
             val ymax = p.finiteOrNull(yMaxAes) ?: return null
             val w = p.finiteOrNull(widthAes) ?: return null
 
-            val width = geomHelper.transformDimensionValue(w, widthUnit, xAes)
+            val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
             val origin = DoubleVector(x - width / 2, ymin)
             val dimension = DoubleVector(width, ymax - ymin)
             return DoubleRectangle(origin, dimension)

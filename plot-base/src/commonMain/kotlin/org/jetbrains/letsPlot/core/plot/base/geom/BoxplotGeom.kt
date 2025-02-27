@@ -80,7 +80,7 @@ class BoxplotGeom : GeomBase(), WithWidth {
             val x = p.finiteOrNull(Aes.X) ?: continue
             val w = p.finiteOrNull(Aes.WIDTH) ?: 0.0
 
-            val halfWidth = geomHelper.transformDimensionValue(w, widthUnit, Aes.X) / 2
+            val halfWidth = w * geomHelper.getUnitResolution(widthUnit, Aes.X) / 2
             val halfFenceWidth = halfWidth * whiskerWidth
 
             // lower whisker
@@ -145,7 +145,7 @@ class BoxplotGeom : GeomBase(), WithWidth {
                 val upper = p.finiteOrNull(Aes.UPPER) ?: return null
                 val w = p.finiteOrNull(Aes.WIDTH) ?: return null
 
-                val width = geomHelper.transformDimensionValue(w, widthUnit, Aes.X)
+                val width = w * geomHelper.getUnitResolution(widthUnit, Aes.X)
                 val rect = DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower)
 
                 return geomHelper.toClient(rect, p)?.let {
