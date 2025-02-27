@@ -25,8 +25,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
-import kotlin.math.abs
-import kotlin.math.min
 import kotlin.math.sqrt
 
 internal class DataPointsConverter(
@@ -181,11 +179,12 @@ internal class DataPointsConverter(
         aesthetics: Aesthetics
     ) : PathFeatureConverterBase(aesthetics) {
         fun tile(): List<DataPointLiveMapAesthetics> {
-            val d = getMinXYNonZeroDistance(aesthetics)
+            val resX = getResolution(Aes.X)
+            val resY = getResolution(Aes.Y)
             return process(isClosed = true, dataPointToGeometry = { p ->
                 if (SeriesUtil.allFinite(p.x(), p.y(), p.width(), p.height())) {
-                    val w = nonZero(p.width()!! * d.x, 1.0)
-                    val h = nonZero(p.height()!! * d.y, 1.0)
+                    val w = nonZero(p.width()!! * resX, 1.0)
+                    val h = nonZero(p.height()!! * resY, 1.0)
                     GeomUtil.rectToGeometry(
                         p.x()!! - w / 2,
                         p.y()!! - h / 2,
@@ -255,9 +254,10 @@ internal class DataPointsConverter(
         }
 
         fun hex(): List<DataPointLiveMapAesthetics> {
-            val d = getMinXYNonZeroDistance(aesthetics)
-            val transformWidthToUnits: (Double) -> Double = { v -> 2.0 * d.x * v }
-            val transformHeightToUnits: (Double) -> Double = { v -> 2.0 / sqrt(3.0) * d.y * v }
+            val resX = getResolution(Aes.X)
+            val resY = getResolution(Aes.Y)
+            val transformWidthToUnits: (Double) -> Double = { v -> 2.0 * resX * v }
+            val transformHeightToUnits: (Double) -> Double = { v -> 2.0 / sqrt(3.0) * resY * v }
             return process(isClosed = true, dataPointToGeometry = { p ->
                 HexGeom.clientHexByDataPoint(transformWidthToUnits, transformHeightToUnits).invoke(p) ?: emptyList()
             })
@@ -285,43 +285,14 @@ internal class DataPointsConverter(
             else -> d
         }
 
-        private fun getMinXYNonZeroDistance(aesthetics: Aesthetics): DoubleVector {
-            val dataPoints = aesthetics.dataPoints().toList()
-
-            if (dataPoints.size < 2) {
-                return DoubleVector.ZERO
-            }
-
-            var minDx = 0.0
-            var minDy = 0.0
-
-            var i = 0
-            val n = dataPoints.size - 1
-            while (i < n) {
-                var j = i + 1
-                val k = dataPoints.size
-                while (j < k) {
-                    val p1 = dataPoints[i]
-                    val p2 = dataPoints[j]
-
-                    minDx = minNonZeroDistance(p1.x()!!, p2.x()!!, minDx)
-                    minDy = minNonZeroDistance(p1.y()!!, p2.y()!!, minDy)
-                    ++j
-                }
-                ++i
-            }
-            return DoubleVector(minDx, minDy)
-        }
-
-        private fun minNonZeroDistance(p1: Double, p2: Double, minDistance: Double): Double {
-            val delta = abs(p1 - p2)
-            if (delta == 0.0) {
-                return minDistance
-            }
-
-            return when (minDistance) {
-                0.0 -> delta
-                else -> min(minDistance, delta)
+        // See:
+        // org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder.MyGeomContext.getResolution
+        private fun getResolution(aes: Aes<Double>): Double {
+            val resolution = aesthetics.resolution(aes, 0.0)
+            return if (resolution <= SeriesUtil.TINY) {
+                1.0
+            } else {
+                resolution
             }
         }
     }
