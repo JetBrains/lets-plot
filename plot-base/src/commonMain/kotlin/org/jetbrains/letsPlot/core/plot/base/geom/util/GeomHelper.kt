@@ -354,13 +354,7 @@ open class GeomHelper(
         }
     }
 
-    /*
-    value - the value obtained from the dimension aesthetics (Aes.WIDTH or Aes.HEIGHT);
-    unit - units to which the value should be converted;
-    axisAes - axis along which the value size is considered
-    */
-    fun transformDimensionValue(
-        value: Double,
+    fun getUnitResolution(
         unit: DimensionUnit,
         axisAes: Aes<Double>
     ): Double {
@@ -370,15 +364,15 @@ open class GeomHelper(
             else -> error("Unsupported axis aes: $axisAes")
         }
         return when (unit) {
-            RESOLUTION -> value * ctx.getResolution(axisAes) // 1 corresponds to the resolution along the axis, i.e. the minimum distance between data points
-            IDENTITY -> value // 1 corresponds to the distance from 0 to 1 on the axis
+            RESOLUTION -> ctx.getResolution(axisAes) // resolution along the axis, i.e. the minimum distance between data points
+            IDENTITY -> 1.0 // distance from 0 to 1 on the axis
             SIZE -> {
-                // 1 corresponds to the diameter of a point of size 1 (in standard point size units)
-                value * AesScaling.POINT_UNIT_SIZE / unitSize
+                // diameter of a point of size 1 (in standard point size units)
+                AesScaling.POINT_UNIT_SIZE / unitSize
             }
             PIXEL -> {
-                // 1 corresponds to 1 pixel
-                value / unitSize
+                // pixel
+                1.0 / unitSize
             }
         }
     }

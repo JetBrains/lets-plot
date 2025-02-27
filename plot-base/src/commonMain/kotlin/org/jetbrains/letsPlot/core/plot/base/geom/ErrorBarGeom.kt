@@ -111,7 +111,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
     ): Double? {
         val widthAes = afterRotation(Aes.WIDTH)
         val width = p.finiteOrNull(widthAes) ?: return null
-        return helper.transformDimensionValue(width, dimensionUnit, afterRotation(Aes.X))
+        return width * helper.getUnitResolution(dimensionUnit, afterRotation(Aes.X))
     }
 
     override fun widthSpan(
@@ -148,7 +148,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
     }
 
     companion object {
-        val DEF_DIMENSION_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
+        private val DEF_DIMENSION_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()

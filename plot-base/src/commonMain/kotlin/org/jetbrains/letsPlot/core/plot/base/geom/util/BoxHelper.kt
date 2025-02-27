@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -37,7 +38,7 @@ object BoxHelper {
         xAes: Aes<Double>,
         middleAes: Aes<Double>,
         sizeAes: Aes<Double>,
-        ctx: GeomContext,
+        widthUnit: DimensionUnit,
         geomHelper: GeomHelper,
         fatten: Double,
         flip: Boolean
@@ -48,7 +49,7 @@ object BoxHelper {
             val middle = p.finiteOrNull(middleAes) ?: continue
             val w = p.finiteOrNull(sizeAes) ?: continue
 
-            val width = w * ctx.getResolution(xAes)
+            val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
 
             val (line) = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle).flipIf(flip),

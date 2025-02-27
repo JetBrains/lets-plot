@@ -81,8 +81,8 @@ open class TileGeom : GeomBase(), WithWidth, WithHeight {
                 val w = p.finiteOrNull(Aes.WIDTH) ?: return null
                 val h = p.finiteOrNull(Aes.HEIGHT) ?: return null
 
-                val width = helper.transformDimensionValue(w, widthUnit, Aes.X)
-                val height = helper.transformDimensionValue(h, heightUnit, Aes.Y)
+                val width = w * helper.getUnitResolution(widthUnit, Aes.X)
+                val height = h * helper.getUnitResolution(heightUnit, Aes.Y)
 
                 val origin = DoubleVector(x - width / 2, y - height / 2)
                 val dimensions = DoubleVector(width, height)
