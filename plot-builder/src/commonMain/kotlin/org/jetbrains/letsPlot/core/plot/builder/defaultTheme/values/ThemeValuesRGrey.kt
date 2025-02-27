@@ -27,17 +27,6 @@ internal class ThemeValuesRGrey : ThemeValues(VALUES) {
 
     companion object {
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
-            LINE to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
-
-            RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
-
-            TEXT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
 
             // Panel (no border)
             PANEL_BKGR_RECT to mapOf(
@@ -45,7 +34,6 @@ internal class ThemeValuesRGrey : ThemeValues(VALUES) {
                 Elem.FILL to SymbolicColor.GREY_3,
             ),
 
-            // Grid
             PANEL_GRID to mapOf(
                 Elem.COLOR to SymbolicColor.WHITE,
             ),
@@ -57,17 +45,9 @@ internal class ThemeValuesRGrey : ThemeValues(VALUES) {
             ),
 
             // Axis
-            AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
-            ),
             AXIS_LINE to ELEMENT_BLANK,
             AXIS_TICKS to mapOf(
                 Elem.SIZE to 1.4
-            ),
-
-            AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to SymbolicColor.WHITE,
-                Elem.FILL to SymbolicColor.BLACK,
             ),
 
             // Facets

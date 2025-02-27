@@ -24,7 +24,7 @@ internal object Hyperlink {
 
     private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
 
-    private class HyperlinkElement(
+    class HyperlinkElement(
         private val text: String,
         private val href: String,
     ) : RichTextNode.Span {

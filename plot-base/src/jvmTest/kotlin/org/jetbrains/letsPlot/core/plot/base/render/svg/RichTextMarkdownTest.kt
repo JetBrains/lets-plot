@@ -9,6 +9,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.test.Test
 
 class RichTextMarkdownTest {
@@ -187,5 +189,21 @@ class RichTextMarkdownTest {
         assertTSpan(foo, "foo", color = "red", bold = true, italic = true)
         assertTSpan(bar, "bar", color = "red", bold = true, italic = true)
         assertTSpan(baz, "baz", color = "red", bold = true, italic = true)
+    }
+
+    @Test
+    fun spanWithHyperlink() {
+        val richTextLines = RichText.toSvg("<span style=\"color:grey\">Powered by <a href=\"https://github.com/lets-plot\">lets-plot</a>  \nSource code</span>", markdown = true)
+
+        assertThat(richTextLines).hasSize(2)
+
+        val poweredBy = richTextLines[0].children()[0] as SvgTSpanElement
+        val hyperlink = richTextLines[0].children()[1] as SvgAElement
+        val hyperlinkText = hyperlink.children()[0] as SvgTSpanElement
+
+        assertTSpan(poweredBy, "Powered by ", color = "grey")
+        assertTSpan(hyperlinkText, "lets-plot", color = null) // color is not inherited from the parent
+        assertThat(hyperlinkText.hasClass(RichText.HYPERLINK_ELEMENT_CLASS)).isTrue()
+        assertThat(hyperlink.href().get()).isEqualTo("https://github.com/lets-plot")
     }
 }

@@ -6,14 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Geom
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
 
 internal class ThemeValuesLPNone : ThemeValues(VALUES) {
 
@@ -31,19 +29,9 @@ internal class ThemeValuesLPNone : ThemeValues(VALUES) {
                 Elem.COLOR to Color.BLUE,
             ),
 
-            PLOT_BKGR_RECT to mapOf(
-                Elem.FILL to Color.WHITE,
-            ),
-
-            LEGEND_BKGR_RECT to mapOf(
-                Elem.FILL to Color.WHITE,
-            ),
-
-            // Legend
-            // Tooltip
-            TOOLTIP_RECT to mapOf(
-                Elem.FILL to Color.WHITE,
-                Elem.COLOR to Color.BLACK
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to Color.BLUE,
+                Elem.FILL to Color.LIGHT_BLUE,
             ),
 
             ThemeOption.GEOM to mapOf(

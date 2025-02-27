@@ -19,7 +19,7 @@
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
 - Texts and labels:
-  - `hjust` and `vjust` parameters for axis labels [[#1227](https://github.com/JetBrains/lets-plot/issues/1227)][[#1230](https://github.com/JetBrains/lets-plot/issues/1230)].
+  - `hjust` and `vjust` parameters for axis labels [[#1227](https://github.com/JetBrains/lets-plot/issues/1227)],[[#1230](https://github.com/JetBrains/lets-plot/issues/1230)].
   
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb).
 
@@ -38,6 +38,8 @@
 
 - Parameter `spacer` in `image_matrix()` function.
 
+- `transparent`/`blank`/`''` color [[#1281](https://github.com/JetBrains/lets-plot/issues/1281)].
+
 ### Changed
 
 - [**DEPRECATED**] class `GGBunch` is deprecated. Please use `ggbunch()` function instead.
@@ -47,11 +49,12 @@
 - [**BREAKING**] geoms `tile, bin2d, contour, contourf, density2d, density2df` : default coordinate system changed from 'fixed' to 'cartesian'.
 
 ### Fixed
+- Incorrectly rendered Area chart [[#1295](https://github.com/JetBrains/lets-plot/issues/1295)].
 - Tooltip should not cover and hide the geometry that it provides info for [[#1275](https://github.com/JetBrains/lets-plot/issues/1275)].
 - General purpose `scale_continuous`: can't use the `expand` parameter [[#1285](https://github.com/JetBrains/lets-plot/issues/1285)].
-- Incorrectly rendered Area chart [[#1295](https://github.com/JetBrains/lets-plot/issues/1295)].
 - Error when using `stat='summary'` if the data contains NaN values [[#1301](https://github.com/JetBrains/lets-plot/issues/1301)].
 - Broken `plot_background` in `gggrid` [[#1124](https://github.com/JetBrains/lets-plot/issues/1124)].
+- `plot_background` not inheriting from `rect` [[#1278](https://github.com/JetBrains/lets-plot/issues/1278)]
 - gggrid: allow title and other labels for the entire figure [[#715](https://github.com/JetBrains/lets-plot/issues/715)].
 - GGbunch: overall title [[#321](https://github.com/JetBrains/lets-plot/issues/321)].
 - Expand discrete axis according to tile size with geom_tile [[#1284](https://github.com/JetBrains/lets-plot/issues/1284)].

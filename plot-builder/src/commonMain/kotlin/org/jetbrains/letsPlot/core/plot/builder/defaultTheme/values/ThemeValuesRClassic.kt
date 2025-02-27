@@ -24,35 +24,11 @@ internal class ThemeValuesRClassic : ThemeValues(VALUES) {
     companion object {
 
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
-            LINE to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
-
-            RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
-                Elem.FILL to SymbolicColor.GREY_3
-            ),
-
-            TEXT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
 
             PANEL_BKGR_RECT to ELEMENT_BLANK,
             PANEL_GRID to mapOf(
                 Elem.BLANK to true,
                 Elem.COLOR to SymbolicColor.GREY_1,
-            ),
-
-            AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
-            ),
-            AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to SymbolicColor.WHITE,
-                Elem.FILL to SymbolicColor.BLACK,
-            ),
-
-            FACET_STRIP_BGR_RECT to mapOf(
-                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             FLAVOR to Flavor.BASE,
