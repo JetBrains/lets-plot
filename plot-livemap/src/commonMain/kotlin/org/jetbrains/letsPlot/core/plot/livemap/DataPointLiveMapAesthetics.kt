@@ -242,6 +242,12 @@ internal class DataPointLiveMapAesthetics {
             }
         } ?: StrokeSide.OUTER
 
+    val startAngle: Double?
+        get() = myPieOptions?.startAngle
+
+    val clockwise: Boolean
+        get() = myPieOptions?.clockwise != false
+
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
     }

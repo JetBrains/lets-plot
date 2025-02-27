@@ -6,13 +6,18 @@
 package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.pos.NudgePos
@@ -235,6 +240,8 @@ object LayerConverter {
                         holeSize = it.holeRatio
                         spacerColor = it.spacerColor
                         spacerWidth = it.spacerWidth
+                        startAngle = it.startAngle
+                        clockwise = it.clockwise
                     }
                 }
             }

@@ -71,6 +71,8 @@ class PieEntityBuilder(
     var spacerColor: Color = Color.WHITE
     var spacerWidth: Double = 1.0
     var explodes: List<Double>? = null
+    var startAngle: Double? = null
+    var clockwise: Boolean = true
 
     fun build(): EcsEntity {
         return myFactory.createStaticFeatureWithLocation("map_ent_s_pie_sector", point)
@@ -100,6 +102,8 @@ class PieEntityBuilder(
                         spacerColor = this@PieEntityBuilder.spacerColor
                         spacerWidth = this@PieEntityBuilder.spacerWidth
                         explodeValues = this@PieEntityBuilder.explodes
+                        startAngle = this@PieEntityBuilder.startAngle
+                        clockwise = this@PieEntityBuilder.clockwise
                     }
                     +WorldOriginComponent(worldPoint)
                     +ScreenDimensionComponent()

@@ -44,11 +44,21 @@ internal class DataPointsConverter(
         val spacerColor: Color?,
         val spacerWidth: Double,
         val holeSize: Double,
-        val strokeSide: PieGeom.StrokeSide
+        val strokeSide: PieGeom.StrokeSide,
+        val startAngle: Double?,
+        val clockwise: Boolean
     )
 
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
-        val pieOptions = PieOptions(geom.spacerColor, geom.spacerWidth, geom.holeSize, geom.strokeSide)
+        val pieOptions = PieOptions(
+            spacerColor = geom.spacerColor,
+            spacerWidth = geom.spacerWidth,
+            holeSize = geom.holeSize,
+            strokeSide = geom.strokeSide,
+            startAngle = geom.start,
+            clockwise = geom.clockwise
+        )
+
         val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints)
             .map {

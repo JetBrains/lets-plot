@@ -99,6 +99,8 @@ class PieSpecComponent : EcsComponent {
     var spacerColor: Color? = null
     var spacerWidth: Double = 0.0
     var strokeSide: StrokeSide? = null
+    var startAngle: Double? = null
+    var clockwise: Boolean = true
 }
 
 class SearchResultComponent : EcsComponent {

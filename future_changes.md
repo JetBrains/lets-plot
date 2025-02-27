@@ -18,6 +18,10 @@
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
+  - Parameters `start` and `direction` in `geom_pie()` [[#1280]](https://github.com/JetBrains/lets-plot/issues/1280).
+  
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_pie_params.ipynb).
+
 - Texts and labels:
   - `hjust` and `vjust` parameters for axis labels [[#1227](https://github.com/JetBrains/lets-plot/issues/1227)],[[#1230](https://github.com/JetBrains/lets-plot/issues/1230)].
   

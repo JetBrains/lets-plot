@@ -379,7 +379,7 @@ internal object GeomProviderFactory {
                 }
                 geom.sizeUnit = layerConfig.getString(Pie.SIZE_UNIT)?.lowercase()
                 geom.start = layerConfig.getDouble(Pie.START)
-                geom.clockWise = (layerConfig.getInteger(Pie.DIRECTION) ?: 1)  == 1
+                geom.clockwise = (layerConfig.getInteger(Pie.DIRECTION) ?: 1)  == 1
                 geom
             }
 

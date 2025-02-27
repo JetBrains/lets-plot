@@ -38,7 +38,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     var strokeSide: StrokeSide = StrokeSide.BOTH
     var sizeUnit: String? = null
     var start: Double? = null
-    var clockWise: Boolean = true
+    var clockwise: Boolean = true
 
     enum class StrokeSide {
         OUTER, INNER, BOTH;
@@ -245,13 +245,13 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             toRadians(start!!)
         } else {
             // the first slice goes to the left of 12 o'clock and others go clockwise
-            angle(dataPoints.first()) * (if (clockWise) -1 else 1)
+            angle(dataPoints.first()) * (if (clockwise) -1 else 1)
         }
 
         // Starts at 12 o'clock
         var currentAngle = -PI / 2.0 + startAngle
 
-        return (dataPoints.takeIf { clockWise } ?: dataPoints.reversed()).mapNotNull { p ->
+        return (dataPoints.takeIf { clockwise } ?: dataPoints.reversed()).mapNotNull { p ->
             val pieCenter = toLocation(p) ?: return@mapNotNull null
             Sector(
                 p = p,
