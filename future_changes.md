@@ -14,7 +14,7 @@
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
 
-  - Parameters `width_unit` and `height_unit` in `geom_errorbar()`, `geom_tile()` and `geom_hex()` [[#1288](https://github.com/JetBrains/lets-plot/issues/1288)]:
+  - Parameters `width_unit` and `height_unit` in `geom_errorbar()`, `geom_boxplot()`, `geom_crossbar()`, `geom_tile()` and `geom_hex()` [[#1288](https://github.com/JetBrains/lets-plot/issues/1288)]:
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/param_width_unit.ipynb).
 
@@ -47,6 +47,7 @@
 - Axis labels: changed default justification for rotated labels.
 - Axis labels: changed orientation of automatic vertical labels.
 - [**BREAKING**] geoms `tile, bin2d, contour, contourf, density2d, density2df` : default coordinate system changed from 'fixed' to 'cartesian'.
+- [**BREAKING**] tiles in `geom_bin2d()` are sized according to the `binwidth` value, not the maximum possible.
 
 ### Fixed
 - Incorrectly rendered Area chart [[#1295](https://github.com/JetBrains/lets-plot/issues/1295)].
