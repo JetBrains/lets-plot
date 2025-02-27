@@ -101,6 +101,7 @@ class CrossBarGeom(
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
+        // height is not defined for CrossBarGeom, so after flipping the width aesthetic is responsible for the thickness
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
