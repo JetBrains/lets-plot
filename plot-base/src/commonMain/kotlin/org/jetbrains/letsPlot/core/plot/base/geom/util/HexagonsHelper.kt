@@ -22,7 +22,6 @@ class HexagonsHelper(
     ctx: GeomContext,
     private val geometryFactory: (DataPointAesthetics) -> List<DoubleVector>?
 ) : LinesHelper(pos, coord, ctx) {
-    private var myResamplingEnabled = false
     private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
 
     fun createHexagons(): List<LinePath> {
