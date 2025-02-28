@@ -1466,20 +1466,20 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Override `bins`. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
         Specify whether to remove all hexagonal bins with 0 counts.
-    width_unit : {'res', 'identity', 'size', 'px'}, default='identity'
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for width of the hexagon.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'res': value 1 corresponds to `binwidth[0]` if the `'binhex'` statistic is used, or to the minimum distance between hexagons along the x-axis if the `'identity'` statistic is used;
         - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
         - 'size': value 1 corresponds to the diameter of a point of size 1;
         - 'px': value 1 corresponds to 1 pixel.
 
-    height_unit : {'res', 'identity', 'size', 'px'}, default='identity'
+    height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for height of the hexagon.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between data points;
+        - 'res': value 1 corresponds to `binwidth[1]` if the `'binhex'` statistic is used, or to the minimum distance between hexagons along the y-axis if the `'identity'` statistic is used;
         - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
         - 'size': value 1 corresponds to the diameter of a point of size 1;
         - 'px': value 1 corresponds to 1 pixel.
@@ -1642,7 +1642,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Unit for width of the tile.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
+        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between tiles;
         - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
         - 'size': value 1 corresponds to the diameter of a point of size 1;
         - 'px': value 1 corresponds to 1 pixel.
@@ -1651,7 +1651,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Unit for height of the tile.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between data points;
+        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between tiles;
         - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
         - 'size': value 1 corresponds to the diameter of a point of size 1;
         - 'px': value 1 corresponds to 1 pixel.
@@ -2085,8 +2085,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Unit for the width of the crossbar.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'res': value 1 corresponds to the resolution along the axis, i.e. the minimum distance between data points;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the axis;
         - 'size': value 1 corresponds to the diameter of a point of size 1;
         - 'px': value 1 corresponds to 1 pixel.
 
@@ -3679,8 +3679,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Unit for the width of the boxplot.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
+        - 'res': value 1 corresponds to the resolution along the axis, i.e. the minimum distance between boxes;
+        - 'identity': value 1 corresponds to the distance from 0 to 1 on the axis;
         - 'size': value 1 corresponds to the diameter of a point of size 1;
         - 'px': value 1 corresponds to 1 pixel.
 
