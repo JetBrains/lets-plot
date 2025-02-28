@@ -601,8 +601,8 @@ def element_text(
         Can be used with values out of range, but behaviour is not specified.
     margin : number or list of numbers
         Margins around the text.
-
         The margin may be specified using a number or a list of numbers:
+
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
