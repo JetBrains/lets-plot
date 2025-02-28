@@ -1470,19 +1470,19 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Unit for width of the hexagon.
         Possible values:
 
-        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin width (`binwidth[0]`); otherwise, it equals the smallest distance between adjacent hexagons along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin width (`binwidth[0]`); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for height of the hexagon.
         Possible values:
 
-        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin height (`binwidth[1]`); otherwise, it equals the smallest distance between adjacent hexagons along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin height (`binwidth[1]`); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -1642,19 +1642,19 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Unit for width of the tile.
         Possible values:
 
-        - 'res': unit equals the smallest distance between adjacent tiles along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': the unit equals the smallest distance between adjacent tiles along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for height of the tile.
         Possible values:
 
-        - 'res': unit equals the smallest distance between adjacent tiles along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': the unit equals the smallest distance between adjacent tiles along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -1915,19 +1915,19 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Unit for the whisker width of the vertical error bar.
         Possible values:
 
-        - 'res': unit equals the smallest distance between adjacent error bars along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for the whisker height of the horizontal error bar.
         Possible values:
 
-        - 'res': unit equals the smallest distance between adjacent error bars along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -2085,10 +2085,10 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Unit for the width of the crossbar.
         Possible values:
 
-        - 'res': unit equals the smallest distance between adjacent crossbars along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': the unit equals the smallest distance between adjacent crossbars along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -3679,10 +3679,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Unit for the width of the boxplot.
         Possible values:
 
-        - 'res': unit equals the smallest distance between adjacent boxes along the corresponding axis.
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'res': the unit equals the smallest distance between adjacent boxes along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -7043,9 +7043,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Units for x and y nudging.
         Possible values:
 
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     check_overlap : bool, default=False
         If True, skip plotting text that overlaps previous text in the same layer.
@@ -7297,9 +7297,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Units for x and y nudging.
         Possible values:
 
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     check_overlap : bool, default=False
         If True, skip plotting text that overlaps previous text in the same layer.

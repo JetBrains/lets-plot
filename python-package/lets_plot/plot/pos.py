@@ -160,9 +160,9 @@ def position_nudge(x=None, y=None, unit=None):
         Units for x and y nudging.
         Possible values:
 
-        - 'identity': unit corresponds to a difference of 1 in data space.
-        - 'size': unit equals the diameter of a point with size 1.
-        - 'px': unit is measured in screen pixels.
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     Returns
     -------
