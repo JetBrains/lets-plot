@@ -59,6 +59,9 @@
 - Axis labels: changed orientation of automatic vertical labels.
 - [**BREAKING**] geoms `tile, bin2d, contour, contourf, density2d, density2df` : default coordinate system changed from 'fixed' to 'cartesian'.
 - [**BREAKING**] tiles in `geom_bin2d()` are sized according to the `binwidth` value, not the maximum possible.
+- [**BREAKING**] only Lets-Plot/JS users: signature of "buildPlotFromXXX" functions changed, see current Kotlin/JS declarations:
+  - [`buildPlotFromRawSpecs()`](https://github.com/JetBrains/lets-plot/blob/38d0b24ecb3c74420814da8a66a91819d84bedd7/js-package/src/jsMain/kotlin/MonolithicJs.kt#L81)
+  - [`buildPlotFromProcessedSpecs()`](https://github.com/JetBrains/lets-plot/blob/38d0b24ecb3c74420814da8a66a91819d84bedd7/js-package/src/jsMain/kotlin/MonolithicJs.kt#L158)
 
 ### Fixed
 - Incorrectly rendered Area chart [[#1295](https://github.com/JetBrains/lets-plot/issues/1295)].
