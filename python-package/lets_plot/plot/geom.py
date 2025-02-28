@@ -1470,19 +1470,19 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Unit for width of the hexagon.
         Possible values:
 
-        - 'res': value 1 corresponds to `binwidth[0]` if the `'binhex'` statistic is used, or to the minimum distance between hexagons along the x-axis if the `'identity'` statistic is used;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin width (`binwidth[0]`); otherwise, it equals the smallest distance between adjacent hexagons along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for height of the hexagon.
         Possible values:
 
-        - 'res': value 1 corresponds to `binwidth[1]` if the `'binhex'` statistic is used, or to the minimum distance between hexagons along the y-axis if the `'identity'` statistic is used;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin height (`binwidth[1]`); otherwise, it equals the smallest distance between adjacent hexagons along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -1642,19 +1642,19 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Unit for width of the tile.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between tiles;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': unit equals the smallest distance between adjacent tiles along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for height of the tile.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between tiles;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': unit equals the smallest distance between adjacent tiles along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -1915,19 +1915,19 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Unit for the whisker width of the vertical error bar.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the x-axis, i.e. the minimum distance between data points;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the x-axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': unit equals the smallest distance between adjacent error bars along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for the whisker height of the horizontal error bar.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the y-axis, i.e. the minimum distance between data points;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the y-axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': unit equals the smallest distance between adjacent error bars along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -2085,10 +2085,10 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Unit for the width of the crossbar.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the axis, i.e. the minimum distance between data points;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': unit equals the smallest distance between adjacent crossbars along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -3679,10 +3679,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Unit for the width of the boxplot.
         Possible values:
 
-        - 'res': value 1 corresponds to the resolution along the axis, i.e. the minimum distance between boxes;
-        - 'identity': value 1 corresponds to the distance from 0 to 1 on the axis;
-        - 'size': value 1 corresponds to the diameter of a point of size 1;
-        - 'px': value 1 corresponds to 1 pixel.
+        - 'res': unit equals the smallest distance between adjacent boxes along the corresponding axis.
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
