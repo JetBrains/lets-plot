@@ -601,12 +601,11 @@ def element_text(
         Can be used with values out of range, but behaviour is not specified.
     margin : number or list of numbers
         Margins around the text.
-
         The margin may be specified using a number or a list of numbers:
+
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
-        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
-        the third - to the bottom;
+        - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
 
         It is acceptable to use None for any side; in this case, the default side value for this element will be used.
@@ -658,8 +657,8 @@ def element_markdown(
         Text color.
     family : str
         Font family.
-    face : str
-        Font face ("plain", "italic", "bold", "bold_italic").
+    face : {'plain', 'italic', 'bold', 'bold_italic'}, default='plain'
+        Font face.
     size : int
         Text size in px.
     angle : float
@@ -678,12 +677,11 @@ def element_markdown(
         Can be used with values out of range, but behaviour is not specified.
     margin : number or list of numbers
         Margins around the text.
-
         The margin may be specified using a number or a list of numbers:
+
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
-        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
-        the third - to the bottom;
+        - a list of three numbers -  the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
 
         It is acceptable to use None for any side; in this case, the default side value for this element will be used.
