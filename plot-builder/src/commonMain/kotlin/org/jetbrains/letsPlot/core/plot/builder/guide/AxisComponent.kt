@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.guide
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -163,8 +164,7 @@ class AxisComponent(
         horizontalAnchor: Text.HorizontalAnchor? = null,
         verticalAnchor: Text.VerticalAnchor? = null,
         val rotationDegree: Double = 0.0,
-        val hJust: Double? = null,
-        val vJust: Double? = null,
+        val bounds: List<DoubleRectangle>? = null,
         private val additionalOffsets: List<DoubleVector>? = null
     ) {
         val horizontalAnchor: Text.HorizontalAnchor = horizontalAnchor ?: when (orientation) {

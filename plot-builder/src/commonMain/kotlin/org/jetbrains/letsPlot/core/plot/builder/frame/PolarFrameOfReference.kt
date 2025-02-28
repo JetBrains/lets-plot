@@ -196,8 +196,6 @@ internal class PolarFrameOfReference(
             horizontalAnchor = axisInfo.tickLabelHorizontalAnchor,
             verticalAnchor = axisInfo.tickLabelVerticalAnchor,
             rotationDegree = axisInfo.tickLabelRotationAngle,
-            hJust = axisInfo.tickLabelHJust,
-            vJust = axisInfo.tickLabelVJust,
             additionalOffsets = axisInfo.tickLabelAdditionalOffsets
         )
 

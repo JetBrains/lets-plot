@@ -205,8 +205,7 @@ internal class SquareFrameOfReference(
             horizontalAnchor = axisInfo.tickLabelHorizontalAnchor,
             verticalAnchor = axisInfo.tickLabelVerticalAnchor,
             rotationDegree = axisInfo.tickLabelRotationAngle,
-            hJust = axisInfo.tickLabelHJust,
-            vJust = axisInfo.tickLabelVJust,
+            bounds = axisInfo.tickLabelBoundsList,
             additionalOffsets = axisInfo.tickLabelAdditionalOffsets
         )
 
