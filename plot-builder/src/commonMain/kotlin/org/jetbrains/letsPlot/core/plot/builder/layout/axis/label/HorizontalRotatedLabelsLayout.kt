@@ -147,8 +147,6 @@ internal class HorizontalRotatedLabelsLayout(
             .labelHorizontalAnchor(horizontalAnchor)
             .labelVerticalAnchor(verticalAnchor)
             .labelRotationAngle(-myRotationAngle)
-            .hJust(hJust)
-            .vJust(vJust)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin)) // for debug drawing
             .build()

@@ -61,16 +61,16 @@ object AxisUtil {
 
         val majorBreaks = toClient(breakTransformedValues, dataDomain, coord, flipAxis, orientation.isHorizontal)
             .mapIndexedNotNull { i, clientTick ->
-                when (clientTick) {
-                    null, !in gridRect -> null
-                    else -> IndexedValue(i, Triple(breakLabels[i], breakTransformedValues[i], clientTick))
-                }
+                if (clientTick == null || clientTick !in gridRect) return@mapIndexedNotNull null
+
+                IndexedValue(i, Triple(breakLabels[i], breakTransformedValues[i], clientTick))
             }
             .filter { (i, br) ->
                 val (label, _, clientBreak) = br
-                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i) ?: DoubleVector.ZERO)
+                val bounds = labelAdjustments.bounds?.getOrNull(i)
                 val loc = if (orientation.isHorizontal) clientBreak.x else clientBreak.y
-                labelsMap.haveSpace(loc, label, labelOffset)
+                labelsMap.haveSpace(loc, label, labelOffset, bounds)
             }
 
         val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
@@ -180,10 +180,10 @@ object AxisUtil {
     ) {
         private val filledAreas = ArrayList<DoubleRectangle>()
 
-        fun haveSpace(loc: Double, label: String, labelOffset: DoubleVector): Boolean {
+        fun haveSpace(loc: Double, label: String, labelOffset: DoubleVector, bounds: DoubleRectangle?): Boolean {
             if (!isRelevant(rotationDegree)) return true
 
-            val rect = labelRect(loc, label, rotationDegree, labelOffset)
+            val rect = bounds ?: labelRect(loc, label, rotationDegree, labelOffset)
             // find overlap
             if (filledAreas.any { it.intersects(rect) }) {
                 // overlap - don't add this label
