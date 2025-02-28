@@ -35,6 +35,13 @@
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
 
+- In `nudge` position adjustments:
+  the ability to specify absolute shift values for `nudge`.
+  - `unit` parameter in `position_nudge()`.
+  - `nudge_unit` parameter in `geom_text()` and `geom_label()`
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/position_nudge_unit.ipynb).      
+
 - Theme:
   - Parameters `legend_ticks` and `legend_ticks_length` for fine-grained control over colorbar tick marks [[#1262](https://github.com/JetBrains/lets-plot/issues/1262)].
 
