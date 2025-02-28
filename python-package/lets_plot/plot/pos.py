@@ -156,8 +156,13 @@ def position_nudge(x=None, y=None, unit=None):
         Nudging width.
     y : float
         Nudging height.
-    unit : {'identity', 'size', 'px'}
+    unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
+        Possible values:
+
+        - 'identity': unit corresponds to a difference of 1 in data space.
+        - 'size': unit equals the diameter of a point with size 1.
+        - 'px': unit is measured in screen pixels.
 
     Returns
     -------
