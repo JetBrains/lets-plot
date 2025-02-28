@@ -939,8 +939,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     threshold : float, default=None
-        If a bin's `..count..` is less than the threshold, the bin will be removed.
-        Dropping empty bins is particularly useful for faceted plots with free scales.
+        If a bin's `..count..` is less than the threshold, it will be removed, but only if it is on the left or right edge of the histogram.
+        Dropping empty edge bins is particularly useful for faceted plots with free scales.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
