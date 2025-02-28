@@ -70,9 +70,9 @@
 - Error when using `stat='summary'` if the data contains NaN values [[#1301](https://github.com/JetBrains/lets-plot/issues/1301)].
 - Broken `plot_background` in `gggrid` [[#1124](https://github.com/JetBrains/lets-plot/issues/1124)].
 - `plot_background` not inheriting from `rect` [[#1278](https://github.com/JetBrains/lets-plot/issues/1278)]
-- gggrid: allow title and other labels for the entire figure [[#715](https://github.com/JetBrains/lets-plot/issues/715)].
-- GGbunch: overall title [[#321](https://github.com/JetBrains/lets-plot/issues/321)].
-- Expand discrete axis according to tile size with geom_tile [[#1284](https://github.com/JetBrains/lets-plot/issues/1284)].
-- geom_bin2d implodes when the disparity in axes units is large [[#1303](https://github.com/JetBrains/lets-plot/issues/1303)].
-- Livemap: parameters nudge_x and nudge_y have no effect on geom_text or geom_label [[#1048](https://github.com/JetBrains/lets-plot/issues/1048)].
-- Livemap: Add zooming-in for geom_text()/geom_label() [[#1059](https://github.com/JetBrains/lets-plot/issues/1059)].
+- `gggrid`: allow title and other labels for the entire figure [[#715](https://github.com/JetBrains/lets-plot/issues/715)].
+- `ggbunch`: overall title [[#321](https://github.com/JetBrains/lets-plot/issues/321)].
+- Expand discrete axis according to tile size with `geom_tile` [[#1284](https://github.com/JetBrains/lets-plot/issues/1284)].
+- `geom_bin2d` implodes when the disparity in axes units is large [[#1303](https://github.com/JetBrains/lets-plot/issues/1303)].
+- Livemap: parameters nudge_x and nudge_y have no effect on `geom_text` or `geom_label` [[#1048](https://github.com/JetBrains/lets-plot/issues/1048)].
+- Livemap: Add zooming-in for `geom_text()/geom_label()` [[#1059](https://github.com/JetBrains/lets-plot/issues/1059)].
