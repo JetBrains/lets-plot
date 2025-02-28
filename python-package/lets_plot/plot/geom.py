@@ -6968,8 +6968,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               label_format=None,
               na_text=None,
               nudge_x=None, nudge_y=None,
-              nudge_unit=None,
               size_unit=None,
+              nudge_unit=None,
               check_overlap=None,
               color_by=None,
               **other_args):
