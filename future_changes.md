@@ -35,8 +35,8 @@
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
 
-- In `nudge` position adjustments:
-  the ability to specify absolute shift values for `nudge`.
+- In the `nudge` position adjustment -
+  the ability to specify absolute shift values for `nudge`:
   - `unit` parameter in `position_nudge()`.
   - `nudge_unit` parameter in `geom_text()` and `geom_label()`
 
