@@ -1,5 +1,5 @@
+import base64
 import json
-import subprocess
 import uuid
 from IPython import get_ipython
 from IPython.core.magic import register_line_magic
@@ -11,6 +11,11 @@ ENABLE_COPY_SPEC_BUTTON_KEY = "_enable_spec_copy_button"
 
 ipython = get_ipython()
 
+def encode_base64(data: str) -> str:
+    """
+    Encode a string to Base64.
+    """
+    return base64.b64encode(data.encode()).decode()
 
 def lets_plot_repr_hook(plot):
     plot_html = plot._repr_html_()
@@ -19,19 +24,36 @@ def lets_plot_repr_hook(plot):
         return plot_html  # Return only the plot, no button
 
     plot_dict = standardize_dict(plot.as_dict())
+
     plot_json = json.dumps(plot_dict, indent=2)
+
+    # Encode JSON as Base64 or tags like <span> in markdown will be lost on copy to clipboard
+    plot_json_base64 = encode_base64(plot_json)
+
     plot_id = f"obj-{uuid.uuid4().hex}"  # Unique ID
 
     js_script = f"""
     <script>
+        function decodeBase64(base64String) {{
+            return atob(base64String);
+        }}
+
         function copyToClipboard(plotId, button) {{
-            navigator.clipboard.writeText(document.getElementById(plotId).textContent).then(() => {{
+            let base64Spec = document.getElementById(plotId).dataset.spec;
+            if (!base64Spec) {{
+                console.error("Plot spec not found:", plotId);
+                return;
+            }}
+            let rawText = decodeBase64(base64Spec);
+            navigator.clipboard.writeText(rawText).then(() => {{
                 button.textContent = 'Copied!';
                 button.style.opacity = '0.5';
                 setTimeout(() => {{
                     button.textContent = 'Copy Spec';
                     button.style.opacity = '1';
                 }}, 1000);
+            }}).catch(err => {{
+                console.error("Failed to copy:", err);
             }});
         }}
     </script>
@@ -45,14 +67,14 @@ def lets_plot_repr_hook(plot):
             {plot_html}
         </div>
         <button onclick="copyToClipboard('{plot_id}', this)"
-                style="cursor: pointer; width: 100px; padding: 5px 10px; font-size: 14px; 
+                style="cursor: pointer; min-width: 100px; padding: 5px 10px; font-size: 14px; 
                        background: #f5f5f5; border: 1px solid #ccc; border-radius: 5px; 
                        user-select: text; flex-shrink: 0; transition: opacity 0.3s ease;
                        white-space: nowrap; text-align: center;">
             Copy Spec
         </button>
     </div>
-    <pre id="{plot_id}" style="display:none;">{plot_json}</pre>
+    <div id="{plot_id}" data-spec="{plot_json_base64}" style="display:none;"></div>
     {js_script}
     """
 

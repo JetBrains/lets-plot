@@ -1,4 +1,4 @@
-# Debugging Jupyter Plots
+]# Debugging Jupyter Plots
 Unlike debugging a demo application, debugging a plot specification from Jupyter allows for quick iteration and immediate feedback on changes.
 
 To obtain the plot specification as a JSON string in a Jupyter notebook, follow these steps:
