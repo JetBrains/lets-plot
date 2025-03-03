@@ -702,7 +702,7 @@ def element_markdown(
         from lets_plot import *
         LetsPlot.setup_html()
 
-        ggplot() \
+        ggplot() \\
             + geom_blank() \\
             + labs(
                 title='*Hello*, **world**',
