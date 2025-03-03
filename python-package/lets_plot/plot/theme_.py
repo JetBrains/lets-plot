@@ -697,21 +697,20 @@ def element_markdown(
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         from lets_plot import *
         LetsPlot.setup_html()
-
-        ggplot() \\
-            + geom_blank() \\
-            + labs(
+        ggplot() + \\
+            geom_blank() + \\
+            labs(
                 title='*Hello*, **world**',
                 subtitle='_Simple plot_',
                 caption='*Powered by **lets-plot***',
                 x='Title **X**',
                 y='Title **Y**'
-            ) \\
-            + theme(title=element_markdown())
+            ) + \\
+            theme(title=element_markdown())
 
     """
     return {'markdown': True, **locals()}
