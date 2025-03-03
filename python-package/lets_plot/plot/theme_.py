@@ -697,15 +697,21 @@ def element_markdown(
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 13
 
-        import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(axis_text=element_text(color='#cb181d', face='bold_italic', margin=[5, 10]))
+
+        ggplot() \
+            + geom_blank() \\
+            + labs(
+                title='*Hello*, **world**',
+                subtitle='_Simple plot_',
+                caption='*Powered by **lets-plot***',
+                x='Title **X**',
+                y='Title **Y**'
+            ) \\
+            + theme(title=element_markdown())
 
     """
     return {'markdown': True, **locals()}
