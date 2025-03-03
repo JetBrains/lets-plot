@@ -1581,6 +1581,21 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                        fill='darkgreen') + \\
             ggsize(600, 450)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x, y = np.random.multivariate_normal(mean=[-98, 39], cov=[[100, 0], [0, 10]], size=100).T
+        ggplot() + geom_livemap() + \\
+            geom_hex(aes(x, y, fill='..density..'), \\
+                     bins=[10, 5], alpha=.5, show_legend=False)
+
     """
     return _geom('hex',
                  mapping=mapping,
