@@ -35,7 +35,7 @@ internal class SvgGElementMapper(
                 SvgNodeSubtreeGeneratingSynchronizer(
                     source,
                     target,
-                    SkiaTargetPeer(peer)
+                    CanvasTargetPeer(peer)
                 )
             )
         }

@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.getChildren
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.newElement
 import org.jetbrains.letsPlot.raster.shape.*
 
-internal class SkiaTargetPeer(
+internal class CanvasTargetPeer(
     private val peer: SvgCanvasPeer
 ) : TargetPeer<Element> {
     override fun appendChild(target: Element, child: Element) {
