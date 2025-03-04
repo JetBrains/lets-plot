@@ -41,12 +41,13 @@ class GeomProto(val geomKind: GeomKind) {
 
     fun preferredCoordinateSystem(layerConfig: OptionsAccessor): CoordProvider? {
         return when (geomKind) {
-            TILE,
-            BIN_2D,
-            CONTOUR,
-            CONTOURF,
-            DENSITY2D,
-            DENSITY2DF,
+//            TILE,
+//            BIN_2D,
+//            HEX,
+//            CONTOUR,
+//            CONTOURF,
+//            DENSITY2D,
+//            DENSITY2DF,
             RASTER,
             IMAGE -> CoordProviders.fixed(1.0)
 
@@ -67,6 +68,7 @@ class GeomProto(val geomKind: GeomKind) {
             DOT_PLOT -> DefaultSampling.DOT_PLOT
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
+            HEX -> DefaultSampling.HEX
             ERROR_BAR -> DefaultSampling.ERROR_BAR
             CROSS_BAR -> DefaultSampling.CROSS_BAR
             LINE_RANGE -> DefaultSampling.LINE_RANGE
@@ -105,7 +107,7 @@ class GeomProto(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE,
-            BLANK-> Samplings.NONE
+            BLANK -> Samplings.NONE
         }
     }
 
@@ -141,7 +143,8 @@ class GeomProto(val geomKind: GeomKind) {
                 mapOf(
                     Meta.NAME to PosProto.NUDGE,
                     Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
-                    Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y)
+                    Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y),
+                    Pos.Nudge.UNIT to layerOptions.getString(Geom.Text.NUDGE_UNIT)
                 )
             } else {
                 PosProto.IDENTITY
@@ -202,6 +205,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[Q_Q_2_LINE] = qq2LineDefaults()
             DEFAULTS[FREQPOLY] = freqpolyDefaults()
             DEFAULTS[BIN_2D] = bin2dDefaults()
+            DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
         }
 
@@ -350,6 +354,12 @@ class GeomProto(val geomKind: GeomKind) {
         private fun bin2dDefaults(): Map<String, Any> {
             return mapOf(
                 Layer.STAT to "bin2d"
+            )
+        }
+
+        private fun hexDefaults(): Map<String, Any> {
+            return mapOf(
+                Layer.STAT to "binhex"
             )
         }
 

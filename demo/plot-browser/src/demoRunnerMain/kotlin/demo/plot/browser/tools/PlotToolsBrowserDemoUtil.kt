@@ -13,22 +13,20 @@ import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJ
 import java.io.StringWriter
 
 internal object PlotToolsBrowserDemoUtil {
-    private const val DEMO_PROJECT = "demo/plot"
+    private const val DEMO_PROJECT_PATH = "demo/plot-browser"
     private const val ROOT_ELEMENT_ID = "root"
 
     fun show(
         title: String,
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector = DoubleVector(1000.0, 600.0),
-        applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 listOf(plotSpec),
                 plotSize,
-                applyBackendTransform,
                 backgroundColor
             )
         }
@@ -42,15 +40,8 @@ internal object PlotToolsBrowserDemoUtil {
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector,
-        applyBackendTransform: Boolean,
         backgroundColor: String
     ): String {
-
-        val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
-            "buildPlotFromProcessedSpecs"
-        } else {
-            "buildPlotFromRawSpecs"
-        }
 
         val plotSpecJs = mapToJsObjectInitializer(plotSpecList.first())
 
@@ -91,22 +82,27 @@ internal object PlotToolsBrowserDemoUtil {
                     type = "text/javascript"
                     unsafe {
                         +"""
-                        |
-                        |var plotSpec = $plotSpecJs;
-                        |var rootElement = document.getElementById("root");
-                        |
-                        |// Toolbar
-                        |var toolbar = new LetsPlot.tools.DefaultToolbar();
-                        |rootElement.appendChild(toolbar.getElement());
-                        |
-                        |var parentElement = document.createElement('div');
-                        |rootElement.appendChild(parentElement);
-                        |var fig = LetsPlot.$plotFun(plotSpec, ${plotSize.x}, ${plotSize.y}, parentElement);
-                        |
-                        |toolbar.bind(fig);
-                        |
+                       |  
+                       |  var plotSpec = $plotSpecJs;
+                       |  var rootElement = document.getElementById("root");
+                       |  
+                       |  // Toolbar
+                       |  var toolbar = new LetsPlot.tools.DefaultToolbar();
+                       |  rootElement.appendChild(toolbar.getElement());
+                       |  
+                       |  var parentElement = document.createElement('div');
+                       |  rootElement.appendChild(parentElement);
+                       |  
+                       |  const sizing = {
+                       |      width: ${plotSize.x},
+                       |      height: ${plotSize.y}
+                       |  };
+                       |  
+                       |  var fig = LetsPlot.buildPlotFromRawSpecs(plotSpec, parentElement, sizing);
+                       |  
+                       |  toolbar.bind(fig);
+                       |  
                     """.trimMargin()
-
                     }
                 }
             }

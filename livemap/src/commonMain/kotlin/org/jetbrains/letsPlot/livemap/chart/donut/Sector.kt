@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.livemap.chart.donut
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.chart.PieSpecComponent
 import kotlin.math.PI
@@ -75,13 +76,20 @@ internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): Lis
         else -> abs(slice) / sum
     }.let { PI * 2.0 * it }
 
-    // the first slice goes to the left of 12 o'clock and others go clockwise
-    var currentAngle = -PI / 2.0
-    currentAngle -= angle(pieSpec.sliceValues.first())
+    val startAngle = if (pieSpec.startAngle != null) {
+        toRadians(pieSpec.startAngle!!)
+    } else {
+        // the first slice goes to the left of 12 o'clock and others go clockwise
+        angle(pieSpec.sliceValues.first()) * (if (pieSpec.clockwise) -1 else 1)
+    }
+
+    // Starts at 12 o'clock
+    var currentAngle = -PI / 2.0 + startAngle
 
     val radius = pieSpec.radius * scaleFactor
 
-    val pieIndices = pieSpec.sliceValues.indices
+    val pieIndices = pieSpec.sliceValues.indices.let { it.takeIf { pieSpec.clockwise } ?: it.reversed() }
+
     val explodedSectors = pieIndices.mapNotNull { index ->
         val explode = pieSpec.explodeValues?.get(index)
         index.takeIf { explode != null && explode != 0.0  }

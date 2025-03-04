@@ -34,8 +34,7 @@ class MonolithicCommonTest {
                         )
                     )
                 ),
-            ),
-            frontendOnly = false
+            )
         )
 
         assertFalse(PlotConfig.isFailure(plotSpec))
@@ -66,8 +65,7 @@ class MonolithicCommonTest {
                         )
                     )
                 )
-            ),
-            frontendOnly = false
+            )
         )
 
         assertTrue(PlotConfig.isFailure(plotSpec))

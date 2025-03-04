@@ -6,18 +6,17 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.commons.values.FontFace
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.*
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_X
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
@@ -33,6 +32,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_SPACING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TICKS
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_ONTOP
@@ -79,6 +80,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.HJUST to 0.0,
                 Elem.VJUST to 0.5,
                 Elem.COLOR to SymbolicColor.BLACK,
+                Elem.MARKDOWN to false
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
@@ -100,18 +102,16 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.Margin.BOTTOM to 4.0,
             ),
-//            TEXT_WIDTH_FACTOR to 1.0,
+
             PANEL_BORDER_RECT to ELEMENT_BLANK,
             PANEL_BORDER_ONTOP to true,
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             LEGEND_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             AXIS_ONTOP to true,
@@ -127,6 +127,16 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.Margin.LEFT to 3.0,
                 // Currently 'angle' is supported for AXIS_TEXT only: NaN means no rotation.
                 Elem.ANGLE to Double.NaN
+            ),
+
+            AXIS_TEXT_X to mapOf(
+                Elem.HJUST to Double.NaN,
+                Elem.VJUST to Double.NaN,
+            ),
+
+            AXIS_TEXT_Y to mapOf(
+                Elem.HJUST to Double.NaN,
+                Elem.VJUST to Double.NaN,
             ),
 
             AXIS_TITLE to mapOf(
@@ -174,6 +184,16 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_BOX_JUST to LegendBoxJustification.AUTO,
             LEGEND_BOX_SPACING to 5.0,
 
+            // Colorbar
+            LEGEND_TICKS_LENGTH to 4.0,
+            LEGEND_TICKS to mapOf(
+                Elem.SIZE to 1.0,
+// COLOR is undefined because tick color by default should inherit legend's background FILL color.
+//                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.LINETYPE to NamedLineType.SOLID
+            ),
+
+
             FACET_STRIP_TEXT to mapOf(
                 Elem.HJUST to 0.5,
                 Elem.Margin.TOP to 3.0,
@@ -189,6 +209,11 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             TOOLTIP_TITLE_TEXT to mapOf(
                 Elem.FONT_FACE to FontFace.BOLD,
+            ),
+
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to SymbolicColor.WHITE,
+                Elem.FILL to SymbolicColor.BLACK,
             ),
 
             PLOT_MARGIN to mapOf(

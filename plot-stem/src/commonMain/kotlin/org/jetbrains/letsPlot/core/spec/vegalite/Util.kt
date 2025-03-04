@@ -5,17 +5,32 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
-import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
+import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
+import org.jetbrains.letsPlot.core.spec.plotson.GuideOptions.Companion.guide
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.ENCODING
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
-import org.jetbrains.letsPlot.core.spec.vegalite.data.*
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.TimeUnit
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.VALUE
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Title
 
 internal object Util {
+    fun getDefinedChannelEncodings(encoding: Map<*, *>): Map<String, Map<*, *>> {
+        return Channels
+            .filter(encoding::containsKey)
+            .associateWith { channel -> encoding.getMap(channel) ?: emptyMap() }
+    }
+
     internal fun readMark(spec: Any): Pair<String, Map<*, *>> {
         val options = when (spec) {
             is String -> mapOf(VegaOption.Mark.TYPE to spec)
@@ -27,21 +42,23 @@ internal object Util {
         return Pair(mark, options)
     }
 
-    fun transformData(vegaData: Map<String, Any>): Map<String, List<Any?>> {
-        val data = if (VegaOption.Data.URL in vegaData) {
-            val url = vegaData.getString(VegaOption.Data.URL) ?: error("URL is not specified")
-            val json = when (url) {
-                "data/penguins.json" -> Penguins.json
-                "data/cars.json" -> Cars.json
-                "data/seattle-weather.csv" -> SeattleWeather.json
-                "data/population.json" -> Population.json
-                "data/barley.json" -> Barley.json
-                "data/stocks.csv" -> Stocks.json
-                else -> error("Unsupported URL: $url")
+    fun transformTitle(vegaTitle: Any?): TitleOptions? {
+        return when (vegaTitle) {
+            is String -> title {
+                titleText = vegaTitle
             }
-            mapOf(VegaOption.Data.VALUES to JsonSupport.parse(json))
-        } else vegaData
-        val rows = data.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
+
+            is Map<*, *> -> title {
+                titleText = vegaTitle.getString(Title.TEXT)
+                subtitleText = vegaTitle.getString(Title.SUBTITLE)
+            }
+
+            else -> null
+        }
+    }
+
+    fun transformData(vegaData: Map<String, Any>): Map<String, List<Any?>> {
+        val rows = vegaData.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
         val columnKeys = rows.flatMap { it.keys.filterNotNull() }.distinct().map(Any::toString)
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
@@ -53,6 +70,8 @@ internal object Util {
 
     fun isContinuous(channel: String, encoding: Map<*, *>): Boolean {
         val channelEncoding = encoding.getMap(channel) ?: return false
+        if (channel == Channel.LONGITUDE) return true
+        if (channel == Channel.LATITUDE) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.QUANTITATIVE) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.TEMPORAL) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.ORDINAL) return false
@@ -75,15 +94,55 @@ internal object Util {
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
-        return encoding.entries.map { (channel, encoding) ->
-                channel as? String ?: return@map emptyList()
-                encoding as? Map<*, *> ?: return@map emptyList()
-                val field = encoding.getString(Encoding.FIELD) ?: return@map emptyList()
-                val aesthetics = channelToAes(channel, customChannelMapping)
-                aesthetics.map { aes -> aes to field}
-            }
+
+        return getDefinedChannelEncodings(encoding).map { (channel, enc) ->
+            val field = enc.getString(Encoding.FIELD) ?: return@map emptyList()
+            val aesthetics = channelToAes(channel, customChannelMapping)
+            aesthetics.map { aes -> aes to field }
+        }
             .flatten()
             .fold(Mapping(groupingVar)) { mapping, (aes, field) -> mapping + (aes to field) }
+    }
+
+    fun transformPlotGuides(
+        plotGuides: Map<Aes<*>, GuideOptions>?,
+        encoding: Map<*, *>,
+        customChannelMapping: List<Pair<String, Aes<*>>>
+    ): Map<Aes<*>, GuideOptions>? {
+        val generatedTitles = run {
+            val titleByAes = getDefinedChannelEncodings(encoding)
+                .mapKeys { (channel, _) -> channelToAes(channel, customChannelMapping).firstOrNull() }
+                .mapValues { (_, definition) -> definition.getString(Encoding.TITLE) }
+                .filterNotNullKeys()
+                .filterNotNullValues()
+
+            if (titleByAes.isEmpty()) return plotGuides
+
+            // fix cases when single channel is mapped to multiple aesthetics
+            // E.g., COLOR mapped to fill/color, but only fill has a title.
+            // LP will build two guides, because one have a title and another doesn't.
+            // To merge them into one guide we need give explicit names to all aesthetics.
+
+            val colorTitle = titleByAes[Aes.COLOR]
+            val fillTitle = titleByAes[Aes.FILL]
+
+            val dupColorTitle = when {
+                colorTitle != null && fillTitle == null -> mapOf(Aes.FILL to colorTitle)
+                colorTitle == null && fillTitle != null -> mapOf(Aes.COLOR to fillTitle)
+                else -> emptyMap()
+            }
+
+            // Titles set by user override generated titles
+            titleByAes + dupColorTitle
+        }
+
+        val mergedGuides = generatedTitles.mapValues { guide { } } + (plotGuides ?: emptyMap())
+
+        mergedGuides.forEach { (aes, guide) ->
+            guide.title = generatedTitles[aes]
+        }
+
+        return mergedGuides
     }
 
     private fun channelToAes(
@@ -100,7 +159,9 @@ internal object Util {
             Channel.SIZE to Aes.SIZE,
             Channel.ANGLE to Aes.ANGLE,
             Channel.SHAPE to Aes.SHAPE,
-            Channel.TEXT to Aes.LABEL
+            Channel.TEXT to Aes.LABEL,
+            Channel.LONGITUDE to Aes.X,
+            Channel.LATITUDE to Aes.Y,
         ).groupBy { (ch, _) -> ch }
 
         @Suppress("NAME_SHADOWING")
@@ -112,13 +173,28 @@ internal object Util {
         return channelToAes[channel] ?: emptyList()
     }
 
-    fun LayerOptions.applyConstants(markSpec: Map<*, *>, customChannelMapping: List<Pair<String, Aes<*>>>) {
-        markSpec.forEach { (prop, value) ->
-            channelToAes(prop.toString(), customChannelMapping)
-                .forEach { aes ->
-                    const(aes, value)
-                }
+    fun LayerOptions.applyConstants(
+        layerSpec: Map<*, *>,
+        customChannelMapping: List<Pair<String, Aes<*>>>,
+        mapping: Mapping
+    ) {
+        fun readChannel(map: Map<*, *>, vararg path: Any): Map<Aes<*>, Any> {
+            return Channels
+                .filter { channel -> map.has(channel, *path) }
+                .map { channel -> channelToAes(channel, customChannelMapping) to map.read(channel, *path)!! }
+                .flatMap { (aesthetics, value) -> aesthetics.map { aes -> aes to value } }
+                .toMap()
         }
+
+        val markSpec = layerSpec.getMap(VegaOption.MARK) ?: emptyMap()
+        val markChannelProps = readChannel(markSpec)
+
+        val encoding = layerSpec.getMap(ENCODING) ?: emptyMap()
+        val encodingChannelValues = readChannel(encoding, VALUE)
+
+        val constants = (markChannelProps + encodingChannelValues - mapping.aesthetics.keys)
+
+        constants.forEach { (aes, value) -> const(aes, value) }
     }
 
     // Data should be in columnar format, not in Vega format, i.e., a list of values rather than a list of objects.
@@ -129,10 +205,8 @@ internal object Util {
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        encodingVegaSpec.entries.forEach { (channel, encoding) ->
-            channel as? String ?: return@forEach
-            encoding as? Map<*, *> ?: return@forEach
-
+        getDefinedChannelEncodings(encodingVegaSpec).forEach { (channel, encoding) ->
+            // as? Map<*, *> ?: return@forEach
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
                 // Yet need to check sorting and other options - they may affect series_meta or mapping_meta
@@ -140,15 +214,23 @@ internal object Util {
             }
 
             val field = encoding.getString(Encoding.FIELD) ?: return@forEach
-            if (encoding[Encoding.TYPE] == Encoding.Types.TEMPORAL
-                || encoding.contains(Encoding.TIMEUNIT)
-            ) {
+            if (encoding[Encoding.TYPE] == Encoding.Types.TEMPORAL || encoding.contains(Encoding.TIMEUNIT)) {
                 dataMeta.appendSeriesAnnotation {
                     type = SeriesAnnotationOptions.Types.DATE_TIME
                     column = field
                 }
             }
 
+            //In Vega-Lite, applying a time unit automatically converts the field to discrete
+            if (encoding.contains(Encoding.TIMEUNIT)) {
+                dataMeta.appendMappingAnnotation {
+                    aes = channelToAes(channel, customChannelMapping).firstOrNull()
+                    annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
+                    parameters {
+                        label = field
+                    }
+                }
+            }
 
             if (!isContinuous(channel, encodingVegaSpec)) {
                 if (data?.get(field)?.all { it is String } != true) {
@@ -172,6 +254,30 @@ internal object Util {
 
         return dataMeta
     }
+
+    fun applyTimeUnit(
+        data: Map<String, List<Any?>>,
+        encodingVegaSpec: Map<*, *>
+    ): Map<String, List<Any?>> {
+        Channels.forEach { channel ->
+            val field = encodingVegaSpec.getString(channel, Encoding.FIELD) ?: return@forEach
+            val timeUnit = encodingVegaSpec.getString(channel, Encoding.TIMEUNIT) ?: return@forEach
+            val timeSeries = data[field] ?: return@forEach
+
+            val adjustedTimeSeries = timeSeries.map {
+                if (it !is Number) return@map null
+                val instant = Instant(it.toLong())
+                val dateTime = UTC.toDateTime(instant)
+                val adjustedDateTime = applyTimeUnit(dateTime, timeUnit)
+                UTC.toInstant(adjustedDateTime).timeSinceEpoch
+            }
+
+            data.write(field) { adjustedTimeSeries }
+        }
+
+        return data
+    }
+
 
     fun transformPositionAdjust(encodings: Map<*, *>, stat: StatOptions?): PositionOptions? {
         run {
@@ -249,17 +355,41 @@ internal object Util {
         val newXDomain = union(plotOptions.coord?.xLim, domain(Channel.X))
         val newYDomain = union(plotOptions.coord?.yLim, domain(Channel.Y))
 
-        if (newXDomain != null || newYDomain != null) {
-            if (plotOptions.coord == null) {
-                plotOptions.coord = coord {
-                    name = CARTESIAN
-                }
-            }
+        val coordName = when {
+            Channel.LONGITUDE in encoding -> CoordName.MAP
+            Channel.LATITUDE in encoding -> CoordName.MAP
+            else -> null
+        }
 
-            plotOptions.coord!!.apply {
+        if (newXDomain != null || newYDomain != null || coordName != null) {
+            plotOptions.coord = (plotOptions.coord ?: CoordOptions()).apply {
+                name = coordName ?: CARTESIAN
                 xLim = newXDomain
                 yLim = newYDomain
             }
         }
+    }
+
+    internal fun applyTimeUnit(dateTime: DateTime, unitsTemplate: String): DateTime {
+        var year = 0
+        var month = Month.JANUARY
+        var day = 1
+        var hours = 0
+        var minutes = 0
+        var seconds = 0
+        var ms = 0
+
+        if (TimeUnit.YEAR in unitsTemplate) year = dateTime.year
+        if (TimeUnit.MONTH in unitsTemplate) month = Month.values()[dateTime.month.ordinal()]
+        if (TimeUnit.DAY in unitsTemplate) day = dateTime.day
+        if (TimeUnit.HOURS in unitsTemplate) hours = dateTime.time.hours
+        if (TimeUnit.MINUTES in unitsTemplate) minutes = dateTime.time.minutes
+        if (TimeUnit.SECONDS in unitsTemplate) seconds = dateTime.time.hours
+        if (TimeUnit.MILLISECONDS in unitsTemplate) ms = dateTime.time.milliseconds
+
+        return DateTime(
+            Date(day = day, month = month, year = year),
+            Time(hours = hours, minutes = minutes, seconds = seconds, milliseconds = ms)
+        )
     }
 }

@@ -52,7 +52,7 @@ internal class HorizontalFixedBreaksLabelsLayout constructor(
         )
 
         if (theme.rotateLabels()) {
-            return rotatedLayout(theme.labelAngle()).doLayout(axisDomain, axisLength)
+            return rotatedLayout().doLayout(axisDomain, axisLength)
         }
 
         // Don't run this expensive code when num of breaks is too large.
@@ -114,12 +114,11 @@ internal class HorizontalFixedBreaksLabelsLayout constructor(
         )
     }
 
-    private fun rotatedLayout(angle: Double): AxisLabelsLayout {
+    private fun rotatedLayout(): AxisLabelsLayout {
         return HorizontalRotatedLabelsLayout(
             orientation,
             breaks,
-            theme,
-            angle
+            theme
         )
     }
 

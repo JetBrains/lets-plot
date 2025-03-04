@@ -17,6 +17,8 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val labelHorizontalAnchor: Text.HorizontalAnchor?
     val labelVerticalAnchor: Text.VerticalAnchor?
     val labelRotationAngle: Double
+    val labelHJust: Double?
+    val labelVJust: Double?
     internal val isOverlap: Boolean
     val labelBoundsList: List<DoubleRectangle>?
 
@@ -28,6 +30,8 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
         this.labelHorizontalAnchor = b.myLabelHorizontalAnchor
         this.labelVerticalAnchor = b.myLabelVerticalAnchor
         this.labelRotationAngle = b.myLabelRotationAngle
+        this.labelHJust = b.myLabelHJust
+        this.labelVJust = b.myLabelVJust
         this.labelBoundsList = b.myLabelBoundsList
     }
 
@@ -39,6 +43,8 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
         internal var myLabelHorizontalAnchor: Text.HorizontalAnchor? = null
         internal var myLabelVerticalAnchor: Text.VerticalAnchor? = null
         internal var myLabelRotationAngle = 0.0
+        internal var myLabelHJust: Double? = null
+        internal var myLabelVJust: Double? = null
         internal var myLabelBoundsList: List<DoubleRectangle>? = null
 
         fun breaks(breaks: ScaleBreaks): Builder {
@@ -78,6 +84,16 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
 
         fun labelBoundsList(boundsList: List<DoubleRectangle>): Builder {
             myLabelBoundsList = boundsList
+            return this
+        }
+
+        fun hJust(hJust: Double): Builder {
+            myLabelHJust = hJust
+            return this
+        }
+
+        fun vJust(vJust: Double): Builder {
+            myLabelVJust = vJust
             return this
         }
 

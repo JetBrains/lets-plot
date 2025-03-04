@@ -19,14 +19,9 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 object SpecTransformBackendUtil {
     private val LOG = PortableLogging.logger(SpecTransformBackendUtil::class)
 
-
-    fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
-        return processTransform(plotSpecRaw, false)
-    }
-
     internal fun processTransform(
         plotSpecRaw: MutableMap<String, Any>,
-        simulateFailure: Boolean
+        simulateFailure: Boolean = false
     ): MutableMap<String, Any> {
         var vegaLiteConverterSummary: List<*>? = null
 
@@ -85,17 +80,11 @@ object SpecTransformBackendUtil {
         }
     }
 
-    private fun processTransformInSubPlots(compositeFigureSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
-        if (!compositeFigureSpecRaw.containsKey(Option.SubPlots.FIGURES)) {
-            compositeFigureSpecRaw[Option.SubPlots.FIGURES] = emptyList<Any>()
-            return compositeFigureSpecRaw
+    private fun processTransformInSubPlots(compositeFigureSpecRaw: Map<String, Any>): MutableMap<String, Any> {
+        return HashMap<String, Any>(compositeFigureSpecRaw).apply {
+            val figures = (this[Option.SubPlots.FIGURES] as? List<*>) ?: emptyList<Any>()
+            this[Option.SubPlots.FIGURES] = processTransformFigureList(figures)
         }
-
-        val elementListRaw = compositeFigureSpecRaw[Option.SubPlots.FIGURES] as List<*>
-        val elementListProcessed = processTransformFigureList(elementListRaw)
-        val compositeFigureSpec = HashMap<String, Any>(compositeFigureSpecRaw)
-        compositeFigureSpec[Option.SubPlots.FIGURES] = elementListProcessed
-        return compositeFigureSpec
     }
 
     private fun processTransformFigureList(figureListRaw: List<*>): List<Any> {

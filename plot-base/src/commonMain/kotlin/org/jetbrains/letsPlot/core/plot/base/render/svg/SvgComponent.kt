@@ -5,14 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
+import org.jetbrains.letsPlot.commons.event.Event
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Companion.CLIP_CIRCLE_JFX
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 
 abstract class SvgComponent {
     protected var isBuilt: Boolean = false
@@ -164,12 +168,39 @@ abstract class SvgComponent {
         add(defs)
 
         rootGroup.clipPath().set(SvgIRI(clipPathElement.id().get()!!))
-        rootGroup.setAttribute(CLIP_CIRCLE_JFX, DoubleRectangle.XYWH(center.x - radius, center.y - radius, radius * 2, radius * 2)) // JFX workaround
+        rootGroup.setAttribute(
+            CLIP_CIRCLE_JFX,
+            DoubleRectangle.XYWH(center.x - radius, center.y - radius, radius * 2, radius * 2)
+        ) // JFX workaround
     }
 
     open fun addClassName(className: String) {
         myRootGroup.addClass(className)
     }
+
+    fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
+        val rect = SvgRectElement(r)
+        rect.strokeColor().set(color)
+        rect.strokeWidth().set(1.0)
+        rect.fillOpacity().set(0.0)
+        message?.run {
+            onMouseMove(rect, "$message: $r")
+        }
+        add(rect)
+    }
+
+    /**
+     * Only used when DEBUG_DRAWING is ON.
+     */
+    private fun onMouseMove(e: SvgElement, message: String) {
+        e.addEventHandler(SvgEventSpec.MOUSE_MOVE, object :
+            SvgEventHandler<Event> {
+            override fun handle(node: SvgNode, e: Event) {
+                println(message)
+            }
+        })
+    }
+
 
     companion object {
         const val CLIP_PATH_ID_PREFIX = "c"

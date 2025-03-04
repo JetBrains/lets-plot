@@ -10,11 +10,11 @@ import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.io.StringWriter
 
 object PlotConfigBrowserDemoUtil {
-    private const val DEMO_PROJECT = "demo/plot-browser"
+    private const val DEMO_PROJECT_PATH = "demo/plot-browser"
     private const val ROOT_ELEMENT_ID = "root"
 
     fun show(
@@ -24,7 +24,7 @@ object PlotConfigBrowserDemoUtil {
         applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 plotSpecList,
@@ -47,19 +47,13 @@ object PlotConfigBrowserDemoUtil {
         backgroundColor: String
     ): String {
 
-        val plotFun = if (applyBackendTransform) {  // see: MonolithicJs
-            "buildPlotFromProcessedSpecs"
-        } else {
-            "buildPlotFromRawSpecs"
-        }
-
         val plotSpecListJs = StringBuilder("[\n")
 
         var first = true
         for (spec in plotSpecList) {
             @Suppress("NAME_SHADOWING")
             val spec = if (applyBackendTransform) {
-                SpecTransformBackendUtil.processTransform(spec)
+                MonolithicCommon.processRawSpecs(spec)
             } else {
                 spec  // raw: JS is going to apply transform on the client side
             }
@@ -67,6 +61,13 @@ object PlotConfigBrowserDemoUtil {
             plotSpecListJs.append(mapToJsObjectInitializer(spec))
         }
         plotSpecListJs.append("\n]")
+
+        val plotFun = if (applyBackendTransform) {
+            "buildPlotFromProcessedSpecs"
+        } else {
+            // Do "backend transform" in JS.
+            "buildPlotFromRawSpecs"
+        }
 
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -104,14 +105,12 @@ object PlotConfigBrowserDemoUtil {
                         |
                         |   var parentElement = document.createElement('div');
                         |   document.getElementById("root").appendChild(parentElement);
-                        |   var options = {
-                        |       sizing: {
-                        |           width: ${plotSize.x},
-                        |           height: ${plotSize.y}
-                        |       }
+                        |   const sizing = {
+                        |       width: ${plotSize.x},
+                        |       height: ${plotSize.y}
                         |   };
                         |   
-                        |   LetsPlot.$plotFun(spec, -1, -1, parentElement, options);
+                        |   LetsPlot.$plotFun(spec, parentElement, sizing);
                         |});
                     """.trimMargin()
 

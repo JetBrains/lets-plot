@@ -8,10 +8,9 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_VIEW_TOOLBOX_HTML
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotHtmlHelper {
     private val LOG = PortableLogging.logger(PlotHtmlHelper::class)
@@ -100,101 +99,15 @@ object PlotHtmlHelper {
     }
 
     fun getDynamicDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>): String {
-        // server-side transforms: statistics, sampling, etc.
-        @Suppress("NAME_SHADOWING")
-        val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
-        val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return dynamicDisplayHtml(
-            plotSpecJs,
-            showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
+        return getDisplayHtmlForRawSpec(
+            plotSpec,
+            SizingPolicy.notebookCell(),
+            dynamicScriptLoading = true,
+            forceImmediateRender = false,
+            responsive = false,
+            removeComputationMessages = false,
+            logComputationMessages = false,
         )
-    }
-
-    private fun dynamicDisplayHtml(
-        plotSpecAsJsObjectInitializer: String,
-        showToolbar: Boolean
-    ): String {
-        val outputId = randomString(6)
-        return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |   
-            |   (function() {
-            |   // ----------
-            |   
-            |   var containerDiv = document.getElementById("$outputId");
-            |   var observer = new ResizeObserver(function(entries) {
-            |       for (let entry of entries) {
-            |           var width = containerDiv.clientWidth
-            |           if (entry.contentBoxSize && width > 0) {
-            |           
-            |               // Render plot
-            |               if (observer) {
-            |                   observer.disconnect();
-            |                   observer = null;
-            |               }
-
-            |               var plotSpec=$plotSpecAsJsObjectInitializer;
-            |               window.letsPlotCall(function() {
-            |       
-${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}               
-            |               
-            |                   var options = {
-            |                       sizing: {
-            |                           width_mode: "min",
-            |                           height_mode: "scaled",
-            |                           width: width
-            |                       }
-            |                   };
-            |                   var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer, options);
-            |                   if (toolbar) {
-            |                     toolbar.bind(fig);
-            |                   }
-            |               });
-            |               
-            |               break;
-            |           }
-            |       }
-            |   });
-            |   
-            |   observer.observe(containerDiv);
-            |   
-            |   // ----------
-            |   })();
-            |   
-            |   </script>
-        """.trimMargin()
-    }
-
-    /**
-     * Common part in both, "dynamic" and "static" html-s.
-     *
-     * Context: defined 'containerDiv' element.
-     *
-     * Effect: defined 'plotContainer' element and (conditionally) the 'toolbar' element.
-     */
-    private fun plotContainerHtmlSnippet(showToolbar: Boolean): String {
-        return if (showToolbar) {
-            """
-            |               // Wrapper for toolbar and chart
-            |               var outputDiv = document.createElement('div');
-            |               outputDiv.setAttribute('style', 'display: inline-block;');
-            |               containerDiv.appendChild(outputDiv);
-            |           
-            |               // Toolbar
-            |               var toolbar = new LetsPlot.tools.DefaultToolbar();
-            |               outputDiv.appendChild(toolbar.getElement());
-            |               
-            |               // Plot
-            |               var plotContainer = document.createElement('div');
-            |               outputDiv.appendChild(plotContainer);
-            """.trimIndent()
-        } else {
-            """
-            |               var toolbar = null;
-            |               var plotContainer = containerDiv;
-            """.trimIndent()
-        }
     }
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
@@ -207,9 +120,35 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}
         removeComputationMessages: Boolean = false,
         logComputationMessages: Boolean = false
     ): String {
+        val sizingPolicy = when (size) {
+            null -> SizingPolicy.notebookCell()
+            else -> SizingPolicy.fixed(size.x, size.y)
+        }
+
+        return getDisplayHtmlForRawSpec(
+            plotSpec,
+            sizingPolicy,
+            dynamicScriptLoading = false,
+            forceImmediateRender = false,
+            responsive = false,
+            removeComputationMessages = removeComputationMessages,
+            logComputationMessages = logComputationMessages
+        )
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun getDisplayHtmlForRawSpec(
+        plotSpec: MutableMap<String, Any>,
+        sizingPolicy: SizingPolicy,
+        dynamicScriptLoading: Boolean,
+        forceImmediateRender: Boolean,
+        responsive: Boolean,
+        removeComputationMessages: Boolean,
+        logComputationMessages: Boolean
+    ): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
-        val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
+        val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
 
         if (logComputationMessages) {
             PlotConfigUtil.findComputationMessages(plotSpec).forEach { LOG.info { "[when HTML generating] $it" } }
@@ -221,111 +160,103 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}
         }
 
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return when (size) {
-            null ->
-                staticDisplayHtmlWithRelativeSizing(
-                    plotSpecJs,
-                    showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
-                )
+        return getDisplayHtmlForProcessedSpecs(
+            plotSpecJs,
+            sizingPolicy,
+            dynamicScriptLoading = dynamicScriptLoading,
+            forceImmediateRender = forceImmediateRender,
+            responsive = responsive,
+        )
+    }
 
-            else ->
-                staticDisplayHtmlWithFixedSizing(
-                    plotSpecJs,
-                    size,
-                    showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
-                )
+    private fun getDisplayHtmlForProcessedSpecs(
+        plotSpecAsJsObjectInitializer: String,
+        sizingPolicy: SizingPolicy,
+        dynamicScriptLoading: Boolean,
+        forceImmediateRender: Boolean,
+        responsive: Boolean,
+    ): String {
+        val outputId = randomString(6)
+
+        return """
+        |   <div id="$outputId"></div>
+        |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
+        |   
+        |   (function() {
+        |   // ----------
+        |   
+        |   const forceImmediateRender = ${forceImmediateRender};
+        |   const responsive = ${responsive};
+        |   
+        |   let sizing = {
+        |       width_mode: "${sizingPolicy.widthMode}",
+        |       height_mode: "${sizingPolicy.heightMode}",
+        |       width: ${sizingPolicy.width}, 
+        |       height: ${sizingPolicy.height} 
+        |   };
+        |   
+        |   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+        |   if (preferredWidth !== undefined) {
+        |       sizing = {
+        |           width_mode: 'FIXED',
+        |           height_mode: 'SCALED',
+        |           width: parseFloat(preferredWidth)
+        |       };
+        |   }
+        |   
+        |   const containerDiv = document.getElementById("$outputId");
+        |   let fig = null;
+        |   
+        |   function renderPlot() {
+        |       if (fig === null) {
+        |           const plotSpec = $plotSpecAsJsObjectInitializer;
+        |           ${
+            if (dynamicScriptLoading)
+                "window.letsPlotCall(function() { " +
+                        "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing); });"
+            else
+                "fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, containerDiv, sizing);"
         }
-    }
-
-    private fun staticDisplayHtmlWithFixedSizing(
-        plotSpecAsJsObjectInitializer: String,
-        size: DoubleVector,
-        showToolbar: Boolean,
-    ): String {
-        val outputId = randomString(6)
-        return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |   
-            |   (function() {
-            |   // ----------
-            |   
-            |       var plotSpec=$plotSpecAsJsObjectInitializer;
-            |       var containerDiv = document.getElementById("$outputId");
-            |       
-${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}               
-            |               
-            |       var options = {
-            |           sizing: {
-            |               width_mode: "fixed",
-            |               height_mode: "fixed",
-            |               width: ${size.x},
-            |               height: ${size.y}
-            |           }
-            |       };
-            |       var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer, options);
-            |       if (toolbar) {
-            |         toolbar.bind(fig);
-            |       }
-            |       
-            |   // ----------
-            |   })();
-            |   
-            |   </script>
-        """.trimMargin()
-    }
-
-    private fun staticDisplayHtmlWithRelativeSizing(
-        plotSpecAsJsObjectInitializer: String,
-        showToolbar: Boolean,
-    ): String {
-        val outputId = randomString(6)
-        return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |   
-            |   (function() {
-            |   // ----------
-            |   
-            |   var containerDiv = document.getElementById("$outputId");
-            |   var observer = new ResizeObserver(function(entries) {
-            |       for (let entry of entries) {
-            |           var width = containerDiv.clientWidth
-            |           if (entry.contentBoxSize && width > 0) {
-            |           
-            |               // Render plot
-            |               if (observer) {
-            |                   observer.disconnect();
-            |                   observer = null;
-            |               }
-
-            |               var plotSpec=$plotSpecAsJsObjectInitializer;
-            |       
-${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}               
-            |               
-            |               var options = {
-            |                   sizing: {
-            |                       width_mode: "min",
-            |                       height_mode: "scaled",
-            |                       width: width
-            |                   }
-            |               };
-            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer, options);
-            |               if (toolbar) {
-            |                 toolbar.bind(fig);
-            |               }
-            |               
-            |               break;
-            |           }
-            |       }
-            |   });
-            |   
-            |   observer.observe(containerDiv);
-            |   
-            |   // ----------
-            |   })();
-            |   
-            |   </script>
-        """.trimMargin()
+        |       } else {
+        |           fig.updateView({});
+        |       }
+        |   }
+        |   
+        |   const renderImmediately = 
+        |       forceImmediateRender || (
+        |           sizing.width_mode === 'FIXED' && 
+        |           (sizing.height_mode === 'FIXED' || sizing.height_mode === 'SCALED')
+        |       );
+        |   
+        |   if (renderImmediately) {
+        |       renderPlot();
+        |   }
+        |   
+        |   if (!renderImmediately || responsive) {
+        |       // Set up observer for initial sizing or continuous monitoring
+        |       var observer = new ResizeObserver(function(entries) {
+        |           for (let entry of entries) {
+        |               if (entry.contentBoxSize && 
+        |                   entry.contentBoxSize[0].inlineSize > 0) {
+        |                   if (!responsive && observer) {
+        |                       observer.disconnect();
+        |                       observer = null;
+        |                   }
+        |                   renderPlot();
+        |                   if (!responsive) {
+        |                       break;
+        |                   }
+        |               }
+        |           }
+        |       });
+        |       
+        |       observer.observe(containerDiv);
+        |   }
+        |   
+        |   // ----------
+        |   })();
+        |   
+        |   </script>
+    """.trimMargin()
     }
 }

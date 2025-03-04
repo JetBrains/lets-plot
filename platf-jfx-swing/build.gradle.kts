@@ -7,6 +7,7 @@ plugins {
 }
 
 val jfxVersion = extra["jfx_version"] as String
+val assertjVersion = project.extra["assertj_version"] as String
 
 javafx {
     version = jfxVersion
@@ -24,4 +25,5 @@ dependencies {
     testImplementation(project(":platf-awt"))
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
+    testImplementation("org.assertj:assertj-core:$assertjVersion")
 }

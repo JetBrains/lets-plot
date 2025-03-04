@@ -179,6 +179,8 @@ class DefaultToolbarJs() {
     }
 
     companion object {
+        const val EXPECTED_TOOLBAR_HEIGHT = 33  // px
+
         private const val SELECTED = "selected"
 
         private const val C_BACKGR = "rgb(247, 248, 250)"

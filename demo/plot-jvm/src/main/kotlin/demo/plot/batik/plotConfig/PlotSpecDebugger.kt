@@ -9,6 +9,7 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.getString
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaDataUtil
 import org.jetbrains.letsPlot.core.spec.write
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
@@ -106,7 +107,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         plotPanel.components.forEach(plotPanel::remove)
         plotPanel.add(DefaultPlotPanelBatik(
-            processedSpec = MonolithicCommon.processRawSpecs(spec, frontendOnly = false),
+            processedSpec = MonolithicCommon.processRawSpecs(spec),
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,
@@ -139,10 +140,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 reader.readText()
             }
 
-            if (url.endsWith(".json")) {
-                plotSpec.remove("data")
-                plotSpec.write("data", "values") { JsonSupport.parse(content)!! }
-            }
+            plotSpec.remove("data")
+            plotSpec.write("data", "values") { VegaDataUtil.parseVegaDataset(content, url) }
         }
 
         return plotSpec

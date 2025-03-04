@@ -75,10 +75,22 @@ internal open class ThemeValuesAccess(
         return (elem.getValue(key) as Number).toDouble()
     }
 
+    protected fun getBoolean(elem: Map<String, Any>, key: String): Boolean {
+        return elem.getValue(key) as Boolean
+    }
+
     protected fun getColor(elem: Map<String, Any>, key: String): Color {
         return when (val value = elem.getValue(key)) {
             is Color -> value
             else -> Colors.parseColor(value as String)
+        }
+    }
+
+    protected fun getColorDef(elem: Map<String, Any>, key: String, defaultValue: Color): Color {
+        return if (elem.containsKey(key)) {
+            getColor(elem, key)
+        } else {
+            defaultValue
         }
     }
 
@@ -111,7 +123,8 @@ internal open class ThemeValuesAccess(
             family = getFontFamily(elem),
             face = getFontFace(elem),
             size = getNumber(elem, Elem.SIZE),
-            color = getColor(elem, Elem.COLOR)
+            color = getColor(elem, Elem.COLOR),
+            markdown = getBoolean(elem, Elem.MARKDOWN)
         )
     }
 

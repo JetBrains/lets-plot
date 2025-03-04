@@ -13,7 +13,7 @@ __all__ = ['ggbunch']
 
 
 def ggbunch(plots: List,
-            *regions: Tuple[float, float, float, float]
+            regions: List[Tuple[float, float, float, float, float, float]]
             ) -> SupPlotsSpec:
     """
     Combine several plots into a single figure with custom layout.
@@ -22,16 +22,18 @@ def ggbunch(plots: List,
     ----------
     plots : List
         A list where each element is one of:
+
         - a plot specification
         - a subplots specification
         - None
-    *regions : Tuple[float, float, float, float]
+
+    regions : List[Tuple]
         Layout parameters for each plot. Each region is specified as
-        (x, y, width, height) where:
-        - x, y: Position of the plot's top-left corner in relative coordinates
-          ([0,0] is top-left corner, [1,1] is bottom-right corner of the container)
-        - width, height: Size of the plot relative to container dimensions
-          (1.0 equals full container width/height)
+        (x, y, width, height, dx, dy) where:
+
+        - x, y: Position of the plot's top-left corner in relative coordinates ([0,0] is top-left corner, [1,1] is bottom-right corner of the container).
+        - width, height: Size of the plot relative to container dimensions (1 equal to the full container width/height).
+        - dx, dy: Pixel offsets to move the region (defaults to 0).
 
     Returns
     -------
@@ -42,22 +44,21 @@ def ggbunch(plots: List,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 10-14
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
         data = {'x': np.random.gamma(2.0, size=100)}
-        p1 = ggplot(data, aes(x='x')) + \
+        p1 = ggplot(data, aes(x='x')) + \\
             geom_histogram(aes(color='x', fill='x'))
-                gggrid(plot_list, ncol=1) + ggsize(400, 300)
-        p2 = ggplot(data, aes(x='x')) + \
+        p2 = ggplot(data, aes(x='x')) + \\
             geom_density() + theme_bw() + theme(axis='blank', panel_grid='blank')
         ggbunch(
             [p1, p2],
-            (0, 0, 1, 1),
-            (0.5, 0.1, 0.3, 0.3)
+            [(0, 0, 1, 1),
+             (0.5, 0.1, 0.3, 0.3)]
         ) + ggsize(400, 300)
 
     """
@@ -67,16 +68,16 @@ def ggbunch(plots: List,
 
     # Validate provided regions
     for i, region in enumerate(regions):
-        if len(region) != 4:
-            raise ValueError(f"Region {i} must have exactly 4 values, got {len(region)}")
+        if len(region) not in (4, 6):
+            raise ValueError(f"Region {i} must have 4 or 6 values, got {len(region)}")
         if not all(isinstance(x, Number) for x in region):
             raise ValueError(f"Region {i} contains non-numeric values: {region}")
 
         # Validate size is positive
-        if any(x <= 0 for x in region[2:]):
+        if any(x <= 0 for x in region[2:4]):
             raise ValueError(f"Region {i} sizes must be positive: {region}")
 
-    # Convert *regions (tuple of tuples) to list of lists
+    # Convert regions tuples to lists
     regions_list = [list(r) for r in regions]
     layout = SupPlotsLayoutSpec(
         name="free",

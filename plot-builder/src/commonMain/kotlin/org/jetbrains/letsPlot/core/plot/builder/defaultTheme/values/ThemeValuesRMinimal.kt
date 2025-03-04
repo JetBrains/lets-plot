@@ -26,18 +26,6 @@ internal class ThemeValuesRMinimal : ThemeValues(VALUES) {
     companion object {
 
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
-            LINE to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
-
-            RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
-                Elem.FILL to SymbolicColor.GREY_3
-            ),
-
-            TEXT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
 
             PANEL_BKGR_RECT to ELEMENT_BLANK,
 
@@ -47,13 +35,6 @@ internal class ThemeValuesRMinimal : ThemeValues(VALUES) {
 
             AXIS_LINE to ELEMENT_BLANK,
             AXIS_TICKS to ELEMENT_BLANK,
-            AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
-            ),
-            AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to SymbolicColor.WHITE,
-                Elem.FILL to SymbolicColor.BLACK,
-            ),
 
             FACET_STRIP_BGR_RECT to mapOf(
                 Elem.BLANK to true,

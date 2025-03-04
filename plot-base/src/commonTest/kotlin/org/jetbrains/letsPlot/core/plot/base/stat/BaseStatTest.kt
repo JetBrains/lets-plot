@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 open class BaseStatTest {
@@ -30,15 +31,34 @@ open class BaseStatTest {
         return builder.build()
     }
 
-    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
-        assertTrue(statDf.has(variable), "Has var " + variable.name)
+    protected fun checkStatVarSize(
+        statDf: DataFrame,
+        variable: DataFrame.Variable,
+        expectedSize: Int,
+    ) {
+        checkStatVar(statDf, variable)
+        assertEquals(expectedSize, statDf[variable].size, "Size var " + variable.name)
     }
 
-    protected fun checkStatVarValues(statDf: DataFrame, variable: DataFrame.Variable, expectedValues: List<Double?>) {
-        checkStatVar(statDf, variable)
-        assertEquals(expectedValues.size, statDf[variable].size, "Size var " + variable.name)
+    protected fun checkStatVarValues(
+        statDf: DataFrame,
+        variable: DataFrame.Variable,
+        expectedValues: List<Double?>,
+        epsilon: Double? = null
+    ) {
+        checkStatVarSize(statDf, variable, expectedValues.size)
         for (i in expectedValues.indices)
-            assertEquals(expectedValues[i], statDf[variable][i], "Get var " + variable.name)
+            if (epsilon == null)
+                assertEquals(expectedValues[i], statDf[variable][i], "Get var " + variable.name)
+            else {
+                val expectedValue = expectedValues[i]
+                val actualValue = statDf[variable][i] as? Double?
+                when {
+                    expectedValue == null -> assertNull(actualValue, "Get var " + variable.name)
+                    actualValue == null -> assertNull(expectedValue, "Get var " + variable.name)
+                    else -> assertEquals(expectedValue, actualValue, epsilon, "Get var " + variable.name)
+                }
+            }
     }
 
     protected fun checkStatVarDomain(
@@ -79,5 +99,9 @@ open class BaseStatTest {
                 checkStatVarValues(statDf, stat.getDefaultMapping(aes), emptyList())
             }
         }
+    }
+
+    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
+        assertTrue(statDf.has(variable), "Has var " + variable.name)
     }
 }

@@ -27,10 +27,14 @@ class LiveMapTestAdapter(
     private val animationEventHandler: AnimationProvider.AnimationEventHandler
 
     init {
-        val processSpecs = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec), false)
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(processSpecs, SizingPolicy.fixed(600.0, 400.0))
+        val processSpecs = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec))
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
+            processSpecs,
+            containerSize = null,
+            SizingPolicy.fixed(600.0, 400.0)
+        )
         val successBuildResult = buildResult as MonolithicCommon.PlotsBuildResult.Success
-        val buildInfo = successBuildResult.buildInfos.single().layoutedByOuterSize()
+        val buildInfo = successBuildResult.buildInfo.layoutedByOuterSize()
         buildInfo.injectLiveMapProvider { tiles, spec -> injectLiveMapProvider(tiles, spec, CursorServiceConfig()) }
 
         val svgRoot = buildInfo.createSvgRoot() as PlotSvgRoot

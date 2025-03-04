@@ -47,6 +47,10 @@ object BogusContext : GeomContext {
         error("Not available in a bogus geom context")
     }
 
+    override fun getCoordinateSystem(): CoordinateSystem? {
+        error("Not available in a bogus geom context")
+    }
+
     override fun estimateTextSize(
         text: String,
         family: String,

@@ -13,6 +13,7 @@ enum class StatKind {
     COUNT2D,
     BIN,
     BIN2D,
+    BINHEX,
     DOTPLOT,
     SMOOTH,
     CONTOUR,

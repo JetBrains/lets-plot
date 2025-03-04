@@ -5,17 +5,16 @@
 
 package org.jetbrains.letsPlot.core.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotSizeHelper {
@@ -25,16 +24,17 @@ object PlotSizeHelper {
      */
     fun singlePlotSize(
         plotSpec: Map<*, *>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
         facets: PlotFacets,
         containsLiveMap: Boolean
     ): DoubleVector {
-        if (sizingPolicy != null && sizingPolicy.isFixedDefined()) {
-            return sizingPolicy.getFixedDefined()
+        if (sizingPolicy.isFixedSize()) {
+            return sizingPolicy.getFixedSize()
         }
 
         val defaultSize = singlePlotSizeDefault(plotSpec, facets, containsLiveMap)
-        return sizingPolicy?.resize(defaultSize) ?: defaultSize
+        return sizingPolicy.resize(defaultSize, containerSize)
     }
 
     /**
@@ -59,14 +59,15 @@ object PlotSizeHelper {
      */
     fun compositeFigureSize(
         config: CompositeFigureConfig,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
     ): DoubleVector {
-        if (sizingPolicy != null && sizingPolicy.isFixedDefined()) {
-            return sizingPolicy.getFixedDefined()
+        if (sizingPolicy.isFixedSize()) {
+            return sizingPolicy.getFixedSize()
         }
 
         val defaultSize = compositeFigureSizeDefault(config)
-        return sizingPolicy?.resize(defaultSize) ?: defaultSize
+        return sizingPolicy.resize(defaultSize, containerSize)
     }
 
     /**
@@ -77,38 +78,6 @@ object PlotSizeHelper {
     ): DoubleVector {
         val specifiedFigureSize = getSizeOptionOrNull(config.toMap())
         return specifiedFigureSize ?: config.layout.defaultSize()
-    }
-
-    private fun bunchItemBoundsList(bunchSpec: Map<String, Any>): List<DoubleRectangle> {
-        val bunchConfig = BunchConfig(bunchSpec)
-        if (bunchConfig.bunchItems.isEmpty()) {
-            throw IllegalArgumentException("No plots in the bunch")
-        }
-
-        val plotBounds = ArrayList<DoubleRectangle>()
-        for (bunchItem in bunchConfig.bunchItems) {
-            plotBounds.add(
-                DoubleRectangle(
-                    DoubleVector(bunchItem.x, bunchItem.y),
-                    bunchItemSize(bunchItem)
-                )
-            )
-        }
-        return plotBounds
-    }
-
-    /**
-     * Expects 'processed specs' (aka client specs)
-     */
-    internal fun bunchItemSize(bunchItem: BunchConfig.BunchItem): DoubleVector {
-        return if (bunchItem.hasSize()) {
-            bunchItem.size
-        } else {
-            singlePlotSizeDefault(
-                bunchItem.featureSpec,
-                PlotFacets.UNDEFINED, false
-            )
-        }
     }
 
     private fun defaultFacetedPlotSize(ncol: Int, nrow: Int): DoubleVector {
@@ -133,18 +102,32 @@ object PlotSizeHelper {
         return DoubleVector(width, height)
     }
 
-    fun plotBunchSize(plotBunchFpec: Map<String, Any>): DoubleVector {
-        require(PlotConfig.figSpecKind(plotBunchFpec) == FigKind.GG_BUNCH_SPEC) {
-            "Plot Bunch is expected but was kind: ${PlotConfig.figSpecKind(plotBunchFpec)}"
+    fun figureSizeDefault(
+        figureSpec: Map<String, Any>,
+    ): DoubleVector {
+        if (PlotConfig.isFailure(figureSpec)) {
+            return DEF_PLOT_SIZE
         }
-        return plotBunchSize(bunchItemBoundsList(plotBunchFpec))
+        return when (PlotConfig.figSpecKind(figureSpec)) {
+            FigKind.PLOT_SPEC -> {
+                val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
+                PlotSizeHelper.singlePlotSizeDefault(
+                    figureSpec,
+                    config.facets,
+                    config.containsLiveMap
+                )
+            }
+
+            FigKind.SUBPLOTS_SPEC -> {
+                val compositeFigureConfig = CompositeFigureConfig(figureSpec, containerTheme = null) {
+                    // ignore message when computing a figure size.
+                }
+
+                PlotSizeHelper.compositeFigureSizeDefault(compositeFigureConfig)
+            }
+
+            FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
+        }
     }
 
-    private fun plotBunchSize(bunchItemBoundsIterable: Iterable<DoubleRectangle>): DoubleVector {
-        return bunchItemBoundsIterable
-            .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-                acc.union(bounds)
-            }
-            .dimension
-    }
 }

@@ -13,10 +13,9 @@ object GGBunch_PNG_Resolutions {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGBunch()) {
-            @Suppress("UNCHECKED_CAST")
             val plotSpecList = plotSpecList()
             PlotImageDemoUtil.show(
-                "GGBunch",
+                "ggbunch()",
                 plotSpecList.first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),

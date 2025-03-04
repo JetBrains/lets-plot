@@ -86,9 +86,16 @@ object Option {
         }
     }
 
+    // Error emulation.
     object ErrorGen {
         const val MESSAGE = "message" // str
         const val IS_INTERNAL = "is_internal" // bool
+    }
+
+    // Computation messages emulation.
+    object CompMessagesGen {
+        const val PLOT_FEATURE_NAME = "comp_messages_gen"
+        const val NUM_MESSAGES = "num_messages"
     }
 
     object GGBunch {
@@ -252,12 +259,28 @@ object Option {
             const val METHOD = "method"
         }
 
+        object Tile {
+            const val WIDTH_UNIT = "width_unit"
+            const val HEIGHT_UNIT = "height_unit"
+        }
+
+        object Hex {
+            const val WIDTH_UNIT = "width_unit"
+            const val HEIGHT_UNIT = "height_unit"
+        }
+
         object Choropleth {
             const val GEO_POSITIONS = "map"
         }
 
+        object ErrorBar {
+            const val WIDTH_UNIT = "width_unit"
+            const val HEIGHT_UNIT = "height_unit"
+        }
+
         object CrossBar {
             const val FATTEN = "fatten"
+            const val WIDTH_UNIT = "width_unit"
         }
 
         object PointRange {
@@ -267,6 +290,7 @@ object Option {
         object Boxplot {
             const val FATTEN = "fatten"
             const val WHISKER_WIDTH = "whisker_width"
+            const val WIDTH_UNIT = "width_unit"
         }
 
         object Area {
@@ -348,6 +372,7 @@ object Option {
             const val SIZE_UNIT = "size_unit"
             const val NUDGE_X = "nudge_x"
             const val NUDGE_Y = "nudge_y"
+            const val NUDGE_UNIT = "nudge_unit"
             const val CHECK_OVERLAP = "check_overlap"
         }
 
@@ -364,6 +389,8 @@ object Option {
             const val SPACER_COLOR = "spacer_color"
             const val STROKE_SIDE = "stroke_side"
             const val SIZE_UNIT = "size_unit"
+            const val START = "start"
+            const val DIRECTION = "direction"
         }
 
         object Lollipop {
@@ -436,6 +463,12 @@ object Option {
         }
 
         object Bin2d {
+            const val BINS = "bins"
+            const val BINWIDTH = "binwidth"
+            const val DROP = "drop"
+        }
+
+        object BinHex {
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
             const val DROP = "drop"
@@ -553,6 +586,7 @@ object Option {
         object Nudge {
             const val WIDTH = "x"
             const val HEIGHT = "y"
+            const val UNIT = "unit"
         }
 
         object JitterDodge {
@@ -865,6 +899,10 @@ object Option {
         const val LEGEND_BOX_JUST = ThemeOption.LEGEND_BOX_JUST
         const val LEGEND_BOX_SPACING = ThemeOption.LEGEND_BOX_SPACING
 
+        // Colorbar tick-marks
+        const val LEGEND_TICKS = ThemeOption.LEGEND_TICKS
+        const val LEGEND_TICKS_LENGTH = ThemeOption.LEGEND_TICKS_LENGTH
+
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
         const val TOOLTIP_TEXT = ThemeOption.TOOLTIP_TEXT
@@ -950,6 +988,7 @@ object Option {
         private const val DOT_PLOT = "dotplot"
         private const val TILE = "tile"
         private const val BIN_2D = "bin2d"
+        private const val HEX = "hex"
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
         private const val CROSS_BAR = "crossbar"
@@ -1005,6 +1044,7 @@ object Option {
             map[Y_DOT_PLOT] = GeomKind.Y_DOT_PLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
+            map[HEX] = GeomKind.HEX
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
             map[CROSS_BAR] = GeomKind.CROSS_BAR

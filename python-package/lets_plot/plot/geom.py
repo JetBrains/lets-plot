@@ -12,7 +12,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, g
 #
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
-           'geom_histogram', 'geom_dotplot', 'geom_bin2d',
+           'geom_histogram', 'geom_dotplot', 'geom_bin2d', 'geom_hex',
            'geom_tile', 'geom_raster',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
@@ -939,8 +939,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     threshold : float, default=None
-        If a bin's `..count..` is less than the threshold, the bin will be removed.
-        Dropping empty bins is particularly useful for faceted plots with free scales.
+        If a bin's `..count..` is less than the threshold, it will be removed, but only if it is on the left or right edge of the histogram.
+        Dropping empty edge bins is particularly useful for faceted plots with free scales.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -1253,10 +1253,6 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     Apply a rectangular grid to the plane, count observations in each cell (bin) of the grid,
     and map the count to the fill color of the cell (tile).
 
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
-
     Parameters
     ----------
     mapping : `FeatureSpec`
@@ -1421,9 +1417,208 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
+def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
+             tooltips=None,
+             bins=None,
+             binwidth=None,
+             drop=None,
+             width_unit=None, height_unit=None,
+             color_by=None, fill_by=None,
+             **other_args):
+    """
+    Apply a hexagonal grid to the plane, count observations in each cell (hexagonal bin) of the grid,
+    and map the count to the fill color of the cell (hexagonal tile).
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='binhex'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    bins : list of int, default=[30, 30]
+        Number of hexagonal bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+    binwidth : list of float
+        The width of the hexagonal bins in both directions, vertical and horizontal.
+        Override `bins`. The default is to use bin widths that cover the entire range of the data.
+    drop : bool, default=True
+        Specify whether to remove all hexagonal bins with 0 counts.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for width of the hexagon.
+        Possible values:
+
+        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin width (`binwidth[0]`); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
+    height_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for height of the hexagon.
+        Possible values:
+
+        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin height (`binwidth[1]`); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+
+    Computed variables:
+
+    - ..count.. : number of points with coordinates in the same hexagonal bin.
+
+    `geom_hex()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - size : line width, default=0 (i.e. tiles outline initially is not visible).
+    - weight : used by 'binhex' stat to compute weighted sum instead of simple count.
+    - width : width of the hexagon.
+    - height : the real height of the hexagon will be 2/sqrt(3) times this value, so with width=height the hexagon will be the regular.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        mean = np.zeros(2)
+        cov = np.eye(2)
+        x, y = np.random.multivariate_normal(mean, cov, 1000).T
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_hex()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-14
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 5000
+        x = np.random.uniform(-2, 2, size=n)
+        y = np.random.normal(scale=.5, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_hex(aes(fill='..density..'), binwidth=[.25, .24], \\
+                     tooltips=layer_tooltips().format('@x', '.2f')
+                             .format('@y', '.2f').line('(@x, @y)')
+                             .line('count|@..count..')
+                             .format('@..density..', '.3f')
+                             .line('density|@..density..')) + \\
+            scale_fill_gradient(low='black', high='red')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        mean = np.zeros(2)
+        cov = [[1, .5],
+               [.5, 1]]
+        x, y = np.random.multivariate_normal(mean, cov, 500).T
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_hex(aes(alpha='..count..'), bins=[20, 20], \\
+                     fill='darkgreen') + \\
+            geom_point(size=1.5, shape=21, color='white', \\
+                       fill='darkgreen') + \\
+            ggsize(600, 450)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x, y = np.random.multivariate_normal(mean=[-98, 39], cov=[[100, 0], [0, 10]], size=100).T
+        ggplot() + geom_livemap() + \\
+            geom_hex(aes(x, y, fill='..density..'), \\
+                     bins=[10, 5], alpha=.5, show_legend=False)
+
+    """
+    return _geom('hex',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 bins=bins,
+                 binwidth=binwidth,
+                 drop=drop,
+                 width_unit=width_unit, height_unit=height_unit,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
 def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
               manual_key=None, sampling=None,
               tooltips=None,
+              width_unit=None, height_unit=None,
               color_by=None, fill_by=None,
               **other_args):
     """
@@ -1458,6 +1653,24 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for width of the tile.
+        Possible values:
+
+        - 'res': the unit equals the smallest distance between adjacent tiles along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
+    height_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for height of the tile.
+        Possible values:
+
+        - 'res': the unit equals the smallest distance between adjacent tiles along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1569,6 +1782,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 width_unit=width_unit,
+                 height_unit=height_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -1671,6 +1886,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                   manual_key=None,
                   sampling=None, tooltips=None,
+                  width_unit=None, height_unit=None,
                   color_by=None,
                   **other_args):
     """
@@ -1710,6 +1926,24 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for the whisker width of the vertical error bar.
+        Possible values:
+
+        - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
+    height_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for the whisker height of the horizontal error bar.
+        Possible values:
+
+        - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -1811,6 +2045,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 width_unit=width_unit,
+                 height_unit=height_unit,
                  color_by=color_by,
                  **other_args)
 
@@ -1818,6 +2054,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                   manual_key=None, sampling=None, tooltips=None,
                   fatten=None,
+                  width_unit=None,
                   color_by=None, fill_by=None,
                   **other_args):
     """
@@ -1859,6 +2096,15 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set tooltips='none' to hide tooltips from the layer.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for the width of the crossbar.
+        Possible values:
+
+        - 'res': the unit equals the smallest distance between adjacent crossbars along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1955,6 +2201,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
+                 width_unit=width_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -3385,6 +3632,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_shape=None, outlier_size=None, outlier_stroke=None,
                  varwidth=None,
                  whisker_width=None,
+                 width_unit=None,
                  color_by=None, fill_by=None,
                  **other_args):
     """
@@ -3442,6 +3690,15 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         of the number of observations in the groups.
     whisker_width : float, default=0.5
         A multiplicative factor applied to the box width to draw horizontal segments on whiskers.
+    width_unit : {'res', 'identity', 'size', 'px'}, default='res'
+        Unit for the width of the boxplot.
+        Possible values:
+
+        - 'res': the unit equals the smallest distance between adjacent boxes along the corresponding axis;
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -3579,6 +3836,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           fatten=fatten,
                           varwidth=varwidth,
                           whisker_width=whisker_width,
+                          width_unit=width_unit,
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
@@ -4653,7 +4911,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 10-11
 
         import numpy as np
         from lets_plot import *
@@ -4661,19 +4919,22 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         np.random.seed(42)
         x = np.random.normal(size=1000)
         p = ggplot({'x': x}, aes(x='x'))
-        bunch = GGBunch()
-        for i, bw in enumerate([.1, .2, .4]):
-            for j, n in enumerate([16, 64, 256]):
-                bunch.add_plot(p + geom_density(kernel='epanechikov', bw=bw, n=n) + \\
-                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
-                               j * 300, i * 200, 300, 200)
-        bunch.show()
+        bandwidths = [0.1, 0.2, 0.4]
+        sample_sizes = [16, 64, 256]
+        plots = [
+            p + geom_density(
+                kernel='epanechikov', bw=bw, n=n
+            ) + ggtitle(f'bw={bw}, n={n}')
+            for bw in bandwidths
+            for n in sample_sizes
+        ]
+        gggrid(plots, ncol=3) + ggsize(900, 600)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 10-12
 
         import numpy as np
         from lets_plot import *
@@ -4682,13 +4943,15 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         x = np.random.normal(size=1000)
         y = np.sign(x)
         p = ggplot({'x': x, 'y': y}, aes(x='x'))
-        bunch = GGBunch()
-        for i, adjust in [(i, .5 * (1 + i)) for i in range(3)]:
-            bunch.add_plot(p + geom_density(aes(weight='y'), kernel='cosine', \\
-                                            adjust=adjust) + \\
-                               ggtitle('adjust={0}'.format(adjust)),
-                           i * 300, 0, 300, 200)
-        bunch.show()
+        adjustments = [0.5 * (1 + i) for i in range(3)]
+        plots = [
+            p + geom_density(
+                aes(weight='y'),
+                kernel='cosine', adjust=adjust
+            ) + ggtitle(f'adjust={adjust}')
+            for adjust in adjustments
+        ]
+        gggrid(plots) + ggsize(800, 200)
 
     """
     return _geom('density',
@@ -4720,10 +4983,6 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                    **other_args):
     """
     Display density function contour.
-
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -4848,7 +5107,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 12-14
 
         import numpy as np
         from lets_plot import *
@@ -4858,19 +5117,23 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
-        bunch = GGBunch()
-        for i, bw in enumerate([.2, .4]):
-            for j, n in enumerate([16, 256]):
-                bunch.add_plot(p + geom_density2d(kernel='epanechikov', bw=bw, n=n) + \\
-                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        bandwidths = [0.2, 0.4]
+        sample_sizes = [16, 256]
+        plots = [
+            p + geom_density2d(
+                kernel='epanechikov',
+                bw=bw, n=n
+            ) + ggtitle(f'bw={bw}, n={n}')
+            for bw in bandwidths
+            for n in sample_sizes
+        ]
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-13
+        :emphasize-lines: 12-15
 
         import numpy as np
         from lets_plot import *
@@ -4880,14 +5143,18 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
-        bunch = GGBunch()
-        for i, adjust in enumerate([1.5, 2.5]):
-            for j, bins in enumerate([5, 15]):
-                bunch.add_plot(p + geom_density2d(kernel='cosine', \\
-                                                  adjust=adjust, bins=bins) + \\
-                                   ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        adjustments = [1.5, 2.5]
+        bin_counts = [5, 15]
+        plots = [
+            p + geom_density2d(
+                kernel='cosine',
+                adjust=adjust,
+                bins=bins
+            ) + ggtitle(f'adjust={adjust}, bins={bins}')
+            for adjust in adjustments
+            for bins in bin_counts
+        ]
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
@@ -4904,7 +5171,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
             geom_raster(aes(fill='..density..'), \\
-                       stat='density2d', contour=False, n=50) + \\
+                        stat='density2d', contour=False, n=50) + \\
             scale_fill_gradient(low='#49006a', high='#fff7f3')
 
     |
@@ -4952,10 +5219,6 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                     **other_args):
     """
     Fill density function contour.
-
-    By default, this geom uses `coord_fixed()`.
-    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
-    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -5074,7 +5337,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-13
+        :emphasize-lines: 12-15
 
         import numpy as np
         from lets_plot import *
@@ -5084,20 +5347,24 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        bunch = GGBunch()
-        for i, bw in enumerate([.2, .4]):
-            for j, n in enumerate([16, 256]):
-                bunch.add_plot(p + geom_density2df(kernel='epanechikov', bw=bw, n=n, \\
-                                                   size=.5, color='white') + \\
-                                   ggtitle('bw={0}, n={1}'.format(bw, n)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        bandwidths = [0.2, 0.4]
+        sample_sizes = [16, 256]
+        plots = [
+            p + geom_density2df(
+                kernel='epanechikov',
+                size=.5, color='white',
+                bw=bw, n=n
+            ) + ggtitle(f'bw={bw}, n={n}')
+            for bw in bandwidths
+            for n in sample_sizes
+        ]
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-14
+        :emphasize-lines: 12-15
 
         import numpy as np
         from lets_plot import *
@@ -5107,15 +5374,18 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         p = ggplot({'x': x, 'y': y}, aes(x='x', y='y'))
-        bunch = GGBunch()
-        for i, adjust in enumerate([1.5, 2.5]):
-            for j, bins in enumerate([5, 15]):
-                bunch.add_plot(p + geom_density2df(kernel='cosine', \\
-                                                   size=.5, color='white', \\
-                                                   adjust=adjust, bins=bins) + \\
-                                   ggtitle('adjust={0}, bins={1}'.format(adjust, bins)),
-                               j * 400, i * 400, 400, 400)
-        bunch.show()
+        adjustments = [1.5, 2.5]
+        bin_counts = [5, 15]
+        plots = [
+            p + geom_density2df(
+                kernel='cosine', size=.5, color='white',
+                adjust=adjust,
+                bins=bins
+            ) + ggtitle(f'adjust={adjust}, bins={bins}')
+            for adjust in adjustments
+            for bins in bin_counts
+        ]
+        gggrid(plots, ncol=2) + ggsize(600, 650)
 
     |
 
@@ -6296,7 +6566,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     spacer : float, default=0.0
-        Space to shorten a segment by moving the start/end.
+        Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6463,7 +6733,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     ncp : int, default=5
         The number of control points used to draw the curve. More control points creates a smoother curve.
     spacer : float, default=0.0
-        Space to shorten a curve by moving the start/end.
+        Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6714,6 +6984,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               na_text=None,
               nudge_x=None, nudge_y=None,
               size_unit=None,
+              nudge_unit=None,
               check_overlap=None,
               color_by=None,
               **other_args):
@@ -6783,6 +7054,14 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     size_unit : {'x', 'y'}
         Relate the size of the text to the length of the unit step along one of the axes.
         If None, no fitting is performed.
+    nudge_unit : {'identity', 'size', 'px'}, default='identity'
+        Units for x and y nudging.
+        Possible values:
+
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
     check_overlap : bool, default=False
         If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -6935,6 +7214,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  na_text=na_text,
                  nudge_x=nudge_x, nudge_y=nudge_y,
                  size_unit=size_unit,
+                 nudge_unit=nudge_unit,
                  check_overlap=check_overlap,
                  color_by=color_by,
                  **other_args)
@@ -6950,6 +7230,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                label_padding=None, label_r=None, label_size=None,
                alpha_stroke=None,
                size_unit=None,
+               nudge_unit=None,
                check_overlap=None,
                color_by=None, fill_by=None,
                **other_args):
@@ -7027,6 +7308,14 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     size_unit : {'x', 'y'}
         Relate the size of the text label to the length of the unit step along one of the axes.
         If None, no fitting is performed.
+    nudge_unit : {'identity', 'size', 'px'}, default='identity'
+        Units for x and y nudging.
+        Possible values:
+
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
     check_overlap : bool, default=False
         If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -7187,6 +7476,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_size=label_size,
                  alpha_stroke=alpha_stroke,
                  size_unit=size_unit,
+                 nudge_unit=nudge_unit,
                  check_overlap=check_overlap,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
@@ -7199,6 +7489,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              hole=None,
              stroke_side=None,
              spacer_width=None, spacer_color=None,
+             start=None, direction=None,
              size_unit=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -7256,10 +7547,15 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     stroke_side : {'outer', 'inner', 'both'}, default='both'
         Define which arcs of pie sector should have a stroke.
     spacer_width : float, default=0.75
-        Line width between sectors.
+        Line width between sectors in pixels.
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
         Color for spacers between sectors. By default, the "paper" color is used.
+    start : float, default=None
+        Specify the angle at which the first sector starts. Accept values between 0 and 360.
+        Default is a negative angle of the first sector.
+    direction : {1, -1}, default=1
+        Specify angle direction, 1=clockwise, -1=counter-clockwise.
     size_unit : {'x', 'y'}
         Relate the size of the pie chart to the length of the unit step along one of the axes.
         If None, no fitting is performed.
@@ -7439,6 +7735,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stroke_side=stroke_side,
                  spacer_width=spacer_width,
                  spacer_color=spacer_color,
+                 start=start, direction=direction,
                  size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)

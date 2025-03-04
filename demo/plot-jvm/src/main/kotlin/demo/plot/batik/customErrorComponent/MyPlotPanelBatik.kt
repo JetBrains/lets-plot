@@ -6,6 +6,7 @@
 package demo.plot.batik.customErrorComponent
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 open class MyPlotPanelBatik(
     processedSpec: MutableMap<String, Any>,
@@ -16,11 +17,11 @@ open class MyPlotPanelBatik(
 ) : PlotPanel(
     plotComponentProvider = MyPlotComponentProviderBatik(
         processedSpec = processedSpec,
-        preserveAspectRatio = preserveAspectRatio,
         executor = MY_AWT_EDT_EXECUTOR,
         computationMessagesHandler = computationMessagesHandler
     ),
     preferredSizeFromPlot = preferredSizeFromPlot,
+    sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio),
     repaintDelay = repaintDelay,
     applicationContext = MY_APP_CONTEXT
 )

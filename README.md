@@ -54,45 +54,34 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.5.0
+## What is new in 4.6.0
 
-- #### Panning and Zooming
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/ggtb.png" alt="f-24g/images/ggtb.png" width="300" height="134">
+- #### Markdown Support in *Title*, *Subtitle*, *Caption*, and Axis Labels
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/markdown.png" alt="f-25a/images/markdown.png" width="400" height="237">
   
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interact_pan_zoom.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
 
-- #### Clickable Links
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/lp_verse.png" alt="f-24g/images/lp_verse.png" width="400" height="270">
+- #### Support for Multiline Axis Labels, Text Justification in Axis Labels
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/multiline_axis_labels.png" alt="f-25a/images/multiline_axis_labels.png" width="400" height="275">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interactive_links.ipynb).
+  See examples: [multiline axis labels](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/multiline_axis_labels.ipynb),
+  [axis label justification](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb),
 
-- #### LaTeX Support: Subscript, Superscript, Greek Letters and Special Characters 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/latex.png" alt="f-24g/images/latex.png" width="300" height="227">
+- #### `geom_hex()` Geometry
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/geom_hex.png" alt="f-25a/images/geom_hex.png" width="370" height="296">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/latex_support.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
 
-> [!CAUTION]  
-> Subscripts and superscripts are not supported in PDF and PNG exports.
-
-- #### Compact Scientific Notation Formatting
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/compact_exp.png" alt="f-24g/images/compact_exp.png" width="400" height="174">
+- #### `ggbunch()` Function: Combining Plots with Custom Layout
+  It replaces the deprecated `GGBunch` class.  <br/>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/ggbunch_indonesia.png" alt="f-25a/images/ggbunch_indonesia.png" width="400" height="164">
      
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/superscript_exponent.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
 
-> [!CAUTION]  
-> `pow` and `pow_full` options are not supported in PDF and PNG exports.     
+- #### Parameters `start` and `direction` in `geom_pie()` Geometry
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/geom_pie_params.png" alt="f-25a/images/geom_pie_params.png" width="400" height="119">
 
-- #### QQ-Plot: Marginal Distributions
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/gg_marins.png" alt="f-24g/images/gg_marins.png" width="400" height="249">
-
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/qq_plot_marginal.ipynb).
-
-- #### More Theme Settings
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/theme_legend_scheme.png" alt="f-24g/images/theme_legend_scheme.png" width="400" height="320">
-
-  See examples: [legend margins](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_margins.ipynb),
-  [legend key](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_key.ipynb),
-  [facet strip](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_facet_strip_xy.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_pie_params.ipynb).
 
 
 - #### And More

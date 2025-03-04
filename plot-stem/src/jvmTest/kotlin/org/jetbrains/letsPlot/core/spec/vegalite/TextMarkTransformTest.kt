@@ -10,12 +10,11 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.*
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.junit.Test
 import java.util.Map.entry
 
@@ -35,7 +34,7 @@ class TextMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Option.Layer.GEOM, fromGeomKind(GeomKind.TEXT)),
@@ -68,7 +67,14 @@ class TextMarkTransformTest {
         val vegaSpec = parseJson(
             """
             |{
-            |  "data": { "url": "data/population.json"},
+            |  "data": { 
+            |    "values": [
+            |      {"year":1850,"age":0,"sex":1,"people":1483789},
+            |      {"year":1850,"age":0,"sex":2,"people":1450376},
+            |      {"year":1850,"age":5,"sex":1,"people":1411067},
+            |      {"year":1850,"age":5,"sex":2,"people":1359668}
+            |   ]
+            |  },
             |  "encoding": {
             |    "y": {"field": "age"}
             |  },
@@ -91,7 +97,7 @@ class TextMarkTransformTest {
         """.trimMargin()
         ).asMutable()
 
-        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val spec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).contains(
             entry(Option.Layer.STAT, StatKind.SUMMARY.name.lowercase()),

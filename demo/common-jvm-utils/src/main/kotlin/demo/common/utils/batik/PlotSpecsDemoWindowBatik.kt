@@ -28,7 +28,7 @@ class PlotSpecsDemoWindowBatik(
 
     override fun createPlotComponent(rawSpec: MutableMap<String, Any>, plotSize: Dimension?): JComponent {
         // Pre-process figure specifications
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
+        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
         val plotPanel = DefaultPlotPanelBatik(
             processedSpec = processedSpec,
             preferredSizeFromPlot = plotSize == null,

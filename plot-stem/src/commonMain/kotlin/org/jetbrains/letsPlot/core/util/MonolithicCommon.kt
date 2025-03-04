@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object MonolithicCommon {
@@ -25,17 +26,20 @@ object MonolithicCommon {
     /**
      * Static SVG export
      */
-    fun buildSvgImagesFromRawSpecs(
+    fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
-    ): List<String> {
+    ): String {
         @Suppress("NAME_SHADOWING")
-        val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
+        val plotSpec = processRawSpecs(plotSpec)
         val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
+            ?: SizingPolicy.keepFigureDefaultSize()
+
         val buildResult = buildPlotsFromProcessedSpecs(
             plotSpec,
+            containerSize = null,
             sizingPolicy
         )
         if (buildResult.isError) {
@@ -44,20 +48,39 @@ object MonolithicCommon {
         }
 
         val success = buildResult as PlotsBuildResult.Success
-        val computationMessages = success.buildInfos.flatMap { it.computationMessages }
+        val computationMessages = success.buildInfo.computationMessages
         if (computationMessages.isNotEmpty()) {
             computationMessagesHandler(computationMessages)
         }
 
-        return success.buildInfos.map { buildInfo ->
-            FigureToPlainSvg(buildInfo).eval()
-        }.map { svgToString.render(it) }
+        val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
+        return svgToString.render(svg)
     }
 
+    /**
+     * Static SVG export
+     */
+    @Deprecated(
+        message = "Use buildSvgImageFromRawSpecs instead",
+        replaceWith = ReplaceWith("buildSvgImageFromRawSpecs(plotSpec, plotSize, svgToString, computationMessagesHandler)")
+    )
+    fun buildSvgImagesFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        svgToString: SvgToString,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): List<String> {
+        return listOf(
+            buildSvgImageFromRawSpecs(
+                plotSpec, plotSize, svgToString, computationMessagesHandler
+            )
+        )
+    }
 
     fun buildPlotsFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
 
@@ -70,21 +93,19 @@ object MonolithicCommon {
         return when (PlotConfig.figSpecKind(plotSpec)) {
             FigKind.PLOT_SPEC -> {
                 PlotsBuildResult.Success(
-                    listOf(
-                        buildSinglePlotFromProcessedSpecs(
-                            plotSpec,
-                            sizingPolicy
-                        )
+                    buildSinglePlotFromProcessedSpecs(
+                        plotSpec,
+                        containerSize,
+                        sizingPolicy
                     )
                 )
             }
 
             FigKind.SUBPLOTS_SPEC -> PlotsBuildResult.Success(
-                listOf(
-                    buildCompositeFigureFromProcessedSpecs(
-                        plotSpec,
-                        sizingPolicy
-                    )
+                buildCompositeFigureFromProcessedSpecs(
+                    plotSpec,
+                    containerSize,
+                    sizingPolicy
                 )
             )
 
@@ -94,7 +115,8 @@ object MonolithicCommon {
 
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val config = PlotConfigFrontend.create(
@@ -106,7 +128,8 @@ object MonolithicCommon {
 
         return buildSinglePlot(
             config,
-            sizingPolicy = sizingPolicy,
+            containerSize,
+            sizingPolicy,
             sharedContinuousDomainX = null,  // only applicable to "composite figures"
             sharedContinuousDomainY = null,
             computationMessages
@@ -115,7 +138,8 @@ object MonolithicCommon {
 
     private fun buildSinglePlot(
         config: PlotConfigFrontend,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
         sharedContinuousDomainX: DoubleSpan?,
         sharedContinuousDomainY: DoubleSpan?,
         computationMessages: List<String>
@@ -123,7 +147,8 @@ object MonolithicCommon {
 
         val preferredSize = PlotSizeHelper.singlePlotSize(
             plotSpec = config.toMap(),
-            sizingPolicy = sizingPolicy,
+            containerSize,
+            sizingPolicy,
             config.facets,
             config.containsLiveMap
         )
@@ -143,7 +168,8 @@ object MonolithicCommon {
 
     private fun buildCompositeFigureFromProcessedSpecs(
         plotSpec: Map<String, Any>,
-        sizingPolicy: SizingPolicy?,
+        containerSize: DoubleVector?,
+        sizingPolicy: SizingPolicy,
     ): CompositeFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val compositeFigureConfig = CompositeFigureConfig(plotSpec, containerTheme = null) {
@@ -152,7 +178,8 @@ object MonolithicCommon {
 
         val preferredSize = PlotSizeHelper.compositeFigureSize(
             compositeFigureConfig,
-            sizingPolicy,
+            containerSize,
+            sizingPolicy
         )
 
         return buildCompositeFigure(
@@ -191,7 +218,9 @@ object MonolithicCommon {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
-                        sizingPolicy = null, // Doesn't matter - will be updateed by sub-plots layout.
+                        // Sizing doesn't matter - will be updateed by sub-plots layout.
+                        containerSize = null,
+                        sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                         sharedContinuousDomainX = sharedXDomains?.get(index),
                         sharedContinuousDomainY = sharedYDomains?.get(index),
                         computationMessages = emptyList()  // No "own messages" when a part of a composite.
@@ -214,6 +243,9 @@ object MonolithicCommon {
             elements = elements,
             layout = compositeFigureLayout,
             bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            title = config.title,
+            subtitle = config.subtitle,
+            caption = config.caption,
             theme = config.theme,
             computationMessages
         )
@@ -231,9 +263,13 @@ object MonolithicCommon {
     /**
      * Applies all transformations to the plot specifications.
      * @param plotSpec: raw specifications of a plot
+     * @param frontendOnly: if False, apply 'backend' transform as well as `frontend` transform.
      */
-    fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-        // Internal use: testing
+    fun processRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        frontendOnly: Boolean = false
+    ): MutableMap<String, Any> {
+        // Internal use: error simulation (for testing).
         if (plotSpec["kind"]?.toString() == Option.Meta.Kind.ERROR_GEN) {
             return SpecTransformBackendUtil.processTransform(plotSpec, simulateFailure = true)
         }
@@ -255,6 +291,22 @@ object MonolithicCommon {
             return plotSpec
         }
 
+        // Internal use: simulation of "computation messages"
+        plotSpec[Option.CompMessagesGen.PLOT_FEATURE_NAME]?.let {
+            @Suppress("UNCHECKED_CAST")
+            val numMessages = (it as Map<String, Any>).getValue(Option.CompMessagesGen.NUM_MESSAGES) as Number
+            val simulatedMessages = List<String>(numMessages.toInt()) { i ->
+                val tail = List(i + 1) { " tail"}.joinToString()
+                "$i: Simulated computation message #${i + 1} - $tail"
+            }
+
+            plotSpec.remove(Option.CompMessagesGen.PLOT_FEATURE_NAME)
+            @Suppress("UNCHECKED_CAST")
+            plotSpec[Option.Plot.COMPUTATION_MESSAGES] =
+                plotSpec.getOrPut(Option.Plot.COMPUTATION_MESSAGES) { emptyList<String>() } as List<String> +
+                        simulatedMessages
+        }
+
         // "Frontend" transforms.
         return PlotConfigFrontend.processTransform(plotSpec)
     }
@@ -266,7 +318,7 @@ object MonolithicCommon {
         class Error(val error: String) : PlotsBuildResult()
 
         class Success(
-            val buildInfos: List<FigureBuildInfo>
+            val buildInfo: FigureBuildInfo
         ) : PlotsBuildResult()
     }
 }

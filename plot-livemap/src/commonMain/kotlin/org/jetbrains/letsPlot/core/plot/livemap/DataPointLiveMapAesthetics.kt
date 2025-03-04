@@ -73,9 +73,9 @@ internal class DataPointLiveMapAesthetics {
             field = value?.map(::trimLonLat)
         }
 
-    var point: Vec<LonLat>? = null
+    var point: Vec<LonLat> = LonLat.ZERO_VEC
         set(value) {
-            field = value?.let(::trimLonLat)
+            field = trimLonLat(value)
         }
 
     var flat: Boolean = false
@@ -241,6 +241,12 @@ internal class DataPointLiveMapAesthetics {
                 PieGeom.StrokeSide.BOTH -> StrokeSide.BOTH
             }
         } ?: StrokeSide.OUTER
+
+    val startAngle: Double?
+        get() = myPieOptions?.startAngle
+
+    val clockwise: Boolean
+        get() = myPieOptions?.clockwise != false
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())

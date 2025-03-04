@@ -7,18 +7,24 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.livemap.SUPPORTED_LAYERS
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.liveMap
+import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.vectorTiles
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
+import kotlin.math.sqrt
 
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpecMap: MutableMap<String, Any?>
@@ -34,8 +40,11 @@ internal class VegaPlotConverter private constructor(
     }
 
     private val plotOptions = PlotOptions()
+    private var useLiveMap = false
 
     private fun convert(): PlotOptions {
+        plotOptions.title = Util.transformTitle(vegaPlotSpec[VegaOption.TITLE])
+
         when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
             VegaPlotKind.SINGLE_LAYER -> {
                 val encodingSpecMap = vegaPlotSpecMap.getMap(VegaOption.ENCODING) ?: emptyMap<Any, Any>()
@@ -45,17 +54,22 @@ internal class VegaPlotConverter private constructor(
             VegaPlotKind.MULTI_LAYER -> {
                 vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEachIndexed { i, it ->
                     val combinedEncoding = mutableMapOf<String, Any>()
+                    vegaPlotSpec.getMap(VegaOption.ENCODING)?.let { encodings ->
+                        Channels.forEach { channel ->
+                            val encoding = encodings.getMap(channel) ?: return@forEach
+                            combinedEncoding.write(channel) { encoding }
 
-                    vegaPlotSpec.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
-                        combinedEncoding.write(channel) { encoding }
-
-                        // Encoding spec was moved from the plot to the layer, where it’s used.
-                        // Visit all plot encoding options to prevent them from appearing as unused in the summary
-                        (encoding as Map<*, *>).getPaths()
+                            // Encoding spec was moved from the plot to the layer, where it’s used.
+                            // Visit all plot encoding options to prevent them from appearing as unused in the summary
+                            (encoding as Map<*, *>).getPaths()
+                        }
                     }
 
-                    it.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
-                        combinedEncoding.write(channel) { encoding }
+                    it.getMap(VegaOption.ENCODING)?.let { encodings ->
+                        Channels.forEach { channel ->
+                            val encoding = encodings.getMap(channel) ?: return@forEach
+                            combinedEncoding.write(channel) { encoding }
+                        }
                     }
 
                     processLayerSpec(it, combinedEncoding, accessLogger.nested(listOf(VegaOption.LAYER, i)))
@@ -71,6 +85,21 @@ internal class VegaPlotConverter private constructor(
             plotOptions.computationMessages = summary
         }
 
+        if (useLiveMap
+            && (plotOptions.layerOptions?.size ?: 0) > 0
+            && plotOptions.layerOptions!!.all { it.geom in SUPPORTED_LAYERS } == true
+        ) {
+            val liveMapLayer = liveMap {
+                tiles = vectorTiles()
+
+                // never scale points/lines etc
+                constSizeZoomin = 0
+                dataSizeZoomin = 0
+            }
+
+            plotOptions.layerOptions = listOf(liveMapLayer) + plotOptions.layerOptions!!
+        }
+
         return plotOptions
     }
 
@@ -81,6 +110,10 @@ internal class VegaPlotConverter private constructor(
     ) {
         val layerSpec: Map<*, *> = TraceableMapWrapper(layerSpecMap, accessLogger)
         val encoding = TraceableMapWrapper(combinedEncodingSpecMap, accessLogger.nested(listOf(VegaOption.ENCODING)))
+
+        if (Channel.LATITUDE in encoding || Channel.LONGITUDE in encoding) {
+            useLiveMap = true
+        }
 
         val (markType, markVegaSpecMap) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
         val markVegaSpec = TraceableMapWrapper(markVegaSpecMap, accessLogger.nested(listOf(VegaOption.MARK)))
@@ -100,20 +133,18 @@ internal class VegaPlotConverter private constructor(
             val layerOptions = LayerOptions()
                 .apply {
                     this.geom = geom
-                    data = when {
-                        VegaOption.DATA !in layerSpec -> Util.transformData(
-                            vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
-                        )
 
-                        layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                        layerSpec[VegaOption.DATA] != null -> Util.transformData(
-                            layerSpecMap.getMap(VegaOption.DATA)!!.typed()
-                        ) // data is specified
-                        else -> error("Unsupported data specification")
+                    val vegaData = when (VegaOption.DATA in layerSpec) {
+                        true -> layerSpec.getMap(VegaOption.DATA) ?: emptyMap() // if explicitly null - don't use plot data
+                        false -> vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
                     }
+
+                    data = Util.transformData(vegaData)
+                        .let { Util.applyTimeUnit(it, encoding) }
 
                     stat = transformResult?.stat
                     orientation = transformResult?.orientation
+                    plotOptions.guides = Util.transformPlotGuides(plotOptions.guides, encoding, channelMapping)
 
                     mapping = Util.transformMappings(encoding, channelMapping)
                     position = Util.transformPositionAdjust(encoding, stat)
@@ -121,7 +152,7 @@ internal class VegaPlotConverter private constructor(
 
                     Util.transformCoordinateSystem(encoding, plotOptions)
 
-                    applyConstants(markVegaSpec, channelMapping)
+                    applyConstants(layerSpec, channelMapping, mapping!!)
                 }
                 .apply(block)
 
@@ -140,7 +171,7 @@ internal class VegaPlotConverter private constructor(
                             COLOR to Aes.COLOR
                         )
                     )
-                } else if (encoding.any { (channel, _) -> channel == X2 }) {
+                } else if (X2 in encoding) {
                     appendLayer(
                         geom = GeomKind.CROSS_BAR,
                         channelMapping = listOf(
@@ -151,7 +182,7 @@ internal class VegaPlotConverter private constructor(
                             COLOR to Aes.COLOR
                         )
                     )
-                } else if (encoding.any { (channel, _) -> channel == Y2 }) {
+                } else if (Y2 in encoding) {
                     appendLayer(
                         geom = GeomKind.CROSS_BAR,
                         channelMapping = listOf(
@@ -176,7 +207,11 @@ internal class VegaPlotConverter private constructor(
 
 
             Mark.Types.LINE, Mark.Types.TRAIL -> appendLayer(GeomKind.LINE)
-            Mark.Types.POINT -> appendLayer(GeomKind.POINT)
+            Mark.Types.POINT -> appendLayer(GeomKind.POINT) {
+                // In Vega-Lite constant size represents the pixel area of the marks, while in Lets-Plot it's the diameter
+                // So, we need to convert the area to the diameter
+                size = size?.let(::sqrt)
+            }
             Mark.Types.AREA -> appendLayer(
                 channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
             ) {

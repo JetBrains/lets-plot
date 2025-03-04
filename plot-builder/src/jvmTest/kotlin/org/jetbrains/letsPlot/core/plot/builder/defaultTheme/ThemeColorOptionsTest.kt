@@ -72,7 +72,7 @@ class ThemeColorOptionsTest(
                             plotBackground(Color.WHITE) +
                             panelBackgroundRect(
                                 expectedColor = DARK_GREY,
-                                expectedFill = LIGHT_GREY
+                                expectedFill = Color.WHITE
                             )
                 ),
                 test(
@@ -88,9 +88,9 @@ class ThemeColorOptionsTest(
                     ),
                     expected = yAxisColor(Color.parseHex("#BBBBBB")) +
                             plotBackground(Color.parseHex("#303030")) +
-                            panelBackgroundRect( // special flavor color
-                                expectedColor = Color.parseHex("#BBBBBB"),
-                                expectedFill = Color.parseHex("#3B3B3B")
+                            panelBackgroundRect(
+                                expectedColor = Color.parseHex("#BBBBBB"), // special flavor color
+                                expectedFill = Color.parseHex("#303030") // same as the plot bkgr
                             )
                 ),
                 // check facet rect
@@ -165,7 +165,7 @@ class ThemeColorOptionsTest(
                 test(
                     themeOptions = noneTheme,
                     expected = yAxisColor(Color.BLUE) +
-                            plotBackground(Color.WHITE) +
+                            plotBackground(Color.LIGHT_BLUE) +
                             panelBackgroundRect(
                                 expectedColor = Color.BLUE,
                                 expectedFill = Color.LIGHT_BLUE
@@ -175,7 +175,7 @@ class ThemeColorOptionsTest(
                 test(
                     themeOptions = noneTheme + flavorOption,
                     expected = yAxisColor(Color.BLUE) +
-                            plotBackground(Color.WHITE) +
+                            plotBackground(Color.LIGHT_BLUE) +
                             panelBackgroundRect(
                                 expectedColor = Color.BLUE,
                                 expectedFill = Color.LIGHT_BLUE

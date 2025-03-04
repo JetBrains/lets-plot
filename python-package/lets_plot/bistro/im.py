@@ -6,14 +6,23 @@ from typing import Any
 
 from lets_plot._type_utils import is_ndarray
 from lets_plot.plot.geom_imshow_ import geom_imshow
-from lets_plot.plot.plot import ggplot, GGBunch
+from lets_plot.plot.ggbunch_ import ggbunch
+from lets_plot.plot.plot import ggplot, ggsize, GGBunch
 from lets_plot.plot.scale_position import scale_x_continuous, scale_y_continuous
+from lets_plot.plot.subplots import SupPlotsSpec
 from lets_plot.plot.theme_ import theme
 
 __all__ = ['image_matrix']
 
 
-def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None, scale=1) -> GGBunch:
+def image_matrix(image_data_array,
+                 cmap=None, *,
+                 norm=None,
+                 vmin=None,
+                 vmax=None,
+                 scale=1,
+                 spacer=1,
+                 ) -> SupPlotsSpec:
     """
     Display a set of images in a grid.
     Dimensions of the grid are determined by the shape of the input Numpy 2D array.
@@ -39,6 +48,8 @@ def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None
         This parameter is ignored for RGB(A) images or if parameter `norm=False`.
     scale : float, default=1.0
         Specify the image size magnification factor.
+    spacer : number, default=1
+        Specify the number of pixels between images.
 
     Returns
     -------
@@ -111,13 +122,21 @@ def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None
     options = scale_x_continuous(expand=[0, 0])
     options += scale_y_continuous(expand=[0, 0])
 
-    # show no axis
-    options += theme(axis_line='blank', axis_title='blank', axis_ticks='blank', axis_text='blank')
+    # clear all plot decorations, reset plot margins
+    options += theme(axis='blank', panel_grid='blank')
+    options += theme(plot_inset=0, plot_margin=0, panel_inset=0)
 
-    ggbunch = GGBunch()
+    figures = []
+    regions = []
+
+    bunch_width = cols * w_max + (cols - 1) * spacer
+    bunch_height = rows * h_max + (rows - 1) * spacer
 
     for row in range(rows):
         for col in range(cols):
+            figures.append(None)
+            regions.append((0, 0, 0, 0))
+
             image_data = image_data_array[row][col]
             if image_data is None:
                 continue
@@ -133,9 +152,21 @@ def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None
                 show_legend=False
             )
             p += options
-            ggbunch.add_plot(p, col * w_max, row * h_max, w, h)
+            figures[len(figures) - 1] = p
+            regions[len(figures) - 1] = (
+                col * (w_max + spacer) / bunch_width,
+                row * (h_max + spacer) / bunch_height,
+                w / bunch_width,
+                h / bunch_height
+            )
 
-    return ggbunch
+    return ggbunch(
+        plots=figures,
+        regions=regions
+    ) + ggsize(
+        bunch_width,
+        bunch_height
+    )
 
 
 def _assert_image_data(image_data: Any) -> None:

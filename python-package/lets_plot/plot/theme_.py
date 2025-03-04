@@ -10,6 +10,7 @@ __all__ = [
     "element_line",
     'element_rect',
     'element_text',
+    'element_markdown',
     'margin',
     'element_geom',
 ]
@@ -48,12 +49,11 @@ def theme(*,
           legend_key_size=None, legend_key_width=None, legend_key_height=None,
           legend_key_spacing=None, legend_key_spacing_x=None, legend_key_spacing_y=None,
           legend_box=None, legend_box_just=None, legend_box_spacing=None,
-          # ToDo: other legend options...
+          legend_ticks=None, legend_ticks_length=None,
 
           panel_background=None,
           panel_border=None,
           panel_border_ontop=None,
-          # ToDo: other panel options...
 
           panel_grid=None,
           panel_grid_ontop=None,
@@ -221,6 +221,14 @@ def theme(*,
         Justification of each legend within the overall bounding box, when there are multiple legends.
     legend_box_spacing : float
         Spacing between plotting area and legend box.
+    legend_ticks : str or dict
+        Tick marks in colorbars.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_line()` to specify all tick mark parameters.
+        `legend_ticks_*` DOES NOT inherit from `line`.
+        By default, the colorbar tick marks are drawn with the same color as the colorbar background.
+    legend_ticks_length : float
+        Length of colorbar tick marks in px.
     panel_background : str or dict
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -593,12 +601,11 @@ def element_text(
         Can be used with values out of range, but behaviour is not specified.
     margin : number or list of numbers
         Margins around the text.
-
         The margin may be specified using a number or a list of numbers:
+
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
-        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
-        the third - to the bottom;
+        - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
 
         It is acceptable to use None for any side; in this case, the default side value for this element will be used.
@@ -626,6 +633,87 @@ def element_text(
 
     """
     return locals()
+
+
+def element_markdown(
+        color=None,
+        family=None,
+        face=None,
+        size=None,
+        angle=None,
+        # ToDo: lineheight
+        hjust=None,
+        vjust=None,
+        margin=None,
+        blank=False,
+) -> dict:
+    """
+    Specify how non-data components of the plot are drawn.
+    This theme element draws texts with Markdown support.
+
+    Parameters
+    ----------
+    color : str
+        Text color.
+    family : str
+        Font family.
+    face : {'plain', 'italic', 'bold', 'bold_italic'}, default='plain'
+        Font face.
+    size : int
+        Text size in px.
+    angle : float
+        Angle to rotate the text (in degrees).
+    hjust : float
+        Horizontal justification (in [0, 1]).
+        0 - left-justified;
+        1 - right-justified;
+        0.5 - center-justified.
+        Can be used with values out of range, but behaviour is not specified.
+    vjust : float
+        Vertical justification (in [0, 1]).
+        0 - bottom-justified;
+        1 - top-justified;
+        0.5 - middle-justified.
+        Can be used with values out of range, but behaviour is not specified.
+    margin : number or list of numbers
+        Margins around the text.
+        The margin may be specified using a number or a list of numbers:
+
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers -  the first margin applies to the top, the second - to the right and left, the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default side value for this element will be used.
+    blank : bool, default=False
+        If True - draws nothing, and assigns no space.
+
+    Returns
+    -------
+    `dict`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + \\
+            geom_blank() + \\
+            labs(
+                title='*Hello*, **world**',
+                subtitle='_Simple plot_',
+                caption='*Powered by **lets-plot***',
+                x='Title **X**',
+                y='Title **Y**'
+            ) + \\
+            theme(title=element_markdown())
+
+    """
+    return {'markdown': True, **locals()}
 
 
 def margin(t=None, r=None, b=None, l=None):

@@ -33,8 +33,6 @@ include("platf-jfx-swing")
 include("platf-native")
 include("plot-image-export")
 
-include("deprecated-in-v4")
-
 include("python-extension")
 include("python-package-build")
 

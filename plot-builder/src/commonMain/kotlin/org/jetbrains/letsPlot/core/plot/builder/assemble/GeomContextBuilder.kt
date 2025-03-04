@@ -28,6 +28,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var defaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private var backgroundColor: Color = Color.WHITE
     private var plotContext: PlotContext = NullPlotContext
+    private var coordinateSystem: CoordinateSystem? = null
 
     constructor()
 
@@ -41,6 +42,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         defaultFormatters = ctx.defaultFormatters
         backgroundColor = ctx.backgroundColor
         plotContext = ctx.plotContext
+        coordinateSystem = ctx._coordinateSystem
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
@@ -93,6 +95,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun coordinateSystem(coordinateSystem: CoordinateSystem): ImmutableGeomContext.Builder {
+        this.coordinateSystem = coordinateSystem
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -103,6 +110,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val aestheticMappers = b.aestheticMappers
         val _aesBounds: DoubleRectangle? = b.aesBounds
         val defaultFormatters = b.defaultFormatters
+        val _coordinateSystem = b.coordinateSystem
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -155,6 +163,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override fun getDefaultFormatter(varName: String): (Any) -> String {
             return defaultFormatters[varName] ?: Any::toString
+        }
+
+        override fun getCoordinateSystem(): CoordinateSystem? {
+            return _coordinateSystem
         }
 
         override fun getAesBounds(): DoubleRectangle {

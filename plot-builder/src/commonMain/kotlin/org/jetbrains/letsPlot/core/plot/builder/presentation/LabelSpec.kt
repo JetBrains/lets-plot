@@ -10,10 +10,15 @@ import org.jetbrains.letsPlot.commons.values.Font
 
 interface LabelSpec {
     val font: Font
+    val markdown: Boolean
 
     fun dimensions(labelText: String): DoubleVector
+
+    fun multilineDimensions(labelText: String): DoubleVector
 
     fun width(labelText: String): Double
 
     fun height(): Double
+
+    fun multilineHeight(labelText: String): Double
 }

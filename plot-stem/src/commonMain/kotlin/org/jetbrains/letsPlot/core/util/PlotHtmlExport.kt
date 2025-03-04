@@ -19,10 +19,10 @@ object PlotHtmlExport {
      * - exporting to file
      * - cell output for notebooks which wrap the output cell content in an iframe.
      *
-     * @param plotSpec Raw specification of a plot or GGBunch.
+     * @param plotSpec Raw specification of a plot.
      * @param scriptUrl A URL to load the Lets-plot JS library from.
-     * @param iFrame Whether to wrap HTML in IFrame
-     * @param plotSize Desired plot size. Has no effect on GGBunch.
+     * @param iFrame Whether to wrap HTML in IFrame.
+     * @param plotSize Desired plot size.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildHtmlFromRawSpecs(
@@ -110,7 +110,7 @@ object PlotHtmlExport {
 
         try {
             @Suppress("NAME_SHADOWING")
-            val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
+            val plotSpec = MonolithicCommon.processRawSpecs(plotSpec)
             if (PlotConfig.isFailure(plotSpec)) {
                 return null
             }

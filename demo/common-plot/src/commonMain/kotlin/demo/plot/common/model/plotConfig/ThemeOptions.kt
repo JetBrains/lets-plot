@@ -26,12 +26,12 @@ class ThemeOptions {
 
     private fun margins(): MutableMap<String, Any> {
         val theme = """
-            'theme': {
-                'plot_background': {'size': 6, 'blank': false},
-                'legend_position': 'none',
-                'axis_title': {'margin': [ null, null, 0, 0 ], 'size': 15, 'blank': false},
-                'axis_text_x': {'margin': [ 20, null, null, null ], 'size': 15, 'blank': false},
-                'plot_margin': [80, 10, null]
+            "theme": {
+                "plot_background": {"size": 6, "blank": false},
+                "legend_position": "none",
+                "axis_title": {"margin": [ null, null, 0, 0 ], "size": 15, "blank": false},
+                "axis_text_x": {"margin": [ 20, null, null, null ], "size": 15, "blank": false},
+                "plot_margin": [80, 10, null]
             }
         """.trimIndent()
 
@@ -43,8 +43,8 @@ class ThemeOptions {
 
 
     private fun withTheme(themeName: String, flavorName: String? = null): MutableMap<String, Any> {
-        val flavor = flavorName?.let { ", 'flavor': '$it'" } ?: ""
-        val theme = "'theme': { 'name': '$themeName' $flavor }"
+        val flavor = flavorName?.let { """, "flavor": "$it"""" } ?: ""
+        val theme = """"theme": { "name": "$themeName" $flavor }"""
         // , 'strip_background' : {'size': 2, 'blank': false },  'panel_background': {'size': 6, 'blank': false} }"
         return plot(
             plotTitle = "theme = $themeName, flavor = $flavorName",
@@ -55,8 +55,8 @@ class ThemeOptions {
     private fun setThemeOptions(): MutableMap<String, Any> {
         fun option(name: String, value: Any?) : String {
             if (value == null) return ""
-            val vStr = if (value is String) "\"$value\"" else value.toString()
-            return "\"${name}\": $vStr,"
+            val vStr = if (value is String) """"$value"""" else value.toString()
+            return """"$name": $vStr,"""
         }
         fun text(key: String, color: String? = null, face: String? = null, size: Double? = null, family: String? = null): String {
             return """
@@ -77,7 +77,7 @@ class ThemeOptions {
                 "blank": false
             }"""
         }
-        val theme = "'theme': { " +
+        val theme = "\"theme\": { " +
                 text("title", color = "#2a14a8") +
                 "," + text("plot_title", face = "bold_italic") +
                 "," + text("plot_caption", face = "italic") +
@@ -88,7 +88,7 @@ class ThemeOptions {
                 "," + text("axis_text", color = "pink", face = "italic") +
                 "," + rect("axis_tooltip_x", color = "pink", fill = "#6c4675", size = 2.0) +
                 "," + text("axis_tooltip_text_x", color = "pink") +
-                "," + "'geom' : { 'pen':'dark_green' }" +
+                "," + "\"geom\" : { \"pen\":\"dark_green\" }" +
                 "}"
 
         return plot(
@@ -113,7 +113,7 @@ class ThemeOptions {
                     "y": "y",
                     "size": "y"
                 },
-                'facet': {'name': 'grid', 'x': 'x' },
+                "facet": {"name": "grid", "x": "x" },
                 "ggtitle": {
                     "text": "$plotTitle"
                 },

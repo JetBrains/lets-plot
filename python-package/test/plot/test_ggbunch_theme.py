@@ -8,25 +8,25 @@ import lets_plot as gg
 
 
 def test_ggbunch_theme():
-    spec = gg.ggbunch([gg.ggplot()]) + gg.theme_grey()
+    spec = gg.ggbunch([gg.ggplot()], []) + gg.theme_grey()
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'name': 'grey'}
 
 
 def test_ggbunch_flavor():
-    spec = gg.ggbunch([gg.ggplot()]) + gg.flavor_darcula()
+    spec = gg.ggbunch([gg.ggplot()], []) + gg.flavor_darcula()
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'flavor': 'darcula'}
 
 
 def test_ggbunch_theme_flavor():
-    spec = gg.ggbunch([gg.ggplot()]) + gg.theme_grey() + gg.flavor_darcula()
+    spec = gg.ggbunch([gg.ggplot()], []) + gg.theme_grey() + gg.flavor_darcula()
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'name': 'grey', 'flavor': 'darcula'}
 
 
 def test_ggbunch_theme_flavor_as_array():
-    spec = gg.ggbunch([gg.ggplot()]) + (gg.theme_grey() + gg.flavor_darcula())
+    spec = gg.ggbunch([gg.ggplot()], []) + (gg.theme_grey() + gg.flavor_darcula())
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'name': 'grey', 'flavor': 'darcula'}
 
@@ -38,7 +38,7 @@ def test_ggbunch_global_theme_override():
     )
 
     try:
-        spec = gg.ggbunch([gg.ggplot()]) + gg.theme_light()
+        spec = gg.ggbunch([gg.ggplot()], []) + gg.theme_light()
     finally:
         # Clear global setting
         gg.LetsPlot.set_theme(None)
@@ -60,7 +60,7 @@ def test_ggbunch_global_theme_override_cancelled():
 
     try:
         fig = gg.ggplot() + gg.theme_bw()  # this should cancel global theme for this figure
-        spec = gg.ggbunch([fig]) + gg.theme_light()
+        spec = gg.ggbunch([fig], []) + gg.theme_light()
     finally:
         # Clear global setting
         gg.LetsPlot.set_theme(None)

@@ -13,5 +13,6 @@ data class ThemeTextStyle(
     val family: FontFamily,
     val face: FontFace,
     val size: Double,
-    val color: Color
+    val color: Color,
+    val markdown: Boolean
 )

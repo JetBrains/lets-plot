@@ -8,22 +8,28 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 
 class MultilineLabel(
     val text: String,
-    wrapWidth: Int = -1
+    wrapWidth: Int = -1,
+    markdown: Boolean = false
 ) : SvgComponent() {
-    private val myLines: List<SvgTextElement> = RichText.toSvg(text, wrapWidth)
+    private val myLines: List<SvgTextElement> = RichText.toSvg(text, wrapWidth, markdown = markdown)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
     private var myLineHeight = 0.0
+    private var myVerticalAnchor: VerticalAnchor? = null
+    private var yStart = 0.0
 
     init {
         myLines.forEach(rootGroup.children()::add)
@@ -53,6 +59,14 @@ class MultilineLabel(
         myLines.forEach {
             it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
         }
+    }
+
+    fun setVerticalAnchor(anchor: VerticalAnchor) {
+        myVerticalAnchor = anchor
+        myLines.forEach {
+            it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+        }
+        repositionLines()
     }
 
     fun setFontSize(px: Double) {
@@ -104,18 +118,27 @@ class MultilineLabel(
     }
 
     fun setY(y: Double) {
-        updatePositions(y)
+        yStart = y
+        repositionLines()
     }
 
     fun setLineHeight(v: Double) {
         myLineHeight = v
-        val yStart = myLines.firstOrNull()?.y()?.get() ?: 0.0
-        updatePositions(yStart)
+        repositionLines()
     }
 
-    private fun updatePositions(yStart: Double) {
+    private fun repositionLines() {
+        val totalHeightShift = myLineHeight * (myLines.size - 1)
+
+        val adjustedYStart = yStart - when (myVerticalAnchor) {
+            VerticalAnchor.TOP -> 0.0
+            VerticalAnchor.CENTER -> totalHeightShift / 2
+            VerticalAnchor.BOTTOM -> totalHeightShift
+            else -> 0.0
+        }
+
         myLines.forEachIndexed { index, elem ->
-            elem.y().set(yStart + myLineHeight * index)
+            elem.y().set(adjustedYStart + myLineHeight * index)
         }
     }
 

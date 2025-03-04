@@ -5,19 +5,19 @@
 
 package org.jetbrains.letsPlot.livemap
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import org.jetbrains.letsPlot.commons.registration.Disposable
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
@@ -87,7 +87,6 @@ class LiveMap(
 ) : Disposable {
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
-    private var myInitialized: Boolean = false
     private lateinit var myEcsController: EcsController
     private lateinit var myContext: LiveMapContext
     private lateinit var myLayerRenderingSystem: LayersRenderingSystem
@@ -132,9 +131,10 @@ class LiveMap(
         )
         myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         myUiService = UiService(myComponentManager, myTextMeasurer)
+        init(myComponentManager)
 
         val updateController = UpdateController(
-            { dt -> animationHandler(myComponentManager, dt) },
+            { dt -> animationHandler(dt) },
             myDevParams.read(UPDATE_PAUSE_MS).toLong(),
             myDevParams.read(UPDATE_TIME_MULTIPLIER)
         )
@@ -146,19 +146,10 @@ class LiveMap(
     }
 
     fun hoverObjects(): List<HoverObject> {
-        if (!myInitialized) {
-            return emptyList()
-        }
-
-        return myComponentManager.getSingleton<SearchResultComponent>().hoverObjects
+        return myComponentManager.tryGetSingleton<SearchResultComponent>()?.hoverObjects ?: emptyList()
     }
 
-    private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
-        if (!myInitialized) {
-            init(componentManager)
-            myInitialized = true
-        }
-
+    private fun animationHandler(dt: Long): Boolean {
         myEcsController.update(dt.toDouble())
 
         myDiagnostics.update(dt)

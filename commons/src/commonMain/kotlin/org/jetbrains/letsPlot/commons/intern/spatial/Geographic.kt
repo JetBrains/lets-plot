@@ -6,13 +6,13 @@
 package org.jetbrains.letsPlot.commons.intern.spatial
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.max
 import kotlin.math.min
 
 interface LonLat {
     companion object {
         val DOMAIN = Rect.LTRB<LonLat>(-180.0, -90.0, 180.0, 90.0)
+        val ZERO_VEC: Vec<LonLat> = Vec(0.0, 0.0)
     }
 }
 typealias LonLatPoint = Vec<LonLat>

@@ -57,7 +57,7 @@ class PointEntityBuilder(
     var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 4.0
-    var point: Vec<LonLat>? = null
+    var point: Vec<LonLat> = LonLat.ZERO_VEC
 
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0
@@ -71,54 +71,52 @@ class PointEntityBuilder(
 
     fun build(nonInteractive: Boolean = false): EcsEntity {
         val d = radius * 2.0
-        return when {
-            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_point", point!!)
-            else -> error("Can't create point entity. Coord is null.")
-        }.run {
-            myFactory.incrementLayerPointsTotalCount(1)
-            setInitializer { worldPoint ->
-                if (layerIndex != null && index != null) {
-                    +IndexComponent(layerIndex!!, index!!)
-                }
-                + RenderableComponent().apply {
-                    renderer = PointRenderer(shape, angle)
-                }
-                +ChartElementComponent().apply {
-                    sizeScalingRange = this@PointEntityBuilder.sizeScalingRange
-                    alphaScalingEnabled = this@PointEntityBuilder.alphaScalingEnabled
-                    when (shape) {
-                        in 0..14 -> {
-                            strokeColor = this@PointEntityBuilder.strokeColor
-                            strokeWidth = this@PointEntityBuilder.strokeWidth
+        return myFactory.createStaticFeatureWithLocation("map_ent_s_point", point)
+            .run {
+                myFactory.incrementLayerPointsTotalCount(1)
+                setInitializer { worldPoint ->
+                    if (layerIndex != null && index != null) {
+                        +IndexComponent(layerIndex!!, index!!)
+                    }
+                    + RenderableComponent().apply {
+                        renderer = PointRenderer(shape, angle)
+                    }
+                    +ChartElementComponent().apply {
+                        sizeScalingRange = this@PointEntityBuilder.sizeScalingRange
+                        alphaScalingEnabled = this@PointEntityBuilder.alphaScalingEnabled
+                        when (shape) {
+                            in 0..14 -> {
+                                strokeColor = this@PointEntityBuilder.strokeColor
+                                strokeWidth = this@PointEntityBuilder.strokeWidth
+                            }
+                            in 15..18, 20 -> {
+                                fillColor = this@PointEntityBuilder.strokeColor
+                                strokeWidth = 0.0
+                            }
+                            19 -> {
+                                fillColor = this@PointEntityBuilder.strokeColor
+                                strokeColor = this@PointEntityBuilder.strokeColor
+                                strokeWidth = this@PointEntityBuilder.strokeWidth
+                            }
+                            in 21..25 -> {
+                                fillColor = this@PointEntityBuilder.fillColor
+                                strokeColor = this@PointEntityBuilder.strokeColor
+                                strokeWidth = this@PointEntityBuilder.strokeWidth
+                            }
+                            else -> error("Not supported shape: ${this@PointEntityBuilder.shape}")
                         }
-                        in 15..18, 20 -> {
-                            fillColor = this@PointEntityBuilder.strokeColor
-                            strokeWidth = 0.0
-                        }
-                        19 -> {
-                            fillColor = this@PointEntityBuilder.strokeColor
-                            strokeColor = this@PointEntityBuilder.strokeColor
-                            strokeWidth = this@PointEntityBuilder.strokeWidth
-                        }
-                        in 21..25 -> {
-                            fillColor = this@PointEntityBuilder.fillColor
-                            strokeColor = this@PointEntityBuilder.strokeColor
-                            strokeWidth = this@PointEntityBuilder.strokeWidth
-                        }
-                        else -> error("Not supported shape: ${this@PointEntityBuilder.shape}")
+                    }
+                    +PointComponent().apply {
+                        size = d
+                    }
+
+                    +WorldOriginComponent(worldPoint)
+                    +ScreenDimensionComponent()
+
+                    if (!nonInteractive) {
+                        +LocatorComponent(PointLocator)
                     }
                 }
-                +PointComponent().apply {
-                    size = d
-                }
-
-                +WorldOriginComponent(worldPoint)
-                +ScreenDimensionComponent()
-
-                if (!nonInteractive) {
-                    +LocatorComponent(PointLocator)
-                }
             }
-        }
     }
 }

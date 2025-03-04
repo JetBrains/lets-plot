@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.typed
 import org.junit.Test
@@ -63,29 +63,43 @@ class ErrorBandMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RIBBON)),
             entry(
                 PlotBase.MAPPING, mapOf(
-                toOption(Aes.YMIN) to "ci1",
-                toOption(Aes.YMAX) to "ci0",
-                toOption(Aes.X) to "Year"
-            )),
-            entry(PlotBase.DATA, mapOf(
-                "ci0" to listOf(19.6912, 20.8554, 21.9749, 22.6203),
-                "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
-                "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
-            )),
-            entry(Meta.DATA_META, mapOf(
-                Meta.SeriesAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.SeriesAnnotation.COLUMN to "Year",
-                        Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
+                    toOption(Aes.YMIN) to "ci1",
+                    toOption(Aes.YMAX) to "ci0",
+                    toOption(Aes.X) to "Year"
+                )
+            ),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "ci0" to listOf(19.6912, 20.8554, 21.9749, 22.6203),
+                    "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
+                    "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
+                )
+            ),
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "Year"
+                            )
+                        )
+                    ),
+                    Meta.SeriesAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.SeriesAnnotation.COLUMN to "Year",
+                            Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
+                        )
                     )
                 )
-            )),
+            ),
             entry(toOption(Aes.LINETYPE), 0)
         )
     }
@@ -130,28 +144,43 @@ class ErrorBandMarkTransformTest {
             """.trimMargin()
         ).asMutable()
 
-        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        val plotSpec = BackendTestUtil.backendSpecTransform(vegaSpec)
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RIBBON)),
-            entry(PlotBase.DATA, mapOf(
-                "ci0" to listOf(19.6912, 20.8554, 21.9749, 22.6203),
-                "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
-                "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
-            )),
-            entry(Meta.DATA_META, mapOf(
-                Meta.SeriesAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.SeriesAnnotation.COLUMN to "Year",
-                        Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
+            entry(
+                PlotBase.DATA, mapOf(
+                    "ci0" to listOf(19.6912, 20.8554, 21.9749, 22.6203),
+                    "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
+                    "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
+                )
+            ),
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.Y),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "Year"
+                            )
+                        )
+                    ),
+                    Meta.SeriesAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.SeriesAnnotation.COLUMN to "Year",
+                            Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
+                        )
                     )
                 )
-            )),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.XMIN) to "ci1",
-                toOption(Aes.XMAX) to "ci0",
-                toOption(Aes.Y) to "Year"
-            )),
+            ),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.XMIN) to "ci1",
+                    toOption(Aes.XMAX) to "ci0",
+                    toOption(Aes.Y) to "Year"
+                )
+            ),
             entry(toOption(Aes.LINETYPE), 0)
         )
     }

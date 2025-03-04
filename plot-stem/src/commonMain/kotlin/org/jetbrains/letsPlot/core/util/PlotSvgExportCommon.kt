@@ -27,7 +27,7 @@ object PlotSvgExportCommon {
         useCssPixelatedImageRendering: Boolean
     ): String {
         val svgToString = SvgToString(rgbEncoder, useCssPixelatedImageRendering)
-        val list = MonolithicCommon.buildSvgImagesFromRawSpecs(
+        return MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec,
             plotSize,
             svgToString
@@ -36,16 +36,5 @@ object PlotSvgExportCommon {
                 LOG.info { "[when SVG generating] $it" }
             }
         }
-
-        if (list.isEmpty()) {
-            throw IllegalStateException("Nothing to save: the plot is empty.")
-        }
-
-        if (list.size == 1) {
-            return list[0]
-        }
-
-        // Must be GGBunch
-        throw IllegalStateException("Unsupported: GGBunch")
     }
 }

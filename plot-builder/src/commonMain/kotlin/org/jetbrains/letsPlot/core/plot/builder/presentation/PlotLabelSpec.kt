@@ -8,22 +8,33 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 
 class PlotLabelSpec(
-    override val font: Font
+    override val font: Font,
+    override val markdown: Boolean = false
 ) : LabelSpec {
 
     override fun dimensions(labelText: String): DoubleVector {
         return DoubleVector(width(labelText), height())
     }
 
+    override fun multilineDimensions(labelText: String): DoubleVector {
+        return DoubleVector(width(labelText), multilineHeight(labelText))
+    }
+
     override fun width(labelText: String): Double {
-        return RichText.estimateWidth(labelText, font, widthEstimator = ::widthCalculator)
+        return RichText.estimateWidth(labelText, font, markdown = markdown, widthEstimator = ::widthCalculator)
     }
 
     override fun height(): Double {
         return font.size + 2 * LABEL_PADDING
+    }
+
+    override fun multilineHeight(labelText: String): Double {
+        labelText.count { it == '\n' }.let { newLinesCount ->
+            return height() + font.size * newLinesCount
+        }
     }
 
     companion object {
@@ -62,7 +73,14 @@ class PlotLabelSpec(
             override val font: Font
                 get() = UNSUPPORTED("Dummy Label Spec")
 
+            override val markdown: Boolean
+                get() = UNSUPPORTED("Dummy Label Spec")
+
             override fun dimensions(labelText: String): DoubleVector {
+                UNSUPPORTED("Dummy Label Spec")
+            }
+
+            override fun multilineDimensions(labelText: String): DoubleVector {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
@@ -71,6 +89,10 @@ class PlotLabelSpec(
             }
 
             override fun height(): Double {
+                UNSUPPORTED("Dummy Label Spec")
+            }
+
+            override fun multilineHeight(labelText: String): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

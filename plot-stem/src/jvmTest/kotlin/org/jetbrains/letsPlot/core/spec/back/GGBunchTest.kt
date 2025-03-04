@@ -41,7 +41,7 @@ class GGBunchTest {
         val ggBunch = simpleBunch(listOf(geom0, geom1))
 
         // Transform
-        SpecTransformBackendUtil.processTransform(ggBunch)
+        val ggBunchTransformed = BackendTestUtil.backendSpecTransform(ggBunch)
 
         // Expected
         val geom0Exp = mapOf(
@@ -56,9 +56,14 @@ class GGBunchTest {
             Option.PlotBase.DATA to mapOf("..count.." to listOf(100.0), "x" to listOf(1.0)),
             "bins" to 1
         )
-        val ggBunchExp = simpleBunch(listOf(geom0Exp, geom1Exp))
+        val ggBunchExp = simpleBunch(
+            listOf(
+                geom0Exp,
+                geom1Exp
+            )
+        )
 
         // Test
-        assertEquals(ggBunchExp, ggBunch)
+        assertEquals(ggBunchExp, ggBunchTransformed)
     }
 }

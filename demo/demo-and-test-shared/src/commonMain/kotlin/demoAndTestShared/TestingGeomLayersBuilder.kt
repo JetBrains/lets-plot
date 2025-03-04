@@ -7,14 +7,14 @@ package demoAndTestShared
 
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 
 object TestingGeomLayersBuilder {
     fun createMultiTileGeomLayers(plotSpec: MutableMap<String, Any>): List<List<GeomLayer>> {
-        val transformed = SpecTransformBackendUtil.processTransform(plotSpec)
+        val transformed = MonolithicCommon.processRawSpecs(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigFrontend.create(transformed) {}
         return PlotConfigFrontendUtil.createPlotGeomTiles(config).coreLayersByTile()

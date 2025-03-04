@@ -11,9 +11,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.tickLabelBaseOffset
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
@@ -95,9 +96,9 @@ class AxisComponent(
             StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
         }
 
-        var tickLabel: TextLabel? = null
+        var tickLabel: MultilineLabel? = null
         if (axisTheme.showLabels()) {
-            tickLabel = TextLabel(label)
+            tickLabel = MultilineLabel(label)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
         }
 
@@ -141,6 +142,8 @@ class AxisComponent(
             tickLabel.moveTo(labelOffset.x, labelOffset.y)
             tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
             tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
+            val lineHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
+            tickLabel.setLineHeight(lineHeight)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)
         }
@@ -160,6 +163,8 @@ class AxisComponent(
         horizontalAnchor: Text.HorizontalAnchor? = null,
         verticalAnchor: Text.VerticalAnchor? = null,
         val rotationDegree: Double = 0.0,
+        val hJust: Double? = null,
+        val vJust: Double? = null,
         private val additionalOffsets: List<DoubleVector>? = null
     ) {
         val horizontalAnchor: Text.HorizontalAnchor = horizontalAnchor ?: when (orientation) {

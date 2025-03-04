@@ -5,7 +5,7 @@
 
 package demoAndTestShared
 
-fun rawSpec_SinglePlot(): MutableMap<String, Any> {
+fun rawSpecSinglePlot(): MutableMap<String, Any> {
     val spec = """
             |{
             |  'kind': 'plot',
@@ -25,7 +25,7 @@ fun rawSpec_SinglePlot(): MutableMap<String, Any> {
     return parsePlotSpec(spec)
 }
 
-fun rawSpec_GGBunch(): MutableMap<String, Any> {
+fun rawSpecGGBunch(): MutableMap<String, Any> {
     val spec = """
         |{
         |   'kind': 'ggbunch',
@@ -35,14 +35,14 @@ fun rawSpec_GGBunch(): MutableMap<String, Any> {
         |                   'y': 0,
         |                   'width': 150,
         |                   'height': 150,
-        |                   'feature_spec': ${rawSpecStr_GGBunchItemPlot()} 
+        |                   'feature_spec': ${rawSpecStrGGBunchItemPlot()} 
         |               },
         |               {
         |                   'x': 150,
         |                   'y': 0,
         |                   'width': 150,
         |                   'height': 150,
-        |                   'feature_spec': ${rawSpecStr_GGBunchItemPlot()} 
+        |                   'feature_spec': ${rawSpecStrGGBunchItemPlot()} 
         |               }
         |            ]
         |}
@@ -50,7 +50,7 @@ fun rawSpec_GGBunch(): MutableMap<String, Any> {
     return parsePlotSpec(spec)
 }
 
-fun rawSpecStr_GGBunchItemPlot(): String {
+fun rawSpecStrGGBunchItemPlot(): String {
 
     return """
         |{

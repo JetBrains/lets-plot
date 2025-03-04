@@ -37,6 +37,8 @@ internal class AxisLayouter private constructor(
             tickLabelRotationAngle = labelsInfo.labelRotationAngle,
             tickLabelHorizontalAnchor = labelsInfo.labelHorizontalAnchor,
             tickLabelVerticalAnchor = labelsInfo.labelVerticalAnchor,
+            tickLabelHJust = labelsInfo.labelHJust,
+            tickLabelVJust = labelsInfo.labelVJust,
             tickLabelAdditionalOffsets = labelsInfo.labelAdditionalOffsets,
             tickLabelsTextBounds = BreakLabelsLayoutUtil.textBounds(
                 labelsBounds,

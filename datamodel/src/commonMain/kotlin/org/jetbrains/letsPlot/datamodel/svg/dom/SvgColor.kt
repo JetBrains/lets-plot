@@ -150,6 +150,7 @@ enum class SvgColors(private val literal: String) : SvgColor {
     TEAL("teal"),
     THISTLE("thistle"),
     TOMATO("tomato"),
+    TRANSPARENT("transparent"),
     TURQUOISE("turquoise"),
     VIOLET("violet"),
     WHEAT("wheat"),

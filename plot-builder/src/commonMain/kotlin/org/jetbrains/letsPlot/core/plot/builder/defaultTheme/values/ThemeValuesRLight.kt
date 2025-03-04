@@ -25,21 +25,8 @@ internal class ThemeValuesRLight : ThemeValues(VALUES) {
     companion object {
 
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
-            LINE to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
-
-            RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
-                Elem.FILL to SymbolicColor.GREY_3
-            ),
-
-            TEXT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
-            ),
 
             PANEL_BKGR_RECT to mapOf(
-                Elem.FILL to SymbolicColor.WHITE,
                 Elem.COLOR to SymbolicColor.GREY_4
             ),
             PANEL_GRID to mapOf(
@@ -50,11 +37,6 @@ internal class ThemeValuesRLight : ThemeValues(VALUES) {
 
             AXIS to mapOf(
                 Elem.COLOR to SymbolicColor.GREY_4
-            ),
-
-            AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to SymbolicColor.WHITE,
-                Elem.FILL to SymbolicColor.BLACK
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(

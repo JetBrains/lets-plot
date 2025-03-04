@@ -23,7 +23,7 @@ object ThemeOption {
     const val PLOT_MARGIN = "plot_margin"
     const val PLOT_INSET = "plot_inset"
 
-    const val PLOT_TITLE_POSITION = "plot_title_position"
+    const val PLOT_TITLE_POSITION = "plot_title_position" // also apples to 'subtitle'
     const val PLOT_CAPTION_POSITION = "plot_caption_position"
 
     // ToDo: "text_width_scale" is used Violin demo - update.
@@ -112,6 +112,10 @@ object ThemeOption {
     const val LEGEND_BOX_JUST = "legend_box_just"
     const val LEGEND_BOX_SPACING = "legend_box_spacing"
 
+    // Colorbar tick-marks
+    const val LEGEND_TICKS = "legend_ticks"
+    const val LEGEND_TICKS_LENGTH = "legend_ticks_length"
+
     // Tooltip
     const val TOOLTIP_RECT = "tooltip"
     const val TOOLTIP_TEXT = "tooltip_text"
@@ -134,6 +138,7 @@ object ThemeOption {
         const val COLOR = "color"
         const val SIZE = "size"
         const val LINETYPE = "linetype"
+        const val MARKDOWN = "markdown"
         const val ARROW = "arrow"       // ToDo
 
         // text

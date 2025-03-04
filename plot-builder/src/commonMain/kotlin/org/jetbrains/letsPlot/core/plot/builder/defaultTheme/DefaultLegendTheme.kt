@@ -7,19 +7,12 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.*
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX
@@ -27,8 +20,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_HEIGHT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SPACING_X
@@ -39,7 +32,13 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_SPACING_X
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_SPACING_Y
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TICKS
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TICKS_LENGTH
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
 internal class DefaultLegendTheme(
     options: Map<String, Any>,
@@ -52,6 +51,10 @@ internal class DefaultLegendTheme(
     internal val backgroundKey = listOf(LEGEND_BKGR_RECT, RECT)
     internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
     internal val textKey = listOf(LEGEND_TEXT, TEXT)
+
+    // 'tick key' doesn't inherit LINE because tick color by default should inherit legend's background FILL color.
+    internal val tickKey = listOf(LEGEND_TICKS/*, LINE*/)
+    internal val tickLengthKey = listOf(LEGEND_TICKS_LENGTH)
 
     override fun keySize(): DoubleVector {
         val width = getNumber(listOf(LEGEND_KEY_WIDTH, LEGEND_KEY_SIZE))
@@ -134,4 +137,24 @@ internal class DefaultLegendTheme(
     }
 
     override fun backgroundLineType() = getLineType(getElemValue(backgroundKey))
+
+    override fun showTickMarks(): Boolean {
+        return !isElemBlank(tickKey)
+    }
+
+    override fun tickMarkColor(): Color {
+        return getColorDef(getElemValue(tickKey), Elem.COLOR, backgroundFill())
+    }
+
+    override fun tickMarkLineType(): LineType {
+        return getLineType(getElemValue(tickKey))
+    }
+
+    override fun tickMarkWidth(): Double {
+        return getNumber(getElemValue(tickKey), Elem.SIZE)
+    }
+
+    override fun tickMarkLength(): Double {
+        return getNumber(tickLengthKey)
+    }
 }

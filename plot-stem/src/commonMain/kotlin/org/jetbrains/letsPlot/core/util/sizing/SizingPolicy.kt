@@ -19,21 +19,62 @@ import kotlin.math.min
 private val LOG = PortableLogging.logger("Lets-Plot SizingPolicy")
 
 /**
- * width and height are required for fit, min and fixed modes, and also when both modeas are 'scales'
+ * Controls the sizing behavior of plots by managing width and height dimensions
+ * according to different sizing modes.
+ *
+ * The policy determines how a plot's dimensions should be calculated based on:
+ * - The default figure size
+ * - The container size (if available)
+ * - The specified width and height values
+ * - The sizing modes for both width and height
+ *
+ * Sizing modes:
+ *
+ * 1. FIXED mode:
+ *    - Uses the explicitly provided width/height values
+ *    - Falls back to the default figure size if no values provided
+ *    - Not responsive to container size
+ *
+ * 2. MIN mode:
+ *    Applies the smallest dimension among:
+ *    - The default figure size
+ *    - The specified width/height (if provided)
+ *    - The container size (if available)
+ *
+ * 3. FIT mode:
+ *    Uses either:
+ *    - The specified width/height if provided
+ *    - Otherwise uses container size if available
+ *    - Falls back to default figure size if neither is available
+ *
+ * 4. SCALED mode:
+ *    - Always preserves the figure's aspect ratio
+ *    - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode
+ *      and SCALED height adjusts to maintain aspect ratio
+ *    - Special case: when both width and height are SCALED:
+ *      * Requires container size to be available
+ *      * Fits figure within container while preserving aspect ratio
+ *      
  */
 class SizingPolicy(
     val widthMode: SizingMode,
     val heightMode: SizingMode,
-    val width: Double?,
-    val height: Double?,
+    val width: Double? = null,
+    val height: Double? = null,
 ) {
+
+    // avoid division by zero
     private fun normalize(v: Double): Double = max(1.0, v)
 
-    fun isFixedDefined() = widthMode == FIXED && heightMode == FIXED && width != null && height != null
+    fun isFixedSize(): Boolean {
+        // 'fixed size' - no need to know figure size or container sise.
+        return widthMode == FIXED && heightMode == FIXED
+                && width != null && height != null
+    }
 
-    fun getFixedDefined(): DoubleVector {
-        check(isFixedDefined()) {
-            "Undefined fixed size: $this"
+    fun getFixedSize(): DoubleVector {
+        check(isFixedSize()) {
+            "Not a fixed size policy: $this"
         }
 
         return DoubleVector(
@@ -42,70 +83,49 @@ class SizingPolicy(
         )
     }
 
-    fun resize(figureSize: DoubleVector): DoubleVector {
-        // avoid division by zero
+    fun resize(figureSizeDefault: DoubleVector, containerSize: DoubleVector?): DoubleVector {
         @Suppress("NAME_SHADOWING")
-        val figureSize = DoubleVector(
-            normalize(figureSize.x),
-            normalize(figureSize.y),
-        )
+        val containerSize = containerSize ?: figureSizeDefault
 
-        val definedWidth = width?.let { normalize(it) }
-        val definedHeight = height?.let { normalize(it) }
+        // width, height if provided by the policy override the container size.
+        val policyWidth = width ?: containerSize.x
+        val policyHeight = height ?: containerSize.y
 
-        if (widthMode == SCALED && heightMode == SCALED) {
-            require(definedWidth != null && definedHeight != null) {
-                "Both 'width' and 'height' are required when both sides scaled: $this"
+        return if (widthMode == SCALED && heightMode == SCALED) {
+            // Fit in container and preserve figure aspect ratio.
+            return DoubleRectangle(DoubleVector.ZERO, DoubleVector(policyWidth, policyHeight))
+                .shrinkToAspectRatio(figureSizeDefault)
+                .dimension
+        } else {
+            val widthFixed = when (widthMode) {
+                FIXED -> width ?: figureSizeDefault.x
+                FIT -> policyWidth
+                MIN -> min(figureSizeDefault.x, policyWidth)
+                SCALED -> null
             }
 
-            val containerSize = DoubleVector(
-                x = normalize(definedWidth),
-                y = normalize(definedHeight),
-            )
-            // Fit in container and preserve figure aspect ratio.
-            return DoubleRectangle(DoubleVector.ZERO, containerSize)
-                .shrinkToAspectRatio(figureSize)
-                .dimension
+            val heightFixed = when (heightMode) {
+                FIXED -> height ?: figureSizeDefault.y
+                FIT -> policyHeight
+                MIN -> min(figureSizeDefault.y, policyHeight)
+                SCALED -> null
+            }
 
+            if (widthFixed != null && heightFixed != null) {
+                DoubleVector(widthFixed, heightFixed)
+            } else if (widthFixed != null) {
+                // scale height
+                val height = widthFixed / normalize(figureSizeDefault.x) * figureSizeDefault.y
+                DoubleVector(widthFixed, height)
+            } else if (heightFixed != null) {
+                // scale width
+                val width = heightFixed / normalize(figureSizeDefault.y) * figureSizeDefault.x
+                DoubleVector(width, heightFixed)
+            } else {
+                // Never occures.
+                throw IllegalArgumentException("Unable to determine size with sizing policy: $this")
+            }
         }
-
-        val widthFixed = when (widthMode) {
-            FIT -> definedWidth ?: throw IllegalArgumentException("Undefined `width`: $this")
-            MIN -> definedWidth?.let { min(figureSize.x, definedWidth) } ?: figureSize.x
-            SCALED -> null
-            FIXED -> definedWidth ?: figureSize.x
-        }
-
-        val heightFixed = when (heightMode) {
-            FIT -> definedHeight ?: throw IllegalArgumentException("Undefined `height`: $this")
-            MIN -> definedHeight?.let { min(figureSize.y, definedHeight) } ?: figureSize.y
-            SCALED -> null
-            FIXED -> definedHeight ?: figureSize.y
-        }
-
-        return if (widthFixed != null && heightFixed != null) {
-            DoubleVector(widthFixed, heightFixed)
-        } else if (widthFixed != null) {
-            // scale height
-            val height = widthFixed / figureSize.x * figureSize.y
-            DoubleVector(widthFixed, height)
-        } else if (heightFixed != null) {
-            // scale width
-            val width = heightFixed / figureSize.y * figureSize.x
-            DoubleVector(width, heightFixed)
-        } else {
-            // Impossible!
-            figureSize
-        }
-    }
-
-    fun withFixedWidth(width: Double): SizingPolicy {
-        return SizingPolicy(
-            widthMode = FIXED,
-            width = width,
-            heightMode = this.heightMode,
-            height = this.height,
-        )
     }
 
     fun withUpdate(
@@ -135,6 +155,15 @@ class SizingPolicy(
             )
         }
 
+        fun dataloreReportCell(width: Double): SizingPolicy {
+            return SizingPolicy(
+                widthMode = FIXED,
+                width = width,
+                heightMode = SCALED,
+                height = null,
+            )
+        }
+
         fun fixed(width: Double, height: Double): SizingPolicy {
             return SizingPolicy(
                 widthMode = FIXED,
@@ -144,22 +173,37 @@ class SizingPolicy(
             )
         }
 
+        fun keepFigureDefaultSize(): SizingPolicy {
+            return SizingPolicy(
+                widthMode = FIXED,
+                heightMode = FIXED,
+                width = null,
+                height = null,
+            )
+        }
+
+        fun fitContainerSize(preserveAspectRatio: Boolean): SizingPolicy {
+            val mode = if (preserveAspectRatio) SCALED else FIT
+            return SizingPolicy(
+                widthMode = mode,
+                heightMode = mode,
+                width = null,
+                height = null,
+            )
+        }
+
         fun create(
             options: Map<*, *>,
         ): SizingPolicy {
             val width = (options[WIDTH] as? Number)?.toDouble()
             val height = (options[HEIGHT] as? Number)?.toDouble()
 
-            val defaultFixed = width != null && height != null
-            val defaultWidthMode = if (defaultFixed) FIXED else NOTEBOOK_WIDTH_MODE
-            val defaultHeightMode = if (defaultFixed) FIXED else NOTEBOOK_HEIGHT_MODE
-
-            val widthMode = sizingMode(options, WIDTH_MODE) ?: defaultWidthMode
-            val heightMode = sizingMode(options, HEIGHT_MODE) ?: defaultHeightMode
+            val widthMode = sizingMode(options, WIDTH_MODE) ?: if (width != null) FIXED else null
+            val heightMode = sizingMode(options, HEIGHT_MODE) ?: if (height != null) FIXED else null
 
             return SizingPolicy(
-                widthMode = widthMode,
-                heightMode = heightMode,
+                widthMode = widthMode ?: NOTEBOOK_WIDTH_MODE,
+                heightMode = heightMode ?: NOTEBOOK_HEIGHT_MODE,
                 width = width,
                 height = height,
             )

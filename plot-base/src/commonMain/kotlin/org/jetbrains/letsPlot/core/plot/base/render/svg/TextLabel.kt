@@ -10,11 +10,12 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.WritablePropert
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
-class TextLabel(text: String) : SvgComponent() {
+class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
     private val myText: SvgTextElement
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
@@ -25,7 +26,7 @@ class TextLabel(text: String) : SvgComponent() {
     init {
         // TextLabel is a single-line text element
         val singleLineText = text.replace("\n", " ")
-        myText = RichText.toSvg(singleLineText).firstOrNull() ?: SvgTextElement()
+        myText = RichText.toSvg(singleLineText, markdown = markdown).firstOrNull() ?: SvgTextElement()
         rootGroup.children().add(myText)
     }
 

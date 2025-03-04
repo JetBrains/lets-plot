@@ -51,17 +51,17 @@ def joint_plot(data, x, y, *,
         The data to be displayed.
     x, y : str
         Names of a variables.
-    geom : {'point', 'tile', 'density2d', 'density2df'}, default='point'
+    geom : {'point', 'tile', 'hex', 'density2d', 'density2df'}, default='point'
         The geometric object to use to display the data.
     bins : int or list of int
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
         If only one value given - interpret it as list of two equal values.
-        Applicable simultaneously for 'tile' geom and 'histogram' marginal.
+        Applicable simultaneously for 'tile'/'hex' geom and 'histogram' marginal.
     binwidth : float or list of float
         The width of the bins in both directions, vertical and horizontal.
         Overrides `bins`. The default is to use bin widths that cover the entire range of the data.
         If only one value given - interpret it as list of two equal values.
-        Applicable simultaneously for 'tile' geom and 'histogram' marginal.
+        Applicable simultaneously for 'tile'/'hex' geom and 'histogram' marginal.
     color : str
         Color of the geometry.
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.

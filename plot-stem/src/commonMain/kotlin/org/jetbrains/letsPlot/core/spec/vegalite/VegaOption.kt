@@ -23,6 +23,7 @@ internal object VegaOption {
     const val HCONCAT = "hconcat"
     const val REPEAT = "repeat"
     const val ENCODING = "encoding"
+    const val TITLE = "title"
 
     const val CONFIG = "config"
 
@@ -50,6 +51,19 @@ internal object VegaOption {
         const val CONDITION = "condition"
         const val TOOLTIP = "tooltip"
         const val FORMAT_TYPE = "formatType"
+
+        object TimeUnit {
+            const val YEAR = "year"
+            const val QUARTER = "quarter"
+            const val MONTH = "month"
+            const val DATE = "date"
+            const val WEEK = "week"
+            const val DAY = "day"
+            const val HOURS = "hours"
+            const val MINUTES = "minutes"
+            const val SECONDS = "seconds"
+            const val MILLISECONDS = "milliseconds"
+        }
 
         object Aggregate {
             const val COUNT = "count"
@@ -89,20 +103,31 @@ internal object VegaOption {
             const val CENTER = "center"
         }
 
+        val Channels = setOf(
+            Channel.X, Channel.Y, Channel.X2, Channel.Y2,
+            Channel.LATITUDE, Channel.LONGITUDE,
+            Channel.COLOR, Channel.FILL, Channel.OPACITY,
+            Channel.STROKE, Channel.SIZE,
+            Channel.ANGLE,
+            Channel.SHAPE,
+            Channel.TEXT,
+            Channel.DETAIL,
+            Channel.X_OFFSET, Channel.Y_OFFSET,
+            Channel.ERROR_X
+        )
         object Channel {
             const val X = "x"
             const val Y = "y"
             const val X2 = "x2"
             const val Y2 = "y2"
 
+            const val LATITUDE = "latitude"
+            const val LONGITUDE = "longitude"
+
             const val COLOR = "color"
             const val FILL = "fill"
             const val OPACITY = "opacity"
-            const val FILL_OPACITY = "fillOpacity"
             const val STROKE = "stroke"
-            const val STROKE_OPACITY = "strokeOpacity"
-            const val STROKE_WIDTH = "strokeWidth"
-            const val STROKE_DASH = "strokeDash"
             const val SIZE = "size"
             const val ANGLE = "angle"
             const val SHAPE = "shape"
@@ -167,4 +192,8 @@ internal object VegaOption {
         }
     }
 
+    object Title {
+        const val TEXT = "text"
+        const val SUBTITLE = "subtitle"
+    }
 }

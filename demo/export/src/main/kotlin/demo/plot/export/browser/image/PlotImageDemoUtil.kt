@@ -14,7 +14,7 @@ import java.io.StringWriter
 
 object PlotImageDemoUtil {
     private const val DEMO_PROJECT_PATH = "demo/export"
-    private const val DEMO_PROJECT = "demo-plot-export"
+//    private const val DEMO_PROJECT = "demo-plot-export"
 
     fun show(
         title: String,

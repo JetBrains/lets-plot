@@ -210,3 +210,25 @@ fun rotateAround(px: Double, py: Double, cx: Double, cy: Double, phi: Double): D
 
     return DoubleVector(x + cx, y + cy)
 }
+
+fun polygonContainsCoordinate(points: List<DoubleVector>, coord: DoubleVector): Boolean {
+    var intersectionCount = 0
+
+    for (i in 1 until points.size) {
+        val start = points[i - 1]
+        val end = points[i]
+
+        if (start.y >= coord.y && end.y >= coord.y || start.y < coord.y && end.y < coord.y) {
+            continue
+        }
+
+        // TODO: replace with the xOnLine function?
+        val x = start.x + (coord.y - start.y) * (end.x - start.x) / (end.y - start.y)
+
+        if (x <= coord.x) {
+            intersectionCount++
+        }
+    }
+
+    return intersectionCount % 2 != 0
+}

@@ -26,6 +26,10 @@ interface SvgTextContent {
             SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE)
         val TEXT_DY: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_DY_ATTRIBUTE)
+        val FONT_WEIGHT: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("font-weight")
+        val FONT_STYLE: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("font-style")
     }
 
     val computedTextLength: Double
@@ -47,4 +51,8 @@ interface SvgTextContent {
     fun textAnchor(): Property<String?>
 
     fun textDy(): Property<String?>
+
+    fun fontWeight(): Property<String?>
+
+    fun fontStyle(): Property<String?>
 }

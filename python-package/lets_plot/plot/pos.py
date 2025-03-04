@@ -146,7 +146,7 @@ def position_jitter(width=None, height=None, seed=None):
     return _pos('jitter', width=width, height=height, seed=seed)
 
 
-def position_nudge(x=None, y=None):
+def position_nudge(x=None, y=None, unit=None):
     """
     Adjust position by nudging a given offset.
 
@@ -156,6 +156,13 @@ def position_nudge(x=None, y=None):
         Nudging width.
     y : float
         Nudging height.
+    unit : {'identity', 'size', 'px'}, default='identity'
+        Units for x and y nudging.
+        Possible values:
+
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
 
     Returns
     -------
@@ -182,10 +189,10 @@ def position_nudge(x=None, y=None):
         t = np.random.choice(list('abcdefghijk'), size=n)
         ggplot({'x': x, 'y': y, 't': t}, aes('x', 'y')) + \\
             geom_point(size=5, shape=21, color='black', fill='red') + \\
-            geom_text(aes(label='t'), position=position_nudge(y=.05))
+            geom_text(aes(label='t'), position=position_nudge(y=.05, unit='identity'))
 
     """
-    return _pos('nudge', x=x, y=y)
+    return _pos('nudge', x=x, y=y, unit=unit)
 
 
 def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None, seed=None):

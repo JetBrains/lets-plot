@@ -30,7 +30,7 @@ open class LinesHelper(
 ) : GeomHelper(pos, coord, ctx) {
 
     private var myAlphaEnabled = true
-    private var myResamplingEnabled = false
+    protected var myResamplingEnabled = false
 
     // Polar coordinate system with discrete X scale.
     fun meetsRadarPlotReq(): Boolean {

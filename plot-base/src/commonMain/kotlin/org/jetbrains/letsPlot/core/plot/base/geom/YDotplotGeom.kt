@@ -162,11 +162,12 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
     }
 
     override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
-        return PointDimensionsUtil.dimensionSpan(
+        return DimensionsUtil.dimensionSpan(
             p,
             coordAes,
             sizeAes = Aes.BINWIDTH,
-            resolution
+            resolution,
+            DimensionUnit.RESOLUTION
         )
     }
 

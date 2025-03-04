@@ -27,11 +27,11 @@ internal class SingleTilePlotLayout(
     }
 
     private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val plotMargins = plotTheme.plotMargins()
+        val plotLayoutMargins = plotTheme.layoutMargins()
         val tilePreferredSize = outerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
-            .subtract(DoubleVector(plotMargins.width, plotMargins.height))
+            .subtract(DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height))
 
         val tileInfo = tileLayout
             .doLayout(tilePreferredSize, coordProvider)

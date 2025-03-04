@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.livemap.Client
-import org.jetbrains.letsPlot.livemap.ClientPoint
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
@@ -17,6 +16,8 @@ import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapCellComponent
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DebugDataComponent
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DebugDataComponent.Companion.LINES_ORDER
 import org.jetbrains.letsPlot.livemap.mapengine.placement.ScreenDimensionComponent
+import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
+import org.jetbrains.letsPlot.livemap.mapengine.translate
 
 class DebugCellRenderer : Renderer {
     private var myOffset: Double = 0.0
@@ -26,12 +27,13 @@ class DebugCellRenderer : Renderer {
 
         myOffset = 0.0
 
+        ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
         ctx.setFillStyle(Color.RED)
         ctx.setStrokeStyle(Color.RED)
         ctx.setLineWidth(LINE_WIDTH)
         ctx.setFont(FONT)
 
-        ctx.strokeRect(org.jetbrains.letsPlot.livemap.Client.ZERO_VEC, cellDimension)
+        ctx.strokeRect(Client.ZERO_VEC, cellDimension)
 
         ctx.drawNextLine(entity.get<BasemapCellComponent>().cellKey.toString())
 

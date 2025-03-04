@@ -14,13 +14,12 @@ import org.jetbrains.letsPlot.commons.intern.util.ArrowSupport
 import org.jetbrains.letsPlot.commons.intern.util.curve
 import org.jetbrains.letsPlot.commons.intern.util.padLineString
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
+import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Companion.toArrowAes
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Type.CLOSED
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
@@ -352,6 +351,29 @@ open class GeomHelper(
             if (!hasArrow) return 0.0
 
             return newVer
+        }
+    }
+
+    fun getUnitResolution(
+        unit: DimensionUnit,
+        axisAes: Aes<Double>
+    ): Double {
+        val unitSize = when (axisAes) {
+            Aes.X -> coord.unitSize(DoubleVector(1.0, 0.0)).x
+            Aes.Y -> coord.unitSize(DoubleVector(0.0, 1.0)).y
+            else -> error("Unsupported axis aes: $axisAes")
+        }
+        return when (unit) {
+            RESOLUTION -> ctx.getResolution(axisAes) // resolution along the axis, i.e. the minimum distance between data points
+            IDENTITY -> 1.0 // distance from 0 to 1 on the axis
+            SIZE -> {
+                // diameter of a point of size 1 (in standard point size units)
+                AesScaling.POINT_UNIT_SIZE / unitSize
+            }
+            PIXEL -> {
+                // pixel
+                1.0 / unitSize
+            }
         }
     }
 

@@ -13,13 +13,26 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_
 
 class CompositeFigureFreeLayout(
     regions: List<DoubleRectangle>,
+    offsets: List<DoubleVector>,
     elementsCount: Int
 ) : CompositeFigureLayout {
     private val regions: List<DoubleRectangle>
+    private val offsets: List<DoubleVector>
 
     init {
-        val autoRegionsCount = elementsCount - regions.size
-        this.regions = regions + calculateAutoRegions(autoRegionsCount)
+        val regionsSizeDiff = elementsCount - regions.size
+        this.regions = if (regionsSizeDiff >= 0) {
+            regions + calculateAutoRegions(regionsSizeDiff)
+        } else {
+            regions.take(elementsCount)
+        }
+
+        val offsetsSizeDiff = elementsCount - offsets.size
+        this.offsets = if (offsetsSizeDiff >= 0) {
+            offsets + List(offsetsSizeDiff) { DoubleVector.ZERO }
+        } else {
+            offsets.take(elementsCount)
+        }
     }
 
     override fun defaultSize(): DoubleVector {
@@ -27,14 +40,15 @@ class CompositeFigureFreeLayout(
     }
 
     override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
-        val elementBoundsList = regions.map {
+        val elementBoundsList = regions.zip(offsets).map { (region, offset) ->
             // scale
             DoubleRectangle.XYWH(
-                it.origin.x * bounds.width,
-                it.origin.y * bounds.height,
-                it.width * bounds.width,
-                it.height * bounds.height,
-            ).add(bounds.origin)
+                region.origin.x * bounds.width,
+                region.origin.y * bounds.height,
+                region.width * bounds.width,
+                region.height * bounds.height,
+            ).add(offset)  // move (optional, px)
+                .add(bounds.origin)
         }
 
         val elementsWithBounds = elements.mapIndexed { index, buildInfo ->

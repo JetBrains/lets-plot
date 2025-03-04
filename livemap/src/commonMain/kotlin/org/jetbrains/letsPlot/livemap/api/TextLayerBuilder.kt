@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.TextSpecComponent
 import org.jetbrains.letsPlot.livemap.chart.text.TextRenderer
@@ -54,7 +55,10 @@ class TextEntityBuilder(
     private val myFactory: FeatureEntityFactory
 ) {
     var index: Int = 0
-    var point: Vec<LonLat>? = null
+    var point: Vec<LonLat> = LonLat.ZERO_VEC
+
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
 
     var fillColor: Color = Color.TRANSPARENT
     var strokeColor: Color = Color.BLACK
@@ -77,6 +81,9 @@ class TextEntityBuilder(
     var angle: Double = 0.0
     var lineheight: Double = 1.0
 
+    var nudgeClient: Vec<Client> = Vec(0.0, 0.0)
+    var enableNudgeScaling = false
+
     fun build(
         textMeasurer: TextMeasurer
     ): EcsEntity {
@@ -97,19 +104,22 @@ class TextEntityBuilder(
             lineheight
         )
 
-        return when {
-            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_text", point!!)
-            else -> error("Can't create text entity. Coord is null.")
-        }
+        return myFactory.createStaticFeatureWithLocation("map_ent_s_text", point)
             .setInitializer { worldPoint ->
                 +RenderableComponent().apply {
                     renderer = TextRenderer()
                 }
                 +ChartElementComponent().apply {
+                    sizeScalingRange = this@TextEntityBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@TextEntityBuilder.alphaScalingEnabled
+
                     fillColor = this@TextEntityBuilder.fillColor
                     strokeColor = this@TextEntityBuilder.strokeColor
                     strokeWidth = this@TextEntityBuilder.strokeWidth
                     lineheight = this@TextEntityBuilder.lineheight
+
+                    nudgeClient = this@TextEntityBuilder.nudgeClient
+                    enableNudgeScaling = this@TextEntityBuilder.enableNudgeScaling
                 }
                 +TextSpecComponent().apply { this.textSpec = textSpec }
                 +WorldOriginComponent(worldPoint)
