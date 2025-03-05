@@ -1,0 +1,93 @@
+/*
+ * Copyright (c) 2025. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.builder.assemble
+
+import demoAndTestShared.assertEquals
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.geom.ErrorBarGeom
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
+import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.SimplePlotGeomTiles
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
+import kotlin.test.Test
+import kotlin.to
+
+class ErrorBarDomainTest {
+    @Test
+    fun testErrorBarGeomCalculatesYRangeCorrectly() {
+        checkDomain(isVertical = true)
+    }
+
+    @Test
+    fun testErrorBarGeomCalculatesRotatedYRangeCorrectly() {
+        checkDomain(isVertical = false)
+    }
+
+    private fun checkDomain(
+        isVertical: Boolean
+    ) {
+        val xAes = aesAfterRotation(isVertical, Aes.X)
+        val yAes = aesAfterRotation(isVertical, Aes.Y)
+        val yMinAes = aesAfterRotation(isVertical, Aes.YMIN)
+        val yMaxAes = aesAfterRotation(isVertical, Aes.YMAX)
+        val catValues = listOf("a")
+        val catVar = DataFrame.Variable("cat")
+        val minVar = DataFrame.Variable("min")
+        val maxVar = DataFrame.Variable("max")
+
+        val geomProvider = GeomProvider.errorBar { ErrorBarGeom(isVertical = isVertical) }
+        val data = DataFrame.Builder()
+            .put(catVar, catValues)
+            .put(minVar, listOf(100.0))
+            .put(maxVar, listOf(101.0))
+            .build()
+        val continuousScale = Scales.DemoAndTest.continuousDomain(yAes.name, yAes)
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            xAes to Scales.DemoAndTest.discreteDomain("cat", catValues),
+            yAes to continuousScale, yMinAes to continuousScale, yMaxAes to continuousScale
+        )
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf()
+
+        val layer = GeomLayerBuilder.demoAndTest(geomProvider, Stats.IDENTITY, PosProvider.wrap(PositionAdjustments.identity()))
+            .addBinding(VarBinding(catVar, xAes))
+            .addBinding(VarBinding(minVar, yMinAes))
+            .addBinding(VarBinding(maxVar, yMaxAes))
+            .build(data, scaleByAes, scaleMappersNP)
+
+        val geomTiles = SimplePlotGeomTiles(
+            listOf(layer),
+            scaleByAes,
+            scaleMappersNP,
+            CoordProviders.cartesian(),
+            containsLiveMap = false
+        )
+
+        val (xDomain, yDomain) = geomTiles.overallXYContinuousDomains()
+        val domain = if (isVertical) yDomain else xDomain
+        assertEquals(99.95, domain?.lowerEnd, EPSILON)
+        assertEquals(101.05, domain?.upperEnd, EPSILON)
+    }
+
+    companion object {
+        const val EPSILON = 1e-8
+
+        private fun aesAfterRotation(isVertical: Boolean, aes: Aes<*>): Aes<*> {
+            return when (aes) {
+                Aes.X -> if (isVertical) Aes.X else Aes.Y
+                Aes.Y -> if (isVertical) Aes.Y else Aes.X
+                Aes.YMIN -> if (isVertical) Aes.YMIN else Aes.XMIN
+                Aes.YMAX -> if (isVertical) Aes.YMAX else Aes.XMAX
+                else -> throw IllegalArgumentException("Unsupported aes: $aes")
+            }
+        }
+    }
+}
