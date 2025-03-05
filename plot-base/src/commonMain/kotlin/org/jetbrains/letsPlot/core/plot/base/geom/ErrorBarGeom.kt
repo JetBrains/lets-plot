@@ -120,6 +120,9 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
+        // ErrorBar only has a width, but when oriented horizontally, it uses height instead.
+        // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
+        // widthSpan() should only be used when width is present.
         if (Aes.WIDTH in wontRender) {
             return null
         }
@@ -132,6 +135,9 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
+        // ErrorBar only has a width, but when oriented horizontally, it uses height instead.
+        // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
+        // heightSpan() should only be used when height is present.
         if (Aes.HEIGHT in wontRender) {
             return null
         }
