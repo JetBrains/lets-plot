@@ -3,12 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.assemble.tiles
+package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.Geom
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.geom.ErrorBarGeom
@@ -16,32 +15,25 @@ import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
+import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.SimplePlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import kotlin.test.Test
+import kotlin.to
 
-class SimplePlotGeomTilesTest {
+class ErrorBarYDomainTest {
     @Test
     fun testErrorBarGeomCalculatesYRangeCorrectly() {
+        val xs = listOf("a")
         val xVar = DataFrame.Variable("x")
         val yMinVar = DataFrame.Variable("ymin")
         val yMaxVar = DataFrame.Variable("ymax")
-        val xs = listOf("a")
-        val yMin = 100.0
-        val yMax = 101.0
-        val yMins = listOf(yMin)
-        val yMaxs = listOf(yMax)
 
-        val supplier: (GeomProvider.Context) -> Geom = { ErrorBarGeom(isVertical = true) }
-        val geomProvider = GeomProvider.errorBar(supplier)
-        val stat = Stats.IDENTITY
-        val posProvider = PosProvider.wrap(PositionAdjustments.identity())
+        val geomProvider = GeomProvider.errorBar { ErrorBarGeom(isVertical = true) }
         val data = DataFrame.Builder()
             .put(xVar, xs)
-            .put(yMinVar, yMins)
-            .put(yMaxVar, yMaxs)
+            .put(yMinVar, listOf(100.0))
+            .put(yMaxVar, listOf(101.0))
             .build()
         val yScale = Scales.DemoAndTest.continuousDomain("y", Aes.Y)
         val scaleByAes = mapOf<Aes<*>, Scale>(
@@ -50,7 +42,7 @@ class SimplePlotGeomTilesTest {
         )
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf()
 
-        val layer = GeomLayerBuilder.demoAndTest(geomProvider, stat, posProvider)
+        val layer = GeomLayerBuilder.demoAndTest(geomProvider, Stats.IDENTITY, PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(VarBinding(xVar, Aes.X))
             .addBinding(VarBinding(yMinVar, Aes.YMIN))
             .addBinding(VarBinding(yMaxVar, Aes.YMAX))
@@ -65,8 +57,8 @@ class SimplePlotGeomTilesTest {
         )
 
         val (_, yDomain) = geomTiles.overallXYContinuousDomains()
-        assertEquals(yMin - 0.05, yDomain?.lowerEnd, EPSILON)
-        assertEquals(yMax + 0.05, yDomain?.upperEnd, EPSILON)
+        assertEquals(99.95, yDomain?.lowerEnd, EPSILON)
+        assertEquals(101.05, yDomain?.upperEnd, EPSILON)
     }
 
     companion object {
