@@ -24,21 +24,27 @@ import kotlin.to
 class ErrorBarDomainTest {
     @Test
     fun testErrorBarGeomCalculatesYRangeCorrectly() {
-        checkDomain(isVertical = true)
+        val errorBarTile = buildErrorBar(isVertical = true)
+        val (_, yDomain) = errorBarTile.overallXYContinuousDomains()
+        assertEquals(MIN_VALUE - 0.05, yDomain?.lowerEnd, EPSILON)
+        assertEquals(MAX_VALUE + 0.05, yDomain?.upperEnd, EPSILON)
     }
 
     @Test
     fun testErrorBarGeomCalculatesRotatedYRangeCorrectly() {
-        checkDomain(isVertical = false)
+        val errorBarTile = buildErrorBar(isVertical = false)
+        val (xDomain, _) = errorBarTile.overallXYContinuousDomains()
+        assertEquals(MIN_VALUE - 0.05, xDomain?.lowerEnd, EPSILON)
+        assertEquals(MAX_VALUE + 0.05, xDomain?.upperEnd, EPSILON)
     }
 
-    private fun checkDomain(
+    private fun buildErrorBar(
         isVertical: Boolean
-    ) {
-        val xAes = aesAfterRotation(isVertical, Aes.X)
-        val yAes = aesAfterRotation(isVertical, Aes.Y)
-        val yMinAes = aesAfterRotation(isVertical, Aes.YMIN)
-        val yMaxAes = aesAfterRotation(isVertical, Aes.YMAX)
+    ): SimplePlotGeomTiles {
+        val xAes = if (isVertical) Aes.X else Aes.Y
+        val yAes = if (isVertical) Aes.Y else Aes.X
+        val yMinAes = if (isVertical) Aes.YMIN else Aes.XMIN
+        val yMaxAes = if (isVertical) Aes.YMAX else Aes.XMAX
         val catValues = listOf("a")
         val catVar = DataFrame.Variable("cat")
         val minVar = DataFrame.Variable("min")
@@ -47,8 +53,8 @@ class ErrorBarDomainTest {
         val geomProvider = GeomProvider.errorBar { ErrorBarGeom(isVertical = isVertical) }
         val data = DataFrame.Builder()
             .put(catVar, catValues)
-            .put(minVar, listOf(100.0))
-            .put(maxVar, listOf(101.0))
+            .put(minVar, listOf(MIN_VALUE))
+            .put(maxVar, listOf(MAX_VALUE))
             .build()
         val continuousScale = Scales.DemoAndTest.continuousDomain(yAes.name, yAes)
         val scaleByAes = mapOf<Aes<*>, Scale>(
@@ -63,31 +69,18 @@ class ErrorBarDomainTest {
             .addBinding(VarBinding(maxVar, yMaxAes))
             .build(data, scaleByAes, scaleMappersNP)
 
-        val geomTiles = SimplePlotGeomTiles(
+        return SimplePlotGeomTiles(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(),
             containsLiveMap = false
         )
-
-        val (xDomain, yDomain) = geomTiles.overallXYContinuousDomains()
-        val domain = if (isVertical) yDomain else xDomain
-        assertEquals(99.95, domain?.lowerEnd, EPSILON)
-        assertEquals(101.05, domain?.upperEnd, EPSILON)
     }
 
     companion object {
         const val EPSILON = 1e-8
-
-        private fun aesAfterRotation(isVertical: Boolean, aes: Aes<*>): Aes<*> {
-            return when (aes) {
-                Aes.X -> if (isVertical) Aes.X else Aes.Y
-                Aes.Y -> if (isVertical) Aes.Y else Aes.X
-                Aes.YMIN -> if (isVertical) Aes.YMIN else Aes.XMIN
-                Aes.YMAX -> if (isVertical) Aes.YMAX else Aes.XMAX
-                else -> throw IllegalArgumentException("Unsupported aes: $aes")
-            }
-        }
+        const val MIN_VALUE = 100.0
+        const val MAX_VALUE = 101.0
     }
 }
