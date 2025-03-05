@@ -15,4 +15,8 @@ interface PlotComponentProvider {
         sizingPolicy: SizingPolicy,
         specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent
+
+    @Deprecated("Removed API", level = DeprecationLevel.ERROR)
+    fun getPreferredSize(containerSize: Dimension): Dimension =
+        throw IllegalStateException("Removed API: 'fun getPreferredSize(containerSize: Dimension)'")
 }

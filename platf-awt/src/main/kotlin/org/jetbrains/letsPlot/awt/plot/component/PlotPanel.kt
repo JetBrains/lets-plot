@@ -17,7 +17,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 
-open class PlotPanel(
+open class PlotPanel constructor(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
     private val sizingPolicy: SizingPolicy,
@@ -25,6 +25,26 @@ open class PlotPanel(
     applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
 
+    @Deprecated(
+        message = "Removed API: use constructor with sizingPolicy parameter",
+        level = DeprecationLevel.ERROR,
+        replaceWith = ReplaceWith(
+            expression = "PlotPanel(plotComponentProvider = plotComponentProvider, preferredSizeFromPlot = preferredSizeFromPlot, sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio), repaintDelay = repaintDelay, applicationContext = applicationContext)",
+            imports = ["org.jetbrains.letsPlot.core.util.sizing.SizingPolicy"]
+        )
+    )
+    constructor(
+        plotComponentProvider: PlotComponentProvider,
+        preferredSizeFromPlot: Boolean,
+        repaintDelay: Int,
+        applicationContext: ApplicationContext
+    ) : this(
+        plotComponentProvider,
+        preferredSizeFromPlot,
+        SizingPolicy.fitContainerSize(preserveAspectRatio = false),
+        repaintDelay,
+        applicationContext
+    )
     val figureModel: FigureModel
 
     init {
