@@ -120,6 +120,9 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
+        if (Aes.WIDTH in wontRender) {
+            return null
+        }
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, dimensionUnit)
     }
 
@@ -129,6 +132,9 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
+        if (Aes.HEIGHT in wontRender) {
+            return null
+        }
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.HEIGHT, resolution, dimensionUnit)
     }
 
