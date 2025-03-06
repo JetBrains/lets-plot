@@ -10,13 +10,13 @@ import demoAndTestShared.parsePlotSpec
 open class ScaleLabelJustification {
 
     fun plotSpecList(): List<MutableMap<String, Any>> {
-        val angle = 30.0
+        val angle = 0.0
         val justifications = listOf(1.0, 0.5, 0.0)
-        val axis_position = "bottom"
+        val axisPosition = "bottom"
 
         return justifications.flatMap { hJust ->
             justifications.map { vJust ->
-                specWithAxis(position = axis_position, angle = angle, hJust = hJust, vJust = vJust)
+                specWithAxis(position = axisPosition, angle = angle, hJust = hJust, vJust = vJust)
             }
         }
     }
@@ -24,9 +24,10 @@ open class ScaleLabelJustification {
     companion object {
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
-            map["x"] = listOf("OXXXXXXX", "OOOOO", "It's lXXX", "XOOOOXXX")
-            map["xa"] = listOf("1", "2", "3", "4") // do not overcrowd the x-axis when testing y-axis
-            map["y"] = listOf(500, 1000, 500, 0)
+            map["xh"] = listOf("Label number\none", "2", "\n\nLower label", "A\nshort\none", "Fifth label 5")
+            map["yh"] = listOf("1", "20", "300", "4000", "50000")
+            map["xv"] = listOf("1", "2", "3", "4", "5")
+            map["yv"] = listOf("label 1", "label\nnumber\n2", "long label", "4", "label 5")
             return map
         }
 
@@ -37,11 +38,11 @@ open class ScaleLabelJustification {
                     ""
         }
 
-        private fun layerMapping(postition: String): String {
-            val xMapping = if (postition == "top" || postition == "bottom") "x" else "xa"
+        private fun layerMapping(position: String): String {
+            val mappingVariant = if (position == "top" || position == "bottom") "h" else "v"
             return "   'mapping': {" +
-                    "             'x': '$xMapping'," +
-                    "             'y': 'y'" +
+                    "             'x': 'x$mappingVariant'," +
+                    "             'y': 'y$mappingVariant'" +
                     "           }," +
                     "   'layers': [" +
                     "               {" +
