@@ -19,8 +19,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 class CrossBarGeom(
-    private val isVertical: Boolean
-) : GeomBase(), WithWidth, WithHeight {
+    override val isVertical: Boolean
+) : GeomBase(), WithFlippableWidth {
 
     private val flipHelper = FlippableGeomHelper(isVertical)
     var fattenMidline: Double = 2.5
@@ -92,16 +92,6 @@ class CrossBarGeom(
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
-    }
-
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        // height is not defined for CrossBarGeom, so after flipping the width aesthetic is responsible for the thickness
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 

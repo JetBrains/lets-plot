@@ -136,13 +136,12 @@ object GeomMeta {
                 // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-                Aes.WIDTH,
 
                 // horizontal
                 Aes.Y,
                 Aes.XMIN, Aes.XMAX,
-                Aes.HEIGHT,
 
+                Aes.WIDTH,
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.LINETYPE,

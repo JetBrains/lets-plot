@@ -1886,7 +1886,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                   manual_key=None,
                   sampling=None, tooltips=None,
-                  width_unit=None, height_unit=None,
+                  width_unit=None,
                   color_by=None,
                   **other_args):
     """
@@ -1927,16 +1927,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
-        Unit for the whisker width of the vertical error bar.
-        Possible values:
-
-        - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
-        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
-        - 'px': the unit is measured in screen pixels.
-
-    height_unit : {'res', 'identity', 'size', 'px'}, default='res'
-        Unit for the whisker height of the horizontal error bar.
+        Unit for the whisker width of the error bar.
         Possible values:
 
         - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
@@ -1970,7 +1961,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : line width. Define bar line width.
-    - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
+    - width : size of the whiskers of bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     ----
@@ -2032,7 +2023,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
             'c': ['gr1', 'gr2', 'gr1', 'gr2']
         }
         ggplot(data) + \\
-            geom_errorbar(aes(y='y', xmin='xmin', xmax='xmax', color='c'), height=0.1, size=2)
+            geom_errorbar(aes(y='y', xmin='xmin', xmax='xmax', color='c'), width=0.1, size=2)
 
     """
     return _geom('errorbar',
@@ -2046,7 +2037,6 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  width_unit=width_unit,
-                 height_unit=height_unit,
                  color_by=color_by,
                  **other_args)
 

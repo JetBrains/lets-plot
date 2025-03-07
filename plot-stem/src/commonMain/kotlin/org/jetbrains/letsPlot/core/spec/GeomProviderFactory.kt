@@ -126,16 +126,11 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
-                ErrorBarGeom(isVertical(ctx, geomKind.name)).apply {
-                    val dimensionUnitOption = if (isVertical(ctx, geomKind.name)) {
-                        Option.Geom.ErrorBar.WIDTH_UNIT
-                    } else {
-                        Option.Geom.ErrorBar.HEIGHT_UNIT
-                    }
-                    if (layerConfig.hasOwn(dimensionUnitOption)) {
-                        this.dimensionUnit = dimensionUnit(layerConfig, dimensionUnitOption)!!
-                    }
+                val geom = ErrorBarGeom(isVertical(ctx, geomKind.name))
+                if (layerConfig.hasOwn(Option.Geom.ErrorBar.WIDTH_UNIT)) {
+                    geom.widthUnit = dimensionUnit(layerConfig, Option.Geom.ErrorBar.WIDTH_UNIT)!!
                 }
+                geom
             }
 
             GeomKind.LINE_RANGE -> GeomProvider.lineRange { ctx ->
