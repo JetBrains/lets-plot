@@ -4,6 +4,6 @@
 
 ### Changed
 
-- [**BREAKING**] `geom_errorbar` now only uses the `width` aesthetic to determine its width, even if it is rotated.
+- [**BREAKING**] the `height` and `height_unit` parameters have been deprecated for the `geom_errorbar`.
 
 ### Fixed
