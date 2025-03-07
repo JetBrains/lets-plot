@@ -18,8 +18,7 @@ elif [[ "$1" = "x86_64" ]]
 then
   arch="$1"
   platform_name="manylinux2014_x86_64"
-  docker_image="quay.io/pypa/${platform_name}"
-  docker pull $docker_image
+  docker_image="manylinux_x64:latest"
 elif [[ "$1" = "arm64" ]]
 then
   arch="$1"

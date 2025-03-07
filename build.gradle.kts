@@ -186,7 +186,7 @@ subprojects {
         "plot-builder",
         "plot-stem",
         "plot-raster",
-        "platf-native",
+
         "demo-and-test-shared"
     )
     val projectArchitecture = rootProject.extra.getOrNull("architecture")
@@ -209,52 +209,7 @@ subprojects {
                     linuxX64()
                     linuxArm64()
                 } else if (projectArchitecture == "x86_64") {
-                    if (name == "platf-native") {
-                        linuxX64 {
-                            compilations.forEach {
-                                println("compilation: ${project.name}.$it")
-                            }
-                            compilations.forEach {
-                                it.apply {
-                                    val imagemagick by cinterops.creating {
-                                        compilerOpts(
-                                            "-I/usr/local/include/ImageMagick-7/",
-                                            "-DMAGICKCORE_HDRI_ENABLE=1"
-                                        )
-                                        defFile = file("src/nativeInterop/cinterop/imagemagick.def")
-                                    }
-                                }
-                            }
-                            // Configure linker options for all binaries, including tests
-                            binaries {
-                                // Apply linker options to all binaries
-                                all {
-                                    println("linkerOpts: ${project.name}.$this")
-                                    linkerOpts += listOf(
-                                        "-L/home/ikupriyanov/Downloads/output/lib",
-                                        "-lfontconfig",
-                                        "-lpng"
-                                    )
-                                }
-
-                                // Configure a static library
-                                staticLib {
-                                    // Add any additional linker options if needed
-                                }
-
-                                // Ensure test binaries inherit the same linker options
-                                //test {
-                                //    linkerOpts += listOf(
-                                //        "-L/home/ikupriyanov/Downloads/output/lib",
-                                //        "-lfontconfig",
-                                //        "-lpng"
-                                //    )
-                                //}
-                            }
-                        }
-                    } else {
-                        linuxX64()
-                    }
+                    linuxX64()
                 }
             } else if (os.isWindows) {
                 mingwX64()
