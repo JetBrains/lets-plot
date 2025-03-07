@@ -4,4 +4,6 @@
 
 ### Changed
 
+- [**BREAKING**] `geom_errorbar` now only uses the `width` aesthetic to determine its width, even if it is rotated.
+
 ### Fixed

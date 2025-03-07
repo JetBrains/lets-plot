@@ -1961,7 +1961,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : line width. Define bar line width.
-    - width : size of the whiskers of bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
+    - width : size of the whiskers of error bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     ----
