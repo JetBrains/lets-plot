@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, WithHeight {
-    var dimensionUnit: DimensionUnit = DEF_DIMENSION_UNIT
+    var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
     private val flipHelper = FlippableGeomHelper(isVertical)
 
@@ -41,7 +41,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
 
     override val wontRender: List<Aes<*>>
         get() {
-            return listOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT).map(::afterRotation)
+            return listOf(Aes.Y, Aes.XMIN, Aes.XMAX).map(::afterRotation)
         }
 
     override fun buildIntern(
@@ -109,9 +109,8 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         p: DataPointAesthetics,
         helper: GeomHelper
     ): Double? {
-        val widthAes = afterRotation(Aes.WIDTH)
-        val width = p.finiteOrNull(widthAes) ?: return null
-        return width * helper.getUnitResolution(dimensionUnit, afterRotation(Aes.X))
+        val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+        return width * helper.getUnitResolution(widthUnit, afterRotation(Aes.X))
     }
 
     override fun widthSpan(
@@ -120,13 +119,12 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        // ErrorBar only has a width, but when oriented horizontally, it uses height instead.
         // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
-        // widthSpan() should only be used when width is present.
-        if (Aes.WIDTH in wontRender) {
+        // widthSpan() should only be used when error bar is vertical.
+        if (!isVertical) {
             return null
         }
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, dimensionUnit)
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
     override fun heightSpan(
@@ -135,13 +133,12 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        // ErrorBar only has a width, but when oriented horizontally, it uses height instead.
         // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
-        // heightSpan() should only be used when height is present.
-        if (Aes.HEIGHT in wontRender) {
+        // heightSpan() should only be used when error bar is horizontal.
+        if (isVertical) {
             return null
         }
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.HEIGHT, resolution, dimensionUnit)
+        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
     internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {
@@ -160,7 +157,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
     }
 
     companion object {
-        private val DEF_DIMENSION_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
+        private val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
 
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()
