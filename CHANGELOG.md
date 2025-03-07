@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.1] - 2025-03-07
+
+### Changed
+
+- [**BREAKING**] the `height` and `height_unit` parameters have been deprecated for the `geom_errorbar`.
+
+- the minimum distance between axis labels was reduced to avoid unsuitable layouts.
+
+### Fixed
+
+- `geom_errorbar()`: the plot domain is always stretched to zero, regardless of the data.
+
+- overlapped axis labels when using `hjust/vjust` or multiline text.
+
+
 ## [4.6.0] - 2025-03-03
 
 ### Added
