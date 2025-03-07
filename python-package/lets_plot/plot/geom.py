@@ -2033,9 +2033,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     if 'height' in other_args:
         print("WARN: using 'height' parameter for errorbar was deprecated.\n"
               "      Please, use 'width' parameter instead.")
-        height = other_args.pop('height')
-        if 'width' not in other_args:
-            other_args['width'] = height
+        other_args['width'] = other_args.pop('height')
     if 'height_unit' in other_args:
         print("WARN: using 'height_unit' parameter for errorbar was deprecated.\n"
               "      Please, use 'width_unit' parameter instead.")
