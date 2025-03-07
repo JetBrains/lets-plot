@@ -2026,6 +2026,21 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
             geom_errorbar(aes(y='y', xmin='xmin', xmax='xmax', color='c'), width=0.1, size=2)
 
     """
+    if mapping is not None and 'height' in mapping.props():
+        print("WARN: using 'height' aesthetic parameter for errorbar was deprecated.\n"
+              "      Please, use 'width' aesthetic instead.")
+        mapping.props()['width'] = mapping.props().pop('height')
+    if 'height' in other_args:
+        print("WARN: using 'height' parameter for errorbar was deprecated.\n"
+              "      Please, use 'width' parameter instead.")
+        height = other_args.pop('height')
+        if 'width' not in other_args:
+            other_args['width'] = height
+    if 'height_unit' in other_args:
+        print("WARN: using 'height_unit' parameter for errorbar was deprecated.\n"
+              "      Please, use 'width_unit' parameter instead.")
+        other_args.pop('height_unit')
+
     return _geom('errorbar',
                  mapping=mapping,
                  data=data,
