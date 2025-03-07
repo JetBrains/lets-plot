@@ -275,7 +275,6 @@ object Option {
 
         object ErrorBar {
             const val WIDTH_UNIT = "width_unit"
-            const val HEIGHT_UNIT = "height_unit"
         }
 
         object CrossBar {
