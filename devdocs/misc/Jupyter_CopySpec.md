@@ -1,4 +1,4 @@
-]# Debugging Jupyter Plots
+# Debugging Jupyter Plots
 Unlike debugging a demo application, debugging a plot specification from Jupyter allows for quick iteration and immediate feedback on changes.
 
 To obtain the plot specification as a JSON string in a Jupyter notebook, follow these steps:
@@ -17,6 +17,8 @@ To obtain the plot specification as a JSON string in a Jupyter notebook, follow 
 The button’s visibility can be managed for all notebooks using the following magic command in Jupyter:
 - `%toggle_copy_spec_button on` → Show the button
 - `%toggle_copy_spec_button off` → Hide the button
+
+These commands can be used in separate notebooks, such as `enable_copy_spec_button.ipynb` and `disable_copy_spec_button.ipynb`, to enable or disable the button for all notebooks.
 
 
 ### Removing the hook

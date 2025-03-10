@@ -23,10 +23,8 @@ class AxisLayoutInfo constructor(
     val tickLabelHorizontalAnchor: Text.HorizontalAnchor? = null,
     val tickLabelVerticalAnchor: Text.VerticalAnchor? = null,
     val tickLabelAdditionalOffsets: List<DoubleVector>? = null,
-    val tickLabelHJust: Double? = null,
-    val tickLabelVJust: Double? = null,
-    internal val tickLabelsTextBounds: DoubleRectangle? = null,         // total bounds without margins - debug drawing
-    internal val tickLabelBoundsList: List<DoubleRectangle>? = null     // each label bounds (without margins) - debug
+    val tickLabelBoundsList: List<DoubleRectangle>? = null,     // individual label bounds (without margins)
+    internal val tickLabelsTextBounds: DoubleRectangle? = null  // total bounds without margins - debug drawing
 ) {
 
     fun withAxisLength(axisLength: Double): AxisLayoutInfo {
@@ -40,8 +38,6 @@ class AxisLayoutInfo constructor(
             tickLabelHorizontalAnchor = tickLabelHorizontalAnchor,
             tickLabelVerticalAnchor = tickLabelVerticalAnchor,
             tickLabelAdditionalOffsets = tickLabelAdditionalOffsets,
-            tickLabelHJust = tickLabelHJust,
-            tickLabelVJust = tickLabelVJust,
             tickLabelsTextBounds = tickLabelsTextBounds,
             tickLabelBoundsList = tickLabelBoundsList
         )

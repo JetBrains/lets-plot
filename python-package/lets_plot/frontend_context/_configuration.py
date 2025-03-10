@@ -94,9 +94,16 @@ def _display_plot(spec: Any):
     :param spec: PlotSpec or GGBunch object
     """
     if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
-        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+        raise ValueError("PlotSpec or SupPlotsSpec expected but was: {}".format(type(spec)))
 
     if _default_mimetype == TEXT_HTML:
+        if TEXT_HTML not in _frontend_contexts:
+            raise RuntimeError(
+                "HTML frontend not configured. Before displaying plots, please call either:\n"
+                "- LetsPlot.setup_html() for displaying HTML output inplace\n"
+                "- LetsPlot.setup_show_ext() for displaying HTML output in an external web browser\n"
+            )
+
         if isinstance(_frontend_contexts[TEXT_HTML], WebBrHtmlPageContext):
             _frontend_contexts[TEXT_HTML].show(spec.as_dict())
             return
