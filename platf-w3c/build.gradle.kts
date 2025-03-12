@@ -8,6 +8,8 @@ plugins {
 }
 
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinxAtomicfuVersion = project.extra["kotlinx_atomicfu_version"] as String
 
 kotlin {
     js() {
@@ -29,6 +31,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-annotations-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
             }
         }
 
