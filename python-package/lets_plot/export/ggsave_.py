@@ -27,7 +27,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     Parameters
     ----------
-    plot : `PlotSpec` or `GGBunch`
+    plot : `PlotSpec`
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
