@@ -12,7 +12,9 @@ Before script run install PyYAML python package:
 
     pip install pyyaml
 
-Script requires YAML-formatted settings file with paths to host Python installations.
+Script requires YAML-formatted settings file with paths to host Python installations
+as the first command line argument.
+
 Settings file must have the next format (EXAMPLE):
 
     python37:
@@ -25,14 +27,18 @@ Settings file must have the next format (EXAMPLE):
 
 You can place it anywhere you want, but do not push it to the project repository.
 
+The second command line argument must contain a path to the ImageMagick library root
+directory.
+
 Run script in terminal by its name and do not forget to pass a path to the settings
 file as argument (EXAMPLE):
 
-    ./build_release.py path/to/settings_file.yml
+    ./build_release.py path/to/settings_file.yml /home/letsplotter/ImageMagick-7.1.1
 
 """
 
 
+import os
 import platform
 import sys
 import subprocess
@@ -54,9 +60,6 @@ def print_error_and_exit(error_message):
 
 def read_settings_file():
     # Reads settings file name from commandline arguments.
-    if len(sys.argv) != 2:
-        print_error_and_exit(f"Wrong number of arguments. {len(sys.argv)}\n"
-                             f"Pass the settings filename.")
     try:
         py_settings_file = open(sys.argv[1])
         py_settings = yaml.load(py_settings_file, Loader=yaml.SafeLoader)
@@ -66,6 +69,18 @@ def read_settings_file():
     else:
         return py_settings
 
+def read_imagemagick_path():
+    # Reads path to ImageMagick library from commandline arguments.
+    try:
+        imagemagick_path = sys.argv[2]
+    except Exception as exception:
+        print_error_and_exit("Cannot read path to ImageMagick library root directory!\n"
+                             f"{exception}")
+    if os.path.isdir(imagemagick_path):
+        return imagemagick_path
+    else:
+        print_error_and_exit("ImageMagick path doesn't exist or it is not a directory!\n"
+                             f"{imagemagick_path}")
 
 def run_command(command):
     # Runs shell-command and handles its exit code.
@@ -99,6 +114,11 @@ def get_python_architecture(python_bin_path):
         print_error_and_exit(f"Got wrong Python architecture for {python_bin_path}!\n"
                              f"Check your settings file or Python installation.")
 
+
+# Check command line arguments:
+if len(sys.argv) != 3:
+    print_error_and_exit(f"Wrong number of arguments. {len(sys.argv)}\n"
+                         f"Pass the settings filename and path to ImageMagick.")
 
 # Read Python settings file from script argument.
 # Paths to Python binaries and include directories will be got from here:
@@ -135,7 +155,7 @@ if system == "Linux":
 
     # For each of supported architectures run manylinux build for all Python binaries,
     # defined in the settings file.
-    for architecture in ["arm64", "x86_64"]:
+    for architecture in ["x86_64", "arm64"]:
         for python_paths in python_settings.values():
             # Collect all predefined parameters:
             build_parameters = [
@@ -143,7 +163,8 @@ if system == "Linux":
                 "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
                 "-Ppython.include_path=%s" % (python_paths["include_path"]),
                 f"-Penable_python_package=true",
-                "-Parchitecture=%s" % architecture
+                "-Parchitecture=%s" % architecture,
+                "-Pimagemagick_lib_path=%s" % read_imagemagick_path()
             ]
 
             # Get current Python version in format 'cp3XX':
@@ -173,7 +194,8 @@ elif system == "Darwin" or system == "Windows":
             "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
             "-Ppython.include_path=%s" % (python_paths["include_path"]),
             f"-Penable_python_package=true",
-            "-Parchitecture=%s" % (get_python_architecture(python_paths["bin_path"]))
+            "-Parchitecture=%s" % (get_python_architecture(python_paths["bin_path"])),
+            "-Pimagemagick_lib_path=%s" % read_imagemagick_path()
         ]
 
         # Run Python package build:
