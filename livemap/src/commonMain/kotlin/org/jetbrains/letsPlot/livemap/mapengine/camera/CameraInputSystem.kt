@@ -70,7 +70,7 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         }
         myCamera.canReset = context.initialZoom?.toDouble() != myCamera.zoom || context.initialPosition != myCamera.position
 
-        if (myCamera.requestedAnimation == true) {
+        if (myCamera.animationValue == null && myCamera.requestedAnimation == true) {
             val zoomDelta = myCamera.requestedZoom?.let { it - myCamera.zoom } ?: 0.0
             val center = myCamera.requestedPosition ?: viewport.position
             val scaleOrigin = viewport.center
@@ -87,12 +87,13 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         }
         else {
             updateCamera(
-                requestedZoom = myCamera.requestedZoom,
+                requestedZoom = myCamera.animationValue?: myCamera.requestedZoom,
                 requestedPosition = myCamera.requestedPosition
             )
         }
 
         myCamera.requestedZoom = null
+        myCamera.animationValue = null
         myCamera.requestedPosition = null
         myCamera.requestedAnimation = null
         myCamera.requestedReset = null

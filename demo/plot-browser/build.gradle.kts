@@ -12,6 +12,7 @@ kotlin {
     val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
     val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
     val ktorVersion = project.extra["ktor_version"] as String
+    val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
     applyDefaultHierarchyTemplate()
@@ -55,7 +56,7 @@ kotlin {
                 implementation(kotlin("stdlib-js"))
 
                 implementation(project(":platf-w3c"))
-            }
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")        }
         }
     }
 }
