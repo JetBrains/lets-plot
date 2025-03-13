@@ -7,15 +7,12 @@ plugins {
     kotlin("multiplatform")
 }
 
-
-val mockkVersion = project.extra["mockk_version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val hamcrestVersion = project.extra["hamcrest_version"] as String
 val mockitoVersion = project.extra["mockito_version"] as String
 val assertjVersion = project.extra["assertj_version"] as String
 val slf4jVersion = project.extra["slf4j_version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
-val kotlinxAtomicfuVersion = project.extra["kotlinx_atomicfu_version"] as String
 
 kotlin {
     jvm()
@@ -37,9 +34,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(project(":demo-and-test-shared"))
-
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-                implementation("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
             }
         }
 
