@@ -29,6 +29,14 @@ kotlin {
                 compileOnly("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
             }
         }
+
+        nativeMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
+            }
+        }
+
         commonTest {
             dependencies {
                 implementation(kotlin("test"))

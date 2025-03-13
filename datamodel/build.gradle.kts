@@ -56,13 +56,6 @@ kotlin {
             }
         }
 
-        nativeMain {
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-                implementation("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
-            }
-        }
-
         named("jsMain") {
             dependencies {
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
