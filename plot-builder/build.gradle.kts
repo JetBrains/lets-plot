@@ -23,10 +23,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                // Can't use compileOnly
-                // > Task :commons:compileTestDevelopmentExecutableKotlinJs FAILED
-                //e: Could not find "org.jetbrains.kotlinx:kotlinx-coroutines-core" in [/home/me/.local/share/kotlin/daemon]
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 
                 compileOnly(project(":commons"))
                 compileOnly(project(":datamodel"))
@@ -37,6 +34,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(project(":demo-and-test-shared"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
             }
         }
         jvmMain {
@@ -58,9 +56,6 @@ kotlin {
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
-        named("jsTest") {
-            dependencies {
-            }
-        }
+        named("jsTest")
     }
 }
