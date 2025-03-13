@@ -29,7 +29,6 @@ def ggtb() -> FeatureSpec:
     Limitations:
 
     - The toolbar does not work with interactive maps.
-    - The toolbar is not compatible with `ggbunch()`/`gggrid()`.
     - The toolbar cannot be used with plots using a polar coordinate system.
 
     Returns
