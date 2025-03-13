@@ -2,7 +2,7 @@ The best way to profile JS code is to use Chrome Canary. It shows real function 
 
 Alternatively, use a non-minified demo. To do so:
 - build `js-package` module using Gradle task `js-package:jsBrowserDevelopmentWebpack`
-- build `demo-livemap` module using Gradle task `demo-livemap:jsBrowserDevelopmentRun`
+- build `demo-livemap-browser` module using Gradle task `demo-livemap-browser:jsBrowserDevelopmentRun`
 
 Open a `.kt` file with demo that you want to profile, open `Run Configuration` and add the following ENV var:
 ```DEV=true```

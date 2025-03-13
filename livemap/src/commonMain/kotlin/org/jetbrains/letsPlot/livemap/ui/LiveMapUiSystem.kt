@@ -220,7 +220,7 @@ class LiveMapUiSystem(
             updateZoomButtons(context.camera.zoom)
         }
 
-        internal fun updateZoomButtons(zoom: Double) {
+        fun updateZoomButtons(zoom: Double) {
             myZoomPlusButton.enabled = zoom != myViewport.maxZoom.toDouble()
             myZoomMinusButton.enabled = zoom != myViewport.minZoom.toDouble()
         }

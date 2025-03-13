@@ -24,6 +24,7 @@ interface Camera {
 
     fun requestZoom(zoom: Double)
     fun requestPosition(position: Vec<World>)
+    fun setAnimationValue(zoom: Double)
 
     fun animate(zoom: Double?, position: Vec<World>?)
     fun reset()
@@ -34,6 +35,7 @@ class MutableCamera(val myComponentManager: EcsComponentManager) : Camera {
     var requestedPosition: Vec<World>? = null
     var requestedAnimation: Boolean? = null
     var requestedReset: Boolean? = null
+    var animationValue: Double? = null
 
     override var zoom: Double = 0.0
     override var position: Vec<World> = World.ZERO_VEC
@@ -52,6 +54,11 @@ class MutableCamera(val myComponentManager: EcsComponentManager) : Camera {
 
     override fun requestPosition(position: Vec<World>) {
         requestedPosition = position
+    }
+
+    override fun setAnimationValue(zoom: Double) {
+        if (this.zoom == zoom) return
+        animationValue = zoom
     }
 
     override fun animate(zoom: Double?, position: Vec<World>?) {

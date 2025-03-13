@@ -15,7 +15,7 @@ import kotlin.math.sign
 
 object CameraScale {
 
-    fun setAnimation(cameraEntity: EcsEntity, scaleOrigin: org.jetbrains.letsPlot.livemap.ClientPoint, viewportPosition: org.jetbrains.letsPlot.livemap.WorldPoint, delta: Double) {
+    fun setAnimation(cameraEntity: EcsEntity, scaleOrigin: ClientPoint, viewportPosition: WorldPoint, delta: Double) {
         val camera = cameraEntity.get<CameraComponent>()
 
         if (camera.zoom % 1 != 0.0) {
@@ -62,7 +62,7 @@ object CameraScale {
                     else -> 1.0 + deltaZoom
                 }
 
-                context.camera.requestZoom(scaleEffect.startZoom + deltaZoom)
+                context.camera.setAnimationValue(scaleEffect.startZoom + deltaZoom)
 
                 if (progress == 1.0) {
                     context.camera.requestPosition(scaleEffect.viewportPosition)
@@ -75,8 +75,8 @@ object CameraScale {
 
     class CameraScaleEffectComponent(
         val animationId: Int,
-        val scaleOrigin: org.jetbrains.letsPlot.livemap.ClientPoint,
-        val viewportPosition: org.jetbrains.letsPlot.livemap.WorldPoint,
+        val scaleOrigin: ClientPoint,
+        val viewportPosition: WorldPoint,
         val delta: Double,
         val startZoom: Double
     ) : EcsComponent {
