@@ -299,7 +299,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        graphics.transform(AffineTransform(m11, m12, m21, m22, dx, dy))
+        val tx = AffineTransform(m11, m21, m12, m22, dx, dy)
+        graphics.transform(tx)
         state.transform = graphics.transform
     }
 
