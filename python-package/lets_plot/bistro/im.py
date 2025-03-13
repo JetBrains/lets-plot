@@ -53,7 +53,7 @@ def image_matrix(image_data_array,
 
     Returns
     -------
-    `GGBunch`
+    `ggbunch`
         Plot bunch object.
 
     Examples
