@@ -4,4 +4,6 @@
 
 ### Changed
 
+- The 'base-midnight', 'base-antique' and 'base-flatblue' tilesets have been restored.
+
 ### Fixed

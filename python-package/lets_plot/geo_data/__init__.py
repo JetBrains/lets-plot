@@ -1,7 +1,8 @@
 try:
     import geopandas
 except ImportError:
-    raise ValueError("geopandas is required for using the geo_data package") from None
+    print("geopandas is required for using the geo_data package")
+    raise
 
 from .core import *
 from .geocoder import *
