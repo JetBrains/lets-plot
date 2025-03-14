@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
@@ -189,34 +188,16 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        var start = toDegrees(startAngle) % 360
-        var end = toDegrees(endAngle) % 360
-        var length: Double
-
-        if (start == end && startAngle != endAngle) {
-            length = 360.0
-        } else {
-            if (start > end && end < 0) {
-                end += 360
-            } else if (start > end && end >= 0) {
-                start -= 360
-            }
-
-            length = end - start
-        }
-
-        if (anticlockwise) {
-            if (length != 0.0 && length != 360.0) {
-                length -= 360
-            }
-        }
-
-        val arc = Arc2D.Double(x - radius, y - radius, radius * 2, radius * 2, -start, -length, OPEN)
-        val path = Path2D.Double(arc, graphics.transform)
+        val path = buildArc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
         currentPath.append(path, true)
     }
 
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        val path = buildArc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        currentPath.append(path, true)
+    }
+
+    private fun buildArc(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean): Path2D.Double {
         var start = startAngle % 360
         var end = endAngle % 360
         var length: Double
@@ -247,7 +228,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         }
         path.transform(graphics.transform)
 
-        currentPath.append(path, true)
+        return path
     }
 
     override fun save() {

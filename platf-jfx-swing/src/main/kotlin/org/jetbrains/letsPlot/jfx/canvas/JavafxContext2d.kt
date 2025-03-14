@@ -157,6 +157,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        TODO("Fix ellipse in FX")
         myContext2d.beginPath()
         myContext2d.moveTo(x + radiusX, y)
         myContext2d.arc(x, y, radiusX, radiusY, 0.0, 360.0)
