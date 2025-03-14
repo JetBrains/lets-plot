@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
-import org.jetbrains.letsPlot.core.plot.base.geom.DimensionsUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.WithHeight
-import org.jetbrains.letsPlot.core.plot.base.geom.WithWidth
+import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.YOrientationAesthetics
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
@@ -277,18 +274,33 @@ object PositionalScalesUtil {
         geomCtx: GeomContext,
         coordProvider: CoordProvider
     ): Pair<DoubleSpan?, DoubleSpan?> {
+        val geom = layer.geom
 
-        val (widthAxis, heightAxis) = when (layer.isYOrientation) {
-            true -> Aes.Y to Aes.X
-            false -> Aes.X to Aes.Y
+        val (widthAxis, heightAxis) = if (geom is WithFlippableWidth) {
+            when (geom.isVertical) {
+                true -> Aes.X to Aes.Y
+                else -> Aes.Y to Aes.X
+            }
+        } else {
+            when (layer.isYOrientation) {
+                true -> Aes.Y to Aes.X
+                false -> Aes.X to Aes.Y
+            }
         }
 
-        val geom = layer.geom
         val renderedAes = layer.renderedAes()
 
         val xy = mapOf(
             widthAxis to when {
                 coordProvider is PolarCoordProvider && !coordProvider.isHScaleContinuous -> null
+
+                geom is WithFlippableWidth -> {
+                    val resolution = geomCtx.getResolution(widthAxis)
+                    val isDiscrete = !layer.scaleMap.getValue(widthAxis).isContinuousDomain
+                    computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
+                        geom.widthSpan(p, widthAxis, resolution, isDiscrete)
+                    }
+                }
 
                 geom is WithWidth -> {
                     val resolution = geomCtx.getResolution(widthAxis)

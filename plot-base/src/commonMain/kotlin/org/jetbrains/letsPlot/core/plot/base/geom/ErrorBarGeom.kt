@@ -19,7 +19,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
-class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, WithHeight {
+class ErrorBarGeom(
+    override val isVertical: Boolean
+) : GeomBase(), WithFlippableWidth {
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
     private val flipHelper = FlippableGeomHelper(isVertical)
@@ -119,25 +121,6 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
-        // widthSpan() should only be used when error bar is vertical.
-        if (!isVertical) {
-            return null
-        }
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
-    }
-
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
-        // heightSpan() should only be used when error bar is horizontal.
-        if (isVertical) {
-            return null
-        }
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
