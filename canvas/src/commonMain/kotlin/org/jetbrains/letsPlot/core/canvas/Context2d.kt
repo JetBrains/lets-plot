@@ -36,7 +36,7 @@ interface Context2d {
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
-    fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double)
+    fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean)
     fun save()
     fun restore()
     fun setFillStyle(color: Color?)

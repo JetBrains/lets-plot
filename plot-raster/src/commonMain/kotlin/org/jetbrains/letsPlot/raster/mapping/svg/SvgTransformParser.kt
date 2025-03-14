@@ -192,7 +192,7 @@ internal object SvgTransformParser {
     internal class Result constructor(val name: String, paramCount: Int) {
         private val myParams: MutableList<Float?> = ArrayList(paramCount)
 
-        val params: List<Float?>
+        val args: List<Float?>
             get() = myParams
 
         val paramCount: Int
@@ -204,7 +204,7 @@ internal object SvgTransformParser {
 
         fun getParam(i: Int): Float? {
             if (!containsParam(i)) {
-                throw IndexOutOfBoundsException("index: $i; size: $paramCount; name: $name")
+                return null
             }
             return myParams[i]
         }

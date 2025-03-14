@@ -70,12 +70,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
-        val javafxSnapshot = snapshot as org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, x, y)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
-        val javafxSnapshot = snapshot as org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, x, y, dw, dh)
     }
 
@@ -90,7 +90,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         dw: Double,
         dh: Double
     ) {
-        val javafxSnapshot = snapshot as org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, sx, sy, sw, sh, dx, dy, dw, dh)
     }
 
@@ -156,7 +156,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.arc(x, y, radius, radius, -start, -length )
     }
 
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
         myContext2d.beginPath()
         myContext2d.moveTo(x + radiusX, y)
         myContext2d.arc(x, y, radiusX, radiusY, 0.0, 360.0)

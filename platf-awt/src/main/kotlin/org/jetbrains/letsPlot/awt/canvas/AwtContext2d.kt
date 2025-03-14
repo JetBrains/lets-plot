@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.canvas
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -16,6 +17,7 @@ import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
 import java.awt.font.GlyphVector
 import java.awt.geom.*
+import java.awt.geom.AffineTransform.getRotateInstance
 import java.awt.geom.Arc2D.OPEN
 import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
@@ -214,9 +216,37 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath.append(path, true)
     }
 
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
-        val ellipse2D = Ellipse2D.Double(x - radiusX, y - radiusY, radiusX * 2, radiusY * 2)
-        val path = Path2D.Double(ellipse2D, graphics.transform)
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        var start = startAngle % 360
+        var end = endAngle % 360
+        var length: Double
+
+        if (start == end && startAngle != endAngle) {
+            length = 360.0
+        } else {
+            if (start > end && end < 0) {
+                end += 360
+            } else if (start > end && end >= 0) {
+                start -= 360
+            }
+
+            length = end - start
+        }
+
+        if (anticlockwise) {
+            if (length != 0.0 && length != 360.0) {
+                length -= 360
+            }
+        }
+
+        val arc = Arc2D.Double(x - radiusX, y - radiusY, radiusX * 2, radiusY * 2, -start, -length, OPEN)
+
+        val path = Path2D.Double(arc)
+        if (rotation != 0.0) {
+            path.transform(getRotateInstance(toRadians(rotation), x, y))
+        }
+        path.transform(graphics.transform)
+
         currentPath.append(path, true)
     }
 

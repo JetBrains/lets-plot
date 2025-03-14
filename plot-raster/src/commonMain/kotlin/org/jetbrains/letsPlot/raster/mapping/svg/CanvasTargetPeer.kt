@@ -43,8 +43,8 @@ internal class CanvasTargetPeer(
             SvgSlimElements.LINE -> Line()
             SvgSlimElements.CIRCLE -> Circle()
             SvgSlimElements.RECT -> Rectangle()
-            //SvgSlimElements.PATH -> Path()
-            else -> Group()//throw IllegalStateException("Unsupported slim node " + source::class.simpleName + " '" + source.elementName + "'")
+            SvgSlimElements.PATH -> Path()
+            else -> throw IllegalStateException("Unsupported slim node " + source::class.simpleName + " '" + source.elementName + "'")
         }
     }
 

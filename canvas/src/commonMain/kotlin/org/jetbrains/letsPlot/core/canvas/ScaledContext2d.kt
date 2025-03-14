@@ -78,8 +78,8 @@ internal class ScaledContext2d(
         ctx.arc(scaled(x), scaled(y), scaled(radius), startAngle, endAngle, anticlockwise)
     }
 
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
-        ctx.ellipse(scaled(x), scaled(y), scaled(radiusX), scaled(radiusY))
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        ctx.ellipse(scaled(x), scaled(y), scaled(radiusX), scaled(radiusY), rotation, startAngle, endAngle, anticlockwise)
     }
 
     override fun save() = ctx.save()

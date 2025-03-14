@@ -74,7 +74,7 @@ internal object SvgUtils {
             is SvgCircleElement -> Circle()
             is SvgRectElement -> Rectangle()
             is SvgTextElement -> Text()
-//            is SvgPathElement -> Path()
+            is SvgPathElement -> Path()
             is SvgLineElement -> Line()
             is SvgSvgElement -> Pane()
             is SvgGElement -> Group()

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import kotlin.math.PI
 
 internal class Ellipse : Figure() {
     var centerX: Float by visualProp(0.0f)
@@ -29,7 +30,7 @@ internal class Ellipse : Figure() {
         }
 
         canvas.context2d.beginPath()
-        canvas.context2d.ellipse(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble())
+        canvas.context2d.ellipse(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble(), 0.0, 0.0, 2 * PI, false)
         canvas.context2d.closePath()
 
         fillPaint?.let { canvas.context2d.fill(it) }

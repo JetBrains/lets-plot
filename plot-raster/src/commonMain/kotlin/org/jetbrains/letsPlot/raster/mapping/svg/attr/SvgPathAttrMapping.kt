@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
+import org.jetbrains.letsPlot.raster.mapping.svg.SvgTransformParser.parsePath
 import org.jetbrains.letsPlot.raster.shape.Path
 import org.jetbrains.letsPlot.raster.shape.Path.PathData
 
@@ -34,7 +35,7 @@ internal object SvgPathAttrMapping : SvgShapeMapping<Path>() {
                     else -> throw IllegalArgumentException("Unexpected `path data` type: ${value::class.simpleName}")
                 }
 
-                target.skiaPath = PathData.parse(pathStr)
+                target.pathData = PathData(parsePath(pathStr))
             }
             else -> super.setAttribute(target, name, value)
         }

@@ -32,7 +32,7 @@ class Context2dDelegate : Context2d {
     override fun moveTo(x: Double, y: Double) { }
     override fun lineTo(x: Double, y: Double) { }
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { }
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) { }
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { }
     override fun save() { }
     override fun restore() { }
     override fun setFillStyle(color: Color?) { }

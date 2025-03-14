@@ -103,7 +103,7 @@ internal class DomContext2d(
         ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
 
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double) {
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
         ctx.ellipse(x, y, radiusX, radiusY, 0.0, 0.0, 2 * PI)
     }
     override fun measureText(str: String): org.jetbrains.letsPlot.core.canvas.TextMetrics {
