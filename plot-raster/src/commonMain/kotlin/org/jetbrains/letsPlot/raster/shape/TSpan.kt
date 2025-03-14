@@ -63,11 +63,12 @@ internal class TSpan(
     }
 
     val bbox by computedProp(TSpan::text, TSpan::font, TSpan::fontScale) {
-        println("Fix TODO in TSpan")
+        if (text.isEmpty()) return@computedProp DoubleRectangle.XYWH(0.0, 0.0, 0.0, 0.0)
+
         textMeasurer.measureText(text, font).let {
             DoubleRectangle.XYWH(
-                x = 0.0,
-                y = /*it.top*/ -16.0 - baselineShift.percent * lineHeight, // TODO: make sure it.bbox.top gives the same result as in AWT/Skia/JFX
+                x = it.bbox.left,
+                y = it.bbox.top - baselineShift.percent * lineHeight,
                 width = it.bbox.width * fontScale,
                 height = it.bbox.height * fontScale
             )

@@ -34,6 +34,7 @@ object ReferenceSvgModel {
                 mapOf(
                     "TEXT1" to TextStyle(FontFamily.SERIF.name, FontFace.ITALIC, 15.0, Color.BLUE),
                     "TEXT2" to TextStyle(FontFamily.SERIF.name, FontFace.BOLD, 20.0, Color.RED),
+                    "DARK_GREEN" to TextStyle(FontFamily.SERIF.name, FontFace.BOLD, 20.0, Color.DARK_GREEN),
                     "EMC2" to TextStyle(FontFamily.HELVETICA.name, FontFace.BOLD, 22.0, Color.BLUE),
                 )
             )
@@ -53,11 +54,11 @@ object ReferenceSvgModel {
             }
 
             // Multi-style text
-            text(x = 300.0, y = 210.0, fill = ORANGE) {
+            text(x = 300.0, y = 210.0, fill = ORANGE, styleClass = "DARK_GREEN") {
                 tspan("Red", fill = RED)
                 tspan("-")
-                tspan("green", fill = GREEN)
-                tspan(" text")
+                tspan("brown", fill = BROWN)
+                tspan(" green")
             }
 
             text("Slim elements", x = 30.0, y = 85.0, styleClass = "TEXT1") {
