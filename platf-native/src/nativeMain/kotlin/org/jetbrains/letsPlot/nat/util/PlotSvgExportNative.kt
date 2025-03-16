@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.nat.util
 
-import MagickWand.*
-import kotlinx.cinterop.*
+//import MagickWand.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.jetbrains.letsPlot.nat.encoding.RGBEncoderNative
@@ -34,7 +33,9 @@ actual object PlotSvgExportNative {
     }
 }
 
+
 fun testImageWand() {
+    /*
     MagickWandGenesis()
     val wand = NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
@@ -113,5 +114,5 @@ fun testImageWand() {
         DestroyMagickWand(wand)
         MagickWandTerminus()
     }
-
+*/
 }

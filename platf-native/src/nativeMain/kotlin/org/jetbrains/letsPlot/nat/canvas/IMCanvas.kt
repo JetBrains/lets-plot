@@ -4,7 +4,7 @@
  */
 
 package org.jetbrains.letsPlot.nat.canvas
-
+/*
 import MagickWand.*
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CValues
@@ -69,3 +69,5 @@ class IMCanvas {
 
     }
 }
+
+ */
