@@ -36,13 +36,17 @@ internal class TSpan(
     var layoutX: Float by visualProp(0f)
     var layoutY: Float by visualProp(0f)
 
-    private val font by computedProp(TSpan::fontFamily, TSpan::fontWeight, TSpan::fontStyle, TSpan::fontSize) {
+    private val font by computedProp(TSpan::fontFamily, TSpan::fontWeight, TSpan::fontStyle, TSpan::fontSize, TSpan::fontScale) {
         val family = fontFamily.firstOrNull() ?: Font.DEFAULT_FAMILY
-        Font(fontStyle, fontWeight, fontSize.toDouble(), family)
+        Font(fontStyle, fontWeight, fontSize.toDouble() * fontScale, family)
     }
 
     private val lineHeight by computedProp(TSpan::font) {
-        font.fontSize//font.metrics.descent - font.metrics.ascent
+        font.fontSize
+    }
+
+    private val baseline by computedProp(TSpan::baselineShift, TSpan::dy, TSpan::lineHeight) {
+        -(baselineShift.percent * lineHeight) + lineHeight * dy
     }
 
     private val styleData: StyleData by computedProp(
@@ -56,31 +60,30 @@ internal class TSpan(
         )
     }
 
-    val dimension by computedProp(TSpan::text, TSpan::font, TSpan::fontScale) {
+    val dimension by computedProp(TSpan::text, TSpan::font) {
         val width = textMeasurer.measureTextWidth(text, font)//textData?.width ?: 0.0
-        val height = fontSize * fontScale
+        val height = fontSize
         DoubleVector(width, height)
     }
 
-    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::fontScale) {
+    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline) {
         if (text.isEmpty()) return@computedProp DoubleRectangle.XYWH(0.0, 0.0, 0.0, 0.0)
 
         textMeasurer.measureText(text, font).let {
             DoubleRectangle.XYWH(
                 x = it.bbox.left,
-                y = it.bbox.top - baselineShift.percent * lineHeight,
-                width = it.bbox.width * fontScale,
-                height = it.bbox.height * fontScale
+                y = it.bbox.top - baseline,
+                width = it.bbox.width,
+                height = it.bbox.height
             )
         }
     }
 
     override fun render(canvas: Canvas) {
         canvas.context2d.setFont(font)
-        canvas.context2d.scale(fontScale.toDouble())
 
-        val x = (layoutX.toDouble() + bbox.left) / fontScale
-        val y = (layoutY.toDouble() + lineHeight + bbox.top + lineHeight * dy) / fontScale
+        val x = (layoutX.toDouble())
+        val y = layoutY.toDouble() + baseline
 
         styleData.fillPaint?.let {
             applyPaint(it, canvas)

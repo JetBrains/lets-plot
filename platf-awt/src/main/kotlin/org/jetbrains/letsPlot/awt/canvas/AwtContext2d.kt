@@ -376,7 +376,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         return TextMetrics(
             ascent = graphics.fontMetrics.ascent.toDouble(),
             descent = graphics.fontMetrics.descent.toDouble(),
-            bbox = graphics.glyphVector(str).visualBounds.let { DoubleRectangle.XYWH(it.x, it.y, it.width, it.height) }
+            bbox = graphics.glyphVector(str).logicalBounds.let { DoubleRectangle.XYWH(it.x, it.y, it.width, it.height) }
         )
     }
 
