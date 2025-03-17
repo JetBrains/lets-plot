@@ -63,6 +63,8 @@ internal object PlotConfigUtil {
     }
 
     private fun enumPlots(figSpec: Map<String, Any>, plotSpecHandler: (Map<String, Any>) -> Unit) {
+        if (PlotConfig.isFailure(figSpec)) return  // Not a plot spec
+
         when (PlotConfig.figSpecKind(figSpec)) {
             FigKind.PLOT_SPEC -> plotSpecHandler(figSpec)
             FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
