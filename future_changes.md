@@ -4,6 +4,7 @@
 
 ### Changed
 
+- [**BREAKING**] `kotlinx-coroutines` is now a `compileOnly` dependency and must be explicitly added to **JVM** projects.
 - The 'base-midnight', 'base-antique' and 'base-flatblue' tilesets have been restored.
 
 ### Fixed
