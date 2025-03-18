@@ -43,7 +43,8 @@ object DensityStatUtil {
         overallValuesRange: DoubleSpan,
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
-        valueVarName: DataFrame.Variable = Stats.Y
+        valueVarName: DataFrame.Variable = Stats.Y,
+        resetValueRange: Boolean = true
     ): Map<DataFrame.Variable, List<Double>> {
         val binnedData = (bins zip (values zip weights))
             .filter { it.first?.isFinite() == true }
@@ -63,8 +64,12 @@ object DensityStatUtil {
                 .sortedBy { it.first }
                 .unzip()
             if (binValue.isEmpty()) continue
-            val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
-            val binStatValue = createStepValues(valueRange, n)
+            val binStatValue = if (resetValueRange) {
+                val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
+                createStepValues(valueRange, n)
+            } else {
+                binValue
+            }
             val densityFunction = densityFunction(
                 binValue, binWeight,
                 bandWidth, bandWidthMethod, adjust, kernel, fullScanMax

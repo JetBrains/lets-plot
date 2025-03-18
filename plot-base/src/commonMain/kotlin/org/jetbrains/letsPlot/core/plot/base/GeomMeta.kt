@@ -289,7 +289,21 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
-            GeomKind.SINA -> POINT
+            GeomKind.SINA -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.VIOLINWIDTH,
+                Aes.QUANTILE,
+                Aes.WIDTH,
+
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE,
+                Aes.ANGLE
+            )
 
             GeomKind.Y_DOT_PLOT -> listOf(
                 Aes.X,

@@ -5,17 +5,36 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
-class SinaStat : BaseStat(DEF_MAPPING) {
+class SinaStat(
+    private val scale: Scale,
+    private val trim: Boolean,
+    private val tailsCutoff: Double?,
+    private val bandWidth: Double?,
+    private val bandWidthMethod: DensityStat.BandWidthMethod,
+    private val adjust: Double,
+    private val kernel: DensityStat.Kernel,
+    private val n: Int,
+    private val fullScanMax: Int,
+    private val quantiles: List<Double>
+) : BaseStat(DEF_MAPPING) {
+
+    init {
+        require(n <= DensityStat.MAX_N) {
+            "The input n = $n > ${DensityStat.MAX_N} is too large!"
+        }
+    }
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
+    // Almost the same as in YDensityStat::apply()
     override fun apply(
         data: DataFrame,
         statCtx: StatContext,
@@ -25,16 +44,78 @@ class SinaStat : BaseStat(DEF_MAPPING) {
             return withEmptyStatValues()
         }
 
+        val ys = data.getNumeric(TransformVar.Y)
+        val xs = if (data.has(TransformVar.X)) {
+            data.getNumeric(TransformVar.X)
+        } else {
+            List(ys.size) { 0.0 }
+        }
+        val ws = if (data.has(TransformVar.WEIGHT)) {
+            data.getNumeric(TransformVar.WEIGHT)
+        } else {
+            List(ys.size) { 1.0 }
+        }
+
+        val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
+        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange, quantiles, resetValueRange = false) // Only difference is resetValueRange = false
+
         val builder = DataFrame.Builder()
-        builder.putNumeric(Stats.X, data.getNumeric(TransformVar.X))
-        builder.putNumeric(Stats.Y, data.getNumeric(TransformVar.Y))
+        for ((variable, series) in statData) {
+            builder.putNumeric(variable, series)
+        }
         return builder.build()
     }
 
+    // The same as in YDensityStat::normalize()
+    override fun normalize(dataAfterStat: DataFrame): DataFrame {
+        val statViolinWidth = if (dataAfterStat.rowCount() == 0) {
+            emptyList()
+        } else {
+            when (scale) {
+                Scale.AREA -> {
+                    val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
+                    val densityMax = statDensity.maxOrNull()!!
+                    statDensity.map { it / densityMax }
+                }
+                Scale.COUNT -> {
+                    val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
+                    val densityMax = statDensity.maxOrNull()!!
+                    val statCount = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+                    val widthsSumMax = statDensity.mapIndexed { i, d ->
+                        if (d > 0) statCount[i] / d else Double.NaN
+                    }.maxOrNull()!!
+                    val norm = densityMax * widthsSumMax
+                    statCount.map { it / norm }
+                }
+                Scale.WIDTH -> {
+                    dataAfterStat.getNumeric(Stats.SCALED)
+                }
+            }
+        }
+        return dataAfterStat.builder()
+            .putNumeric(Stats.VIOLIN_WIDTH, statViolinWidth)
+            .build()
+    }
+
+    // The same as in YDensityStat::Scale
+    enum class Scale {
+        AREA,
+        COUNT,
+        WIDTH
+    }
+
+    // The same as in YDensityStat
     companion object {
+        val DEF_SCALE = Scale.AREA
+        const val DEF_TRIM = true
+        const val DEF_TAILS_CUTOFF = 3.0
+        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.Y
+            Aes.Y to Stats.Y,
+            Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH,
+            Aes.QUANTILE to Stats.QUANTILE
         )
     }
 }

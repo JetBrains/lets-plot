@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
+import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
@@ -293,8 +294,52 @@ object StatProto {
         )
     }
 
+    // Almost the same as configureYDensityStat()
     private fun configureSinaStat(options: OptionsAccessor): SinaStat {
-        return SinaStat()
+        val scale = options.getString(Sina.SCALE)?.let {
+            when (it.lowercase()) {
+                "area" -> SinaStat.Scale.AREA
+                "count" -> SinaStat.Scale.COUNT
+                "width" -> SinaStat.Scale.WIDTH
+                else -> throw IllegalArgumentException(
+                    "Unsupported scale: '$it'\n" +
+                    "Use one of: area, count, width."
+                )
+            }
+        }
+
+        var bwValue: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
+        options[Density.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValue = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            }
+        }
+
+        val kernel = options.getString(Density.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+
+        val quantiles = if (options.hasOwn(Sina.QUANTILES)) {
+            options.getBoundedDoubleList(Sina.QUANTILES, 0.0, 1.0)
+        } else {
+            SinaStat.DEF_QUANTILES
+        }
+
+        return SinaStat(
+            scale = scale ?: SinaStat.DEF_SCALE,
+            trim = options.getBoolean(Sina.TRIM, SinaStat.DEF_TRIM),
+            tailsCutoff = options.getDoubleDef(Sina.TAILS_CUTOFF, SinaStat.DEF_TAILS_CUTOFF),
+            bandWidth = bwValue,
+            bandWidthMethod = bwMethod,
+            adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
+            kernel = kernel ?: DensityStat.DEF_KERNEL,
+            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
+            quantiles = quantiles
+        )
     }
 
     private fun configureYDotplotStat(options: OptionsAccessor): YDotplotStat {

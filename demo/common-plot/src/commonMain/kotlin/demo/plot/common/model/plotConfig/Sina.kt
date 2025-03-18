@@ -33,7 +33,16 @@ class Sina {
                   'geom': 'violin'
                 },
                 {
-                  'geom': 'sina'
+                  'geom': 'point',
+                  'size': 2,
+                  'shape': 21,
+                  'fill': 'white'
+                },
+                {
+                  'geom': 'sina',
+                  'size': 2,
+                  'shape': 21,
+                  'fill': 'orange'
                 }
               ]
             }

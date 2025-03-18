@@ -529,6 +529,13 @@ object Option {
             const val QUANTILES = "quantiles"
         }
 
+        object Sina {
+            const val SCALE = "scale"
+            const val TRIM = "trim"
+            const val TAILS_CUTOFF = "tails_cutoff"
+            const val QUANTILES = "quantiles"
+        }
+
         object QQ {
             const val DISTRIBUTION = "distribution"
             const val DISTRIBUTION_PARAMETERS = "dparams"
