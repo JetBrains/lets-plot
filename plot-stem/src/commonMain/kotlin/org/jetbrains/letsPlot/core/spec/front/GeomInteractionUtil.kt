@@ -256,6 +256,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN,
+            GeomKind.SINA,
             GeomKind.LOLLIPOP,
             GeomKind.SPOKE,
             GeomKind.CURVE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
@@ -438,6 +439,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,
+            GeomKind.SINA,
             GeomKind.Q_Q,
             GeomKind.Q_Q_2,
             GeomKind.LINE,

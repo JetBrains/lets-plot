@@ -42,6 +42,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
         PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
+        PROVIDER[GeomKind.SINA] = GeomProvider.sina()
         PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
         PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
         PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()

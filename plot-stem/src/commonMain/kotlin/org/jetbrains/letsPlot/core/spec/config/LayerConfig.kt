@@ -375,6 +375,7 @@ class LayerConfig constructor(
             StatKind.BOXPLOT_OUTLIER,
             StatKind.YDOTPLOT,
             StatKind.YDENSITY
+            // TODO: SINA
         )
 
         return isSuitableGeomKind || isSuitableStatKind

@@ -289,6 +289,8 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
+            GeomKind.SINA -> POINT
+
             GeomKind.Y_DOT_PLOT -> listOf(
                 Aes.X,
                 Aes.Y,

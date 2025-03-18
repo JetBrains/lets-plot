@@ -28,6 +28,7 @@ enum class GeomKind {
     BOX_PLOT,
     AREA_RIDGES,
     VIOLIN,
+    SINA,
     Y_DOT_PLOT,
     LIVE_MAP,
     POINT,
