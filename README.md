@@ -78,6 +78,10 @@ Also read:
      
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
 
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/magnifier_inset.png" alt="f-25a/images/magnifier_inset.png" width="400" height="251">
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/magnifier_inset.ipynb).
+
 - #### Parameters `start` and `direction` in `geom_pie()` Geometry
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/geom_pie_params.png" alt="f-25a/images/geom_pie_params.png" width="400" height="119">
 

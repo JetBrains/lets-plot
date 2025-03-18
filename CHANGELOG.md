@@ -27,7 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Grouping plots:
   - `ggbunch()` function: combining plots with custom layout.
 
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+    See demos: 
+    - [Indonesia Volcanic Activity](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+    - [Magnifier Inset Effect](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/magnifier_inset.ipynb).
 
   - Support for plot **title, subtitle, caption, margins** and **insets** in `gggrid()` and `ggbunch()`.
 
