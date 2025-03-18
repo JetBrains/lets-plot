@@ -95,7 +95,11 @@ object DensityStatUtil {
             Stats.QUANTILE to statQuantile.toList()
         )
 
-        return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
+        return if (resetValueRange) {
+            expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
+        } else {
+            statData
+        }
     }
 
     private fun trimValueRange(

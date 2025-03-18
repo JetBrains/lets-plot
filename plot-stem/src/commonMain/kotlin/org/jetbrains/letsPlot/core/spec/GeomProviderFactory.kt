@@ -214,11 +214,14 @@ internal object GeomProviderFactory {
 
             GeomKind.SINA -> GeomProvider.sina {
                 val geom = SinaGeom()
-                if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
-                    geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
-                }
                 if (layerConfig.hasOwn(Option.Stat.Sina.SEED)) {
                     geom.seed = layerConfig.getLong(Option.Stat.Sina.SEED)!!
+                }
+                if (layerConfig.hasOwn(Option.Stat.Sina.JITTER_Y)) {
+                    geom.jitterY = layerConfig.getBoolean(Option.Stat.Sina.JITTER_Y, SinaGeom.DEF_JITTER_Y)
+                }
+                if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
+                    geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
                 }
                 geom
             }

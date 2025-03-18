@@ -25,13 +25,13 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.math.abs
 import kotlin.random.Random
 
 class SinaGeom : PointGeom() {
     var seed: Long? = null
+    var jitterY: Boolean = DEF_JITTER_Y
     var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
-
-    private val rand = seed?.let { Random(seed!!) } ?: Random.Default
 
     override fun buildIntern(
         root: SvgRoot,
@@ -40,11 +40,16 @@ class SinaGeom : PointGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val rand = seed?.let { Random(seed!!) } ?: Random.Default
         // Almost the same as in ViolinGeom::buildLines()
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
+        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
+        if (!integerish(dataPoints.map { it.y()!! })) {
+            jitterY = false
+        }
+        dataPoints
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
-            .forEach { (_, dataPoints) -> buildGroup(root, dataPoints, pos, coord, ctx) }
+            .forEach { (_, dataPoints) -> buildGroup(root, dataPoints, pos, coord, ctx, rand) }
     }
 
     // Almost the same as in ViolinGeom::buildViolin()
@@ -53,13 +58,14 @@ class SinaGeom : PointGeom() {
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
-        ctx: GeomContext
+        ctx: GeomContext,
+        rand: Random
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
-        val jitterTransform = toLocationBound(ctx)
+        val jitterTransform = toLocationBound(ctx, rand)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             // Almost the same as in PointGeom::buildIntern()
@@ -87,19 +93,30 @@ class SinaGeom : PointGeom() {
     }
 
     private fun toLocationBound(
-        ctx: GeomContext
+        ctx: GeomContext,
+        rand: Random
     ): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
-            val sign = if (rand.nextBoolean()) 1 else -1
-            val randomShift = rand.nextDouble()
+            val signX = if (rand.nextBoolean()) 1 else -1
+            val signY = if (rand.nextBoolean()) 1 else -1
+            val randomWidthShift = rand.nextDouble()
+            val randomHeightShift = rand.nextDouble()
             val widthLimit = ctx.getResolution(Aes.X) / 2 * p.width()!! * p.violinwidth()!!
-            val x = p.x()!! + sign * randomShift * widthLimit // This formula is used to treat both sides equally (do not include ends)
-            val y = p.y()!!
+            val heightLimit = if (jitterY) .25 else 0.0
+            val x = p.x()!! + signX * randomWidthShift * widthLimit // This formula is used to treat both sides equally (do not include ends)
+            val y = p.y()!! + signY * randomHeightShift * heightLimit
             return DoubleVector(x, y)
         }
     }
 
+    private fun integerish(values: List<Double>): Boolean {
+        return values.all { abs(it - it.toLong()) < INTEGERISH_EPSILON }
+    }
+
     companion object {
         const val HANDLES_GROUPS = true
+        const val DEF_JITTER_Y = true
+
+        private const val INTEGERISH_EPSILON = 1e-12
     }
 }
