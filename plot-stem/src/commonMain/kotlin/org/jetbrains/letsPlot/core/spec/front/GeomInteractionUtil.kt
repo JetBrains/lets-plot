@@ -302,6 +302,7 @@ object GeomInteractionUtil {
             GeomKind.AREA -> listOf(Aes.QUANTILE)
             GeomKind.DENSITY -> listOf(Aes.QUANTILE)
             GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
+            GeomKind.SINA -> listOf(Aes.VIOLINWIDTH, Aes.QUANTILE)
             GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)

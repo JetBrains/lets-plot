@@ -217,6 +217,9 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
                     geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
                 }
+                if (layerConfig.hasOwn(Option.Stat.Sina.SEED)) {
+                    geom.seed = layerConfig.getLong(Option.Stat.Sina.SEED)!!
+                }
                 geom
             }
 

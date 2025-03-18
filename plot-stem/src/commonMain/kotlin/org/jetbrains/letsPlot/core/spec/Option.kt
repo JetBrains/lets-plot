@@ -534,6 +534,7 @@ object Option {
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
             const val QUANTILES = "quantiles"
+            const val SEED = "seed"
         }
 
         object QQ {

@@ -25,9 +25,13 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.random.Random
 
 class SinaGeom : PointGeom() {
+    var seed: Long? = null
     var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
+
+    private val rand = seed?.let { Random(seed!!) } ?: Random.Default
 
     override fun buildIntern(
         root: SvgRoot,
@@ -55,7 +59,7 @@ class SinaGeom : PointGeom() {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
-        val boundTransform = toLocationBound(ctx)
+        val jitterTransform = toLocationBound(ctx)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             // Almost the same as in PointGeom::buildIntern()
@@ -65,8 +69,8 @@ class SinaGeom : PointGeom() {
                 val p = points[i]
                 if (p.finiteOrNull(Aes.SIZE) == null) continue
                 val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-                val transformedPoint = boundTransform(p)
-                val location = helper.toClient(transformedPoint, p) ?: continue
+                val jitteredPoint = jitterTransform(p)
+                val location = helper.toClient(jitteredPoint, p) ?: continue
                 val shape = p.shape()!!
                 val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
                 targetCollector.addPoint(
@@ -86,7 +90,10 @@ class SinaGeom : PointGeom() {
         ctx: GeomContext
     ): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
-            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * p.width()!! * p.violinwidth()!!
+            val sign = if (rand.nextBoolean()) 1 else -1
+            val randomShift = rand.nextDouble()
+            val widthLimit = ctx.getResolution(Aes.X) / 2 * p.width()!! * p.violinwidth()!!
+            val x = p.x()!! + sign * randomShift * widthLimit // This formula is used to treat both sides equally (do not include ends)
             val y = p.y()!!
             return DoubleVector(x, y)
         }

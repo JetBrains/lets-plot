@@ -365,6 +365,7 @@ class LayerConfig constructor(
             GeomKind.BAR,
             GeomKind.BOX_PLOT,
             GeomKind.VIOLIN,
+            GeomKind.SINA,
             GeomKind.LOLLIPOP,
             GeomKind.Y_DOT_PLOT
         )
