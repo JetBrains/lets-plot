@@ -1,0 +1,3 @@
+headers = MagickWand/MagickWand.h MagickCore/MagickCore.h
+compilerOpts = "-DMAGICKCORE_HDRI_ENABLE=1"
+package = MagickWand

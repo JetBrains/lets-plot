@@ -56,6 +56,7 @@ if (enablePythonPackage) {
         dependsOn(":python-extension:build")
 
         workingDir(pythonPackagePath)
+        environment("LP_IMAGEMAGICK_PATH", "${rootProject.project.extra["imagemagick_lib_path"]}")
         commandLine(commandLine)
     }
 
