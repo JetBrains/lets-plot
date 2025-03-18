@@ -60,6 +60,8 @@ include("demo-svg-jvm")
 project(":demo-svg-jvm").projectDir = File("./demo/svg-jvm")
 include("demo-svg-browser")
 project(":demo-svg-browser").projectDir = File("./demo/svg-browser")
+include("demo-svg-native")
+project(":demo-svg-native").projectDir = File("./demo/svg-native")
 
 include("demo-plot-jvm")
 project(":demo-plot-jvm").projectDir = File("./demo/plot-jvm")

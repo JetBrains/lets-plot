@@ -4,7 +4,7 @@
  */
 
 package org.jetbrains.letsPlot.nat.canvas
-/*
+
 import MagickWand.*
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CValues
@@ -56,9 +56,9 @@ class IMCanvas {
 
             // Save the image to a file
             val outputFilename = "output_with_text.png"
-            //if (MagickWriteImage(wand, outputFilename) == MagickFalse) {
-            //    throw RuntimeException("Failed to write image")
-            //}
+            if (MagickWriteImage(wand, outputFilename) == MagickFalse) {
+                throw RuntimeException("Failed to write image")
+            }
 
             println("Image saved to $outputFilename")
         } finally {
@@ -70,4 +70,3 @@ class IMCanvas {
     }
 }
 
- */
