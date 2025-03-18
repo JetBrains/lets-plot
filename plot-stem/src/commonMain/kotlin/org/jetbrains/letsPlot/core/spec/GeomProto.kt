@@ -294,7 +294,7 @@ class GeomProto(val geomKind: GeomKind) {
 
         private fun sinaDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
-            defaults[Layer.STAT] = "identity" // TODO: "sina"
+            defaults[Layer.STAT] = "sina"
             return defaults
         }
 

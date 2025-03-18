@@ -137,6 +137,7 @@ object StatProto {
 
             DENSITYRIDGES -> configureDensityRidgesStat(options)
             YDENSITY -> configureYDensityStat(options)
+            SINA -> configureSinaStat(options)
             YDOTPLOT -> configureYDotplotStat(options)
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
@@ -290,6 +291,10 @@ object StatProto {
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
             quantiles = quantiles
         )
+    }
+
+    private fun configureSinaStat(options: OptionsAccessor): SinaStat {
+        return SinaStat()
     }
 
     private fun configureYDotplotStat(options: OptionsAccessor): YDotplotStat {
