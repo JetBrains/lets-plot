@@ -28,11 +28,11 @@ kotlin {
             //executable("SimpleDemo") {
             //    entryPoint = "demo.svg.SimpleDemoKt.main"
             //}
-            executable("ClippingDemo") {
-                entryPoint = "clippingDemoMain"
+            executable("SimpleSvgDemo") {
+                entryPoint = "simpleSvgDemoMain"
             }
-            executable("SimpleDemo") {
-                entryPoint = "simpleDemoMain"
+            executable("SimpleCanvasDemo") {
+                entryPoint = "simpleMagickCanvasDemoMain"
             }
         }
     }
@@ -64,8 +64,11 @@ kotlin {
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
                 implementation(project(":canvas"))
+                implementation(project(":plot-raster"))
 
                 implementation(project(":demo-and-test-shared"))
+                implementation(project(":demo-common-svg"))
+
                 implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
         }

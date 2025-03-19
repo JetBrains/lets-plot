@@ -5,23 +5,28 @@
 
 package demo.svg
 
+import MagickWand.MagickFalse
+import MagickWand.MagickWandGenesis
+import MagickWand.MagickWandTerminus
+import MagickWand.MagickWriteImage
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.nat.canvas.MagickCanvas
 
-object SimpleDemo {
+object SimpleMagickCanvasDemo {
     @OptIn(ExperimentalForeignApi::class)
     fun main() {
+        MagickWandGenesis()
         val width = 50.0
         val height = 50.0
         val canvas = MagickCanvas.create(Vector(width.toInt(), height.toInt()))
         val ctx = canvas.context2d
 
-        val innerWidth = width / 2.0
-        val innerHeight = height / 2.0
         ctx.setFillStyle(Color.RED)
-        ctx.fillRect((width - innerWidth / 2.0), (height - innerHeight) / 2.0, innerWidth, innerHeight)
+        ctx.fillRect(5.0, 5.0, 40.0, 40.0)
+        ctx.setFillStyle(Color.ORANGE)
+        ctx.fillText("Hello!", 10.0, 20.0)
 
         ctx.setStrokeStyle(Color.ORANGE)
         ctx.moveTo(0.0, 0.0)
@@ -30,8 +35,16 @@ object SimpleDemo {
         ctx.lineTo(width, 0.0)
         ctx.stroke()
 
-
         val str = canvas.dumpPixels()
+
+        // Save the image to a file
+        val outputFilename = "simple_demo.png"
+        if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
+            throw RuntimeException("Failed to write image")
+        }
+
+        MagickWandTerminus()
+
         println("Simple demo")
         println(str)
     }

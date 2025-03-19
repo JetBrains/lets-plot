@@ -59,6 +59,48 @@ class MagickCanvas(
             val background = NewPixelWand()
             PixelSetColor(background, "white")
             MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
+
+//            println("fillRect(wand=$wand, x=0.0, y=0.0, w=${size.x}, h=${size.y})")
+//            memScoped {
+//                val drawingWand: CPointer<DrawingWand>? = NewDrawingWand()
+//                val pixelWand = NewPixelWand()
+//                require(pixelWand != null) { "Failed to create PixelWand" }
+//
+//                // Set fill color (default to black, modify as needed)
+//                PixelSetColor(pixelWand, "orange")
+//
+//                // Apply fill color to drawing
+//                DrawSetFillColor(drawingWand, pixelWand)
+//
+//                // Draw the rectangle
+//                DrawRectangle(drawingWand, 5.0, 5.0, 45.0, 45.0)
+//
+//                // Apply drawing to the MagickWand image
+//                MagickDrawImage(wand, drawingWand)
+//
+//                DestroyPixelWand(pixelWand) // Cleanup
+//            }
+//
+//            memScoped {
+//                val drawingWand: CPointer<DrawingWand>? = NewDrawingWand()
+//                val pixelWand = NewPixelWand()
+//                require(pixelWand != null) { "Failed to create PixelWand" }
+//
+//                // Set fill color (default to black, modify as needed)
+//                PixelSetColor(pixelWand, "black")
+//
+//                // Apply fill color to drawing
+//                DrawSetFillColor(drawingWand, pixelWand)
+//
+//                // Draw the rectangle
+//                DrawRectangle(drawingWand, 0.0, 0.0, 5.0, 5.0)
+//
+//                // Apply drawing to the MagickWand image
+//                MagickDrawImage(wand, drawingWand)
+//
+//                DestroyPixelWand(pixelWand) // Cleanup
+//            }
+
             return MagickCanvas(wand, size, 1.0)
         }
     }

@@ -1,5 +1,5 @@
-import demo.svg.ClippingDemo
-import demo.svg.SimpleDemo
+import demo.svg.SimpleMagickCanvasDemo
+import demo.svg.SimpleSvgDemo
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -7,10 +7,10 @@ import demo.svg.SimpleDemo
  */
 
 
-fun simpleDemoMain() {
-    SimpleDemo.main()
+fun simpleMagickCanvasDemoMain() {
+    SimpleMagickCanvasDemo.main()
 }
 
-fun clippingDemoMain() {
-    ClippingDemo.main()
+fun simpleSvgDemoMain() {
+    SimpleSvgDemo.main()
 }

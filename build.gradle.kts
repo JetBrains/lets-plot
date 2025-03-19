@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.FileNotFoundException
 import java.util.*
-import kotlin.plus
 
 plugins {
     kotlin("multiplatform") apply false
@@ -187,7 +186,9 @@ subprojects {
         "plot-stem",
         "plot-raster",
 
-        "demo-and-test-shared"
+        "demo-and-test-shared",
+        "demo-common-svg",
+        "demo-svg-native",
     )
     val projectArchitecture = rootProject.extra.getOrNull("architecture")
 
