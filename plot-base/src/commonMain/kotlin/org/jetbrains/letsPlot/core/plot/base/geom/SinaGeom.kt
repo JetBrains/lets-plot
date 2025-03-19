@@ -96,13 +96,15 @@ class SinaGeom : PointGeom() {
         ctx: GeomContext,
         rand: Random
     ): (p: DataPointAesthetics) -> DoubleVector {
+        val resolutionX = ctx.getResolution(Aes.X)
+        val resolutionY = ctx.getResolution(Aes.Y)
         return fun(p: DataPointAesthetics): DoubleVector {
             val signX = if (rand.nextBoolean()) 1 else -1
             val signY = if (rand.nextBoolean()) 1 else -1
             val randomWidthShift = rand.nextDouble()
             val randomHeightShift = rand.nextDouble()
-            val widthLimit = ctx.getResolution(Aes.X) / 2 * p.width()!! * p.violinwidth()!!
-            val heightLimit = if (jitterY) .25 else 0.0
+            val widthLimit = resolutionX / 2 * p.width()!! * p.violinwidth()!!
+            val heightLimit = if (jitterY) DY * resolutionY else 0.0
             val x = p.x()!! + signX * randomWidthShift * widthLimit // This formula is used to treat both sides equally (do not include ends)
             val y = p.y()!! + signY * randomHeightShift * heightLimit
             return DoubleVector(x, y)
@@ -117,6 +119,7 @@ class SinaGeom : PointGeom() {
         const val HANDLES_GROUPS = true
         const val DEF_JITTER_Y = true
 
+        private const val DY = 0.25
         private const val INTEGERISH_EPSILON = 1e-12
     }
 }
