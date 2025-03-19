@@ -10,8 +10,8 @@ import MagickWand.MagickWriteImage
 import demo.svgMapping.model.ReferenceSvgModel
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.nat.canvas.MagickCanvas
-import org.jetbrains.letsPlot.nat.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 object SimpleSvgDemo {

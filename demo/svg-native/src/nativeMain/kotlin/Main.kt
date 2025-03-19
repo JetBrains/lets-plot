@@ -7,10 +7,12 @@ import demo.svg.SimpleSvgDemo
  */
 
 
+@Suppress("unused")
 fun simpleMagickCanvasDemoMain() {
     SimpleMagickCanvasDemo.main()
 }
 
+@Suppress("unused")
 fun simpleSvgDemoMain() {
     SimpleSvgDemo.main()
 }

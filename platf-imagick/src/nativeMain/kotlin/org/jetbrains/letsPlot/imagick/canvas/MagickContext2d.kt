@@ -3,19 +3,30 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.nat.canvas
+package org.jetbrains.letsPlot.imagick.canvas
 
 import MagickWand.*
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Context2dDelegate
+import org.jetbrains.letsPlot.core.canvas.Font
 
 class MagickContext2d(
     private val wand: CPointer<MagickWand>?
 ) : Context2d by Context2dDelegate() {
 
     private val drawingWand: CPointer<DrawingWand>? = NewDrawingWand()
+
+    override fun setFont(f: Font) {
+        val size = f.fontSize
+        val family = f.fontFamily
+        val style = f.fontStyle
+        val weight = f.fontWeight
+
+        // Set font size
+        DrawSetFontSize(drawingWand, size)
+    }
 
     override fun setFillStyle(color: Color?) {
         memScoped {

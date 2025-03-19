@@ -2,6 +2,8 @@
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+import java.util.*
+
 
 pluginManagement {
     plugins {
@@ -60,8 +62,6 @@ include("demo-svg-jvm")
 project(":demo-svg-jvm").projectDir = File("./demo/svg-jvm")
 include("demo-svg-browser")
 project(":demo-svg-browser").projectDir = File("./demo/svg-browser")
-include("demo-svg-native")
-project(":demo-svg-native").projectDir = File("./demo/svg-native")
 
 include("demo-plot-jvm")
 project(":demo-plot-jvm").projectDir = File("./demo/plot-jvm")
@@ -80,3 +80,17 @@ project(":demo-livemap-jvm").projectDir = File("./demo/livemap-jvm")
 
 include("demo-livemap-browser")
 project(":demo-livemap-browser").projectDir = File("./demo/livemap-browser")
+
+val localProperties = rootDir.resolve("local.properties")
+val properties = Properties()
+if (localProperties.exists()) {
+    localProperties.inputStream().use { properties.load(it) }
+}
+
+val imagemagickLibPath = properties.getProperty("imagemagick_lib_path", "").toString()
+if (imagemagickLibPath.isNotBlank()) {
+    include("platf-imagick")
+
+    include("demo-svg-native")
+    project(":demo-svg-native").projectDir = File("./demo/svg-native")
+}

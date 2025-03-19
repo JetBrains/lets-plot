@@ -56,7 +56,12 @@ if (enablePythonPackage) {
         dependsOn(":python-extension:build")
 
         workingDir(pythonPackagePath)
-        environment("LP_IMAGEMAGICK_PATH", "${rootProject.project.extra["imagemagick_lib_path"]}")
+
+        val imagickLibPath = (rootProject.project.extra.getOrNull("imagemagick_lib_path") as? String) ?: ""
+        if (imagickLibPath.isNotBlank()) {
+            environment("LP_IMAGEMAGICK_PATH", imagickLibPath)
+        }
+
         commandLine(commandLine)
     }
 

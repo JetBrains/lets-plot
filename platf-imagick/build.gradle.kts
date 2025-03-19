@@ -1,7 +1,8 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
 import org.gradle.internal.os.OperatingSystem
 
 plugins {
@@ -10,7 +11,6 @@ plugins {
 
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
 kotlin {
     val target = when {
@@ -22,18 +22,12 @@ kotlin {
         else -> throw Exception("Unsupported platform! Check project settings.")
     }
 
-    target.apply {
-        binaries {
-            // ✅ Create separate executables for each demo file
-            //executable("SimpleDemo") {
-            //    entryPoint = "demo.svg.SimpleDemoKt.main"
-            //}
-            executable("SimpleSvgDemo") {
-                entryPoint = "simpleSvgDemoMain"
+    target.compilations.getByName("main") {
+        val imageMagick by cinterops.creating {
+            if (os.isWindows) {
+                compilerOpts += listOf("-D_LIB")
             }
-            executable("SimpleCanvasDemo") {
-                entryPoint = "simpleMagickCanvasDemoMain"
-            }
+            compilerOpts += listOf("-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7")
         }
     }
 
@@ -47,31 +41,29 @@ kotlin {
         )
     }
 
-    // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
-    applyDefaultHierarchyTemplate()
-
     sourceSets {
-        nativeMain {
-            dependencies {
-                implementation(project(":platf-native"))
-                implementation(project(":platf-imagick"))
-            }
+        all {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
 
         commonMain {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-
                 implementation(project(":commons"))
-                implementation(project(":datamodel"))
                 implementation(project(":canvas"))
+                implementation(project(":datamodel"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-builder"))
+                implementation(project(":plot-stem"))
                 implementation(project(":plot-raster"))
-
-                implementation(project(":demo-and-test-shared"))
-                implementation(project(":demo-common-svg"))
-
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("com.squareup.okio:okio:3.9.0")
             }
         }
+
+        //nativeTest {
+        //    dependencies {
+        //        implementation(project(":demo-and-test-shared"))
+        //        implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+        //    }
+        //}
     }
 }

@@ -12,7 +12,7 @@ import MagickWand.MagickWriteImage
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.nat.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 
 object SimpleMagickCanvasDemo {
     @OptIn(ExperimentalForeignApi::class)

@@ -9,7 +9,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
 
@@ -21,26 +20,6 @@ kotlin {
         os.isLinux && arch == "x86_64" -> linuxX64()
         os.isWindows -> mingwX64()
         else -> throw Exception("Unsupported platform! Check project settings.")
-    }
-
-    target.compilations.getByName("main") {
-        val imageMagick by cinterops.creating {
-            if (os.isWindows) {
-                compilerOpts += listOf("-D_LIB")
-            }
-            compilerOpts += listOf("-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7")
-        }
-    }
-
-    target.binaries.forEach {
-        println("Target: ${it}")
-        it.linkerOpts += listOf(
-            "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-            "-lMagickWand-7.Q16HDRI",
-            "-lMagickCore-7.Q16HDRI",
-            "-lpng",
-            "-lz"
-        )
     }
 
     sourceSets {
