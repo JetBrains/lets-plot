@@ -13,8 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
 class SinaStat(
     private val scale: Scale,
-    private val trim: Boolean,
-    private val tailsCutoff: Double?,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -57,7 +55,7 @@ class SinaStat(
         }
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
-        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange, quantiles, resetValueRange = false) // Only difference is resetValueRange = false
+        val statData = DensityStatUtil.binnedStat(xs, ys, ws, true, null, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange, quantiles, resetValueRange = false) // Differences is: trim = true, tailsCutoff = null, resetValueRange = false
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -107,8 +105,6 @@ class SinaStat(
     // The same as in YDensityStat
     companion object {
         val DEF_SCALE = Scale.AREA
-        const val DEF_TRIM = true
-        const val DEF_TAILS_CUTOFF = 3.0
         val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(

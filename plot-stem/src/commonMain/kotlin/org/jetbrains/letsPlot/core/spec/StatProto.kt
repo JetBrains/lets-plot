@@ -330,8 +330,6 @@ object StatProto {
 
         return SinaStat(
             scale = scale ?: SinaStat.DEF_SCALE,
-            trim = options.getBoolean(Sina.TRIM, SinaStat.DEF_TRIM),
-            tailsCutoff = options.getDoubleDef(Sina.TAILS_CUTOFF, SinaStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

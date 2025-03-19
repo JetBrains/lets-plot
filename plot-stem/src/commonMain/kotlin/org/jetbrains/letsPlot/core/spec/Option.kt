@@ -531,8 +531,6 @@ object Option {
 
         object Sina {
             const val SCALE = "scale"
-            const val TRIM = "trim"
-            const val TAILS_CUTOFF = "tails_cutoff"
             const val QUANTILES = "quantiles"
             const val SEED = "seed"
             const val JITTER_Y = "jitter_y"
