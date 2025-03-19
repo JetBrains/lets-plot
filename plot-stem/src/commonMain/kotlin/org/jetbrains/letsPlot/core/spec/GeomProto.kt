@@ -295,6 +295,10 @@ class GeomProto(val geomKind: GeomKind) {
         private fun sinaDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "sina"
+            defaults[Layer.POS] = mapOf(
+                Meta.NAME to PosProto.DODGE,
+                Pos.Dodge.WIDTH to 0.95
+            )
             return defaults
         }
 
