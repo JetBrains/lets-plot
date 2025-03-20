@@ -58,10 +58,8 @@ if this_system == 'Darwin':
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
-            '-lMagickWand-7.Q16HDRI',
-            '-lMagickCore-7.Q16HDRI',
-            '-lpng',
-            '-lz'
+            '-lMagickWand-7.Q8',
+            '-lMagickCore-7.Q8',
         ]
 
 elif this_system == 'Windows':
@@ -76,11 +74,9 @@ elif this_system == 'Windows':
     if imagemagick_lib_path is not None:
         extra_link += [
         f'-L{imagemagick_lib_path}/lib',
-        '-lMagickWand-7.Q16HDRI',
-        '-lMagickCore-7.Q16HDRI',
+        '-lMagickWand-7.Q8',
+        '-lMagickCore-7.Q8',
         '-lpthread',
-        '-lpng',
-        '-lz',
         '-lgdi32',
         '-lurlmon'
     ]
@@ -96,12 +92,8 @@ elif this_system == 'Linux':
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
-            '-lMagickWand-7.Q16HDRI',
-            '-lMagickCore-7.Q16HDRI',
-            '-lpng',
-            '-lz',
-            '-lX11',
-            '-lXext'
+            '-lMagickWand-7.Q8',
+            '-lMagickCore-7.Q8',
         ]
 
 else:

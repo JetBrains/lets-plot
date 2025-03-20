@@ -38,7 +38,7 @@ object SimpleMagickCanvasDemo {
         val str = canvas.dumpPixels()
 
         // Save the image to a file
-        val outputFilename = "simple_demo.png"
+        val outputFilename = "simple_demo.bmp"
         if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
             throw RuntimeException("Failed to write image")
         }

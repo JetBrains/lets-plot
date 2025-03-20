@@ -29,7 +29,7 @@ object SimpleSvgDemo {
         val canvas = canvasControl.children.single() as MagickCanvas
 
         // Save the image to a file
-        val outputFilename = "svg_demo.png"
+        val outputFilename = "svg_demo.bmp"
         if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
             throw RuntimeException("Failed to write image")
         }

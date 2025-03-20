@@ -60,7 +60,7 @@ class ImageMagicTest {
             MagickDrawImage(wand, draw)
 
             // Save the image to a file
-            val outputFilename = "output_with_text.png"
+            val outputFilename = "output_with_text.bmp"
             if (MagickWriteImage(wand, outputFilename) == MagickFalse) {
                 throw RuntimeException("Failed to write image")
             }

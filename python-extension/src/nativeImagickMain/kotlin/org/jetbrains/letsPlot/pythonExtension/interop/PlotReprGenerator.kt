@@ -4,19 +4,25 @@
  */
 
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-
 package org.jetbrains.letsPlot.pythonExtension.interop
 
+import MagickWand.MagickFalse
+import MagickWand.MagickWriteImage
 import Python.PyObject
 import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
+import org.jetbrains.letsPlot.raster.builderLW.MonolithicSkiaLW
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
@@ -34,8 +40,29 @@ object PlotReprGenerator {
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         return try {
 
-            println("generateSvg() - start")
+
             val plotSpecMap = pyDictToMap(plotSpecDict)
+
+            run {
+                val rawSpec = plotSpecMap as MutableMap<String, Any>
+                val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
+                val vm = MonolithicSkiaLW.buildPlotFromProcessedSpecs(processedSpec) {}
+
+                val w = 500
+                val h = 500
+                val canvasControl = MagickCanvasControl(w, h)
+                SvgCanvasFigure(vm.svg).mapToCanvas(canvasControl)
+                val canvas = canvasControl.children.single() as MagickCanvas
+
+                // Save the image to a file
+                val outputFilename = "/home/ikupriyanov/Pictures/imagick_svg_to_raster.png"
+                if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
+                    throw RuntimeException("Failed to write image")
+                } else {
+                    println("Image saved to $outputFilename")
+                }
+
+            }
 
             @Suppress("UNCHECKED_CAST")
             val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
