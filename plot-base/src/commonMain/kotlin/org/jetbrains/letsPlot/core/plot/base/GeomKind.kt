@@ -52,6 +52,8 @@ enum class GeomKind {
     SPOKE,
     TEXT,
     LABEL,
+    TEXT_REPEL,
+    LABEL_REPEL,
     RASTER,
     IMAGE,
     PIE,

@@ -30,6 +30,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
@@ -172,6 +173,7 @@ object DefaultMapperProvider {
             this.put(SIZE_END, SizeMapperProvider.DEFAULT)
             this.put(STROKE_START, StrokeMapperProvider.DEFAULT)
             this.put(STROKE_END, StrokeMapperProvider.DEFAULT)
+            this.put(POINT_SIZE, SizeMapperProvider.DEFAULT)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {

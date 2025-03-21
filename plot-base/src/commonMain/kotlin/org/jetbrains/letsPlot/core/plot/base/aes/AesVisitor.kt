@@ -35,6 +35,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
@@ -251,6 +252,9 @@ abstract class AesVisitor<T> {
         if (aes == STROKE_END) {
             return strokeEnd()
         }
+        if (aes == POINT_SIZE) {
+            return pointSize()
+        }
 
         throw IllegalArgumentException("Unexpected aes: $aes")
     }
@@ -366,4 +370,6 @@ abstract class AesVisitor<T> {
     protected abstract fun strokeStart(): T
 
     protected abstract fun strokeEnd(): T
+
+    protected abstract fun pointSize(): T
 }

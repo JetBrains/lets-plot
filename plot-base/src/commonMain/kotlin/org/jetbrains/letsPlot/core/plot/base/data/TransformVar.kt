@@ -67,6 +67,7 @@ object TransformVar {
     val SIZE_END = DataFrame.Variable("transform.SIZE_END", TRANSFORM)
     val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
     val STROKE_END = DataFrame.Variable("transform.STROKE_END", TRANSFORM)
+    val POINT_SIZE = DataFrame.Variable("transform.POINT_SIZE", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VAR_BY_NAME: Map<String, DataFrame.Variable>
@@ -324,6 +325,10 @@ object TransformVar {
 
         override fun strokeEnd(): DataFrame.Variable {
             return STROKE_END
+        }
+
+        override fun pointSize(): DataFrame.Variable {
+            return POINT_SIZE
         }
     }
 }

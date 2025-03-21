@@ -370,6 +370,22 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun textRepel(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.TEXT_REPEL,
+                TextGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
+        fun labelRepel(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.LABEL_REPEL,
+                TextGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun raster(): GeomProvider {
             return GeomProvider(
                 GeomKind.RASTER,

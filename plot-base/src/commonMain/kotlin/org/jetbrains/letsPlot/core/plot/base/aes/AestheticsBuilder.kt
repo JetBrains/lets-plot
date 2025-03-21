@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
@@ -225,6 +226,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun strokeEnd(v: (Int) -> Double?): AestheticsBuilder {
         return aes(STROKE_END, v)
+    }
+
+    fun pointSize(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(POINT_SIZE, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {

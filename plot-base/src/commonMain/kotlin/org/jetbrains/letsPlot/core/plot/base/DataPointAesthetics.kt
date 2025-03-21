@@ -233,6 +233,10 @@ abstract class DataPointAesthetics {
         return get(Aes.STROKE_END)
     }
 
+    fun pointSize(): Double? {
+        return get(Aes.POINT_SIZE)
+    }
+
     fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }

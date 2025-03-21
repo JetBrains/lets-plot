@@ -102,7 +102,7 @@ class ScaleConfig<T> constructor(
             }
         } else if (aes == Aes.ALPHA && has(RANGE)) {
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END) && has(RANGE)) {
+        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE) && has(RANGE)) {
             mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
         } else if (aes == Aes.LINEWIDTH && has(RANGE)) {
             mapperProvider = LinewidthMapperProvider(getRange(RANGE), (naValue as Double))

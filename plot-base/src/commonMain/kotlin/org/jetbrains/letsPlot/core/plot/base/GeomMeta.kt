@@ -417,6 +417,37 @@ object GeomMeta {
                 Aes.LINEHEIGHT
             )
 
+            GeomKind.TEXT_REPEL -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.POINT_SIZE
+            )
+
+            GeomKind.LABEL_REPEL -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.POINT_SIZE
+            )
+
             GeomKind.LIVE_MAP -> listOf(
                 Aes.ALPHA,
                 Aes.COLOR,

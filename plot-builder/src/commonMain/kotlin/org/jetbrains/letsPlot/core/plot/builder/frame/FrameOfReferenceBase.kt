@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
@@ -65,7 +66,8 @@ internal abstract class FrameOfReferenceBase(
             coord,
             flipAxis,
             targetCollector,
-            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
+            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
+            bounds = layoutInfo.geomContentBounds
         )
     }
 
@@ -163,7 +165,8 @@ internal abstract class FrameOfReferenceBase(
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color
+            backgroundColor: Color,
+            bounds: DoubleRectangle = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO),
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -206,6 +209,7 @@ internal abstract class FrameOfReferenceBase(
                 .backgroundColor(backgroundColor)
                 .plotContext(plotContext)
                 .coordinateSystem(coord)
+                .contentBounds(bounds)
                 .build()
 
             val pos = rendererData.pos

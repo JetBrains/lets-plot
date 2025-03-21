@@ -102,7 +102,7 @@ class GeomProto(val geomKind: GeomKind) {
             SEGMENT -> DefaultSampling.SEGMENT
             CURVE -> DefaultSampling.SEGMENT
             SPOKE -> DefaultSampling.SPOKE
-            TEXT, LABEL -> DefaultSampling.TEXT
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP
             LIVE_MAP,
@@ -115,7 +115,7 @@ class GeomProto(val geomKind: GeomKind) {
     fun hasOwnPositionAdjustmentOptions(layerOptions: OptionsAccessor): Boolean {
         return when (geomKind) {
             JITTER -> layerOptions.hasOwn(Geom.Jitter.WIDTH) || layerOptions.hasOwn(Geom.Jitter.HEIGHT)
-            TEXT, LABEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
             else -> false
         }
     }
@@ -140,7 +140,7 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)) {
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)) {
                 mapOf(
                     Meta.NAME to PosProto.NUDGE,
                     Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),

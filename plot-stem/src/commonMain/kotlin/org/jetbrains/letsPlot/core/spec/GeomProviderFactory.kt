@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelReplacer
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -342,6 +343,20 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.TEXT_REPEL -> GeomProvider.textRepel {
+                val geom = TextRepelGeom()
+                applyTextOptions(layerConfig, geom, expFormat)
+                applyRepelOptions(layerConfig, geom, expFormat)
+                geom
+            }
+
+            GeomKind.LABEL_REPEL -> GeomProvider.labelRepel {
+                val geom = LabelRepelGeom()
+                applyTextOptions(layerConfig, geom, expFormat)
+                applyRepelOptions(layerConfig, geom, expFormat)
+                geom
+            }
+
             GeomKind.IMAGE -> GeomProvider.image {
                 require(layerConfig.hasOwn(Option.Geom.Image.HREF)) { "Image reference URL (href) is not specified." }
                 for (s in listOf(
@@ -458,6 +473,31 @@ internal object GeomProviderFactory {
         }
     }
 
+    private fun applyRepelOptions(layerConfig: LayerConfig, geom: TextRepelGeom, expFormat: ExponentFormat) {
+        layerConfig.getLong(Option.Geom.Repel.SEED)?.let {
+            geom.seed = it
+        }
+        layerConfig.getInteger(Option.Geom.Repel.MAX_ITER)?.let {
+            geom.maxIter = it
+        }
+        layerConfig.getString(Option.Geom.Repel.DIRECTION)?.let {
+            geom.direction = directionValue(it)
+        }
+        layerConfig.getDouble(Option.Geom.Repel.POINT_PADDING)?.let {
+            geom.pointPadding = it
+        }
+        layerConfig.getDouble(Option.Geom.Repel.BOX_PADDING)?.let {
+            geom.boxPadding = it
+        }
+        layerConfig.getInteger(Option.Geom.Repel.MAX_OVERLAPS)?.let {
+            geom.maxOverlaps = it
+        }
+
+        layerConfig.getDouble(Option.Geom.Repel.MIN_SEGMENT_LENGTH)?.let {
+            geom.minSegmentLength = it
+        }
+    }
+
     // Should be removed when band geom will be refactored
     private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {
         // Horizontal or vertical
@@ -481,6 +521,18 @@ internal object GeomProviderFactory {
                     "Use one of: res, identity, size, px."
                 )
             }
+        }
+    }
+
+    private fun directionValue(value: String): LabelReplacer.Direction {
+        return when (value.lowercase()) {
+            "x" -> LabelReplacer.Direction.X
+            "y" -> LabelReplacer.Direction.Y
+            "both" -> LabelReplacer.Direction.BOTH
+            else -> throw IllegalArgumentException(
+                "Unsupported value for ${Option.Geom.Repel.DIRECTION} parameter: '$value'. " +
+                        "Use one of: x, y, both."
+            )
         }
     }
 }

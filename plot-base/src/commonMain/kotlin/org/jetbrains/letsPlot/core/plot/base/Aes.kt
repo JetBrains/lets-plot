@@ -137,6 +137,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val STROKE_START: Aes<Double> = Aes("stroke_start")
         val STROKE_END: Aes<Double> = Aes("stroke_end")
 
+        val POINT_SIZE: Aes<Double> = Aes("point_size")
+
         fun numeric(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
             @Suppress("UNCHECKED_CAST")

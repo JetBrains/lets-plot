@@ -388,6 +388,17 @@ object Option {
             const val ALPHA_STROKE = "alpha_stroke"
         }
 
+        object Repel {
+            const val SEED = "seed"
+            const val MAX_ITER = "max_iter"
+            const val DIRECTION = "direction"
+            const val POINT_PADDING = "point_padding"
+            const val BOX_PADDING = "box_padding"
+            const val MAX_OVERLAPS = "max_overlaps"
+
+            const val MIN_SEGMENT_LENGTH = "min_segment_length"
+        }
+
         object Pie {
             const val HOLE = "hole"
             const val SPACER_WIDTH = "spacer_width"
@@ -1037,6 +1048,8 @@ object Option {
         private const val SPOKE = "spoke"
         const val TEXT = "text"
         const val LABEL = "label"
+        private const val TEXT_REPEL = "text_repel"
+        private const val LABEL_REPEL = "label_repel"
         private const val RASTER = "raster"
         const val IMAGE = "image"
         const val PIE = "pie"
@@ -1093,6 +1106,8 @@ object Option {
             map[SPOKE] = GeomKind.SPOKE
             map[TEXT] = GeomKind.TEXT
             map[LABEL] = GeomKind.LABEL
+            map[TEXT_REPEL] = GeomKind.TEXT_REPEL
+            map[LABEL_REPEL] = GeomKind.LABEL_REPEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE

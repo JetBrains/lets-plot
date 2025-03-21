@@ -9,6 +9,10 @@
     - `geom_sina()` [[#1298](https://github.com/JetBrains/lets-plot/issues/1298)].
 
       See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
+  
+    - `geom_text_repel()` and `geom_label_repel()` for avoiding text overlaps in plots [[#1092](https://github.com/JetBrains/lets-plot/issues/1092)].  
+      See: **TODO**
+  
 
 ### Changed
 - [**BREAKING**] The `position_dodgev()` function and the `'dodgev'` value for the `position` parameter are deprecated and will be removed in future releases.
