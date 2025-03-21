@@ -58,6 +58,9 @@ if this_system == 'Darwin':
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
+            '-lz',
+            '-lfontconfig',
+            '-lfreetype',
             '-lMagickWand-7.Q8',
             '-lMagickCore-7.Q8',
         ]
@@ -73,15 +76,18 @@ elif this_system == 'Windows':
 
     if imagemagick_lib_path is not None:
         extra_link += [
-        f'-L{imagemagick_lib_path}/lib',
-        '-lMagickWand-7.Q8',
-        '-lMagickCore-7.Q8',
-        '-lpthread',
-        '-lgdi32',
-        '-lurlmon'
-    ]
+            f'-L{imagemagick_lib_path}/lib',
+            '-lMagickWand-7.Q8',
+            '-lMagickCore-7.Q8',
+            '-lz',
+            '-lfontconfig',
+            '-lfreetype',
+            '-lpthread',
+            '-lgdi32',
+            '-lurlmon'
+        ]
 
-# fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
+    # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
 
     distutils.cygwinccompiler.get_msvcr = lambda: []
@@ -94,6 +100,9 @@ elif this_system == 'Linux':
             f'-L{imagemagick_lib_path}/lib',
             '-lMagickWand-7.Q8',
             '-lMagickCore-7.Q8',
+            '-lz',
+            '-lfontconfig',
+            '-lfreetype',
         ]
 
 else:

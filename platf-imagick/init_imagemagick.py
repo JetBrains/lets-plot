@@ -3,30 +3,22 @@ import shutil
 import subprocess
 
 # Define paths
-PROJECT_ROOT = os.path.abspath(os.getcwd())  # Assume script is launched from project root
-PLATF_IMAGICK_DIR = os.path.join(PROJECT_ROOT, "platf-imagick")
-IMAGEMAGICK_DIR = os.path.join(PLATF_IMAGICK_DIR, "ImageMagick")
-BUILD_DIR = os.path.join(IMAGEMAGICK_DIR, "build")
-OUTPUT_DIR = os.path.join(IMAGEMAGICK_DIR, "output")
-INSTALL_DIR = os.path.join(BUILD_DIR, "install")
+ROOT_DIR = os.path.join(os.path.abspath(os.getcwd()), "ImageMagick")
+IMAGEMAGICK_DIR = os.path.join(ROOT_DIR, "src")
+BUILD_DIR = os.path.join(ROOT_DIR, "build")
+INSTALL_DIR = os.path.join(ROOT_DIR, "install")
 IMAGEMAGICK_REPO = "https://github.com/ImageMagick/ImageMagick.git"
 IMAGEMAGICK_HASH = "8209e844cf02b5365918da83b2fc811442813080"  # Replace with correct commit
 
 # Set compilers from Kotlin/Native
 KONAN_DIR = os.path.expanduser("/home/ikupriyanov/.konan/dependencies/x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2")  # Adjust as needed
-CC = os.path.join(KONAN_DIR, "bin", "x86_64-unknown-linux-gnu-gcc")
-CXX = os.path.join(KONAN_DIR, "bin", "x86_64-unknown-linux-gnu-g++")
+#CC = os.path.join(KONAN_DIR, "bin", "x86_64-unknown-linux-gnu-gcc")
+#CXX = os.path.join(KONAN_DIR, "bin", "x86_64-unknown-linux-gnu-g++")
 
-print(f"Project Root: {PROJECT_ROOT}")
-print(f"ImageMagick Target Directory: {IMAGEMAGICK_DIR}")
+print(f"Root: {ROOT_DIR}")
+print(f"ImageMagick Src Directory: {IMAGEMAGICK_DIR}")
 print(f"Build Directory: {BUILD_DIR}")
 print(f"Install Directory: {INSTALL_DIR}")
-print(f"Output Directory: {OUTPUT_DIR}")
-
-# Ensure platf-imagick exists
-if not os.path.isdir(PLATF_IMAGICK_DIR):
-    print(f"❌ Error: {PLATF_IMAGICK_DIR} does not exist. Make sure to create it first!")
-    exit(1)
 
 # Clone ImageMagick inside platf-imagick if not already present
 if not os.path.isdir(IMAGEMAGICK_DIR):
@@ -53,23 +45,19 @@ subprocess.run(["git", "-C", IMAGEMAGICK_DIR, "checkout", IMAGEMAGICK_HASH], che
 
 # Create build and output directories
 os.makedirs(BUILD_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(INSTALL_DIR, exist_ok=True)
 
-# Remove unnecessary modules
-modules_to_remove = ["coders/animate.c", "filters/animate.c"]
-for module in modules_to_remove:
-    module_path = os.path.join(IMAGEMAGICK_DIR, module)
-    if os.path.exists(module_path):
-        print(f"Removing {module_path} to disable animation support...")
-        os.remove(module_path)
+# Clean
+print("Cleaning ImageMagick...")
+subprocess.run(["make", "clean"], cwd=BUILD_DIR, check=False)
 
 # Run configure script
 print("Configuring ImageMagick...")
 configure_cmd = [
-    f"CC={CC}", f"CXX={CXX}",
+    "ac_cv_func_getentropy=no", # while in local sysroot we have getentropy, but it is not available in the konan sysroot (glibc 2.19)
+ #   f"CC={CC}", f"CXX={CXX}",
     "CFLAGS=-fPIC", "CXXFLAGS=-fPIC",
-    "../configure",
+    "../src/configure",
     "--disable-shared",
     "--enable-static",
     "--with-pic",
@@ -89,12 +77,10 @@ configure_cmd = [
     "--without-openjp2",
     "--without-bzlib",
     "--without-tiff",
-    "--without-zlibs",
     "--without-zstd",
     "--without-lzma",
     "--without-xml",
     "--without-x",  # Disable X11 support
-    "--without-x11",
     "--without-modules",  # Disable dynamically loaded modules
 ]
 
@@ -106,9 +92,4 @@ subprocess.run(["make", "-j", str(os.cpu_count())], cwd=BUILD_DIR, check=True)
 print("Installing ImageMagick...")
 subprocess.run(["make", "install"], cwd=BUILD_DIR, check=True)
 
-# Move include and lib directories to output directory
-print("Copying include and lib directories to output...")
-shutil.copytree(os.path.join(INSTALL_DIR, "include"), os.path.join(OUTPUT_DIR, "include"), dirs_exist_ok=True)
-shutil.copytree(os.path.join(INSTALL_DIR, "lib"), os.path.join(OUTPUT_DIR, "lib"), dirs_exist_ok=True)
-
-print(f"✅ ImageMagick built and installed. Include and lib files are in {OUTPUT_DIR}.")
+print(f"ImageMagick built and installed to {INSTALL_DIR}.")

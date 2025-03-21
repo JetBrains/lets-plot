@@ -55,8 +55,9 @@ object PlotReprGenerator {
                 val canvas = canvasControl.children.single() as MagickCanvas
 
                 // Save the image to a file
-                val outputFilename = "/home/ikupriyanov/Pictures/imagick_svg_to_raster.png"
+                val outputFilename = "/home/ikupriyanov/Pictures/imagick_svg_to_raster.bmp"
                 if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
+                    println("Failed to save image $outputFilename")
                     throw RuntimeException("Failed to write image")
                 } else {
                     println("Image saved to $outputFilename")

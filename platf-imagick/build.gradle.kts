@@ -27,13 +27,18 @@ kotlin {
             if (os.isWindows) {
                 compilerOpts += listOf("-D_LIB")
             }
-            compilerOpts += listOf("-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7")
+            compilerOpts += listOf(
+                "-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7",
+            )
         }
     }
 
     target.binaries.forEach {
         it.linkerOpts += listOf(
             "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
+            "-L/usr/lib/x86_64-linux-gnu/",
+            "-lfreetype",
+            "-lfontconfig",
             "-lMagickWand-7.Q8",
             "-lMagickCore-7.Q8",
             "-lz"
@@ -54,7 +59,6 @@ kotlin {
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
                 implementation(project(":plot-raster"))
-                implementation("com.squareup.okio:okio:3.9.0")
             }
         }
 
