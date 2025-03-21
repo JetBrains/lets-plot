@@ -4,12 +4,14 @@
  */
 
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import MagickWand.*
 import Python.PyObject
 import Python.Py_BuildValue
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
@@ -38,12 +40,12 @@ object PlotReprGenerator {
         require(wand != null) { "MagickWand is null" }
 
         return memScoped {
-            val severity = alloc<ExceptionTypeVar>() // ✅ Allocate space for severity type
-            val messagePtr = MagickGetException(wand, severity.ptr) // ✅ Get error message
+            val severity = alloc<ExceptionTypeVar>()
+            val messagePtr = MagickGetException(wand, severity.ptr)
 
             if (messagePtr != null) {
                 val errorMessage = messagePtr.toKString()
-                MagickRelinquishMemory(messagePtr) // ✅ Free memory
+                MagickRelinquishMemory(messagePtr)
                 "ImageMagick Error: $errorMessage"
             } else {
                 "Unknown ImageMagick error"
@@ -53,34 +55,7 @@ object PlotReprGenerator {
 
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         return try {
-
-
             val plotSpecMap = pyDictToMap(plotSpecDict)
-
-            run {
-                val rawSpec = plotSpecMap as MutableMap<String, Any>
-                val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-                val vm = MonolithicSkiaLW.buildPlotFromProcessedSpecs(processedSpec) {}
-
-                val w = 500
-                val h = 500
-                val canvasControl = MagickCanvasControl(w, h)
-                SvgCanvasFigure(vm.svg).mapToCanvas(canvasControl)
-                val canvas = canvasControl.children.single() as MagickCanvas
-
-                // Save the image to a file
-                val outputFilename = "/Users/ikupriyanov/Documents/imagick_svg_to_raster.bmp"
-                if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
-
-
-                    println("Failed to save image $outputFilename")
-                    println(getMagickError(canvas.wand))
-                    throw RuntimeException("Failed to write image: $outputFilename\n${getMagickError(canvas.wand)}")
-                } else {
-                    println("Image saved to $outputFilename")
-                }
-
-            }
 
             @Suppress("UNCHECKED_CAST")
             val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
@@ -157,6 +132,57 @@ object PlotReprGenerator {
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
             Py_BuildValue("s", "generateDisplayHtmlForRawSpec() - Exception: ${e.message}")
+        }
+    }
+
+    fun saveImage(
+        plotSpecDict: CPointer<PyObject>?,
+        filePath: CPointer<ByteVar>,
+        dpi: Int,
+        width: Int,
+        height: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        var canvasReg: Registration? = null
+
+        try {
+            @Suppress("UNCHECKED_CAST")
+            val processedSpec = MonolithicCommon.processRawSpecs(
+                plotSpec = pyDictToMap(plotSpecDict) as MutableMap<String, Any>,
+                frontendOnly = false
+            )
+
+            val vm = MonolithicSkiaLW.buildPlotFromProcessedSpecs(
+                plotSpec = processedSpec,
+                computationMessagesHandler = { println(it.joinToString("\n")) }
+            )
+
+            val svgCanvasFigure = SvgCanvasFigure(vm.svg)
+
+            val canvasControl = MagickCanvasControl(
+                w = svgCanvasFigure.width,
+                h = svgCanvasFigure.height
+            )
+
+            canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
+
+            // TODO: canvasControl can provide takeSnapshot() method
+            val plotCanvas = canvasControl.children.single() as MagickCanvas
+
+            // Save the image to a file
+            val outputFilePath = filePath.toKString()
+            if (MagickWriteImage(plotCanvas.wand, outputFilePath) == MagickFalse) {
+                println("Failed to save image $outputFilePath")
+                println(getMagickError(plotCanvas.wand))
+                throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.wand)}")
+            } else {
+                println("Image saved to $outputFilePath")
+                return Py_BuildValue("s", outputFilePath)
+            }
+        } catch (e: Throwable) {
+            return null
+        } finally {
+            canvasReg?.dispose()
         }
     }
 }
