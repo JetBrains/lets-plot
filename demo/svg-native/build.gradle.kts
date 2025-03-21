@@ -41,6 +41,8 @@ kotlin {
         it.linkerOpts += listOf(
             "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
             "-L/usr/lib/x86_64-linux-gnu",
+            "-L/opt/homebrew/opt/fontconfig/lib",
+            "-L/opt/homebrew/opt/freetype/lib",
             "-lMagickWand-7.Q8",
             "-lMagickCore-7.Q8",
             "-lfontconfig",

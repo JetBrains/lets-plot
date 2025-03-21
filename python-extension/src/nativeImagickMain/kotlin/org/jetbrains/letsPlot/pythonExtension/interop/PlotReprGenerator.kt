@@ -6,13 +6,10 @@
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package org.jetbrains.letsPlot.pythonExtension.interop
 
-import MagickWand.MagickFalse
-import MagickWand.MagickWriteImage
+import MagickWand.*
 import Python.PyObject
 import Python.Py_BuildValue
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.toKString
+import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
@@ -37,6 +34,23 @@ object PlotReprGenerator {
         }
     }
 
+    fun getMagickError(wand: CPointer<MagickWand>?): String {
+        require(wand != null) { "MagickWand is null" }
+
+        return memScoped {
+            val severity = alloc<ExceptionTypeVar>() // ✅ Allocate space for severity type
+            val messagePtr = MagickGetException(wand, severity.ptr) // ✅ Get error message
+
+            if (messagePtr != null) {
+                val errorMessage = messagePtr.toKString()
+                MagickRelinquishMemory(messagePtr) // ✅ Free memory
+                "ImageMagick Error: $errorMessage"
+            } else {
+                "Unknown ImageMagick error"
+            }
+        }
+    }
+
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         return try {
 
@@ -55,10 +69,13 @@ object PlotReprGenerator {
                 val canvas = canvasControl.children.single() as MagickCanvas
 
                 // Save the image to a file
-                val outputFilename = "/home/ikupriyanov/Pictures/imagick_svg_to_raster.bmp"
+                val outputFilename = "/Users/ikupriyanov/Documents/imagick_svg_to_raster.bmp"
                 if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
+
+
                     println("Failed to save image $outputFilename")
-                    throw RuntimeException("Failed to write image")
+                    println(getMagickError(canvas.wand))
+                    throw RuntimeException("Failed to write image: $outputFilename\n${getMagickError(canvas.wand)}")
                 } else {
                     println("Image saved to $outputFilename")
                 }
