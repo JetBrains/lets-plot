@@ -16,7 +16,9 @@ class MagickContext2d(
     private val wand: CPointer<MagickWand>?
 ) : Context2d by Context2dDelegate() {
 
-    private val drawingWand: CPointer<DrawingWand>? = NewDrawingWand()
+    private val drawingWand = NewDrawingWand() ?: error { "Failed to create DrawingWand" }
+    private val pixelWand = NewPixelWand() ?: error { "Failed to create PixelWand" }
+    private val state = MagickState()
 
     override fun setFont(f: Font) {
         val size = f.fontSize
@@ -29,42 +31,31 @@ class MagickContext2d(
     }
 
     override fun setFillStyle(color: Color?) {
-        memScoped {
-            val pixelWand = NewPixelWand()
-            require(pixelWand != null) { "Failed to create PixelWand" }
+        state.current().fillColor = color?.toHexColor() ?: Color.BLACK.toHexColor()
 
-            // Set fill color (default to black, modify as needed)
-            PixelSetColor(pixelWand, color?.toHexColor() ?: "black")
-
-            // Apply fill color to drawing
-            DrawSetFillColor(drawingWand, pixelWand)
-
-            DestroyPixelWand(pixelWand) // Cleanup
-        }
+        PixelSetColor(pixelWand, state.current().fillColor)
+        DrawSetFillColor(drawingWand, pixelWand)
     }
 
     override fun setStrokeStyle(color: Color?) {
-        memScoped {
-            val pixelWand = NewPixelWand()
-            require(pixelWand != null) { "Failed to create PixelWand" }
+        state.current().strokeColor = color?.toHexColor() ?: Color.BLACK.toHexColor()
 
-            // Set stroke color (default to black, modify as needed)
-            PixelSetColor(pixelWand, color?.toHexColor() ?: "black")
-
-            // Apply stroke color to drawing
-            DrawSetStrokeColor(drawingWand, pixelWand)
-
-            DestroyPixelWand(pixelWand) // Cleanup
-        }
+        PixelSetColor(pixelWand, state.current().fillColor)
+        DrawSetStrokeColor(drawingWand, pixelWand)
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
         memScoped {
-            // Draw the text
             val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
             DrawAnnotation(drawingWand, x, y, textCStr)
+            MagickDrawImage(wand, drawingWand)
+        }
+    }
 
-            // Apply drawing to image
+    override fun strokeText(text: String, x: Double, y: Double) {
+        memScoped {
+            val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
+            DrawAnnotation(drawingWand, x, y, textCStr)
             MagickDrawImage(wand, drawingWand)
         }
     }
@@ -74,10 +65,28 @@ class MagickContext2d(
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        // Draw the rectangle
         DrawRectangle(drawingWand, x, y, x + w, y + h)
-
-        // Apply drawing to the MagickWand image
         MagickDrawImage(wand, drawingWand)
+    }
+
+    override fun save() {
+        state.push()
+    }
+
+    override fun restore() {
+        state.pop()
+        DrawAffine(drawingWand, state.current().transform.ptr)
+
+        PixelSetColor(pixelWand, state.current().fillColor)
+        DrawSetFillColor(drawingWand, pixelWand)
+
+        PixelSetColor(pixelWand, state.current().strokeColor)
+        DrawSetStrokeColor(drawingWand, pixelWand)
+
+        //graphics.stroke = it.stroke
+        //graphics.font = it.font
+        //graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
+
+        //state.removeAt(state.lastIndex)
     }
 }
