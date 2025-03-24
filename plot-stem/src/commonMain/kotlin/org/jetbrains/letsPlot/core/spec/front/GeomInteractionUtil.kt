@@ -414,7 +414,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,
             GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN) // TODO: use isVerticalGeom
-            GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
+            GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN, Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()
         }

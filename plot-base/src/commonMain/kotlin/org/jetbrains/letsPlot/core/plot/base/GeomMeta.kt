@@ -245,13 +245,11 @@ object GeomMeta {
             )
 
             GeomKind.BOX_PLOT -> listOf(
-                Aes.LOWER,
-                Aes.MIDDLE,
-                Aes.UPPER,
+                Aes.X, Aes.YMAX, Aes.YMIN,
+                Aes.LOWER, Aes.MIDDLE, Aes.UPPER,
 
-                Aes.X,
-                Aes.YMAX,
-                Aes.YMIN,
+                Aes.Y, Aes.XMIN, Aes.XMAX,
+                Aes.XLOWER, Aes.XMIDDLE, Aes.XUPPER,
 
                 Aes.ALPHA,
                 Aes.COLOR,

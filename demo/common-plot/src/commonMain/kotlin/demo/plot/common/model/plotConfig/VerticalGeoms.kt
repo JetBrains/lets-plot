@@ -46,9 +46,9 @@ class VerticalGeoms {
                   "mapping": {
                     "y": "cat",
                     "xmin": "min",
-                    "lower": "lower",
-                    "middle": "middle",
-                    "upper": "upper",
+                    "xlower": "lower",
+                    "xmiddle": "middle",
+                    "xupper": "upper",
                     "xmax": "max"
                   }
                 }

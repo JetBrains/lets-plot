@@ -40,6 +40,9 @@ object TransformVar {
     val LOWER = DataFrame.Variable("transform.LOWER", TRANSFORM)
     val MIDDLE = DataFrame.Variable("transform.MIDDLE", TRANSFORM)
     val UPPER = DataFrame.Variable("transform.UPPER", TRANSFORM)
+    val XLOWER = DataFrame.Variable("transform.XLOWER", TRANSFORM)
+    val XMIDDLE = DataFrame.Variable("transform.XMIDDLE", TRANSFORM)
+    val XUPPER = DataFrame.Variable("transform.XUPPER", TRANSFORM)
     val SAMPLE = DataFrame.Variable("transform.SAMPLE", TRANSFORM)
     val QUANTILE = DataFrame.Variable("transform.QUANTILE", TRANSFORM)
     val MAP_ID = DataFrame.Variable("transform.MAP_ID", TRANSFORM)
@@ -213,6 +216,18 @@ object TransformVar {
 
         override fun upper(): DataFrame.Variable {
             return UPPER
+        }
+
+        override fun xlower(): DataFrame.Variable {
+            return XLOWER
+        }
+
+        override fun xmiddle(): DataFrame.Variable {
+            return XMIDDLE
+        }
+
+        override fun xupper(): DataFrame.Variable {
+            return XUPPER
         }
 
         override fun sample(): DataFrame.Variable {
