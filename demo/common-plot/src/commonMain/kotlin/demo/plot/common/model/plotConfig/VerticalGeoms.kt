@@ -10,11 +10,11 @@ import demoAndTestShared.parsePlotSpec
 class VerticalGeoms {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            boxplotIdentityStat(),
+            horizontalBoxplotWithIdentityStat(),
         )
     }
 
-    private fun boxplotIdentityStat(): MutableMap<String, Any> {
+    private fun horizontalBoxplotWithIdentityStat(): MutableMap<String, Any> {
         val spec = """
             {
               "data": {
@@ -27,16 +27,6 @@ class VerticalGeoms {
               },
               "ggtitle": {
                 "text": "Horizontal boxplot\n'identity' stat"
-              },
-              "data_meta": {
-                "series_annotations": [
-                  {"type": "str", "column": "cat"},
-                  {"type": "int", "column": "min"},
-                  {"type": "int", "column": "lower"},
-                  {"type": "int", "column": "middle"},
-                  {"type": "int", "column": "upper"},
-                  {"type": "int", "column": "max"}
-                ]
               },
               "kind": "plot",
               "layers": [
