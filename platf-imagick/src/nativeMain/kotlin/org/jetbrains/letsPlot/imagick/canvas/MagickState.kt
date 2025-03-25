@@ -12,8 +12,8 @@ import org.jetbrains.letsPlot.commons.values.Color
 
 class MagickState {
     data class State(
-        var strokeColor: String = Color.BLACK.toHexColor(),
-        var fillColor: String = Color.BLACK.toHexColor(),
+        var strokeColor: String = Color.TRANSPARENT.toCssColor(),
+        var fillColor: String = Color.TRANSPARENT.toCssColor(),
         //var stroke: BasicStroke = BasicStroke(),
         //var textBaseline: TextBaseline = TextBaseline.ALPHABETIC,
         //var textAlign: TextAlign = TextAlign.START,

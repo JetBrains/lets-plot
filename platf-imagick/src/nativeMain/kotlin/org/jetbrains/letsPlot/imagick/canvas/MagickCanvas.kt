@@ -53,7 +53,17 @@ class MagickCanvas(
         }
     }
 
+    fun saveBmp(filename: String) {
+        if (MagickWriteImage(wand, filename) == MagickFalse) {
+            throw RuntimeException("Failed to write image")
+        }
+    }
+
     companion object {
+        fun create(width: Number, height: Number): MagickCanvas {
+            return create(Vector(width.toInt(), height.toInt()))
+        }
+
         fun create(size: Vector): MagickCanvas {
             val wand = NewMagickWand()
             val background = NewPixelWand()

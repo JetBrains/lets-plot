@@ -31,14 +31,14 @@ class MagickContext2d(
     }
 
     override fun setFillStyle(color: Color?) {
-        state.current().fillColor = color?.toHexColor() ?: Color.BLACK.toHexColor()
+        state.current().fillColor = color?.toCssColor() ?: Color.BLACK.toCssColor()
 
         PixelSetColor(pixelWand, state.current().fillColor)
         DrawSetFillColor(drawingWand, pixelWand)
     }
 
     override fun setStrokeStyle(color: Color?) {
-        state.current().strokeColor = color?.toHexColor() ?: Color.BLACK.toHexColor()
+        state.current().strokeColor = color?.toCssColor() ?: Color.BLACK.toCssColor()
 
         PixelSetColor(pixelWand, state.current().fillColor)
         DrawSetStrokeColor(drawingWand, pixelWand)
@@ -60,8 +60,35 @@ class MagickContext2d(
         }
     }
 
+    override fun setLineWidth(lineWidth: Double) {
+        println("setLineWidth: $lineWidth")
+        DrawSetStrokeWidth(drawingWand, lineWidth)
+    }
+
+    override fun beginPath() {
+        DrawPathStart(drawingWand)
+    }
+
     override fun moveTo(x: Double, y: Double) {
-        println("MagickContext2d.moveTo(wand=$wand, x=$x, y=$y)")
+        DrawPathMoveToAbsolute(drawingWand, x, y)
+    }
+
+    override fun lineTo(x: Double, y: Double) {
+        DrawPathLineToAbsolute(drawingWand, x, y)
+    }
+
+    override fun closePath() {
+        DrawPathClose(drawingWand)
+    }
+
+    override fun stroke() {
+        DrawPathFinish(drawingWand)
+        MagickDrawImage(wand, drawingWand)
+    }
+
+    override fun fill() {
+        DrawPathFinish(drawingWand)
+        MagickDrawImage(wand, drawingWand)
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
