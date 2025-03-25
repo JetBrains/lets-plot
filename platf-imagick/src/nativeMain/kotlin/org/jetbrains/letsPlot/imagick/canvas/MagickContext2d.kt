@@ -12,12 +12,13 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Context2dDelegate
 import org.jetbrains.letsPlot.core.canvas.Font
 
+
 class MagickContext2d(
     private val wand: CPointer<MagickWand>?
 ) : Context2d by Context2dDelegate() {
 
-    private val drawingWand = NewDrawingWand() ?: error { "Failed to create DrawingWand" }
-    private val pixelWand = NewPixelWand() ?: error { "Failed to create PixelWand" }
+    var currentPath: MagickPath = MagickPath()
+
     private val state = MagickState()
 
     override fun setFont(f: Font) {
@@ -27,73 +28,89 @@ class MagickContext2d(
         val weight = f.fontWeight
 
         // Set font size
-        DrawSetFontSize(drawingWand, size)
+        //DrawSetFontSize(drawingWand, size)
     }
 
     override fun setFillStyle(color: Color?) {
         state.current().fillColor = color?.toCssColor() ?: Color.BLACK.toCssColor()
-
-        PixelSetColor(pixelWand, state.current().fillColor)
-        DrawSetFillColor(drawingWand, pixelWand)
     }
 
     override fun setStrokeStyle(color: Color?) {
         state.current().strokeColor = color?.toCssColor() ?: Color.BLACK.toCssColor()
+    }
 
-        PixelSetColor(pixelWand, state.current().fillColor)
-        DrawSetStrokeColor(drawingWand, pixelWand)
+    override fun setLineWidth(lineWidth: Double) {
+        state.current().strokeWidth = lineWidth
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
         memScoped {
-            val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
-            DrawAnnotation(drawingWand, x, y, textCStr)
-            MagickDrawImage(wand, drawingWand)
+            state.current().withFillWand { fillWand ->
+                val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
+                DrawAnnotation(fillWand, x, y, textCStr)
+                MagickDrawImage(wand, fillWand)
+            }
         }
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
         memScoped {
-            val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
-            DrawAnnotation(drawingWand, x, y, textCStr)
-            MagickDrawImage(wand, drawingWand)
+            state.current().withStrokeWand { strokeWand ->
+                val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
+                DrawAnnotation(strokeWand, x, y, textCStr)
+                MagickDrawImage(wand, strokeWand)
+            }
         }
     }
 
-    override fun setLineWidth(lineWidth: Double) {
-        println("setLineWidth: $lineWidth")
-        DrawSetStrokeWidth(drawingWand, lineWidth)
-    }
-
     override fun beginPath() {
-        DrawPathStart(drawingWand)
+        currentPath = MagickPath()
     }
 
     override fun moveTo(x: Double, y: Double) {
-        DrawPathMoveToAbsolute(drawingWand, x, y)
+        currentPath.moveTo(x, y)
     }
 
     override fun lineTo(x: Double, y: Double) {
-        DrawPathLineToAbsolute(drawingWand, x, y)
+        currentPath.lineTo(x, y)
     }
 
     override fun closePath() {
-        DrawPathClose(drawingWand)
+        currentPath.closePath()
     }
 
     override fun stroke() {
-        DrawPathFinish(drawingWand)
-        MagickDrawImage(wand, drawingWand)
+        state.current().withStrokeWand { strokeWand ->
+            currentPath.draw(strokeWand)
+            DrawPathFinish(strokeWand)
+            MagickDrawImage(wand, strokeWand)
+        }
     }
 
     override fun fill() {
-        DrawPathFinish(drawingWand)
-        MagickDrawImage(wand, drawingWand)
+        state.current().withFillWand { fillWand ->
+            currentPath.draw(fillWand)
+            DrawPathFinish(fillWand)
+            MagickDrawImage(wand, fillWand)
+        }
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        DrawRectangle(drawingWand, x, y, x + w, y + h)
-        MagickDrawImage(wand, drawingWand)
+        state.current().withFillWand { fillWand ->
+            DrawRectangle(fillWand, x, y, x + w, y + h)
+            MagickDrawImage(wand, fillWand)
+        }
+    }
+
+    override fun arc(
+        x: Double,
+        y: Double,
+        radius: Double,
+        startAngle: Double,
+        endAngle: Double,
+        anticlockwise: Boolean
+    ) {
+        currentPath.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
 
     override fun save() {
@@ -102,18 +119,5 @@ class MagickContext2d(
 
     override fun restore() {
         state.pop()
-        DrawAffine(drawingWand, state.current().transform.ptr)
-
-        PixelSetColor(pixelWand, state.current().fillColor)
-        DrawSetFillColor(drawingWand, pixelWand)
-
-        PixelSetColor(pixelWand, state.current().strokeColor)
-        DrawSetStrokeColor(drawingWand, pixelWand)
-
-        //graphics.stroke = it.stroke
-        //graphics.font = it.font
-        //graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
-
-        //state.removeAt(state.lastIndex)
     }
 }

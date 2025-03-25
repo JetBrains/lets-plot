@@ -14,8 +14,9 @@ class MagickContext2dTest {
         val canvas = MagickCanvas.create(100, 100)
         val context = canvas.context2d
 
-        context.setStrokeStyle(Color.RED)
-        context.setFillStyle(Color.TRANSPARENT)
+        context.setStrokeStyle(Color.ORANGE)
+        context.setFillStyle(Color.DARK_BLUE)
+        context.setLineWidth(1.0)
         context.setLineWidth(3.0)
 
         context.beginPath()
@@ -25,11 +26,11 @@ class MagickContext2dTest {
         context.lineTo(50.0, 75.0)
         context.lineTo(0.0, 100.0)
 
-        context.moveTo(50.0, 0.0)
-        context.lineTo(100.0, 25.0)
-        context.lineTo(50.0, 50.0)
-        context.lineTo(100.0, 75.0)
-        context.lineTo(50.0, 100.0)
+        context.moveTo(100.0, 0.0)
+        context.lineTo(50.0, 25.0)
+        context.lineTo(100.0, 50.0)
+        context.lineTo(50.0, 75.0)
+        context.lineTo(100.0, 100.0)
 
         context.stroke()
 
@@ -41,10 +42,9 @@ class MagickContext2dTest {
         val canvas = MagickCanvas.create(100, 100)
         val context = canvas.context2d
 
-        context.setFillStyle(Color.RED)
-
-        context.setStrokeStyle(Color.TRANSPARENT)
-        context.setLineWidth(0.0)
+        context.setStrokeStyle(Color.ORANGE)
+        context.setFillStyle(Color.DARK_BLUE)
+        context.setLineWidth(1.0)
 
         context.beginPath()
         context.moveTo(0.0, 0.0)
@@ -64,5 +64,60 @@ class MagickContext2dTest {
         context.fill()
 
         canvas.saveBmp("zigzag_fill.bmp")
+    }
+
+    @Test
+    fun circleStroke() {
+        val canvas = MagickCanvas.create(100, 100)
+        val context = canvas.context2d
+
+        context.setStrokeStyle(Color.ORANGE)
+        context.setFillStyle(Color.DARK_BLUE)
+        context.setLineWidth(1.0)
+
+        context.beginPath()
+        context.arc(50.0, 50.0, 40.0, 0.0, 180.0)
+        context.stroke()
+
+        canvas.saveBmp("circle_stroke.bmp")
+    }
+
+    @Test
+    fun circleFill() {
+        val canvas = MagickCanvas.create(100, 100)
+        val context = canvas.context2d
+
+        context.setStrokeStyle(Color.ORANGE)
+        context.setFillStyle(Color.DARK_BLUE)
+        context.setLineWidth(1.0)
+
+        context.setStrokeStyle(Color.ORANGE)
+        context.beginPath()
+        context.arc(50.0, 50.0, 40.0, 0.0, 180.0)
+        context.closePath()
+
+        context.fill()
+
+        canvas.saveBmp("circle_fill.bmp")
+    }
+
+    @Test
+    fun circleFillStroke() {
+        val canvas = MagickCanvas.create(100, 100)
+        val context = canvas.context2d
+
+        context.setStrokeStyle(Color.ORANGE)
+        context.setFillStyle(Color.DARK_BLUE)
+        context.setLineWidth(2.0)
+
+        context.setStrokeStyle(Color.ORANGE)
+        context.beginPath()
+        context.arc(50.0, 50.0, 40.0, 0.0, 180.0)
+        context.closePath()
+
+        context.fill()
+        context.stroke()
+
+        canvas.saveBmp("circle_fill_stroke.bmp")
     }
 }
