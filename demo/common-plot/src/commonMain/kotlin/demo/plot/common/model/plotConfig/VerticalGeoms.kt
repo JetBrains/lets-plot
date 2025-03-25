@@ -10,8 +10,35 @@ import demoAndTestShared.parsePlotSpec
 class VerticalGeoms {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            horizontalBoxplot(),
             horizontalBoxplotWithIdentityStat(),
         )
+    }
+
+    private fun horizontalBoxplot(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "cat": ["a", "a", "a", "a", "b", "b", "b", "b"],
+                "val": [-5, -1, -1, 3, -1, 1, 1, 3]
+              },
+              "ggtitle": {
+                "text": "Horizontal boxplot\ndefault stat"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "boxplot",
+                  "mapping": {
+                    "x": "val",
+                    "y": "cat"
+                  }
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
     }
 
     private fun horizontalBoxplotWithIdentityStat(): MutableMap<String, Any> {
