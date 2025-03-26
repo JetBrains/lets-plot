@@ -17,48 +17,63 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 
-class Context2dDelegate : Context2d {
-    override fun clearRect(rect: DoubleRectangle) { }
-    override fun drawImage(snapshot: Canvas.Snapshot) { }
-    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) { }
-    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) { }
-    override fun drawImage(snapshot: Canvas.Snapshot, sx: Double, sy: Double, sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) { }
-    override fun beginPath() { }
-    override fun closePath() { }
-    override fun stroke() { }
-    override fun fill() { }
-    override fun fillEvenOdd() { }
-    override fun fillRect(x: Double, y: Double, w: Double, h: Double) { }
-    override fun moveTo(x: Double, y: Double) { }
-    override fun lineTo(x: Double, y: Double) { }
-    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { }
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { }
-    override fun save() { }
-    override fun restore() { }
-    override fun setFillStyle(color: Color?) { }
-    override fun setStrokeStyle(color: Color?) { }
-    override fun setGlobalAlpha(alpha: Double) { }
-    override fun setFont(f: Font) { }
-    override fun setLineWidth(lineWidth: Double) { }
-    override fun strokeRect(x: Double, y: Double, w: Double, h: Double) { }
-    override fun strokeText(text: String, x: Double, y: Double) { }
-    override fun fillText(text: String, x: Double, y: Double) { }
-    override fun scale(x: Double, y: Double) { }
-    override fun scale(xy: Double) { }
-    override fun rotate(angle: Double) { }
-    override fun translate(x: Double, y: Double) { }
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { }
-    override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) { }
-    override fun setLineJoin(lineJoin: LineJoin) { }
-    override fun setLineCap(lineCap: LineCap) { }
-    override fun setStrokeMiterLimit(miterLimit: Double) { }
-    override fun setTextBaseline(baseline: TextBaseline) { }
-    override fun setTextAlign(align: TextAlign) { }
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { }
-    override fun setLineDash(lineDash: DoubleArray) { }
-    override fun setLineDashOffset(lineDashOffset: Double) { }
-    override fun measureTextWidth(str: String): Double { return 0.0}
-    override fun measureText(str: String): TextMetrics { return TextMetrics(0.0, 0.0, DoubleRectangle.LTRB(0, 0, 0, 0)) }
+class Context2dDelegate(
+    private val logEnabled: Boolean = false
+) : Context2d {
+    private fun log(msg: String) {
+        if (logEnabled) {
+            println(msg)
+        }
+    }
+
+    override fun clearRect(rect: DoubleRectangle) { log("clearRect: $rect") }
+    override fun drawImage(snapshot: Canvas.Snapshot) { log("drawImage: $snapshot") }
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) { log("drawImage: $snapshot, x=$x, y=$y") }
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) { log("drawImage: $snapshot, x=$x, y=$y, dw=$dw, dh=$dh") }
+    override fun drawImage(snapshot: Canvas.Snapshot, sx: Double, sy: Double, sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) { log("drawImage: $snapshot, sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh") }
+    override fun beginPath() { log("beginPath") }
+    override fun closePath() { log("closePath") }
+    override fun stroke() { log("stroke") }
+    override fun fill() { log("fill") }
+    override fun fillEvenOdd() { log("fillEvenOdd") }
+    override fun fillRect(x: Double, y: Double, w: Double, h: Double) { log("fillRect: x=$x, y=$y, w=$w, h=$h") }
+    override fun moveTo(x: Double, y: Double) { log("moveTo: x=$x, y=$y") }
+    override fun lineTo(x: Double, y: Double) { log("lineTo: x=$x, y=$y") }
+    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { log("arc: x=$x, y=$y, radius=$radius, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise") }
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { log("ellipse: x=$x, y=$y, radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise") }
+    override fun save() { log("save") }
+    override fun restore() { log("restore") }
+    override fun setFillStyle(color: Color?) { log("setFillStyle: $color") }
+    override fun setStrokeStyle(color: Color?) { log("setStrokeStyle: $color") }
+    override fun setGlobalAlpha(alpha: Double) { log("setGlobalAlpha: $alpha") }
+    override fun setFont(f: Font) { log("setFont: $f") }
+    override fun setLineWidth(lineWidth: Double) { log("setLineWidth: $lineWidth") }
+    override fun strokeRect(x: Double, y: Double, w: Double, h: Double) { log("strokeRect: x=$x, y=$y, w=$w, h=$h") }
+    override fun strokeText(text: String, x: Double, y: Double) { log("strokeText: $text, x=$x, y=$y") }
+    override fun fillText(text: String, x: Double, y: Double) { log("fillText: $text, x=$x, y=$y") }
+    override fun scale(x: Double, y: Double) { log("scale: x=$x, y=$y") }
+    override fun scale(xy: Double) { log("scale: xy=$xy") }
+    override fun rotate(angle: Double) { log("rotate: angle=$angle") }
+    override fun translate(x: Double, y: Double) { log("translate: x=$x, y=$y") }
+    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { log("transform: m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy") }
+    override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) { log("bezierCurveTo: cp1x=$cp1x, cp1y=$cp1y, cp2x=$cp2x, cp2y=$cp2y, x=$x, y=$y") }
+    override fun setLineJoin(lineJoin: LineJoin) { log("setLineJoin: $lineJoin") }
+    override fun setLineCap(lineCap: LineCap) { log("setLineCap: $lineCap") }
+    override fun setStrokeMiterLimit(miterLimit: Double) { log("setStrokeMiterLimit: $miterLimit") }
+    override fun setTextBaseline(baseline: TextBaseline) { log("setTextBaseline: $baseline") }
+    override fun setTextAlign(align: TextAlign) { log("setTextAlign: $align") }
+    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { log("setTransform: m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy") }
+    override fun setLineDash(lineDash: DoubleArray) { log("setLineDash: $lineDash") }
+    override fun setLineDashOffset(lineDashOffset: Double) { log("setLineDashOffset: $lineDashOffset") }
+    override fun measureTextWidth(str: String): Double {
+        log("measureTextWidth: '$str'")
+        return str.length * 8.0
+    }
+
+    override fun measureText(str: String): TextMetrics {
+        log("measureText: '$str'")
+        return TextMetrics(0.0, 0.0, DoubleRectangle.LTRB(0, 0, str.length * 8.0, 14.0))
+    }
 }
 
 class CanvasDelegate(

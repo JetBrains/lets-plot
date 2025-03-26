@@ -106,16 +106,15 @@ class MagickContext2dTest {
         val canvas = MagickCanvas.create(100, 100)
         val context = canvas.context2d
 
-        context.setStrokeStyle(Color.ORANGE)
-        context.setFillStyle(Color.DARK_BLUE)
-        context.setLineWidth(2.0)
-
-        context.setStrokeStyle(Color.ORANGE)
         context.beginPath()
         context.arc(50.0, 50.0, 40.0, 0.0, 180.0)
         context.closePath()
 
+        context.setFillStyle(Color.DARK_BLUE)
         context.fill()
+
+        context.setStrokeStyle(Color.RED)
+        context.setLineWidth(2.0)
         context.stroke()
 
         canvas.saveBmp("circle_fill_stroke.bmp")
