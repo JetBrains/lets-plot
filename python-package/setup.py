@@ -56,8 +56,6 @@ static_link_libraries_list = ['lets_plot_python_extension']
 if this_system == 'Darwin':
     static_link_libraries_list += ['c++']
     extra_link = [
-        '-Wl,-rpath,@loader_path/',
-        '-Wl,-rpath,@loader_path/../lib',
         '-Wl,-rpath,/usr/lib',
         '-framework', 'Foundation',
         '-lz'
