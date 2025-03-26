@@ -7,20 +7,15 @@ plugins {
     kotlin("multiplatform")
 //    `maven-publish`
 //    signing
-    id("com.github.johnrengelman.shadow") version "8.1.1" // For creating the fat JAR with relocated classes
+    id("com.gradleup.shadow") version "8.3.6" // Updated to use GradleUp shadow plugin
 }
 
-kotlin {
-    jvm()
-}
-
-val artifactBaseName = "idea-lets-plot-batik"
+val artifactBaseName = "idea-lets-plot-plugin"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val batikVersion = project.extra["batik_version"] as String
-val ktorVersion = project.extra["ktor_version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
+
+val packagePrefix = "ideaLPP"
 
 kotlin {
     jvm {
@@ -40,17 +35,21 @@ kotlin {
 
                 implementation(project(":platf-awt"))
                 implementation(project(":platf-batik"))
-                implementation("org.apache.xmlgraphics:batik-codec:$batikVersion")
 
                 implementation(project(":canvas"))
                 implementation(project(":gis"))
                 implementation(project(":livemap"))
                 implementation(project(":plot-livemap"))
-
-                implementation("io.ktor:ktor-client-websockets-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-client-cio:$ktorVersion")
             }
         }
+    }
+}
+
+// Disable all tasks with metadata in their name -
+// we don't need 'metadata jar': this is no longer 'muptiplatform' lib.
+tasks.configureEach {
+    if (name.contains("metadata", ignoreCase = true)) {
+        enabled = false
     }
 }
 
@@ -73,17 +72,8 @@ val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.
     exclude("_COROUTINE/**")
     exclude("DebugProbesKt.bin")
 
-    // Relocate all classes to idea243 package
-    relocate("org.jetbrains.letsPlot", "idea243.org.jetbrains.letsPlot")
-    relocate("io.ktor", "idea243.io.ktor")
-
-    relocate("org.apache.batik", "idea243.org.apache.batik")
-    relocate("org.xml.sax", "idea243.org.xml.sax")
-    relocate("org.w3c.dom", "idea243.org.w3c.dom")
-    relocate("org.w3c.css", "idea243.org.w3c.css")
-    relocate("org.apache.xmlgraphics", "idea243.org.apache.xmlgraphics")
-    relocate("org.apache.xmlcommons", "idea243.org.apache.xmlcommons")
-    relocate("org.apache.commons", "idea243.org.apache.commons")
+    // Relocate all classes
+    relocate("org.jetbrains.letsPlot", "$packagePrefix.org.jetbrains.letsPlot")
 
     // Add LICENSE file to the META-INF folder inside published JAR files
     metaInf {
@@ -101,9 +91,142 @@ val jvmJar by tasks.named<Jar>("jvmJar") {
     enabled = false
 }
 
-// Register the shadowJar as an artifact
+// Create a sources JAR task with shadowed sources
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
+    archiveBaseName.set(artifactBaseName)
+    archiveVersion.set(artifactVersion)
+    archiveClassifier.set("sources")
+
+    // Set up basic task configuration here
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    doFirst {
+        // Create a temporary directory for processed files
+        val tempDir = layout.buildDirectory.dir("tmp/shadowedSourcesJar").get().asFile
+        tempDir.deleteRecursively()
+        tempDir.mkdirs()
+
+        // Process all project dependencies
+        project.configurations.getByName("jvmCompileClasspath").allDependencies.withType<ProjectDependency>()
+            .forEach { dep ->
+                val projectDep = dep.dependencyProject
+                logger.lifecycle("Processing sources from dependency: ${projectDep.name}")
+
+                // Handle Kotlin Multiplatform projects
+                val kotlinMultiplatformExt =
+                    projectDep.extensions.findByType<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension>()
+                if (kotlinMultiplatformExt != null) {
+                    // Process source sets
+                    listOf("jvmMain", "commonMain").forEach { sourceSetName ->
+                        kotlinMultiplatformExt.sourceSets.findByName(sourceSetName)?.kotlin?.srcDirs?.forEach { srcDir ->
+                            processSourceDirectory(srcDir, tempDir, packagePrefix)
+                        }
+                    }
+                } else {
+                    // Handle JVM-only projects
+                    val sourceSets = projectDep.extensions.findByType<SourceSetContainer>()
+                    sourceSets?.findByName("main")?.allSource?.srcDirs?.forEach { srcDir ->
+                        processSourceDirectory(srcDir, tempDir, packagePrefix)
+                    }
+                }
+            }
+
+        // Add only the processed files with the target prefix path
+        from(tempDir)
+        include("$packagePrefix/**")
+    }
+
+    doLast {
+        logger.lifecycle("Sources JAR created with relocated packages")
+    }
+}
+
+// Helper function to process a source directory
+fun Project.processSourceDirectory(
+    srcDir: File,
+    tempDir: File,
+    packagePrefix: String
+) {
+    if (srcDir.exists()) {
+        logger.lifecycle("Processing sources from: ${srcDir.absolutePath}")
+
+        // Copy and process the files
+        copy {
+            from(srcDir)
+            into(tempDir)
+            include("**/*.kt", "**/*.java")
+
+            // Process only files in org.jetbrains.letsPlot package
+            eachFile {
+                if (path.contains("org/jetbrains/letsPlot")) {
+                    // Create relocated path with prefix
+                    val newPath = path.replace(
+                        "org/jetbrains/letsPlot",
+                        "$packagePrefix/org/jetbrains/letsPlot"
+                    )
+
+                    // Update the path
+                    path = newPath
+
+                    // Filter file content to update package and import statements
+                    filter { line ->
+                        when {
+                            line.startsWith("package org.jetbrains.letsPlot") -> {
+                                line.replace(
+                                    "package org.jetbrains.letsPlot",
+                                    "package $packagePrefix.org.jetbrains.letsPlot"
+                                )
+                            }
+
+                            line.contains("import org.jetbrains.letsPlot") -> {
+                                line.replace(
+                                    "import org.jetbrains.letsPlot",
+                                    "import $packagePrefix.org.jetbrains.letsPlot"
+                                )
+                            }
+
+                            else -> line
+                        }
+                    }
+                } else {
+                    // Exclude files that aren't in the target package
+                    exclude()
+                }
+            }
+        }
+    }
+}
+
+// Explicitly configure the artifacts we want
 artifacts {
+    // Remove default artifacts from archives configuration
+    configurations.getByName("archives").artifacts.clear()
+
+    // Add only our custom artifacts
     add("archives", shadowJar)
+    add("archives", sourcesJar)
+}
+
+// Configure which tasks the build depends on
+tasks.named("build") {
+    dependsOn(shadowJar, sourcesJar)
+}
+
+// Disable the metadataJar task if it exists
+tasks.findByName("metadataJar")?.enabled = false
+
+// Also explicitly disable the kotlin metadata publication tasks
+afterEvaluate {
+    tasks.findByName("jvmSourcesJar")?.enabled = false
+    tasks.findByName("kotlinSourcesJar")?.enabled = false
+    tasks.findByName("metadataSourcesJar")?.enabled = false
+
+    // Disable publication tasks for metadata
+    tasks.names
+        .filter { it.contains("publish", ignoreCase = true) && it.contains("metadata", ignoreCase = true) }
+        .forEach { taskName ->
+            tasks.findByName(taskName)?.enabled = false
+        }
 }
 
 //publishing {
@@ -114,6 +237,7 @@ artifacts {
 //            version = artifactVersion
 //
 //            artifact(shadowJar.get())
+//            artifact(sourcesJar.get())
 //
 //            pom {
 //                name = "IDEA Lets-Plot Batik"
