@@ -13,7 +13,17 @@ class MagickPath {
     private sealed class PathCommand
     private data class MoveTo(val x: Double, val y: Double) : PathCommand()
     private data class LineTo(val x: Double, val y: Double) : PathCommand()
-    private data class Arc(val x: Double, val y: Double, val radius: Double, val startAngle: Double, val endAngle: Double, val anticlockwise: Boolean) : PathCommand()
+    private data class Ellipse(
+        val x: Double,
+        val y: Double,
+        val radiusX: Double,
+        val radiusY: Double,
+        val rotation: Double,
+        val startAngle: Double,
+        val endAngle: Double,
+        val anticlockwise: Boolean
+    ) : PathCommand()
+
     private object ClosePath : PathCommand()
 
     private val commands = mutableListOf<PathCommand>()
@@ -31,7 +41,17 @@ class MagickPath {
     }
 
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
-        commands.add(Arc(x, y, radius, startAngle, endAngle, anticlockwise))
+        commands.add(Ellipse(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise))
+    }
+
+    fun ellipse(
+        x: Double, y: Double,
+        radiusX: Double, radiusY: Double,
+        rotation: Double,
+        startAngle: Double, endAngle: Double,
+        anticlockwise: Boolean
+    ) {
+        commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise))
     }
 
     fun draw(drawingWand: CPointer<DrawingWand>) {
@@ -41,36 +61,40 @@ class MagickPath {
             when (command) {
                 is MoveTo -> DrawPathMoveToAbsolute(drawingWand, command.x, command.y)
                 is LineTo -> DrawPathLineToAbsolute(drawingWand, command.x, command.y)
-                is Arc -> {
-                    val startAngle = command.startAngle
-                    val endAngle = command.endAngle
-                    val anticlockwise = command.anticlockwise
-                    val x = command.x
-                    val y = command.y
-                    val radius = command.radius
-
-                    // Convert angles to radians
+                is Ellipse -> with(command) {
+                    // Convert degrees to radians
                     val startRad = toRadians(startAngle)
                     val endRad = toRadians(endAngle)
 
-                    // Compute start and end points
-                    val startX = x + radius * kotlin.math.cos(startRad)
-                    val startY = y + radius * kotlin.math.sin(startRad)
-                    val endX = x + radius * kotlin.math.cos(endRad)
-                    val endY = y + radius * kotlin.math.sin(endRad)
+                    // Compute start and end points of the arc
+                    val startX = x + radiusX * kotlin.math.cos(startRad)
+                    val startY = y + radiusY * kotlin.math.sin(startRad)
+                    val endX = x + radiusX * kotlin.math.cos(endRad)
+                    val endY = y + radiusY * kotlin.math.sin(endRad)
 
-                    // Determine large-arc and sweep flags
-                    val largeArcFlag = if (kotlin.math.abs(endAngle - startAngle) > 180) 1U else 0U
-                    val sweepFlag = if (anticlockwise) 0U else 1U
+                    // Determine arc flags
+                    val delta = ((endAngle - startAngle + 360) % 360).let { if (anticlockwise) 360 - it else it }
+                    val largeArcFlag = if (delta > 180.0) 1u else 0u
+                    val sweepFlag = if (anticlockwise) 0u else 1u
+                    // Begin drawing path from the arc's starting point
 
-                    // Move to start point
                     DrawPathMoveToAbsolute(drawingWand, startX, startY)
 
-                    // Draw elliptical arc
-                    DrawPathEllipticArcAbsolute(drawingWand, radius, radius, 0.0, largeArcFlag, sweepFlag, endX, endY)
+                    // Draw the elliptical arc
+                    DrawPathEllipticArcAbsolute(
+                        drawingWand,
+                        radiusX,
+                        radiusY,
+                        rotation,
+                        largeArcFlag,
+                        sweepFlag,
+                        endX,
+                        endY
+                    )
                 }
+
                 is ClosePath -> {
-                    //DrawPathClose(drawingWand)
+                    DrawPathClose(drawingWand)
                 }
             }
         }

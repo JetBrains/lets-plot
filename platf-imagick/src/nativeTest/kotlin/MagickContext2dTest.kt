@@ -119,4 +119,36 @@ class MagickContext2dTest {
 
         canvas.saveBmp("circle_fill_stroke.bmp")
     }
+
+    @Test
+    fun ellipse() {
+        val canvas = MagickCanvas.create(500, 500)
+        val context = canvas.context2d
+
+        context.beginPath()
+        context.moveTo(150.0, 175.0)
+        context.lineTo(150.0, 75.0)
+
+        // 100.0, 100.0, 0.0, 0u, 1u, startAngle=-90.0, endAngle=-180.0, anticlockwise=true
+        context.ellipse(
+            x = 150.0,
+            y = 175.0,
+            radiusX = 100.0,
+            radiusY = 100.0,
+            rotation = 0.0,
+            startAngle = -90.0,
+            endAngle = -180.0,
+            anticlockwise = true
+        )
+        context.closePath()
+
+        context.setFillStyle(Color.DARK_BLUE)
+        context.fill()
+
+        context.setStrokeStyle(Color.RED)
+        context.setLineWidth(4.0)
+        context.stroke()
+
+        canvas.saveBmp("ellipse.bmp")
+    }
 }

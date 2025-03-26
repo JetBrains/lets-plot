@@ -71,9 +71,11 @@ internal class Path : Figure() {
                     val sweepFlag = cmd.args[4]!!.toInt()
                     val x2 = cmd.args[5]!!.toDouble()
                     val y2 = cmd.args[6]!!.toDouble()
+                    println("A: rx=$rx, ry=$ry, angle=$angle, largeArcFlag=$largeArcFlag, sweepFlag=$sweepFlag, x2=$x2, y2=$y2")
 
                     drawRelativeSvgEllipse(curX, curY, rx, ry, angle, largeArcFlag, sweepFlag, x2 - curX, y2 - curY) { x, y, rx, ry, rotation, startAngle, endAngle, anticlockwise ->
                         context2d.ellipse(x, y, rx, ry, rotation, startAngle, endAngle, anticlockwise)
+                        println("A: ellipse(x=$x, y=$y, rx=$rx, ry=$ry, rotation=$rotation, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise)")
                     }
                     curX = x2
                     curY = y2

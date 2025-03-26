@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 import MagickWand.*
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Context2dDelegate
-import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.*
 
 
 class MagickContext2d(
@@ -53,29 +51,24 @@ class MagickContext2d(
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
-        memScoped {
-            withFillWand { fillWand ->
+        withFillWand { fillWand ->
+            applyFontStyle(fillWand)
+            memScoped {
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
                 DrawAnnotation(fillWand, x, y, textCStr)
-                MagickDrawImage(wand, fillWand)
             }
+            MagickDrawImage(wand, fillWand)
         }
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
-        memScoped {
-            withStrokeWand { strokeWand ->
-                DrawSetFontSize(strokeWand, state.font?.fontSize ?: 12.0)
-                DrawSetFontFamily(strokeWand, state.font?.fontFamily ?: "Arial")
-                //DrawSetFontStyle(strokeWand, state.font?.fontStyle == StyleType.NormalStyle)
-                //DrawSetFontWeight(strokeWand)
-
-
-
+        withStrokeWand { strokeWand ->
+            applyFontStyle(strokeWand)
+            memScoped {
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
                 DrawAnnotation(strokeWand, x, y, textCStr)
-                MagickDrawImage(wand, strokeWand)
             }
+            MagickDrawImage(wand, strokeWand)
         }
     }
 
@@ -101,6 +94,17 @@ class MagickContext2d(
     ) {
         currentPath.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
+
+    override fun ellipse(
+        x: Double, y: Double,
+        radiusX: Double, radiusY: Double,
+        rotation: Double,
+        startAngle: Double, endAngle: Double,
+        anticlockwise: Boolean
+    ) {
+        currentPath.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+    }
+
 
     override fun closePath() {
         currentPath.closePath()
@@ -181,6 +185,13 @@ class MagickContext2d(
         DestroyDrawingWand(fillWand)
     }
 
+    private fun applyFontStyle(fillWand: CPointer<DrawingWand>) {
+        DrawSetFontSize(fillWand, state.font?.fontSize ?: 12.0)
+        DrawSetFontFamily(fillWand, state.font?.fontFamily ?: "Arial")
+        DrawSetFontStyle(fillWand, fromFontStyle(state.font?.fontStyle) ?: StyleType.NormalStyle)
+        DrawSetFontWeight(fillWand, fromFontWeight(state.font?.fontWeight) ?: 1u)
+    }
+
     companion object {
         val IDENTITY = nativeHeap.alloc<AffineMatrix>().apply {
             sx = 1.0  // Scale X (no change)
@@ -192,4 +203,19 @@ class MagickContext2d(
         }
     }
 
+    private fun fromFontStyle(fontStyle: FontStyle?): StyleType? {
+        return when (fontStyle) {
+            FontStyle.NORMAL -> StyleType.NormalStyle
+            FontStyle.ITALIC -> StyleType.ItalicStyle
+            null -> null
+        }
+    }
+
+    private fun fromFontWeight(fontWeight: FontWeight?): ULong? {
+        return when (fontWeight) {
+            FontWeight.NORMAL -> 1U
+            FontWeight.BOLD -> 2U
+            null -> null
+        }
+    }
 }
