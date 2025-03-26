@@ -40,7 +40,7 @@ include("jvm-package:jvm-publish-common")
 include("jvm-package:jvm-publish-jfx")
 include("jvm-package:jvm-publish-batik")
 include("jvm-package:jvm-publish-gis")
-include("jvm-package:jvm-publish-idea-lets-plot-batik")
+include("jvm-package:jvm-publish-idea-lets-plot-plugin")
 
 
 include("demo-and-test-shared")

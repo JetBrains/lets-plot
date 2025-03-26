@@ -62,6 +62,9 @@ val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.
     archiveVersion.set(artifactVersion)
     archiveClassifier.set("")
 
+    // Exclude Kotlin module files
+    exclude("META-INF/*.kotlin_module")
+
     // Exclude packages
     exclude("org/slf4j/**")
     exclude("org/intellij/**")
