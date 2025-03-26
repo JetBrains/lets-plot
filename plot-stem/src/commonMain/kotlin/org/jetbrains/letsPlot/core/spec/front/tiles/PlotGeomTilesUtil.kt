@@ -73,8 +73,8 @@ internal object PlotGeomTilesUtil {
 
         return statPositionalBindings.associate { binding ->
             val positionalAes = when (isYOrientation) {
-                true -> if (Aes.isPositionalX(binding.aes)) Aes.Y else Aes.X
-                false -> if (Aes.isPositionalX(binding.aes)) Aes.X else Aes.Y
+                true -> Aes.X
+                false -> Aes.Y
             }
             val scaleProto = commonScaleMap.getValue(positionalAes)
             val aesScale = scaleProto.with().name(binding.variable.label).build()

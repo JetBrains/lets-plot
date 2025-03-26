@@ -106,7 +106,7 @@ object GeomInteractionUtil {
                 axisAesFromFunctionTypeAfterOrientation,
                 hiddenAesList
             )
-            sideTooltipAes = createSideTooltipAesList(layerConfig).afterOrientation(yOrientation)
+            sideTooltipAes = createSideTooltipAesList(layerConfig)
             tooltipSpecification = layerConfig.tooltips
         } else {
             tooltipAes = emptyList()
@@ -405,17 +405,19 @@ object GeomInteractionUtil {
 
     private fun createSideTooltipAesList(layerConfig: LayerConfig): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
-            GeomKind.CROSS_BAR -> when (isVerticalGeom(layerConfig)) {
+            GeomKind.CROSS_BAR -> when (isVerticalGeom(layerConfig)) { // TODO: May work incorrectly
                 true -> listOf(Aes.YMAX, Aes.Y, Aes.YMIN) // Y/X is a median - show it as a part of the tooltip
                 false -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
             }
-
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,
             GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN) // TODO: use isVerticalGeom
-            GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN, Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
-            GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
+            GeomKind.BOX_PLOT -> when (isVerticalGeom(layerConfig)) {
+                true -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
+                false -> listOf(Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
+            }
+            GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y) // TODO: May work incorrectly
             else -> emptyList()
         }
     }
@@ -474,7 +476,9 @@ object GeomInteractionUtil {
     }
 
     private fun isVerticalGeom(layerConfig: LayerConfig): Boolean {
-        if (layerConfig.geomProto.geomKind !in listOf(
+        val geomKind = layerConfig.geomProto.geomKind
+        if (geomKind !in listOf(
+                GeomKind.BOX_PLOT,
                 GeomKind.ERROR_BAR,
                 GeomKind.LINE_RANGE,
                 GeomKind.RIBBON,
@@ -487,6 +491,9 @@ object GeomInteractionUtil {
         }
 
         val mappedAes = layerConfig.varBindings.map { it.aes }
-        return mappedAes.containsAll(listOf(Aes.YMAX, Aes.YMIN))
+        return when (geomKind) {
+            GeomKind.BOX_PLOT -> mappedAes.containsAll(listOf(Aes.UPPER, Aes.LOWER))
+            else -> mappedAes.containsAll(listOf(Aes.YMAX, Aes.YMIN))
+        }
     }
 }

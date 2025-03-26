@@ -88,6 +88,28 @@ class StatTransformTest {
 
     @Test
     fun `timeUnit - basic case`() {
+        val dataset = listOf(
+            1262304000000 to 39.4,
+            1262307600000 to 39.2,
+            1262311200000 to 39.0,
+            1262314800000 to 38.9,
+            1262318400000 to 38.8,
+            1262322000000 to 38.7,
+            1262325600000 to 38.7,
+            1262329200000 to 38.6,
+            1262332800000 to 38.7,
+            1262336400000 to 39.2,
+            1262340000000 to 40.1,
+            1262343600000 to 41.3,
+            1262347200000 to 42.5,
+            1262350800000 to 43.2,
+            1262354400000 to 43.5,
+            1262358000000 to 43.3,
+            1262361600000 to 42.7,
+            1262365200000 to 41.7,
+            1262368800000 to 41.2,
+            1262372400000 to 40.9
+        )
         val vegaSpec = parseJson(
             """
                 |{
@@ -102,30 +124,7 @@ class StatTransformTest {
                 |    "params": [
                 |        { "name": "p0", "select": "interval", "bind": "scales" }
                 |    ], 
-                |    "data": {
-                |        "values": [
-                |            { "date": 1262304000000, "temp": 39.4 }, 
-                |            { "date": 1262307600000, "temp": 39.2 }, 
-                |            { "date": 1262311200000, "temp": 39 }, 
-                |            { "date": 1262314800000, "temp": 38.9 }, 
-                |            { "date": 1262318400000, "temp": 38.8 }, 
-                |            { "date": 1262322000000, "temp": 38.7 }, 
-                |            { "date": 1262325600000, "temp": 38.7 }, 
-                |            { "date": 1262329200000, "temp": 38.6 }, 
-                |            { "date": 1262332800000, "temp": 38.7 }, 
-                |            { "date": 1262336400000, "temp": 39.2 }, 
-                |            { "date": 1262340000000, "temp": 40.1 }, 
-                |            { "date": 1262343600000, "temp": 41.3 }, 
-                |            { "date": 1262347200000, "temp": 42.5 }, 
-                |            { "date": 1262350800000, "temp": 43.2 }, 
-                |            { "date": 1262354400000, "temp": 43.5 }, 
-                |            { "date": 1262358000000, "temp": 43.3 }, 
-                |            { "date": 1262361600000, "temp": 42.7 }, 
-                |            { "date": 1262365200000, "temp": 41.7 }, 
-                |            { "date": 1262368800000, "temp": 41.2 }, 
-                |            { "date": 1262372400000, "temp": 40.9 }
-                |        ]
-                |    }
+                |    "data": { "values": [${dataset.map { "{ \"date\": ${it.first}, \"temp\": ${it.second} }" }.joinToString(", ")}] }
                 |}                
             """.trimMargin()
         ).asMutable()
@@ -139,6 +138,7 @@ class StatTransformTest {
             entry("..ymax..", listOf(43.5)),
             entry("..ymin..", listOf(38.6)),
             entry("date", listOf(1.262304E12)),
+            entry("temp", listOf(dataset.map(Pair<Long, Double>::second).sum() / dataset.size)) // Var is preserved in the PlotConfigBackend::variablesToKeep() because for boxplot Aes.Y now in the renderedAes list, according to GeomMeta
         )
     }
 
