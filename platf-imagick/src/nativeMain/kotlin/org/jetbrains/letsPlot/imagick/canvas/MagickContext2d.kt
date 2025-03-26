@@ -24,21 +24,16 @@ class MagickContext2d(
     private data class ContextState(
         var strokeColor: String = Color.TRANSPARENT.toCssColor(),
         var strokeWidth: Double = 1.0,
-        var dashPattern: DoubleArray = doubleArrayOf(),
+        var dashPattern: List<Double> = emptyList(),
         var fillColor: String = Color.TRANSPARENT.toCssColor(),
+        var font: Font? = null,
         var transform: AffineMatrix = IDENTITY,
     )
 
     private val contextStates = mutableListOf<ContextState>()
 
     override fun setFont(f: Font) {
-        val size = f.fontSize
-        val family = f.fontFamily
-        val style = f.fontStyle
-        val weight = f.fontWeight
-
-        // Set font size
-        //DrawSetFontSize(drawingWand, size)
+        state.font = f
     }
 
     override fun setFillStyle(color: Color?) {
@@ -54,7 +49,7 @@ class MagickContext2d(
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
-        state.dashPattern = lineDash
+        state.dashPattern = lineDash.toList()
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
@@ -70,6 +65,13 @@ class MagickContext2d(
     override fun strokeText(text: String, x: Double, y: Double) {
         memScoped {
             withStrokeWand { strokeWand ->
+                DrawSetFontSize(strokeWand, state.font?.fontSize ?: 12.0)
+                DrawSetFontFamily(strokeWand, state.font?.fontFamily ?: "Arial")
+                //DrawSetFontStyle(strokeWand, state.font?.fontStyle == StyleType.NormalStyle)
+                //DrawSetFontWeight(strokeWand)
+
+
+
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
                 DrawAnnotation(strokeWand, x, y, textCStr)
                 MagickDrawImage(wand, strokeWand)
