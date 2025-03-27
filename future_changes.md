@@ -10,3 +10,4 @@
 ### Fixed
 
 - geom_livemap: Map zoom freezes after multiple rapid clicks on +/- buttons [[#1315](https://github.com/JetBrains/lets-plot/issues/1315)].
+- Import error ("libc++abi: Terminating...") when installing Lets-Plot in a fresh `conda` environment on macOS (Darwin).  
