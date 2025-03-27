@@ -6,12 +6,12 @@
 package demo.plot.batik.plotConfig
 
 import demo.common.utils.batik.PlotSpecsDemoWindowBatik
-import demo.plot.common.model.plotConfig.VerticalGeoms
+import demo.plot.common.model.plotConfig.IntervalGeoms
 
 fun main() {
-    with(VerticalGeoms()) {
+    with(IntervalGeoms()) {
         PlotSpecsDemoWindowBatik(
-            "Vertical geometries",
+            "Interval geometries",
             plotSpecList()
         ).open()
     }

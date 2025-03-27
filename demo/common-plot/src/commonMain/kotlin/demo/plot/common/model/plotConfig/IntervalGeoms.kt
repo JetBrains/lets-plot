@@ -7,7 +7,7 @@ package demo.plot.common.model.plotConfig
 
 import demoAndTestShared.parsePlotSpec
 
-class VerticalGeoms {
+class IntervalGeoms {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             horizontalBoxplot(),
