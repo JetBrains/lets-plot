@@ -58,6 +58,14 @@ val jvmJar by tasks.named<Jar>("jvmJar") {
     enabled = false
 }
 
+val javaDocsJar by tasks.creating(Jar::class) {
+    archiveBaseName.set(artifactBaseName)
+    archiveVersion.set(artifactVersion)
+    archiveClassifier.set("javadoc")
+    from("$rootDir/README.md")
+    group = "lets plot"
+}
+
 // Create fat JAR with shadowed (relocated) classes
 val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     from(kotlin.jvm().compilations.getByName("main").output)
@@ -66,6 +74,8 @@ val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.
     archiveBaseName.set(artifactBaseName)
     archiveVersion.set(artifactVersion)
     archiveClassifier.set("")
+
+    group = "lets plot"
 
     // Exclude Kotlin module files
     exclude("META-INF/*.kotlin_module")
@@ -101,6 +111,10 @@ val sourcesJar = tasks.named<org.gradle.jvm.tasks.Jar>("jvmSourcesJar") {
     archiveBaseName.set(artifactBaseName)
     archiveVersion.set(artifactVersion)
     archiveClassifier.set("sources")
+    // Clear the default archiveAppendix that adds "jvm"
+    archiveAppendix.set("")
+
+    group = "lets plot"
 
     // Set up basic task configuration here
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -202,19 +216,10 @@ fun Project.processSourceDirectory(
     }
 }
 
-//// Explicitly configure the artifacts we want
-//artifacts {
-//    // Remove default artifacts from archives configuration
-//    configurations.getByName("archives").artifacts.clear()
-//
-//    // Add only our custom artifacts
-//    add("archives", shadowJar)
-//    add("archives", sourcesJar)
-//}
-
 // Configure which tasks the build depends on
+// to be able to run: `./gradlew jvm-package:jvm-publish-idea-lets-plot-plugin:build`
 tasks.named("build") {
-    dependsOn(shadowJar, sourcesJar)
+    dependsOn(shadowJar, sourcesJar, javaDocsJar)
 }
 
 
@@ -227,6 +232,7 @@ publishing {
 
             artifact(shadowJar)
             artifact(sourcesJar)
+            artifact(javaDocsJar)
 
             pom {
                 name = "Shadowed Lets-Plot for IDEA Plugin"
