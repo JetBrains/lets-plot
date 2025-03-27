@@ -1,13 +1,8 @@
-/*
- * Copyright (c) 2025. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
 plugins {
-    kotlin("multiplatform")
+    kotlin("jvm")
     `maven-publish`
     signing
-    id("com.gradleup.shadow") version "8.3.6" // Updated to use GradleUp shadow plugin
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
 val artifactBaseName = "idea-lets-plot-plugin"
@@ -17,44 +12,24 @@ val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
 val packagePrefix = "ideaLPP"
 
-kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-    }
+dependencies {
+    implementation(project(":commons"))
+    implementation(project(":datamodel"))
+    implementation(project(":plot-base"))
+    implementation(project(":plot-builder"))
+    implementation(project(":plot-stem"))
 
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                implementation(project(":plot-base"))
-                implementation(project(":plot-builder"))
-                implementation(project(":plot-stem"))
+    implementation(project(":platf-awt"))
+    implementation(project(":platf-batik"))
 
-                implementation(project(":platf-awt"))
-                implementation(project(":platf-batik"))
-
-                implementation(project(":canvas"))
-                implementation(project(":gis"))
-                implementation(project(":livemap"))
-                implementation(project(":plot-livemap"))
-            }
-        }
-    }
+    implementation(project(":canvas"))
+    implementation(project(":gis"))
+    implementation(project(":livemap"))
+    implementation(project(":plot-livemap"))
 }
 
-// Disable all tasks with metadata in their name -
-// we don't need 'metadata jar': this is no longer 'muptiplatform' lib.
-tasks.configureEach {
-    if (name.contains("metadata", ignoreCase = true)) {
-        enabled = false
-    }
-}
-
-// Configure the JVM jar task to use the shadow jar output
-val jvmJar by tasks.named<Jar>("jvmJar") {
+// Disable the default JAR task since we're using shadow JAR
+tasks.named("jar") {
     enabled = false
 }
 
@@ -67,9 +42,10 @@ val javaDocsJar by tasks.creating(Jar::class) {
 }
 
 // Create fat JAR with shadowed (relocated) classes
-val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-    from(kotlin.jvm().compilations.getByName("main").output)
-    configurations = listOf(project.configurations.getByName("jvmRuntimeClasspath"))
+//val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+val shadowJar = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    from(sourceSets.main.get().output)
+    configurations = listOf(project.configurations.runtimeClasspath.get())
 
     archiveBaseName.set(artifactBaseName)
     archiveVersion.set(artifactVersion)
@@ -104,15 +80,11 @@ val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.
     mergeServiceFiles()
 }
 
-
 // Create a sources JAR task with shadowed sources
-//val sourcesJar = tasks.register<Jar>("sourcesJar") {
-val sourcesJar = tasks.named<org.gradle.jvm.tasks.Jar>("jvmSourcesJar") {
+val sourcesJar = tasks.register<Jar>("sourcesJar") {
     archiveBaseName.set(artifactBaseName)
     archiveVersion.set(artifactVersion)
     archiveClassifier.set("sources")
-    // Clear the default archiveAppendix that adds "jvm"
-    archiveAppendix.set("")
 
     group = "lets plot"
 
@@ -126,7 +98,7 @@ val sourcesJar = tasks.named<org.gradle.jvm.tasks.Jar>("jvmSourcesJar") {
         tempDir.mkdirs()
 
         // Process all project dependencies
-        project.configurations.getByName("jvmCompileClasspath").allDependencies.withType<ProjectDependency>()
+        project.configurations.compileClasspath.get().allDependencies.withType<ProjectDependency>()
             .forEach { dep ->
                 val projectDep = dep.dependencyProject
                 logger.lifecycle("Processing sources from dependency: ${projectDep.name}")
@@ -221,7 +193,6 @@ fun Project.processSourceDirectory(
 tasks.named("build") {
     dependsOn(shadowJar, sourcesJar, javaDocsJar)
 }
-
 
 publishing {
     publications {
