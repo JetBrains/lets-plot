@@ -5,8 +5,8 @@
 
 plugins {
     kotlin("multiplatform")
-//    `maven-publish`
-//    signing
+    `maven-publish`
+    signing
     id("com.gradleup.shadow") version "8.3.6" // Updated to use GradleUp shadow plugin
 }
 
@@ -53,6 +53,11 @@ tasks.configureEach {
     }
 }
 
+// Configure the JVM jar task to use the shadow jar output
+val jvmJar by tasks.named<Jar>("jvmJar") {
+    enabled = false
+}
+
 // Create fat JAR with shadowed (relocated) classes
 val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     from(kotlin.jvm().compilations.getByName("main").output)
@@ -89,13 +94,10 @@ val shadowJar = tasks.register<com.github.jengelman.gradle.plugins.shadow.tasks.
     mergeServiceFiles()
 }
 
-// Configure the JVM jar task to use the shadow jar output
-val jvmJar by tasks.named<Jar>("jvmJar") {
-    enabled = false
-}
 
 // Create a sources JAR task with shadowed sources
-val sourcesJar = tasks.register<Jar>("sourcesJar") {
+//val sourcesJar = tasks.register<Jar>("sourcesJar") {
+val sourcesJar = tasks.named<org.gradle.jvm.tasks.Jar>("jvmSourcesJar") {
     archiveBaseName.set(artifactBaseName)
     archiveVersion.set(artifactVersion)
     archiveClassifier.set("sources")
@@ -105,7 +107,7 @@ val sourcesJar = tasks.register<Jar>("sourcesJar") {
 
     doFirst {
         // Create a temporary directory for processed files
-        val tempDir = layout.buildDirectory.dir("tmp/shadowedSourcesJar").get().asFile
+        val tempDir = layout.buildDirectory.dir("tmp/shadowSourcesJar").get().asFile
         tempDir.deleteRecursively()
         tempDir.mkdirs()
 
@@ -200,86 +202,72 @@ fun Project.processSourceDirectory(
     }
 }
 
-// Explicitly configure the artifacts we want
-artifacts {
-    // Remove default artifacts from archives configuration
-    configurations.getByName("archives").artifacts.clear()
-
-    // Add only our custom artifacts
-    add("archives", shadowJar)
-    add("archives", sourcesJar)
-}
+//// Explicitly configure the artifacts we want
+//artifacts {
+//    // Remove default artifacts from archives configuration
+//    configurations.getByName("archives").artifacts.clear()
+//
+//    // Add only our custom artifacts
+//    add("archives", shadowJar)
+//    add("archives", sourcesJar)
+//}
 
 // Configure which tasks the build depends on
 tasks.named("build") {
     dependsOn(shadowJar, sourcesJar)
 }
 
-// Disable the metadataJar task if it exists
-tasks.findByName("metadataJar")?.enabled = false
 
-// Also explicitly disable the kotlin metadata publication tasks
-afterEvaluate {
-    tasks.findByName("jvmSourcesJar")?.enabled = false
-    tasks.findByName("kotlinSourcesJar")?.enabled = false
-    tasks.findByName("metadataSourcesJar")?.enabled = false
+publishing {
+    publications {
+        register("ideaLetsPlotPlugin", MavenPublication::class) {
+            groupId = artifactGroupId
+            artifactId = artifactBaseName
+            version = artifactVersion
 
-    // Disable publication tasks for metadata
-    tasks.names
-        .filter { it.contains("publish", ignoreCase = true) && it.contains("metadata", ignoreCase = true) }
-        .forEach { taskName ->
-            tasks.findByName(taskName)?.enabled = false
+            artifact(shadowJar)
+            artifact(sourcesJar)
+
+            pom {
+                name = "Shadowed Lets-Plot for IDEA Plugin"
+                description = "Shadowed Lets-Plot library for Lets-Plot in Sci-View IDEA Plugin."
+                url = "https://github.com/JetBrains/lets-plot"
+
+                licenses {
+                    license {
+                        name = "MIT"
+                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = "jetbrains"
+                        name = "JetBrains"
+                        email = "lets-plot@jetbrains.com"
+                    }
+                }
+
+                scm {
+                    url = "https://github.com/JetBrains/lets-plot"
+                }
+
+                // No dependencies in POM
+                withXml {
+                }
+            }
         }
+    }
+
+    repositories {
+        mavenLocal {
+            url = uri("$mavenLocalPath")
+        }
+    }
 }
 
-//publishing {
-//    publications {
-//        register("ideaLetsPlotBatik", MavenPublication::class) {
-//            groupId = artifactGroupId
-//            artifactId = artifactBaseName
-//            version = artifactVersion
-//
-//            artifact(shadowJar.get())
-//            artifact(sourcesJar.get())
-//
-//            pom {
-//                name = "IDEA Lets-Plot Batik"
-//                description = "Combined Lets-Plot package with relocated classes for IDEA integration"
-//                url = "https://github.com/JetBrains/lets-plot"
-//
-//                licenses {
-//                    license {
-//                        name = "MIT"
-//                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
-//                    }
-//                }
-//
-//                developers {
-//                    developer {
-//                        id = "jetbrains"
-//                        name = "JetBrains"
-//                        email = "lets-plot@jetbrains.com"
-//                    }
-//                }
-//
-//                scm {
-//                    url = "https://github.com/JetBrains/lets-plot"
-//                }
-//
-//                // This is a self-contained artifact, so we don't need to declare dependencies
-//            }
-//        }
-//    }
-//
-//    repositories {
-//        mavenLocal {
-//            url = uri("$mavenLocalPath")
-//        }
-//    }
-//}
-//
-//signing {
-//    if (!project.version.toString().contains("SNAPSHOT")) {
-//        sign(publishing.publications["ideaLetsPlotBatik"])
-//    }
-//}
+signing {
+    if (!project.version.toString().contains("SNAPSHOT")) {
+        sign(publishing.publications["ideaLetsPlotPlugin"])
+    }
+}
