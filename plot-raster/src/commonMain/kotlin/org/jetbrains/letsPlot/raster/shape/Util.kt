@@ -145,18 +145,18 @@ internal fun Matrix33.apply(r: DoubleRectangle): DoubleRectangle {
     return DoubleRectangle.LTRB(xs.min(), ys.min(), xs.max(), ys.max())
 }
 
-internal val Matrix33.translateX get() = mat[TRANSLATE_X]
-internal val Matrix33.translateY get() = mat[TRANSLATE_Y]
+val Matrix33.translateX get() = mat[TRANSLATE_X]
+val Matrix33.translateY get() = mat[TRANSLATE_Y]
 
-internal val Matrix33.scaleX get() = mat[SCALE_X]
-internal val Matrix33.scaleY get() = mat[SCALE_Y]
+val Matrix33.scaleX get() = mat[SCALE_X]
+val Matrix33.scaleY get() = mat[SCALE_Y]
 
-internal val Matrix33.skewX get() = mat[SKEW_X]
-internal val Matrix33.skewY get() = mat[SKEW_Y]
+val Matrix33.skewX get() = mat[SKEW_X]
+val Matrix33.skewY get() = mat[SKEW_Y]
 
-internal val Matrix33.persp0 get() = mat[PERSP0]
-internal val Matrix33.persp1 get() = mat[PERSP1]
-internal val Matrix33.persp2 get() = mat[PERSP2]
+val Matrix33.persp0 get() = mat[PERSP0]
+val Matrix33.persp1 get() = mat[PERSP1]
+val Matrix33.persp2 get() = mat[PERSP2]
 
 internal fun union(rects: List<DoubleRectangle>): DoubleRectangle? =
     rects.fold<DoubleRectangle, DoubleRectangle?>(null) { acc, rect ->

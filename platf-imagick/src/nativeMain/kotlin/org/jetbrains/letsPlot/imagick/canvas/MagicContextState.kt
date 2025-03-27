@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d.Companion.IDENTITY
+import org.jetbrains.letsPlot.raster.shape.*
 
 internal class MagickContextState(
     var strokeColor: String,
@@ -31,13 +32,49 @@ internal class MagickContextState(
             field = value
         }
 
+
+    fun transform(sx: Double, rx: Double, ry: Double, sy: Double, dx: Double, dy: Double) {
+        val cur = Matrix33(
+            transform.sx.toFloat(),
+            transform.rx.toFloat(),
+            transform.tx.toFloat(),
+            transform.ry.toFloat(),
+            transform.sy.toFloat(),
+            transform.ty.toFloat(),
+            0f,
+            0f,
+            1f
+        )
+
+        val tr = Matrix33(
+            sx.toFloat(),
+            rx.toFloat(),
+            dx.toFloat(),
+            ry.toFloat(),
+            sy.toFloat(),
+            dy.toFloat(),
+            0f,
+            0f,
+            1f
+        )
+
+        val res = cur.makeConcat(tr)
+
+        transform = nativeHeap.alloc()
+        transform.sx = res.scaleX.toDouble()
+        transform.sy = res.scaleY.toDouble()
+        transform.rx = res.skewX.toDouble()
+        transform.ry = res.skewY.toDouble()
+        transform.tx = res.translateX.toDouble()
+        transform.ty = res.translateY.toDouble()
+    }
+
     fun destroy() {
         lineDashPattern?.let { nativeHeap.free(it.rawValue) }
         lineDashPattern = null
     }
 
     fun copy(): MagickContextState {
-
         return MagickContextState(
             strokeColor = strokeColor,
             strokeWidth = strokeWidth,

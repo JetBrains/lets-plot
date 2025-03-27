@@ -19,6 +19,20 @@ class MagickContext2d(
     private var state = MagickContextState.create()
     private val contextStates = mutableListOf<MagickContextState>()
 
+    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
+        state.transform = nativeHeap.alloc<ImageMagick.AffineMatrix>()
+        state.transform.sx = m11
+        state.transform.sy = m12
+        state.transform.rx = m21
+        state.transform.ry = m22
+        state.transform.tx = dx
+        state.transform.ty = dy
+    }
+
+    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
+        state.transform(m11, m12, m21, m22, dx, dy)
+    }
+
     override fun setFont(f: Font) {
         state.fontStyle = when (f.fontStyle) {
             FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
@@ -196,6 +210,11 @@ class MagickContext2d(
 
     private fun withWand(block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
         val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
+        val at = state.transform.let {
+            "sx=${it.sx}, sy=${it.sy}, rx=${it.rx}, ry=${it.ry}, tx=${it.tx}, ty=${it.ty}"
+        }
+        println("withWand() - transform: $at")
+        ImageMagick.DrawAffine(wand, state.transform.ptr)
         ImageMagick.DrawSetFontSize(wand, state.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.fontFamily)
         ImageMagick.DrawSetFontStyle(wand, state.fontStyle)
