@@ -10,12 +10,12 @@ plugins {
     id("com.gradleup.shadow") version "8.3.6"
 }
 
-val artifactBaseName = "idea-lets-plot-plugin"
+val artifactBaseName = "lets-plot-idea-plugin"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
-val packagePrefix = "ideaLPP"
+val packagePrefix = "lpip"
 
 dependencies {
     implementation(project(":commons"))
@@ -194,14 +194,14 @@ fun Project.processSourceDirectory(
 }
 
 // Configure which tasks the build depends on
-// to be able to run: `./gradlew jvm-package:jvm-publish-idea-lets-plot-plugin:build`
+// to be able to run: `./gradlew jvm-package:jvm-publish-idea-plugin:build`
 tasks.named("build") {
     dependsOn(shadowJar, sourcesJar, javaDocsJar)
 }
 
 publishing {
     publications {
-        register("ideaLetsPlotPlugin", MavenPublication::class) {
+        register("letsPlotIdeaPlugin", MavenPublication::class) {
             groupId = artifactGroupId
             artifactId = artifactBaseName
             version = artifactVersion
@@ -250,6 +250,6 @@ publishing {
 
 signing {
     if (!project.version.toString().contains("SNAPSHOT")) {
-        sign(publishing.publications["ideaLetsPlotPlugin"])
+        sign(publishing.publications["letsPlotIdeaPlugin"])
     }
 }
