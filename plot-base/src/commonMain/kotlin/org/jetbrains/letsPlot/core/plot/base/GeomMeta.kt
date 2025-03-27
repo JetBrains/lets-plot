@@ -248,9 +248,6 @@ object GeomMeta {
                 Aes.X, Aes.YMAX, Aes.YMIN,
                 Aes.LOWER, Aes.MIDDLE, Aes.UPPER,
 
-                Aes.Y, Aes.XMIN, Aes.XMAX,
-                Aes.XLOWER, Aes.XMIDDLE, Aes.XUPPER,
-
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
