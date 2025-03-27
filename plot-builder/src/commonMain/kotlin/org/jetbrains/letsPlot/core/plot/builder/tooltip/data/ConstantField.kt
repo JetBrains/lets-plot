@@ -51,7 +51,7 @@ class ConstantField(
             StringFormat.forOneArg(format, expFormat = ctx.expFormat).format(value)
         } ?: run {
             val tooltipAes = when {
-                Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, false)
+                Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes)
                 else -> aes
             }
 

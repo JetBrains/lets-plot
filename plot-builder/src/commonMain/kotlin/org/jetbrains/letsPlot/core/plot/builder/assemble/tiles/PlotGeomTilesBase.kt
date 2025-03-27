@@ -75,11 +75,7 @@ abstract class PlotGeomTilesBase(
             fun isMatching(v: DataFrame.Variable, aes: Aes<*>): Boolean {
                 val varAes = TransformVar.toAes(v)
                 return when {
-                    // isYOrientation always false
-                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(
-                        varAes,
-                        false
-                    ) == aes // collecting pos variables
+                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(varAes) == aes // collecting pos variables
                     else -> varAes == aes
                 }
             }

@@ -243,11 +243,7 @@ object PlotUtil {
     private fun scale(aes: Aes<*>, layer: GeomLayer): Scale? {
         @Suppress("NAME_SHADOWING")
         val aes = when {
-            Aes.isPositionalXY(aes) -> Aes.toAxisAes(
-                aes,
-                layer.isYOrientation
-            )
-
+            Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes)
             else -> aes
         }
         return if (layer.scaleMap.containsKey(aes)) {

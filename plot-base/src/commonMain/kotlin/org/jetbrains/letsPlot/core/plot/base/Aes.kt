@@ -182,11 +182,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == YEND
         }
 
-        fun toAxisAes(aes: Aes<*>, isYOrientation: Boolean): Aes<*> {
+        fun toAxisAes(aes: Aes<*>): Aes<*> {
             return when {
-                aes == X || aes == Y -> aes
-                isPositionalX(aes) -> if (isYOrientation) Y else X
-                isPositionalY(aes) -> if (isYOrientation) X else Y
+                isPositionalX(aes) -> X
+                isPositionalY(aes) -> Y
                 else -> throw IllegalArgumentException("Expected a positional aes by was $aes")
             }
         }
