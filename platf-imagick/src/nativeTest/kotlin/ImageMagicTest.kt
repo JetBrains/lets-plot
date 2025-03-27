@@ -1,4 +1,3 @@
-import MagickWand.*
 import kotlinx.cinterop.*
 import kotlin.test.Test
 
@@ -14,42 +13,42 @@ class ImageMagicTest {
     @Test
     fun simple() {
         // Initialize the MagickWand environment
-        MagickWandGenesis()
+        ImageMagick.MagickWandGenesis()
         // Create a MagickWand instance
-        val wand = NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+        val wand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
         try {
             val w = 50
             val h = 50
 
             // Set the canvas size and background color
-            val background = NewPixelWand()
-            PixelSetColor(background, "white")
-            MagickNewImage(wand, w.toULong(), h.toULong(), background)
+            val background = ImageMagick.NewPixelWand()
+            ImageMagick.PixelSetColor(background, "white")
+            ImageMagick.MagickNewImage(wand, w.toULong(), h.toULong(), background)
 
             // Draw a rectangle
-            val draw = NewDrawingWand()
-            val pixel = NewPixelWand()
+            val draw = ImageMagick.NewDrawingWand()
+            val pixel = ImageMagick.NewPixelWand()
 
             // Set rectangle color
-            PixelSetColor(pixel, "orange")
-            DrawSetFillColor(draw, pixel)
+            ImageMagick.PixelSetColor(pixel, "orange")
+            ImageMagick.DrawSetFillColor(draw, pixel)
 
             // Draw the rectangle
-            DrawRectangle(draw, 10.0, 10.0, 40.0, 40.0)
+            ImageMagick.DrawRectangle(draw, 10.0, 10.0, 40.0, 40.0)
 
             // Set circle color
-            PixelSetColor(pixel, "red")
-            DrawSetFillColor(draw, pixel)
+            ImageMagick.PixelSetColor(pixel, "red")
+            ImageMagick.DrawSetFillColor(draw, pixel)
 
             // Draw the circle inside the rectangle
-            DrawCircle(draw, 25.0, 25.0, 25.0, 20.0)
+            ImageMagick.DrawCircle(draw, 25.0, 25.0, 25.0, 20.0)
 
             // Draw text with a font name
-            PixelSetColor(pixel, "black") // Set text color
-            DrawSetFillColor(draw, pixel)
-            DrawSetFont(draw, "DejaVu-Sans-Bold") // Use font name
-            DrawSetFontSize(draw, 36.0) // Set font size
+            ImageMagick.PixelSetColor(pixel, "black") // Set text color
+            ImageMagick.DrawSetFillColor(draw, pixel)
+            ImageMagick.DrawSetFont(draw, "DejaVu-Sans-Bold") // Use font name
+            ImageMagick.DrawSetFontSize(draw, 36.0) // Set font size
 
             memScoped {
                 val text: CValues<ByteVar> = "Hello, MagicWand!".cstr // Convert to C string
@@ -57,11 +56,11 @@ class ImageMagicTest {
             }
 
             // Apply the drawing to the MagickWand
-            MagickDrawImage(wand, draw)
+            ImageMagick.MagickDrawImage(wand, draw)
 
             // Save the image to a file
             val outputFilename = "output_with_text.bmp"
-            if (MagickWriteImage(wand, outputFilename) == MagickFalse) {
+            if (ImageMagick.MagickWriteImage(wand, outputFilename) == ImageMagick.MagickFalse) {
                 throw RuntimeException("Failed to write image")
             }
 
@@ -70,12 +69,12 @@ class ImageMagicTest {
             val pixelData = ByteArray(w * h * 4) // RGBA 8-bit per channel
             memScoped {
                 val byteBuffer = pixelData.refTo(0) // Pointer to ByteArray
-                val success = MagickExportImagePixels(
+                val success = ImageMagick.MagickExportImagePixels(
                     wand,
                     0, 0, w.toULong(), h.toULong(),
-                    "RGBA", StorageType.CharPixel, byteBuffer
+                    "RGBA", ImageMagick.StorageType.CharPixel, byteBuffer
                 )
-                require(success == MagickTrue) { "Failed to export pixels" }
+                require(success == ImageMagick.MagickTrue) { "Failed to export pixels" }
 
                 val lines = pixelData.asSequence().windowed(4 * w.toInt(), 4 * h.toInt()).toList()
                 val strLines = lines.map { line ->
@@ -91,9 +90,55 @@ class ImageMagicTest {
 
         } finally {
             // Clean up resources
-            DestroyMagickWand(wand)
-            MagickWandTerminus()
+            ImageMagick.DestroyMagickWand(wand)
+            ImageMagick.MagickWandTerminus()
+        }
+    }
+
+    @Test
+    fun miterJoinWithOppositeSegments() {
+        ImageMagick.MagickWandGenesis()
+        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+
+        val backgroundWand = ImageMagick.NewPixelWand()
+        ImageMagick.PixelSetColor(backgroundWand, "white")
+        ImageMagick.MagickNewImage(magickWand, 100u, 100u, backgroundWand)
+
+        val drawingWand = ImageMagick.NewDrawingWand()
+        val strokeWand = ImageMagick.NewPixelWand()
+
+        ImageMagick.PixelSetColor(strokeWand, "orange")
+        ImageMagick.DrawSetStrokeColor(drawingWand, strokeWand)
+
+        ImageMagick.DrawSetStrokeWidth(drawingWand, 20.0)
+
+        // MiterJoin with a line in the opposite direction
+        ImageMagick.DrawSetStrokeLineJoin(drawingWand, ImageMagick.LineJoin.MiterJoin)
+        ImageMagick.DrawPathStart(drawingWand)
+        ImageMagick.DrawPathMoveToAbsolute(drawingWand, 5.0, 30.0)
+        ImageMagick.DrawPathLineToAbsolute(drawingWand, 95.0, 30.0)
+        ImageMagick.DrawPathLineToAbsolute(drawingWand, 5.0, 30.0)
+        ImageMagick.DrawPathFinish(drawingWand)
+
+        // BevelJoin with a line in the opposite direction
+        ImageMagick.DrawSetStrokeLineJoin(drawingWand, ImageMagick.LineJoin.BevelJoin)
+        ImageMagick.DrawPathStart(drawingWand)
+        ImageMagick.DrawPathMoveToAbsolute(drawingWand, 5.0, 70.0)
+        ImageMagick.DrawPathLineToAbsolute(drawingWand, 95.0, 70.0)
+        ImageMagick.DrawPathLineToAbsolute(drawingWand, 5.0, 70.0)
+        ImageMagick.DrawPathFinish(drawingWand)
+
+
+        ImageMagick.MagickDrawImage(magickWand, drawingWand)
+        val outputFilename = "miter_join_artifact.bmp"
+        if (ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
+            throw RuntimeException("Failed to write image")
         }
 
+        ImageMagick.DestroyPixelWand(backgroundWand)
+        ImageMagick.DestroyPixelWand(strokeWand)
+        ImageMagick.DestroyDrawingWand(drawingWand)
+        ImageMagick.DestroyMagickWand(magickWand)
+        ImageMagick.MagickWandTerminus()
     }
 }

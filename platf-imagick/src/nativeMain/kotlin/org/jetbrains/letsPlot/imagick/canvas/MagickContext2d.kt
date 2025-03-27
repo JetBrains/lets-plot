@@ -5,19 +5,19 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import MagickWand.*
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 
 
 class MagickContext2d(
-    private val wand: CPointer<MagickWand>?
+    private val wand: CPointer<ImageMagick.MagickWand>?
 ) : Context2d by Context2dDelegate(true) {
-    private val pixelWand = NewPixelWand() ?: error { "Failed to create PixelWand" }
+    private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     private var state = ContextState()
 
     private var currentPath: MagickPath = MagickPath()
+
 
     private data class ContextState(
         var strokeColor: String = Color.TRANSPARENT.toCssColor(),
@@ -25,7 +25,7 @@ class MagickContext2d(
         var dashPattern: List<Double> = emptyList(),
         var fillColor: String = Color.TRANSPARENT.toCssColor(),
         var font: Font? = null,
-        var transform: AffineMatrix = IDENTITY,
+        var transform: ImageMagick.AffineMatrix = IDENTITY,
     )
 
     private val contextStates = mutableListOf<ContextState>()
@@ -55,9 +55,9 @@ class MagickContext2d(
             applyFontStyle(fillWand)
             memScoped {
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
-                DrawAnnotation(fillWand, x, y, textCStr)
+                ImageMagick.DrawAnnotation(fillWand, x, y, textCStr)
             }
-            MagickDrawImage(wand, fillWand)
+            ImageMagick.MagickDrawImage(wand, fillWand)
         }
     }
 
@@ -66,9 +66,9 @@ class MagickContext2d(
             applyFontStyle(strokeWand)
             memScoped {
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
-                DrawAnnotation(strokeWand, x, y, textCStr)
+                ImageMagick.DrawAnnotation(strokeWand, x, y, textCStr)
             }
-            MagickDrawImage(wand, strokeWand)
+            ImageMagick.MagickDrawImage(wand, strokeWand)
         }
     }
 
@@ -113,30 +113,28 @@ class MagickContext2d(
     override fun stroke() {
         withStrokeWand { strokeWand ->
             currentPath.draw(strokeWand)
-            DrawPathFinish(strokeWand)
-            MagickDrawImage(wand, strokeWand)
+            ImageMagick.MagickDrawImage(wand, strokeWand)
         }
     }
 
     override fun fill() {
         withFillWand { fillWand ->
             currentPath.draw(fillWand)
-            DrawPathFinish(fillWand)
-            MagickDrawImage(wand, fillWand)
+            ImageMagick.MagickDrawImage(wand, fillWand)
         }
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
         withFillWand { fillWand ->
-            DrawRectangle(fillWand, x, y, x + w, y + h)
-            MagickDrawImage(wand, fillWand)
+            ImageMagick.DrawRectangle(fillWand, x, y, x + w, y + h)
+            ImageMagick.MagickDrawImage(wand, fillWand)
         }
     }
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
         withStrokeWand { strokeWand ->
-            DrawRectangle(strokeWand, x, y, x + w, y + h)
-            MagickDrawImage(wand, strokeWand)
+            ImageMagick.DrawRectangle(strokeWand, x, y, x + w, y + h)
+            ImageMagick.MagickDrawImage(wand, strokeWand)
         }
     }
 
@@ -150,50 +148,51 @@ class MagickContext2d(
         state = contextStates.lastOrNull() ?: ContextState()
     }
 
-    fun withStrokeWand(block: (CPointer<DrawingWand>) -> Unit) {
-        val strokeWand = NewDrawingWand() ?: error { "DrawingWand was null" }
+    fun withStrokeWand(block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
+        val strokeWand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
 
-        PixelSetColor(pixelWand, state.strokeColor)
-        DrawSetStrokeColor(strokeWand, pixelWand)
-        DrawSetStrokeWidth(strokeWand, state.strokeWidth)
-
+        ImageMagick.PixelSetColor(pixelWand, state.strokeColor)
+        ImageMagick.DrawSetStrokeColor(strokeWand, pixelWand)
+        ImageMagick.DrawSetStrokeWidth(strokeWand, state.strokeWidth)
+        ImageMagick.DrawSetStrokeLineJoin(strokeWand, ImageMagick.LineJoin.MiterJoin)
+        ImageMagick.DrawSetStrokeMiterLimit(strokeWand, 1U)
         memScoped {
             val pattern = allocArray<DoubleVar>(state.dashPattern.size)
             state.dashPattern.forEachIndexed { index, value -> pattern[index] = value }
-            DrawSetStrokeDashArray(strokeWand, state.dashPattern.size.toULong(), pattern)
+            ImageMagick.DrawSetStrokeDashArray(strokeWand, state.dashPattern.size.toULong(), pattern)
         }
 
-        PixelSetColor(pixelWand, Color.TRANSPARENT.toCssColor())
-        DrawSetFillColor(strokeWand, pixelWand)
+        ImageMagick.PixelSetColor(pixelWand, Color.TRANSPARENT.toCssColor())
+        ImageMagick.DrawSetFillColor(strokeWand, pixelWand)
 
         block(strokeWand)
 
-        DestroyDrawingWand(strokeWand)
+        ImageMagick.DestroyDrawingWand(strokeWand)
     }
 
-    fun withFillWand(block: (CPointer<DrawingWand>) -> Unit) {
-        val fillWand = NewDrawingWand() ?: error { "DrawingWand was null" }
+    fun withFillWand(block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
+        val fillWand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
 
-        PixelSetColor(pixelWand, state.fillColor)
-        DrawSetFillColor(fillWand, pixelWand)
+        ImageMagick.PixelSetColor(pixelWand, state.fillColor)
+        ImageMagick.DrawSetFillColor(fillWand, pixelWand)
 
-        PixelSetColor(pixelWand, Color.TRANSPARENT.toCssColor())
-        DrawSetStrokeColor(fillWand, pixelWand)
+        ImageMagick.PixelSetColor(pixelWand, Color.TRANSPARENT.toCssColor())
+        ImageMagick.DrawSetStrokeColor(fillWand, pixelWand)
 
         block(fillWand)
 
-        DestroyDrawingWand(fillWand)
+        ImageMagick.DestroyDrawingWand(fillWand)
     }
 
-    private fun applyFontStyle(fillWand: CPointer<DrawingWand>) {
-        DrawSetFontSize(fillWand, state.font?.fontSize ?: 12.0)
-        DrawSetFontFamily(fillWand, state.font?.fontFamily ?: "Arial")
-        DrawSetFontStyle(fillWand, fromFontStyle(state.font?.fontStyle) ?: StyleType.NormalStyle)
-        DrawSetFontWeight(fillWand, fromFontWeight(state.font?.fontWeight) ?: 1u)
+    private fun applyFontStyle(fillWand: CPointer<ImageMagick.DrawingWand>) {
+        ImageMagick.DrawSetFontSize(fillWand, state.font?.fontSize ?: 12.0)
+        ImageMagick.DrawSetFontFamily(fillWand, state.font?.fontFamily ?: "Arial")
+        ImageMagick.DrawSetFontStyle(fillWand, fromFontStyle(state.font?.fontStyle) ?: ImageMagick.StyleType.NormalStyle)
+        ImageMagick.DrawSetFontWeight(fillWand, fromFontWeight(state.font?.fontWeight) ?: 1u)
     }
 
     companion object {
-        val IDENTITY = nativeHeap.alloc<AffineMatrix>().apply {
+        val IDENTITY = nativeHeap.alloc<ImageMagick.AffineMatrix>().apply {
             sx = 1.0  // Scale X (no change)
             sy = 1.0  // Scale Y (no change)
             rx = 0.0  // Shear X
@@ -203,10 +202,10 @@ class MagickContext2d(
         }
     }
 
-    private fun fromFontStyle(fontStyle: FontStyle?): StyleType? {
+    private fun fromFontStyle(fontStyle: FontStyle?): ImageMagick.StyleType? {
         return when (fontStyle) {
-            FontStyle.NORMAL -> StyleType.NormalStyle
-            FontStyle.ITALIC -> StyleType.ItalicStyle
+            FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
+            FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
             null -> null
         }
     }

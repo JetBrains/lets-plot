@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import MagickWand.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.refTo
@@ -15,7 +14,7 @@ import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 
 class MagickCanvas(
-    val wand: CPointer<MagickWand>?,
+    val wand: CPointer<ImageMagick.MagickWand>?,
     size: Vector,
     pixelRatio: Double,
 ) : ScaledCanvas(MagickContext2d(wand), size, pixelRatio) {
@@ -36,12 +35,12 @@ class MagickCanvas(
         val pixelData = ByteArray(w * h * 4) // RGBA 8-bit per channel
         memScoped {
             val byteBuffer = pixelData.refTo(0) // Pointer to ByteArray
-            val success = MagickExportImagePixels(
+            val success = ImageMagick.MagickExportImagePixels(
                 wand,
                 0, 0, w.toULong(), h.toULong(),
-                "RGBA", StorageType.CharPixel, byteBuffer
+                "RGBA", ImageMagick.StorageType.CharPixel, byteBuffer
             )
-            require(success == MagickTrue) { "Failed to export pixels" }
+            require(success == ImageMagick.MagickTrue) { "Failed to export pixels" }
 
             val lines = pixelData.asSequence().windowed(4 * w.toInt(), 4 * h.toInt()).toList()
             val strLines = lines.map { line ->
@@ -54,7 +53,7 @@ class MagickCanvas(
     }
 
     fun saveBmp(filename: String) {
-        if (MagickWriteImage(wand, filename) == MagickFalse) {
+        if (ImageMagick.MagickWriteImage(wand, filename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
     }
@@ -65,10 +64,10 @@ class MagickCanvas(
         }
 
         fun create(size: Vector): MagickCanvas {
-            val wand = NewMagickWand()
-            val background = NewPixelWand()
-            PixelSetColor(background, "white")
-            MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
+            val wand = ImageMagick.NewMagickWand()
+            val background = ImageMagick.NewPixelWand()
+            ImageMagick.PixelSetColor(background, "white")
+            ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
             return MagickCanvas(wand, size, 1.0)
         }
     }

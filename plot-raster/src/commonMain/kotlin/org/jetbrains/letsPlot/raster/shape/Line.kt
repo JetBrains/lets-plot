@@ -21,7 +21,6 @@ internal class Line : Figure() {
         canvas.context2d.beginPath()
         canvas.context2d.moveTo(x0.toDouble(), y0.toDouble())
         canvas.context2d.lineTo(x1.toDouble(), y1.toDouble())
-        canvas.context2d.closePath()
 
         canvas.context2d.stroke(strokePaint)
     }

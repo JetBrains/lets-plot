@@ -5,10 +5,6 @@
 
 package demo.svg
 
-import MagickWand.MagickFalse
-import MagickWand.MagickWandGenesis
-import MagickWand.MagickWandTerminus
-import MagickWand.MagickWriteImage
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
@@ -17,7 +13,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 object SimpleMagickCanvasDemo {
     @OptIn(ExperimentalForeignApi::class)
     fun main() {
-        MagickWandGenesis()
+        ImageMagick.MagickWandGenesis()
         val width = 50.0
         val height = 50.0
         val canvas = MagickCanvas.create(Vector(width.toInt(), height.toInt()))
@@ -39,11 +35,11 @@ object SimpleMagickCanvasDemo {
 
         // Save the image to a file
         val outputFilename = "simple_demo.bmp"
-        if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
+        if (ImageMagick.MagickWriteImage(canvas.wand, outputFilename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
 
-        MagickWandTerminus()
+        ImageMagick.MagickWandTerminus()
 
         println("Simple demo")
         println(str)

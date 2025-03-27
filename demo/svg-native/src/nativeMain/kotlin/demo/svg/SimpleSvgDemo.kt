@@ -5,8 +5,6 @@
 
 package demo.svg
 
-import MagickWand.MagickFalse
-import MagickWand.MagickWriteImage
 import demo.svgMapping.model.ReferenceSvgModel
 import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
@@ -30,7 +28,7 @@ object SimpleSvgDemo {
 
         // Save the image to a file
         val outputFilename = "svg_demo.bmp"
-        if (MagickWriteImage(canvas.wand, outputFilename) == MagickFalse) {
+        if (ImageMagick.MagickWriteImage(canvas.wand, outputFilename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
 

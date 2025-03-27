@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import MagickWand.*
 import kotlinx.cinterop.CPointer
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 
@@ -54,17 +53,17 @@ class MagickPath {
         commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise))
     }
 
-    fun draw(drawingWand: CPointer<DrawingWand>) {
-        DrawPathStart(drawingWand)
+    fun draw(drawingWand: CPointer<ImageMagick.DrawingWand>) {
+        ImageMagick.DrawPathStart(drawingWand)
         var started = false
 
         commands.forEach { command ->
             when (command) {
                 is MoveTo -> {
-                    DrawPathMoveToAbsolute(drawingWand, command.x, command.y)
+                    ImageMagick.DrawPathMoveToAbsolute(drawingWand, command.x, command.y)
                     started = true
                 }
-                is LineTo -> DrawPathLineToAbsolute(drawingWand, command.x, command.y)
+                is LineTo -> ImageMagick.DrawPathLineToAbsolute(drawingWand, command.x, command.y)
                 is Ellipse -> with(command) {
                     // Convert degrees to radians
                     val startRad = toRadians(startAngle)
@@ -83,14 +82,14 @@ class MagickPath {
                     // Begin drawing path from the arc's starting point
 
                     if (!started) {
-                        DrawPathMoveToAbsolute(drawingWand, startX, startY)
+                        ImageMagick.DrawPathMoveToAbsolute(drawingWand, startX, startY)
                         started = true
                     } else {
-                        DrawPathLineToAbsolute(drawingWand, startX, startY)
+                        ImageMagick.DrawPathLineToAbsolute(drawingWand, startX, startY)
                     }
 
                     // Draw the elliptical arc
-                    DrawPathEllipticArcAbsolute(
+                    ImageMagick.DrawPathEllipticArcAbsolute(
                         drawingWand,
                         radiusX,
                         radiusY,
@@ -103,9 +102,11 @@ class MagickPath {
                 }
 
                 is ClosePath -> {
-                    DrawPathClose(drawingWand)
+                    ImageMagick.DrawPathClose(drawingWand)
                 }
             }
         }
+
+        ImageMagick.DrawPathFinish(drawingWand)
     }
 }
