@@ -138,7 +138,7 @@ class StatTransformTest {
             entry("..upper..", listOf(42.1)),
             entry("..ymax..", listOf(43.5)),
             entry("..ymin..", listOf(38.6)),
-            entry("date", listOf(1.262304E12))
+            entry("date", listOf(1.262304E12)),
         )
     }
 
