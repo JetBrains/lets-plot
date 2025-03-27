@@ -56,10 +56,14 @@ class MagickPath {
 
     fun draw(drawingWand: CPointer<DrawingWand>) {
         DrawPathStart(drawingWand)
+        var started = false
 
         commands.forEach { command ->
             when (command) {
-                is MoveTo -> DrawPathMoveToAbsolute(drawingWand, command.x, command.y)
+                is MoveTo -> {
+                    DrawPathMoveToAbsolute(drawingWand, command.x, command.y)
+                    started = true
+                }
                 is LineTo -> DrawPathLineToAbsolute(drawingWand, command.x, command.y)
                 is Ellipse -> with(command) {
                     // Convert degrees to radians
@@ -78,7 +82,12 @@ class MagickPath {
                     val sweepFlag = if (anticlockwise) 0u else 1u
                     // Begin drawing path from the arc's starting point
 
-                    DrawPathMoveToAbsolute(drawingWand, startX, startY)
+                    if (!started) {
+                        DrawPathMoveToAbsolute(drawingWand, startX, startY)
+                        started = true
+                    } else {
+                        DrawPathLineToAbsolute(drawingWand, startX, startY)
+                    }
 
                     // Draw the elliptical arc
                     DrawPathEllipticArcAbsolute(

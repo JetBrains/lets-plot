@@ -8,6 +8,34 @@ import kotlin.test.Test
  */
 
 class MagickContext2dTest {
+    @Test
+    fun wideStrokes() {
+        val canvas = MagickCanvas.create(100, 100)
+        val context = canvas.context2d
+
+        context.setStrokeStyle(Color.ORANGE)
+        context.setLineWidth(20.0)
+
+        context.beginPath()
+        context.moveTo(0.0, 10.0)
+        context.lineTo(100.0, 10.0)
+        context.closePath()
+        context.stroke()
+
+        context.beginPath()
+        context.moveTo(0.0, 40.0)
+        context.lineTo(100.0, 40.0)
+        context.closePath()
+        context.stroke()
+
+        context.beginPath()
+        context.moveTo(0.0, 70.0)
+        context.lineTo(100.0, 70.0)
+        context.closePath()
+        context.stroke()
+
+        canvas.saveBmp("wide_strokes.bmp")
+    }
 
     @Test
     fun zigZagStroke() {
@@ -122,7 +150,7 @@ class MagickContext2dTest {
 
     @Test
     fun ellipse() {
-        val canvas = MagickCanvas.create(500, 500)
+        val canvas = MagickCanvas.create(200, 200)
         val context = canvas.context2d
 
         context.beginPath()
