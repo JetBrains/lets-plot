@@ -490,9 +490,10 @@ object GeomInteractionUtil {
             return false
         }
 
+        // We determine the verticality of the geometry based on the bindings, regardless of the value of layerConfig.isYOrientation
         val mappedAes = layerConfig.varBindings.map { it.aes }
         return when (geomKind) {
-            GeomKind.BOX_PLOT -> mappedAes.containsAll(listOf(Aes.UPPER, Aes.LOWER))
+            GeomKind.BOX_PLOT -> setOf(Aes.YMIN, Aes.YMAX, Aes.LOWER, Aes.UPPER).intersect(mappedAes.toSet()).isNotEmpty() // If there is at least one Y aes, we consider geom as vertical
             else -> mappedAes.containsAll(listOf(Aes.YMAX, Aes.YMIN))
         }
     }
