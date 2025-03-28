@@ -7,7 +7,6 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
-import MagickWand.*
 import Python.PyObject
 import Python.Py_BuildValue
 import kotlinx.cinterop.*
@@ -36,16 +35,16 @@ object PlotReprGenerator {
         }
     }
 
-    fun getMagickError(wand: CPointer<MagickWand>?): String {
+    fun getMagickError(wand: CPointer<ImageMagick.MagickWand>?): String {
         require(wand != null) { "MagickWand is null" }
 
         return memScoped {
-            val severity = alloc<ExceptionTypeVar>()
-            val messagePtr = MagickGetException(wand, severity.ptr)
+            val severity = alloc<ImageMagick.ExceptionTypeVar>()
+            val messagePtr = ImageMagick.MagickGetException(wand, severity.ptr)
 
             if (messagePtr != null) {
                 val errorMessage = messagePtr.toKString()
-                MagickRelinquishMemory(messagePtr)
+                ImageMagick.MagickRelinquishMemory(messagePtr)
                 "ImageMagick Error: $errorMessage"
             } else {
                 "Unknown ImageMagick error"
@@ -171,7 +170,7 @@ object PlotReprGenerator {
 
             // Save the image to a file
             val outputFilePath = filePath.toKString()
-            if (MagickWriteImage(plotCanvas.wand, outputFilePath) == MagickFalse) {
+            if (ImageMagick.MagickWriteImage(plotCanvas.wand, outputFilePath) == ImageMagick.MagickFalse) {
                 println("Failed to save image $outputFilePath")
                 println(getMagickError(plotCanvas.wand))
                 throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.wand)}")
