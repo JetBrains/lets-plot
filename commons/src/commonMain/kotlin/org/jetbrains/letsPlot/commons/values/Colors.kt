@@ -12,49 +12,168 @@ import kotlin.random.Random
 object Colors {
     private const val DEFAULT_FACTOR = 0.7
 
-    private val variantColors = mapOf<String, Color>(
-        "dark_blue" to Color.DARK_BLUE,
-        "dark_green" to Color.DARK_GREEN,
-        "dark_magenta" to Color.DARK_MAGENTA,
-        "light_blue" to Color.LIGHT_BLUE,
-        "light_gray" to Color.LIGHT_GRAY,
-        "light_green" to Color.LIGHT_GREEN,
-        "light_yellow" to Color.LIGHT_YELLOW,
-        "light_magenta" to Color.LIGHT_MAGENTA,
-        "light_cyan" to Color.LIGHT_CYAN,
-        "light_pink" to Color.LIGHT_PINK,
-        "very_light_gray" to Color.VERY_LIGHT_GRAY,
-        "very_light_yellow" to Color.VERY_LIGHT_YELLOW
+    private val baseColors = mapOf<String, Color>(
+        "aliceblue" to Color.ALICE_BLUE,
+        "antiquewhite" to Color.ANTIQUE_WHITE,
+        "aqua" to Color.AQUA,
+        "aquamarine" to Color.AQUAMARINE,
+        "azure" to Color.AZURE,
+        "beige" to Color.BEIGE,
+        "bisque" to Color.BISQUE,
+        "black" to Color.BLACK,
+        "blanchedalmond" to Color.BLANCHED_ALMOND,
+        "blue" to Color.BLUE,
+        "blueviolet" to Color.BLUE_VIOLET,
+        "brown" to Color.BROWN,
+        "burlywood" to Color.BURLY_WOOD,
+        "cadetblue" to Color.CADET_BLUE,
+        "chartreuse" to Color.CHARTREUSE,
+        "chocolate" to Color.CHOCOLATE,
+        "coral" to Color.CORAL,
+        "cornflowerblue" to Color.CORNFLOWER_BLUE,
+        "cornsilk" to Color.CORNSILK,
+        "crimson" to Color.CRIMSON,
+        "cyan" to Color.CYAN,
+        "darkblue" to Color.DARK_BLUE,
+        "darkcyan" to Color.DARK_CYAN,
+        "darkgoldenrod" to Color.DARK_GOLDENROD,
+        "darkgray" to Color.DARK_GRAY,
+        "darkgreen" to Color.DARK_GREEN,
+        "darkkhaki" to Color.DARK_KHAKI,
+        "darkmagenta" to Color.DARK_MAGENTA,
+        "darkolivegreen" to Color.DARK_OLIVE_GREEN,
+        "darkorange" to Color.DARK_ORANGE,
+        "darkorchid" to Color.DARK_ORCHID,
+        "darkred" to Color.DARK_RED,
+        "darksalmon" to Color.DARK_SALMON,
+        "darkseagreen" to Color.DARK_SEA_GREEN,
+        "darkslateblue" to Color.DARK_SLATE_BLUE,
+        "darkslategray" to Color.DARK_SLATE_GRAY,
+        "darkturquoise" to Color.DARK_TURQUOISE,
+        "darkviolet" to Color.DARK_VIOLET,
+        "deeppink" to Color.DEEP_PINK,
+        "deepskyblue" to Color.DEEP_SKY_BLUE,
+        "dimgray" to Color.DIM_GRAY,
+        "dodgerblue" to Color.DODGER_BLUE,
+        "firebrick" to Color.FIREBRICK,
+        "floralwhite" to Color.FLORAL_WHITE,
+        "forestgreen" to Color.FOREST_GREEN,
+        "fuchsia" to Color.FUCHSIA,
+        "gainsboro" to Color.GAINSBORO,
+        "ghostwhite" to Color.GHOST_WHITE,
+        "gold" to Color.GOLD,
+        "goldenrod" to Color.GOLDENROD,
+        "gray" to Color.GRAY,
+        "green" to Color.GREEN,
+        "greenyellow" to Color.GREEN_YELLOW,
+        "honeydew" to Color.HONEY_DEW,
+        "hotpink" to Color.HOT_PINK,
+        "indianred" to Color.INDIAN_RED,
+        "indigo" to Color.INDIGO,
+        "ivory" to Color.IVORY,
+        "khaki" to Color.KHAKI,
+        "lavender" to Color.LAVENDER,
+        "lavenderblush" to Color.LAVENDER_BLUSH,
+        "lawngreen" to Color.LAWN_GREEN,
+        "lemonchiffon" to Color.LEMON_CHIFFON,
+        "lightblue" to Color.LIGHT_BLUE,
+        "lightcoral" to Color.LIGHT_CORAL,
+        "lightcyan" to Color.LIGHT_CYAN,
+        "lightgoldenrod" to Color.LIGHT_GOLDENROD,
+        "lightgoldenrodyellow" to Color.LIGHT_GOLDENROD_YELLOW,
+        "lightgray" to Color.LIGHT_GRAY,
+        "lightgreen" to Color.LIGHT_GREEN,
+        "lightmagenta" to Color.LIGHT_MAGENTA,
+        "lightpink" to Color.LIGHT_PINK,
+        "lightsalmon" to Color.LIGHT_SALMON,
+        "lightseagreen" to Color.LIGHT_SEA_GREEN,
+        "lightskyblue" to Color.LIGHT_SKY_BLUE,
+        "lightslateblue" to Color.LIGHT_SLATE_BLUE,
+        "lightslategray" to Color.LIGHT_SLATE_GRAY,
+        "lightsteelblue" to Color.LIGHT_STEEL_BLUE,
+        "lightyellow" to Color.LIGHT_YELLOW,
+        "lime" to Color.LIME,
+        "limegreen" to Color.LIME_GREEN,
+        "linen" to Color.LINEN,
+        "magenta" to Color.MAGENTA,
+        "maroon" to Color.MAROON,
+        "mediumaquamarine" to Color.MEDIUM_AQUAMARINE,
+        "mediumblue" to Color.MEDIUM_BLUE,
+        "mediumorchid" to Color.MEDIUM_ORCHID,
+        "mediumpurple" to Color.MEDIUM_PURPLE,
+        "mediumseagreen" to Color.MEDIUM_SEA_GREEN,
+        "mediumslateblue" to Color.MEDIUM_SLATE_BLUE,
+        "mediumspringgreen" to Color.MEDIUM_SPRING_GREEN,
+        "mediumturquoise" to Color.MEDIUM_TURQUOISE,
+        "mediumvioletred" to Color.MEDIUM_VIOLET_RED,
+        "midnightblue" to Color.MIDNIGHT_BLUE,
+        "mintcream" to Color.MINT_CREAM,
+        "mistyrose" to Color.MISTY_ROSE,
+        "moccasin" to Color.MOCCASIN,
+        "navajowhite" to Color.NAVAJO_WHITE,
+        "navy" to Color.NAVY,
+        "navyblue" to Color.NAVY,
+        "oldlace" to Color.OLD_LACE,
+        "olive" to Color.OLIVE,
+        "olivedrab" to Color.OLIVE_DRAB,
+        "orange" to Color.ORANGE,
+        "orangered" to Color.ORANGE_RED,
+        "orchid" to Color.ORCHID,
+        "pacificblue" to Color.PACIFIC_BLUE,
+        "palegoldenrod" to Color.PALE_GOLDENROD,
+        "palegreen" to Color.PALE_GREEN,
+        "paleturquoise" to Color.PALE_TURQUOISE,
+        "palevioletred" to Color.PALE_VIOLET_RED,
+        "papayawhip" to Color.PAPAYA_WHIP,
+        "peachpuff" to Color.PEACH_PUFF,
+        "peru" to Color.PERU,
+        "pink" to Color.PINK,
+        "plum" to Color.PLUM,
+        "powderblue" to Color.POWDERBLUE,
+        "purple" to Color.PURPLE,
+        "rebeccapurple" to Color.REBECCAPURPLE,
+        "red" to Color.RED,
+        "rosybrown" to Color.ROSY_BROWN,
+        "royalblue" to Color.ROYAL_BLUE,
+        "saddlebrown" to Color.SADDLE_BROWN,
+        "salmon" to Color.SALMON,
+        "sandybrown" to Color.SANDY_BROWN,
+        "seagreen" to Color.SEA_GREEN,
+        "seashell" to Color.SEA_SHELL,
+        "sienna" to Color.SIENNA,
+        "silver" to Color.SILVER,
+        "skyblue" to Color.SKY_BLUE,
+        "slateblue" to Color.SLATE_BLUE,
+        "slategray" to Color.SLATE_GRAY,
+        "snow" to Color.SNOW,
+        "springgreen" to Color.SPRING_GREEN,
+        "steelblue" to Color.STEEL_BLUE,
+        "tan" to Color.TAN,
+        "teal" to Color.TEAL,
+        "thistle" to Color.THISTLE,
+        "tomato" to Color.TOMATO,
+        "turquoise" to Color.TURQUOISE,
+        "verylightgray" to Color.VERY_LIGHT_GRAY,
+        "verylightyellow" to Color.VERY_LIGHT_YELLOW,
+        "violet" to Color.VIOLET,
+        "violetred" to Color.VIOLET_RED,
+        "wheat" to Color.WHEAT,
+        "white" to Color.WHITE,
+        "whitesmoke" to Color.WHITE_SMOKE,
+        "yellow" to Color.YELLOW,
+        "yellowgreen" to Color.YELLOW_GREEN
     )
     private val namedColors = (
             mapOf<String, Color>(
                 "transparent" to Color.TRANSPARENT,
                 "blank" to Color.TRANSPARENT,
-                "" to Color.TRANSPARENT,
-                "white" to Color.WHITE,
-                "black" to Color.BLACK,
-                "gray" to Color.GRAY,
-                "red" to Color.RED,
-                "green" to Color.GREEN,
-                "blue" to Color.BLUE,
-                "yellow" to Color.YELLOW,
-                "magenta" to Color.MAGENTA,
-                "cyan" to Color.CYAN,
-                "orange" to Color.ORANGE,
-                "pink" to Color.PINK
+                "" to Color.TRANSPARENT
             ) +
-                    // light_gray
-                    variantColors +
-                    // light-gray
-                    variantColors.mapKeys { it.key.replace('_', '-') } +
-                    // lightgray
-                    variantColors.mapKeys { it.key.replace("_", "") }
+                    baseColors +
+                    baseColors
+                        .filterKeys { it.contains("gray") }
+                        .mapKeys { it.key.replace("gray", "grey") }
             )
-        .run {
-            // ***grey
-            this + mapKeys { it.key.replace("gray", "grey") }
-        }
-
 
     /**
      * @param c color string to parse. Accepted formats:
@@ -74,12 +193,15 @@ object Colors {
         }
     }
 
+    private fun normalizeColorName(name: String): String =
+        name.replace("-", "").replace("_", "").lowercase()
+
     fun isColorName(colorName: String): Boolean {
-        return namedColors.containsKey(colorName.lowercase())
+        return namedColors.containsKey(normalizeColorName(colorName))
     }
 
     fun forName(colorName: String): Color {
-        return namedColors[colorName.lowercase()] ?: throw IllegalArgumentException()
+        return namedColors[normalizeColorName(colorName)] ?: throw IllegalArgumentException()
     }
 
     fun generateHueColor(): Double {
