@@ -147,7 +147,6 @@ class MagickContext2d(
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        println("MagickContext2d.arc(): startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise")
         currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
     }
 
@@ -158,8 +157,7 @@ class MagickContext2d(
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        println("MagickContext2d.ellipse(): startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise")
-        currentPath.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        currentPath.ellipse(x, y, radiusX, radiusY, toDegrees(rotation), toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
     }
 
     override fun closePath() {

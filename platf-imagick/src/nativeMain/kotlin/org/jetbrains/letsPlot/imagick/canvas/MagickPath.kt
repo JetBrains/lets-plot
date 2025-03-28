@@ -52,7 +52,6 @@ class MagickPath {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        println("MagickPath.ellipse(): startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise")
         commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise))
     }
 
@@ -66,10 +65,9 @@ class MagickPath {
                     ImageMagick.DrawPathMoveToAbsolute(drawingWand, command.x, command.y)
                     started = true
                 }
+
                 is LineTo -> ImageMagick.DrawPathLineToAbsolute(drawingWand, command.x, command.y)
                 is Ellipse -> with(command) {
-                    println("MagickPath.drawEllipse(): startAngle=$startAngleDeg, endAngle=$endAngleDeg, anticlockwise=$anticlockwise")
-
                     val startRad = toRadians(startAngleDeg)
                     val endRad = toRadians(endAngleDeg)
 
@@ -78,15 +76,12 @@ class MagickPath {
                     val endX = x + radiusX * cos(endRad)
                     val endY = y + radiusY * sin(endRad)
 
-                    //val delta = ((endAngle - startAngle + 360) % 360).let { if (anticlockwise) 360 - it else it }
                     val delta = endAngleDeg - startAngleDeg
 
                     if (!started) {
-                        println("ImageMagick.DrawPathMoveToAbsolute(): startX=$startX, startY=$startY")
                         ImageMagick.DrawPathMoveToAbsolute(drawingWand, startX, startY)
                         started = true
                     } else {
-                        println("ImageMagick.DrawPathLineToAbsolute(): startX=$startX, startY=$startY")
                         ImageMagick.DrawPathLineToAbsolute(drawingWand, startX, startY)
                     }
 
@@ -101,16 +96,30 @@ class MagickPath {
                         val sweepFlag = if (anticlockwise) 0u else 1u
                         val largeArcFlag = 0u
 
-                        println("ImageMagick.DrawPathEllipticArcAbsolute() [half 1]: radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, endX=$midX, endY=$midY")
-                        ImageMagick.DrawPathEllipticArcAbsolute(drawingWand, radiusX, radiusY, rotation, largeArcFlag, sweepFlag, midX, midY)
-
-                        println("ImageMagick.DrawPathEllipticArcAbsolute() [half 2]: radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, endX=$endX, endY=$endY")
-                        ImageMagick.DrawPathEllipticArcAbsolute(drawingWand, radiusX, radiusY, rotation, largeArcFlag, sweepFlag, endX, endY)
+                        ImageMagick.DrawPathEllipticArcAbsolute(
+                            drawingWand,
+                            radiusX,
+                            radiusY,
+                            rotation,
+                            largeArcFlag,
+                            sweepFlag,
+                            midX,
+                            midY
+                        )
+                        ImageMagick.DrawPathEllipticArcAbsolute(
+                            drawingWand,
+                            radiusX,
+                            radiusY,
+                            rotation,
+                            largeArcFlag,
+                            sweepFlag,
+                            endX,
+                            endY
+                        )
                     } else {
                         val largeArcFlag = if (delta > 180.0) 1u else 0u
                         val sweepFlag = if (anticlockwise) 0u else 1u
 
-                        println("ImageMagick.DrawPathEllipticArcAbsolute(): radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, largeArcFlag=$largeArcFlag, sweepFlag=$sweepFlag, endX=$endX, endY=$endY")
                         ImageMagick.DrawPathEllipticArcAbsolute(
                             drawingWand,
                             radiusX,

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -66,7 +65,7 @@ internal class Path : Figure() {
                 "A" -> {
                     val rx = cmd.args[0]!!.toDouble()
                     val ry = cmd.args[1]!!.toDouble()
-                    val angle = cmd.args[2]!!.toDouble()
+                    val angle = toRadians(cmd.args[2]!!.toDouble())
                     val largeArcFlag = cmd.args[3]!!.toInt()
                     val sweepFlag = cmd.args[4]!!.toInt()
                     val x2 = cmd.args[5]!!.toDouble()
@@ -84,7 +83,7 @@ internal class Path : Figure() {
                 "a" -> {
                     val rx = cmd.args[0]!!.toDouble()
                     val ry = cmd.args[1]!!.toDouble()
-                    val angle = cmd.args[2]!!.toDouble()
+                    val angle = toRadians(cmd.args[2]!!.toDouble())
                     val largeArcFlag = cmd.args[3]!!.toInt()
                     val sweepFlag = cmd.args[4]!!.toInt()
                     val dx = cmd.args[5]!!.toDouble()
@@ -126,7 +125,6 @@ internal class Path : Figure() {
         val y1 = curY
         val x2 = curX + dx
         val y2 = curY + dy
-        val phi = toRadians(angle) // Convert degrees to radians
 
         // Ensure radii are positive
         var rx = abs(rxIn)
@@ -136,8 +134,8 @@ internal class Path : Figure() {
         val dx2 = (x1 - x2) / 2.0
         val dy2 = (y1 - y2) / 2.0
 
-        val x1p = cos(phi) * dx2 + sin(phi) * dy2
-        val y1p = -sin(phi) * dx2 + cos(phi) * dy2
+        val x1p = cos(angle) * dx2 + sin(angle) * dy2
+        val y1p = -sin(angle) * dx2 + cos(angle) * dy2
 
         // Correct radii if they are too small
         val lambda = x1p * x1p / (rx * rx) + y1p * y1p / (ry * ry)
@@ -161,8 +159,8 @@ internal class Path : Figure() {
         val cyp = factor * (-ry * x1p / rx)
 
         // Step 3: Transform center back to the original coordinate system
-        val cx = cos(phi) * cxp - sin(phi) * cyp + (x1 + x2) / 2.0
-        val cy = sin(phi) * cxp + cos(phi) * cyp + (y1 + y2) / 2.0
+        val cx = cos(angle) * cxp - sin(angle) * cyp + (x1 + x2) / 2.0
+        val cy = sin(angle) * cxp + cos(angle) * cyp + (y1 + y2) / 2.0
 
         // Step 4: Compute start angle and end angle
         val v1x = (x1p - cxp) / rx
@@ -180,8 +178,8 @@ internal class Path : Figure() {
             if (deltaTheta > 0) deltaTheta -= 2 * PI
         }
 
-        val startAngle = toDegrees(theta1)
-        val endAngle = toDegrees(theta1 + deltaTheta)
+        val startAngle = theta1
+        val endAngle = theta1 + deltaTheta
 
         // Determine direction (anticlockwise = !sweepFlag)
         val anticlockwise = sweepFlag == 0

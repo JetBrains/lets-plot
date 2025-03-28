@@ -2,6 +2,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import kotlin.math.PI
 import kotlin.test.Test
 
 /*
@@ -240,8 +241,8 @@ class MagickContext2dTest {
             radiusX = 100.0,
             radiusY = 100.0,
             rotation = 0.0,
-            startAngle = -90.0,
-            endAngle = -180.0,
+            startAngle = -PI,
+            endAngle = -2 * PI,
             anticlockwise = true
         )
         context.closePath()
