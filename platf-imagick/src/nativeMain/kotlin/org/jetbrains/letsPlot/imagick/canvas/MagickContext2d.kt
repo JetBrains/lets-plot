@@ -30,7 +30,7 @@ class MagickContext2d(
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        state.transform(m11, m12, m21, m22, dx, dy)
+        state.transform(sx = m11, rx = m21, ry = m12, sy = m22, dx = dx, dy = dy)
     }
 
     override fun setFont(f: Font) {
