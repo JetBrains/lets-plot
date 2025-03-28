@@ -51,47 +51,62 @@ os.makedirs(INSTALL_DIR, exist_ok=True)
 print("Cleaning ImageMagick...")
 subprocess.run(["make", "clean"], cwd=BUILD_DIR, check=False)
 
+# Prepare your env
+env = os.environ.copy()
+env["GS"] = "none"  # disable Ghostscript delegate
+
 # Run configure script
 print("Configuring ImageMagick...")
 configure_cmd = [
     "ac_cv_func_getentropy=no", # while in local sysroot we have getentropy, but it is not available in the konan sysroot (glibc 2.19)
+    "ac_cv_func_gs=no", # while in local sysroot we have getentropy, but it is not available in the konan sysroot (glibc 2.19)
  #   f"CC={CC}", f"CXX={CXX}",
     "CFLAGS=-fPIC", "CXXFLAGS=-fPIC",
     "../src/configure",
-    "--disable-shared",
+    "--enable-zero-configuration",
     "--enable-static",
     "--with-pic",
-    f"--prefix={INSTALL_DIR}",
+    "--with-quantum-depth=8",
     "--with-fontconfig",
     "--with-freetype",
-    "--disable-dependency-tracking",
+    f"--prefix={INSTALL_DIR}",
+    "--disable-shared",
     "--disable-openmp",
-    "--disable-hdri",
-    "--with-quantum-depth=8",
-    "--without-zlib",
     "--without-threads",
+    "--disable-opencl",
+    "--disable-assert",
+    "--disable-hdri",
+    "--disable-installed",
     "--without-magick-plus-plus",
-    "--without-jpeg",
-    "--without-webp",
-    "--without-jbig",
-    "--without-png",
-    "--without-openexr",
-    "--without-lcms",
-    "--without-heic",
-    "--without-pango",
-    "--without-jxl",
-    "--without-lqr",
-    "--without-openjp2",
+    "--without-perl",
     "--without-bzlib",
-    "--without-tiff",
-    "--without-zstd",
+    "--without-djvu",
+    "--without-dps",
+    "--without-fftw",
+    "--without-gslib",
+    "--without-gslib_framework",
+    "--without-gvc",
+    "--without-heic",
+    "--without-jbig",
+    "--without-jpeg",
+    "--without-lcms",
+    "--without-lqr",
     "--without-lzma",
+    "--without-openexr",
+    "--without-pango",
+    "--without-perl",
+    "--without-png",
+    "--without-raw",
+    "--without-rsvg",
+    "--without-tiff",
+    "--without-webp",
+    "--without-wmf",
+    "--without-x",
     "--without-xml",
-    "--without-x",  # Disable X11 support
-    "--without-modules",  # Disable dynamically loaded modules
+    "--without-zlib",
 ]
 
-subprocess.run(" ".join(configure_cmd), shell=True, cwd=BUILD_DIR, check=True)
+subprocess.run(" ".join(configure_cmd), shell=True, env=env, cwd=BUILD_DIR, check=True)
 
 print("Building ImageMagick...")
 subprocess.run(["make", "-j", str(os.cpu_count())], cwd=BUILD_DIR, check=True)
