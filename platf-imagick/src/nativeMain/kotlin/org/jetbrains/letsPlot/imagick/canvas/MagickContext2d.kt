@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.intern.math.toDegrees
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 
@@ -31,6 +33,21 @@ class MagickContext2d(
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
         state.transform(sx = m11, rx = m21, ry = m12, sy = m22, dx = dx, dy = dy)
+    }
+
+    override fun scale(x: Double, y: Double) {
+        return transform(x, 0.0, 0.0, y, 0.0, 0.0)
+    }
+
+    override fun rotate(angle: Double) {
+        val radians = toRadians(angle)
+        val cos = kotlin.math.cos(radians)
+        val sin = kotlin.math.sin(radians)
+        return transform(cos, sin, -sin, cos, 0.0, 0.0)
+    }
+
+    override fun translate(x: Double, y: Double) {
+        return transform(1.0, 0.0, 0.0, 1.0, x, y)
     }
 
     override fun setFont(f: Font) {
@@ -130,7 +147,8 @@ class MagickContext2d(
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        currentPath.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+        println("MagickContext2d.arc(): startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise")
+        currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
     }
 
     override fun ellipse(
@@ -140,9 +158,9 @@ class MagickContext2d(
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
+        println("MagickContext2d.ellipse(): startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise")
         currentPath.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
     }
-
 
     override fun closePath() {
         currentPath.closePath()
@@ -213,7 +231,6 @@ class MagickContext2d(
         val at = state.transform.let {
             "sx=${it.sx}, sy=${it.sy}, rx=${it.rx}, ry=${it.ry}, tx=${it.tx}, ty=${it.ty}"
         }
-        println("withWand() - transform: $at")
         ImageMagick.DrawAffine(wand, state.transform.ptr)
         ImageMagick.DrawSetFontSize(wand, state.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.fontFamily)

@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.CPointer
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import kotlin.math.cos
+import kotlin.math.sin
 
 class MagickPath {
     private sealed class PathCommand
@@ -18,8 +20,8 @@ class MagickPath {
         val radiusX: Double,
         val radiusY: Double,
         val rotation: Double,
-        val startAngle: Double,
-        val endAngle: Double,
+        val startAngleDeg: Double,
+        val endAngleDeg: Double,
         val anticlockwise: Boolean
     ) : PathCommand()
 
@@ -39,8 +41,8 @@ class MagickPath {
         commands.add(LineTo(x, y))
     }
 
-    fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
-        commands.add(Ellipse(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise))
+    fun arc(x: Double, y: Double, radius: Double, startAngleDeg: Double, endAngleDeg: Double, anticlockwise: Boolean) {
+        commands.add(Ellipse(x, y, radius, radius, 0.0, startAngleDeg, endAngleDeg, anticlockwise))
     }
 
     fun ellipse(
@@ -50,6 +52,7 @@ class MagickPath {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
+        println("MagickPath.ellipse(): startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise")
         commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise))
     }
 
@@ -65,45 +68,64 @@ class MagickPath {
                 }
                 is LineTo -> ImageMagick.DrawPathLineToAbsolute(drawingWand, command.x, command.y)
                 is Ellipse -> with(command) {
-                    // Convert degrees to radians
-                    val startRad = toRadians(startAngle)
-                    val endRad = toRadians(endAngle)
+                    println("MagickPath.drawEllipse(): startAngle=$startAngleDeg, endAngle=$endAngleDeg, anticlockwise=$anticlockwise")
 
-                    // Compute start and end points of the arc
-                    val startX = x + radiusX * kotlin.math.cos(startRad)
-                    val startY = y + radiusY * kotlin.math.sin(startRad)
-                    val endX = x + radiusX * kotlin.math.cos(endRad)
-                    val endY = y + radiusY * kotlin.math.sin(endRad)
+                    val startRad = toRadians(startAngleDeg)
+                    val endRad = toRadians(endAngleDeg)
 
-                    // Determine arc flags
-                    val delta = ((endAngle - startAngle + 360) % 360).let { if (anticlockwise) 360 - it else it }
-                    val largeArcFlag = if (delta > 180.0) 1u else 0u
-                    val sweepFlag = if (anticlockwise) 0u else 1u
-                    // Begin drawing path from the arc's starting point
+                    val startX = x + radiusX * cos(startRad)
+                    val startY = y + radiusY * sin(startRad)
+                    val endX = x + radiusX * cos(endRad)
+                    val endY = y + radiusY * sin(endRad)
+
+                    //val delta = ((endAngle - startAngle + 360) % 360).let { if (anticlockwise) 360 - it else it }
+                    val delta = endAngleDeg - startAngleDeg
 
                     if (!started) {
+                        println("ImageMagick.DrawPathMoveToAbsolute(): startX=$startX, startY=$startY")
                         ImageMagick.DrawPathMoveToAbsolute(drawingWand, startX, startY)
                         started = true
                     } else {
+                        println("ImageMagick.DrawPathLineToAbsolute(): startX=$startX, startY=$startY")
                         ImageMagick.DrawPathLineToAbsolute(drawingWand, startX, startY)
                     }
 
-                    // Draw the elliptical arc
-                    ImageMagick.DrawPathEllipticArcAbsolute(
-                        drawingWand,
-                        radiusX,
-                        radiusY,
-                        rotation,
-                        largeArcFlag,
-                        sweepFlag,
-                        endX,
-                        endY
-                    )
+                    if (delta >= 360.0) {
+                        // Full circle: break into two arcs
+
+                        val midAngle = startAngleDeg + (if (anticlockwise) -180.0 else 180.0)
+                        val midRad = toRadians(midAngle)
+                        val midX = x + radiusX * cos(midRad)
+                        val midY = y + radiusY * sin(midRad)
+
+                        val sweepFlag = if (anticlockwise) 0u else 1u
+                        val largeArcFlag = 0u
+
+                        println("ImageMagick.DrawPathEllipticArcAbsolute() [half 1]: radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, endX=$midX, endY=$midY")
+                        ImageMagick.DrawPathEllipticArcAbsolute(drawingWand, radiusX, radiusY, rotation, largeArcFlag, sweepFlag, midX, midY)
+
+                        println("ImageMagick.DrawPathEllipticArcAbsolute() [half 2]: radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, endX=$endX, endY=$endY")
+                        ImageMagick.DrawPathEllipticArcAbsolute(drawingWand, radiusX, radiusY, rotation, largeArcFlag, sweepFlag, endX, endY)
+                    } else {
+                        val largeArcFlag = if (delta > 180.0) 1u else 0u
+                        val sweepFlag = if (anticlockwise) 0u else 1u
+
+                        println("ImageMagick.DrawPathEllipticArcAbsolute(): radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, largeArcFlag=$largeArcFlag, sweepFlag=$sweepFlag, endX=$endX, endY=$endY")
+                        ImageMagick.DrawPathEllipticArcAbsolute(
+                            drawingWand,
+                            radiusX,
+                            radiusY,
+                            rotation,
+                            largeArcFlag,
+                            sweepFlag,
+                            endX,
+                            endY
+                        )
+                    }
+
                 }
 
-                is ClosePath -> {
-                    ImageMagick.DrawPathClose(drawingWand)
-                }
+                is ClosePath -> ImageMagick.DrawPathClose(drawingWand)
             }
         }
 
