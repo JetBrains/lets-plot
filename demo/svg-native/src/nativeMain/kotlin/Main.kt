@@ -1,5 +1,6 @@
+import demo.plot.BarPlotMagickCanvasDemo
+import demo.svg.ReferenceSvgDemo
 import demo.svg.SimpleMagickCanvasDemo
-import demo.svg.SimpleSvgDemo
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -14,5 +15,10 @@ fun simpleMagickCanvasDemoMain() {
 
 @Suppress("unused")
 fun simpleSvgDemoMain() {
-    SimpleSvgDemo.main()
+    ReferenceSvgDemo.main()
+}
+
+@Suppress("unused")
+fun barPlotMain() {
+    BarPlotMagickCanvasDemo.main()
 }

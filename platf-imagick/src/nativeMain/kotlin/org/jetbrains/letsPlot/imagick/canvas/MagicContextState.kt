@@ -24,7 +24,7 @@ internal class MagickContextState(
     var fontFamily: String,
     var fontStyle: ImageMagick.StyleType,
     var fontWeight: ULong,
-    var transform: ImageMagick.AffineMatrix
+    transform: ImageMagick.AffineMatrix
 ) {
     var lineDashPattern: CArrayPointer<DoubleVar>? = lineDashPattern
         set(value) {
@@ -32,15 +32,43 @@ internal class MagickContextState(
             field = value
         }
 
+    val affineMatrix: ImageMagick.AffineMatrix = nativeHeap.alloc<ImageMagick.AffineMatrix>()
+
+    init {
+        affineMatrix.sx = transform.sx
+        affineMatrix.sy = transform.sy
+        affineMatrix.rx = transform.rx
+        affineMatrix.ry = transform.ry
+        affineMatrix.tx = transform.tx
+        affineMatrix.ty = transform.ty
+    }
+
+    fun setTransform(value: ImageMagick.AffineMatrix) {
+        affineMatrix.sx = value.sx
+        affineMatrix.sy = value.sy
+        affineMatrix.rx = value.rx
+        affineMatrix.ry = value.ry
+        affineMatrix.tx = value.tx
+        affineMatrix.ty = value.ty
+    }
+
+    fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
+        affineMatrix.sx = m11
+        affineMatrix.sy = m12
+        affineMatrix.rx = m21
+        affineMatrix.ry = m22
+        affineMatrix.tx = dx
+        affineMatrix.ty = dy
+    }
 
     fun transform(sx: Double, rx: Double, ry: Double, sy: Double, dx: Double, dy: Double) {
         val cur = Matrix33(
-            transform.sx.toFloat(),
-            transform.rx.toFloat(),
-            transform.tx.toFloat(),
-            transform.ry.toFloat(),
-            transform.sy.toFloat(),
-            transform.ty.toFloat(),
+            affineMatrix.sx.toFloat(),
+            affineMatrix.rx.toFloat(),
+            affineMatrix.tx.toFloat(),
+            affineMatrix.ry.toFloat(),
+            affineMatrix.sy.toFloat(),
+            affineMatrix.ty.toFloat(),
             0f,
             0f,
             1f
@@ -60,18 +88,19 @@ internal class MagickContextState(
 
         val res = cur.makeConcat(tr)
 
-        transform = nativeHeap.alloc()
-        transform.sx = res.scaleX.toDouble()
-        transform.sy = res.scaleY.toDouble()
-        transform.rx = res.skewX.toDouble()
-        transform.ry = res.skewY.toDouble()
-        transform.tx = res.translateX.toDouble()
-        transform.ty = res.translateY.toDouble()
+        affineMatrix.sx = res.scaleX.toDouble()
+        affineMatrix.sy = res.scaleY.toDouble()
+        affineMatrix.rx = res.skewX.toDouble()
+        affineMatrix.ry = res.skewY.toDouble()
+        affineMatrix.tx = res.translateX.toDouble()
+        affineMatrix.ty = res.translateY.toDouble()
     }
 
     fun destroy() {
         lineDashPattern?.let { nativeHeap.free(it.rawValue) }
         lineDashPattern = null
+
+        //nativeHeap.free(affineMatrix.rawPtr)
     }
 
     fun copy(): MagickContextState {
@@ -88,7 +117,7 @@ internal class MagickContextState(
             fontFamily = fontFamily,
             fontStyle = fontStyle,
             fontWeight = fontWeight,
-            transform = transform,
+            transform = affineMatrix,
             lineDashPattern = lineDashPattern?.let { pattern ->
                 nativeHeap.allocArray(lineDashPatternSize.toInt()) { i -> value = pattern[i] }
             },

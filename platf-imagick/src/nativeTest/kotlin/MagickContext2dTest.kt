@@ -12,6 +12,33 @@ import kotlin.test.Test
 
 class MagickContext2dTest {
     @Test
+    fun saveRestore() {
+        val canvas = MagickCanvas.create(100, 100)
+        val context = canvas.context2d
+        context.fillStyle = "black"
+
+        context.save()
+        context.translate(0.0, 70.0)
+        context.save()
+        context.translate(40.0, 0.0)
+        context.fillText("foo", 0.0, 0.0 + 12.0 * 0.7)  // dy="0.7em"
+        context.arc(0.0, 6.0, 5.0, 0.0, 2 * PI)
+        context.fill()
+        context.restore()
+        context.save()
+        context.translate(80.0, 0.0)
+        context.fillText("bar", 0.0, 0.0 + 12.0 * 0.7)
+        context.arc(0.0, 6.0, 5.0, 0.0, 2 * PI)
+        context.fill()
+        context.restore()
+        context.restore() // restore after outermost translate
+
+        canvas.saveBmp("translates.bmp")
+
+    }
+
+
+    @Test
     fun lineForwardAndBackward() {
         val canvas = MagickCanvas.create(100, 100)
         val context = canvas.context2d
@@ -92,6 +119,7 @@ class MagickContext2dTest {
 
         canvas.saveBmp("multi_path_fill.bmp")
     }
+
     @Test
     fun multiPathStroke() {
         val canvas = MagickCanvas.create(100, 100)

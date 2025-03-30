@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
-object SimpleSvgDemo {
+object ReferenceSvgDemo {
     @OptIn(ExperimentalForeignApi::class)
     fun main() {
         val w = 500

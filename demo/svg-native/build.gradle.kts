@@ -34,6 +34,9 @@ kotlin {
             executable("SimpleCanvasDemo") {
                 entryPoint = "simpleMagickCanvasDemoMain"
             }
+            executable("BarPlotDemo") {
+                entryPoint = "barPlotMain"
+            }
         }
     }
 

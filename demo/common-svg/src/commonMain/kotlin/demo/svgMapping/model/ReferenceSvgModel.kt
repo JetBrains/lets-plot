@@ -103,6 +103,12 @@ object ReferenceSvgModel {
                 }
             }
 
+            // Translated text
+            g(transform = translate(200, 200)) {
+                text("Translated", x = 0.0, y = 0.0, styleClass = "TEXT1") {
+                    transform().set(SvgTransformBuilder().rotate(45.0, 20.0, 100.0).build())
+                }
+            }
         }
     }
 

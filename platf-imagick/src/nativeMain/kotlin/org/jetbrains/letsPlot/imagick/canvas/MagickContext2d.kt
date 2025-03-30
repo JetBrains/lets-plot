@@ -21,18 +21,20 @@ class MagickContext2d(
     private var state = MagickContextState.create()
     private val contextStates = mutableListOf<MagickContextState>()
 
+
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        state.transform = nativeHeap.alloc<ImageMagick.AffineMatrix>()
-        state.transform.sx = m11
-        state.transform.sy = m12
-        state.transform.rx = m21
-        state.transform.ry = m22
-        state.transform.tx = dx
-        state.transform.ty = dy
+        //println("setTransform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)")
+       // println("\tfrom: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        state.setTransform(m11,m12,m21,m22,dx,dy)
+        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
+        //println("transform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)")
+        //println("\tfrom: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+
         state.transform(sx = m11, rx = m21, ry = m12, sy = m22, dx = dx, dy = dy)
+        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
     }
 
     override fun scale(x: Double, y: Double) {
@@ -108,6 +110,7 @@ class MagickContext2d(
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
+        //println("FillText(\'$text\') [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
         withFillWand { fillWand ->
             memScoped {
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
@@ -165,6 +168,7 @@ class MagickContext2d(
     }
 
     override fun stroke() {
+        //println("Stroke: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
         withStrokeWand { strokeWand ->
             currentPath.draw(strokeWand)
             ImageMagick.MagickDrawImage(magickWand, strokeWand)
@@ -172,6 +176,7 @@ class MagickContext2d(
     }
 
     override fun fill() {
+        //println("Fill: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
         withFillWand { fillWand ->
             currentPath.draw(fillWand)
             ImageMagick.MagickDrawImage(magickWand, fillWand)
@@ -215,21 +220,26 @@ class MagickContext2d(
     }
 
     override fun save() {
+        //println("save")
         contextStates += state
         state = state.copy()
+        val old = contextStates.last().affineMatrix
+        //println("\tfrom: [${old.sx}, ${old.rx}, ${old.tx}, ${old.ry}, ${old.sy}, ${old.ty}]")
+        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
     }
 
     override fun restore() {
-        contextStates.removeLastOrNull()?.destroy()
+        //println("restore()")
+        //println("\tfrom: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
         state = contextStates.lastOrNull() ?: MagickContextState.create()
+        contextStates.removeLastOrNull()?.destroy()
+        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
     }
 
     private fun withWand(block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
         val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
-        val at = state.transform.let {
-            "sx=${it.sx}, sy=${it.sy}, rx=${it.rx}, ry=${it.ry}, tx=${it.tx}, ty=${it.ty}"
-        }
-        ImageMagick.DrawAffine(wand, state.transform.ptr)
+
+        ImageMagick.DrawAffine(wand, state.affineMatrix.ptr)
         ImageMagick.DrawSetFontSize(wand, state.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.fontFamily)
         ImageMagick.DrawSetFontStyle(wand, state.fontStyle)
