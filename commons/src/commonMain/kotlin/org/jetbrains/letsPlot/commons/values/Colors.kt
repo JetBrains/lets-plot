@@ -12,6 +12,16 @@ import kotlin.random.Random
 object Colors {
     private const val DEFAULT_FACTOR = 0.7
 
+    private val grayscaleColors: Map<String, Color> = (0..100).associate { i ->
+        "gray$i" to Color.gray(i)
+    }
+
+    private val transparentColors = mapOf<String, Color>(
+        "transparent" to Color.TRANSPARENT,
+        "blank" to Color.TRANSPARENT,
+        "" to Color.TRANSPARENT
+    )
+
     private val baseColors = mapOf<String, Color>(
         "aliceblue" to Color.ALICE_BLUE,
         "antiquewhite" to Color.ANTIQUE_WHITE,
@@ -153,8 +163,6 @@ object Colors {
         "thistle" to Color.THISTLE,
         "tomato" to Color.TOMATO,
         "turquoise" to Color.TURQUOISE,
-        "verylightgray" to Color.VERY_LIGHT_GRAY,
-        "verylightyellow" to Color.VERY_LIGHT_YELLOW,
         "violet" to Color.VIOLET,
         "violetred" to Color.VIOLET_RED,
         "wheat" to Color.WHEAT,
@@ -163,17 +171,8 @@ object Colors {
         "yellow" to Color.YELLOW,
         "yellowgreen" to Color.YELLOW_GREEN
     )
-    private val namedColors = (
-            mapOf<String, Color>(
-                "transparent" to Color.TRANSPARENT,
-                "blank" to Color.TRANSPARENT,
-                "" to Color.TRANSPARENT
-            ) +
-                    baseColors +
-                    baseColors
-                        .filterKeys { it.contains("gray") }
-                        .mapKeys { it.key.replace("gray", "grey") }
-            )
+
+    private val namedColors = baseColors + grayscaleColors + transparentColors
 
     /**
      * @param c color string to parse. Accepted formats:
@@ -194,7 +193,10 @@ object Colors {
     }
 
     private fun normalizeColorName(name: String): String =
-        name.replace("-", "").replace("_", "").lowercase()
+        name.replace("-", "")
+            .replace("_", "")
+            .replace("grey", "gray")
+            .lowercase()
 
     fun isColorName(colorName: String): Boolean {
         return namedColors.containsKey(normalizeColorName(colorName))

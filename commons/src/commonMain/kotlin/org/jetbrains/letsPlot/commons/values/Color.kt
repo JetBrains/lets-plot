@@ -204,8 +204,6 @@ class Color @JvmOverloads constructor(
         val THISTLE = parseHex("#D8BFD8")
         val TOMATO = parseHex("#FF6347")
         val TURQUOISE = parseHex("#40E0D0")
-        val VERY_LIGHT_GRAY = parseHex("#D2D2D2")
-        val VERY_LIGHT_YELLOW = parseHex("#FFFFD2")
         val VIOLET = parseHex("#EE82EE")
         val VIOLET_RED = parseHex("#D02090")
         val WHEAT = parseHex("#F5DEB3")
@@ -213,6 +211,12 @@ class Color @JvmOverloads constructor(
         val WHITE_SMOKE = parseHex("#F5F5F5")
         val YELLOW = parseHex("#FFFF00")
         val YELLOW_GREEN = parseHex("#9ACD32")
+
+        fun gray(intensity: Int): Color {
+            require(intensity in 0..100) { "Value must be between 0 and 100" }
+            val value = (intensity * 255 / 100.0).roundToInt()
+            return Color(value, value, value)
+        }
 
         private const val RGB = "rgb"
         private const val COLOR = "color"
