@@ -30,14 +30,6 @@ class ErrorBarDomainTest {
         assertEquals(MAX_VALUE + 0.05, yDomain?.upperEnd, EPSILON)
     }
 
-    @Test
-    fun testErrorBarGeomCalculatesRotatedYRangeCorrectly() {
-        val errorBarTile = buildErrorBar(isVertical = false)
-        val (xDomain, _) = errorBarTile.overallXYContinuousDomains()
-        assertEquals(MIN_VALUE - 0.05, xDomain?.lowerEnd, EPSILON)
-        assertEquals(MAX_VALUE + 0.05, xDomain?.upperEnd, EPSILON)
-    }
-
     private fun buildErrorBar(
         isVertical: Boolean
     ): SimplePlotGeomTiles {

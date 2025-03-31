@@ -34,11 +34,12 @@ class CrossBarGeom(
             return listOf(Aes.XMIN, Aes.XMAX).map(::afterRotation)
         }
 
-    override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults): AestheticsDefaults {
-        return if (isVertical) {
-            aestheticDefaults.with(Aes.Y, Double.NaN) // The middle bar is optional
+    override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults {
+        // 'isVertical' is no longer available, so we need to use 'flipped' to correctly remove the default value
+        return if (flipped) {
+            aestheticDefaults.with(Aes.X, Double.NaN) // The middle bar is optional
         } else {
-            aestheticDefaults.with(Aes.X, Double.NaN)
+            aestheticDefaults.with(Aes.Y, Double.NaN)
         }
     }
 

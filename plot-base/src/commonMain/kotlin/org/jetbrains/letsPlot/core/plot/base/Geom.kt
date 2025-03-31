@@ -14,5 +14,5 @@ interface Geom {
     val wontRender: List<Aes<*>> get() = emptyList()
     fun rangeIncludesZero(aes: Aes<*>): Boolean = false
     fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
-    fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults): AestheticsDefaults = aestheticDefaults
+    fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults = aestheticDefaults
 }
