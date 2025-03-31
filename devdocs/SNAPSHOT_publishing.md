@@ -15,7 +15,8 @@ Run tne next gradle tasks from the project root:
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotImageExportPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
-          publishLetsPlotCoreModulesToMavenRepository
+          publishLetsPlotCoreModulesToMavenRepository \
+          publishLetsPlotIdeaPluginPublicationToMavenRepository
 ```
 
 ### 3. Check uploaded artifacts:

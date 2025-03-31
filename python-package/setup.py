@@ -17,10 +17,11 @@ kn_platform_build_dir = {
 this_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(this_dir)
 this_system = platform.system()
+
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
+
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
-                                   kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic',
-                                   )
+                                   kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
 imagemagick_lib_path = os.environ.get('LP_IMAGEMAGICK_PATH')
 python_package = 'lets_plot'
 
@@ -55,10 +56,15 @@ static_link_libraries_list = ['lets_plot_python_extension']
 extra_link = []
 
 if this_system == 'Darwin':
+    static_link_libraries_list += ['c++']
+    extra_link += [
+        '-Wl,-rpath,/usr/lib',
+        '-framework', 'Foundation',
+        '-lz'
+    ]
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
-            '-lz',
             '-lfontconfig',
             '-lfreetype',
             '-lMagickWand-7.Q8',
@@ -67,11 +73,13 @@ if this_system == 'Darwin':
 
 elif this_system == 'Windows':
     static_link_libraries_list += ['stdc++']
-
+    # fix python package build with Kotlin v1.7.20 (and later) on Windows.
     extra_link += [
         '-static-libgcc',
         '-static',
         '-lbcrypt',
+        '-lpthread',
+        '-lz'
     ]
 
     if imagemagick_lib_path is not None:
@@ -94,13 +102,13 @@ elif this_system == 'Windows':
 
 elif this_system == 'Linux':
     static_link_libraries_list += ['stdc++']
+    extra_link += ['-lz']
 
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
             '-lMagickWand-7.Q8',
             '-lMagickCore-7.Q8',
-            '-lz',
             '-lfontconfig',
             '-lfreetype',
         ]
