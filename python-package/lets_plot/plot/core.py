@@ -875,8 +875,7 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
-    str, None]:
+def _check_cairo():
     try:
         import cairosvg
     except ImportError:
@@ -888,16 +887,30 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
               "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
         return None
 
+
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
+    str, None]:
+    from .. import _kbridge
+
     if export_format.lower() == 'png':
+        if _check_cairo() is None:
+            return None
+
         export_function = cairosvg.svg2png
+        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+        input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
     elif export_format.lower() == 'pdf':
+        if _check_cairo() is None:
+            return None
+
         export_function = cairosvg.svg2pdf
+        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+        input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+    elif export_format.lower() == 'bmp':
+        export_function = _kbridge._save_image
+        input = spec.as_dict()
     else:
         raise ValueError("Unknown export format: {}".format(export_format))
-
-    from .. import _kbridge
-    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
-    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
 
     if isinstance(path, str):
         abspath = _makedirs(path)
@@ -910,10 +923,10 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
             raise ValueError("w, h, unit, and dpi must all be specified")
 
         w, h = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
-        export_function(bytestring=svg, write_to=path, dpi=dpi, output_width=w, output_height=h)
+        export_function(bytestring=input, write_to=path, dpi=dpi, output_width=w, output_height=h)
     else:
         scale = scale if scale is not None else 2.0
-        export_function(bytestring=svg, write_to=path, scale=scale)
+        export_function(bytestring=input, write_to=path, scale=scale)
 
     return result
 

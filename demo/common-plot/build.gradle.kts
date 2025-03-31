@@ -13,6 +13,8 @@ kotlin {
         browser()
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
         commonMain {
             dependencies {

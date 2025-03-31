@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
 import kotlin.math.PI
@@ -51,7 +50,7 @@ internal class SpinnerContent : CanvasContent {
             fontFamily = "Helvetica, Arial, sans-serif")
         )
 
-        val textWidth = measureText(LOADING_TEXT)
+        val textWidth = measureTextWidth(LOADING_TEXT)
 
         val spinnerWidth = 2 * RADIUS + LINE_WIDTH
         val width = spinnerWidth + SPACE + textWidth

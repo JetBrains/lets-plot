@@ -11,15 +11,18 @@ import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Font
 import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
 import java.awt.font.GlyphVector
 import java.awt.geom.*
+import java.awt.geom.AffineTransform.getRotateInstance
 import java.awt.geom.Arc2D.OPEN
+import kotlin.math.abs
 import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
 
-typealias AwtFont = java.awt.Font
+typealias AwtFont = Font
 
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath = GeneralPath()
@@ -186,31 +189,57 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        var start = toDegrees(startAngle) % 360
-        var end = toDegrees(endAngle) % 360
-        var length: Double
-
-        if (start == end && startAngle != endAngle) {
-            length = 360.0
-        } else {
-            if (start > end && end < 0) {
-                end += 360
-            } else if (start > end && end >= 0) {
-                start -= 360
-            }
-
-            length = end - start
-        }
-
-        if (anticlockwise) {
-            if (length != 0.0 && length != 360.0) {
-                length -= 360
-            }
-        }
-
-        val arc = Arc2D.Double(x - radius, y - radius, radius * 2, radius * 2, -start, -length, OPEN)
-        val path = Path2D.Double(arc, graphics.transform)
+        val path = buildArc(x, y, radius, radius, 0.0, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
         currentPath.append(path, true)
+    }
+
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        val path = buildArc(x, y, radiusX, radiusY, toDegrees(rotation), toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
+        currentPath.append(path, true)
+    }
+
+    private fun buildArc(
+        x: Double, y: Double,
+        radiusX: Double, radiusY: Double,
+        rotation: Double,
+        startAngle: Double, endAngle: Double,
+        anticlockwise: Boolean
+    ): Path2D.Double {
+        var start = startAngle % 360
+        var end = endAngle % 360
+        val fullCircle = (start == end && startAngle != endAngle)
+
+        if (!anticlockwise && start > end) start -= 360.0
+        if (anticlockwise && start < end) end -= 360.0
+
+        var length = end - start
+        if (anticlockwise) length = -abs(length)
+
+        val path = Path2D.Double()
+
+        fun appendArcSegment(startDeg: Double, extentDeg: Double) {
+            val arc = Arc2D.Double(
+                x - radiusX, y - radiusY,
+                radiusX * 2, radiusY * 2,
+                -startDeg, -extentDeg,
+                OPEN
+            )
+            path.append(arc, true)
+        }
+
+        if (fullCircle) {
+            appendArcSegment(start, 180.0)
+            appendArcSegment(start + 180.0, 180.0)
+        } else {
+            appendArcSegment(start, length)
+        }
+
+        if (rotation != 0.0) {
+            path.transform(getRotateInstance(Math.toRadians(rotation), x, y))
+        }
+
+        path.transform(graphics.transform)
+        return path
     }
 
     override fun save() {
@@ -292,7 +321,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        graphics.transform(AffineTransform(m11, m12, m21, m22, dx, dy))
+        val tx = AffineTransform(m11, m21, m12, m22, dx, dy)
+        graphics.transform(tx)
         state.transform = graphics.transform
     }
 
@@ -349,8 +379,16 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.stroke = state.stroke
     }
 
-    override fun measureText(str: String): Double {
+    override fun measureTextWidth(str: String): Double {
         return graphics.glyphVector(str).visualBounds.width
+    }
+
+    override fun measureText(str: String): TextMetrics {
+        return TextMetrics(
+            ascent = graphics.fontMetrics.ascent.toDouble(),
+            descent = graphics.fontMetrics.descent.toDouble(),
+            bbox = graphics.glyphVector(str).logicalBounds.let { DoubleRectangle.XYWH(it.x, it.y, it.width, it.height) }
+        )
     }
 
     private companion object {

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import Python.PyObject
@@ -31,6 +33,8 @@ object PlotReprGenerator {
 
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         return try {
+
+            println("generateSvg() - start")
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
@@ -109,5 +113,18 @@ object PlotReprGenerator {
         } catch (e: Throwable) {
             Py_BuildValue("s", "generateDisplayHtmlForRawSpec() - Exception: ${e.message}")
         }
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun saveImage(
+        plotSpecDict: CPointer<PyObject>?,
+        filePath: CPointer<ByteVar>,
+        dpi: Int,
+        width: Int,
+        height: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        println("WARNING: set enable_magick_canvas=true in local.properties to enable native raster export")
+        return Py_BuildValue("s", "")
     }
 }
