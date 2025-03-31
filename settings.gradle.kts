@@ -87,10 +87,9 @@ if (localProperties.exists()) {
     localProperties.inputStream().use { properties.load(it) }
 }
 
-val imagemagickLibPath = properties.getProperty("imagemagick_lib_path", "").toString()
-if (imagemagickLibPath.isNotBlank()) {
+val enableMagickCanvas = properties.getProperty("enable_magick_canvas", "false").toBoolean()
+if (enableMagickCanvas) {
     include("platf-imagick")
-
     include("demo-svg-native")
     project(":demo-svg-native").projectDir = File("./demo/svg-native")
 }

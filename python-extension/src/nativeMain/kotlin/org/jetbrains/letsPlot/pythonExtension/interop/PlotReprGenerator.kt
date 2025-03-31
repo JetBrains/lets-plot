@@ -114,4 +114,17 @@ object PlotReprGenerator {
             Py_BuildValue("s", "generateDisplayHtmlForRawSpec() - Exception: ${e.message}")
         }
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun saveImage(
+        plotSpecDict: CPointer<PyObject>?,
+        filePath: CPointer<ByteVar>,
+        dpi: Int,
+        width: Int,
+        height: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        println("WARNING: set enable_magick_canvas=true in local.properties to enable native raster export")
+        return Py_BuildValue("s", "")
+    }
 }

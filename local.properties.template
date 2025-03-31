@@ -7,8 +7,9 @@
 # Available values: 'arm64', 'x86_64'"
 architecture=x86_64
 
-# Add ImageMagick library path. If tou have installed it system wide, add path `/usr/local`.
-#imagemagick_lib_path=
+# Enable native image export using ImageMagick.
+# After the project is loaded, run the task `./gradlew :initImageMagick` to download and build ImageMagick.
+enable_magick_canvas=false
 
 # Enable tasks responsible for building and publishing of lets-plot python package.
 # Set 'true' or 'false' here:

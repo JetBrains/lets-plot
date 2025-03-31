@@ -58,18 +58,31 @@ env["GS"] = "none"  # disable Ghostscript delegate
 # Run configure script
 print("Configuring ImageMagick...")
 configure_cmd = [
-    "ac_cv_func_getentropy=no", # while in local sysroot we have getentropy, but it is not available in the konan sysroot (glibc 2.19)
-    "ac_cv_func_gs=no", # while in local sysroot we have getentropy, but it is not available in the konan sysroot (glibc 2.19)
- #   f"CC={CC}", f"CXX={CXX}",
+    # env vars
+
+    # Fix linker error: undefined getentropy symbol
+    # IM built with Local sysroot with newer glibc than konan has (2.19)
+    # TODO: try to use konan compilers with `f"CC={CC}", f"CXX={CXX}"` to get rid of ac_cv_func_getentropy=no
+    "ac_cv_func_getentropy=no",
+    #
+
+    # For static linking
     "CFLAGS=-fPIC", "CXXFLAGS=-fPIC",
+
+    # Configure command
     "../src/configure",
-    "--enable-zero-configuration",
-    "--enable-static",
+    f"--prefix={INSTALL_DIR}",
+
+    # Required features
     "--with-pic",
+    "--enable-static",
+    "--enable-zero-configuration",
     "--with-quantum-depth=8",
     "--with-fontconfig",
     "--with-freetype",
-    f"--prefix={INSTALL_DIR}",
+
+    # Disable features
+    "--without-modules",
     "--disable-shared",
     "--disable-openmp",
     "--without-threads",
@@ -77,33 +90,44 @@ configure_cmd = [
     "--disable-assert",
     "--disable-hdri",
     "--disable-installed",
-    "--without-magick-plus-plus",
-    "--without-perl",
+
+    # Delegates and formats
     "--without-bzlib",
+    "--without-autotrace",
     "--without-djvu",
     "--without-dps",
     "--without-fftw",
+    "--without-flif",
+    "--without-fpx",
     "--without-gslib",
-    "--without-gslib_framework",
     "--without-gvc",
     "--without-heic",
     "--without-jbig",
     "--without-jpeg",
+    "--without-jxl",
+    "--without-dmr",
     "--without-lcms",
     "--without-lqr",
+    "--without-ltdl",
     "--without-lzma",
+    "--without-magick-plus-plus",
     "--without-openexr",
+    "--without-openjp2",
     "--without-pango",
     "--without-perl",
     "--without-png",
+    "--without-raqm",
     "--without-raw",
     "--without-rsvg",
     "--without-tiff",
+    "--without-uhdr",
     "--without-webp",
     "--without-wmf",
     "--without-x",
     "--without-xml",
+    "--without-zip",
     "--without-zlib",
+    "--without-zstd",
 ]
 
 subprocess.run(" ".join(configure_cmd), shell=True, env=env, cwd=BUILD_DIR, check=True)

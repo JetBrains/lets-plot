@@ -3,6 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import Python.*
@@ -25,7 +26,6 @@ typealias TPyObjPtr = CPointer<PyObject>
  * WARNING: Using of Python API functions on wrong Python objects (like calling PyDict_Keys on a str)
  * will cause SEGFAULT and an interpreter crash (with Jupyter kernel) with no chance to prevent it.
  */
-@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 internal object TypeUtils {
 
     fun pyDictToMap(dict: TPyObjPtr?): MutableMap<Any?, Any?> {

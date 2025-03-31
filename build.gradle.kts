@@ -160,6 +160,25 @@ val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
     group = letsPlotTaskGroup
 }
 
+if ((extra.get("enable_magick_canvas") as? String ?: "false").toBoolean()) {
+    extra.set("imagemagick_lib_path", rootDir.path + "/platf-imagick/ImageMagick/install")
+
+    val initImageMagick by tasks.registering {
+        group = letsPlotTaskGroup
+        doLast {
+            exec {
+                this.workingDir = File(rootDir.path + "/platf-imagick")
+                commandLine(
+                    "python",
+                    "init_imagemagick.py"
+                )
+            }
+        }
+    }
+
+    logger.info("Run './gradlew initImageMagick' to initialize ImageMagick.")
+}
+
 // Generating JavaDoc task for each publication task.
 // Fixes "Task ':canvas:publishJsPublicationToMavenRepository' uses this output of task ':canvas:signJvmPublication'
 // without declaring an explicit or implicit dependency" error.

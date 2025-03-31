@@ -9,6 +9,12 @@ plugins {
     kotlin("multiplatform")
 }
 
+val imagickDir = rootProject.file("platf-imagick/ImageMagick")
+
+if (!imagickDir.exists() || !imagickDir.isDirectory) {
+    logger.warn("⚠️ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n./gradlew :initImageMagick")
+}
+
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
 
