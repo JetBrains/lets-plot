@@ -117,12 +117,11 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun lineRange(supplier: (Context) -> Geom): GeomProvider {
+        fun lineRange(): GeomProvider {
             return GeomProvider(
                 GeomKind.LINE_RANGE,
-                LineRangeGeom.HANDLES_GROUPS,
-                supplier
-            )
+                LineRangeGeom.HANDLES_GROUPS
+            ) { LineRangeGeom() }
         }
 
         fun pointRange(supplier: (Context) -> Geom): GeomProvider {

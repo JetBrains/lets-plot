@@ -11,18 +11,16 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.VerticalGeomHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
-class CrossBarGeom(
-    private val isVertical: Boolean
-) : GeomBase(), WithWidth, WithHeight {
+class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
 
-    private val flipHelper = FlippableGeomHelper(isVertical)
+    private val verticalHelper = VerticalGeomHelper()
     var fattenMidline: Double = 2.5
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
@@ -31,7 +29,7 @@ class CrossBarGeom(
 
     override val wontRender: List<Aes<*>>
         get() {
-            return listOf(Aes.XMIN, Aes.XMAX).map(::afterRotation)
+            return listOf(Aes.XMIN, Aes.XMAX)
         }
 
     override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults {
@@ -41,14 +39,6 @@ class CrossBarGeom(
         } else {
             aestheticDefaults.with(Aes.Y, Double.NaN)
         }
-    }
-
-    private fun afterRotation(aes: Aes<Double>): Aes<Double> {
-        return flipHelper.getEffectiveAes(aes)
-    }
-
-    private fun afterRotation(rectangle: DoubleRectangle): DoubleRectangle {
-        return flipHelper.flip(rectangle)
     }
 
     override fun buildIntern(
@@ -66,17 +56,17 @@ class CrossBarGeom(
         BoxHelper.buildMidlines(
             root,
             aesthetics,
-            xAes = afterRotation(Aes.X),
-            middleAes = afterRotation(Aes.Y),
+            xAes = Aes.X,
+            middleAes = Aes.Y,
             sizeAes = Aes.WIDTH, // do not flip as height is not defined for CrossBarGeom
             widthUnit = widthUnit,
             geomHelper,
             fatten = fattenMidline,
-            flip = !isVertical
+            flip = false
         )
         // tooltip
-        flipHelper.buildHints(
-            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX).map(::afterRotation),
+        verticalHelper.buildHints(
+            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX),
             aesthetics = aesthetics,
             pos = pos,
             coord = coord,
@@ -109,18 +99,13 @@ class CrossBarGeom(
     private fun clientRectByDataPoint(
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
-        val xAes = afterRotation(Aes.X)
-        val yMinAes = afterRotation(Aes.YMIN)
-        val yMaxAes = afterRotation(Aes.YMAX)
-        val widthAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
-
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
-            val x = p.finiteOrNull(xAes) ?: return null
-            val ymin = p.finiteOrNull(yMinAes) ?: return null
-            val ymax = p.finiteOrNull(yMaxAes) ?: return null
-            val w = p.finiteOrNull(widthAes) ?: return null
+            val x = p.finiteOrNull(Aes.X) ?: return null
+            val ymin = p.finiteOrNull(Aes.YMIN) ?: return null
+            val ymax = p.finiteOrNull(Aes.YMAX) ?: return null
+            val w = p.finiteOrNull(Aes.WIDTH) ?: return null
 
-            val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
+            val width = w * geomHelper.getUnitResolution(widthUnit, Aes.X)
             val origin = DoubleVector(x - width / 2, ymin)
             val dimension = DoubleVector(width, ymax - ymin)
             return DoubleRectangle(origin, dimension)
@@ -128,7 +113,7 @@ class CrossBarGeom(
 
         return { p ->
             factory(p)?.let { rect ->
-                geomHelper.toClient(afterRotation(rect), p)
+                geomHelper.toClient(rect, p)
             }
         }
     }

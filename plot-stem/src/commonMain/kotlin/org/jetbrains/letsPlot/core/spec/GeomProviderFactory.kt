@@ -31,6 +31,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
+        PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
         PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
@@ -126,15 +127,11 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
-                ErrorBarGeom(true).apply {
+                ErrorBarGeom().apply {
                     if (layerConfig.hasOwn(Option.Geom.ErrorBar.WIDTH_UNIT)) {
                         this.widthUnit = dimensionUnit(layerConfig, Option.Geom.ErrorBar.WIDTH_UNIT)!!
                     }
                 }
-            }
-
-            GeomKind.LINE_RANGE -> GeomProvider.lineRange { ctx ->
-                LineRangeGeom(true)
             }
 
             GeomKind.RIBBON -> GeomProvider.ribbon { ctx ->
@@ -142,7 +139,7 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.CROSS_BAR -> GeomProvider.crossBar { ctx ->
-                val geom = CrossBarGeom(true)
+                val geom = CrossBarGeom()
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.CrossBar.FATTEN)!!
                 }
@@ -153,7 +150,7 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.POINT_RANGE -> GeomProvider.pointRange { ctx ->
-                val geom = PointRangeGeom(true)
+                val geom = PointRangeGeom()
                 if (layerConfig.hasOwn(Option.Geom.PointRange.FATTEN)) {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
                 }
