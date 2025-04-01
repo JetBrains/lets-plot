@@ -38,6 +38,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.SHOW_LEGEND
 import org.jetbrains.letsPlot.core.spec.Option.Layer.STAT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
@@ -181,6 +182,7 @@ class LayerConfig constructor(
             else -> emptyMap()
         }
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
+        val combinedMappings = plotMappings + layerMappings
 
         val combinedDiscreteMappings = combinedDiscreteMapping(
             commonMappings = plotMappings,
@@ -189,6 +191,7 @@ class LayerConfig constructor(
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
         )
 
+        val hasHorizontalAes = setOf(Aes.XMIN, Aes.XMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
         isYOrientation = when (hasOwn(ORIENTATION)) {
             true -> getString(ORIENTATION)?.lowercase()?.let {
                 when (it) {
@@ -198,31 +201,32 @@ class LayerConfig constructor(
                 }
             } ?: false
 
-            false ->
-                if (!clientSide
-                    && isOrientationApplicable()
-                    && !DataConfigUtil.isAesDiscrete(
+            false -> {
+                when {
+                    clientSide -> false
+                    !isOrientationApplicable() -> false
+                    DataConfigUtil.isAesDiscrete(
                         Aes.X,
                         plotData,
                         ownData,
                         plotMappings,
                         layerMappings,
                         combinedDiscreteMappings
-                    )
-                    && DataConfigUtil.isAesDiscrete(
+                    ) -> false
+                    !DataConfigUtil.isAesDiscrete(
                         Aes.Y,
                         plotData,
                         ownData,
                         plotMappings,
                         layerMappings,
                         combinedDiscreteMappings
-                    )
-                ) {
-                    setOrientationY()
-                    true
-                } else {
-                    false
+                    ) && !hasHorizontalAes -> false
+                    else -> {
+                        setOrientationY()
+                        true
+                    }
                 }
+            }
         }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
@@ -366,7 +370,11 @@ class LayerConfig constructor(
             GeomKind.BOX_PLOT,
             GeomKind.VIOLIN,
             GeomKind.LOLLIPOP,
-            GeomKind.Y_DOT_PLOT
+            GeomKind.Y_DOT_PLOT,
+            GeomKind.CROSS_BAR,
+            GeomKind.ERROR_BAR,
+            GeomKind.LINE_RANGE,
+            GeomKind.POINT_RANGE
         )
         val isSuitableStatKind = statKind in listOf(
             StatKind.COUNT,
