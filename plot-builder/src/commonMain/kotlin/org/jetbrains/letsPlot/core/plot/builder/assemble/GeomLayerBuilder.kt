@@ -304,8 +304,7 @@ class GeomLayerBuilder(
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,
-            colorByAes, fillByAes,
-            exclude = geom.wontRender
+            colorByAes, fillByAes
         )
 
         override val legendKeyElementFactory: LegendKeyElementFactory

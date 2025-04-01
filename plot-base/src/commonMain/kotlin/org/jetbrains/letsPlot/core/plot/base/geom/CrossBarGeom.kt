@@ -27,11 +27,6 @@ class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
 
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.XMIN, Aes.XMAX)
-        }
-
     override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults {
         // 'isVertical' is no longer available, so we need to use 'flipped' to correctly remove the default value
         return if (flipped) {

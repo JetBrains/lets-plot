@@ -58,10 +58,9 @@ object GeomMeta {
     fun renders(
         geomKind: GeomKind,
         actualColorAes: Aes<Color>,
-        actualFillAes: Aes<Color>,
-        exclude: List<Aes<*>> = emptyList()
+        actualFillAes: Aes<Color>
     ): List<Aes<*>> {
-        return (RENDERED_AES_BY_GEOM.getValue(geomKind) - exclude).map {
+        return RENDERED_AES_BY_GEOM.getValue(geomKind).map {
             when (it) {
                 Aes.COLOR -> actualColorAes
                 Aes.FILL -> actualFillAes
@@ -217,9 +216,6 @@ object GeomMeta {
             )
 
             GeomKind.BAND -> listOf(
-                // vertical representation
-                Aes.XMIN, Aes.XMAX,
-                // horizontal representation
                 Aes.YMIN, Aes.YMAX,
 
                 Aes.ALPHA,
@@ -287,12 +283,8 @@ object GeomMeta {
             )
 
             GeomKind.RIBBON -> listOf(
-                //vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-                //horizontal
-                Aes.Y,
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.SIZE,
                 Aes.LINETYPE,

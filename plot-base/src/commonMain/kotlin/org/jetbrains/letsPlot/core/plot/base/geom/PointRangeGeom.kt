@@ -29,11 +29,6 @@ class PointRangeGeom : GeomBase() {
             PointLegendKeyElementFactory(DEF_FATTEN)
         )
 
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.XMIN, Aes.XMAX)
-        }
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

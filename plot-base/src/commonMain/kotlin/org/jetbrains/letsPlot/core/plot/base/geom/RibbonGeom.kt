@@ -17,11 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.XMIN, Aes.XMAX)
-        }
-
     private fun finiteOrNull(x: Double?, y: Double?): DoubleVector? {
         return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
             DoubleVector(x!!, y!!)

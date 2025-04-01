@@ -27,11 +27,6 @@ class ErrorBarGeom : GeomBase(), WithWidth {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = ErrorBarLegendKeyElementFactory()
 
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.Y, Aes.XMIN, Aes.XMAX)
-        }
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

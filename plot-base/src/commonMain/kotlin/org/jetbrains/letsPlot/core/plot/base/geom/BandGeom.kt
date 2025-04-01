@@ -18,10 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONT
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
 class BandGeom : GeomBase() {
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.XMIN, Aes.XMAX)
-        }
 
     override fun buildIntern(
         root: SvgRoot,

@@ -24,11 +24,6 @@ class LineRangeGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = VLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.Y, Aes.XMIN, Aes.XMAX)
-        }
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
