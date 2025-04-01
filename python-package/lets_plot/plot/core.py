@@ -875,35 +875,30 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _check_cairo():
-    try:
-        import cairosvg
-    except ImportError:
-        import sys
-        print("\n"
-              "To export Lets-Plot figure to a PNG or PDF file please install CairoSVG library"
-              "to your Python environment.\n"
-              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
-              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
-        return None
-
-
 def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
     str, None]:
     from .. import _kbridge
 
-    if export_format.lower() == 'png':
-        if _check_cairo() is None:
+    input = None
+    export_function = None
+
+    if export_format.lower() == 'png' or export_format.lower() == 'pdf':
+        try:
+            import cairosvg
+        except ImportError:
+            import sys
+            print("\n"
+                  "To export Lets-Plot figure to a PNG or PDF file please install CairoSVG library"
+                  "to your Python environment.\n"
+                  "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+                  "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
             return None
 
-        export_function = cairosvg.svg2png
-        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
-        input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
-    elif export_format.lower() == 'pdf':
-        if _check_cairo() is None:
-            return None
+        if export_format.lower() == 'png':
+            export_function = cairosvg.svg2png
+        elif export_format.lower() == 'pdf':
+            export_function = cairosvg.svg2pdf
 
-        export_function = cairosvg.svg2pdf
         # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
         input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
     elif export_format.lower() == 'bmp':
