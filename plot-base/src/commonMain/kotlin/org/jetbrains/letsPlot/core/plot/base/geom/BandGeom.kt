@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection
@@ -18,18 +17,10 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
-/*
-  For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
-*/
-class BandGeom(private val isVertical: Boolean) : GeomBase() {
-    private val flipHelper = FlippableGeomHelper(isVertical)
-
-    private val yMinAes = flipHelper.getEffectiveAes(Aes.YMIN)
-    private val yMaxAes = flipHelper.getEffectiveAes(Aes.YMAX)
-
+class BandGeom : GeomBase() {
     override val wontRender: List<Aes<*>>
         get() {
-            return listOf(Aes.XMIN, Aes.XMAX).map(flipHelper::getEffectiveAes)
+            return listOf(Aes.XMIN, Aes.XMAX)
         }
 
     override fun buildIntern(
@@ -43,19 +34,19 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
 
-        val viewPort = overallAesBounds(ctx).flipIf(!isVertical)
+        val viewPort = overallAesBounds(ctx)
 
         for (p in aesthetics.dataPoints()) {
-            val yMin = p.finiteOrNull(yMinAes) ?: continue
-            val yMax = p.finiteOrNull(yMaxAes) ?: continue
+            val yMin = p.finiteOrNull(Aes.YMIN) ?: continue
+            val yMax = p.finiteOrNull(Aes.YMAX) ?: continue
             if (yMin > yMax) continue
             val rect = DoubleRectangle.hvRange(viewPort.xRange(), DoubleSpan(yMin, yMax))
             val (topSide, _, _, bottomSide) = rect.parts.toList()
 
             // strokeScaler = { 0.0 } to avoid rendering stroke
-            val (rectSvg, _) = svgHelper.createRectangle(rect.flipIf(!isVertical), p, strokeScaler = { 0.0 }) ?: continue
-            val (topSvg, _) = svgHelper.createLine(topSide.flipIf(!isVertical), p) ?: continue
-            val (bottomSvg, _) = svgHelper.createLine(bottomSide.flipIf(!isVertical), p) ?: continue
+            val (rectSvg, _) = svgHelper.createRectangle(rect, p, strokeScaler = { 0.0 }) ?: continue
+            val (topSvg, _) = svgHelper.createLine(topSide, p) ?: continue
+            val (bottomSvg, _) = svgHelper.createLine(bottomSide, p) ?: continue
 
             root.add(rectSvg)
             root.add(topSvg)
@@ -74,17 +65,13 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
-        val isVerticallyOriented = when (isVertical) {
-            true -> !ctx.flipped
-            false -> ctx.flipped
-        }
         val hint = HintsCollection.HintConfigFactory()
             .defaultObjectRadius(0.0)
-            .defaultKind(VERTICAL_TOOLTIP.takeIf { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
+            .defaultKind(VERTICAL_TOOLTIP.takeUnless { ctx.flipped } ?: HORIZONTAL_TOOLTIP)
 
         for (p in aesthetics.dataPoints()) {
             for (x in resample(viewPort.xRange())) {
-                for (aes in listOf(yMinAes, yMaxAes)) {
+                for (aes in listOf(Aes.YMIN, Aes.YMAX)) {
                     val value = p[aes] ?: continue
                     val defaultColor = p.fill() ?: continue
 
@@ -98,7 +85,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                         tipLayoutHints = hintsCollection.hints,
                         markerColors = colorMapper(p)
                     )
-                    helper.toClient(DoubleVector(x, value).flipIf(!isVertical), p)?.let { point ->
+                    helper.toClient(DoubleVector(x, value), p)?.let { point ->
                         ctx.targetCollector.addPoint(p.index(), point, 0.0, tooltipParams)
                     }
                 }
