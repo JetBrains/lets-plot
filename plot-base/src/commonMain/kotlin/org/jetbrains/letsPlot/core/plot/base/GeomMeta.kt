@@ -133,13 +133,8 @@ object GeomMeta {
             )
 
             GeomKind.ERROR_BAR -> listOf(
-                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-
-                // horizontal
-                Aes.Y,
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.WIDTH,
                 Aes.ALPHA,
@@ -150,10 +145,7 @@ object GeomMeta {
 
             GeomKind.CROSS_BAR -> listOf(
                 Aes.X, Aes.Y,
-                // vertical representation
                 Aes.YMIN, Aes.YMAX,
-                // horizontal
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.WIDTH,
                 Aes.ALPHA,
@@ -164,12 +156,8 @@ object GeomMeta {
             )
 
             GeomKind.LINE_RANGE -> listOf(
-                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-                // horizontal
-                Aes.Y,
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.ALPHA,
                 Aes.COLOR,
@@ -179,10 +167,7 @@ object GeomMeta {
 
             GeomKind.POINT_RANGE -> listOf(
                 Aes.X, Aes.Y,
-                // vertical representation
                 Aes.YMIN, Aes.YMAX,
-                // horizontal
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.ALPHA,
                 Aes.COLOR,
