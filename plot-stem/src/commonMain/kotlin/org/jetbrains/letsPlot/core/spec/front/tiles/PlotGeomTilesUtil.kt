@@ -44,7 +44,6 @@ internal object PlotGeomTilesUtil {
 
         val layerAddedScales = createScalesForPositionalStatVariables(
             layerConfig.varBindings,
-            layerConfig.isYOrientation,
             commonScales
         ).let { scaleByAes ->
             when (layerConfig.isMarginal) {
@@ -63,7 +62,6 @@ internal object PlotGeomTilesUtil {
 
     private fun createScalesForPositionalStatVariables(
         layerVarBindings: List<VarBinding>,
-        isYOrientation: Boolean,
         commonScaleMap: Map<Aes<*>, Scale>,
     ): Map<Aes<*>, Scale> {
         val statPositionalBindings =
@@ -72,9 +70,10 @@ internal object PlotGeomTilesUtil {
                 .filter { Aes.isPositionalXY(it.aes) }
 
         return statPositionalBindings.associate { binding ->
-            val positionalAes = when (isYOrientation) {
-                true -> Aes.X
-                false -> Aes.Y
+            val positionalAes = when {
+                Aes.isPositionalX(binding.aes) -> Aes.X
+                Aes.isPositionalY(binding.aes) -> Aes.Y
+                else -> throw IllegalStateException("Positional aes expected but was ${binding.aes}.")
             }
             val scaleProto = commonScaleMap.getValue(positionalAes)
             val aesScale = scaleProto.with().name(binding.variable.label).build()
