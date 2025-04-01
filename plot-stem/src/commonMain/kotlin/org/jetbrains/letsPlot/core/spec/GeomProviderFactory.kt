@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
@@ -436,16 +435,6 @@ internal object GeomProviderFactory {
         layerConfig.getBoolean(Option.Geom.Text.CHECK_OVERLAP).let {
             geom.checkOverlap = it
         }
-    }
-
-    private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {
-        // Horizontal or vertical
-        val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
-        val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
-        require(!(isVertical && isHorizontal)) {
-            "Either ymin, ymax or xmin, xmax must be specified for the $geomName."
-        }
-        return isVertical
     }
 
     private fun dimensionUnit(layerConfig: LayerConfig, option: String): DimensionUnit? {
