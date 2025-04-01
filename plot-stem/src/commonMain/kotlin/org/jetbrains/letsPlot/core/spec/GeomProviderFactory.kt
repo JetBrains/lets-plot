@@ -31,6 +31,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
+        PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
         PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
@@ -133,10 +134,6 @@ internal object GeomProviderFactory {
                         this.widthUnit = dimensionUnit(layerConfig, Option.Geom.ErrorBar.WIDTH_UNIT)!!
                     }
                 }
-            }
-
-            GeomKind.RIBBON -> GeomProvider.ribbon { ctx ->
-                RibbonGeom(isVertical(ctx, geomKind.name))
             }
 
             GeomKind.CROSS_BAR -> GeomProvider.crossBar { ctx ->
