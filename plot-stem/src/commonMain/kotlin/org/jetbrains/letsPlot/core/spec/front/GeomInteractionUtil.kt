@@ -104,7 +104,7 @@ object GeomInteractionUtil {
                 axisAesFromFunctionTypeAfterOrientation,
                 hiddenAesList
             )
-            sideTooltipAes = createSideTooltipAesList(layerConfig)
+            sideTooltipAes = createSideTooltipAesList(layerConfig, yOrientation)
             tooltipSpecification = layerConfig.tooltips
         } else {
             tooltipAes = emptyList()
@@ -373,23 +373,23 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createSideTooltipAesList(layerConfig: LayerConfig): List<Aes<*>> {
+    private fun createSideTooltipAesList(layerConfig: LayerConfig, yOrientation: Boolean): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.CROSS_BAR,
-            GeomKind.SMOOTH -> when (isVerticalGeom(layerConfig)) {
-                true -> listOf(Aes.YMAX, Aes.Y, Aes.YMIN)
-                false -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
+            GeomKind.SMOOTH -> when (yOrientation) {
+                true -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
+                false -> listOf(Aes.YMAX, Aes.Y, Aes.YMIN)
             }
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,
-            GeomKind.BAND -> when (isVerticalGeom(layerConfig)) {
-                true -> listOf(Aes.YMAX, Aes.YMIN)
-                false -> listOf(Aes.XMAX, Aes.XMIN)
+            GeomKind.BAND -> when (yOrientation) {
+                true -> listOf(Aes.XMAX, Aes.XMIN)
+                false -> listOf(Aes.YMAX, Aes.YMIN)
             }
-            GeomKind.BOX_PLOT -> when (isVerticalGeom(layerConfig)) {
-                true -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
-                false -> listOf(Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
+            GeomKind.BOX_PLOT -> when (yOrientation) {
+                true -> listOf(Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
+                false -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             }
             else -> emptyList()
         }
@@ -446,29 +446,5 @@ object GeomInteractionUtil {
         }
         val factors = scaleMap.safeGet(aes)?.getScaleBreaks()?.domainValues ?: return false
         return factors.size >= MIN_FACTORS_TO_SHOW_TOOLTIPS
-    }
-
-    private fun isVerticalGeom(layerConfig: LayerConfig): Boolean {
-        val geomKind = layerConfig.geomProto.geomKind
-        if (geomKind !in listOf(
-                GeomKind.BOX_PLOT,
-                GeomKind.ERROR_BAR,
-                GeomKind.LINE_RANGE,
-                GeomKind.RIBBON,
-                GeomKind.CROSS_BAR,
-                GeomKind.POINT_RANGE,
-                GeomKind.BAND,
-                GeomKind.SMOOTH
-            )
-        ) {
-            return false
-        }
-
-        // We determine the verticality of the geometry based on the bindings, regardless of the value of layerConfig.isYOrientation
-        val mappedAes = layerConfig.varBindings.map { it.aes }
-        return when (geomKind) {
-            GeomKind.BOX_PLOT -> setOf(Aes.YMIN, Aes.YMAX, Aes.LOWER, Aes.UPPER).intersect(mappedAes.toSet()).isNotEmpty() // If there is at least one Y aes, we consider geom as vertical
-            else -> mappedAes.containsAll(listOf(Aes.YMAX, Aes.YMIN))
-        }
     }
 }
