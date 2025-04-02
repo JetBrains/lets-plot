@@ -9,7 +9,6 @@ plugins {
 
 val ktorVersion = project.extra["ktor_version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val hamcrestVersion = project.extra["hamcrest_version"] as String
 val mockitoVersion = project.extra["mockito_version"] as String
 val assertjVersion = project.extra["assertj_version"] as String
 
@@ -27,7 +26,19 @@ kotlin {
                 compileOnly(project(":canvas"))
                 compileOnly(project(":gis"))
 
-                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-core:$ktorVersion")
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+            }
+        }
+
+        named("jsMain") {
+            dependencies {
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 
@@ -41,12 +52,6 @@ kotlin {
             }
         }
 
-        jvmMain {
-            dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-            }
-        }
-
         jvmTest {
             dependencies {
                 implementation(kotlin("test-junit"))
@@ -55,22 +60,14 @@ kotlin {
             }
         }
 
-        named("jsMain") {
-            dependencies {
-                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
-            }
-        }
 
 /*      Fix for build errors:
          - 'Could not find "io.github.microutils:kotlin-logging"...'
-         - 'Could not find "io.ktor:ktor-client-websockets"...'
          - 'Could not find "io.ktor:ktor-client-js"...'
         (Kotlin 1.9.xx versions): */
         named("jsTest") {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
                 implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }

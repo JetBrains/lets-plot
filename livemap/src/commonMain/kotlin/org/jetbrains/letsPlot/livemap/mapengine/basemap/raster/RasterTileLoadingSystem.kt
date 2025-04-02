@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.gis.tileprotocol.http.HttpTileTransport
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent

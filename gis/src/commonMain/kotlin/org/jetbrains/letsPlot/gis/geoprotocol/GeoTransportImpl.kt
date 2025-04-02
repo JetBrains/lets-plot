@@ -5,27 +5,32 @@
 
 package org.jetbrains.letsPlot.gis.geoprotocol
 
-import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.launch
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.gis.geoprotocol.json.RequestJsonFormatter
 import org.jetbrains.letsPlot.gis.geoprotocol.json.ResponseJsonParser
-import kotlinx.coroutines.launch
+import org.jetbrains.letsPlot.gis.newHttpClient
+import org.jetbrains.letsPlot.gis.newNetworkCoroutineScope
+
+// Never create HttpClient in common code - it causes type mismatch when run inside an IntelliJ Plugin:
+// java.util.ServiceConfigurationError: io.ktor.client.HttpClientEngineContainer: io.ktor.client.engine.java.JavaHttpEngineContainer not a subtype
 
 class GeoTransportImpl(
     private val myUrl: String
 ): GeoTransport {
-    private val myClient = HttpClient()
+    private val client = newHttpClient()
+    private val coroutineScope = newNetworkCoroutineScope()
 
     override fun send(request: GeoRequest): Async<GeoResponse> {
         val async = ThreadSafeAsync<GeoResponse>()
 
-        myClient.launch {
+        coroutineScope.launch {
             try {
-                val response = myClient.post(myUrl) {
+                val response = client.post(myUrl) {
                     setBody(request
                         .let(RequestJsonFormatter::format)
                         .let(JsonSupport::formatJson)
