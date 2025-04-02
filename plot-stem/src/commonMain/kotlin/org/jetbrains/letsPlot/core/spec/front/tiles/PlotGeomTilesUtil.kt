@@ -35,8 +35,7 @@ internal object PlotGeomTilesUtil {
         val layerCommonScales = when (layerConfig.isMarginal) {
             true -> MarginalLayerUtil.toMarginalScaleMap(
                 commonScales,
-                layerConfig.marginalSide,
-                flipOrientation = false    // Positional aes are already flipped in the "common scale map".
+                layerConfig.marginalSide
             )
 
             false -> commonScales
@@ -49,8 +48,7 @@ internal object PlotGeomTilesUtil {
             when (layerConfig.isMarginal) {
                 true -> MarginalLayerUtil.toMarginalScaleMap(
                     scaleByAes,
-                    layerConfig.marginalSide,
-                    flipOrientation = layerConfig.isYOrientation
+                    layerConfig.marginalSide
                 )
 
                 false -> scaleByAes
