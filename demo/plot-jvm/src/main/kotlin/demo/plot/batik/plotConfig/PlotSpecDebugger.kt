@@ -27,67 +27,12 @@ fun main() {
     // Plot spec can be set by PLOT_SPEC env var via IDEA run configuration.
     val specString = System.getenv("PLOT_SPEC")
         ?: """
-{
-  "data": {
-    "ymin": [
-      19.0,
-      20.0
-    ],
-    "y": [
-      20.0,
-      21.0
-    ],
-    "ymax": [
-      21.0,
-      22.0
-    ],
-    "color": [
-      "p",
-      "q"
-    ]
-  },
-  "mapping": {},
-  "data_meta": {
-    "series_annotations": [
-      {
-        "type": "int",
-        "column": "ymin"
-      },
-      {
-        "type": "int",
-        "column": "y"
-      },
-      {
-        "type": "int",
-        "column": "ymax"
-      },
-      {
-        "type": "str",
-        "column": "color"
-      }
-    ]
-  },
-  "ggtitle": {
-    "text": "geom_pointrange():\nmapping is inverse\nstat=None, orientation=y"
-  },
-  "kind": "plot",
-  "scales": [],
-  "layers": [
-    {
-      "geom": "pointrange",
-      "mapping": {
-        "x": "y",
-        "xmin": "ymin",
-        "xmax": "ymax",
-        "color": "color"
-      },
-      "position": "dodge",
-      "data_meta": {},
-      "orientation": "y"
-    }
-  ],
-  "metainfo_list": []
-}
+        {
+            'kind': 'plot',
+            'data': { 'time': ['Lunch','Lunch', 'Dinner', 'Dinner', 'Dinner'] },
+            'mapping': { 'x': 'time', 'color': 'time', 'fill': 'time' },
+            'layers': [ { 'geom': 'bar', 'alpha': '0.5' } ]
+        }
         """.trimIndent()
 
     val spec = parsePlotSpec(specString)
