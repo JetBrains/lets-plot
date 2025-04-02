@@ -383,10 +383,7 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,
-            GeomKind.BAND -> when (yOrientation) {
-                true -> listOf(Aes.XMAX, Aes.XMIN)
-                false -> listOf(Aes.YMAX, Aes.YMIN)
-            }
+            GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> when (yOrientation) {
                 true -> listOf(Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
                 false -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)

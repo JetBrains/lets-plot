@@ -216,6 +216,9 @@ object GeomMeta {
             )
 
             GeomKind.BAND -> listOf(
+                // vertical representation
+                Aes.XMIN, Aes.XMAX,
+                // horizontal representation
                 Aes.YMIN, Aes.YMAX,
 
                 Aes.ALPHA,

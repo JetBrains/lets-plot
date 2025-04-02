@@ -17,7 +17,15 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
-class BandGeom : GeomBase() {
+/*
+  For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
+
+  Instead of using this parameter, 'band' could be added to the list of orientable geoms in the LayerConfig::isOrientationApplicable(),
+  but it's hard to get the correct behavior with polar coordinates that way.
+*/
+class BandGeom(private val isVertical: Boolean) : GeomBase() {
+    private val yMinAes = if (isVertical) Aes.YMIN else Aes.XMIN
+    private val yMaxAes = if (isVertical) Aes.YMAX else Aes.XMAX
 
     override fun buildIntern(
         root: SvgRoot,
@@ -30,19 +38,19 @@ class BandGeom : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
 
-        val viewPort = overallAesBounds(ctx)
+        val viewPort = overallAesBounds(ctx).flipIf(!isVertical)
 
         for (p in aesthetics.dataPoints()) {
-            val yMin = p.finiteOrNull(Aes.YMIN) ?: continue
-            val yMax = p.finiteOrNull(Aes.YMAX) ?: continue
+            val yMin = p.finiteOrNull(yMinAes) ?: continue
+            val yMax = p.finiteOrNull(yMaxAes) ?: continue
             if (yMin > yMax) continue
             val rect = DoubleRectangle.hvRange(viewPort.xRange(), DoubleSpan(yMin, yMax))
             val (topSide, _, _, bottomSide) = rect.parts.toList()
 
             // strokeScaler = { 0.0 } to avoid rendering stroke
-            val (rectSvg, _) = svgHelper.createRectangle(rect, p, strokeScaler = { 0.0 }) ?: continue
-            val (topSvg, _) = svgHelper.createLine(topSide, p) ?: continue
-            val (bottomSvg, _) = svgHelper.createLine(bottomSide, p) ?: continue
+            val (rectSvg, _) = svgHelper.createRectangle(rect.flipIf(!isVertical), p, strokeScaler = { 0.0 }) ?: continue
+            val (topSvg, _) = svgHelper.createLine(topSide.flipIf(!isVertical), p) ?: continue
+            val (bottomSvg, _) = svgHelper.createLine(bottomSide.flipIf(!isVertical), p) ?: continue
 
             root.add(rectSvg)
             root.add(topSvg)
@@ -61,13 +69,17 @@ class BandGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
+        val isVerticallyOriented = when (isVertical) {
+            true -> !ctx.flipped
+            false -> ctx.flipped
+        }
         val hint = HintsCollection.HintConfigFactory()
             .defaultObjectRadius(0.0)
-            .defaultKind(VERTICAL_TOOLTIP.takeUnless { ctx.flipped } ?: HORIZONTAL_TOOLTIP)
+            .defaultKind(VERTICAL_TOOLTIP.takeIf { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
 
         for (p in aesthetics.dataPoints()) {
             for (x in resample(viewPort.xRange())) {
-                for (aes in listOf(Aes.YMIN, Aes.YMAX)) {
+                for (aes in listOf(yMinAes, yMaxAes)) {
                     val value = p[aes] ?: continue
                     val defaultColor = p.fill() ?: continue
 
@@ -81,7 +93,7 @@ class BandGeom : GeomBase() {
                         tipLayoutHints = hintsCollection.hints,
                         markerColors = colorMapper(p)
                     )
-                    helper.toClient(DoubleVector(x, value), p)?.let { point ->
+                    helper.toClient(DoubleVector(x, value).flipIf(!isVertical), p)?.let { point ->
                         ctx.targetCollector.addPoint(p.index(), point, 0.0, tooltipParams)
                     }
                 }

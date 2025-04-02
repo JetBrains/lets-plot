@@ -375,7 +375,6 @@ class LayerConfig constructor(
             GeomKind.ERROR_BAR,
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE,
-            GeomKind.BAND,
             GeomKind.RIBBON
         )
         val isSuitableStatKind = statKind in listOf(
