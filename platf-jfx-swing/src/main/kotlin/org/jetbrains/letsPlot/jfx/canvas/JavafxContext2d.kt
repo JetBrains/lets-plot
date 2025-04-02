@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.*
 
 typealias JfxFont = Font
 typealias JfxFontWeight = javafx.scene.text.FontWeight
@@ -71,12 +70,12 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
-        val javafxSnapshot = snapshot as org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, x, y)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
-        val javafxSnapshot = snapshot as org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, x, y, dw, dh)
     }
 
@@ -91,7 +90,7 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         dw: Double,
         dh: Double
     ) {
-        val javafxSnapshot = snapshot as org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot
+        val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, sx, sy, sw, sh, dx, dy, dw, dh)
     }
 
@@ -155,6 +154,14 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         }
 
         myContext2d.arc(x, y, radius, radius, -start, -length )
+    }
+
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        TODO("Fix ellipse in FX")
+        myContext2d.beginPath()
+        myContext2d.moveTo(x + radiusX, y)
+        myContext2d.arc(x, y, radiusX, radiusY, 0.0, 360.0)
+        myContext2d.closePath()
     }
 
     override fun save() {
@@ -264,10 +271,14 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.lineDashOffset = lineDashOffset
     }
 
-    override fun measureText(str: String): Double {
+    override fun measureTextWidth(str: String): Double {
         val text = Text(str)
         text.font = myContext2d.font
         return text.layoutBounds.width
+    }
+
+    override fun measureText(str: String): TextMetrics {
+        TODO("Not yet implemented")
     }
 
     override fun clearRect(rect: DoubleRectangle) {

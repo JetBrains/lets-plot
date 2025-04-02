@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.livemap.canvascontrols
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.drawLater
 import kotlin.math.max
 
@@ -56,7 +55,7 @@ internal class MessageContent(private val message: String) : CanvasContent {
             val height = FONT_HEIGHT * lines.size
             var width = 0.0
 
-            lines.forEach { width = max(width, measureText(it)) }
+            lines.forEach { width = max(width, measureTextWidth(it)) }
 
             lines.indices.forEach {
                 fillText(lines[it], (dimension.x - width) / 2, (dimension.y - height) / 2 + it * FONT_HEIGHT)

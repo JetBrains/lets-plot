@@ -70,7 +70,7 @@ class RasterTileLoadingSystem(
                             val errorText = response.errorCode!!.message ?: "Unknown error"
                             val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
                             val tileCtx = tileCanvas.context2d
-                            val textDim = tileCtx.measureText(errorText)
+                            val textDim = tileCtx.measureTextWidth(errorText)
                             val x =
                                 if (textDim < TILE_PIXEL_SIZE) {
                                     TILE_PIXEL_SIZE / 2 - textDim / 2

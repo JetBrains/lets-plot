@@ -17,11 +17,15 @@ plugins {
     kotlin("multiplatform") apply false
     kotlin("js") apply false
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
-    id ("org.openjfx.javafxplugin") version "0.1.0" apply false
+    id("org.openjfx.javafxplugin") version "0.1.0" apply false
 }
 
 
-fun ExtraPropertiesExtension.getOrNull(name: String): Any? = if (has(name)) { get(name) } else { null }
+fun ExtraPropertiesExtension.getOrNull(name: String): Any? = if (has(name)) {
+    get(name)
+} else {
+    null
+}
 
 
 val os: OperatingSystem = OperatingSystem.current()
@@ -29,7 +33,7 @@ val letsPlotTaskGroup by extra { "lets-plot" }
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.6.2-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "4.6.3-SNAPSHOT" // see also: python-package/lets_plot/_version.py
 //    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
@@ -131,9 +135,9 @@ if (project.hasProperty("build_release")) {
 // define local Maven Repository path:
 val localMavenRepository by extra { "$rootDir/.maven-publish-dev-repo" }
 // define Sonatype nexus repository manager settings:
-val sonatypeUsername = extra.getOrNull("sonatype.username")?: ""
-val sonatypePassword = extra.getOrNull("sonatype.password")?: ""
-val sonatypeProfileID = extra.getOrNull("sonatype.profileID")?: ""
+val sonatypeUsername = extra.getOrNull("sonatype.username") ?: ""
+val sonatypePassword = extra.getOrNull("sonatype.password") ?: ""
+val sonatypeProfileID = extra.getOrNull("sonatype.profileID") ?: ""
 
 nexusPublishing {
     repositories {
@@ -149,11 +153,30 @@ nexusPublishing {
 
 // Publish some sub-projects as Kotlin Multi-project libraries.
 val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
-    group=letsPlotTaskGroup
+    group = letsPlotTaskGroup
 }
 
 val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
-    group=letsPlotTaskGroup
+    group = letsPlotTaskGroup
+}
+
+if ((extra.getOrNull("enable_magick_canvas") as? String ?: "false").toBoolean()) {
+    extra.set("imagemagick_lib_path", rootDir.path + "/platf-imagick/ImageMagick/install")
+
+    val initImageMagick by tasks.registering {
+        group = letsPlotTaskGroup
+        doLast {
+            exec {
+                this.workingDir = File(rootDir.path + "/platf-imagick")
+                commandLine(
+                    "python",
+                    "init_imagemagick.py"
+                )
+            }
+        }
+    }
+
+    logger.info("Run './gradlew initImageMagick' to initialize ImageMagick.")
 }
 
 // Generating JavaDoc task for each publication task.
@@ -163,7 +186,7 @@ val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
 //  - https://github.com/gradle-nexus/publish-plugin/issues/208
 //  - https://github.com/gradle/gradle/issues/26091
 //
-fun getJarJavaDocsTask(distributeName:String): TaskProvider<Jar> {
+fun getJarJavaDocsTask(distributeName: String): TaskProvider<Jar> {
     return tasks.register<Jar>("${distributeName}JarJavaDoc") {
         archiveClassifier.set("javadoc")
         from("$rootDir/README.md")
@@ -175,12 +198,16 @@ fun getJarJavaDocsTask(distributeName:String): TaskProvider<Jar> {
 subprojects {
     val pythonExtensionModules = listOf(
         "commons",
+        "canvas",
         "datamodel",
         "plot-base",
         "plot-builder",
         "plot-stem",
-        "platf-native",
-        "demo-and-test-shared"
+        "plot-raster",
+
+        "demo-and-test-shared",
+        "demo-common-svg",
+        "demo-svg-native",
     )
     val projectArchitecture = rootProject.extra.getOrNull("architecture")
 
@@ -244,7 +271,7 @@ val jvmCoreModulesForPublish = listOf(
 )
 
 subprojects {
-    if(name in jvmCoreModulesForPublish) {
+    if (name in jvmCoreModulesForPublish) {
         apply(plugin = "org.jetbrains.kotlin.jvm")
         apply(plugin = "maven-publish")
 
@@ -272,7 +299,7 @@ subprojects {
 
 // Configure Maven publication for Lets-Plot Core modules.
 subprojects {
-    if(name in multiPlatformCoreModulesForPublish + jvmCoreModulesForPublish) {
+    if (name in multiPlatformCoreModulesForPublish + jvmCoreModulesForPublish) {
         apply(plugin = "maven-publish")
         apply(plugin = "signing")
         // Do not publish 'native' targets:
@@ -283,7 +310,8 @@ subprojects {
             "jvm",
             "js",
             "kotlinMultiplatform",
-            "metadata")
+            "metadata"
+        )
 
         configure<PublishingExtension> {
             publications {
