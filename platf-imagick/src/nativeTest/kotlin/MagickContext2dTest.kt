@@ -11,6 +11,11 @@ import kotlin.test.Test
  */
 
 class MagickContext2dTest {
+    val imageComparer = ImageComparer(
+        expectedDir = "src/nativeTest/resources/expected/",
+        outDir = "build/image-test/diff/"
+    )
+
     @Test
     fun saveRestore() {
         val canvas = MagickCanvas.create(100, 100)
@@ -147,57 +152,63 @@ class MagickContext2dTest {
     @Test
     fun zigZagStroke() {
         val canvas = MagickCanvas.create(100, 100)
-        val context = canvas.context2d
+        with(canvas.context2d) {
+            strokeStyle = "orange"
+            fillStyle = "dark_blue"
+            lineWidth = 3.0
 
-        context.strokeStyle = "orange"
-        context.fillStyle = "dark_blue"
-        context.lineWidth = 3.0
+            beginPath()
+            moveTo(0.0, 0.0)
+            lineTo(50.0, 25.0)
+            lineTo(0.0, 50.0)
+            lineTo(50.0, 75.0)
+            lineTo(0.0, 100.0)
 
-        context.beginPath()
-        context.moveTo(0.0, 0.0)
-        context.lineTo(50.0, 25.0)
-        context.lineTo(0.0, 50.0)
-        context.lineTo(50.0, 75.0)
-        context.lineTo(0.0, 100.0)
+            moveTo(100.0, 0.0)
+            lineTo(50.0, 25.0)
+            lineTo(100.0, 50.0)
+            lineTo(50.0, 75.0)
+            lineTo(100.0, 100.0)
 
-        context.moveTo(100.0, 0.0)
-        context.lineTo(50.0, 25.0)
-        context.lineTo(100.0, 50.0)
-        context.lineTo(50.0, 75.0)
-        context.lineTo(100.0, 100.0)
+            stroke()
+        }
 
-        context.stroke()
-
-        canvas.saveBmp("zigzag_stroke.bmp")
+        imageComparer.assertImageEquals(
+            expectedFileName = "zigzag_stroke.bmp",
+            actualWand = canvas.wand!!,
+        )
     }
 
     @Test
     fun zigZagFill() {
         val canvas = MagickCanvas.create(100, 100)
-        val context = canvas.context2d
+        with(canvas.context2d) {
+            strokeStyle = "orange"
+            fillStyle = "dark_blue"
+            lineWidth = 1.0
 
-        context.strokeStyle = "orange"
-        context.fillStyle = "dark_blue"
-        context.lineWidth = 1.0
+            beginPath()
+            moveTo(0.0, 0.0)
+            lineTo(50.0, 25.0)
+            lineTo(0.0, 50.0)
+            lineTo(50.0, 75.0)
+            lineTo(0.0, 100.0)
+            closePath()
 
-        context.beginPath()
-        context.moveTo(0.0, 0.0)
-        context.lineTo(50.0, 25.0)
-        context.lineTo(0.0, 50.0)
-        context.lineTo(50.0, 75.0)
-        context.lineTo(0.0, 100.0)
-        context.closePath()
+            moveTo(50.0, 0.0)
+            lineTo(100.0, 25.0)
+            lineTo(50.0, 50.0)
+            lineTo(100.0, 75.0)
+            lineTo(50.0, 100.0)
+            closePath()
 
-        context.moveTo(50.0, 0.0)
-        context.lineTo(100.0, 25.0)
-        context.lineTo(50.0, 50.0)
-        context.lineTo(100.0, 75.0)
-        context.lineTo(50.0, 100.0)
-        context.closePath()
+            fill()
+        }
 
-        context.fill()
-
-        canvas.saveBmp("zigzag_fill.bmp")
+        imageComparer.assertImageEquals(
+            expectedFileName = "zigzag_fill.bmp",
+            actualWand = canvas.wand!!,
+        )
     }
 
     @Test
