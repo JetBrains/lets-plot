@@ -12,19 +12,23 @@ class ImageComparer(
 ) {
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
         val expectedPath = expectedDir + expectedFileName
+        val testName = expectedFileName.removeSuffix(".bmp")
+        val actualFilePath = "${testName}_actual.bmp"
+        val diffFilePath = "${testName}_diff.bmp"
+
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
         if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
             println(getMagickError(expectedWand))
+            // Write the  actual image to a file for debugging
+            if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
+                println(getMagickError(actualWand))
+            }
         }
 
         val expected = exportPixels(expectedWand)
         val actual = exportPixels(actualWand)
 
         if (!comparePixelArrays(expected, actual, tolerance = 0)) {
-            val testName = expectedFileName.removeSuffix(".bmp")
-            val actualFilePath = "${testName}_actual.bmp"
-            val diffFilePath = "${testName}_diff.bmp"
-
             ImageMagick.MagickWriteImage(actualWand, actualFilePath)
             val width = ImageMagick.MagickGetImageWidth(actualWand).toInt()
             val height = ImageMagick.MagickGetImageHeight(actualWand).toInt()
