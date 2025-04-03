@@ -22,6 +22,7 @@ kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_br
 
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
                                    kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
+imagemagick_lib_path = os.environ.get('LP_IMAGEMAGICK_PATH')
 python_package = 'lets_plot'
 
 
@@ -52,19 +53,48 @@ with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 static_link_libraries_list = ['lets_plot_python_extension']
+extra_link = []
 
 if this_system == 'Darwin':
     static_link_libraries_list += ['c++']
-    extra_link = [
+    extra_link += [
         '-Wl,-rpath,/usr/lib',
         '-framework', 'Foundation',
         '-lz'
     ]
+    if imagemagick_lib_path is not None:
+        extra_link += [
+            f'-L{imagemagick_lib_path}/lib',
+            '-lfontconfig',
+            '-lfreetype',
+            '-lMagickWand-7.Q8',
+            '-lMagickCore-7.Q8',
+        ]
 
 elif this_system == 'Windows':
     static_link_libraries_list += ['stdc++']
     # fix python package build with Kotlin v1.7.20 (and later) on Windows.
-    extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread', '-lz']
+    extra_link += [
+        '-static-libgcc',
+        '-static',
+        '-lbcrypt',
+        '-lpthread',
+        '-lz'
+    ]
+
+    if imagemagick_lib_path is not None:
+        extra_link += [
+            f'-L{imagemagick_lib_path}/lib',
+            '-lMagickWand-7.Q8',
+            '-lMagickCore-7.Q8',
+            '-lz',
+            '-lfontconfig',
+            '-lfreetype',
+            '-lpthread',
+            '-lgdi32',
+            '-lurlmon'
+        ]
+
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
 
@@ -72,7 +102,16 @@ elif this_system == 'Windows':
 
 elif this_system == 'Linux':
     static_link_libraries_list += ['stdc++']
-    extra_link = ['-lz']
+    extra_link += ['-lz']
+
+    if imagemagick_lib_path is not None:
+        extra_link += [
+            f'-L{imagemagick_lib_path}/lib',
+            '-lMagickWand-7.Q8',
+            '-lMagickCore-7.Q8',
+            '-lfontconfig',
+            '-lfreetype',
+        ]
 
 else:
     raise ValueError("Unsupported platform.")

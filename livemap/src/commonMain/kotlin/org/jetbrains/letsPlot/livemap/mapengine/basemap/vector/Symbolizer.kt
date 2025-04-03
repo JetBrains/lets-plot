@@ -100,7 +100,7 @@ internal interface Symbolizer {
 
                             val wrapWidth = myStyle.wrapWidth
 
-                            if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureText(label)) {
+                            if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureTextWidth(label)) {
                                 ctx.drawWrapText(multiPoint, label, wrapWidth)
                             } else {
                                 ctx.drawTextFast(multiPoint, label)
@@ -125,7 +125,7 @@ internal interface Symbolizer {
         }
 
         private fun Context2d.drawTextFast(multiPoint: List<Vec<*>>, label: String) {
-            val width = measureText(label)
+            val width = measureTextWidth(label)
             val height = myStyle.size ?: 10.0
 
             multiPoint.forEach { point ->
@@ -149,13 +149,13 @@ internal interface Symbolizer {
             val height = myStyle.size ?: 10.0
 
             while (words.isNotEmpty()) {
-                while (measureText(words.joinToString(" ")) > width && words.size != 1) {
+                while (measureTextWidth(words.joinToString(" ")) > width && words.size != 1) {
                     next.add(0, words.removeAt(words.size - 1))
                 }
 
-                if (words.size == 1 && measureText(words[0]) > width) {
+                if (words.size == 1 && measureTextWidth(words[0]) > width) {
                     rows.add(words[0])
-                    width = measureText(words[0])
+                    width = measureTextWidth(words[0])
                 } else {
                     rows.add(words.joinToString(" "))
                 }

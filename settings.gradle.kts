@@ -2,6 +2,8 @@
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+import java.util.*
+
 
 pluginManagement {
     plugins {
@@ -25,6 +27,7 @@ include("plot-livemap")
 include("plot-base")
 include("plot-builder")
 include("plot-stem")
+include("plot-raster")
 include("platf-w3c")
 include("platf-awt")
 include("platf-batik")
@@ -77,3 +80,16 @@ project(":demo-livemap-jvm").projectDir = File("./demo/livemap-jvm")
 
 include("demo-livemap-browser")
 project(":demo-livemap-browser").projectDir = File("./demo/livemap-browser")
+
+val localProperties = rootDir.resolve("local.properties")
+val properties = Properties()
+if (localProperties.exists()) {
+    localProperties.inputStream().use { properties.load(it) }
+}
+
+val enableMagickCanvas = properties.getProperty("enable_magick_canvas", "false").toBoolean()
+if (enableMagickCanvas) {
+    include("platf-imagick")
+    include("demo-svg-native")
+    project(":demo-svg-native").projectDir = File("./demo/svg-native")
+}

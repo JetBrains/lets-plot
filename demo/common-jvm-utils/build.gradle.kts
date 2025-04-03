@@ -23,8 +23,10 @@ dependencies {
 
     implementation(project(":commons"))
     implementation(project(":datamodel"))
+    implementation(project(":canvas"))
     implementation(project(":plot-stem"))
     implementation(project(":plot-builder"))
+    implementation(project(":plot-raster"))
     implementation(project(":platf-awt"))
     implementation(project(":platf-batik"))
     implementation(project(":platf-jfx-swing"))

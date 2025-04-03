@@ -35,6 +35,21 @@ static PyObject* export_svg(PyObject* self, PyObject* args) {
     return svg;
 }
 
+static PyObject* save_image(PyObject* self, PyObject* args) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
+
+    PyObject *rawPlotSpecDict;
+    const char *filePath;
+    int dpi;
+    int width;
+    int height;
+    float scale;
+    PyArg_ParseTuple(args, "Osiiif", &rawPlotSpecDict, &filePath, &dpi, &width, &height, &scale);
+
+    PyObject* path = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.saveImage(reprGen, rawPlotSpecDict, (void*)filePath, dpi, width, height, scale);
+    return path;
+}
+
 static PyObject* export_html(PyObject* self, PyObject* args) {
     T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
 
@@ -93,6 +108,7 @@ static PyMethodDef module_methods[] = {
    { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },
    { "export_svg", (PyCFunction)export_svg, METH_VARARGS, "Generates SVG representing plot." },
    { "export_html", (PyCFunction)export_html, METH_VARARGS, "Generates HTML page showing plot." },
+   { "save_image", (PyCFunction)save_image, METH_VARARGS, "Saves image representing plot." },
    { "get_static_configure_html", (PyCFunction)get_static_configure_html, METH_O, "Generates static HTML configuration." },
    { "get_display_html_for_raw_spec", (PyCFunction)get_display_html_for_raw_spec, METH_VARARGS, "Generates display HTML for raw plot spec." },
    { NULL }
