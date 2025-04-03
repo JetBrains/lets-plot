@@ -662,7 +662,7 @@ class TooltipBox(
             fun drawLineSeparator(path: SvgPathElement, toSvgElem: SvgSvgElement) {
                 path.strokeWidth().set(LINE_SEPARATOR_WIDTH)
                 path.strokeOpacity().set(1.0)
-                path.strokeColor().set(Color.VERY_LIGHT_GRAY)
+                path.strokeColor().set(Color.gray(80))
 
                 toSvgElem.children().add(path)
             }
