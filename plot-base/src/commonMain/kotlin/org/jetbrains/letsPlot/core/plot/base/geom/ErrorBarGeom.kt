@@ -13,7 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.VerticalGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -21,8 +22,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ErrorBarGeom : GeomBase(), WithWidth {
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
-
-    private val verticalHelper = VerticalGeomHelper()
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = ErrorBarLegendKeyElementFactory()
@@ -36,6 +35,13 @@ class ErrorBarGeom : GeomBase(), WithWidth {
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
+        val tooltipHelper = RectangleTooltipHelper(
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            hintAesList = listOf(Aes.YMIN, Aes.YMAX),
+            colorMarkerMapper = colorsByDataPoint
+        )
 
         for (p in aesthetics.dataPoints()) {
             val x = p.finiteOrNull(Aes.X) ?: continue
@@ -51,18 +57,11 @@ class ErrorBarGeom : GeomBase(), WithWidth {
             root.add(g)
         }
         // tooltip
-        verticalHelper.buildHints(
-            listOf(Aes.YMIN, Aes.YMAX),
-            aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(geomHelper),
-            { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
-        )
+        val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))
+        hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
     }
 
-    private fun clientRectByDataPoint(
-        geomHelper: GeomHelper
-    ): (DataPointAesthetics) -> DoubleRectangle? {
+    private fun rectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
             val x = p.finiteOrNull(Aes.X) ?: return null
             val ymin = p.finiteOrNull(Aes.YMIN) ?: return null
@@ -70,11 +69,7 @@ class ErrorBarGeom : GeomBase(), WithWidth {
             val width = widthOrNull(p, geomHelper) ?: return null
 
             val height = ymax - ymin
-            val rect = geomHelper.toClient(
-                DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0),
-                p
-            )!!
-            return rect
+            return DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)
         }
 
         return ::factory

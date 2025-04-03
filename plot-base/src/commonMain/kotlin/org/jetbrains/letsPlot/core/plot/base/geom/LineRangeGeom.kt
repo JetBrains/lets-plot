@@ -13,13 +13,13 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.VerticalGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import kotlin.math.max
 
 class LineRangeGeom : GeomBase() {
-    private val verticalHelper = VerticalGeomHelper()
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = VLineGeom.LEGEND_KEY_ELEMENT_FACTORY
@@ -35,6 +35,14 @@ class LineRangeGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LINE_RANGE, ctx)
+        val tooltipHelper = RectangleTooltipHelper(
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            hintAesList = listOf(Aes.YMIN, Aes.YMAX),
+            fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
+            colorMarkerMapper = colorsByDataPoint
+        )
         for (p in aesthetics.dataPoints()) {
             val start = p.toLocation(Aes.X, Aes.YMIN) ?: continue
             val end = p.toLocation(Aes.X, Aes.YMAX) ?: continue
@@ -42,17 +50,11 @@ class LineRangeGeom : GeomBase() {
             helper.createLine(start, end, p)?.let { (svgElement, _) -> root.add(svgElement) }
         }
         // tooltip
-        verticalHelper.buildHints(
-            listOf(Aes.YMIN, Aes.YMAX),
-            aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper),
-            { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
-        )
+        val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))
+        hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
     }
 
-    private fun clientRectByDataPoint(
-        ctx: GeomContext,
+    private fun rectByDataPoint(
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
@@ -62,13 +64,11 @@ class LineRangeGeom : GeomBase() {
 
             val height = ymax - ymin
 
-            val rect = geomHelper.toClient(
-                DoubleRectangle(DoubleVector(x, ymax - height / 2.0), DoubleVector.ZERO),
-                p
-            )!!
-            val width = max(AesScaling.strokeWidth(p), MIN_TOOLTIP_RECTANGLE_WIDTH)
+            val rect = DoubleRectangle(DoubleVector(x, ymax - height / 2.0), DoubleVector.ZERO)
+            val unitResolution = geomHelper.getUnitResolution(DimensionUnit.SIZE, Aes.X)
+            val width = unitResolution * max(AesScaling.strokeWidth(p), MIN_TOOLTIP_RECTANGLE_WIDTH)
 
-            return GeomUtil.extendWidth(rect, width, ctx.flipped)
+            return GeomUtil.extendWidth(rect, width, geomHelper.ctx.flipped)
         }
 
         return ::factory

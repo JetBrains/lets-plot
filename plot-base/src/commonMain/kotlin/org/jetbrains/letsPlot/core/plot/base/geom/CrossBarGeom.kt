@@ -13,14 +13,14 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.VerticalGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
 
-    private val verticalHelper = VerticalGeomHelper()
     var fattenMidline: Double = 2.5
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
@@ -44,6 +44,14 @@ class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
+        val tooltipHelper = RectangleTooltipHelper(
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX),
+            tooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP,
+            fillColorMapper = { HintColorUtil.colorWithAlpha(it) }
+        )
         BoxHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
             rectFactory = clientRectByDataPoint(geomHelper)
@@ -60,16 +68,8 @@ class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
             flip = false
         )
         // tooltip
-        verticalHelper.buildHints(
-            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX),
-            aesthetics = aesthetics,
-            pos = pos,
-            coord = coord,
-            ctx = ctx,
-            clientRectFactory = clientRectByDataPoint(geomHelper),
-            fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
-            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
-        )
+        val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))
+        hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
     }
 
     override fun widthSpan(
@@ -91,9 +91,7 @@ class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
-    private fun clientRectByDataPoint(
-        geomHelper: GeomHelper
-    ): (DataPointAesthetics) -> DoubleRectangle? {
+    private fun rectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
             val x = p.finiteOrNull(Aes.X) ?: return null
             val ymin = p.finiteOrNull(Aes.YMIN) ?: return null
@@ -106,6 +104,11 @@ class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
             return DoubleRectangle(origin, dimension)
         }
 
+        return ::factory
+    }
+
+    private fun clientRectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
+        val factory = rectByDataPoint(geomHelper)
         return { p ->
             factory(p)?.let { rect ->
                 geomHelper.toClient(rect, p)

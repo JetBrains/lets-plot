@@ -12,16 +12,17 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.CompositeLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.VLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper.Companion.decorate
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.VerticalGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 class PointRangeGeom : GeomBase() {
     var fattenMidPoint: Double = DEF_FATTEN
-    private val verticalHelper = VerticalGeomHelper()
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(
@@ -40,6 +41,14 @@ class PointRangeGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT_RANGE, ctx)
+        val tooltipHelper = RectangleTooltipHelper(
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            hintAesList = listOf(Aes.YMIN, Aes.YMAX),
+            fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
+            colorMarkerMapper = colorsByDataPoint
+        )
 
         for (p in aesthetics.dataPoints()) {
             val x = p.finiteOrNull(Aes.X) ?: continue
@@ -59,18 +68,22 @@ class PointRangeGeom : GeomBase() {
             val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
             root.add(wrap(o))
         }
-
-        verticalHelper.buildHints(
-            listOf(Aes.YMIN, Aes.YMAX),
-            aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper, fattenMidPoint),
-            { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
-        )
+        // tooltip
+        /*
+          Unlike the cases of CrossBarGeom, ErrorBarGeom and LineRangeGeom, it is inconvenient to use RectanglesHelper here.
+          RectanglesHelper uses a geometry factory that returns rectangles in data coordinates, but clientRectByDataPoint() returns client coordinates.
+          Otherwise it is difficult to correctly calculate the width of the rectangle bounding the geometry.
+        */
+        aesthetics.dataPoints().forEach { p ->
+            clientRectByDataPoint(geomHelper, fattenMidPoint)(p)?.let { clientRect ->
+                val svgRect = SvgRectElement(clientRect)
+                decorate(svgRect, p)
+                tooltipHelper.addTarget(p, clientRect)
+            }
+        }
     }
 
     private fun clientRectByDataPoint(
-        ctx: GeomContext,
         geomHelper: GeomHelper,
         fatten: Double
     ): (DataPointAesthetics) -> DoubleRectangle? {
@@ -85,7 +98,7 @@ class PointRangeGeom : GeomBase() {
             val shapeSize = shape.size(p, fatten)
             val strokeWidth = shape.strokeWidth(p)
             val width = shapeSize + strokeWidth
-            return GeomUtil.extendWidth(rect, width, ctx.flipped)
+            return GeomUtil.extendWidth(rect, width, geomHelper.ctx.flipped)
         }
 
         return ::factory
