@@ -195,8 +195,8 @@ object Colors {
     private fun normalizeColorName(name: String): String =
         name.replace("-", "")
             .replace("_", "")
-            .replace("grey", "gray")
             .lowercase()
+            .replace("grey", "gray")
 
     fun isColorName(colorName: String): Boolean {
         return namedColors.containsKey(normalizeColorName(colorName))

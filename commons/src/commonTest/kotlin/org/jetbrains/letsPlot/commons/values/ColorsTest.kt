@@ -17,6 +17,7 @@ class ColorsTest {
         assertTrue(Colors.isColorName("light-blue"))
         assertTrue(Colors.isColorName("darkgrey"))
         assertTrue(Colors.isColorName("darkgray"))
+        assertTrue(Colors.isColorName("DARK-GREY"))
         assertTrue(Colors.isColorName("gray81"))
         assertFalse(Colors.isColorName("unknown"))
 
