@@ -76,28 +76,13 @@ object MarginalLayerUtil {
 
     fun toMarginalScaleMap(
         scaleMap: Map<Aes<*>, Scale>,
-        margin: MarginSide,
-        flipOrientation: Boolean
+        margin: MarginSide
     ): Map<Aes<*>, Scale> {
-
-        fun isXAxis(aes: Aes<*>): Boolean {
-            return when (flipOrientation) {
-                true -> Aes.isPositionalY(aes)
-                false -> Aes.isPositionalX(aes)
-            }
-        }
-
-        fun isYAxis(aes: Aes<*>): Boolean {
-            return when (flipOrientation) {
-                true -> Aes.isPositionalX(aes)
-                false -> Aes.isPositionalY(aes)
-            }
-        }
 
         return scaleMap.mapValues { (aes, scale) ->
             when (margin) {
-                MarginSide.LEFT, MarginSide.RIGHT -> if (isXAxis(aes)) MARGINAL_SCALES.getValue(margin) else scale
-                MarginSide.TOP, MarginSide.BOTTOM -> if (isYAxis(aes)) MARGINAL_SCALES.getValue(margin) else scale
+                MarginSide.LEFT, MarginSide.RIGHT -> if (Aes.isPositionalX(aes)) MARGINAL_SCALES.getValue(margin) else scale
+                MarginSide.TOP, MarginSide.BOTTOM -> if (Aes.isPositionalY(aes)) MARGINAL_SCALES.getValue(margin) else scale
             }
         }
     }

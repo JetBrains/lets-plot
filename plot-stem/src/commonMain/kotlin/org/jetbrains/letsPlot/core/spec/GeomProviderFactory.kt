@@ -31,6 +31,8 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
+        PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
+        PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
         PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
@@ -126,23 +128,15 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
-                ErrorBarGeom(isVertical(ctx, geomKind.name)).apply {
+                ErrorBarGeom().apply {
                     if (layerConfig.hasOwn(Option.Geom.ErrorBar.WIDTH_UNIT)) {
                         this.widthUnit = dimensionUnit(layerConfig, Option.Geom.ErrorBar.WIDTH_UNIT)!!
                     }
                 }
             }
 
-            GeomKind.LINE_RANGE -> GeomProvider.lineRange { ctx ->
-                LineRangeGeom(isVertical(ctx, geomKind.name))
-            }
-
-            GeomKind.RIBBON -> GeomProvider.ribbon { ctx ->
-                RibbonGeom(isVertical(ctx, geomKind.name))
-            }
-
             GeomKind.CROSS_BAR -> GeomProvider.crossBar { ctx ->
-                val geom = CrossBarGeom(isVertical(ctx, geomKind.name))
+                val geom = CrossBarGeom()
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.CrossBar.FATTEN)!!
                 }
@@ -153,7 +147,7 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.POINT_RANGE -> GeomProvider.pointRange { ctx ->
-                val geom = PointRangeGeom(isVertical(ctx, geomKind.name))
+                val geom = PointRangeGeom()
                 if (layerConfig.hasOwn(Option.Geom.PointRange.FATTEN)) {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
                 }
@@ -447,6 +441,7 @@ internal object GeomProviderFactory {
         }
     }
 
+    // Should be removed when band geom will be refactored
     private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {
         // Horizontal or vertical
         val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }

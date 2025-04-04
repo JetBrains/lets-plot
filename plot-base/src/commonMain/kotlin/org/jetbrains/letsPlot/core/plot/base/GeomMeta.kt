@@ -58,10 +58,9 @@ object GeomMeta {
     fun renders(
         geomKind: GeomKind,
         actualColorAes: Aes<Color>,
-        actualFillAes: Aes<Color>,
-        exclude: List<Aes<*>> = emptyList()
+        actualFillAes: Aes<Color>
     ): List<Aes<*>> {
-        return (RENDERED_AES_BY_GEOM.getValue(geomKind) - exclude).map {
+        return RENDERED_AES_BY_GEOM.getValue(geomKind).map {
             when (it) {
                 Aes.COLOR -> actualColorAes
                 Aes.FILL -> actualFillAes
@@ -133,13 +132,8 @@ object GeomMeta {
             )
 
             GeomKind.ERROR_BAR -> listOf(
-                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-
-                // horizontal
-                Aes.Y,
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.WIDTH,
                 Aes.ALPHA,
@@ -150,10 +144,7 @@ object GeomMeta {
 
             GeomKind.CROSS_BAR -> listOf(
                 Aes.X, Aes.Y,
-                // vertical representation
                 Aes.YMIN, Aes.YMAX,
-                // horizontal
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.WIDTH,
                 Aes.ALPHA,
@@ -164,12 +155,8 @@ object GeomMeta {
             )
 
             GeomKind.LINE_RANGE -> listOf(
-                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-                // horizontal
-                Aes.Y,
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.ALPHA,
                 Aes.COLOR,
@@ -179,10 +166,7 @@ object GeomMeta {
 
             GeomKind.POINT_RANGE -> listOf(
                 Aes.X, Aes.Y,
-                // vertical representation
                 Aes.YMIN, Aes.YMAX,
-                // horizontal
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.ALPHA,
                 Aes.COLOR,
@@ -302,12 +286,8 @@ object GeomMeta {
             )
 
             GeomKind.RIBBON -> listOf(
-                //vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
-                //horizontal
-                Aes.Y,
-                Aes.XMIN, Aes.XMAX,
 
                 Aes.SIZE,
                 Aes.LINETYPE,

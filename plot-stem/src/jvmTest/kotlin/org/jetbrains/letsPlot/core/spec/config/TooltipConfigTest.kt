@@ -1027,7 +1027,7 @@ class TooltipConfigTest {
 
     @Test
     fun `issue579 - geom_boxplot(aes(coeff, alphabet), orientation=y)`() {
-        // MIDDLE, LOWER, YMIN were formatted with exponential notation, while YMAX and UPPER were formatted
+        // XMIDDLE, XLOWER, XMIN were formatted with exponential notation, while XMAX and XUPPER were formatted
         // with regular number format
 
         val geomLayer = buildGeomLayer(
@@ -1044,11 +1044,11 @@ class TooltipConfigTest {
         )
 
         val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.84",
-            Aes.MIDDLE to "0.54",
-            Aes.LOWER to "0.2",
-            Aes.YMIN to "0.019",
+            Aes.XMAX to "0.99",
+            Aes.XUPPER to "0.84",
+            Aes.XMIDDLE to "0.54",
+            Aes.XLOWER to "0.2",
+            Aes.XMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
@@ -1058,7 +1058,7 @@ class TooltipConfigTest {
 
     @Test
     fun `issue579 - geom_boxplot(aes(coeff), orientation=y)`() {
-        // MIDDLE, LOWER, YMIN were formatted with exponential notation, while YMAX and UPPER were formatted
+        // XMIDDLE, XLOWER, XMIN were formatted with exponential notation, while XMAX and XUPPER were formatted
         // with regular number format
 
         val geomLayer = buildGeomLayer(
@@ -1074,11 +1074,11 @@ class TooltipConfigTest {
         )
 
         val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.94",
-            Aes.MIDDLE to "0.64",
-            Aes.LOWER to "0.34",
-            Aes.YMIN to "0.019",
+            Aes.XMAX to "0.99",
+            Aes.XUPPER to "0.94",
+            Aes.XMIDDLE to "0.64",
+            Aes.XLOWER to "0.34",
+            Aes.XMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {

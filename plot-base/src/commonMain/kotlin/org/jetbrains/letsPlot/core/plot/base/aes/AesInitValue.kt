@@ -54,8 +54,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XINTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XLOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XUPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YINTERCEPT
@@ -101,6 +104,9 @@ object AesInitValue {
         VALUE_MAP[LOWER] = Double.NaN
         VALUE_MAP[MIDDLE] = Double.NaN
         VALUE_MAP[UPPER] = Double.NaN
+        VALUE_MAP[XLOWER] = Double.NaN
+        VALUE_MAP[XMIDDLE] = Double.NaN
+        VALUE_MAP[XUPPER] = Double.NaN
         VALUE_MAP[SAMPLE] = 0.0
         VALUE_MAP[QUANTILE] = Double.NaN
         VALUE_MAP[MAP_ID] = "empty map_id"

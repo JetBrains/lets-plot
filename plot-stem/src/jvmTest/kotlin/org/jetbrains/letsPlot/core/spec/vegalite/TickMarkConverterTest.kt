@@ -58,6 +58,7 @@ class TickMarkConverterTest {
             ),
             entry(Layer.GEOM, fromGeomKind(GeomKind.CROSS_BAR)),
             entry(Option.Geom.CrossBar.FATTEN, 0.0),
+            entry(Layer.ORIENTATION, "y"),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.XMIN) to "a",
@@ -90,6 +91,7 @@ class TickMarkConverterTest {
             entry(Meta.DATA_META, empty()),
             entry(Layer.GEOM, fromGeomKind(GeomKind.CROSS_BAR)),
             entry(Option.Geom.CrossBar.FATTEN, 0.0),
+            entry(Layer.ORIENTATION, "y"),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.XMIN) to "a",
@@ -196,6 +198,7 @@ class TickMarkConverterTest {
             ),
             entry(Layer.GEOM, fromGeomKind(GeomKind.CROSS_BAR)),
             entry(Option.Geom.CrossBar.FATTEN, 0.0),
+            entry(Layer.ORIENTATION, "y"),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.XMIN) to "a",

@@ -11,43 +11,29 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
-class CrossBarGeom(
-    private val isVertical: Boolean
-) : GeomBase(), WithWidth, WithHeight {
+class CrossBarGeom : GeomBase(), WithWidth {
 
-    private val flipHelper = FlippableGeomHelper(isVertical)
     var fattenMidline: Double = 2.5
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
 
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.XMIN, Aes.XMAX).map(::afterRotation)
-        }
-
-    override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults): AestheticsDefaults {
-        return if (isVertical) {
-            aestheticDefaults.with(Aes.Y, Double.NaN) // The middle bar is optional
+    override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults {
+        // 'isVertical' is no longer available, so we need to use 'flipped' to correctly remove the default value
+        return if (flipped) {
+            aestheticDefaults.with(Aes.X, Double.NaN) // The middle bar is optional
         } else {
-            aestheticDefaults.with(Aes.X, Double.NaN)
+            aestheticDefaults.with(Aes.Y, Double.NaN)
         }
-    }
-
-    private fun afterRotation(aes: Aes<Double>): Aes<Double> {
-        return flipHelper.getEffectiveAes(aes)
-    }
-
-    private fun afterRotation(rectangle: DoubleRectangle): DoubleRectangle {
-        return flipHelper.flip(rectangle)
     }
 
     override fun buildIntern(
@@ -58,6 +44,14 @@ class CrossBarGeom(
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
+        val tooltipHelper = RectangleTooltipHelper(
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX),
+            tooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP,
+            fillColorMapper = { HintColorUtil.colorWithAlpha(it) }
+        )
         BoxHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
             rectFactory = clientRectByDataPoint(geomHelper)
@@ -65,25 +59,17 @@ class CrossBarGeom(
         BoxHelper.buildMidlines(
             root,
             aesthetics,
-            xAes = afterRotation(Aes.X),
-            middleAes = afterRotation(Aes.Y),
+            xAes = Aes.X,
+            middleAes = Aes.Y,
             sizeAes = Aes.WIDTH, // do not flip as height is not defined for CrossBarGeom
             widthUnit = widthUnit,
             geomHelper,
             fatten = fattenMidline,
-            flip = !isVertical
+            flip = false
         )
         // tooltip
-        flipHelper.buildHints(
-            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX).map(::afterRotation),
-            aesthetics = aesthetics,
-            pos = pos,
-            coord = coord,
-            ctx = ctx,
-            clientRectFactory = clientRectByDataPoint(geomHelper),
-            fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
-            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
-        )
+        val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))
+        hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
     }
 
     override fun widthSpan(
@@ -95,39 +81,27 @@ class CrossBarGeom(
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        // height is not defined for CrossBarGeom, so after flipping the width aesthetic is responsible for the thickness
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
-    }
-
-    private fun clientRectByDataPoint(
-        geomHelper: GeomHelper
-    ): (DataPointAesthetics) -> DoubleRectangle? {
-        val xAes = afterRotation(Aes.X)
-        val yMinAes = afterRotation(Aes.YMIN)
-        val yMaxAes = afterRotation(Aes.YMAX)
-        val widthAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
-
+    private fun rectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
-            val x = p.finiteOrNull(xAes) ?: return null
-            val ymin = p.finiteOrNull(yMinAes) ?: return null
-            val ymax = p.finiteOrNull(yMaxAes) ?: return null
-            val w = p.finiteOrNull(widthAes) ?: return null
+            val x = p.finiteOrNull(Aes.X) ?: return null
+            val ymin = p.finiteOrNull(Aes.YMIN) ?: return null
+            val ymax = p.finiteOrNull(Aes.YMAX) ?: return null
+            val w = p.finiteOrNull(Aes.WIDTH) ?: return null
 
-            val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
+            val width = w * geomHelper.getUnitResolution(widthUnit, Aes.X)
             val origin = DoubleVector(x - width / 2, ymin)
             val dimension = DoubleVector(width, ymax - ymin)
             return DoubleRectangle(origin, dimension)
         }
 
+        return ::factory
+    }
+
+    private fun clientRectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
+        val factory = rectByDataPoint(geomHelper)
         return { p ->
             factory(p)?.let { rect ->
-                geomHelper.toClient(afterRotation(rect), p)
+                geomHelper.toClient(rect, p)
             }
         }
     }

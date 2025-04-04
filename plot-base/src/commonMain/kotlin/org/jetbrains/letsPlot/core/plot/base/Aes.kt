@@ -78,6 +78,12 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
             Aes("middle")
         val UPPER: Aes<Double> =
             Aes("upper")
+        val XLOWER: Aes<Double> =
+            Aes("xlower")
+        val XMIDDLE: Aes<Double> =
+            Aes("xmiddle")
+        val XUPPER: Aes<Double> =
+            Aes("xupper")
         val SAMPLE: Aes<Double> =
             Aes("sample")
         val QUANTILE: Aes<Double> =
@@ -155,6 +161,9 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         fun isPositionalX(aes: Aes<*>): Boolean {
             return aes == X ||
                     aes == XINTERCEPT ||
+                    aes == XLOWER ||
+                    aes == XMIDDLE ||
+                    aes == XUPPER ||
                     aes == XMIN ||
                     aes == XMAX ||
                     aes == XEND
@@ -173,12 +182,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == YEND
         }
 
-        fun toAxisAes(aes: Aes<*>, isYOrientation: Boolean): Aes<*> {
-            // Aes like `LOWER` (boxplot) are mapped on either X or Y-axis depending on the geom orientation.
+        fun toAxisAes(aes: Aes<*>): Aes<*> {
             return when {
-                aes == X || aes == Y -> aes
-                isPositionalX(aes) -> if (isYOrientation) Y else X
-                isPositionalY(aes) -> if (isYOrientation) X else Y
+                isPositionalX(aes) -> X
+                isPositionalY(aes) -> Y
                 else -> throw IllegalArgumentException("Expected a positional aes by was $aes")
             }
         }

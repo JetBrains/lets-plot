@@ -24,58 +24,41 @@ import kotlin.to
 class ErrorBarDomainTest {
     @Test
     fun testErrorBarGeomCalculatesYRangeCorrectly() {
-        val errorBarTile = buildErrorBar(isVertical = true)
-        val (_, yDomain) = errorBarTile.overallXYContinuousDomains()
-        assertEquals(MIN_VALUE - 0.05, yDomain?.lowerEnd, EPSILON)
-        assertEquals(MAX_VALUE + 0.05, yDomain?.upperEnd, EPSILON)
-    }
-
-    @Test
-    fun testErrorBarGeomCalculatesRotatedYRangeCorrectly() {
-        val errorBarTile = buildErrorBar(isVertical = false)
-        val (xDomain, _) = errorBarTile.overallXYContinuousDomains()
-        assertEquals(MIN_VALUE - 0.05, xDomain?.lowerEnd, EPSILON)
-        assertEquals(MAX_VALUE + 0.05, xDomain?.upperEnd, EPSILON)
-    }
-
-    private fun buildErrorBar(
-        isVertical: Boolean
-    ): SimplePlotGeomTiles {
-        val xAes = if (isVertical) Aes.X else Aes.Y
-        val yAes = if (isVertical) Aes.Y else Aes.X
-        val yMinAes = if (isVertical) Aes.YMIN else Aes.XMIN
-        val yMaxAes = if (isVertical) Aes.YMAX else Aes.XMAX
         val catValues = listOf("a")
-        val catVar = DataFrame.Variable("cat")
-        val minVar = DataFrame.Variable("min")
-        val maxVar = DataFrame.Variable("max")
+        val xVar = DataFrame.Variable("cat")
+        val yMinVar = DataFrame.Variable("ymin")
+        val yMaxVar = DataFrame.Variable("ymax")
 
-        val geomProvider = GeomProvider.errorBar { ErrorBarGeom(isVertical = isVertical) }
+        val geomProvider = GeomProvider.errorBar { ErrorBarGeom() }
         val data = DataFrame.Builder()
-            .put(catVar, catValues)
-            .put(minVar, listOf(MIN_VALUE))
-            .put(maxVar, listOf(MAX_VALUE))
+            .put(xVar, catValues)
+            .put(yMinVar, listOf(MIN_VALUE))
+            .put(yMaxVar, listOf(MAX_VALUE))
             .build()
-        val continuousScale = Scales.DemoAndTest.continuousDomain(yAes.name, yAes)
+        val continuousScale = Scales.DemoAndTest.continuousDomain(Aes.Y.name, Aes.Y)
         val scaleByAes = mapOf<Aes<*>, Scale>(
-            xAes to Scales.DemoAndTest.discreteDomain("cat", catValues),
-            yAes to continuousScale, yMinAes to continuousScale, yMaxAes to continuousScale
+            Aes.X to Scales.DemoAndTest.discreteDomain("cat", catValues),
+            Aes.Y to continuousScale, Aes.YMIN to continuousScale, Aes.YMAX to continuousScale
         )
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf()
 
         val layer = GeomLayerBuilder.demoAndTest(geomProvider, Stats.IDENTITY, PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(VarBinding(catVar, xAes))
-            .addBinding(VarBinding(minVar, yMinAes))
-            .addBinding(VarBinding(maxVar, yMaxAes))
+            .addBinding(VarBinding(xVar, Aes.X))
+            .addBinding(VarBinding(yMinVar, Aes.YMIN))
+            .addBinding(VarBinding(yMaxVar, Aes.YMAX))
             .build(data, scaleByAes, scaleMappersNP)
 
-        return SimplePlotGeomTiles(
+        val errorBarTile = SimplePlotGeomTiles(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(),
             containsLiveMap = false
         )
+
+        val (_, yDomain) = errorBarTile.overallXYContinuousDomains()
+        assertEquals(MIN_VALUE - 0.05, yDomain?.lowerEnd, EPSILON)
+        assertEquals(MAX_VALUE + 0.05, yDomain?.upperEnd, EPSILON)
     }
 
     companion object {

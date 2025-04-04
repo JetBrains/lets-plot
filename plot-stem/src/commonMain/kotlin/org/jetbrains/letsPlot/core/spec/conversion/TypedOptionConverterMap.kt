@@ -51,8 +51,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XINTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XLOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XUPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YINTERCEPT
@@ -98,6 +101,9 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
         this.put(LOWER, DOUBLE_CVT)
         this.put(MIDDLE, DOUBLE_CVT)
         this.put(UPPER, DOUBLE_CVT)
+        this.put(XLOWER, DOUBLE_CVT)
+        this.put(XMIDDLE, DOUBLE_CVT)
+        this.put(XUPPER, DOUBLE_CVT)
         this.put(SAMPLE, DOUBLE_CVT)
         this.put(QUANTILE, DOUBLE_CVT)
 

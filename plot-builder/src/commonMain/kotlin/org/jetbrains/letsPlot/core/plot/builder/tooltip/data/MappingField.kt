@@ -51,7 +51,7 @@ class MappingField(
             { value: Any? -> value?.let { mappingFormatter.format(value) } ?: "n/a" }
         } else {
             // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
-            val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+            val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes)
 
             if (Aes.isPositional(primaryAes)) { // ask scale for formatter
                 ctx.getTooltipFormatter(primaryAes)
