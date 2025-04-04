@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
-class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
+class CrossBarGeom : GeomBase(), WithWidth {
 
     var fattenMidline: Double = 2.5
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
@@ -78,16 +78,6 @@ class CrossBarGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
-    }
-
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        // height is not defined for CrossBarGeom, so after flipping the width aesthetic is responsible for the thickness
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 
