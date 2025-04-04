@@ -122,22 +122,22 @@ class Matrix33(vararg mat: Float) {
     }
 }
 
-internal fun Matrix33.apply(sx: Number, sy: Number): DoubleVector {
+fun Matrix33.applyTransform(sx: Number, sy: Number): DoubleVector {
     val x = sdot(sx.toDouble(), scaleX, sy, skewX) + translateX
     val y = sdot(sx.toDouble(), skewY, sy, scaleY) + translateY
     val z = (sdot(sx, persp0, sy, persp1) + persp2).let { if (it != 0.0) 1 / it else it }
     return DoubleVector(x * z, y * z)
 }
 
-internal fun Matrix33.with(idx: Int, v: Float): Matrix33 {
+fun Matrix33.with(idx: Int, v: Float): Matrix33 {
     return Matrix33(*mat).also { it.mat[idx] = v }
 }
 
-internal fun Matrix33.apply(r: DoubleRectangle): DoubleRectangle {
-    val lt = apply(r.left, r.top)
-    val rt = apply(r.right, r.top)
-    val rb = apply(r.right, r.bottom)
-    val lb = apply(r.left, r.bottom)
+fun Matrix33.applyTransform(r: DoubleRectangle): DoubleRectangle {
+    val lt = applyTransform(r.left, r.top)
+    val rt = applyTransform(r.right, r.top)
+    val rb = applyTransform(r.right, r.bottom)
+    val lb = applyTransform(r.left, r.bottom)
 
     val xs = listOf(lt.x, rt.x, rb.x, lb.x)
     val ys = listOf(lt.y, rt.y, rb.y, lb.y)
@@ -321,8 +321,8 @@ internal fun Context2d.fill(paint: Paint) {
 fun Context2d.transform(m: Matrix33) {
     transform(
         m.scaleX.toDouble(),
-        m.skewX.toDouble(),
-        m.skewY.toDouble(),
+        m.skewX.toDouble(), // TODO: should be skewY
+        m.skewY.toDouble(), // TODO: should be skewX
         m.scaleY.toDouble(),
         m.translateX.toDouble(),
         m.translateY.toDouble()

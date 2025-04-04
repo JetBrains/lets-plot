@@ -24,8 +24,9 @@ internal class MagickContextState(
     var fontFamily: String,
     var fontStyle: ImageMagick.StyleType,
     var fontWeight: ULong,
-    transform: ImageMagick.AffineMatrix
+    transform: ImageMagick.AffineMatrix,
 ) {
+
     var lineDashPattern: CArrayPointer<DoubleVar>? = lineDashPattern
         set(value) {
             field?.let { nativeHeap.free(it.rawValue) }
@@ -33,6 +34,19 @@ internal class MagickContextState(
         }
 
     val affineMatrix: ImageMagick.AffineMatrix = nativeHeap.alloc<ImageMagick.AffineMatrix>()
+    val transformMatrix: Matrix33 get() {
+        return Matrix33(
+            affineMatrix.sx.toFloat(),
+            affineMatrix.rx.toFloat(),
+            affineMatrix.tx.toFloat(),
+            affineMatrix.ry.toFloat(),
+            affineMatrix.sy.toFloat(),
+            affineMatrix.ty.toFloat(),
+            0f,
+            0f,
+            1f
+        )
+    }
 
     init {
         affineMatrix.sx = transform.sx
@@ -61,7 +75,7 @@ internal class MagickContextState(
         affineMatrix.ty = dy
     }
 
-    fun transform(sx: Double, rx: Double, ry: Double, sy: Double, dx: Double, dy: Double) {
+    fun transform(sx: Double, ry: Double, rx: Double, sy: Double, dx: Double, dy: Double) {
         val cur = Matrix33(
             affineMatrix.sx.toFloat(),
             affineMatrix.rx.toFloat(),
@@ -159,4 +173,8 @@ internal class MagickContextState(
             )
         }
     }
+}
+
+fun ImageMagick.AffineMatrix.repr(): String {
+    return "matrix(sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty)"
 }

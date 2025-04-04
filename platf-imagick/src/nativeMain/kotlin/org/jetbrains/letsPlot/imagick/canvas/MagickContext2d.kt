@@ -7,11 +7,13 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
-import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.raster.shape.applyTransform
 
+val pathTransform = false
 
 class MagickContext2d(
     private val magickWand: CPointer<ImageMagick.MagickWand>?
@@ -23,18 +25,18 @@ class MagickContext2d(
 
 
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        //println("setTransform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)")
-       // println("\tfrom: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log { "setTransform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)" }
+        log { "\tfrom: [${state.affineMatrix.repr()}]" }
         state.setTransform(m11,m12,m21,m22,dx,dy)
-        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log { "\t  to: [${state.affineMatrix.repr()}]" }
     }
 
     override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        //println("transform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)")
-        //println("\tfrom: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log { "transform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)" }
+        log { "\tfrom: [${state.affineMatrix.repr()}]" }
 
-        state.transform(sx = m11, rx = m21, ry = m12, sy = m22, dx = dx, dy = dy)
-        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        state.transform(sx = m11, ry = m12, rx = m21, sy = m22, dx = dx, dy = dy)
+        log { "\t  to: [${state.affineMatrix.repr()}]" }
     }
 
     override fun scale(x: Double, y: Double) {
@@ -42,10 +44,10 @@ class MagickContext2d(
     }
 
     override fun rotate(angle: Double) {
-        val radians = toRadians(angle)
-        val cos = kotlin.math.cos(radians)
-        val sin = kotlin.math.sin(radians)
-        return transform(cos, sin, -sin, cos, 0.0, 0.0)
+        val angle = -angle // ImageMagick uses clockwise rotation
+        val cos = kotlin.math.cos(angle)
+        val sin = kotlin.math.sin(angle)
+        return transform(cos, -sin, sin, cos, 0.0, 0.0)
     }
 
     override fun translate(x: Double, y: Double) {
@@ -135,11 +137,19 @@ class MagickContext2d(
     }
 
     override fun moveTo(x: Double, y: Double) {
-        currentPath.moveTo(x, y)
+        val (tx, ty) = if (!pathTransform) DoubleVector(x, y) else state.transformMatrix.applyTransform(x, y)
+
+        log { "moveTo($x, $y) -> [$tx, $ty]" }
+
+        currentPath.moveTo(tx, ty)
     }
 
     override fun lineTo(x: Double, y: Double) {
-        currentPath.lineTo(x, y)
+        val (tx, ty) = if (!pathTransform) DoubleVector(x, y) else state.transformMatrix.applyTransform(x, y)
+
+        log { "lineTo($x, $y) -> [$tx, $ty]" }
+
+        currentPath.lineTo(tx, ty)
     }
 
     override fun arc(
@@ -150,7 +160,11 @@ class MagickContext2d(
         endAngle: Double,
         anticlockwise: Boolean
     ) {
-        currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
+        val (tx, ty) = if (!pathTransform) DoubleVector(x, y) else state.transformMatrix.applyTransform(x, y)
+
+        log { "arc($x, $y, $radius, $startAngle, $endAngle) -> [$tx, $ty]" }
+
+        currentPath.arc(tx, ty, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
     }
 
     override fun ellipse(
@@ -160,7 +174,12 @@ class MagickContext2d(
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        currentPath.ellipse(x, y, radiusX, radiusY, toDegrees(rotation), toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
+        val (tX, tY) = if (!pathTransform) DoubleVector(x, y) else state.transformMatrix.applyTransform(x, y)
+        val (trX, trY) = if (!pathTransform) DoubleVector(radiusX, radiusY) else state.transformMatrix.applyTransform(radiusX, radiusY)
+
+        log { "ellipse($x, $y, $radiusX, $radiusY, $rotation, $startAngle, $endAngle, $anticlockwise) -> c: [$tX, $tY], r: [$trX, $trY]" }
+
+        currentPath.ellipse(tX, tY, radiusX, radiusY, toDegrees(rotation), toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
     }
 
     override fun closePath() {
@@ -168,17 +187,31 @@ class MagickContext2d(
     }
 
     override fun stroke() {
-        //println("Stroke: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log { "Stroke: [${state.affineMatrix.repr()}]" }
         withStrokeWand { strokeWand ->
-            currentPath.draw(strokeWand)
+
+            if (pathTransform) {
+                ImageMagick.DrawAffine(strokeWand, IDENTITY.ptr)
+                currentPath.draw(strokeWand)
+                ImageMagick.DrawAffine(strokeWand, state.affineMatrix.ptr)
+            } else {
+                currentPath.draw(strokeWand)
+            }
+
             ImageMagick.MagickDrawImage(magickWand, strokeWand)
         }
     }
 
     override fun fill() {
-        //println("Fill: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log { "Fill: [${state.affineMatrix.repr()}]" }
         withFillWand { fillWand ->
-            currentPath.draw(fillWand)
+            if (pathTransform) {
+                ImageMagick.DrawAffine(fillWand, IDENTITY.ptr)
+                currentPath.draw(fillWand)
+                ImageMagick.DrawAffine(fillWand, state.affineMatrix.ptr)
+            } else {
+                currentPath.draw(fillWand)
+            }
             ImageMagick.MagickDrawImage(magickWand, fillWand)
         }
     }
@@ -220,20 +253,20 @@ class MagickContext2d(
     }
 
     override fun save() {
-        //println("save")
+        log { "save" }
         contextStates += state
         state = state.copy()
         val old = contextStates.last().affineMatrix
-        //println("\tfrom: [${old.sx}, ${old.rx}, ${old.tx}, ${old.ry}, ${old.sy}, ${old.ty}]")
-        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log { "\tfrom: [${old.repr()}]" }
+        log { "\t  to: [${state.affineMatrix.repr()}]" }
     }
 
     override fun restore() {
-        //println("restore()")
-        //println("\tfrom: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log{ "restore()"}
+        log{ "\tfrom: [${state.affineMatrix.repr()}]"}
         state = contextStates.lastOrNull() ?: MagickContextState.create()
         contextStates.removeLastOrNull()?.destroy()
-        //println("\t  to: [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
+        log{ "\t  to: [${state.affineMatrix.repr()}]" }
     }
 
     private fun withWand(block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
@@ -288,6 +321,12 @@ class MagickContext2d(
             ry = 0.0  // Shear Y
             tx = 0.0 // Translate X
             ty = 0.0  // Translate Y
+        }
+
+        val logEnabled = false
+        fun log(str: () -> String) {
+            if (logEnabled)
+                println(str())
         }
     }
 

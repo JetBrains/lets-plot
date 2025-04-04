@@ -115,29 +115,94 @@ class ImageComparer(
     ): CPointer<ImageMagick.MagickWand> {
         val width = ImageMagick.MagickGetImageWidth(expected).toInt()
         val height = ImageMagick.MagickGetImageHeight(expected).toInt()
+        val separatorWidth = 10
 
-        val composite = ImageMagick.NewMagickWand()!!
+        val totalTopWidth = width * 2 + separatorWidth
+        val totalHeight = height * 2 + separatorWidth
 
-        // Create new blank canvas: 3x width to fit all images
-        val canvasWidth = (width * 3).toULong()
-        val canvasHeight = height.toULong()
+        val canvas = ImageMagick.NewMagickWand()!!
+        val white = ImageMagick.NewPixelWand()!!.apply {
+            ImageMagick.PixelSetColor(this, "white")
+        }
+        ImageMagick.MagickNewImage(canvas, totalTopWidth.toULong(), totalHeight.toULong(), white)
+        ImageMagick.DestroyPixelWand(white)
+
+        // --- Separator texture ---
+        val sep = createZigZagPattern(separatorWidth, height)
+
+        // --- Border for diff ---
+        val borderColor = ImageMagick.NewPixelWand()!!.apply {
+            ImageMagick.PixelSetColor(this, "gray")
+        }
+        ImageMagick.MagickBorderImage(diff, borderColor, 1u, 1u, ImageMagick.CompositeOperator.OverCompositeOp)
+        ImageMagick.DestroyPixelWand(borderColor)
+
+        // --- Composite images ---
+        ImageMagick.MagickCompositeImage(canvas, expected, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, 0, 0)
+        ImageMagick.MagickCompositeImage(canvas, sep, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, width.toLong(), 0)
+        ImageMagick.MagickCompositeImage(canvas, actual, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, (width + separatorWidth).toLong(), 0)
+
+        // Add horizontal zigzag separator (same height as vertical one)
+        val separatorSize = 10
+        val horizSeparator = createZigZagPattern(totalTopWidth, separatorSize)
+
+        val diffWidth = ImageMagick.MagickGetImageWidth(diff).toInt()
+        val diffX = ((totalTopWidth - diffWidth) / 2).toLong()
+        ImageMagick.MagickCompositeImage(canvas, diff, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, diffX, height.toLong() + separatorWidth)
+
+        ImageMagick.MagickCompositeImage(
+            canvas,
+            horizSeparator,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            0,
+            height.toLong() // Below top row
+        )
+
+        return canvas
+    }
+
+    private fun createZigZagPattern(width: Int, height: Int): CPointer<ImageMagick.MagickWand> {
+        val wand = ImageMagick.NewMagickWand()!!
+        val black = ImageMagick.NewPixelWand()!!
+        ImageMagick.PixelSetColor(black, "grey")
+
+        ImageMagick.MagickNewImage(wand, width.toULong(), height.toULong(), black)
 
         val white = ImageMagick.NewPixelWand()!!
         ImageMagick.PixelSetColor(white, "white")
 
-        ImageMagick.MagickNewImage(composite, canvasWidth, canvasHeight, white)
+        // Draw the pattern (diagonal lines across)
+        val drawingWand = ImageMagick.NewDrawingWand()!!
+        ImageMagick.DrawSetStrokeColor(drawingWand, white)
+        ImageMagick.DrawSetStrokeWidth(drawingWand, 1.0)
+
+        for (i in 0 until width step 4) {
+            ImageMagick.DrawLine(drawingWand, i.toDouble(), 0.0, i.toDouble() + 4.0, height.toDouble())
+        }
+
+        ImageMagick.MagickDrawImage(wand, drawingWand)
+
+        ImageMagick.DestroyDrawingWand(drawingWand)
+        ImageMagick.DestroyPixelWand(black)
         ImageMagick.DestroyPixelWand(white)
 
-        // Composite images: expected at x=0
-        ImageMagick.MagickCompositeImage(composite, expected, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickFalse, 0, 0)
-        // actual at x=width
-        ImageMagick.MagickCompositeImage(composite, actual, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickFalse,width.toLong(), 0)
-        // diff at x=width * 2
-        ImageMagick.MagickCompositeImage(composite, diff, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickFalse,(width * 2).toLong(), 0)
-
-        return composite
+        return wand
     }
 
+    private fun addBorder(wand: CPointer<ImageMagick.MagickWand>, borderSize: Int = 1, color: String = "black"): CPointer<ImageMagick.MagickWand> {
+        val bordered = ImageMagick.CloneMagickWand(wand) ?: error("Failed to clone wand for border")
+
+        val borderColor = ImageMagick.NewPixelWand()!!
+        ImageMagick.PixelSetColor(borderColor, color)
+
+        val ok = ImageMagick.MagickBorderImage(bordered, borderColor, borderSize.toULong(), borderSize.toULong(), ImageMagick.CompositeOperator.OverCompositeOp)
+        ImageMagick.DestroyPixelWand(borderColor)
+
+        if (ok == ImageMagick.MagickFalse) error("Failed to apply border")
+
+        return bordered
+    }
 
     @OptIn(ExperimentalForeignApi::class)
     fun getMagickError(wand: CPointer<ImageMagick.MagickWand>?): String {

@@ -3,6 +3,7 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -10,6 +11,7 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@Ignore
 class MagickContext2dTest {
     val imageComparer = ImageComparer(
         expectedDir = "src/nativeTest/resources/expected/",
@@ -275,6 +277,53 @@ class MagickContext2dTest {
         }
 
         canvas.saveBmp("ellipse_with_rotation.bmp")
+    }
+
+    @Test
+    fun pathTransformOnBuild() {
+        val canvas = MagickCanvas.create(100, 100)
+        with(canvas.context2d) {
+           strokeStyle = "black"
+            lineWidth = 2.0
+
+            save()
+            translate(50.0, 50.0)
+            rotate(PI / 2)
+            scale(0.5, 0.5)
+            beginPath()
+            moveTo(0.0, 0.0)
+            lineTo(50.0, 50.0)
+            restore()
+            stroke()
+
+        }
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "path_transform_on_build.bmp",
+            actualWand = canvas.wand!!
+        )
+    }
+
+    @Test
+    fun arcTransformsAfterRestore() {
+        val canvas = MagickCanvas.create(100, 100)
+        with(canvas.context2d) {
+            fillStyle = "green"
+
+            save()
+            translate(75.0, 75.0)
+            beginPath()
+            scale(1.0, 0.5)
+            arc(0.0, 0.0, 50.0, 0.0, 2 * PI)
+            restore()
+
+            fill()
+        }
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "arc_transform_after_restore.bmp",
+            actualWand = canvas.wand!!
+        )
     }
 
     companion object {

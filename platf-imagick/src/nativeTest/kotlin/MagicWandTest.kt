@@ -1,5 +1,4 @@
 import kotlinx.cinterop.*
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -8,7 +7,6 @@ import kotlin.test.Test
  */
 
 // This test class is used to demonstrate the usage of the ImageMagick library
-@Ignore
 class MagicWandTest {
 
     @OptIn(ExperimentalStdlibApi::class)

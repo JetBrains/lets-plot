@@ -33,7 +33,7 @@ internal abstract class Element() : Node() {
     // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
     // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
     open val screenBounds: DoubleRectangle
-        get() = ctm.apply(localBounds)
+        get() = ctm.applyTransform(localBounds)
 
     open fun render(canvas: Canvas) {}
 
