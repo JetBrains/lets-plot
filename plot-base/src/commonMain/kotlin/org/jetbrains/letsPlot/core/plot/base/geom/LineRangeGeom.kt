@@ -10,13 +10,14 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper.Companion.decorate
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import kotlin.math.max
 
 class LineRangeGeom : GeomBase() {
@@ -50,11 +51,21 @@ class LineRangeGeom : GeomBase() {
             helper.createLine(start, end, p)?.let { (svgElement, _) -> root.add(svgElement) }
         }
         // tooltip
-        val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))
-        hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
+        /*
+          Unlike the cases of CrossBarGeom and ErrorBarGeom, it is inconvenient to use RectanglesHelper here.
+          RectanglesHelper uses a geometry factory that returns rectangles in data coordinates, but clientRectByDataPoint() returns client coordinates.
+          Otherwise it is difficult to correctly calculate the width of the rectangle bounding the geometry, especially when the geometry is rotated.
+        */
+        aesthetics.dataPoints().forEach { p ->
+            clientRectByDataPoint(geomHelper)(p)?.let { clientRect ->
+                val svgRect = SvgRectElement(clientRect)
+                decorate(svgRect, p)
+                tooltipHelper.addTarget(p, clientRect)
+            }
+        }
     }
 
-    private fun rectByDataPoint(
+    private fun clientRectByDataPoint(
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
@@ -65,8 +76,8 @@ class LineRangeGeom : GeomBase() {
             val height = ymax - ymin
 
             val rect = DoubleRectangle(DoubleVector(x, ymax - height / 2.0), DoubleVector.ZERO)
-            val unitResolution = geomHelper.getUnitResolution(DimensionUnit.SIZE, Aes.X)
-            val width = unitResolution * max(AesScaling.strokeWidth(p), MIN_TOOLTIP_RECTANGLE_WIDTH)
+                .let { geomHelper.toClient(it, p) }!!
+            val width = max(AesScaling.strokeWidth(p), MIN_TOOLTIP_RECTANGLE_WIDTH)
 
             return GeomUtil.extendWidth(rect, width, geomHelper.ctx.flipped)
         }

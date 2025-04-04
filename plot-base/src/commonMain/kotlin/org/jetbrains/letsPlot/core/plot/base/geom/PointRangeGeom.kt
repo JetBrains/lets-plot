@@ -70,9 +70,9 @@ class PointRangeGeom : GeomBase() {
         }
         // tooltip
         /*
-          Unlike the cases of CrossBarGeom, ErrorBarGeom and LineRangeGeom, it is inconvenient to use RectanglesHelper here.
+          Unlike the cases of CrossBarGeom and ErrorBarGeom, it is inconvenient to use RectanglesHelper here.
           RectanglesHelper uses a geometry factory that returns rectangles in data coordinates, but clientRectByDataPoint() returns client coordinates.
-          Otherwise it is difficult to correctly calculate the width of the rectangle bounding the geometry.
+          Otherwise it is difficult to correctly calculate the width of the rectangle bounding the geometry, especially when the geometry is rotated.
         */
         aesthetics.dataPoints().forEach { p ->
             clientRectByDataPoint(geomHelper, fattenMidPoint)(p)?.let { clientRect ->
