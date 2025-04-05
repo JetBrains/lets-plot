@@ -5,11 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 class BoxplotOutlierStat(
     private val whiskerIQRRatio: Double    // ggplot: 'coef'
@@ -89,7 +90,7 @@ class BoxplotOutlierStat(
                 var upperWhisker = upperFence
                 if (SeriesUtil.allFinite(lowerFence, upperFence)) {
                     val boxed = bin.filter { y -> y in lowerFence..upperFence }
-                    val range = SeriesUtil.range(boxed)
+                    val range = DoubleSpan.encloseAllQ(boxed)
                     if (range != null) {
                         lowerWhisker = range.lowerEnd
                         upperWhisker = range.upperEnd

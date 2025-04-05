@@ -144,7 +144,7 @@ class DataFrame private constructor(builder: Builder) {
     fun range(variable: Variable): DoubleSpan? {
         if (!myRanges.containsKey(variable)) {
             val v = getNumeric(variable)
-            val r = SeriesUtil.range(v)
+            val r = DoubleSpan.encloseAllQ(v)
             myRanges[variable] = r
         }
         return myRanges[variable]

@@ -5,12 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 class Density2dStat constructor(
     bandWidthX: Double?,
@@ -116,7 +117,7 @@ class Density2dStat constructor(
         }
 
         if (isContour) {
-            val zRange = SeriesUtil.range(statDensity)
+            val zRange = DoubleSpan.encloseAllQ(statDensity)
             val levels = ContourStatUtil.computeLevels(zRange, binOptions)
                 ?: return DataFrame.Builder.emptyFrame()
 

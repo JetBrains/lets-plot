@@ -315,7 +315,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
                     else -> {
                         val values = numericValues(aes)
-                        SeriesUtil.range(values)
+                        DoubleSpan.encloseAllQ(values)
                     }
                 }
                 myRangeByNumericAes[aes] = r

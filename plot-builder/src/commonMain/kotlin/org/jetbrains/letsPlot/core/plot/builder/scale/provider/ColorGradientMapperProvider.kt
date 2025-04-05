@@ -6,8 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan.Companion.encloseAllQ
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -24,7 +25,7 @@ class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: Color) : M
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         val transformedDomain = discreteTransform.effectiveDomainTransformed
-        val mapperDomain = SeriesUtil.range(transformedDomain)!!
+        val mapperDomain = ensureApplicableRange(encloseAllQ(transformedDomain))
         val gradient = ColorMapper.gradient(mapperDomain, low, high, naValue)
         return GuideMappers.asNotContinuous(ScaleMapper.wrap(gradient))
     }

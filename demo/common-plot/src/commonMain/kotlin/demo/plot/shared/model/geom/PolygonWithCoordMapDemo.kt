@@ -10,8 +10,8 @@ import demo.plot.shared.data.KansasPolygon.KANSAS_X
 import demo.plot.shared.data.KansasPolygon.KANSAS_Y
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.array
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
@@ -44,7 +44,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
     }
 
     private fun colorMapper(values: Iterable<Double>): (Double?) -> Color {
-        return ColorMapper.gradient(SeriesUtil.range(values)!!, Color.DARK_BLUE, Color.LIGHT_BLUE, Color.GRAY)
+        return ColorMapper.gradient(DoubleSpan.encloseAll(values), Color.DARK_BLUE, Color.LIGHT_BLUE, Color.GRAY)
     }
 
     private fun create(): GroupComponent {
@@ -53,8 +53,8 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
 
         val coordsX = KANSAS_X.toList()
         val coordsY = KANSAS_Y.toList()
-        val domainX = SeriesUtil.range(coordsX)!!
-        val domainY = SeriesUtil.range(coordsY)!!
+        val domainX = DoubleSpan.encloseAll(coordsX)
+        val domainY = DoubleSpan.encloseAll(coordsY)
 //        val spanX = domainX.upperEnd - domainX.lowerEnd
 //        val spanY = domainY.upperEnd - domainY.lowerEnd
 //        val clientW = demoInnerSize.x
