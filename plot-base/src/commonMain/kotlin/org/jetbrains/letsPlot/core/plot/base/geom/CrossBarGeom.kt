@@ -64,8 +64,7 @@ class CrossBarGeom : GeomBase(), WithWidth {
             sizeAes = Aes.WIDTH, // do not flip as height is not defined for CrossBarGeom
             widthUnit = widthUnit,
             geomHelper,
-            fatten = fattenMidline,
-            flip = false
+            fatten = fattenMidline
         )
         // tooltip
         val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))

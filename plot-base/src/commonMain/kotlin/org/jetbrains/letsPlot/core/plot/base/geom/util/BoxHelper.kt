@@ -40,8 +40,7 @@ object BoxHelper {
         sizeAes: Aes<Double>,
         widthUnit: DimensionUnit,
         geomHelper: GeomHelper,
-        fatten: Double,
-        flip: Boolean
+        fatten: Double
     ) {
         val elementHelper = geomHelper.createSvgElementHelper()
         for (p in aesthetics.dataPoints()) {
@@ -52,8 +51,8 @@ object BoxHelper {
             val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
 
             val (line) = elementHelper.createLine(
-                DoubleVector(x - width / 2, middle).flipIf(flip),
-                DoubleVector(x + width / 2, middle).flipIf(flip),
+                DoubleVector(x - width / 2, middle),
+                DoubleVector(x + width / 2, middle),
                 p
             ) { AesScaling.strokeWidth(it) * fatten } ?: continue
 
