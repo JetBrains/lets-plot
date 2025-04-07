@@ -153,8 +153,8 @@ internal class DomContext2d(
     override fun rotate(angle: Double) = ctx.rotate(angle)
     override fun translate(x: Double, y: Double) = ctx.translate(x, y)
 
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        ctx.transform(m11, m12, m21, m22, dx, dy)
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
+        ctx.transform(sx, ry, rx, sy, tx, ty)
     }
 
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) {

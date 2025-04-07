@@ -29,7 +29,6 @@ class ImageComparer(
         val actual = exportPixels(actualWand)
 
         if (!comparePixelArrays(expected, actual, tolerance = 0)) {
-            ImageMagick.MagickWriteImage(actualWand, actualFilePath)
             val width = ImageMagick.MagickGetImageWidth(actualWand).toInt()
             val height = ImageMagick.MagickGetImageHeight(actualWand).toInt()
             val diffWand = composeVisualDiff(expectedWand, actualWand, createDiffImage(expected, actual, width, height))

@@ -55,7 +55,7 @@ class Context2dDelegate(
     override fun scale(xy: Double) { log("scale: xy=$xy") }
     override fun rotate(angle: Double) { log("rotate: angle=$angle") }
     override fun translate(x: Double, y: Double) { log("translate: x=$x, y=$y") }
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { log("transform: m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy") }
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) { log("transform: m11=$sx, m12=$ry, m21=$rx, m22=$sy, dx=$tx, dy=$ty") }
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) { log("bezierCurveTo: cp1x=$cp1x, cp1y=$cp1y, cp2x=$cp2x, cp2y=$cp2y, x=$x, y=$y") }
     override fun setLineJoin(lineJoin: LineJoin) { log("setLineJoin: $lineJoin") }
     override fun setLineCap(lineCap: LineCap) { log("setLineCap: $lineCap") }

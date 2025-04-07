@@ -321,8 +321,8 @@ internal fun Context2d.fill(paint: Paint) {
 fun Context2d.transform(m: Matrix33) {
     transform(
         m.scaleX.toDouble(),
-        m.skewX.toDouble(), // TODO: should be skewY
-        m.skewY.toDouble(), // TODO: should be skewX
+        m.skewY.toDouble(),
+        m.skewX.toDouble(),
         m.scaleY.toDouble(),
         m.translateX.toDouble(),
         m.translateY.toDouble()

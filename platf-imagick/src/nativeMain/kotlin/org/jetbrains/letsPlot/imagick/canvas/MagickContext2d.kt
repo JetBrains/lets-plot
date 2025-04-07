@@ -31,11 +31,11 @@ class MagickContext2d(
         log { "\t  to: [${state.affineMatrix.repr()}]" }
     }
 
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        log { "transform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)" }
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
+        log { "transform(m11=$sx, m12=$ry, m21=$rx, m22=$sy, dx=$tx, dy=$ty)" }
         log { "\tfrom: [${state.affineMatrix.repr()}]" }
 
-        state.transform(sx = m11, ry = m12, rx = m21, sy = m22, dx = dx, dy = dy)
+        state.transform(sx = sx, ry = ry, rx = rx, sy = sy, dx = tx, dy = ty)
         log { "\t  to: [${state.affineMatrix.repr()}]" }
     }
 
@@ -323,7 +323,7 @@ class MagickContext2d(
             ty = 0.0  // Translate Y
         }
 
-        val logEnabled = false
+        val logEnabled = true
         fun log(str: () -> String) {
             if (logEnabled)
                 println(str())
