@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import kotlin.math.sign
 
@@ -122,7 +123,12 @@ object PlotUtil {
                     }
                 } else {
                     // apply default
-                    val v = layer.getDefault(aes)
+                    val v = when (layer.isYOrientation) {
+                        false -> aes
+                        else -> YOrientationBaseUtil.flipAes(aes) // For oriented geoms, default aesthetics defined for vertical geom versions
+                    }.let {
+                        layer.getDefault(it)
+                    }
                     val t = transformIfContinuous(scale(aes, layer))
                     aesBuilder.constantAes(
                         aes,

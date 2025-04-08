@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
-import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
@@ -13,5 +12,4 @@ interface Geom {
     val legendKeyElementFactory: LegendKeyElementFactory
     fun rangeIncludesZero(aes: Aes<*>): Boolean = false
     fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
-    fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults = aestheticDefaults
 }

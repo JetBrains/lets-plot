@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
@@ -26,15 +25,6 @@ class CrossBarGeom : GeomBase(), WithWidth {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
-
-    override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults, flipped: Boolean): AestheticsDefaults {
-        // 'isVertical' is no longer available, so we need to use 'flipped' to correctly remove the default value
-        return if (flipped) {
-            aestheticDefaults.with(Aes.X, Double.NaN) // The middle bar is optional
-        } else {
-            aestheticDefaults.with(Aes.Y, Double.NaN)
-        }
-    }
 
     override fun buildIntern(
         root: SvgRoot,

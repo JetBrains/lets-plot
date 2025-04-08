@@ -91,6 +91,7 @@ class AestheticsDefaults private constructor(
         private fun crossBar(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
                 .update(Aes.WIDTH, 0.9)
+                .update(Aes.Y, Double.NaN)
         }
 
         private fun boxplot(geomTheme: GeomTheme): AestheticsDefaults {
