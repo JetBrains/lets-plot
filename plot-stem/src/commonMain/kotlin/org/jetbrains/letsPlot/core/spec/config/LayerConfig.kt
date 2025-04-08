@@ -45,6 +45,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
+import kotlin.collections.contains
 
 class LayerConfig constructor(
     layerOptions: Map<String, Any>,
@@ -182,7 +183,6 @@ class LayerConfig constructor(
             else -> emptyMap()
         }
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
-        val combinedMappings = plotMappings + layerMappings
 
         val combinedDiscreteMappings = combinedDiscreteMapping(
             commonMappings = plotMappings,
@@ -191,43 +191,7 @@ class LayerConfig constructor(
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
         )
 
-        val hasHorizontalAes = setOf(Aes.XMIN, Aes.XMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-        isYOrientation = when (hasOwn(ORIENTATION)) {
-            true -> getString(ORIENTATION)?.lowercase()?.let {
-                when (it) {
-                    "y" -> true
-                    "x" -> false
-                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
-                }
-            } ?: false
-
-            false -> {
-                when {
-                    clientSide -> false
-                    !isOrientationApplicable() -> false
-                    DataConfigUtil.isAesDiscrete(
-                        Aes.X,
-                        plotData,
-                        ownData,
-                        plotMappings,
-                        layerMappings,
-                        combinedDiscreteMappings
-                    ) -> false
-                    !DataConfigUtil.isAesDiscrete(
-                        Aes.Y,
-                        plotData,
-                        ownData,
-                        plotMappings,
-                        layerMappings,
-                        combinedDiscreteMappings
-                    ) && !hasHorizontalAes -> false
-                    else -> {
-                        setOrientationY()
-                        true
-                    }
-                }
-            }
-        }
+        isYOrientation = initYOrientation(plotData, plotMappings, layerMappings, combinedDiscreteMappings)
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
@@ -327,6 +291,63 @@ class LayerConfig constructor(
             aggregateOperation = aggregateOperation,
             clientSide = clientSide
         )
+    }
+
+    private fun initYOrientation(
+        plotData: DataFrame,
+        plotMappings: Map<String, String>,
+        layerMappings: Map<String, String>,
+        combinedDiscreteMappings: Map<String, String>
+    ): Boolean {
+        if (hasOwn(ORIENTATION)) {
+            getString(ORIENTATION)?.lowercase()?.let {
+                // Return explicitly defined orientation
+                return when (it) {
+                    "y" -> true
+                    "x" -> false
+                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
+                }
+            }
+        }
+        if (clientSide) {
+            // Client-side orientation is always "X"
+            return false
+        }
+        if (!isOrientationApplicable()) {
+            // Orientation is "X" if geom/stat is not orientable
+            return false
+        }
+        val xIsDiscrete = DataConfigUtil.isAesDiscrete(
+            Aes.X,
+            plotData,
+            ownData,
+            plotMappings,
+            layerMappings,
+            combinedDiscreteMappings
+        )
+        if (xIsDiscrete) {
+            // If the X-axis is discrete, the layer is definitely X-oriented
+            return false
+        }
+        val yIsDiscrete = DataConfigUtil.isAesDiscrete(
+            Aes.Y,
+            plotData,
+            ownData,
+            plotMappings,
+            layerMappings,
+            combinedDiscreteMappings
+        )
+        val combinedMappings = plotMappings + layerMappings
+        val hasHorizontalAes = setOf(Aes.XMIN, Aes.XLOWER, Aes.XMIDDLE, Aes.XUPPER, Aes.XMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+        val hasVerticalAes = setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+        // The layer is Y-oriented if it is orientable, the X-axis is not discrete, and
+        // - either the Y-axis is discrete,
+        // - or there is some horizontal aesthetic and there are no vertical aesthetics
+        val isYOriented = yIsDiscrete || (hasHorizontalAes && !hasVerticalAes)
+        if (isYOriented) {
+            setOrientationY()
+        }
+        return isYOriented
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
