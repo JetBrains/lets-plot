@@ -22,12 +22,12 @@ class MagickContext2d(
     private var currentPath: MagickPath = MagickPath()
     private var state = MagickContextState.create()
     private val contextStates = mutableListOf<MagickContextState>()
+    private val contextState = ContextState()
 
-
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        log { "setTransform(m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy)" }
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        log { "setTransform(m11=$m00, m12=$m10, m21=$m01, m22=$m11, dx=$m02, dy=$m12)" }
         log { "\tfrom: [${state.affineMatrix.repr()}]" }
-        state.setTransform(m11,m12,m21,m22,dx,dy)
+        state.setTransform(m00, m10, m01, m11, m02, m12)
         log { "\t  to: [${state.affineMatrix.repr()}]" }
     }
 

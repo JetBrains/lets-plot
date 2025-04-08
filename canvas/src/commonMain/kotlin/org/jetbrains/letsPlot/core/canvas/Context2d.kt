@@ -58,7 +58,7 @@ interface Context2d {
     fun setStrokeMiterLimit(miterLimit: Double)
     fun setTextBaseline(baseline: TextBaseline)
     fun setTextAlign(align: TextAlign)
-    fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
+    fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double)
     fun setLineDash(lineDash: DoubleArray)
     fun setLineDashOffset(lineDashOffset: Double)
     fun measureTextWidth(str: String): Double

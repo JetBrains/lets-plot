@@ -115,8 +115,8 @@ internal class ScaledContext2d(
     override fun setTextBaseline(baseline: TextBaseline) = ctx.setTextBaseline(baseline)
     override fun setTextAlign(align: TextAlign) = ctx.setTextAlign(align)
 
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        ctx.setTransform(m11, m12, m21, m22, scaled(dx), scaled(dy))
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        ctx.setTransform(m00, m10, m01, m11, scaled(m02), scaled(m12))
     }
 
     override fun fillEvenOdd() = ctx.fillEvenOdd()

@@ -75,6 +75,46 @@ class AffineTest {
     }
 
     @Test
+    fun `translate scale concat`() {
+        val tr = AffineTransform()
+        tr.translate(10.0, 10.0)
+
+        val sc = AffineTransform()
+        sc.scale(2.0, 2.0)
+
+        val at = AffineTransform()
+        at.concatenate(tr)
+        at.concatenate(sc)
+
+        assertEquals(at.scaleX, 2.0)
+        assertEquals(at.scaleY, 2.0)
+        assertEquals(at.translateX, 10.0)
+        assertEquals(at.translateY, 10.0)
+        assertEquals(at.shearX, 0.0)
+        assertEquals(at.shearY, 0.0)
+    }
+
+    @Test
+    fun `scale translate concat`() {
+        val tr = AffineTransform()
+        tr.scale(2.0, 2.0)
+
+        val sc = AffineTransform()
+        sc.translate(10.0, 10.0)
+
+        val at = AffineTransform()
+        at.concatenate(tr)
+        at.concatenate(sc)
+
+        assertEquals(at.scaleX, 2.0)
+        assertEquals(at.scaleY, 2.0)
+        assertEquals(at.translateX, 20.0)
+        assertEquals(at.translateY, 20.0)
+        assertEquals(at.shearX, 0.0)
+        assertEquals(at.shearY, 0.0)
+    }
+
+    @Test
     fun `translate scale rotate shear concat`() {
         val tr = AffineTransform()
         tr.translate(10.0, 10.0)

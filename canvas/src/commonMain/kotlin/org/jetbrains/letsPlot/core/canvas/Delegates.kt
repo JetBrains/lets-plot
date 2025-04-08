@@ -62,7 +62,7 @@ class Context2dDelegate(
     override fun setStrokeMiterLimit(miterLimit: Double) { log("setStrokeMiterLimit: $miterLimit") }
     override fun setTextBaseline(baseline: TextBaseline) { log("setTextBaseline: $baseline") }
     override fun setTextAlign(align: TextAlign) { log("setTextAlign: $align") }
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { log("setTransform: m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy") }
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) { log("setTransform: m11=$m00, m12=$m10, m21=$m01, m22=$m11, dx=$m02, dy=$m12") }
     override fun setLineDash(lineDash: DoubleArray) { log("setLineDash: $lineDash") }
     override fun setLineDashOffset(lineDashOffset: Double) { log("setLineDashOffset: $lineDashOffset") }
     override fun measureTextWidth(str: String): Double {

@@ -25,7 +25,7 @@ class MagickPath {
         val anticlockwise: Boolean
     ) : PathCommand()
 
-    private object ClosePath : PathCommand()
+    private data object ClosePath : PathCommand()
 
     private val commands = mutableListOf<PathCommand>()
 

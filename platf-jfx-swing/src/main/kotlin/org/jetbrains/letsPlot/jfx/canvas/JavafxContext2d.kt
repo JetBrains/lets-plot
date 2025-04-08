@@ -259,8 +259,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.textAlign = convertTextAlign(align)
     }
 
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        myContext2d.setTransform(m11, m12, m21, m22, dx, dy)
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        myContext2d.setTransform(m00, m10, m01, m11, m02, m12)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {

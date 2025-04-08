@@ -359,8 +359,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         state.textAlign = align
     }
 
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        graphics.transform = AffineTransform(m11, m12, m21, m22, dx, dy)
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        graphics.transform = AffineTransform(m00, m10, m01, m11, m02, m12)
         state.transform = graphics.transform
     }
 
