@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -309,14 +310,14 @@ class LayerConfig constructor(
                 }
             }
         }
+
+        // Auto-detection of orientation
+
         if (clientSide) {
-            // Client-side orientation is always "X"
+            // On client-side orientation should be detected as "X"
             return false
         }
-        if (!isOrientationApplicable()) {
-            // Orientation is "X" if geom/stat is not orientable
-            return false
-        }
+
         val xIsDiscrete = DataConfigUtil.isAesDiscrete(
             Aes.X,
             plotData,
@@ -325,10 +326,6 @@ class LayerConfig constructor(
             layerMappings,
             combinedDiscreteMappings
         )
-        if (xIsDiscrete) {
-            // If the X-axis is discrete, the layer is definitely X-oriented
-            return false
-        }
         val yIsDiscrete = DataConfigUtil.isAesDiscrete(
             Aes.Y,
             plotData,
@@ -337,13 +334,49 @@ class LayerConfig constructor(
             layerMappings,
             combinedDiscreteMappings
         )
-        val combinedMappings = plotMappings + layerMappings
-        val hasHorizontalAes = setOf(Aes.XMIN, Aes.XLOWER, Aes.XMIDDLE, Aes.XUPPER, Aes.XMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-        val hasVerticalAes = setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-        // The layer is Y-oriented if it is orientable, the X-axis is not discrete, and
-        // - either the Y-axis is discrete,
-        // - or there is some horizontal aesthetic and there are no vertical aesthetics
-        val isYOriented = yIsDiscrete || (hasHorizontalAes && !hasVerticalAes)
+        // For a given set of aesthetics, the function says:
+        // is it true that none of these aesthetics is defined, but at least one of the flipped versions is
+        // (which might be a reason to consider the geometry as y-oriented)
+        val yOrientedByAes: (Set<Aes<*>>) -> Boolean = { canonicalAesthetics ->
+            val combinedMappings = plotMappings + layerMappings
+            val hasFlippedAesthetics = canonicalAesthetics.map { YOrientationBaseUtil.flipAes(it) }.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            val hasCanonicalAesthetics = canonicalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            hasFlippedAesthetics && !hasCanonicalAesthetics
+        }
+
+        val isYOriented = when {
+            statKind in listOf(
+                StatKind.COUNT,
+                StatKind.SUMMARY,
+                StatKind.BOXPLOT,
+                StatKind.BOXPLOT_OUTLIER,
+                StatKind.YDOTPLOT,
+                StatKind.YDENSITY
+            ) -> {
+                !xIsDiscrete && yIsDiscrete
+            }
+            geomProto.geomKind in listOf(
+                GeomKind.BAR,
+                GeomKind.VIOLIN,
+                GeomKind.LOLLIPOP,
+                GeomKind.Y_DOT_PLOT
+            ) -> {
+                !xIsDiscrete && yIsDiscrete
+            }
+            geomProto.geomKind == GeomKind.BOX_PLOT -> {
+                yOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
+            }
+            geomProto.geomKind in listOf(
+                GeomKind.CROSS_BAR,
+                GeomKind.ERROR_BAR,
+                GeomKind.LINE_RANGE,
+                GeomKind.POINT_RANGE,
+                GeomKind.RIBBON
+            ) -> {
+                yOrientedByAes(setOf(Aes.YMIN, Aes.YMAX))
+            }
+            else -> false
+        }
         if (isYOriented) {
             setOrientationY()
         }
@@ -383,31 +416,6 @@ class LayerConfig constructor(
 
         // Invalidate layer' "combined data"
         combinedDataValid = false
-    }
-
-    private fun isOrientationApplicable(): Boolean {
-        val isSuitableGeomKind = geomProto.geomKind in listOf(
-            GeomKind.BAR,
-            GeomKind.BOX_PLOT,
-            GeomKind.VIOLIN,
-            GeomKind.LOLLIPOP,
-            GeomKind.Y_DOT_PLOT,
-            GeomKind.CROSS_BAR,
-            GeomKind.ERROR_BAR,
-            GeomKind.LINE_RANGE,
-            GeomKind.POINT_RANGE,
-            GeomKind.RIBBON
-        )
-        val isSuitableStatKind = statKind in listOf(
-            StatKind.COUNT,
-            StatKind.SUMMARY,
-            StatKind.BOXPLOT,
-            StatKind.BOXPLOT_OUTLIER,
-            StatKind.YDOTPLOT,
-            StatKind.YDENSITY
-        )
-
-        return isSuitableGeomKind || isSuitableStatKind
     }
 
     private fun setOrientationY() {
