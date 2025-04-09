@@ -318,30 +318,28 @@ class LayerConfig constructor(
             return false
         }
 
-        val xIsDiscrete = DataConfigUtil.isAesDiscrete(
-            Aes.X,
-            plotData,
-            ownData,
-            plotMappings,
-            layerMappings,
-            combinedDiscreteMappings
-        )
-        val yIsDiscrete = DataConfigUtil.isAesDiscrete(
-            Aes.Y,
-            plotData,
-            ownData,
-            plotMappings,
-            layerMappings,
-            combinedDiscreteMappings
-        )
+        fun isAesDiscrete(aes: Aes<*>): Boolean {
+            return DataConfigUtil.isAesDiscrete(
+                aes,
+                plotData,
+                ownData,
+                plotMappings,
+                layerMappings,
+                combinedDiscreteMappings
+            )
+        }
         // For a given set of aesthetics, the function says:
         // is it true that none of these aesthetics is defined, but at least one of the flipped versions is
         // (which might be a reason to consider the geometry as y-oriented)
-        val yOrientedByAes: (Set<Aes<*>>) -> Boolean = { canonicalAesthetics ->
+        fun isYOrientedByAes(verticalAesthetics: Set<Aes<*>>): Boolean {
             val combinedMappings = plotMappings + layerMappings
-            val hasFlippedAesthetics = canonicalAesthetics.map { YOrientationBaseUtil.flipAes(it) }.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-            val hasCanonicalAesthetics = canonicalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-            hasFlippedAesthetics && !hasCanonicalAesthetics
+            val hasVerticalAesthetics = verticalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            if (hasVerticalAesthetics) {
+                return false
+            }
+            val horizontalAesthetics = verticalAesthetics.map { YOrientationBaseUtil.flipAes(it) }
+            val hasHorizontalAesthetics = horizontalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            return hasHorizontalAesthetics // if false - i.e. there is no vertical, no horizontal aesthetics, then the geometry is considered y-oriented
         }
 
         val isYOriented = when {
@@ -353,7 +351,7 @@ class LayerConfig constructor(
                 StatKind.YDOTPLOT,
                 StatKind.YDENSITY
             ) -> {
-                !xIsDiscrete && yIsDiscrete
+                !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
             }
             geomProto.geomKind in listOf(
                 GeomKind.BAR,
@@ -361,10 +359,10 @@ class LayerConfig constructor(
                 GeomKind.LOLLIPOP,
                 GeomKind.Y_DOT_PLOT
             ) -> {
-                !xIsDiscrete && yIsDiscrete
+                !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
             }
             geomProto.geomKind == GeomKind.BOX_PLOT -> {
-                yOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
+                isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
             }
             geomProto.geomKind in listOf(
                 GeomKind.CROSS_BAR,
@@ -373,7 +371,7 @@ class LayerConfig constructor(
                 GeomKind.POINT_RANGE,
                 GeomKind.RIBBON
             ) -> {
-                yOrientedByAes(setOf(Aes.YMIN, Aes.YMAX))
+                isYOrientedByAes(setOf(Aes.YMIN, Aes.YMAX))
             }
             else -> false
         }
