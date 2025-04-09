@@ -17,66 +17,11 @@ import kotlin.math.sin
 
 
 class MagickContext2d(
-    private val magickWand: CPointer<ImageMagick.MagickWand>?
-) : Context2d by Context2dDelegate(true) {
+    private val magickWand: CPointer<ImageMagick.MagickWand>?,
+    private val stateDelegate: ContextStateDelegate = ContextStateDelegate()
+) : Context2d by stateDelegate {
+    private val contextState: ContextState get() = stateDelegate.state
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
-    private val contextState = ContextState()
-
-    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
-        contextState.setTransform(m00 = m00, m10 = m10, m01 = m01, m11 = m11, m02 = m02, m12 = m12)
-    }
-
-    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
-        contextState.transform(sx = sx, ry = ry, rx = rx, sy = sy, tx = tx, ty = ty)
-    }
-
-    override fun scale(x: Double, y: Double) {
-        contextState.scale(x, y)
-    }
-
-    override fun rotate(angle: Double) {
-        contextState.rotate(angle)
-    }
-
-    override fun translate(x: Double, y: Double) {
-        contextState.translate(x, y)
-    }
-
-    override fun setFont(f: Font) {
-        contextState.setFont(f)
-    }
-
-    override fun setFillStyle(color: Color?) {
-        contextState.setFillStyle(color ?: Color.BLACK)
-    }
-
-    override fun setStrokeStyle(color: Color?) {
-        contextState.setStrokeStyle(color ?: Color.BLACK)
-    }
-
-    override fun setLineWidth(lineWidth: Double) {
-        contextState.setLineWidth(lineWidth)
-    }
-
-    override fun setLineDash(lineDash: DoubleArray) {
-        contextState.setLineDashPattern(lineDash.toList())
-    }
-
-    override fun setLineDashOffset(lineDashOffset: Double) {
-        contextState.setLineDashOffset(lineDashOffset)
-    }
-
-    override fun setStrokeMiterLimit(miterLimit: Double) {
-        contextState.setStrokeMiterLimit(miterLimit)
-    }
-
-    override fun setLineCap(lineCap: LineCap) {
-        contextState.setLineCap(lineCap)
-    }
-
-    override fun setLineJoin(lineJoin: LineJoin) {
-        contextState.setLineJoin(lineJoin)
-    }
 
     override fun fillText(text: String, x: Double, y: Double) {
         //println("FillText(\'$text\') [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
@@ -95,43 +40,6 @@ class MagickContext2d(
                 ImageMagick.DrawAnnotation(strokeWand, x, y, textCStr)
             }
         }
-    }
-
-    override fun beginPath() {
-        contextState.beginPath()
-    }
-
-    override fun moveTo(x: Double, y: Double) {
-        contextState.moveTo(x, y)
-    }
-
-    override fun lineTo(x: Double, y: Double) {
-        contextState.lineTo(x, y)
-    }
-
-    override fun arc(
-        x: Double,
-        y: Double,
-        radius: Double,
-        startAngle: Double,
-        endAngle: Double,
-        anticlockwise: Boolean
-    ) {
-        contextState.arc(x, y, radius, startAngle, endAngle, anticlockwise)
-    }
-
-    override fun ellipse(
-        x: Double, y: Double,
-        radiusX: Double, radiusY: Double,
-        rotation: Double,
-        startAngle: Double, endAngle: Double,
-        anticlockwise: Boolean
-    ) {
-        contextState.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
-    }
-
-    override fun closePath() {
-        contextState.closePath()
     }
 
     override fun stroke() {
@@ -178,14 +86,6 @@ class MagickContext2d(
 
     override fun measureTextWidth(str: String): Double {
         return measureText(str).bbox.width
-    }
-
-    override fun save() {
-        contextState.save()
-    }
-
-    override fun restore() {
-        contextState.restore()
     }
 
     private fun withWand(affineTransform: AffineTransform? = null, block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {

@@ -87,6 +87,7 @@ class ContextState {
     sealed class PathCommand(
         val transform: AffineTransform
     )
+
     class ClosePath(transform: AffineTransform) : PathCommand(transform)
     class MoveTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
     class LineTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
@@ -127,7 +128,19 @@ class ContextState {
             endAngleDeg: Double,
             anticlockwise: Boolean
         ) {
-            commands.add(Ellipse(x, y, radius, radius, 0.0, startAngleDeg, endAngleDeg, anticlockwise, currentState.transform))
+            commands.add(
+                Ellipse(
+                    x,
+                    y,
+                    radius,
+                    radius,
+                    0.0,
+                    startAngleDeg,
+                    endAngleDeg,
+                    anticlockwise,
+                    currentState.transform
+                )
+            )
         }
 
         fun ellipse(
@@ -137,14 +150,27 @@ class ContextState {
             startAngle: Double, endAngle: Double,
             anticlockwise: Boolean
         ) {
-            commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise, currentState.transform))
+            commands.add(
+                Ellipse(
+                    x,
+                    y,
+                    radiusX,
+                    radiusY,
+                    rotation,
+                    startAngle,
+                    endAngle,
+                    anticlockwise,
+                    currentState.transform
+                )
+            )
         }
     }
 
     fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
         log { "setTransform(m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12)" }
         log { "\tfrom: [${currentState.transform.repr()}]" }
-        currentState.transform = AffineTransform.makeMatrix(m00 = m00, m10 = m10, m01 = m01, m11 = m11, m02 = m02, m12 = m12)
+        currentState.transform =
+            AffineTransform.makeMatrix(m00 = m00, m10 = m10, m01 = m01, m11 = m11, m02 = m02, m12 = m12)
         log { "\t  to: [${currentState.transform.repr()}]" }
     }
 
@@ -181,12 +207,12 @@ class ContextState {
     }
 
     fun restore() {
-        log{ "restore()"}
-        log{ "\tfrom: [${currentState.transform.repr()}]"}
+        log { "restore()" }
+        log { "\tfrom: [${currentState.transform.repr()}]" }
         if (states.isNotEmpty()) {
             currentState = states.removeAt(states.size - 1)
         }
-        log{ "\t  to: [${currentState.transform.repr()}]" }
+        log { "\t  to: [${currentState.transform.repr()}]" }
     }
 
     fun beginPath() {
@@ -235,14 +261,14 @@ class ContextState {
         )
     }
 
-    fun setStrokeStyle(color: Color) {
+    fun setStrokeStyle(color: Color?) {
         log { "setStrokeStyle($color)" }
-        currentState.strokeColor = color
+        currentState.strokeColor = color ?: Color.TRANSPARENT
     }
 
-    fun setFillStyle(color: Color) {
+    fun setFillStyle(color: Color?) {
         log { "setFillStyle($color)" }
-        currentState.fillColor = color
+        currentState.fillColor = color ?: Color.TRANSPARENT
     }
 
     fun setFont(font: Font) {
@@ -278,5 +304,32 @@ class ContextState {
     fun setStrokeMiterLimit(miterLimit: Double) {
         log { "setStrokeMiterLimit($miterLimit)" }
         currentState.miterLimit = miterLimit
+    }
+
+    fun setGlobalAlpha(d: Double) {
+        TODO("Not yet implemented")
+    }
+
+    fun scale(d: Double) {
+        scale(d, d)
+    }
+
+    fun bezierCurveTo(
+        cp1x: Double,
+        cp1y: Double,
+        cp2x: Double,
+        cp2y: Double,
+        x: Double,
+        y: Double
+    ) {
+        TODO("Not yet implemented")
+    }
+
+    fun setTextBaseline(baseline: TextBaseline) {
+        TODO("Not yet implemented")
+    }
+
+    fun setTextAlign(align: TextAlign) {
+        TODO("Not yet implemented")
     }
 }
