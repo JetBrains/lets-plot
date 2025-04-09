@@ -12,7 +12,7 @@ interface MappedDataAccess {
 
     fun getOriginalValue(aes: Aes<*>, index: Int): Any?
 
-//    fun getMappedDataValue(aes: Aes<*>, index: Int, ctx: PlotContext): String
+    fun getTransformedValue(aes: Aes<*>, index: Int): Double?
 
     fun getMappedDataLabel(aes: Aes<*>): String
 
