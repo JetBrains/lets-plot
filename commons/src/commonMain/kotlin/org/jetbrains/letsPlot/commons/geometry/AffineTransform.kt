@@ -10,7 +10,7 @@ import kotlin.math.sin
 
 /*
     Represents the 2D affine transformation matrix in the form:
-    | m00 / sx | m01 / ry | m02 / tx |
+    | m00 / sx | m01 / rx | m02 / tx |
     | -------- | -------- | -------- |
     | m10 / ry | m11 / sy | m12 / ty |
     | -------- | -------- | -------- |
@@ -25,10 +25,19 @@ class AffineTransform(
     val m02: Double, // tx
     val m12: Double // ty
 ) {
-    fun transform(x: Double, y: Double): DoubleVector {
+
+    // synonyms
+    val sx: Double get() = m00
+    val sy: Double get() = m11
+    val rx: Double get() = m01
+    val ry: Double get() = m10
+    val tx: Double get() = m02
+    val ty: Double get() = m12
+
+    fun transform(x: Number, y: Number): DoubleVector {
         return DoubleVector(
-            x = m00 * x + m01 * y + m02,
-            y = m10 * x + m11 * y + m12
+            x = m00 * x.toDouble() + m01 * y.toDouble() + m02,
+            y = m10 * x.toDouble() + m11 * y.toDouble() + m12
         )
     }
 
@@ -42,6 +51,7 @@ class AffineTransform(
             m12 = m10 * other.m02 + m11 * other.m12 + m12
         )
     }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -77,11 +87,11 @@ class AffineTransform(
     companion object {
         val IDENTITY = AffineTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 
-        fun makeScale(sx: Double, sy: Double): AffineTransform {
+        fun makeScale(sx: Number, sy: Number): AffineTransform {
             return makeTransform(sx = sx, sy = sy)
         }
 
-        fun makeTranslation(tx: Double, ty: Double): AffineTransform {
+        fun makeTranslation(tx: Number, ty: Number): AffineTransform {
             return makeTransform(tx = tx, ty = ty)
         }
 
@@ -91,7 +101,7 @@ class AffineTransform(
             return makeTransform(sx = cos, ry = sin, rx = -sin, sy = cos)
         }
 
-        fun makeShear(rx: Double, ry: Double): AffineTransform {
+        fun makeShear(rx: Number, ry: Number): AffineTransform {
             return makeTransform(ry = ry, rx = rx)
         }
 
@@ -109,23 +119,26 @@ class AffineTransform(
         }
 
         // Creates a transform from the matrix elements
-        // | sx  ry  tx |
-        // | rx  sy  ty |
+        // | m00 / sx | m01 / rx | m02 / tx |
+        // | -------- | -------- | -------- |
+        // | m10 / ry | m11 / sy | m12 / ty |
+        // | -------- | -------- | -------- |
+        // |     0    |     0    |     1    |
         fun makeTransform(
             sx: Number = 1, // m00
-            ry: Number = 0, // m01
-            rx: Number = 0, // m10
+            ry: Number = 0, // m10
+            rx: Number = 0, // m01
             sy: Number = 1, // m11
             tx: Number = 0, // m02
             ty: Number = 0  // m12
         ): AffineTransform {
             return AffineTransform(
-                sx.toDouble(),
-                ry.toDouble(),
-                rx.toDouble(),
-                sy.toDouble(),
-                tx.toDouble(),
-                ty.toDouble()
+                m00 = sx.toDouble(),
+                m10 = ry.toDouble(),
+                m01 = rx.toDouble(),
+                m11 = sy.toDouble(),
+                m02 = tx.toDouble(),
+                m12 = ty.toDouble()
             )
         }
 

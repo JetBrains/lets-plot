@@ -59,7 +59,7 @@ class MagicWandTest {
             ImageMagick.MagickDrawImage(wand, draw)
 
             // Never saves the image - this is just a test to check if the code compiles and runs
-            val outputFilename = "simple.bmp"
+            val outputFilename = "magickwand_simple.bmp"
             if (false && ImageMagick.MagickWriteImage(wand, outputFilename) == ImageMagick.MagickFalse) {
                 throw RuntimeException("Failed to write image")
             }
@@ -130,7 +130,7 @@ class MagicWandTest {
 
 
         ImageMagick.MagickDrawImage(magickWand, drawingWand)
-        val outputFilename = "miter_join_artifact.bmp"
+        val outputFilename = "magickwand_miter_join_artifact.bmp"
 
         // Never saves the image - this is just a test to check if the code compiles and runs
         if (false && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
@@ -139,6 +139,52 @@ class MagicWandTest {
 
         ImageMagick.DestroyPixelWand(backgroundWand)
         ImageMagick.DestroyPixelWand(strokeWand)
+        ImageMagick.DestroyDrawingWand(drawingWand)
+        ImageMagick.DestroyMagickWand(magickWand)
+        ImageMagick.MagickWandTerminus()
+    }
+
+    @Test
+    fun affine_ry() {
+        ImageMagick.MagickWandGenesis()
+        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+
+        val backgroundWand = ImageMagick.NewPixelWand()
+        ImageMagick.PixelSetColor(backgroundWand, "white")
+        ImageMagick.MagickNewImage(magickWand, 300u, 300u, backgroundWand)
+
+        val drawingWand = ImageMagick.NewDrawingWand()
+        val pixelWand = ImageMagick.NewPixelWand()
+
+        ImageMagick.PixelSetColor(pixelWand, "black")
+        ImageMagick.DrawSetFillColor(drawingWand, pixelWand)
+        ImageMagick.DrawRectangle(drawingWand, 50.0, 50.0, 200.0, 200.0)
+
+        memScoped {
+            val m = alloc<ImageMagick.AffineMatrix>()
+            m.sx = 1.0
+            m.sy = 1.0
+            m.ry = 0.3420201241970062
+            m.rx = 0.0
+            m.tx = 0.0
+            m.ty = 0.0
+            ImageMagick.DrawAffine(drawingWand, m.ptr)
+        }
+
+        ImageMagick.PixelSetColor(pixelWand, "green")
+        ImageMagick.DrawSetFillColor(drawingWand, pixelWand)
+        ImageMagick.DrawSetFillOpacity(drawingWand, 0.7)
+        ImageMagick.DrawRectangle(drawingWand, 50.0, 50.0, 200.0, 200.0)
+
+        ImageMagick.MagickDrawImage(magickWand, drawingWand)
+        val outputFilename = "affine_ry.bmp"
+
+        if (false && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
+            throw RuntimeException("Failed to write image")
+        }
+
+        ImageMagick.DestroyPixelWand(backgroundWand)
+        ImageMagick.DestroyPixelWand(pixelWand)
         ImageMagick.DestroyDrawingWand(drawingWand)
         ImageMagick.DestroyMagickWand(magickWand)
         ImageMagick.MagickWandTerminus()

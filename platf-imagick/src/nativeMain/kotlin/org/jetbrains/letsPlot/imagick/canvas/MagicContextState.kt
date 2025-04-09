@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d.Companion.IDENTITY
 import org.jetbrains.letsPlot.raster.shape.*
 
 internal class MagickContextState(
@@ -139,6 +138,15 @@ internal class MagickContextState(
     }
 
     companion object {
+        val IDENTITY = nativeHeap.alloc<ImageMagick.AffineMatrix>().apply {
+            sx = 1.0  // Scale X (no change)
+            sy = 1.0  // Scale Y (no change)
+            rx = 0.0  // Shear X
+            ry = 0.0  // Shear Y
+            tx = 0.0 // Translate X
+            ty = 0.0  // Translate Y
+        }
+
         fun create(
             strokeColor: String = Color.TRANSPARENT.toCssColor(),
             strokeWidth: Double = 1.0,

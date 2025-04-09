@@ -3,7 +3,6 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -11,12 +10,44 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
+//@Ignore
 class MagickContext2dTest {
     val imageComparer = ImageComparer(
         expectedDir = "src/nativeTest/resources/expected/",
         outDir = "build/image-test/diff/"
     )
+
+    @Test
+    fun shearedEllipse() {
+        val canvas = MagickCanvas.create(500, 500)
+        with(canvas.context2d) {
+            strokeStyle = "black"
+
+            transform(sx=1.0, ry=0.3420201241970062, rx=0.0, sy=1.0, tx=0.0, ty=-30.0)
+            beginPath()
+            moveTo(150.0, 375.0)
+            lineTo(150.0, 275.0)
+            if (true) {
+                lineTo(50.0, 275.0)
+                lineTo(50.0, 375.0)
+            } else {
+                ellipse(
+                    x = 150.0,
+                    y = 375.0,
+                    radiusX = 100.0,
+                    radiusY = 100.0,
+                    rotation = 0.0,
+                    startAngle = -PI / 2,
+                    endAngle = PI,
+                    anticlockwise = true
+                )
+            }
+            closePath()
+            stroke()
+        }
+
+        imageComparer.assertImageEquals("sheared_ellipse.bmp", canvas.wand!!)
+    }
 
     @Test
     fun nestedTranslates() {

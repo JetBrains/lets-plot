@@ -76,6 +76,8 @@ class MagickPath {
                     val endX = x + radiusX * cos(endRad)
                     val endY = y + radiusY * sin(endRad)
 
+                    println("startX: $startX, startY: $startY, endX: $endX, endY: $endY")
+
                     val delta = endAngleDeg - startAngleDeg
 
                     if (!started) {

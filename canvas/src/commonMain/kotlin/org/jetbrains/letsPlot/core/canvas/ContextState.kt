@@ -6,32 +6,37 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 
 private const val logEnabled = true
-private const val pathTransform = false
 private fun log(str: () -> String) {
     if (logEnabled)
         println(str())
 }
-
 
 class ContextState {
     private val states = ArrayList<StateEntry>()
     private var currentState = StateEntry.create()
     private var currentPath: Path = Path()
 
+    fun getCurrentState(): StateEntry {
+        return currentState.copy()
+    }
+
+    fun getCurrentPath(): List<PathCommand> {
+        return currentPath.getCommands()
+    }
+
     class StateEntry(
-        var strokeColor: String,
+        var strokeColor: Color,
         var strokeWidth: Double,
         var lineDashPattern: List<Double>?,
         var lineDashOffset: Double,
-        var miterLimit: Int,
+        var miterLimit: Double,
         var lineCap: LineCap,
         var lineJoin: LineJoin,
-        var fillColor: String,
+        var fillColor: Color,
         var font: Font,
         var transform: AffineTransform
     ) {
@@ -52,14 +57,13 @@ class ContextState {
 
         companion object {
             fun create(
-                strokeColor: String = Color.TRANSPARENT.toCssColor(),
+                strokeColor: Color = Color.TRANSPARENT,
                 strokeWidth: Double = 1.0,
-                lineDashPatternSize: ULong = 0u,
                 lineDashOffset: Double = 0.0,
-                miterLimit: Int = 10,
+                miterLimit: Double = 10.0,
                 lineCap: LineCap = LineCap.BUTT,
                 lineJoin: LineJoin = LineJoin.MITER,
-                fillColor: String = Color.TRANSPARENT.toCssColor(),
+                fillColor: Color = Color.TRANSPARENT,
                 font: Font = Font(),
                 transform: AffineTransform = AffineTransform.IDENTITY,
                 lineDashPattern: List<Double>? = null
@@ -77,39 +81,42 @@ class ContextState {
                     transform = transform
                 )
             }
-
         }
     }
 
-    class Path {
-        private sealed class PathCommand
-        private data class MoveTo(val x: Double, val y: Double) : PathCommand()
-        private data class LineTo(val x: Double, val y: Double) : PathCommand()
-        private data class Ellipse(
-            val x: Double,
-            val y: Double,
-            val radiusX: Double,
-            val radiusY: Double,
-            val rotation: Double,
-            val startAngleDeg: Double,
-            val endAngleDeg: Double,
-            val anticlockwise: Boolean
-        ) : PathCommand()
+    sealed class PathCommand(
+        val transform: AffineTransform
+    )
+    class ClosePath(transform: AffineTransform) : PathCommand(transform)
+    class MoveTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
+    class LineTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
+    class Ellipse(
+        val x: Double,
+        val y: Double,
+        val radiusX: Double,
+        val radiusY: Double,
+        val rotation: Double,
+        val startAngleDeg: Double,
+        val endAngleDeg: Double,
+        val anticlockwise: Boolean,
+        transform: AffineTransform
+    ) : PathCommand(transform)
 
-        private data object ClosePath : PathCommand()
-
+    internal inner class Path {
         private val commands = mutableListOf<PathCommand>()
 
+        fun getCommands() = commands.toList()
+
         fun closePath() {
-            commands.add(ClosePath)
+            commands.add(ClosePath(currentState.transform))
         }
 
         fun moveTo(x: Double, y: Double) {
-            commands.add(MoveTo(x, y))
+            commands.add(MoveTo(x, y, currentState.transform))
         }
 
         fun lineTo(x: Double, y: Double) {
-            commands.add(LineTo(x, y))
+            commands.add(LineTo(x, y, currentState.transform))
         }
 
         fun arc(
@@ -120,7 +127,7 @@ class ContextState {
             endAngleDeg: Double,
             anticlockwise: Boolean
         ) {
-            commands.add(Ellipse(x, y, radius, radius, 0.0, startAngleDeg, endAngleDeg, anticlockwise))
+            commands.add(Ellipse(x, y, radius, radius, 0.0, startAngleDeg, endAngleDeg, anticlockwise, currentState.transform))
         }
 
         fun ellipse(
@@ -130,37 +137,42 @@ class ContextState {
             startAngle: Double, endAngle: Double,
             anticlockwise: Boolean
         ) {
-            commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise))
+            commands.add(Ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise, currentState.transform))
         }
     }
 
     fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
-        log { "setTransform(m11=$m00, m12=$m10, m21=$m01, m22=$m11, dx=$m02, dy=$m12)" }
+        log { "setTransform(m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12)" }
         log { "\tfrom: [${currentState.transform.repr()}]" }
         currentState.transform = AffineTransform.makeMatrix(m00 = m00, m10 = m10, m01 = m01, m11 = m11, m02 = m02, m12 = m12)
         log { "\t  to: [${currentState.transform.repr()}]" }
     }
 
-    fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
-        log { "transform(m11=$sx, m12=$ry, m21=$rx, m22=$sy, dx=$tx, dy=$ty)" }
+    private fun transform(at: AffineTransform) {
+        log { "transform(${at.repr()})" }
         log { "\tfrom: [${currentState.transform.repr()}]" }
-
-        currentState.transform = AffineTransform.makeTransform(sx = sx, ry = ry, rx = rx, sy = sy, tx = tx, ty = ty)
+        currentState.transform = currentState.transform.concat(at)
         log { "\t  to: [${currentState.transform.repr()}]" }
     }
 
+    fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
+        log { "transform(sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty)" }
+        transform(AffineTransform.makeTransform(sx = sx, ry = ry, rx = rx, sy = sy, tx = tx, ty = ty))
+    }
+
     fun scale(x: Double, y: Double) {
-        return transform(x, 0.0, 0.0, y, 0.0, 0.0)
+        log { "scale($x, $y)" }
+        transform(AffineTransform.makeScale(x, y))
     }
 
     fun rotate(angle: Double) {
-        val cos = kotlin.math.cos(angle)
-        val sin = kotlin.math.sin(angle)
-        return transform(cos, -sin, sin, cos, 0.0, 0.0)
+        log { "rotate($angle)" }
+        transform(AffineTransform.makeRotation(angle))
     }
 
     fun translate(x: Double, y: Double) {
-        return transform(1.0, 0.0, 0.0, 1.0, x, y)
+        log { "translate($x, $y)" }
+        transform(AffineTransform.makeTranslation(x, y))
     }
 
     fun save() {
@@ -177,7 +189,6 @@ class ContextState {
         log{ "\t  to: [${currentState.transform.repr()}]" }
     }
 
-
     fun beginPath() {
         currentPath = Path()
     }
@@ -187,19 +198,11 @@ class ContextState {
     }
 
     fun moveTo(x: Double, y: Double) {
-        val (tx, ty) = if (!pathTransform) DoubleVector(x, y) else currentState.transform.transform(x, y)
-
-        log { "moveTo($x, $y) -> [$tx, $ty]" }
-
-        currentPath.moveTo(tx, ty)
+        currentPath.moveTo(x, y)
     }
 
     fun lineTo(x: Double, y: Double) {
-        val (tx, ty) = if (!pathTransform) DoubleVector(x, y) else currentState.transform.transform(x, y)
-
-        log { "lineTo($x, $y) -> [$tx, $ty]" }
-
-        currentPath.lineTo(tx, ty)
+        currentPath.lineTo(x, y)
     }
 
     fun arc(
@@ -210,11 +213,7 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        val (tx, ty) = if (!pathTransform) DoubleVector(x, y) else currentState.transform.transform(x, y)
-
-        log { "arc($x, $y, $radius, $startAngle, $endAngle) -> [$tx, $ty]" }
-
-        currentPath.arc(tx, ty, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
+        currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
     }
 
     fun ellipse(
@@ -224,17 +223,9 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        val (tX, tY) = if (!pathTransform) DoubleVector(x, y) else currentState.transform.transform(x, y)
-        val (trX, trY) = if (!pathTransform) DoubleVector(radiusX, radiusY) else currentState.transform.transform(
-            radiusX,
-            radiusY
-        )
-
-        log { "ellipse($x, $y, $radiusX, $radiusY, $rotation, $startAngle, $endAngle, $anticlockwise) -> c: [$tX, $tY], r: [$trX, $trY]" }
-
         currentPath.ellipse(
-            tX,
-            tY,
+            x,
+            y,
             radiusX,
             radiusY,
             toDegrees(rotation),
@@ -244,12 +235,12 @@ class ContextState {
         )
     }
 
-    fun setStrokeStyle(color: String) {
+    fun setStrokeStyle(color: Color) {
         log { "setStrokeStyle($color)" }
         currentState.strokeColor = color
     }
 
-    fun setFillStyle(color: String) {
+    fun setFillStyle(color: Color) {
         log { "setFillStyle($color)" }
         currentState.fillColor = color
     }
@@ -284,7 +275,7 @@ class ContextState {
         currentState.lineDashOffset = lineDashOffset
     }
 
-    fun setStrokeMiterLimit(miterLimit: Int) {
+    fun setStrokeMiterLimit(miterLimit: Double) {
         log { "setStrokeMiterLimit($miterLimit)" }
         currentState.miterLimit = miterLimit
     }
