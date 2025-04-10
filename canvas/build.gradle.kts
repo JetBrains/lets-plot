@@ -27,6 +27,8 @@ kotlin {
 
         jvmTest {
             dependencies {
+                implementation(project(":commons"))
+                implementation(project(":datamodel"))
                 implementation(kotlin("test"))
                 implementation("org.assertj:assertj-core:$assertjVersion")
             }

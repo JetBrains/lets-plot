@@ -1,4 +1,5 @@
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.math.*
 import kotlin.test.Test
 
@@ -237,63 +238,32 @@ class MagicWandTest {
     }
 
     @Test
-    fun threeBezierCurves() {
+    fun bezier() {
+        val cp0 = DoubleVector(150.0, 100.0)
+        val cp1 = DoubleVector(150.0, 127.614237)
+        val cp2 = DoubleVector(127.614237, 150.0)
+        val cp3 = DoubleVector(100.0, 150.0)
+
         ImageMagick.MagickWandGenesis()
+
+        val drawingWand = ImageMagick.NewDrawingWand()
+        ImageMagick.DrawPathStart(drawingWand)
+        ImageMagick.DrawPathLineToAbsolute(drawingWand, cp0.x, cp0.y)
+        ImageMagick.DrawPathCurveToAbsolute(drawingWand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+        ImageMagick.DrawPathFinish(drawingWand)
+
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
         val backgroundWand = ImageMagick.NewPixelWand()
         ImageMagick.PixelSetColor(backgroundWand, "white")
         ImageMagick.MagickNewImage(magickWand, 500.convert(), 500.convert(), backgroundWand)
-
-        val drawingWand = ImageMagick.NewDrawingWand()
-        val pixelWand = ImageMagick.NewPixelWand()
-
-        ImageMagick.PixelSetColor(pixelWand, "black")
-        ImageMagick.DrawSetFillColor(drawingWand, pixelWand)
-        ImageMagick.DrawSetStrokeColor(drawingWand, pixelWand)
-        ImageMagick.DrawSetStrokeWidth(drawingWand, 2.0)
-
-        // Draw three Bezier curves
-//        memScoped {
-//            val bezierPoints = allocArray<ImageMagick.PointInfo>(3)
-//            bezierPoints[0].x = 50.0; bezierPoints[0].y = 50.0
-//            bezierPoints[1].x = 150.0; bezierPoints[1].y = 50.0
-//            bezierPoints[2].x = 150.0; bezierPoints[2].y = 150.0
-//
-//            ImageMagick.DrawBezier(drawingWand, 3.convert(), bezierPoints)
-//
-//            bezierPoints[0].x = 150.0; bezierPoints[0].y = 150.0
-//            bezierPoints[1].x = 250.0; bezierPoints[1].y = 150.0
-//            bezierPoints[2].x = 250.0; bezierPoints[2].y = 50.0
-//
-//            ImageMagick.DrawBezier(drawingWand, 3.convert(), bezierPoints)
-//
-//            bezierPoints[0].x = 250.0; bezierPoints[0].y = 50.0
-//            bezierPoints[1].x = 350.0; bezierPoints[1].y = -50.0
-//            bezierPoints[2].x = 350.0; bezierPoints[2].y = -50.0
-//
-//            ImageMagick.DrawBezier(drawingWand, 3.convert(), bezierPoints)
-//        }
-
-        memScoped {
-            val bezierPoints = allocArray<ImageMagick.PointInfo>(4)
-            bezierPoints[0].x = 150.0; bezierPoints[0].y = 275.0
-            bezierPoints[1].x = 94.77152501692068; bezierPoints[1].y = 275.0
-            bezierPoints[2].x = 50.0; bezierPoints[2].y = 319.77152501692063
-            bezierPoints[3].x = 50.0; bezierPoints[3].y = 375.0
-
-            ImageMagick.DrawPathStart(drawingWand)
-            ImageMagick.DrawPathLineToAbsolute(drawingWand, 150.0, 275.0)
-            ImageMagick.DrawPathCurveToAbsolute(drawingWand, 94.77152501692068, 275.0, 50.0, 319.77152501692063, 50.0, 375.0)
-            ImageMagick.DrawPathFinish(drawingWand)
-        }
         ImageMagick.MagickDrawImage(magickWand, drawingWand)
-        val outputFilename = "three_bezier_curves.bmp"
+
+        val outputFilename = "bezier.bmp"
         if (true && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
         ImageMagick.DestroyPixelWand(backgroundWand)
-        ImageMagick.DestroyPixelWand(pixelWand)
         ImageMagick.DestroyDrawingWand(drawingWand)
         ImageMagick.DestroyMagickWand(magickWand)
         ImageMagick.MagickWandTerminus()

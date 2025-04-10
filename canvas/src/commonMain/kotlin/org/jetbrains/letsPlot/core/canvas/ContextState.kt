@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.canvas
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.math.*
 
@@ -108,8 +109,30 @@ class ContextState {
             return "Ellipse(x=$x, y=$y, radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, startAngleDeg=$startAngleDeg, endAngleDeg=$endAngleDeg, anticlockwise=$anticlockwise)"
         }
 
-        fun toBezierControlPoints(): ControlPoints {
+        fun toBezierControlPoints(): List<BezierSegment> {
+            val startAngleRad = toRadians(startAngleDeg)
+            val endAngleRad = toRadians(endAngleDeg)
+            if (radiusX < 0 || radiusY < 0) {
+                println("Warning: ellipse radii must be non-negative.")
+                // Or potentially call drawEllipticalArcPathBezier with 0 radius which handles MoveTo
+                drawEllipticalArcPathBezier(x, y, 0.0, 0.0, rotation, startAngleRad, 0.0) { x, y -> x to y }
+                error("asd")
+            }
 
+            val (normStartRad, normEndRad, sweepAngle) = normalizeAnglesAndSweep(startAngleRad, endAngleRad, anticlockwise)
+
+            val segments = drawEllipticalArcPathBezier(
+                cx = x,
+                cy = y,
+                rx = radiusX,
+                ry = radiusY,
+                rotation = rotation,
+                arcStartAngle = startAngleRad, // Use original start angle
+                sweepAngle = sweepAngle,    // Use calculated sweep
+                transform = { x, y -> x to y }
+            )
+
+            return segments
         }
 
         /**
@@ -193,7 +216,7 @@ class ContextState {
             arcStartAngle: Double,
             sweepAngle: Double,
             transform: (x: Double, y: Double) -> Pair<Double, Double>
-        ): Boolean {
+        ): List<BezierSegment> {
             if (rx <= 0 || ry <= 0 || abs(sweepAngle) < 1e-9) {
                 // Nothing to draw, but not an error state for path definition itself
                 // Though, might need a single MoveTo if this is the only element? Handle in caller.
@@ -209,7 +232,7 @@ class ContextState {
                 //ImageMagick.DrawPathStart(drawingWand)
                 //ImageMagick.DrawPathMoveToAbsolute(drawingWand, tp0x, tp0y)
                 //ImageMagick.DrawPathFinish(drawingWand)
-                return !checkDrawingWandError(drawingWand, "Degenerate Ellipse Arc MoveTo")
+                return emptyList()
             }
 
             // Max angle per Bezier segment (e.g., 90 degrees)
@@ -218,18 +241,15 @@ class ContextState {
             val deltaAngle = sweepAngle / numSegments.toDouble() // Angle step per segment (signed)
             val kappa = (4.0 / 3.0) * tan(abs(deltaAngle) / 4.0) // Bezier approximation factor
 
-            // Clear any previous drawing wand exception state
-            ImageMagick.DrawClearException(drawingWand)
-            ImageMagick.DrawPathStart(drawingWand)
-
             var currentAngle = arcStartAngle
             var errorOccurred = false
+
+            val segments = mutableListOf<BezierSegment>()
 
             for (i in 0 until numSegments) {
                 val angle1 = currentAngle
                 val angle2 = currentAngle + deltaAngle
 
-                memScoped {
                     // Calculate points for this segment in ellipse local space (0,0 center, no rotation)
                     val cosA1 = cos(angle1); val sinA1 = sin(angle1)
                     val cosA2 = cos(angle2); val sinA2 = sin(angle2)
@@ -257,18 +277,13 @@ class ContextState {
 
                     println("Bezier segment $i: $tp0x, $tp0y -> $tp1x, $tp1y -> $tp2x, $tp2y -> $tp3x, $tp3y")
 
-                    // Add to DrawingWand path
-                    if (i == 0) {
-                        ImageMagick.DrawPathMoveToAbsolute(drawingWand, tp0x, tp0y)
-                    }
+                segments += BezierSegment(
+                    cp1 = DoubleVector(tp0x, tp0y),
+                    cp2 = DoubleVector(tp1x, tp1y),
+                    cp3 = DoubleVector(tp2x, tp2y),
+                    cp4 = DoubleVector(tp3x, tp3y)
+                )
 
-                    val bezierPoints = allocArray<ImageMagick.PointInfo>(3)
-                    bezierPoints[0].x = tp1x; bezierPoints[0].y = tp1y // Control Point 1
-                    bezierPoints[1].x = tp2x; bezierPoints[1].y = tp2y // Control Point 2
-                    bezierPoints[2].x = tp3x; bezierPoints[2].y = tp3y // End Point
-
-                    ImageMagick.DrawBezier(drawingWand, 3.convert(), bezierPoints)
-                } // End memScoped
 
                 currentAngle = angle2
 
@@ -276,15 +291,8 @@ class ContextState {
                 // if (checkDrawingWandError(drawingWand, "DrawBezier segment $i")) { errorOccurred = true; break }
             } // End loop
 
-            // DO NOT call DrawPathClose for an arc unless specifically intended
-            ImageMagick.DrawPathFinish(drawingWand)
 
-            // Check for errors accumulated during the path definition
-            //if (checkDrawingWandError(drawingWand, "Elliptical Arc Bezier Path Definition")) {
-            //    errorOccurred = true
-            //}
-
-            return !errorOccurred
+            return segments
         }
 
         // Helper function to apply ellipse rotation and translation
@@ -301,7 +309,7 @@ class ContextState {
             return Pair(pxRotated + cx, pyRotated + cy)
         }
 
-        data class ControlPoints(
+        data class BezierSegment(
             val cp1: DoubleVector,
             val cp2: DoubleVector,
             val cp3: DoubleVector,
