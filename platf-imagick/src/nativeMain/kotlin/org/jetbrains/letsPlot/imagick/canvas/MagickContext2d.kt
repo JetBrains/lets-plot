@@ -194,6 +194,8 @@ class MagickContext2d(
                 }
 
                 is Ellipse -> with(command) {
+                    println(command)
+
                     val startRad = toRadians(startAngleDeg)
                     val endRad = toRadians(endAngleDeg)
 
@@ -265,9 +267,8 @@ class MagickContext2d(
             }
 
         }
-        //ImageMagick.PopDrawingWand(drawingWand)
+        ImageMagick.PopDrawingWand(drawingWand)
         ImageMagick.DrawPathFinish(drawingWand)
-
     }
 
 

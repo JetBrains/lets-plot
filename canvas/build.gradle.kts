@@ -8,6 +8,7 @@ plugins {
 }
 
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val assertjVersion = project.extra["assertj_version"] as String
 
 kotlin {
     js {
@@ -23,5 +24,13 @@ kotlin {
                 compileOnly("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
         }
+
+        jvmTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("org.assertj:assertj-core:$assertjVersion")
+            }
+        }
+
     }
 }

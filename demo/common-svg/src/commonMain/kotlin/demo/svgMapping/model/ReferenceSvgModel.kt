@@ -6,17 +6,25 @@
 package demo.svgMapping.model
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Color.Companion.LIGHT_GREEN
-import org.jetbrains.letsPlot.commons.values.FontFace
-import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.Companion.create
-import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.NONE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.ORANGE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 object ReferenceSvgModel {
     fun createModel(): SvgSvgElement = SvgSvgElement(500.0, 500.0).apply {
+        val p = SvgPathDataBuilder(false)
+            .moveTo(150.0, 375.0, true)
+            .verticalLineTo(-100.0)
+            .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+            .closePath()
+            .build()
+        path(stroke = ORANGE, fill = NONE, pathData = p, strokeWidth = 2.0) {
+            transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
+        }
+        /*
         g {
             slimG(16) {
                 var i = 20.0
@@ -109,6 +117,8 @@ object ReferenceSvgModel {
                 }
             }
         }
+
+         */
     }
 
     private fun createClosedPathFrom(x: Double, y: Double): SvgPathData {
