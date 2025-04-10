@@ -18,6 +18,11 @@ class MagickContext2dTest {
     )
 
     @Test
+    fun testmkdir() {
+        mksubdirs("/Users/ikupriyanov/Downloads/hello")
+    }
+
+    @Test
     fun shearedEllipse() {
         val canvas = MagickCanvas.create(500, 500)
         with(canvas.context2d) {

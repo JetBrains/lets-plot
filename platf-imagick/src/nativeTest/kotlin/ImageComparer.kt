@@ -1,4 +1,5 @@
 import kotlinx.cinterop.*
+import platform.posix.*
 import kotlin.math.abs
 
 /*
@@ -71,7 +72,12 @@ class ImageComparer(
         return expected.indices.all { pixelsEqual(expected[it], actual[it], tolerance) }
     }
 
-    fun createDiffImage(expected: UByteArray, actual: UByteArray, width: Int, height: Int): CPointer<ImageMagick.MagickWand> {
+    fun createDiffImage(
+        expected: UByteArray,
+        actual: UByteArray,
+        width: Int,
+        height: Int
+    ): CPointer<ImageMagick.MagickWand> {
         val diff = ImageMagick.NewMagickWand() ?: error("Failed to create diff image")
         val blackPixel = ImageMagick.NewPixelWand()
         ImageMagick.PixelSetColor(blackPixel, "black")
@@ -137,9 +143,30 @@ class ImageComparer(
         ImageMagick.DestroyPixelWand(borderColor)
 
         // --- Composite images ---
-        ImageMagick.MagickCompositeImage(canvas, expected, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, 0, 0)
-        ImageMagick.MagickCompositeImage(canvas, sep, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, width.toLong(), 0)
-        ImageMagick.MagickCompositeImage(canvas, actual, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, (width + separatorWidth).toLong(), 0)
+        ImageMagick.MagickCompositeImage(
+            canvas,
+            expected,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            0,
+            0
+        )
+        ImageMagick.MagickCompositeImage(
+            canvas,
+            sep,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            width.toLong(),
+            0
+        )
+        ImageMagick.MagickCompositeImage(
+            canvas,
+            actual,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            (width + separatorWidth).toLong(),
+            0
+        )
 
         // Add horizontal zigzag separator (same height as vertical one)
         val separatorSize = 10
@@ -147,7 +174,14 @@ class ImageComparer(
 
         val diffWidth = ImageMagick.MagickGetImageWidth(diff).toInt()
         val diffX = ((totalTopWidth - diffWidth) / 2).toLong()
-        ImageMagick.MagickCompositeImage(canvas, diff, ImageMagick.CompositeOperator.OverCompositeOp, ImageMagick.MagickTrue, diffX, height.toLong() + separatorWidth)
+        ImageMagick.MagickCompositeImage(
+            canvas,
+            diff,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            diffX,
+            height.toLong() + separatorWidth
+        )
 
         ImageMagick.MagickCompositeImage(
             canvas,
@@ -189,13 +223,23 @@ class ImageComparer(
         return wand
     }
 
-    private fun addBorder(wand: CPointer<ImageMagick.MagickWand>, borderSize: Int = 1, color: String = "black"): CPointer<ImageMagick.MagickWand> {
+    private fun addBorder(
+        wand: CPointer<ImageMagick.MagickWand>,
+        borderSize: Int = 1,
+        color: String = "black"
+    ): CPointer<ImageMagick.MagickWand> {
         val bordered = ImageMagick.CloneMagickWand(wand) ?: error("Failed to clone wand for border")
 
         val borderColor = ImageMagick.NewPixelWand()!!
         ImageMagick.PixelSetColor(borderColor, color)
 
-        val ok = ImageMagick.MagickBorderImage(bordered, borderColor, borderSize.toULong(), borderSize.toULong(), ImageMagick.CompositeOperator.OverCompositeOp)
+        val ok = ImageMagick.MagickBorderImage(
+            bordered,
+            borderColor,
+            borderSize.toULong(),
+            borderSize.toULong(),
+            ImageMagick.CompositeOperator.OverCompositeOp
+        )
         ImageMagick.DestroyPixelWand(borderColor)
 
         if (ok == ImageMagick.MagickFalse) error("Failed to apply border")
@@ -221,4 +265,32 @@ class ImageComparer(
         }
     }
 
+
+
+}
+
+fun mksubdirs(path: String) {
+    println("Creating subdirs for $path")
+
+    val access = S_IRWXU.convert<mode_t>() or S_IRWXG.convert() or S_IRWXO.convert()
+    val parts = path.split("/").filter { it.isNotBlank() }
+    println("parts: $parts")
+    val dirs = parts.runningFold("/") { acc, part -> "$acc$part/" }
+
+    println("subdirs: $dirs")
+
+    dirs
+        .forEach { subdir ->
+            if (access(subdir, F_OK) == 0) {
+                println("Directory '$subdir' already exists")
+                return@forEach
+            }
+
+            if (mkdir(subdir, access) != 0 && errno != EEXIST) {
+                perror("mkdir '$subdir' failed")
+                return
+            }
+
+            println("Directory '$subdir' created")
+        }
 }

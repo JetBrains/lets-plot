@@ -120,7 +120,7 @@ class Path {
             return segments
         }
 
-        fun normalizeAnglesAndSweep(
+        private fun normalizeAnglesAndSweep(
             startAngle: Double,
             endAngle: Double,
             anticlockwise: Boolean
