@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.ContextState.*
+import org.jetbrains.letsPlot.core.canvas.Path.*
 
 
 class MagickContext2d(
@@ -172,7 +172,7 @@ class MagickContext2d(
         }
     }
 
-    fun drawPath(commands: List<ContextState.PathCommand>, drawingWand: CPointer<ImageMagick.DrawingWand>) {
+    fun drawPath(commands: List<PathCommand>, drawingWand: CPointer<ImageMagick.DrawingWand>) {
         var started = false
 
         ImageMagick.DrawPathStart(drawingWand)

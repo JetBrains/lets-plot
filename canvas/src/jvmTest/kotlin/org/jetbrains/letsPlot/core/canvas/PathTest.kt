@@ -10,7 +10,7 @@ import org.assertj.core.api.RecursiveComparisonAssert
 import org.assertj.core.util.DoubleComparator
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvas.ContextState.Ellipse
+import org.jetbrains.letsPlot.core.canvas.Path.Ellipse
 import kotlin.test.Test
 
 class PathTest {
