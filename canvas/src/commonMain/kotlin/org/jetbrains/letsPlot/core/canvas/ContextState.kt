@@ -126,7 +126,7 @@ class ContextState {
                 rotation = rotation,
                 arcStartAngle = startAngleRad, // Use original start angle
                 sweepAngle = sweepAngle,    // Use calculated sweep
-                transform = { x, y -> x to y }
+                transform = { p -> p }
             )
 
             return segments
@@ -185,7 +185,7 @@ class ContextState {
             rotation: Double,
             arcStartAngle: Double, // Use the original start angle for calculations
             sweepAngle: Double,    // Use the calculated signed sweep angle
-            transform: (x: Double, y: Double) -> Pair<Double, Double>
+            transform: (p: DoubleVector) -> DoubleVector
         ): List<DoubleVector> {
             if (rx <= 0 || ry <= 0 || abs(sweepAngle) < 1e-9) {
                 // Handle degenerate case: MoveTo start point
@@ -193,10 +193,10 @@ class ContextState {
                 val sinA = sin(arcStartAngle)
                 val p0xLocal = rx * cosA;
                 val p0yLocal = ry * sinA
-                val (p0eX, p0eY) = transformEllipsePoint(p0xLocal, p0yLocal, cx, cy, rotation)
-                val (tp0x, tp0y) = transform(p0eX, p0eY)
+                val p0e = transformEllipsePoint(p0xLocal, p0yLocal, cx, cy, rotation)
+                val tp0 = transform(p0e)
 
-                return listOf(DoubleVector(tp0x, tp0y))
+                return listOf(tp0)
             }
 
             // Max angle per Bezier segment (e.g., 90 degrees)
@@ -225,7 +225,7 @@ class ContextState {
 
                 // Start and End points (local)
                 val p0xLocal = rx * cosA1;
-                val p0ylocal = ry * sinA1 // P0
+                val p0yLocal = ry * sinA1 // P0
                 val p3xLocal = rx * cosA2;
                 val p3yLocal = ry * sinA2 // P3
 
@@ -238,38 +238,38 @@ class ContextState {
 
                 // Control points (local) - Apply direction correction `dir`
                 val p1xLocal = p0xLocal + dir * offsetX1
-                val p1yLocal = p0ylocal + dir * offsetY1
+                val p1yLocal = p0yLocal + dir * offsetY1
                 val p2xLocal = p3xLocal + dir * offsetX2 // P2 is relative to P3's tangent endpoint
                 val p2yLocal = p3yLocal + dir * offsetY2
 
                 // Apply ellipse's own transform (rotation + translation)
-                val (p0eX, p0eY) = transformEllipsePoint(p0xLocal, p0ylocal, cx, cy, rotation) // P0
-                val (p1eX, p1eY) = transformEllipsePoint(p1xLocal, p1yLocal, cx, cy, rotation) // P1 (CP1)
-                val (p2eX, p2eY) = transformEllipsePoint(p2xLocal, p2yLocal, cx, cy, rotation) // P2 (CP2)
-                val (p3eX, p3eY) = transformEllipsePoint(p3xLocal, p3yLocal, cx, cy, rotation) // P3
+                val p0e = transformEllipsePoint(p0xLocal, p0yLocal, cx, cy, rotation) // P0
+                val p1e = transformEllipsePoint(p1xLocal, p1yLocal, cx, cy, rotation) // P1 (CP1)
+                val p2e = transformEllipsePoint(p2xLocal, p2yLocal, cx, cy, rotation) // P2 (CP2)
+                val p3e = transformEllipsePoint(p3xLocal, p3yLocal, cx, cy, rotation) // P3
 
                 // Apply the current canvas transform
-                val (tp0x, tp0y) = transform(p0eX, p0eY) // Final P0
-                val (tp1x, tp1y) = transform(p1eX, p1eY) // Final P1 (CP1)
-                val (tp2x, tp2y) = transform(p2eX, p2eY) // Final P2 (CP2)
-                val (tp3x, tp3y) = transform(p3eX, p3eY) // Final P3
+                val tp0 = transform(p0e) // Final P0
+                val tp1 = transform(p1e) // Final P1 (CP1)
+                val tp2 = transform(p2e) // Final P2 (CP2)
+                val tp3 = transform(p3e) // Final P3
 
                 if (numSegments == 1) {
-                    segments += DoubleVector(tp0x, tp0y)
-                    segments += DoubleVector(tp1x, tp1y)
-                    segments += DoubleVector(tp2x, tp2y)
-                    segments += DoubleVector(tp3x, tp3y)
+                    segments += tp0
+                    segments += tp1
+                    segments += tp2
+                    segments += tp3
                 } else {
                     if (i == 0) {
-                        segments += DoubleVector(tp0x, tp0y)
-                        segments += DoubleVector(tp1x, tp1y)
-                        segments += DoubleVector(tp2x, tp2y)
-                        segments += DoubleVector(tp3x, tp3y)
+                        segments += tp0
+                        segments += tp1
+                        segments += tp2
+                        segments += tp3
                     } else {
                         // Exclude last point of previous segment
-                        segments += DoubleVector(tp1x, tp1y)
-                        segments += DoubleVector(tp2x, tp2y)
-                        segments += DoubleVector(tp3x, tp3y)
+                        segments += tp1
+                        segments += tp2
+                        segments += tp3
                     }
                 }
 
@@ -284,12 +284,12 @@ class ContextState {
             px: Double, py: Double, // Point in local ellipse space (center 0,0, no rotation)
             cx: Double, cy: Double, // Ellipse center
             rotation: Double // Ellipse rotation
-        ): Pair<Double, Double> {
+        ): DoubleVector {
             val cosRot = cos(rotation)
             val sinRot = sin(rotation)
             val pxRotated = px * cosRot - py * sinRot
             val pyRotated = px * sinRot + py * cosRot
-            return Pair(pxRotated + cx, pyRotated + cy)
+            return DoubleVector(pxRotated + cx, pyRotated + cy)
         }
     }
 
