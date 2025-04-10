@@ -339,7 +339,11 @@ class LayerConfig constructor(
             }
             val horizontalAesthetics = verticalAesthetics.map { YOrientationBaseUtil.flipAes(it) }
             val hasHorizontalAesthetics = horizontalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-            return hasHorizontalAesthetics // if false - i.e. there is no vertical, no horizontal aesthetics, then the geometry is considered y-oriented
+            if (hasHorizontalAesthetics) {
+                return true
+            }
+            // If there is no vertical, no horizontal aesthetics, then the geometry is considered y-oriented
+            return false
         }
 
         val isYOriented = when {
