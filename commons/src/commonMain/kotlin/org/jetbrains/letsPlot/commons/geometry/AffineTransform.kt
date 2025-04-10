@@ -34,6 +34,10 @@ class AffineTransform(
     val tx: Double get() = m02
     val ty: Double get() = m12
 
+    fun transform(p: DoubleVector): DoubleVector {
+        return transform(p.x, p.y)
+    }
+
     fun transform(x: Number, y: Number): DoubleVector {
         return DoubleVector(
             x = m00 * x.toDouble() + m01 * y.toDouble() + m02,

@@ -28,8 +28,8 @@ kotlin {
             //executable("SimpleDemo") {
             //    entryPoint = "demo.svg.SimpleDemoKt.main"
             //}
-            executable("SimpleSvgDemo") {
-                entryPoint = "simpleSvgDemoMain"
+            executable("referenceSvgDemoMain") {
+                entryPoint = "referenceSvgDemoMain"
             }
             executable("SimpleCanvasDemo") {
                 entryPoint = "simpleMagickCanvasDemoMain"

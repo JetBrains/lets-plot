@@ -109,19 +109,16 @@ class ContextState {
             return "Ellipse(x=$x, y=$y, radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, startAngleDeg=$startAngleDeg, endAngleDeg=$endAngleDeg, anticlockwise=$anticlockwise)"
         }
 
-        fun toBezierControlPoints(): List<BezierSegment> {
+        fun approximateWithBezierCurve(): List<DoubleVector> {
             val startAngleRad = toRadians(startAngleDeg)
             val endAngleRad = toRadians(endAngleDeg)
             if (radiusX < 0 || radiusY < 0) {
-                println("Warning: ellipse radii must be non-negative.")
-                // Or potentially call drawEllipticalArcPathBezier with 0 radius which handles MoveTo
-                drawEllipticalArcPathBezier(x, y, 0.0, 0.0, rotation, startAngleRad, 0.0) { x, y -> x to y }
-                error("asd")
+                return listOf(DoubleVector(x, y))
             }
 
-            val (normStartRad, normEndRad, sweepAngle) = normalizeAnglesAndSweep(startAngleRad, endAngleRad, anticlockwise)
+            val sweepAngle = normalizeAnglesAndSweep(startAngleRad, endAngleRad, anticlockwise)
 
-            val segments = drawEllipticalArcPathBezier(
+            val segments = approximateEllipticalArcWithBezier(
                 cx = x,
                 cy = y,
                 rx = radiusX,
@@ -135,168 +132,154 @@ class ContextState {
             return segments
         }
 
-        /**
-         * Calculates the start/end angles normalized to [0, 2*PI) and the total sweep angle.
-         * Handles anticlockwise direction and angle wrapping.
-         *
-         * @return Triple(normalizedStart, normalizedEnd, sweepAngle)
-         *         sweepAngle is positive for clockwise, negative for anticlockwise.
-         */
         fun normalizeAnglesAndSweep(
             startAngle: Double,
             endAngle: Double,
             anticlockwise: Boolean
-        ): Triple<Double, Double, Double> {
+        ): Double {
             val twoPi = 2.0 * PI
 
-            // Normalize angles to [0, 2*PI)
+            // Normalize angles to be within [0, 2*PI) - handles negative inputs
             val normStart = (startAngle % twoPi + twoPi) % twoPi
             val normEnd = (endAngle % twoPi + twoPi) % twoPi
 
-            var sweep = if (!anticlockwise) { // Clockwise
-                if (normEnd >= normStart) {
-                    normEnd - normStart
-                } else {
-                    twoPi - normStart + normEnd // Wrap around
-                }
-            } else { // Anticlockwise
-                if (normStart >= normEnd) {
-                    normStart - normEnd
-                } else {
-                    twoPi - normEnd + normStart // Wrap around
-                }
+            var sweepMagnitude: Double
+            if (!anticlockwise) { // Clockwise sweep magnitude
+                sweepMagnitude = if (normEnd >= normStart) normEnd - normStart else twoPi - normStart + normEnd
+            } else { // Anticlockwise sweep magnitude
+                sweepMagnitude = if (normStart >= normEnd) normStart - normEnd else twoPi - normEnd + normStart
             }
 
-            // Adjust sweep if the original angles indicated multiple full circles
+            // Adjust sweep magnitude for multiple wraps indicated by original angles
             val angleDiff = endAngle - startAngle
-            if (!anticlockwise && angleDiff >= twoPi) {
-                sweep += floor(angleDiff / twoPi) * twoPi
-            } else if (anticlockwise && angleDiff <= -twoPi) {
-                // For anticlockwise, a large negative diff means more sweep
-                sweep += floor(-angleDiff / twoPi) * twoPi // Add positive sweep magnitude
+            val wraps = abs(angleDiff) / twoPi
+            if (wraps >= 1.0) {
+                // Check if the shortest path direction matches the requested direction
+                val shortestSweepClockwise =
+                    if (normEnd >= normStart) normEnd - normStart else twoPi - normStart + normEnd
+                val wrapsClockwise = floor(angleDiff / twoPi)
+                val wrapsAntiClockwise = floor(-angleDiff / twoPi) // How many full wraps in the other direction
+
+                if (!anticlockwise && angleDiff > 1e-9) { // Wants clockwise, and diff is positive
+                    sweepMagnitude = shortestSweepClockwise + wrapsClockwise * twoPi
+                } else if (anticlockwise && angleDiff < -1e-9) { // Wants anticlockwise, and diff is negative
+                    sweepMagnitude =
+                        (twoPi - shortestSweepClockwise) + wrapsAntiClockwise * twoPi // Use the anticlockwise magnitude
+                }
             }
 
-            // Ensure non-zero sweep if angles are different but normalized same value (e.g. 0 and 2*PI)
-            if (abs(sweep) < 1e-9 && abs(angleDiff) > 1e-9) {
-                sweep = if (angleDiff > 0 && !anticlockwise || angleDiff < 0 && anticlockwise) twoPi else -twoPi
+            // Ensure non-zero sweep if angles are distinct but normalize to same value (e.g., 0 and 2PI)
+            // Use original angle difference to detect this
+            if (abs(sweepMagnitude) < 1e-9 && abs(angleDiff) > 1e-9) {
+                sweepMagnitude = twoPi
             }
 
-            // Apply direction sign to sweep
-            if (anticlockwise) {
-                sweep = -abs(sweep) // Make sweep negative for anticlockwise
-            } else {
-                sweep = abs(sweep) // Make sweep positive for clockwise
-            }
-
-            return Triple(normStart, normEnd, sweep)
+            return if (anticlockwise) -sweepMagnitude else sweepMagnitude
         }
 
-        /**
-         * Draws an elliptical arc path using Bezier curve approximation onto the DrawingWand.
-         * Takes pre-calculated start angle and sweep angle.
-         * Applies ellipse rotation/translation, then the canvas transform lambda.
-         *
-         * @param drawingWand The wand to draw on.
-         * @param cx Ellipse center X.
-         * @param cy Ellipse center Y.
-         * @param rx Ellipse radius X.
-         * @param ry Ellipse radius Y.
-         * @param rotation Ellipse rotation in radians.
-         * @param arcStartAngle Starting angle of the arc in radians (normalized or actual start).
-         * @param sweepAngle Total sweep angle in radians (+ve clockwise, -ve anticlockwise).
-         * @param transform Lambda to apply the current canvas transformation.
-         * @return True if path definition succeeded without detected errors.
-         */
-        fun drawEllipticalArcPathBezier(
+        fun approximateEllipticalArcWithBezier(
             cx: Double,
             cy: Double,
             rx: Double,
             ry: Double,
             rotation: Double,
-            arcStartAngle: Double,
-            sweepAngle: Double,
+            arcStartAngle: Double, // Use the original start angle for calculations
+            sweepAngle: Double,    // Use the calculated signed sweep angle
             transform: (x: Double, y: Double) -> Pair<Double, Double>
-        ): List<BezierSegment> {
+        ): List<DoubleVector> {
             if (rx <= 0 || ry <= 0 || abs(sweepAngle) < 1e-9) {
-                // Nothing to draw, but not an error state for path definition itself
-                // Though, might need a single MoveTo if this is the only element? Handle in caller.
-                // Let's just move to the start point in this case.
-                val cosA = cos(arcStartAngle)
+                // Handle degenerate case: MoveTo start point
+                val cosA = cos(arcStartAngle);
                 val sinA = sin(arcStartAngle)
-                val p0x_local = rx * cosA
-                val p0y_local = ry * sinA
-                val (p0e_x, p0e_y) = transformEllipsePoint(p0x_local, p0y_local, cx, cy, rotation)
-                val (tp0x, tp0y) = transform(p0e_x, p0e_y)
+                val p0xLocal = rx * cosA;
+                val p0yLocal = ry * sinA
+                val (p0eX, p0eY) = transformEllipsePoint(p0xLocal, p0yLocal, cx, cy, rotation)
+                val (tp0x, tp0y) = transform(p0eX, p0eY)
 
-                //ImageMagick.DrawClearException(drawingWand)
-                //ImageMagick.DrawPathStart(drawingWand)
-                //ImageMagick.DrawPathMoveToAbsolute(drawingWand, tp0x, tp0y)
-                //ImageMagick.DrawPathFinish(drawingWand)
-                return emptyList()
+                return listOf(DoubleVector(tp0x, tp0y))
             }
 
             // Max angle per Bezier segment (e.g., 90 degrees)
             val maxAnglePerSegment = PI / 2.0
             val numSegments = ceil(abs(sweepAngle) / maxAnglePerSegment).toInt().coerceAtLeast(1)
-            val deltaAngle = sweepAngle / numSegments.toDouble() // Angle step per segment (signed)
-            val kappa = (4.0 / 3.0) * tan(abs(deltaAngle) / 4.0) // Bezier approximation factor
+            val deltaAngle = sweepAngle / numSegments // Angle step per segment (signed)
+
+            // Correction factor for control point direction based on sweep direction
+            val dir = sign(deltaAngle) // +1.0 for clockwise, -1.0 for anticlockwise
+
+            val kappa = (4.0 / 3.0) * tan(abs(deltaAngle) / 4.0) // Kappa based on segment angle magnitude
 
             var currentAngle = arcStartAngle
-            var errorOccurred = false
 
-            val segments = mutableListOf<BezierSegment>()
+            val segments = mutableListOf<DoubleVector>()
 
             for (i in 0 until numSegments) {
                 val angle1 = currentAngle
                 val angle2 = currentAngle + deltaAngle
 
-                    // Calculate points for this segment in ellipse local space (0,0 center, no rotation)
-                    val cosA1 = cos(angle1); val sinA1 = sin(angle1)
-                    val cosA2 = cos(angle2); val sinA2 = sin(angle2)
+                // Calculate points for this segment
+                val cosA1 = cos(angle1);
+                val sinA1 = sin(angle1)
+                val cosA2 = cos(angle2);
+                val sinA2 = sin(angle2)
 
-                    val p0x_local = rx * cosA1;    val p0y_local = ry * sinA1 // Start P0
-                    val p3x_local = rx * cosA2;    val p3y_local = ry * sinA2 // End P3
+                // Start and End points (local)
+                val p0xLocal = rx * cosA1;
+                val p0ylocal = ry * sinA1 // P0
+                val p3xLocal = rx * cosA2;
+                val p3yLocal = ry * sinA2 // P3
 
-                    // Control points (local)
-                    val p1x_local = p0x_local - kappa * ry * sinA1 // Use ry for x tangent calc with ellipse aspect ratio
-                    val p1y_local = p0y_local + kappa * rx * cosA1 // Use rx for y tangent calc
-                    val p2x_local = p3x_local + kappa * ry * sinA2
-                    val p2y_local = p3y_local - kappa * rx * cosA2
+                // Calculate tangent offsets scaled by kappa
+                // These represent the vector from P0->P1 and P3->P2 if dir were +1
+                val offsetX1 = -kappa * ry * sinA1
+                val offsetY1 = +kappa * rx * cosA1
+                val offsetX2 = +kappa * ry * sinA2
+                val offsetY2 = -kappa * rx * cosA2
 
-                    // Apply ellipse's own transform (rotation + translation)
-                    val (p0e_x, p0e_y) = transformEllipsePoint(p0x_local, p0y_local, cx, cy, rotation)
-                    val (p1e_x, p1e_y) = transformEllipsePoint(p1x_local, p1y_local, cx, cy, rotation)
-                    val (p2e_x, p2e_y) = transformEllipsePoint(p2x_local, p2y_local, cx, cy, rotation)
-                    val (p3e_x, p3e_y) = transformEllipsePoint(p3x_local, p3y_local, cx, cy, rotation)
+                // Control points (local) - Apply direction correction `dir`
+                val p1xLocal = p0xLocal + dir * offsetX1
+                val p1yLocal = p0ylocal + dir * offsetY1
+                val p2xLocal = p3xLocal + dir * offsetX2 // P2 is relative to P3's tangent endpoint
+                val p2yLocal = p3yLocal + dir * offsetY2
 
-                    // Apply the current canvas transform
-                    val (tp0x, tp0y) = transform(p0e_x, p0e_y)
-                    val (tp1x, tp1y) = transform(p1e_x, p1e_y)
-                    val (tp2x, tp2y) = transform(p2e_x, p2e_y)
-                    val (tp3x, tp3y) = transform(p3e_x, p3e_y)
+                // Apply ellipse's own transform (rotation + translation)
+                val (p0eX, p0eY) = transformEllipsePoint(p0xLocal, p0ylocal, cx, cy, rotation) // P0
+                val (p1eX, p1eY) = transformEllipsePoint(p1xLocal, p1yLocal, cx, cy, rotation) // P1 (CP1)
+                val (p2eX, p2eY) = transformEllipsePoint(p2xLocal, p2yLocal, cx, cy, rotation) // P2 (CP2)
+                val (p3eX, p3eY) = transformEllipsePoint(p3xLocal, p3yLocal, cx, cy, rotation) // P3
 
-                    println("Bezier segment $i: $tp0x, $tp0y -> $tp1x, $tp1y -> $tp2x, $tp2y -> $tp3x, $tp3y")
+                // Apply the current canvas transform
+                val (tp0x, tp0y) = transform(p0eX, p0eY) // Final P0
+                val (tp1x, tp1y) = transform(p1eX, p1eY) // Final P1 (CP1)
+                val (tp2x, tp2y) = transform(p2eX, p2eY) // Final P2 (CP2)
+                val (tp3x, tp3y) = transform(p3eX, p3eY) // Final P3
 
-                segments += BezierSegment(
-                    cp1 = DoubleVector(tp0x, tp0y),
-                    cp2 = DoubleVector(tp1x, tp1y),
-                    cp3 = DoubleVector(tp2x, tp2y),
-                    cp4 = DoubleVector(tp3x, tp3y)
-                )
-
+                if (numSegments == 1) {
+                    segments += DoubleVector(tp0x, tp0y)
+                    segments += DoubleVector(tp1x, tp1y)
+                    segments += DoubleVector(tp2x, tp2y)
+                    segments += DoubleVector(tp3x, tp3y)
+                } else {
+                    if (i == 0) {
+                        segments += DoubleVector(tp0x, tp0y)
+                        segments += DoubleVector(tp1x, tp1y)
+                        segments += DoubleVector(tp2x, tp2y)
+                        segments += DoubleVector(tp3x, tp3y)
+                    } else {
+                        // Exclude last point of previous segment
+                        segments += DoubleVector(tp1x, tp1y)
+                        segments += DoubleVector(tp2x, tp2y)
+                        segments += DoubleVector(tp3x, tp3y)
+                    }
+                }
 
                 currentAngle = angle2
-
-                // Optional early exit on error
-                // if (checkDrawingWandError(drawingWand, "DrawBezier segment $i")) { errorOccurred = true; break }
-            } // End loop
-
+            }
 
             return segments
         }
 
-        // Helper function to apply ellipse rotation and translation
-// (Assumes this exists or is added)
+
         private fun transformEllipsePoint(
             px: Double, py: Double, // Point in local ellipse space (center 0,0, no rotation)
             cx: Double, cy: Double, // Ellipse center
@@ -307,17 +290,6 @@ class ContextState {
             val pxRotated = px * cosRot - py * sinRot
             val pyRotated = px * sinRot + py * cosRot
             return Pair(pxRotated + cx, pyRotated + cy)
-        }
-
-        data class BezierSegment(
-            val cp1: DoubleVector,
-            val cp2: DoubleVector,
-            val cp3: DoubleVector,
-            val cp4: DoubleVector
-        ) {
-            fun toList(): List<DoubleVector> {
-                return listOf(cp1, cp2, cp3, cp4)
-            }
         }
     }
 

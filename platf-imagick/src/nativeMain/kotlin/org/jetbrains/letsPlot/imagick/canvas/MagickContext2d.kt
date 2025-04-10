@@ -8,12 +8,9 @@ package org.jetbrains.letsPlot.imagick.canvas
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.ContextState.*
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 class MagickContext2d(
@@ -181,8 +178,6 @@ class MagickContext2d(
         ImageMagick.DrawPathStart(drawingWand)
 
         commands.forEach { command ->
-            //ImageMagick.PushDrawingWand(drawingWand)
-            //DrawAffineTransofrm(drawingWand, command.transform)
             when (command) {
                 is MoveTo -> with(command) {
                     ImageMagick.DrawPathMoveToAbsolute(drawingWand, x, y)
@@ -194,72 +189,32 @@ class MagickContext2d(
                 }
 
                 is Ellipse -> with(command) {
-                    println(command)
+                    if (true) {
+                        val cpts = approximateWithBezierCurve()
 
-                    val startRad = toRadians(startAngleDeg)
-                    val endRad = toRadians(endAngleDeg)
+                        val x0 = cpts[0].x
+                        val y0 = cpts[0].y
+                        if (!started) {
+                            ImageMagick.DrawPathMoveToAbsolute(drawingWand, x0, y0)
+                            started = true
+                        } else {
+                            ImageMagick.DrawPathLineToAbsolute(drawingWand, x0, y0)
+                        }
 
-                    var startX = x + radiusX * cos(startRad)
-                    var startY = y + radiusY * sin(startRad)
-                    var endX = x + radiusX * cos(endRad)
-                    var endY = y + radiusY * sin(endRad)
-
-                    println("startX: $startX, startY: $startY, endX: $endX, endY: $endY")
-
-                    val delta = endAngleDeg - startAngleDeg
-
-                    if (!started) {
-                        ImageMagick.DrawPathMoveToAbsolute(drawingWand, startX, startY)
-                        started = true
-                    } else {
-                        ImageMagick.DrawPathLineToAbsolute(drawingWand, startX, startY)
-                    }
-
-                    if (delta >= 360.0) {
-                        // Full circle: break into two arcs
-
-                        val midAngle = startAngleDeg + (if (anticlockwise) -180.0 else 180.0)
-                        val midRad = toRadians(midAngle)
-                        val midX = x + radiusX * cos(midRad)
-                        val midY = y + radiusY * sin(midRad)
-
-                        val sweepFlag = if (anticlockwise) 0u else 1u
-                        val largeArcFlag = 0u
-
-                        ImageMagick.DrawPathEllipticArcAbsolute(
-                            drawingWand,
-                            radiusX,
-                            radiusY,
-                            rotation,
-                            largeArcFlag,
-                            sweepFlag,
-                            midX,
-                            midY
-                        )
-                        ImageMagick.DrawPathEllipticArcAbsolute(
-                            drawingWand,
-                            radiusX,
-                            radiusY,
-                            rotation,
-                            largeArcFlag,
-                            sweepFlag,
-                            endX,
-                            endY
-                        )
-                    } else {
-                        val largeArcFlag = if (delta > 180.0) 1u else 0u
-                        val sweepFlag = if (anticlockwise) 0u else 1u
-
-                        ImageMagick.DrawPathEllipticArcAbsolute(
-                            drawingWand,
-                            radiusX,
-                            radiusY,
-                            rotation,
-                            largeArcFlag,
-                            sweepFlag,
-                            endX,
-                            endY
-                        )
+                        cpts.asSequence()
+                            .drop(1)
+                            .windowed(size = 3, step = 3)
+                            .forEach { (cp1, cp2, cp3) ->
+                                ImageMagick.DrawPathCurveToAbsolute(
+                                    drawingWand,
+                                    cp1.x,
+                                    cp1.y,
+                                    cp2.x,
+                                    cp2.y,
+                                    cp3.x,
+                                    cp3.y
+                                )
+                            }
                     }
                 }
 

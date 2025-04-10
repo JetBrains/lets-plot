@@ -9,7 +9,7 @@ import kotlin.test.Test
  */
 
 // This test class is used to demonstrate the usage of the ImageMagick library
-class MagicWandTest {
+class MagicWandSandbox {
 
     fun checkDrawingWandError(wand: CPointer<ImageMagick.DrawingWand>?, str: String): Boolean {
         return true
@@ -239,17 +239,59 @@ class MagicWandTest {
 
     @Test
     fun bezier() {
-        val cp0 = DoubleVector(150.0, 100.0)
-        val cp1 = DoubleVector(150.0, 127.614237)
-        val cp2 = DoubleVector(127.614237, 150.0)
-        val cp3 = DoubleVector(100.0, 150.0)
+        // Positive arc
+        //val cp0 = DoubleVector(150.0, 100.0)
+        //val cp1 = DoubleVector(150.0, 127.614237)
+        //val cp2 = DoubleVector(127.614237, 150.0)
+        //val cp3 = DoubleVector(100.0, 150.0)
+
+        // Negative arc
+        //val cps = listOf(
+        //    DoubleVector(150.0, 50.0),
+        //    DoubleVector(94.7715, 50.0),
+        //    DoubleVector(50.0, 94.7715),
+        //    DoubleVector(50.0, 150.0)
+        //)
+
+        // Circle
+        val cps = listOf(
+            DoubleVector(150.0, 100.0),
+            DoubleVector(150.0, 127.614237),
+            DoubleVector(127.614237, 150.0),
+            DoubleVector(100.0, 150.0),
+            DoubleVector(72.38576250846033, 150.0),
+            DoubleVector(50.0, 127.61423749153968),
+            DoubleVector(50.0, 100.0),
+            DoubleVector(50.0, 72.38576250846033),
+            DoubleVector(72.38576250846033, 50.0),
+            DoubleVector(100.0, 50.0),
+            DoubleVector(127.61423749153968, 50.0),
+            DoubleVector(150.0, 72.38576250846033),
+            DoubleVector(150.0, 100.0)
+        )
+
+
+        //val cp0 = DoubleVector(150.0, 50.0)
+        //val cp1 = DoubleVector(94.7715, 50.0)
+        //val cp2 = DoubleVector(50.0, 94.7715)
+        //val cp3 = DoubleVector(50.0, 150.0)
+
+        // Circle
+
 
         ImageMagick.MagickWandGenesis()
 
         val drawingWand = ImageMagick.NewDrawingWand()
+
         ImageMagick.DrawPathStart(drawingWand)
-        ImageMagick.DrawPathLineToAbsolute(drawingWand, cp0.x, cp0.y)
-        ImageMagick.DrawPathCurveToAbsolute(drawingWand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+        ImageMagick.DrawPathMoveToAbsolute(drawingWand, cps[0].x, cps[0].y)
+
+        cps.drop(1)
+            .windowed(size = 3, step = 3)
+            .forEach { (cp1, cp2, cp3) ->
+                ImageMagick.DrawPathCurveToAbsolute(drawingWand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+            }
+
         ImageMagick.DrawPathFinish(drawingWand)
 
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
@@ -280,7 +322,7 @@ class MagicWandTest {
         val radiusX: Double = 100.0
         val radiusY: Double = 100.0
         val rotation: Double = 0.0
-        val startAngle: Double = -PI/2
+        val startAngle: Double = -PI / 2
         val endAngle: Double = -PI
         val anticlockwise: Boolean = true
 
@@ -388,8 +430,6 @@ class MagicWandTest {
     }
 
 
-
-
     /**
      * Draws an elliptical arc path using Bezier curve approximation onto the DrawingWand.
      * Takes pre-calculated start angle and sweep angle.
@@ -421,8 +461,10 @@ class MagicWandTest {
             // Nothing to draw, but not an error state for path definition itself
             // Though, might need a single MoveTo if this is the only element? Handle in caller.
             // Let's just move to the start point in this case.
-            val cosA = cos(arcStartAngle); val sinA = sin(arcStartAngle)
-            val p0x_local = rx * cosA;    val p0y_local = ry * sinA
+            val cosA = cos(arcStartAngle);
+            val sinA = sin(arcStartAngle)
+            val p0x_local = rx * cosA;
+            val p0y_local = ry * sinA
             val (p0e_x, p0e_y) = transformEllipsePoint(p0x_local, p0y_local, cx, cy, rotation)
             val (tp0x, tp0y) = transform(p0e_x, p0e_y)
 
@@ -452,11 +494,15 @@ class MagicWandTest {
 
             memScoped {
                 // Calculate points for this segment in ellipse local space (0,0 center, no rotation)
-                val cosA1 = cos(angle1); val sinA1 = sin(angle1)
-                val cosA2 = cos(angle2); val sinA2 = sin(angle2)
+                val cosA1 = cos(angle1);
+                val sinA1 = sin(angle1)
+                val cosA2 = cos(angle2);
+                val sinA2 = sin(angle2)
 
-                val p0x_local = rx * cosA1;    val p0y_local = ry * sinA1 // Start P0
-                val p3x_local = rx * cosA2;    val p3y_local = ry * sinA2 // End P3
+                val p0x_local = rx * cosA1;
+                val p0y_local = ry * sinA1 // Start P0
+                val p3x_local = rx * cosA2;
+                val p3y_local = ry * sinA2 // End P3
 
                 // Control points (local)
                 val p1x_local = p0x_local - kappa * ry * sinA1 // Use ry for x tangent calc with ellipse aspect ratio
