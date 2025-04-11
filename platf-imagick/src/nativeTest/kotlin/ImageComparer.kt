@@ -14,17 +14,16 @@ class ImageComparer(
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
         val expectedPath = expectedDir + expectedFileName
         val testName = expectedFileName.removeSuffix(".bmp")
-        val actualFilePath = outDir + "${testName}_actual.bmp"
-        val diffFilePath = outDir + "${testName}_diff.bmp"
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
         if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
             println(getMagickError(expectedWand))
             // Write the  actual image to a file for debugging
+            val actualFilePath = outDir + "${testName}.bmp"
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(actualWand))
             } else {
-                println("Failed to read expected image. Actual image:\n$actualFilePath")
+                println("Failed to read expected image. Actual image:\nfile:/$actualFilePath")
             }
         }
 
@@ -32,6 +31,7 @@ class ImageComparer(
         val actual = exportPixels(actualWand)
 
         if (!comparePixelArrays(expected, actual, tolerance = 0)) {
+            val diffFilePath = outDir + "${testName}_diff.bmp"
             val width = ImageMagick.MagickGetImageWidth(actualWand).toInt()
             val height = ImageMagick.MagickGetImageHeight(actualWand).toInt()
             val diffWand = composeVisualDiff(expectedWand, actualWand, createDiffImage(expected, actual, width, height))
@@ -39,7 +39,7 @@ class ImageComparer(
                 println(getMagickError(diffWand))
             }
 
-            error("Image mismatch: see $actualFilePath and $diffFilePath")
+            error("Image mismatch. See diff:\nfile:/$diffFilePath")
         }
     }
 
