@@ -40,13 +40,15 @@ class MagickContext2d(
     }
 
     override fun stroke() {
-        withStrokeWand() { strokeWand ->
+        // Path is already transformed - no need to apply transform again.
+        withStrokeWand(AffineTransform.IDENTITY) { strokeWand ->
             drawPath(contextState.getCurrentPath(), strokeWand)
         }
     }
 
     override fun fill() {
-        withFillWand { fillWand ->
+        // Path is already transformed - no need to apply transform again.
+        withFillWand(AffineTransform.IDENTITY) { fillWand ->
             drawPath(contextState.getCurrentPath(), fillWand)
         }
     }
@@ -190,10 +192,8 @@ class MagickContext2d(
 
                 is Ellipse -> with(command) {
                     if (true) {
-                        val cpts = controlPoints
-
-                        val x0 = cpts[0].x
-                        val y0 = cpts[0].y
+                        val x0 = controlPoints[0].x
+                        val y0 = controlPoints[0].y
                         if (!started) {
                             ImageMagick.DrawPathMoveToAbsolute(drawingWand, x0, y0)
                             started = true
@@ -201,7 +201,7 @@ class MagickContext2d(
                             ImageMagick.DrawPathLineToAbsolute(drawingWand, x0, y0)
                         }
 
-                        cpts.asSequence()
+                        controlPoints.asSequence()
                             .drop(1)
                             .windowed(size = 3, step = 3)
                             .forEach { (cp1, cp2, cp3) ->

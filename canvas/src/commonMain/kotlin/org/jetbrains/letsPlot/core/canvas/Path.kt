@@ -15,16 +15,18 @@ class Path {
 
     fun getCommands() = commands.toList()
 
-    fun closePath(transform: AffineTransform) {
-        commands.add(ClosePath(transform))
+    fun closePath() {
+        commands.add(ClosePath)
     }
 
     fun moveTo(x: Double, y: Double, transform: AffineTransform) {
-        commands.add(MoveTo(x, y, transform))
+        val (x, y) = transform.transform(x, y)
+        commands.add(MoveTo(x, y))
     }
 
     fun lineTo(x: Double, y: Double, transform: AffineTransform) {
-        commands.add(LineTo(x, y, transform))
+        val (x, y) = transform.transform(x, y)
+        commands.add(LineTo(x, y))
     }
 
     fun arc(
@@ -75,14 +77,12 @@ class Path {
     }
 
 
-    sealed class PathCommand(
-        val transform: AffineTransform
-    )
+    sealed class PathCommand
 
-    class ClosePath(transform: AffineTransform) : PathCommand(transform)
-    class MoveTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
-    class LineTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
-    class Ellipse (val controlPoints: List<DoubleVector>, transform: AffineTransform): PathCommand(transform) {
+    object ClosePath : PathCommand()
+    class MoveTo(val x: Double, val y: Double) : PathCommand()
+    class LineTo(val x: Double, val y: Double) : PathCommand()
+    class Ellipse (val controlPoints: List<DoubleVector>): PathCommand() {
 
     constructor(
         x: Double,
@@ -104,10 +104,8 @@ class Path {
             endAngleDeg = endAngleDeg,
             anticlockwise = anticlockwise,
             transform = transform
-        ), transform)
+        ))
     }
-
-
 
     companion object {
         fun approximateWithBezierCurve(
@@ -137,7 +135,7 @@ class Path {
                 rotation = rotation,
                 arcStartAngle = startAngleRad, // Use original start angle
                 sweepAngle = sweepAngle,    // Use calculated sweep
-                transform = { p -> p }
+                transform = { p -> transform.transform(p) }
             )
 
             return segments

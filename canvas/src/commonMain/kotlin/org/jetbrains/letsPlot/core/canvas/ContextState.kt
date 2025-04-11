@@ -139,7 +139,7 @@ class ContextState {
     }
 
     fun closePath() {
-        currentPath.closePath(currentState.transform)
+        currentPath.closePath()
     }
 
     fun moveTo(x: Double, y: Double) {
