@@ -1,6 +1,7 @@
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -9,6 +10,7 @@ import kotlin.test.Test
  */
 
 // This test class is used to demonstrate the usage of the ImageMagick library
+@Ignore
 class MagicWandSandbox {
     @OptIn(ExperimentalStdlibApi::class)
     @Test
