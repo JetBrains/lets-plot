@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 
 class AestheticsDefaults private constructor(
     private val defaults: TypedKeyHashMap,
@@ -63,6 +64,25 @@ class AestheticsDefaults private constructor(
         return AestheticsDefaults(
             defaults = this.defaults.makeCopy().also { it.put(aes, defaultValue) },
             defaultsInLegend = this.defaultsInLegend
+        )
+    }
+
+    fun flipIf(flip: Boolean): AestheticsDefaults {
+        if (!flip) {
+            return this
+        }
+        fun flipKeys(map: TypedKeyHashMap): TypedKeyHashMap {
+            @Suppress("UNCHECKED_CAST")
+            val keys: List<Aes<Any>> = map.keys<Aes<*>>().map { it as Aes<Any> }
+            return TypedKeyHashMap().apply {
+                for (aes in keys) {
+                    put(YOrientationBaseUtil.flipAes(aes), map[aes])
+                }
+            }
+        }
+        return AestheticsDefaults(
+            defaults = flipKeys(this.defaults),
+            defaultsInLegend = flipKeys(this.defaultsInLegend)
         )
     }
 

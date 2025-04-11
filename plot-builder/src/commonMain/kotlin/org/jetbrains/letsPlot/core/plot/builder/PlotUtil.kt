@@ -123,12 +123,7 @@ object PlotUtil {
                     }
                 } else {
                     // apply default
-                    val v = when (layer.isYOrientation) {
-                        false -> aes
-                        else -> YOrientationBaseUtil.flipAes(aes) // For oriented geoms, default aesthetics defined for vertical geom versions
-                    }.let {
-                        layer.getDefault(it)
-                    }
+                    val v = layer.getDefault(aes) // both the aes and the aestheticsDefaults take orientation into account
                     val t = transformIfContinuous(scale(aes, layer))
                     aesBuilder.constantAes(
                         aes,

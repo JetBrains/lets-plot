@@ -298,7 +298,7 @@ class GeomLayerBuilder(
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme)
+        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme).flipIf(isYOrientation)
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,
