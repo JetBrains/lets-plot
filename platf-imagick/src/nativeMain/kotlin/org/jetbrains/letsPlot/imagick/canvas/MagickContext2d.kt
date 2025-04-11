@@ -238,8 +238,8 @@ class MagickContext2d(
             memScoped {
                 val affineMatrix = alloc<ImageMagick.AffineMatrix>()
                 affineMatrix.sx = affine.sx
-                affineMatrix.ry = affine.rx
-                affineMatrix.rx = affine.ry
+                affineMatrix.ry = affine.rx // https://github.com/ImageMagick/ImageMagick/issues/8091
+                affineMatrix.rx = affine.ry // https://github.com/ImageMagick/ImageMagick/issues/8091
                 affineMatrix.sy = affine.sy
                 affineMatrix.tx = affine.tx
                 affineMatrix.ty = affine.ty
