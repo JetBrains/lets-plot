@@ -213,12 +213,11 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun sina(supplier: (Context) -> Geom): GeomProvider {
+        fun sina(): GeomProvider {
             return GeomProvider(
                 GeomKind.SINA,
-                SinaGeom.HANDLES_GROUPS,
-                supplier
-            )
+                SinaGeom.HANDLES_GROUPS
+            ) { SinaGeom() }
         }
 
         fun ydotplot(supplier: (Context) -> Geom): GeomProvider {

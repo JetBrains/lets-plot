@@ -44,6 +44,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
         PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
+        PROVIDER[GeomKind.SINA] = GeomProvider.sina()
         PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
         PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
         PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()
@@ -202,20 +203,6 @@ internal object GeomProviderFactory {
                 }
                 if (layerConfig.hasOwn(Option.Geom.Violin.SHOW_HALF)) {
                     geom.showHalf = layerConfig.getDouble(Option.Geom.Violin.SHOW_HALF)!!
-                }
-                geom
-            }
-
-            GeomKind.SINA -> GeomProvider.sina {
-                val geom = SinaGeom()
-                if (layerConfig.hasOwn(Option.Stat.Sina.SEED)) {
-                    geom.seed = layerConfig.getLong(Option.Stat.Sina.SEED)!!
-                }
-                if (layerConfig.hasOwn(Option.Stat.Sina.JITTER_Y)) {
-                    geom.jitterY = layerConfig.getBoolean(Option.Stat.Sina.JITTER_Y, SinaGeom.DEF_JITTER_Y)
-                }
-                if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
-                    geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
                 }
                 geom
             }

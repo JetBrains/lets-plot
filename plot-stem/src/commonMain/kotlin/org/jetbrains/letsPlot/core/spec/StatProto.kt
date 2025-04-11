@@ -336,7 +336,9 @@ object StatProto {
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
-            quantiles = quantiles
+            quantiles = quantiles,
+            seed = options.getLong(Sina.SEED),
+            jitterY = options.getBoolean(Sina.JITTER_Y, SinaStat.DEF_JITTER_Y)
         )
     }
 

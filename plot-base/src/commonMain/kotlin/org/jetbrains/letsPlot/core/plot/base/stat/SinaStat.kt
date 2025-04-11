@@ -6,10 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import kotlin.math.abs
+import kotlin.random.Random
 
 class SinaStat(
     private val scale: Scale,
@@ -19,7 +22,9 @@ class SinaStat(
     private val kernel: DensityStat.Kernel,
     private val n: Int,
     private val fullScanMax: Int,
-    private val quantiles: List<Double>
+    private val quantiles: List<Double>,
+    private val seed: Long?,
+    private val jitterY: Boolean
 ) : BaseStat(DEF_MAPPING) {
 
     init {
@@ -64,9 +69,8 @@ class SinaStat(
         return builder.build()
     }
 
-    // The same as in YDensityStat::normalize()
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
-        val statViolinWidth = if (dataAfterStat.rowCount() == 0) {
+        val statViolinWidth: List<Double> = if (dataAfterStat.rowCount() == 0) {
             emptyList()
         } else {
             when (scale) {
@@ -86,12 +90,38 @@ class SinaStat(
                     statCount.map { it / norm }
                 }
                 Scale.WIDTH -> {
-                    dataAfterStat.getNumeric(Stats.SCALED)
+                    dataAfterStat.getNumeric(Stats.SCALED).map { it!! }
                 }
             }
         }
+        val statX = dataAfterStat.getNumeric(Stats.X).map { it!! }
+        val statY = dataAfterStat.getNumeric(Stats.Y).map { it!! }
+        val rand = seed?.let { Random(seed) } ?: Random.Default
+        val yRes = SeriesUtil.resolution(statY, 0.0)
+        val jitterY: Boolean = if (!integerish(statY, yRes)) {
+            false
+        } else {
+            jitterY
+        }
+        val statJitteredX = (statX zip statViolinWidth).map { (x, violinwidth) ->
+            val sign = if (rand.nextBoolean()) 1 else -1
+            val randomWidthShift = rand.nextDouble()
+            val widthLimit = violinwidth / 2.0
+            x + sign * randomWidthShift * widthLimit
+        }
+        val statJitteredY = if (jitterY) {
+            val sign = if (rand.nextBoolean()) 1 else -1
+            val randomHeightShift = rand.nextDouble()
+            val heightLimit = DY * yRes / 2.0
+            statY.map { it + sign * randomHeightShift * heightLimit }
+        } else {
+            statY
+        }
         return dataAfterStat.builder()
-            .putNumeric(Stats.VIOLIN_WIDTH, statViolinWidth)
+            .remove(Stats.X)
+            .remove(Stats.Y)
+            .putNumeric(Stats.X, statJitteredX)
+            .putNumeric(Stats.Y, statJitteredY)
             .build()
     }
 
@@ -106,6 +136,10 @@ class SinaStat(
     companion object {
         val DEF_SCALE = Scale.AREA
         val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
+        const val DEF_JITTER_Y = true
+
+        private const val INTEGERISH_EPSILON = 1e-9
+        private const val DY = .5 // y-jitter height factor, 1 means full height
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
@@ -113,5 +147,9 @@ class SinaStat(
             Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH,
             Aes.QUANTILE to Stats.QUANTILE
         )
+
+        private fun integerish(values: List<Double>, resolution: Double): Boolean {
+            return values.all { abs(it - it.toLong()) < resolution * INTEGERISH_EPSILON }
+        }
     }
 }
