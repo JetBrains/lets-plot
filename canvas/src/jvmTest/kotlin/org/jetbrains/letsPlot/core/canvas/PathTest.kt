@@ -10,13 +10,13 @@ import org.assertj.core.api.RecursiveComparisonAssert
 import org.assertj.core.util.DoubleComparator
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvas.Path.Ellipse
+import org.jetbrains.letsPlot.core.canvas.Path.Companion.approximateEllipseWithBezierCurve
 import kotlin.test.Test
 
 class PathTest {
     @Test
     fun `negative radius returns center point`() {
-        val ellipse = Ellipse(
+        val cpts = approximateEllipseWithBezierCurve(
             x = 100.0,
             y = 100.0,
             radiusX = -50.0,
@@ -28,14 +28,12 @@ class PathTest {
             transform = AffineTransform.IDENTITY,
         )
 
-        val cpts = ellipse.controlPoints
-
         assertControlPoints(cpts, DoubleVector(100.0, 100.0))
     }
 
     @Test
     fun `bezier curve from 90degree circle arc`() {
-        val ellipse = Ellipse(
+        val cpts = approximateEllipseWithBezierCurve(
             x = 100.0,
             y = 100.0,
             radiusX = 50.0,
@@ -46,8 +44,6 @@ class PathTest {
             anticlockwise = false,
             transform = AffineTransform.IDENTITY,
         )
-
-        val cpts = ellipse.controlPoints
 
         assertControlPoints(
             cpts,
@@ -60,7 +56,7 @@ class PathTest {
 
     @Test
     fun `bezier curve from 180degree circle arc`() {
-        val ellipse = Ellipse(
+        val cpts = approximateEllipseWithBezierCurve(
             x = 100.0,
             y = 100.0,
             radiusX = 50.0,
@@ -71,8 +67,6 @@ class PathTest {
             anticlockwise = false,
             transform = AffineTransform.IDENTITY,
         )
-
-        val cpts = ellipse.controlPoints
 
         assertControlPoints(
             cpts,
@@ -88,7 +82,7 @@ class PathTest {
 
     @Test
     fun `bezier curve from negative angle circle arc`() {
-        val ellipse = Ellipse(
+        val cpts = approximateEllipseWithBezierCurve(
             x = 150.0,
             y = 150.0,
             radiusX = 100.0,
@@ -99,8 +93,6 @@ class PathTest {
             anticlockwise = true,
             transform = AffineTransform.IDENTITY,
         )
-
-        val cpts = ellipse.controlPoints
 
         assertControlPoints(
             cpts,
@@ -113,7 +105,7 @@ class PathTest {
 
     @Test
     fun `bezier curve from full circle`() {
-        val ellipse = Ellipse(
+        val cpts = approximateEllipseWithBezierCurve(
             x = 100.0,
             y = 100.0,
             radiusX = 50.0,
@@ -124,8 +116,6 @@ class PathTest {
             anticlockwise = false,
             transform = AffineTransform.IDENTITY,
         )
-
-        val cpts = ellipse.controlPoints
 
         assertControlPoints(cpts,
             DoubleVector(150.0, 100.0),

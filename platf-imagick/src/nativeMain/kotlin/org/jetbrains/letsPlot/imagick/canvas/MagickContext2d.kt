@@ -190,7 +190,7 @@ class MagickContext2d(
                     ImageMagick.DrawPathLineToAbsolute(drawingWand, x, y)
                 }
 
-                is Ellipse -> with(command) {
+                is Bezier -> with(command) {
                     if (true) {
                         val x0 = controlPoints[0].x
                         val y0 = controlPoints[0].y

@@ -38,19 +38,19 @@ class Path {
         anticlockwise: Boolean,
         transform: AffineTransform
     ) {
-        commands.add(
-            Ellipse(
-                x,
-                y,
-                radius,
-                radius,
-                0.0,
-                startAngleDeg,
-                endAngleDeg,
-                anticlockwise,
-                transform
-            )
+        val controlPoints = approximateEllipseWithBezierCurve(
+            x = x,
+            y = y,
+            radiusX = radius,
+            radiusY = radius,
+            rotation = 0.0,
+            startAngleDeg = startAngleDeg,
+            endAngleDeg = endAngleDeg,
+            anticlockwise = anticlockwise,
+            transform = transform
         )
+
+        commands.add(Bezier(controlPoints))
     }
 
     fun ellipse(
@@ -61,54 +61,29 @@ class Path {
         anticlockwise: Boolean,
         transform: AffineTransform
     ) {
-        commands.add(
-            Ellipse(
-                x,
-                y,
-                radiusX,
-                radiusY,
-                rotation,
-                startAngle,
-                endAngle,
-                anticlockwise,
-                transform
-            )
-        )
-    }
-
-
-    sealed class PathCommand
-
-    object ClosePath : PathCommand()
-    class MoveTo(val x: Double, val y: Double) : PathCommand()
-    class LineTo(val x: Double, val y: Double) : PathCommand()
-    class Ellipse (val controlPoints: List<DoubleVector>): PathCommand() {
-
-    constructor(
-        x: Double,
-        y: Double,
-        radiusX: Double,
-        radiusY: Double,
-        rotation: Double,
-        startAngleDeg: Double,
-        endAngleDeg: Double,
-        anticlockwise: Boolean,
-        transform: AffineTransform
-    ) : this(approximateWithBezierCurve(
+        val controlPoints = approximateEllipseWithBezierCurve(
             x = x,
             y = y,
             radiusX = radiusX,
             radiusY = radiusY,
             rotation = rotation,
-            startAngleDeg = startAngleDeg,
-            endAngleDeg = endAngleDeg,
+            startAngleDeg = startAngle,
+            endAngleDeg = endAngle,
             anticlockwise = anticlockwise,
             transform = transform
-        ))
+        )
+
+        commands.add(Bezier(controlPoints))
     }
 
+    sealed class PathCommand
+    object ClosePath : PathCommand()
+    class MoveTo(val x: Double, val y: Double) : PathCommand()
+    class LineTo(val x: Double, val y: Double) : PathCommand()
+    class Bezier (val controlPoints: List<DoubleVector>): PathCommand()
+
     companion object {
-        fun approximateWithBezierCurve(
+        fun approximateEllipseWithBezierCurve(
             x: Double,
             y: Double,
             radiusX: Double,
@@ -282,7 +257,6 @@ class Path {
             return segments
         }
 
-
         private fun transformEllipsePoint(
             px: Double, py: Double, // Point in local ellipse space (center 0,0, no rotation)
             cx: Double, cy: Double, // Ellipse center
@@ -294,6 +268,5 @@ class Path {
             val pyRotated = px * sinRot + py * cosRot
             return DoubleVector(pxRotated + cx, pyRotated + cy)
         }
-
     }
 }
