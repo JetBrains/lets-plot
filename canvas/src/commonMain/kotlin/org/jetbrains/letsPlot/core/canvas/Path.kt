@@ -206,29 +206,23 @@ class Path {
                 val angle2 = currentAngle + deltaAngle
 
                 // Calculate points for this segment
-                val cosA1 = cos(angle1);
-                val sinA1 = sin(angle1)
-                val cosA2 = cos(angle2);
-                val sinA2 = sin(angle2)
+                val cosA1 = cos(angle1); val sinA1 = sin(angle1)
+                val cosA2 = cos(angle2); val sinA2 = sin(angle2)
 
                 // Start and End points (local)
-                val p0xLocal = rx * cosA1;
-                val p0yLocal = ry * sinA1 // P0
-                val p3xLocal = rx * cosA2;
-                val p3yLocal = ry * sinA2 // P3
+                val p0xLocal = rx * cosA1; val p0yLocal = ry * sinA1 // P0
+                val p3xLocal = rx * cosA2; val p3yLocal = ry * sinA2 // P3
 
-                // Calculate tangent offsets scaled by kappa
-                // These represent the vector from P0->P1 and P3->P2 if dir were +1
-                val offsetX1 = -kappa * ry * sinA1
-                val offsetY1 = +kappa * rx * cosA1
-                val offsetX2 = +kappa * ry * sinA2
-                val offsetY2 = -kappa * rx * cosA2
+                // Calculate tangent vector components at angle1 and angle2
+                val tx1 = -rx * sinA1 // Tangent component X at angle1
+                val ty1 =  ry * cosA1 // Tangent component Y at angle1
+                val tx2 = -rx * sinA2 // Tangent component X at angle2
+                val ty2 =  ry * cosA2 // Tangent component Y at angle2
 
-                // Control points (local) - Apply direction correction `dir`
-                val p1xLocal = p0xLocal + dir * offsetX1
-                val p1yLocal = p0yLocal + dir * offsetY1
-                val p2xLocal = p3xLocal + dir * offsetX2 // P2 is relative to P3's tangent endpoint
-                val p2yLocal = p3yLocal + dir * offsetY2
+                val p1xLocal = p0xLocal + dir * kappa * tx1 // P0 + scaled tangent T1
+                val p1yLocal = p0yLocal + dir * kappa * ty1
+                val p2xLocal = p3xLocal - dir * kappa * tx2 // P3 - scaled tangent T2 (note sign)
+                val p2yLocal = p3yLocal - dir * kappa * ty2
 
                 // Apply ellipse's own transform (rotation + translation)
                 val p0e = transformEllipsePoint(p0xLocal, p0yLocal, cx, cy, rotation) // P0
@@ -280,5 +274,4 @@ class Path {
             return DoubleVector(pxRotated + cx, pyRotated + cy)
         }
     }
-
 }

@@ -17,14 +17,16 @@ import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object ReferenceSvgModel {
     fun createModel(): SvgSvgElement = SvgSvgElement(500.0, 500.0).apply {
-        //val p = SvgPathDataBuilder(false)
-        //    .moveTo(150.0, 100.0, true)
-        //    .ellipticalArc(50.0, 50.0, PI/4, false, true, -100.0, 0.0)
-        //    .closePath()
-        //    .build()
-        //path(stroke = ORANGE, fill = NONE, pathData = p, strokeWidth = 2.0) {
-        //    //transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
-        //}
+        if (false) {
+            val p = SvgPathDataBuilder(false)
+                .moveTo(50.0, 300.0, true)
+                .ellipticalArc(50.0, 300.0, 0.0, false, true, 100.0, 0.0)
+                .closePath()
+                .build()
+            path(stroke = ORANGE, fill = NONE, pathData = p, strokeWidth = 2.0) {
+                //transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
+            }
+        }
 
         //slimG(1) {
         //    slimCircle(100.0, 100.0, 50.0, Color.DARK_BLUE, Color.LIGHT_YELLOW, 3.0)
