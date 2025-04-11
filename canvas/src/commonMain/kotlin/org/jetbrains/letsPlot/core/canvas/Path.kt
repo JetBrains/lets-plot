@@ -82,22 +82,45 @@ class Path {
     class ClosePath(transform: AffineTransform) : PathCommand(transform)
     class MoveTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
     class LineTo(val x: Double, val y: Double, transform: AffineTransform) : PathCommand(transform)
-    class Ellipse(
-        val x: Double,
-        val y: Double,
-        val radiusX: Double,
-        val radiusY: Double,
-        val rotation: Double,
-        val startAngleDeg: Double,
-        val endAngleDeg: Double,
-        val anticlockwise: Boolean,
-        transform: AffineTransform
-    ) : PathCommand(transform) {
-        override fun toString(): String {
-            return "Ellipse(x=$x, y=$y, radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, startAngleDeg=$startAngleDeg, endAngleDeg=$endAngleDeg, anticlockwise=$anticlockwise)"
-        }
+    class Ellipse (val controlPoints: List<DoubleVector>, transform: AffineTransform): PathCommand(transform) {
 
-        fun approximateWithBezierCurve(): List<DoubleVector> {
+    constructor(
+        x: Double,
+        y: Double,
+        radiusX: Double,
+        radiusY: Double,
+        rotation: Double,
+        startAngleDeg: Double,
+        endAngleDeg: Double,
+        anticlockwise: Boolean,
+        transform: AffineTransform
+    ) : this(approximateWithBezierCurve(
+            x = x,
+            y = y,
+            radiusX = radiusX,
+            radiusY = radiusY,
+            rotation = rotation,
+            startAngleDeg = startAngleDeg,
+            endAngleDeg = endAngleDeg,
+            anticlockwise = anticlockwise,
+            transform = transform
+        ), transform)
+    }
+
+
+
+    companion object {
+        fun approximateWithBezierCurve(
+            x: Double,
+            y: Double,
+            radiusX: Double,
+            radiusY: Double,
+            rotation: Double,
+            startAngleDeg: Double,
+            endAngleDeg: Double,
+            anticlockwise: Boolean,
+            transform: AffineTransform
+        ): List<DoubleVector> {
             val startAngleRad = toRadians(startAngleDeg)
             val endAngleRad = toRadians(endAngleDeg)
             if (radiusX < 0 || radiusY < 0) {
@@ -273,5 +296,6 @@ class Path {
             val pyRotated = px * sinRot + py * cosRot
             return DoubleVector(pxRotated + cx, pyRotated + cy)
         }
+
     }
 }

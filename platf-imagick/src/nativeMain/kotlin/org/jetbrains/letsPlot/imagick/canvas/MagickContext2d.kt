@@ -190,7 +190,7 @@ class MagickContext2d(
 
                 is Ellipse -> with(command) {
                     if (true) {
-                        val cpts = approximateWithBezierCurve()
+                        val cpts = controlPoints
 
                         val x0 = cpts[0].x
                         val y0 = cpts[0].y

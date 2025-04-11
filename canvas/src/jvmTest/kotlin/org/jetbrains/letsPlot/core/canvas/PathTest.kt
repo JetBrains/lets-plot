@@ -28,7 +28,7 @@ class PathTest {
             transform = AffineTransform.IDENTITY,
         )
 
-        val cpts = ellipse.approximateWithBezierCurve()
+        val cpts = ellipse.controlPoints
 
         assertControlPoints(cpts, DoubleVector(100.0, 100.0))
     }
@@ -47,7 +47,7 @@ class PathTest {
             transform = AffineTransform.IDENTITY,
         )
 
-        val cpts = ellipse.approximateWithBezierCurve()
+        val cpts = ellipse.controlPoints
 
         assertControlPoints(
             cpts,
@@ -72,7 +72,7 @@ class PathTest {
             transform = AffineTransform.IDENTITY,
         )
 
-        val cpts = ellipse.approximateWithBezierCurve()
+        val cpts = ellipse.controlPoints
 
         assertControlPoints(
             cpts,
@@ -100,7 +100,7 @@ class PathTest {
             transform = AffineTransform.IDENTITY,
         )
 
-        val cpts = ellipse.approximateWithBezierCurve()
+        val cpts = ellipse.controlPoints
 
         assertControlPoints(
             cpts,
@@ -125,7 +125,7 @@ class PathTest {
             transform = AffineTransform.IDENTITY,
         )
 
-        val cpts = ellipse.approximateWithBezierCurve()
+        val cpts = ellipse.controlPoints
 
         assertControlPoints(cpts,
             DoubleVector(150.0, 100.0),
