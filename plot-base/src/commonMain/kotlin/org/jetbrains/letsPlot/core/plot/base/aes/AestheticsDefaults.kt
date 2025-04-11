@@ -67,25 +67,6 @@ class AestheticsDefaults private constructor(
         )
     }
 
-    fun flipIf(flip: Boolean): AestheticsDefaults {
-        if (!flip) {
-            return this
-        }
-        fun flipKeys(map: TypedKeyHashMap): TypedKeyHashMap {
-            @Suppress("UNCHECKED_CAST")
-            val keys: List<Aes<Any>> = map.keys<Aes<*>>().map { it as Aes<Any> }
-            return TypedKeyHashMap().apply {
-                for (aes in keys) {
-                    put(YOrientationBaseUtil.flipAes(aes), map[aes])
-                }
-            }
-        }
-        return AestheticsDefaults(
-            defaults = flipKeys(this.defaults),
-            defaultsInLegend = flipKeys(this.defaultsInLegend)
-        )
-    }
-
     companion object {
         private fun point(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)

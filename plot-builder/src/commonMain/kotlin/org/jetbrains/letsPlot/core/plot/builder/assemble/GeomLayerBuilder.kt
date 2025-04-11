@@ -298,11 +298,22 @@ class GeomLayerBuilder(
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme).let {
+        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme).let { aestheticsDefaults ->
             when (geomKind) {
-                GeomKind.CROSS_BAR -> it.flipIf(isYOrientation)
-                GeomKind.POINT_RANGE -> it.flipIf(isYOrientation)
-                else -> it
+                // Geoms for which x and y has different defaults
+                GeomKind.CROSS_BAR,
+                GeomKind.POINT_RANGE,
+                GeomKind.BOX_PLOT -> {
+                    when (isYOrientation) {
+                        false -> aestheticsDefaults
+                        true -> {
+                            val defaultX = aestheticsDefaults.defaultValue(Aes.X)
+                            val defaultY = aestheticsDefaults.defaultValue(Aes.Y)
+                            aestheticsDefaults.with(Aes.Y, defaultX).with(Aes.X, defaultY)
+                        }
+                    }
+                }
+                else -> aestheticsDefaults
             }
         }
 
