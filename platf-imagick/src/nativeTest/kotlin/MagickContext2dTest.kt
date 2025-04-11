@@ -3,7 +3,6 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -11,12 +10,70 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
+
 class MagickContext2dTest {
+    val outDir: String = getCurrentDir() + "/build/image-test/"
+
+    init {
+        mkDir(outDir)
+    }
+
     val imageComparer = ImageComparer(
         expectedDir = "src/nativeTest/resources/expected/",
-        outDir = "build/image-test/diff/"
+        outDir = outDir
     )
+
+    @Test
+    fun shearedEllipse() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.strokeStyle = "black"
+        ctx.beginPath()
+        ctx.save()
+        ctx.transform(sx = 1.0, ry = 0.3420201241970062, rx = 0.0, sy = 1.0, tx = 0.0, ty = -30.0)
+        ctx.ellipse(
+            x = 50.0,
+            y = 60.0,
+            radiusX = 45.0,
+            radiusY = 20.0,
+            rotation = 0.0,
+            startAngle = 0.0,
+            endAngle = PI * 2,
+            anticlockwise = true
+        )
+        ctx.restore()
+        ctx.closePath()
+        ctx.stroke()
+
+        imageComparer.assertImageEquals("sheared_ellipse.bmp", canvas.wand!!)
+    }
+
+    @Test
+    fun shearedCircularArc() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.strokeStyle = "black"
+        ctx.beginPath()
+        ctx.save()
+        ctx.transform(sx = 1.0, ry = 0.3420201241970062, rx = 0.0, sy = 1.0, tx = 0.0, ty = -30.0)
+        ctx.moveTo(95.0, 95.0)
+        ctx.lineTo(95.0, 5.0)
+        ctx.ellipse(
+            x = 95.0,
+            y = 95.0,
+            radiusX = 90.0,
+            radiusY = 90.0,
+            rotation = 0.0,
+            startAngle = -PI / 2,
+            endAngle = PI,
+            anticlockwise = true
+        )
+        ctx.restore()
+        ctx.closePath()
+        ctx.stroke()
+
+        imageComparer.assertImageEquals("sheared_circular_arc.bmp", canvas.wand!!)
+    }
 
     @Test
     fun nestedTranslates() {
@@ -283,7 +340,7 @@ class MagickContext2dTest {
     fun pathTransformOnBuild() {
         val canvas = MagickCanvas.create(100, 100)
         with(canvas.context2d) {
-           strokeStyle = "black"
+            strokeStyle = "black"
             lineWidth = 2.0
 
             save()
@@ -308,10 +365,10 @@ class MagickContext2dTest {
     fun arcTransformsAfterRestore() {
         val canvas = MagickCanvas.create(100, 100)
         with(canvas.context2d) {
-            fillStyle = "green"
+            fillStyle = "black"
 
             save()
-            translate(75.0, 75.0)
+            translate(50.0, 50.0)
             beginPath()
             scale(1.0, 0.5)
             arc(0.0, 0.0, 50.0, 0.0, 2 * PI)

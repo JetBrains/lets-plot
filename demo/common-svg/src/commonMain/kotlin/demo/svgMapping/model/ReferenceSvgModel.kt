@@ -83,7 +83,13 @@ object ReferenceSvgModel {
                 getAttribute(SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE).set(getDashes(4.3, 4.3, 1.0))
             }
 
-            path(stroke = ORANGE, fill = NONE, pathData = createClosedPathFrom(150.0, 375.0), strokeWidth = 2.0) {
+            val p = SvgPathDataBuilder(false)
+                .moveTo(150.0, 375.0, true)
+                .verticalLineTo(-100.0)
+                .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+                .closePath()
+                .build()
+            path(stroke = ORANGE, fill = NONE, pathData = p, strokeWidth = 2.0) {
                 transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
             }
 
