@@ -23,12 +23,16 @@ internal class PointDataAccess(
     override fun getOriginalValue(aes: Aes<*>, index: Int): Any? {
         require(isMapped(aes)) { "Not mapped: $aes" }
 
-        val binding = bindings.getValue(aes)
         val scale = scaleMap.getValue(aes)
+        val transformedValue = getTransformedValue(aes, index)
+        return scale.transform.applyInverse(transformedValue)
+    }
 
-        return binding.variable
-            .let { variable -> data.getNumeric(variable)[index] }
-            .let { value -> scale.transform.applyInverse(value) }
+    override fun getTransformedValue(aes: Aes<*>, index: Int): Double? {
+        require(isMapped(aes)) { "Not mapped: $aes" }
+
+        val binding = bindings.getValue(aes)
+        return data.getNumeric(binding.variable)[index]
     }
 
     override fun getMappedDataLabel(aes: Aes<*>): String =

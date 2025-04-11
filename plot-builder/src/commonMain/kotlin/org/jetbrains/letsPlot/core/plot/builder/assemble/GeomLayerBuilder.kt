@@ -298,9 +298,18 @@ class GeomLayerBuilder(
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = geom.updateAestheticsDefaults(
-            AestheticsDefaults.create(geomKind, geomTheme), isYOrientation
-        )
+        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme).let { aestheticsDefaults ->
+            // Default y must be NaN or 0 depending on the orientation to avoid drawing the midline/midpoint when it is not specified
+            if (isYOrientation && geomKind in listOf(GeomKind.CROSS_BAR, GeomKind.POINT_RANGE)) {
+                val defaultX = aestheticsDefaults.defaultValue(Aes.X)
+                val defaultY = aestheticsDefaults.defaultValue(Aes.Y)
+                aestheticsDefaults
+                    .with(Aes.Y, defaultX)
+                    .with(Aes.X, defaultY)
+            } else {
+                aestheticsDefaults
+            }
+        }
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,

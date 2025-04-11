@@ -98,30 +98,41 @@ class TooltipAxisConfigTest {
                 scaleFormat = "scale = {} %",
                 tooltipFormat = null
             )
-            assertGeneralTooltip(geomLayer, "scale = 0.34447 %")
-            assertYAxisTooltip(geomLayer, "scale = 0.34447 %")
-            assertEquals("scale = 0.34447 %", getYTick(geomLayer))
+            // "general" tooltip: discrete axis format is not applicable to numeric data.
+//            assertGeneralTooltip(geomLayer, "scale = 0.34447 %")
+            assertGeneralTooltip(geomLayer, "0.34")  // default numeric format ".2f"
+
+            // "axis" tooltip should not be shown for numeric data on discrete axis.
+//            assertYAxisTooltip(geomLayer, "scale = 0.34447 %")
+            assertYAxisTooltip(geomLayer, "**blank**")
+
+            // discrete axis does not create tooltips for numeric data.
+//            assertEquals("scale = 0.34447 %", getYTick(geomLayer))
+            assertNoYTicks(geomLayer)
         }
-        run {
-            val geomLayer = geomLayer(
-                additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
-                scaleFormat = "scale = {.4f} %",
-                tooltipFormat = null
-            )
-            assertGeneralTooltip(geomLayer, "scale = 0.3445 %")
-            assertYAxisTooltip(geomLayer, "scale = 0.3445 %")
-            assertEquals("scale = 0.3445 %", getYTick(geomLayer))
-        }
-        run {
-            val geomLayer = geomLayer(
-                additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
-                scaleFormat = ".4f",
-                tooltipFormat = null
-            )
-            assertGeneralTooltip(geomLayer, "0.3445")
-            assertYAxisTooltip(geomLayer, "0.3445")
-            assertEquals("0.3445", getYTick(geomLayer))
-        }
+
+        // Unnecessary test - see comment above.
+//        run {
+//            val geomLayer = geomLayer(
+//                additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
+//                scaleFormat = "scale = {.4f} %",
+//                tooltipFormat = null
+//            )
+//            assertGeneralTooltip(geomLayer, "scale = 0.3445 %")
+//            assertYAxisTooltip(geomLayer, "scale = 0.3445 %")
+//            assertEquals("scale = 0.3445 %", getYTick(geomLayer))
+//        }
+        // Unnecessary test - see comment above.
+//        run {
+//            val geomLayer = geomLayer(
+//                additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
+//                scaleFormat = ".4f",
+//                tooltipFormat = null
+//            )
+//            assertGeneralTooltip(geomLayer, "0.3445")
+//            assertYAxisTooltip(geomLayer, "0.3445")
+//            assertEquals("0.3445", getYTick(geomLayer))
+//        }
     }
 
     // Issue https://github.com/JetBrains/lets-plot/issues/484: '{}' in format pattern should use the default formatting
@@ -328,6 +339,22 @@ class TooltipAxisConfigTest {
                 targetCount = 1,
                 closedRange
             ).first()
+        }
+
+        private fun assertNoYTicks(
+            geomLayer: GeomLayer,
+            closedRange: DoubleSpan = DoubleSpan(0.3, 0.4),
+            method: (String) -> Unit = ::fail
+        ) {
+            val scaleLabels = ScaleConfigLabelsTest.getScaleLabels(
+                geomLayer.scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y),
+                targetCount = 1,
+                closedRange
+            )
+
+            if (scaleLabels.isNotEmpty()) {
+                method("expected: no Y-axis labels;\n\tactual: \"$scaleLabels\"")
+            }
         }
     }
 }

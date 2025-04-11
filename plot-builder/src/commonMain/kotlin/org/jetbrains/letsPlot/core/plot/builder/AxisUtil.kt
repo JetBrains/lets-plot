@@ -67,7 +67,7 @@ object AxisUtil {
             }
             .filter { (i, br) ->
                 val (label, _, clientBreak) = br
-                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i) ?: DoubleVector.ZERO)
+                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
                 val bounds = labelAdjustments.bounds?.getOrNull(i)
                 val loc = if (orientation.isHorizontal) clientBreak.x else clientBreak.y
                 labelsMap.haveSpace(loc, label, labelOffset, bounds)
@@ -144,6 +144,7 @@ object AxisUtil {
                 DoubleVector(tick, hvDomain.yRange().lowerEnd),
                 DoubleVector(tick, hvDomain.yRange().upperEnd)
             )
+
             else -> listOf(
                 DoubleVector(hvDomain.xRange().lowerEnd, tick),
                 DoubleVector(hvDomain.xRange().upperEnd, tick)

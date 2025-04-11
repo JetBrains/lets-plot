@@ -10,8 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Iterables
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.math.log10
-import kotlin.math.max
-import kotlin.math.min
 
 
 object SeriesUtil {
@@ -113,28 +111,6 @@ object SeriesUtil {
             true -> listOf(l0Copy, l1Copy)
             false -> listOf(l0 as List<Double>, l1 as List<Double>)
         }
-    }
-
-    fun range(values: Iterable<Double?>): DoubleSpan? {
-        var min = 0.0
-        var max = 0.0
-        var inited = false
-        for (v in values) {
-            if (isFinite(v)) {
-                if (inited) {
-                    min = min(min, v!!)
-                    max = max(max, v)
-                } else {
-                    max = v!!
-                    min = max
-                    inited = true
-                }
-            }
-        }
-        return if (inited)
-            DoubleSpan(min, max)
-        else
-            null
     }
 
     fun resolution(values: Iterable<Double?>, naValue: Double): Double {

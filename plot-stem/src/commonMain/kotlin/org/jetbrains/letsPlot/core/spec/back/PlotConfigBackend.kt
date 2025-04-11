@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.back
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
@@ -401,7 +402,7 @@ open class PlotConfigBackend(
 
             // Try the same formatter that is used for the continuous scale
             val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
-                ?.let { doubleList -> SeriesUtil.range(doubleList) }
+                ?.let { doubleList -> DoubleSpan.encloseAllQ(doubleList) }
                 ?.let { range ->
                     DateTimeBreaksHelper(
                         range.lowerEnd,

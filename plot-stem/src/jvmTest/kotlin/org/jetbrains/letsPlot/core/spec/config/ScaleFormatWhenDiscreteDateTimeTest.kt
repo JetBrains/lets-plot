@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.spec.Option
@@ -74,7 +74,7 @@ class ScaleFormatWhenDiscreteDateTimeTest {
             if (scale.isContinuous) {
                 val breaksGenerator =
                     (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
-                val range = SeriesUtil.range(dataValues)
+                val range = DoubleSpan.encloseAllQ(dataValues)
                 assertNotNull(range)
                 val scaleLabels = breaksGenerator.generateBreaks(range, dataValues.size).labels
                 assertEquals(expectedLabelForContinuous, scaleLabels, "Wrong scale labels for $aes")
@@ -110,6 +110,13 @@ class ScaleFormatWhenDiscreteDateTimeTest {
         )
         checkScaleLabels(
             dataValues,
+            discreteScales = listOf(Aes.COLOR),
+            asDiscreteAes = emptyList(),
+            expectedLabelsForDiscrete,
+            expectedLabelForContinuous
+        )
+        checkScaleLabels(
+            dataValues,
             discreteScales = emptyList(),
             asDiscreteAes = listOf(Aes.X, Aes.COLOR),
             expectedLabelsForDiscrete,
@@ -118,17 +125,20 @@ class ScaleFormatWhenDiscreteDateTimeTest {
 
         checkScaleLabels(
             dataValues,
-            discreteScales = listOf(Aes.COLOR),
-            asDiscreteAes = emptyList(),
+            discreteScales = listOf(Aes.X, Aes.COLOR),
+            // Positional aes must be annotated 'as_discrete'
+            asDiscreteAes = listOf(Aes.X),
             expectedLabelsForDiscrete,
             expectedLabelForContinuous
         )
 
+        // If positional aes is not annotated 'as_discrete'
+        // then it is not taken in account by a discrete axis
         checkScaleLabels(
             dataValues,
-            discreteScales = listOf(Aes.X, Aes.COLOR),
+            discreteScales = listOf(Aes.X),
             asDiscreteAes = emptyList(),
-            expectedLabelsForDiscrete,
+            expectedLabelsForDiscrete = emptyList(),
             expectedLabelForContinuous
         )
     }

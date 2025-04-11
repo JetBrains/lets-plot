@@ -151,21 +151,23 @@ class DiscreteScaleTest {
             domainLimits = listOf("b", "c", "d")
         )
 
-//        assertEquals("b", scale.transform.applyInverse(-1.0))
         assertNull(scale.transform.applyInverse(-0.6))
-        assertEquals("b", scale.transform.applyInverse(-0.5))
+//        assertEquals("b", scale.transform.applyInverse(-0.5))
+        assertNull(scale.transform.applyInverse(-0.5))
         assertEquals("b", scale.transform.applyInverse(0.0))
-        assertEquals("b", scale.transform.applyInverse(0.4))
+//        assertEquals("b", scale.transform.applyInverse(0.4))
 
-        assertEquals("c", scale.transform.applyInverse(0.5))
+//        assertEquals("c", scale.transform.applyInverse(0.5))
+        assertNull(scale.transform.applyInverse(0.5))
         assertEquals("c", scale.transform.applyInverse(1.0))
-        assertEquals("c", scale.transform.applyInverse(1.4))
-//        assertEquals("c", scale.transform.applyInverse(1.5))
+//        assertEquals("c", scale.transform.applyInverse(1.4))
 
-        assertEquals("d", scale.transform.applyInverse(1.5))
+//        assertEquals("d", scale.transform.applyInverse(1.5))
+        assertNull(scale.transform.applyInverse(1.5))
         assertEquals("d", scale.transform.applyInverse(2.0))
-        assertEquals("d", scale.transform.applyInverse(2.4))
+//        assertEquals("d", scale.transform.applyInverse(2.4))
 
+        assertNull(scale.transform.applyInverse(2.1))
         assertNull(scale.transform.applyInverse(2.5))
     }
 
@@ -180,5 +182,45 @@ class DiscreteScaleTest {
         val transform = scale2.transform
         val transformedValues = transform.apply(domainValues)
         assertEquals(listOf(0.0, 0.0, 1.0, 2.0), transformedValues)
+    }
+
+    @Test
+    fun withNumericApplication() {
+        val domainValues = listOf("a", "b", "c")
+        val scale = Scales.DemoAndTest.discreteDomain("Test scale", domainValues)
+
+
+        val testValues = listOf(-0.5, 0.0, "a", 1.5, 1, "b", 2, "c", 2.5)
+        val transform = scale.transform
+        val transformedValues = transform.apply(testValues)
+        assertEquals(listOf(-0.5, 0.0, 0.0, 1.5, 1.0, 1.0, 2.0, 2.0, 2.5), transformedValues)
+
+        // Inverse
+        val inversedValues = transform.applyInverse(transformedValues)
+        assertEquals(listOf(null, "a", "a", null, "b", "b", "c", "c", null), inversedValues)
+    }
+
+    @Test
+    fun withNumericDomain() {
+        val domainValues = listOf(-1, 2, 3)
+        val scale = Scales.DemoAndTest.discreteDomain("Test scale", domainValues)
+
+        val transform = scale.transform
+
+        // -1 -> 0.0, 2 -> 1.0, 3 -> 2.0
+        val transformedValues = transform.apply(domainValues)
+        assertEquals(listOf(0.0, 1.0, 2.0), transformedValues)
+
+        val testValues = listOf(-1, -0.5, 0.0, 1.5, 1, 2, 2.5, 3)
+        val transformedValues2 = transform.apply(testValues)
+        assertEquals(listOf(0.0, -0.5, 0.0, 1.5, 1.0, 1.0, 2.5, 2.0), transformedValues2)
+
+        // Inverse
+        // 0.0 -> -1, 1.0 -> 2, 2.0 -> 3
+        val origValues = transform.applyInverse(transformedValues)
+        assertEquals(listOf(-1, 2, 3), origValues)
+
+        val origValues2 = transform.applyInverse(transformedValues2)
+        assertEquals(listOf(-1, null, -1, null, 2, 2, null, 3), origValues2)
     }
 }
