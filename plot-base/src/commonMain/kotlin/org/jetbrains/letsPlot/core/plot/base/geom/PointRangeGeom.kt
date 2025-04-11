@@ -52,7 +52,6 @@ class PointRangeGeom : GeomBase() {
 
         for (p in aesthetics.dataPoints()) {
             val x = p.finiteOrNull(Aes.X) ?: continue
-            val y = p.finiteOrNull(Aes.Y)
             val ymin = p.finiteOrNull(Aes.YMIN) ?: continue
             val ymax = p.finiteOrNull(Aes.YMAX) ?: continue
             val shape = p.shape() ?: continue
@@ -64,11 +63,10 @@ class PointRangeGeom : GeomBase() {
             root.add(svg)
 
             // mid-point
-            if (y != null) {
-                val location = geomHelper.toClient(DoubleVector(x, y), p)!!
-                val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
-                root.add(wrap(o))
-            }
+            val y = p.finiteOrNull(Aes.Y) ?: continue
+            val location = geomHelper.toClient(DoubleVector(x, y), p)!!
+            val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
+            root.add(wrap(o))
         }
         // tooltip
         /*

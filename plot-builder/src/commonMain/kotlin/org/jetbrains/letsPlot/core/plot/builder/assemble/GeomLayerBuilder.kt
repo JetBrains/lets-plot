@@ -302,8 +302,7 @@ class GeomLayerBuilder(
             when (geomKind) {
                 // Geoms for which x and y has different defaults
                 GeomKind.CROSS_BAR,
-                GeomKind.POINT_RANGE,
-                GeomKind.BOX_PLOT -> {
+                GeomKind.POINT_RANGE -> {
                     when (isYOrientation) {
                         false -> aestheticsDefaults
                         true -> {

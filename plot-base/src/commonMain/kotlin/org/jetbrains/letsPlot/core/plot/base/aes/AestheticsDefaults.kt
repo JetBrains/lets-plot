@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
-import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 
 class AestheticsDefaults private constructor(
     private val defaults: TypedKeyHashMap,
@@ -101,7 +100,8 @@ class AestheticsDefaults private constructor(
         }
 
         private fun boxplot(geomTheme: GeomTheme): AestheticsDefaults {
-            return crossBar(geomTheme)
+            return base(geomTheme)
+                .update(Aes.WIDTH, 0.9)
         }
 
         private fun text(geomTheme: GeomTheme): AestheticsDefaults {
