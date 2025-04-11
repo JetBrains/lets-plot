@@ -51,7 +51,7 @@ class MappingField(
             { value: Any? -> value?.let { mappingFormatter.format(value) } ?: "n/a" }
         } else {
             // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
-            val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+            val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes)
 
             if (Aes.isPositional(primaryAes)) { // ask scale for formatter
                 ctx.getTooltipFormatter(primaryAes)
@@ -83,15 +83,32 @@ class MappingField(
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
         val formatter = myFormatter ?: initFormatter(ctx)
 
-        val originalValue = myDataAccess.getOriginalValue(aes, index)
-        val formattedValue = formatter.invoke(originalValue)
+        val originalValue = myDataAccess.getOriginalValue(aes, index) ?: run {
+            if (Aes.isPositionalXY(aes) && !isAxis) {
+                // The situation when numeric data is mapped to a discrete axis.
+                // In this case scale's discrete transformer is unable to apply inverse transform and returnes null.
+                // However, forward transform in this situation is 'identity', i.e. the original value equals to
+                // the 'transformed' value.
+                // Note: this only applies to "general" and "side" tooltips. As for "axis" tooltips, we'll hide them.
+                myDataAccess.getTransformedValue(aes, index)
+            } else {
+                null
+            }
+        }
+
+        val formattedValue = if (originalValue == null && isAxis) {
+            "**blank**"
+        } else {
+            formatter.invoke(originalValue)
+        }
 
         return DataPoint(
             label = myDataLabel,
             value = formattedValue,
             aes = aes,
             isAxis = isAxis,
-            isSide = isSide
+            isSide = isSide,
+            isBlank = formattedValue == "**blank**" // ToDo: do not show
         )
     }
 

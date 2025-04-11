@@ -7,10 +7,10 @@ package org.jetbrains.letsPlot.core.plot.base.scale
 
 import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 object Mappers {
     val IDENTITY = object : ScaleMapper<Double> {
@@ -99,7 +99,7 @@ object Mappers {
         outputRange: DoubleSpan,
         naValue: Double
     ): ScaleMapper<Double> {
-        val dataRange = SeriesUtil.range(transformedDomain) ?: return IDENTITY
+        val dataRange = DoubleSpan.encloseAllQ(transformedDomain) ?: return IDENTITY
         return linear(dataRange, outputRange, naValue)
     }
 

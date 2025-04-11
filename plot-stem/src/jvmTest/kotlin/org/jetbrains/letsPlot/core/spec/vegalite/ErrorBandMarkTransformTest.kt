@@ -155,6 +155,7 @@ class ErrorBandMarkTransformTest {
                     "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
                 )
             ),
+            entry(Layer.ORIENTATION, "y"),
             entry(
                 Meta.DATA_META, mapOf(
                     Meta.MappingAnnotation.TAG to listOf(

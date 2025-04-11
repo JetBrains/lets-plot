@@ -54,8 +54,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XINTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XLOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XUPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YINTERCEPT
@@ -99,6 +102,9 @@ object DefaultNaValue {
         VALUE_MAP.put(LOWER, 0.0)
         VALUE_MAP.put(MIDDLE, 0.0)
         VALUE_MAP.put(UPPER, 0.0)
+        VALUE_MAP.put(XLOWER, 0.0)
+        VALUE_MAP.put(XMIDDLE, 0.0)
+        VALUE_MAP.put(XUPPER, 0.0)
         VALUE_MAP.put(SAMPLE, 0.0)
         VALUE_MAP.put(QUANTILE, 0.0)
         VALUE_MAP.put(MAP_ID, "empty map_id")

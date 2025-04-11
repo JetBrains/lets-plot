@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.2] - 2025-03-28
+
+### Fixed
+
+- macOS: incorrect system libraries linkage that may lead to Lets-Plot import failure:<br>
+  ```libc++abi: Terminating due to typed operator new being invoked before its static initializer in libcxx has been executed.```
+
+
+- `geom_livemap()`: map zoom freezes after multiple rapid clicks on +/- buttons [[#1315](https://github.com/JetBrains/lets-plot/issues/1315)].
+- Misleading warnings when using CARTO 'base-midnight', 'base-antique' and 'base-flatblue' tilesets in livemap.
+
 ## [4.6.1] - 2025-03-07
 
 ### Changed
@@ -27,7 +38,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Grouping plots:
   - `ggbunch()` function: combining plots with custom layout.
 
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+    See demos: 
+    - [Indonesia Volcanic Activity](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+    - [Magnifier Inset Effect](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/magnifier_inset.ipynb).
 
   - Support for plot **title, subtitle, caption, margins** and **insets** in `gggrid()` and `ggbunch()`.
 

@@ -23,22 +23,27 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-core:$ktorVersion")
                 compileOnly(project(":commons"))
-            }
-        }
-
-        commonTest {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-                implementation(project(":commons"))
             }
         }
 
         jvmMain {
             dependencies {
                 compileOnly("io.ktor:ktor-client-cio:$ktorVersion")
+            }
+        }
+
+        named("jsMain") {
+            dependencies {
+                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(project(":commons"))
             }
         }
 
@@ -49,13 +54,6 @@ kotlin {
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
                 implementation("org.mockito:mockito-core:$mockitoVersion")
                 implementation("org.assertj:assertj-core:$assertjVersion")
-            }
-        }
-
-        named("jsMain") {
-            dependencies {
-                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 

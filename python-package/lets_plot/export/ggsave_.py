@@ -125,7 +125,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         return _to_svg(plot, pathname)
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
-    elif ext in ['png', 'pdf']:
+    elif ext in ['png', 'pdf', 'bmp']:
         return _export_as_raster(plot, pathname, scale, export_format=ext, w=w, h=h, unit=unit, dpi=dpi)
     else:
         raise ValueError(

@@ -19,8 +19,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
-
                 compileOnly(project(":commons"))
                 compileOnly(project(":datamodel"))
                 compileOnly(project(":canvas"))
@@ -32,10 +30,21 @@ kotlin {
             }
         }
 
+        jvmMain {
+            dependencies {
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+            }
+        }
+
+        named("jsMain") {
+            dependencies {
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+            }
+        }
+
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
 
                 implementation(project(":demo-and-test-shared"))
                 implementation(project(":commons"))
@@ -49,22 +58,9 @@ kotlin {
             }
         }
 
-        jvmMain {
-            dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-            }
-        }
-
         jvmTest {
             dependencies {
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
-            }
-        }
-
-        named("jsMain") {
-            dependencies {
-                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 

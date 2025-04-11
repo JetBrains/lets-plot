@@ -21,11 +21,10 @@ import org.jetbrains.letsPlot.gis.tileprotocol.json.MapStyleJsonParser
 import org.jetbrains.letsPlot.gis.tileprotocol.json.RequestFormatter
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SafeSocketHandler
-import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketBuilder
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketHandler
+import org.jetbrains.letsPlot.gis.tileprotocol.socket.TileWebSocket
 
-
-open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme) {
+open class TileService(url: String, private val myTheme: Theme) {
     enum class Theme {
         COLOR,
         LIGHT,
@@ -33,7 +32,7 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
         BW
     }
 
-    private val mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler()))
+    private val mySocket: TileWebSocket = TileWebSocket(url, SafeSocketHandler(TileSocketHandler()))
     private val myMessageQueue = ThreadSafeMessageQueue<String>()
     private val pendingRequests = RequestMap()
     var mapConfig: MapConfig? = null

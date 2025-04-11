@@ -51,8 +51,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XINTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XLOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XUPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YINTERCEPT
@@ -166,6 +169,15 @@ abstract class AesVisitor<T> {
         }
         if (aes == UPPER) {
             return upper()
+        }
+        if (aes == XLOWER) {
+            return xlower()
+        }
+        if (aes == XMIDDLE) {
+            return xmiddle()
+        }
+        if (aes == XUPPER) {
+            return xupper()
         }
         if (aes == SAMPLE) {
             return sample()
@@ -300,6 +312,12 @@ abstract class AesVisitor<T> {
     protected abstract fun middle(): T
 
     protected abstract fun upper(): T
+
+    protected abstract fun xlower(): T
+
+    protected abstract fun xmiddle(): T
+
+    protected abstract fun xupper(): T
 
     protected abstract fun sample(): T
 

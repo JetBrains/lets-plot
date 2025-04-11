@@ -100,6 +100,7 @@ class ErrorBarMarkTransformTest {
                     "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
                 )
             ),
+            entry(Layer.ORIENTATION, "y"),
             entry(Option.Meta.DATA_META, empty()),
         )
     }

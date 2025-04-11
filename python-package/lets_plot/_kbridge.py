@@ -19,6 +19,10 @@ def _generate_svg(plot_spec: Dict, use_css_pixelated_image_rendering: bool = Tru
     plot_spec = _standardize_plot_spec(plot_spec)
     return lets_plot_kotlin_bridge.export_svg(plot_spec, use_css_pixelated_image_rendering)
 
+def _save_image(bytestring: Dict, write_to: str, dpi: int = 0, output_width: int = 0, output_height: int = 0, scale: float = 0.0):
+    plot_spec = _standardize_plot_spec(bytestring)
+    lets_plot_kotlin_bridge.save_image(plot_spec, write_to, dpi, output_width, output_height, scale)
+
 
 def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)

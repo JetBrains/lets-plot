@@ -49,7 +49,6 @@ internal object PlotConfigTransforms {
             } else if (variablesByMappedAes.containsKey(aes)) {
                 val variables = variablesByMappedAes.getValue(aes)
                 val anyNotNumericData = variables.any { variable ->
-//                    val data = dataByVarBinding.getValue(VarBinding(variable, aes))
                     val varBinding = VarBinding(variable, aes)
                     val data = dataByVarBinding.find { it.first == varBinding }?.second
                         ?: error("Missing binding $varBinding")
@@ -88,9 +87,9 @@ internal object PlotConfigTransforms {
             val scaleBreaks = scaleProvider.breaks ?: emptyList()
             val domainValues = if (discreteDomainByAes.containsKey(aes)) {
                 discreteDomainByAes.getValue(aes)
-            } else if (aes in setOf(Aes.X, Aes.Y)) {
-                // Aes x/y are always in the list, thus it's possible there is no data associated with x/y aes.
-                emptySet()
+//            } else if (aes in setOf(Aes.X, Aes.Y)) {
+//                // Aes x/y are always in the list, thus it's possible there is no data associated with x/y aes.
+//                emptySet()
             } else {
                 throw IllegalStateException("No discrete data found for aes $aes")
             }
@@ -185,22 +184,42 @@ internal object PlotConfigTransforms {
 
     internal fun discreteDomainByAes(
         discreteAesSet: Set<Aes<*>>,
-//        dataByVarBinding: Map<VarBinding, DataFrame>,
         dataByVarBinding: List<Pair<VarBinding, DataFrame>>,
     ): Map<Aes<*>, Collection<Any>> {
-        // Discrete domains from 'data'.
-//        val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
-//            it.aes in discreteAesSet
-//        }
         val discreteDataByVarBinding: List<Pair<VarBinding, DataFrame>> = dataByVarBinding.filter {
-            it.first.aes in discreteAesSet
+            val binding = it.first
+            val data = it.second
+            val aes = binding.aes
+            val variable = binding.variable
+            val include = when (aes in discreteAesSet) {
+                true -> when (Aes.isPositionalXY(aes)) {
+                    true -> {
+                        // Positional variable must be "strictly discrete"
+                        // See issue: https://github.com/JetBrains/lets-plot/issues/1323
+                        !data.isEmpty(variable) && data.isDiscrete(variable)
+                    }
+
+                    else -> true
+                }
+
+                else -> false
+            }
+            include
         }
-        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
+
+        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>().apply {
+            // Initialize because each of "discrete aes" must be present
+            // and some might not be present in `discreteDataByVarBinding` due to the filter above.
+            discreteAesSet.forEach { aes ->
+                this[aes] = LinkedHashSet()
+            }
+        }
         for ((varBinding, data) in discreteDataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
             val factors = data.distinctValues(variable)
-            discreteDomainByAes.getOrPut(aes) { LinkedHashSet() }.addAll(factors)
+//            discreteDomainByAes.getOrPut(aes) { LinkedHashSet() }.addAll(factors)
+            discreteDomainByAes.getValue(aes).addAll(factors)
         }
         return discreteDomainByAes
     }

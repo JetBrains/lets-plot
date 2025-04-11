@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.gis.tileprotocol.http.HttpTileTransport
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
@@ -70,7 +69,7 @@ class RasterTileLoadingSystem(
                             val errorText = response.errorCode!!.message ?: "Unknown error"
                             val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
                             val tileCtx = tileCanvas.context2d
-                            val textDim = tileCtx.measureText(errorText)
+                            val textDim = tileCtx.measureTextWidth(errorText)
                             val x =
                                 if (textDim < TILE_PIXEL_SIZE) {
                                     TILE_PIXEL_SIZE / 2 - textDim / 2

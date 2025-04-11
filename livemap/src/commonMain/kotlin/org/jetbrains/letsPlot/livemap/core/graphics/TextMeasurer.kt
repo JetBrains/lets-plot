@@ -13,7 +13,7 @@ class TextMeasurer(private val myContext2d: Context2d) {
     fun measure(label: String, font: Font): DoubleVector {
         myContext2d.save()
         myContext2d.setFont(font)
-        val width = myContext2d.measureText(label)
+        val width = myContext2d.measureTextWidth(label)
         myContext2d.restore()
 
         return DoubleVector(width, font.fontSize)
@@ -23,7 +23,7 @@ class TextMeasurer(private val myContext2d: Context2d) {
         myContext2d.save()
         myContext2d.setFont(font)
 
-        val width = label.maxOf(myContext2d::measureText)
+        val width = label.maxOf(myContext2d::measureTextWidth)
         myContext2d.restore()
 
         val height = lineHeight * (label.size - 1) + font.fontSize

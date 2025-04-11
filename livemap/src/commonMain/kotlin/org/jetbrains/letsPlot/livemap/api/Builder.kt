@@ -19,7 +19,6 @@ import org.jetbrains.letsPlot.gis.geoprotocol.GeoTransportImpl
 import org.jetbrains.letsPlot.gis.geoprotocol.GeocodingService
 import org.jetbrains.letsPlot.gis.geoprotocol.MapRegion
 import org.jetbrains.letsPlot.gis.tileprotocol.TileService
-import org.jetbrains.letsPlot.gis.tileprotocol.socket.TileWebSocketBuilder
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.chart.fragment.newFragmentProvider
 import org.jetbrains.letsPlot.livemap.config.DevParams
@@ -162,7 +161,7 @@ class LiveMapTileServiceBuilder {
     var theme = TileService.Theme.COLOR
 
     fun build(): TileService {
-        return TileService(TileWebSocketBuilder(url), theme)
+        return TileService(url, theme)
     }
 }
 

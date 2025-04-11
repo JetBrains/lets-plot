@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
-import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
@@ -51,8 +50,7 @@ object GeomInteractionUtil {
             statKind = layerConfig.statKind,
             isCrosshairEnabled = isCrosshairEnabled(layerConfig),
             isPolarCoordSystem = isPolarCoordSystem,
-            multilayerWithTooltips = multilayerWithTooltips,
-            definedAesList = layerConfig.varBindings.map(VarBinding::aes) + layerConfig.constantsMap.keys
+            multilayerWithTooltips = multilayerWithTooltips
         )
         return createGeomInteractionBuilder(layerConfig, scaleMap, tooltipSetup, isLiveMap, theme)
     }
@@ -106,7 +104,7 @@ object GeomInteractionUtil {
                 axisAesFromFunctionTypeAfterOrientation,
                 hiddenAesList
             )
-            sideTooltipAes = createSideTooltipAesList(layerConfig).afterOrientation(yOrientation)
+            sideTooltipAes = createSideTooltipAesList(layerConfig, yOrientation)
             tooltipSpecification = layerConfig.tooltips
         } else {
             tooltipAes = emptyList()
@@ -140,15 +138,13 @@ object GeomInteractionUtil {
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
         isPolarCoordSystem: Boolean,
-        multilayerWithTooltips: Boolean,
-        definedAesList: List<Aes<*>>,
+        multilayerWithTooltips: Boolean
     ): GeomTooltipSetup {
         val tooltipSetup = createGeomTooltipSetup(
             geomKind,
             statKind,
             isCrosshairEnabled,
-            isPolarCoordSystem,
-            definedAesList
+            isPolarCoordSystem
         ).let {
             var multilayerLookup = false
             if (multilayerWithTooltips && !isCrosshairEnabled) {
@@ -178,8 +174,7 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
-        isPolarCoordSystem: Boolean,
-        definedAesList: List<Aes<*>>
+        isPolarCoordSystem: Boolean
     ): GeomTooltipSetup {
         if (isPolarCoordSystem) {
             // Always show axis tooltips for polar coordinate system as all geoms are area-like
@@ -214,19 +209,10 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR -> {
-                return if (definedAesList.containsAll(listOf(Aes.YMIN, Aes.YMAX))) {
-                    GeomTooltipSetup.xUnivariateFunction(
-                        GeomTargetLocator.LookupStrategy.HOVER,
-                        axisTooltipVisibilityFromConfig = true
-                    )
-                } else if (definedAesList.containsAll(listOf(Aes.XMIN, Aes.XMAX))) {
-                    GeomTooltipSetup.yUnivariateFunction(
-                        GeomTargetLocator.LookupStrategy.HOVER,
-                        axisTooltipVisibilityFromConfig = true
-                    )
-                } else {
-                    GeomTooltipSetup.none()
-                }
+                return GeomTooltipSetup.xUnivariateFunction(
+                    GeomTargetLocator.LookupStrategy.HOVER,
+                    axisTooltipVisibilityFromConfig = true
+                )
             }
 
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
@@ -292,10 +278,6 @@ object GeomInteractionUtil {
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
-            GeomKind.CROSS_BAR -> when (isVerticalGeom(layerConfig)) { // Y/X is a part of the tooltip, do not duplicate it on the axis
-                true -> listOf(Aes.Y)
-                false -> listOf(Aes.X)
-            }
             GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.HEX -> listOf(Aes.WIDTH, Aes.HEIGHT)
@@ -304,23 +286,11 @@ object GeomInteractionUtil {
             GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
             GeomKind.SINA -> listOf(Aes.VIOLINWIDTH, Aes.QUANTILE)
             GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
+            GeomKind.CROSS_BAR -> listOf(Aes.Y)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT, GeomKind.CURVE -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
             GeomKind.SPOKE -> listOf(Aes.X, Aes.Y, Aes.ANGLE, Aes.RADIUS)
-            GeomKind.RIBBON,
-            GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> {
-                // ToDo Need refactoring...
-                // Error bar supports a dual set of aesthetics (vertical and horizontal representation).
-                // Here the `layerConfig.renderedAes` (full aesthetic list) is used.
-                // So add unused axis aes to the hidden list
-                when (axisAes.singleOrNull()) {
-                    Aes.X -> listOf(Aes.Y)
-                    Aes.Y -> listOf(Aes.X)
-                    else -> emptyList()
-                }
-            }
 
             GeomKind.Q_Q, GeomKind.Q_Q_LINE -> listOf(Aes.SAMPLE)
             GeomKind.TEXT, GeomKind.LABEL -> {
@@ -405,19 +375,21 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createSideTooltipAesList(layerConfig: LayerConfig): List<Aes<*>> {
+    private fun createSideTooltipAesList(layerConfig: LayerConfig, yOrientation: Boolean): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
-            GeomKind.CROSS_BAR -> when (isVerticalGeom(layerConfig)) {
-                true -> listOf(Aes.YMAX, Aes.Y, Aes.YMIN) // Y/X is a median - show it as a part of the tooltip
-                false -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
+            GeomKind.CROSS_BAR,
+            GeomKind.SMOOTH -> when (yOrientation) {
+                true -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
+                false -> listOf(Aes.YMAX, Aes.Y, Aes.YMIN)
             }
-
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,
-            GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN) // TODO: use isVerticalGeom
-            GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
-            GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
+            GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
+            GeomKind.BOX_PLOT -> when (yOrientation) {
+                true -> listOf(Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)
+                false -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
+            }
             else -> emptyList()
         }
     }
@@ -474,22 +446,5 @@ object GeomInteractionUtil {
         }
         val factors = scaleMap.safeGet(aes)?.getScaleBreaks()?.domainValues ?: return false
         return factors.size >= MIN_FACTORS_TO_SHOW_TOOLTIPS
-    }
-
-    private fun isVerticalGeom(layerConfig: LayerConfig): Boolean {
-        if (layerConfig.geomProto.geomKind !in listOf(
-                GeomKind.ERROR_BAR,
-                GeomKind.LINE_RANGE,
-                GeomKind.RIBBON,
-                GeomKind.CROSS_BAR,
-                GeomKind.POINT_RANGE,
-                GeomKind.BAND
-            )
-        ) {
-            return false
-        }
-
-        val mappedAes = layerConfig.varBindings.map { it.aes }
-        return mappedAes.containsAll(listOf(Aes.YMAX, Aes.YMIN))
     }
 }

@@ -32,7 +32,7 @@ object DataFrameUtil {
         val transformed = try {
             ScaleUtil.applyTransform(data[variable], transform)
         } catch (e: IllegalStateException) {
-            throw IllegalArgumentException(
+            throw IllegalStateException(
                 "Can't transform '${variable.name}' with ${transform::class.simpleName} : ${e.message}"
             )
         }

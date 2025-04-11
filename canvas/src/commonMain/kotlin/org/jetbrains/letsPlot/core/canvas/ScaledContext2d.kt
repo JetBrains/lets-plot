@@ -78,6 +78,10 @@ internal class ScaledContext2d(
         ctx.arc(scaled(x), scaled(y), scaled(radius), startAngle, endAngle, anticlockwise)
     }
 
+    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+        ctx.ellipse(scaled(x), scaled(y), scaled(radiusX), scaled(radiusY), rotation, startAngle, endAngle, anticlockwise)
+    }
+
     override fun save() = ctx.save()
     override fun restore() = ctx.restore()
     override fun setFillStyle(color: Color?) = ctx.setFillStyle(color)
@@ -118,7 +122,8 @@ internal class ScaledContext2d(
     override fun fillEvenOdd() = ctx.fillEvenOdd()
     override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(scaled(lineDash))
     override fun setLineDashOffset(lineDashOffset: Double) = ctx.setLineDashOffset(lineDashOffset)
-    override fun measureText(str: String): Double = descaled(ctx.measureText(str))
+    override fun measureTextWidth(str: String): Double = descaled(ctx.measureTextWidth(str))
+    override fun measureText(str: String): TextMetrics = ctx.measureText(str)
 
     override fun clearRect(rect: DoubleRectangle) {
         ctx.clearRect(

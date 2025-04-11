@@ -7,14 +7,12 @@ package org.jetbrains.letsPlot.core.plot.base.stat
 
 import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.stat.DensityStat
-import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
-import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -57,9 +55,9 @@ class DensityStatTest {
         )
 
         val n = 512
-        val binWidth = (SeriesUtil.range(test)!!).length / (n - 1)
+        val binWidth = (DoubleSpan.encloseAll(test)).length / (n - 1)
 
-        for (kernel in DensityStat.Kernel.values()) { //test for different kernels
+        for (kernel in DensityStat.Kernel.entries) { //test for different kernels
             val stat = Stats.density(n = n, kernel = kernel, quantiles = emptyList())
 
             val statDf = stat.apply(df, statContext(df))
@@ -102,7 +100,7 @@ class DensityStatTest {
         val n1 = 512
         val n2 = 256
         val binArea =
-            (SeriesUtil.range(testX)!!).length / (n1 - 1) * (SeriesUtil.range(testY)!!).length / (n2 - 1)
+            DoubleSpan.encloseAll(testX).length / (n1 - 1) * DoubleSpan.encloseAll(testY).length / (n2 - 1)
 
         val stat = Stats.density2d(nX = n1, nY = n2, isContour = false)
 

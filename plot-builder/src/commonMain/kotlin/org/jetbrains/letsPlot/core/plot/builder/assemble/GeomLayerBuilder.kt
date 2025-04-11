@@ -299,13 +299,12 @@ class GeomLayerBuilder(
         )
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults = geom.updateAestheticsDefaults(
-            AestheticsDefaults.create(geomKind, geomTheme)
+            AestheticsDefaults.create(geomKind, geomTheme), isYOrientation
         )
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,
-            colorByAes, fillByAes,
-            exclude = geom.wontRender
+            colorByAes, fillByAes
         )
 
         override val legendKeyElementFactory: LegendKeyElementFactory
@@ -365,13 +364,13 @@ class GeomLayerBuilder(
         }
 
         override fun createContextualMapping(): ContextualMapping {
-            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation, defaultFormatters)
+            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, defaultFormatters)
             return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
         }
 
         override fun createAnnotation(): Annotation? {
             return annotationProvider?.let { provider ->
-                val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation, defaultFormatters)
+                val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, defaultFormatters)
                 provider(dataAccess, dataFrame)
             }
         }

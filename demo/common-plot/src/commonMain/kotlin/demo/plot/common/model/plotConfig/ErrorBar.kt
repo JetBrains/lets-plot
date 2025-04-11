@@ -197,7 +197,7 @@ class ErrorBar {
             |         'xmin': [10.83, 20.8, 24.0, 5.24, 15.26, 24.35],
             |         'xmax': [15.63, 24.6, 28.11, 10.72, 18.28, 27.93],
             |         'group': 'supp'},
-            |        'position': {'name': 'dodgev', 'height': 0.9},
+            |        'position': {'name': 'dodge', 'height': 0.9},
             |        'color': 'black',
             |        'height': 0.1
             |       }
@@ -220,7 +220,7 @@ class ErrorBar {
             |  },
             | 'layers': [
             |       {'geom': 'errorbar',
-            |        'position': { 'name': 'dodgev', 'height': 0.3 },
+            |        'position': { 'name': 'dodge', 'height': 0.3 },
             |        'height': 0.2
             |       }
             |   ]
@@ -243,7 +243,7 @@ class ErrorBar {
             | 'coord': {'name': 'flip', 'flip': true},
             | 'layers': [
             |       {'geom': 'errorbar',
-            |        'position': { 'name': 'dodgev', 'height': 0.3 },
+            |        'position': { 'name': 'dodge', 'height': 0.3 },
             |        'height': 0.2
             |       }
             |   ]

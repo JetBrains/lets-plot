@@ -40,3 +40,6 @@ python-package/kotlin-bridge/lets_plot_kotlin_bridge.o
 # System file for Docker manylinux image
 qemu-arm-static
 qemu-aarch64-static
+
+# Junie AI 
+/.junie/guidelines.md

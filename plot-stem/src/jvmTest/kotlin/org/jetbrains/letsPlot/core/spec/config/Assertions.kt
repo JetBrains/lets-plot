@@ -26,7 +26,7 @@ fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigFr
     return plotSpec
         .let(BackendTestUtil::backendSpecTransform)
         .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
-        .let(TestUtil::assertClientWontFail)
+        .let(TestUtil::createPlotConfigFrontend)
 }
 
 fun failedTransformToClientPlotConfig(spec: String): String {

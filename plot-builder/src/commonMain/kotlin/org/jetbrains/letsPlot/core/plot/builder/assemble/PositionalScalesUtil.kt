@@ -369,7 +369,7 @@ object PositionalScalesUtil {
                 }
 
                 is DiscreteTransform -> {
-                    DoubleSpan.encloseAll(transform.effectiveDomainTransformed)
+                    DoubleSpan.encloseAllQ(transform.effectiveDomainTransformed)
                 }
 
                 else -> throw IllegalStateException("Unexpected transform type: ${transform::class.simpleName}")
