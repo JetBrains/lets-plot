@@ -18,11 +18,16 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 
 class Context2dDelegate(
-    private val logEnabled: Boolean = false
+    private val logEnabled: Boolean = false,
+    private val failIfNotImplemented: Boolean = false
 ) : Context2d {
     private fun log(msg: String) {
         if (logEnabled) {
             println(msg)
+        }
+
+        if (failIfNotImplemented) {
+            throw UnsupportedOperationException(msg)
         }
     }
 

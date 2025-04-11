@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Path.PathCommand
 
-private const val logEnabled = true
+private const val logEnabled = false
 private fun log(str: () -> String) {
     if (logEnabled)
         println(str())

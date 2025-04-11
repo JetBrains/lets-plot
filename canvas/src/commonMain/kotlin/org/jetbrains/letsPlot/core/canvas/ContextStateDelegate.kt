@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.values.Color
 
-class ContextStateDelegate: Context2d by Context2dDelegate(logEnabled = true) {
+class ContextStateDelegate(
+    logEnabled: Boolean = true, failIfNotImplemented: Boolean = true
+) : Context2d by Context2dDelegate(logEnabled = logEnabled, failIfNotImplemented = failIfNotImplemented) {
     val state = ContextState()
 
     override fun beginPath() {
@@ -76,18 +78,6 @@ class ContextStateDelegate: Context2d by Context2dDelegate(logEnabled = true) {
 
     override fun setLineWidth(lineWidth: Double) {
         state.setLineWidth(lineWidth)
-    }
-
-    override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
-        TODO("Not yet implemented")
-    }
-
-    override fun strokeText(text: String, x: Double, y: Double) {
-        TODO("Not yet implemented")
-    }
-
-    override fun fillText(text: String, x: Double, y: Double) {
-        TODO("Not yet implemented")
     }
 
     override fun scale(x: Double, y: Double) {
