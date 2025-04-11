@@ -12,15 +12,16 @@ import kotlin.test.Test
 
 //@Ignore
 class MagickContext2dTest {
+    val outDir: String = getCurrentDir() + "/build/image-test/"
+
+    init {
+        mkDir(outDir)
+    }
+
     val imageComparer = ImageComparer(
         expectedDir = "src/nativeTest/resources/expected/",
-        outDir = "build/image-test/diff/"
+        outDir = outDir
     )
-
-    @Test
-    fun testmkdir() {
-        mksubdirs("/Users/ikupriyanov/Downloads/hello")
-    }
 
     @Test
     fun shearedEllipse() {

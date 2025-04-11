@@ -14,8 +14,8 @@ class ImageComparer(
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
         val expectedPath = expectedDir + expectedFileName
         val testName = expectedFileName.removeSuffix(".bmp")
-        val actualFilePath = "${testName}_actual.bmp"
-        val diffFilePath = "${testName}_diff.bmp"
+        val actualFilePath = outDir + "${testName}_actual.bmp"
+        val diffFilePath = outDir + "${testName}_diff.bmp"
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
         if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
@@ -23,6 +23,8 @@ class ImageComparer(
             // Write the  actual image to a file for debugging
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(actualWand))
+            } else {
+                println("Failed to read expected image. Actual image:\n$actualFilePath")
             }
         }
 
@@ -264,33 +266,29 @@ class ImageComparer(
             }
         }
     }
-
-
-
 }
 
-fun mksubdirs(path: String) {
-    println("Creating subdirs for $path")
-
+fun mkDir(dir: String): Boolean {
     val access = S_IRWXU.convert<mode_t>() or S_IRWXG.convert() or S_IRWXO.convert()
-    val parts = path.split("/").filter { it.isNotBlank() }
-    println("parts: $parts")
-    val dirs = parts.runningFold("/") { acc, part -> "$acc$part/" }
+    if (access(dir, F_OK) == 0) {
+        return true
+    }
 
-    println("subdirs: $dirs")
+    if (mkdir(dir, access) != 0 && errno != EEXIST) {
+        return false
+    }
 
-    dirs
-        .forEach { subdir ->
-            if (access(subdir, F_OK) == 0) {
-                println("Directory '$subdir' already exists")
-                return@forEach
-            }
+    return true
+}
 
-            if (mkdir(subdir, access) != 0 && errno != EEXIST) {
-                perror("mkdir '$subdir' failed")
-                return
-            }
-
-            println("Directory '$subdir' created")
+fun getCurrentDir(): String {
+    return memScoped {
+        val bufferSize = 4096 * 8
+        val buffer = allocArray<ByteVar>(bufferSize)
+        if (getcwd(buffer, bufferSize.toULong()) != null) {
+            buffer.toKString()
+        } else {
+            "." // Default to current directory on error
         }
+    }
 }
