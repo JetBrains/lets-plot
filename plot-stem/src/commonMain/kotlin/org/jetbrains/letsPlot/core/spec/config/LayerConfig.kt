@@ -328,9 +328,6 @@ class LayerConfig constructor(
                 combinedDiscreteMappings
             )
         }
-        // For a given set of aesthetics, the function says:
-        // is it true that none of these aesthetics is defined, but at least one of the flipped versions is
-        // (which might be a reason to consider the geometry as y-oriented)
         fun isYOrientedByAes(verticalAesthetics: Set<Aes<*>>): Boolean {
             val combinedMappings = plotMappings + layerMappings
             val hasVerticalAesthetics = verticalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
@@ -342,7 +339,6 @@ class LayerConfig constructor(
             if (hasHorizontalAesthetics) {
                 return true
             }
-            // If there is no vertical, no horizontal aesthetics, then the geometry is considered y-oriented
             return false
         }
 
