@@ -123,7 +123,7 @@ object PlotUtil {
                     }
                 } else {
                     // apply default
-                    val v = layer.getDefault(aes) // both the aes and the aestheticsDefaults take orientation into account
+                    val v = layer.getDefault(aes)
                     val t = transformIfContinuous(scale(aes, layer))
                     aesBuilder.constantAes(
                         aes,

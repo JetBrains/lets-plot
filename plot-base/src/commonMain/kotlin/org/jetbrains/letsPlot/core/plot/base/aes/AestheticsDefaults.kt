@@ -114,6 +114,11 @@ class AestheticsDefaults private constructor(
                 .update(Aes.Y, Double.NaN)
         }
 
+        private fun pointRange(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
+                .update(Aes.Y, Double.NaN)
+        }
+
         private fun boxplot(geomTheme: GeomTheme): AestheticsDefaults {
             return crossBar(geomTheme)
         }
@@ -155,6 +160,8 @@ class AestheticsDefaults private constructor(
 
                 GeomKind.CROSS_BAR -> crossBar(geomTheme)
 
+                GeomKind.POINT_RANGE -> pointRange(geomTheme)
+
                 GeomKind.BOX_PLOT -> boxplot(geomTheme)
 
                 GeomKind.TEXT,
@@ -174,7 +181,6 @@ class AestheticsDefaults private constructor(
                 GeomKind.HEX,
                 GeomKind.MAP,
                 GeomKind.LINE_RANGE,
-                GeomKind.POINT_RANGE,
                 GeomKind.POLYGON,
                 GeomKind.AB_LINE,
                 GeomKind.H_LINE,
