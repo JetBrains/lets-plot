@@ -60,7 +60,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
         assertHint(
             expectedHintKind = X_AXIS_TOOLTIP,
             expectedHintCoord = TARGET_X_AXIS_COORD,
-            expectedObjectRadius = 1.5
+            expectedObjectRadius = 0.5
         )
         assertFill(AXIS_TOOLTIP_COLOR)
         assertLines(0, xMapping.shortTooltipText())
