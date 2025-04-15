@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.canvas
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
@@ -100,8 +101,16 @@ interface Context2d {
     }
 }
 
-fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
+fun Context2d.affineTransform(matrix: AffineTransform) = transform(
+    sx = matrix.sx,
+    ry = matrix.ry,
+    rx = matrix.rx,
+    sy = matrix.sy,
+    tx = matrix.tx,
+    ty = matrix.ty
+)
 
+fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
 
 enum class TextBaseline {
     ALPHABETIC, BOTTOM, MIDDLE, TOP

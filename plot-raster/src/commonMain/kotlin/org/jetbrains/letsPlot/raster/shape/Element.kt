@@ -5,12 +5,13 @@
 
 package org.jetbrains.letsPlot.raster.shape
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.canvas.Canvas
 
 
 internal abstract class Element() : Node() {
-    var transform: Matrix33 by visualProp(Matrix33.IDENTITY)
+    var transform: AffineTransform by visualProp(AffineTransform.IDENTITY)
     var styleClass: List<String>? by visualProp(null)
     //var clipPath: SkPath? by visualProp(null, managed = true)
     var parent: Container? by visualProp(null)
@@ -23,9 +24,9 @@ internal abstract class Element() : Node() {
 
     // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
     // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
-    val ctm: Matrix33 by computedProp(Element::parent, Element::transform) {
-        val parentCtm = parent?.ctm ?: Matrix33.IDENTITY
-        parentCtm.makeConcat(transform)
+    val ctm: AffineTransform by computedProp(Element::parent, Element::transform) {
+        val parentCtm = parent?.ctm ?: AffineTransform.IDENTITY
+        parentCtm.concat(transform)
     }
 
     open val localBounds: DoubleRectangle = DoubleRectangle.XYWH(0, 0, 0, 0)
@@ -33,7 +34,7 @@ internal abstract class Element() : Node() {
     // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
     // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
     open val screenBounds: DoubleRectangle
-        get() = ctm.applyTransform(localBounds)
+        get() = ctm.transform(localBounds)
 
     open fun render(canvas: Canvas) {}
 

@@ -83,15 +83,21 @@ object ReferenceSvgModel {
                 getAttribute(SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE).set(getDashes(4.3, 4.3, 1.0))
             }
 
-            val p = SvgPathDataBuilder(false)
-                .moveTo(150.0, 375.0, true)
-                .verticalLineTo(-100.0)
-                .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
-                .closePath()
-                .build()
-            path(stroke = ORANGE, fill = NONE, pathData = p, strokeWidth = 2.0) {
-                transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
-            }
+            path(
+                stroke = ORANGE,
+                fill = NONE,
+                strokeWidth = 2.0,
+                pathData = SvgPathDataBuilder(false)
+                    .moveTo(150.0, 375.0, true)
+                    .verticalLineTo(-100.0)
+                    .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+                    .closePath()
+                    .build(),
+                transform = SvgTransformBuilder()
+                    .translate(0.0, -30.0)
+                    .skewY(20.0)
+                    .build()
+            )
 
             path(stroke = ORANGE, fill = NONE, pathData = createUnclosedPathFrom(0.0, 200.0), strokeWidth = 1.5)
             path(fill = LIGHT_BLUE, pathData = createHoledPathFrom(350.0, 350.0))
@@ -110,10 +116,11 @@ object ReferenceSvgModel {
             }
 
             // curveTo
-            g(transform = SvgTransformBuilder()
-                .translate(180.0, 120.0)
-                .scale(3.0)
-                .build()
+            g(
+                transform = SvgTransformBuilder()
+                    .translate(180.0, 120.0)
+                    .scale(3.0)
+                    .build()
             ) {
                 path(
                     stroke = RED,

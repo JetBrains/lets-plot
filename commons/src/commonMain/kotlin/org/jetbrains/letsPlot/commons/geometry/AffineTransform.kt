@@ -38,6 +38,18 @@ class AffineTransform(
         return transform(p.x, p.y)
     }
 
+    fun transform(r: DoubleRectangle): DoubleRectangle {
+        val lt = transform(r.left, r.top)
+        val rt = transform(r.right, r.top)
+        val rb = transform(r.right, r.bottom)
+        val lb = transform(r.left, r.bottom)
+
+        val xs = listOf(lt.x, rt.x, rb.x, lb.x)
+        val ys = listOf(lt.y, rt.y, rb.y, lb.y)
+
+        return DoubleRectangle.LTRB(xs.min(), ys.min(), xs.max(), ys.max())
+    }
+
     fun transform(x: Number, y: Number): DoubleVector {
         return DoubleVector(
             x = m00 * x.toDouble() + m01 * y.toDouble() + m02,
@@ -99,26 +111,22 @@ class AffineTransform(
             return makeTransform(tx = tx, ty = ty)
         }
 
-        fun makeRotation(angle: Double): AffineTransform {
-            val cos = cos(angle)
-            val sin = sin(angle)
-            return makeTransform(sx = cos, ry = sin, rx = -sin, sy = cos)
-        }
-
         fun makeShear(rx: Number, ry: Number): AffineTransform {
             return makeTransform(ry = ry, rx = rx)
         }
 
-        fun makeRotation(angle: Double, centerX: Double, centerY: Double): AffineTransform {
-            val cos = cos(angle)
-            val sin = sin(angle)
+        fun makeRotation(angle: Number, centerX: Number = 0, centerY: Number = 0): AffineTransform {
+            // TODO: check is it really needed
+            //val tolerance = (1.0f / (1 shl 12)).toDouble()
+            val sin = sin(angle.toDouble())//.takeIf { abs(it) > tolerance } ?: 0.0
+            val cos = cos(angle.toDouble())//.takeIf { abs(it) > tolerance } ?: 0.0
             return makeTransform(
                 sx = cos,
-                ry = -sin,
-                rx = sin,
+                ry = sin,
+                rx = -sin,
                 sy = cos,
-                tx = centerX * (1 - cos) + centerY * sin,
-                ty = centerY * (1 - cos) - centerX * sin
+                tx = centerX.toDouble() * (1 - cos) + centerY.toDouble() * sin,
+                ty = centerY.toDouble() * (1 - cos) - centerX.toDouble() * sin
             )
         }
 
@@ -162,6 +170,10 @@ class AffineTransform(
                 m02 = m02.toDouble(),
                 m12 = m12.toDouble()
             )
+        }
+
+        fun makeTranslate(dx: Number, dy: Number): AffineTransform {
+            return makeTranslation(tx = dx, ty = dy)
         }
     }
 }

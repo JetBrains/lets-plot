@@ -71,6 +71,7 @@ internal fun SvgNode.path(
     strokeWidth: Number? = null,
     strokeOpacity: Number? = null,
     fillOpacity: Number? = null,
+    transform: SvgTransform? = null,
     id: String? = null,
     config: SvgPathElement.() -> Unit = {},
 ): SvgPathElement {
@@ -81,6 +82,7 @@ internal fun SvgNode.path(
     strokeWidth?.let { el.strokeWidth().set(it.toDouble()) }
     fill?.let { el.fill().set(it) }
     fillOpacity?.let { el.fillOpacity().set(it.toDouble()) }
+    transform?.let { el.transform().set(it) }
 
     el.apply(config)
 

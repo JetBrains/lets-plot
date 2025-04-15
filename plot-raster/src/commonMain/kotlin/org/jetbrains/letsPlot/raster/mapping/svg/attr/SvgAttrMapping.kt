@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.PointerEvents
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgTransformParser.parseSvgTransform
 import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.Matrix33
 
 internal abstract class SvgAttrMapping<in TargetT : Element> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {
@@ -63,7 +63,7 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
 
     companion object {
         private fun setTransform(value: String, target: Element) {
-            target.transform = parseSvgTransform(value).fold(Matrix33.IDENTITY, Matrix33::makeConcat)
+            target.transform = parseSvgTransform(value).fold(AffineTransform.IDENTITY, AffineTransform::concat)
         }
 
         val Any.asFloat: Float
