@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.raster.builderLW
+package org.jetbrains.letsPlot.raster.builder
 
 import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 /**
- * "lightweight" - no JComponents or Views are created here.
+ * no JComponents or Views are created here.
  */
-object MonolithicSkiaLW {
+object MonolithicCanvas {
     fun buildPlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         computationMessagesHandler: (List<String>) -> Unit
