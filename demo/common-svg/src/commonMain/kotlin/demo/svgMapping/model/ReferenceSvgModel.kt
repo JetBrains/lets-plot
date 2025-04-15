@@ -108,6 +108,31 @@ object ReferenceSvgModel {
                     strokeWidth().set(1.0)
                 }
             }
+
+            // curveTo
+            g(transform = SvgTransformBuilder()
+                .translate(180.0, 120.0)
+                .scale(3.0)
+                .build()
+            ) {
+                path(
+                    stroke = RED,
+                    fill = RED,
+                    fillOpacity = 0.3,
+                    strokeWidth = 2,
+                    pathData = SvgPathDataBuilder(true)
+                        .moveTo(25.6086387569017, 21.0)
+                        .curveTo(25.6086387569017, 21.0, 28.7586387569017, 21.0, 28.7586387569017, 17.85)
+                        .lineTo(28.7586387569017, 3.15)
+                        .curveTo(28.7586387569017, 3.15, 28.7586387569017, 0.0, 25.6086387569017, 0.0)
+                        .lineTo(3.37605456734872, 0.0)
+                        .curveTo(3.37605456734872, 0.0, 0.2260545673487, 0.0, 0.2260545673487, 3.15)
+                        .lineTo(0.2260545673487, 17.85)
+                        .curveTo(0.2260545673487, 17.85, 0.2260545673487, 21.0, 3.37605456734872, 21.0)
+                        .closePath()
+                        .build()
+                )
+            }
         }
     }
 

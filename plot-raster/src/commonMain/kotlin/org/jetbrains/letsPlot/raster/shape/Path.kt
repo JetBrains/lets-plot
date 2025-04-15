@@ -103,6 +103,26 @@ internal class Path : Figure() {
                     context2d.lineTo(curX, curY)
                 }
 
+                "C" -> {
+                    val cp1x = cmd.args[0]!!.toDouble()
+                    val cp1y = cmd.args[1]!!.toDouble()
+                    val cp2x = cmd.args[2]!!.toDouble()
+                    val cp2y = cmd.args[3]!!.toDouble()
+                    curX = cmd.args[4]!!.toDouble()
+                    curY = cmd.args[5]!!.toDouble()
+                    context2d.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, curX, curY)
+                }
+
+                "c" -> {
+                    val cp1x = cmd.args[0]!!.toDouble()
+                    val cp1y = cmd.args[1]!!.toDouble()
+                    val cp2x = cmd.args[2]!!.toDouble()
+                    val cp2y = cmd.args[3]!!.toDouble()
+                    curX += cmd.args[4]!!.toDouble()
+                    curY += cmd.args[5]!!.toDouble()
+                    context2d.bezierCurveTo(curX + cp1x, curY + cp1y, curX + cp2x, curY + cp2y, curX, curY)
+                }
+
                 "Z", "z" -> context2d.closePath()
 
                 else -> println("Path - Unsupported command: ${cmd.name}")
