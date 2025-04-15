@@ -38,19 +38,17 @@ class Path {
         anticlockwise: Boolean,
         transform: AffineTransform
     ) {
-        val controlPoints = approximateEllipseWithBezierCurve(
+        ellipse(
             x = x,
             y = y,
             radiusX = radius,
             radiusY = radius,
             rotation = 0.0,
-            startAngleDeg = startAngleDeg,
-            endAngleDeg = endAngleDeg,
+            startAngle = startAngleDeg,
+            endAngle = endAngleDeg,
             anticlockwise = anticlockwise,
             transform = transform
         )
-
-        commands.add(Bezier(controlPoints))
     }
 
     fun ellipse(
@@ -73,14 +71,38 @@ class Path {
             transform = transform
         )
 
-        commands.add(Bezier(controlPoints))
+        if (commands.isEmpty()) {
+            commands.add(MoveTo(controlPoints[0].x, controlPoints[0].y))
+        }
+
+        commands.add(BezierCurveTo(controlPoints.drop(1)))
+    }
+
+    fun bezierCurveTo(
+        cp1x: Double,
+        cp1y: Double,
+        cp2x: Double,
+        cp2y: Double,
+        x: Double,
+        y: Double,
+        transform: AffineTransform
+    ) {
+        commands.add(
+            BezierCurveTo(
+                listOf(
+                    transform.transform(cp1x, cp1y),
+                    transform.transform(cp2x, cp2y),
+                    transform.transform(x, y)
+                )
+            )
+        )
     }
 
     sealed class PathCommand
     object ClosePath : PathCommand()
     class MoveTo(val x: Double, val y: Double) : PathCommand()
     class LineTo(val x: Double, val y: Double) : PathCommand()
-    class Bezier (val controlPoints: List<DoubleVector>): PathCommand()
+    class BezierCurveTo(val controlPoints: List<DoubleVector>) : PathCommand()
 
     companion object {
         fun approximateEllipseWithBezierCurve(

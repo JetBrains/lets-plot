@@ -288,26 +288,51 @@ class MagickContext2dTest {
     @Test
     fun ellipse() {
         val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            fillStyle = "dark_blue"
-
-            beginPath()
-            ellipse(
-                x = 50.0,
-                y = 50.0,
-                radiusX = 20.0,
-                radiusY = 50.0,
-                rotation = 0.0,
-                startAngle = -PI,
-                endAngle = -2 * PI,
-                anticlockwise = true
-            )
-            closePath()
-            fill()
-        }
+        val ctx = canvas.context2d
+        ctx.fillStyle = "dark_blue"
+        ctx.beginPath()
+        //ctx.moveTo(50.0, 50.0)
+        ctx.ellipse(
+            x = 50.0,
+            y = 50.0,
+            radiusX = 20.0,
+            radiusY = 50.0,
+            rotation = 0.0,
+            startAngle = -PI,
+            endAngle = -2 * PI,
+            anticlockwise = true
+        )
+        ctx.closePath()
+        ctx.fill()
 
         imageComparer.assertImageEquals(
             expectedFileName = "ellipse.bmp",
+            actualWand = canvas.wand!!
+        )
+    }
+
+    @Test
+    fun rotatedEllipse() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+
+        ctx.fillStyle = "black"
+        ctx.beginPath()
+        ctx.ellipse(
+            x = 50.0,
+            y = 50.0,
+            radiusX = 20.0,
+            radiusY = 50.0,
+            rotation = PI / 4,
+            startAngle = -PI,
+            endAngle = -2 * PI,
+            anticlockwise = true
+        )
+        ctx.closePath()
+        ctx.fill()
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "rotated_ellipse.bmp",
             actualWand = canvas.wand!!
         )
     }
@@ -415,5 +440,23 @@ class MagickContext2dTest {
 
                 setStrokeStyle(color)
             }
+    }
+
+    @Test
+    fun simpleBezierCurve() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2.0
+
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.bezierCurveTo(50.0, 0.0, 50.0, 100.0, 100.0, 100.0)
+        ctx.stroke()
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "simple_bezier_curve.bmp",
+            actualWand = canvas.wand!!
+        )
     }
 }

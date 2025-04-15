@@ -175,53 +175,30 @@ class MagickContext2d(
     }
 
     fun drawPath(commands: List<PathCommand>, drawingWand: CPointer<ImageMagick.DrawingWand>) {
-        var started = false
-
         ImageMagick.DrawPathStart(drawingWand)
 
-        commands.forEach { command ->
-            when (command) {
-                is MoveTo -> with(command) {
-                    ImageMagick.DrawPathMoveToAbsolute(drawingWand, x, y)
-                    started = true
-                }
-
-                is LineTo -> with(command) {
-                    ImageMagick.DrawPathLineToAbsolute(drawingWand, x, y)
-                }
-
-                is Bezier -> with(command) {
-                    if (true) {
-                        val x0 = controlPoints[0].x
-                        val y0 = controlPoints[0].y
-                        if (!started) {
-                            ImageMagick.DrawPathMoveToAbsolute(drawingWand, x0, y0)
-                            started = true
-                        } else {
-                            ImageMagick.DrawPathLineToAbsolute(drawingWand, x0, y0)
-                        }
-
-                        controlPoints.asSequence()
-                            .drop(1)
-                            .windowed(size = 3, step = 3)
-                            .forEach { (cp1, cp2, cp3) ->
-                                ImageMagick.DrawPathCurveToAbsolute(
-                                    drawingWand,
-                                    cp1.x,
-                                    cp1.y,
-                                    cp2.x,
-                                    cp2.y,
-                                    cp3.x,
-                                    cp3.y
-                                )
-                            }
+        commands.forEach { cmd ->
+            when (cmd) {
+                is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(drawingWand, cmd.x, cmd.y)
+                is LineTo -> ImageMagick.DrawPathLineToAbsolute(drawingWand, cmd.x, cmd.y)
+                is BezierCurveTo -> cmd.controlPoints.asSequence()
+                    .windowed(size = 3, step = 3)
+                    .forEach { (cp1, cp2, cp3) ->
+                        ImageMagick.DrawPathCurveToAbsolute(
+                            drawingWand,
+                            cp1.x,
+                            cp1.y,
+                            cp2.x,
+                            cp2.y,
+                            cp3.x,
+                            cp3.y
+                        )
                     }
-                }
 
                 is ClosePath -> ImageMagick.DrawPathClose(drawingWand)
             }
-
         }
+
         ImageMagick.PopDrawingWand(drawingWand)
         ImageMagick.DrawPathFinish(drawingWand)
     }

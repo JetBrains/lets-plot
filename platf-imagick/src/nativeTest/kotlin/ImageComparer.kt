@@ -23,8 +23,9 @@ class ImageComparer(
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(actualWand))
             } else {
-                println("Failed to read expected image. Actual image:\nfile:/$actualFilePath")
+                println("Failed to read expected image. Actual image saved to $actualFilePath")
             }
+            error("Failed to read expected image. Actual image saved to '$actualFilePath'")
         }
 
         val expected = exportPixels(expectedWand)

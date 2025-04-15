@@ -181,6 +181,25 @@ class ContextState {
         )
     }
 
+    fun bezierCurveTo(
+        cp1x: Double,
+        cp1y: Double,
+        cp2x: Double,
+        cp2y: Double,
+        x: Double,
+        y: Double
+    ) {
+        currentPath.bezierCurveTo(
+            cp1x,
+            cp1y,
+            cp2x,
+            cp2y,
+            x,
+            y,
+            currentState.transform
+        )
+    }
+
     fun setStrokeStyle(color: Color?) {
         log { "setStrokeStyle($color)" }
         currentState.strokeColor = color ?: Color.TRANSPARENT
@@ -232,17 +251,6 @@ class ContextState {
 
     fun scale(d: Double) {
         scale(d, d)
-    }
-
-    fun bezierCurveTo(
-        cp1x: Double,
-        cp1y: Double,
-        cp2x: Double,
-        cp2y: Double,
-        x: Double,
-        y: Double
-    ) {
-        TODO("Not yet implemented")
     }
 
     fun setTextBaseline(baseline: TextBaseline) {
