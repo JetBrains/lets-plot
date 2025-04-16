@@ -79,10 +79,18 @@ class SvgCanvasFigure(
             return
         }
 
-        canvas.context2d.save()
-        canvas.context2d.affineTransform(element.transform)
+        val ctx = canvas.context2d
 
-        //element.clipPath?.let(canvas::clipPath)
+        ctx.save()
+        ctx.affineTransform(element.transform)
+
+        element.clipPath?.let {
+            ctx.beginPath()
+            it.applyToContext(ctx)
+            ctx.closePath()
+            canvas.context2d.clip()
+        }
+
         //val globalAlphaSet = element.opacity?.let {
         //    val paint = Paint().apply {
         //        setAlphaf(it)

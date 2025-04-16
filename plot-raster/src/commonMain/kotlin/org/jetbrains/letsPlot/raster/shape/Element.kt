@@ -8,12 +8,13 @@ package org.jetbrains.letsPlot.raster.shape
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Path
 
 
 internal abstract class Element() : Node() {
     var transform: AffineTransform by visualProp(AffineTransform.IDENTITY)
     var styleClass: List<String>? by visualProp(null)
-    //var clipPath: SkPath? by visualProp(null, managed = true)
+    var clipPath: Path? by visualProp(null, managed = true)
     var parent: Container? by visualProp(null)
     var isMouseTransparent: Boolean = true // need proper hitTest for non-rectangular shapes for correct default "false"
 

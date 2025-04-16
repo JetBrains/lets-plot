@@ -260,4 +260,8 @@ class ContextState {
     fun setTextAlign(align: TextAlign) {
         TODO("Not yet implemented")
     }
+
+    fun clip() {
+        TODO("Not yet implemented")
+    }
 }

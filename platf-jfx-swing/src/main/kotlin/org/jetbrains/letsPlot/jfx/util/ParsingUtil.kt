@@ -136,7 +136,7 @@ internal object ParsingUtil {
 
         fun getParam(i: Int): Double? {
             if (!containsParam(i)) {
-                throw IndexOutOfBoundsException("index: $i; size: $paramCount; name: $name")
+                return null
             }
             return myParams[i]
         }

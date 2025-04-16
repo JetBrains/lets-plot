@@ -5,6 +5,7 @@
 
 package demo.svgMapping.model
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.LIGHT_GREEN
@@ -150,6 +151,40 @@ object ReferenceSvgModel {
                         .closePath()
                         .build()
                 )
+            }
+        }
+
+        val abs = false
+        // Clip path
+        g(
+            transform = if (abs) {
+                SvgTransformBuilder().build()
+            } else {
+                SvgTransformBuilder().translate(180.0, 313.0).build()
+            }
+        ) {
+            val clipRect = if (abs) {
+                DoubleRectangle.XYWH(180, 343, 150, 60)
+            } else {
+                DoubleRectangle.XYWH(0, 40, 150, 60)
+            }
+
+            setAttribute(SvgGraphicsElement.CLIP_BOUNDS_JFX, clipRect)
+            clipPath().set(SvgIRI("myClip"))
+            children().add(SvgClipPathElement().apply {
+                id().set("myClip")
+                children().add(
+                    SvgRectElement(clipRect)
+                )
+            })
+
+            rect(0, 0, 150, 100, fill = NONE)
+            if (abs) {
+                text("Invisible text", 180, 333, styleClass = "TEXT2")
+                text("Visible text", 180, 373, styleClass = "TEXT2")
+            } else {
+                text("Invisible text", 0, 20, styleClass = "TEXT2")
+                text("Visible text", 0, 60, styleClass = "TEXT2")
             }
         }
     }

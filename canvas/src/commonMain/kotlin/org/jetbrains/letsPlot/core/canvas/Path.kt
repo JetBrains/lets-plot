@@ -13,18 +13,39 @@ import kotlin.math.*
 class Path {
     private val commands = mutableListOf<PathCommand>()
 
+    fun applyToContext(ctx: Context2d) {
+        for (command in commands) {
+            when (command) {
+                is ClosePath -> ctx.closePath()
+                is MoveTo -> ctx.moveTo(command.x, command.y)
+                is LineTo -> ctx.lineTo(command.x, command.y)
+                is BezierCurveTo -> {
+                    val controlPoints = command.controlPoints
+                    ctx.bezierCurveTo(
+                        controlPoints[0].x,
+                        controlPoints[0].y,
+                        controlPoints[1].x,
+                        controlPoints[1].y,
+                        controlPoints[2].x,
+                        controlPoints[2].y
+                    )
+                }
+            }
+        }
+    }
+
     fun getCommands() = commands.toList()
 
     fun closePath() {
         commands.add(ClosePath)
     }
 
-    fun moveTo(x: Double, y: Double, transform: AffineTransform) {
+    fun moveTo(x: Double, y: Double, transform: AffineTransform = AffineTransform.IDENTITY) {
         val (x, y) = transform.transform(x, y)
         commands.add(MoveTo(x, y))
     }
 
-    fun lineTo(x: Double, y: Double, transform: AffineTransform) {
+    fun lineTo(x: Double, y: Double, transform: AffineTransform = AffineTransform.IDENTITY) {
         val (x, y) = transform.transform(x, y)
         commands.add(LineTo(x, y))
     }
@@ -36,7 +57,7 @@ class Path {
         startAngleDeg: Double,
         endAngleDeg: Double,
         anticlockwise: Boolean,
-        transform: AffineTransform
+        transform: AffineTransform = AffineTransform.IDENTITY
     ) {
         ellipse(
             x = x,
@@ -57,7 +78,7 @@ class Path {
         rotation: Double,
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean,
-        transform: AffineTransform
+        transform: AffineTransform = AffineTransform.IDENTITY
     ) {
         val controlPoints = approximateEllipseWithBezierCurve(
             x = x,
@@ -85,7 +106,7 @@ class Path {
         cp2y: Double,
         x: Double,
         y: Double,
-        transform: AffineTransform
+        transform: AffineTransform = AffineTransform.IDENTITY
     ) {
         commands.add(
             BezierCurveTo(

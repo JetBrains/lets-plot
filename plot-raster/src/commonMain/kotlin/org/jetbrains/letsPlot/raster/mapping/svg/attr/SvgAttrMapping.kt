@@ -6,36 +6,46 @@
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.core.canvas.Path
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.PointerEvents
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgTransformParser.parseSvgTransform
 import org.jetbrains.letsPlot.raster.shape.Element
+import kotlin.math.PI
 
 internal abstract class SvgAttrMapping<in TargetT : Element> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
             SvgGraphicsElement.VISIBILITY.name -> target.isVisible = visibilityAsBoolean(value)
             SvgGraphicsElement.OPACITY.name -> target.opacity = value?.asFloat
-            //SvgGraphicsElement.CLIP_BOUNDS_JFX.name -> target.clipPath = (value as DoubleRectangle).let {
-            //    SkPath().addRect(
-            //        Rect.makeLTRB(
-            //            it.left.toFloat(),
-            //            it.top.toFloat(),
-            //            it.right.toFloat(),
-            //            it.bottom.toFloat()
-            //        )
-            //    )
-            //}
+            SvgGraphicsElement.CLIP_BOUNDS_JFX.name -> target.clipPath = (value as DoubleRectangle).let {
+                Path().apply {
+                    moveTo(it.left, it.top)
+                    lineTo(it.right, it.top)
+                    lineTo(it.right, it.bottom)
+                    lineTo(it.left, it.bottom)
+                    lineTo(it.left, it.top)
+                    closePath()
+                }
+            }
 
-            //SvgGraphicsElement.CLIP_CIRCLE_JFX.name -> target.clipPath = (value as DoubleRectangle).let {
-            //    SkPath().addCircle(
-            //        it.center.x.toFloat(),
-            //        it.center.y.toFloat(),
-            //        it.width.toFloat() / 2
-            //    )
-            //}
+            SvgGraphicsElement.CLIP_CIRCLE_JFX.name -> target.clipPath = (value as DoubleRectangle).let {
+                Path().apply {
+                    arc(
+                        x = it.center.x,
+                        y = it.center.y,
+                        radius = it.width / 2,
+                        startAngleDeg = 0.0,
+                        endAngleDeg = 2 * PI,
+                        anticlockwise = false
+                    )
+                }
+            }
 
-            SvgGraphicsElement.CLIP_PATH.name -> Unit // Not supported.
+            SvgGraphicsElement.CLIP_PATH.name -> {
+                println(value)
+            } // Not supported.
             SvgConstants.SVG_STYLE_ATTRIBUTE -> {
                 splitStyle(value as? String)
                     .forEach { (attr, value) ->
