@@ -58,7 +58,10 @@ object ReferenceSvgModel {
                 tspan("Red", fill = RED)
                 tspan("-")
                 tspan("brown", fill = BROWN)
-                tspan(" green")
+                tspan(" green") {
+                    fontWeight().set("normal")
+                    fontStyle().set("italic")
+                }
             }
 
             text("Slim elements", x = 30.0, y = 85.0, styleClass = "TEXT1") {

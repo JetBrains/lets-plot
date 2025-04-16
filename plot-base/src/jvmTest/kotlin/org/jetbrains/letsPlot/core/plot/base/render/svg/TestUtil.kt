@@ -61,14 +61,14 @@ object TestUtil {
 
         if (sup == true) {
             assertThat(tspan.textDy().get()).isEqualTo("-0.4em")
-            assertThat(tspan.getAttribute(SvgTSpanElement.FONT_SIZE).get()).isEqualTo("0.7em")
+            assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo("0.7em")
         } else if (sup == false) {
             assertThat(tspan.textDy().get()).isNull()
         }
 
         if (sub == true) {
             assertThat(tspan.textDy().get()).isEqualTo("0.4em")
-            assertThat(tspan.getAttribute(SvgTSpanElement.FONT_SIZE).get()).isEqualTo("0.7em")
+            assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo("0.7em")
         } else if (sub == false) {
             assertThat(tspan.textDy().get()).isNull()
         }
