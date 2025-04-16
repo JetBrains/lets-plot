@@ -28,9 +28,6 @@ object Defaults {
     // HEX colors only (because of using of parseHex())
     const val DARK_GRAY = "#3d3d3d"
     val GRAY = Color.GRAY.toHexColor()
-    val LIGHT_GRAY = Color.LIGHT_GRAY.toHexColor()
-    val X_LIGHT_GRAY = Color.VERY_LIGHT_GRAY.toHexColor()
-    const val XX_LIGHT_GRAY = "#e0e0e0"
 
     val TEXT_COLOR = Color.parseHex(DARK_GRAY)
 

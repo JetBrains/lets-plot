@@ -70,7 +70,7 @@ object DemoModelA {
         svgRoot.children().add(circle)
 
         val rect = SvgRectElement(160.0, 250.0, 80.0, 50.0)
-        rect.fillColor().set(Color.VERY_LIGHT_YELLOW)
+        rect.fillColor().set(Color.LIGHT_YELLOW)
         rect.strokeColor().set(Color.GRAY)
         rect.getAttribute(SVG_STROKE_DASHARRAY_ATTRIBUTE).set(
             getDashes(
