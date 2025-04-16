@@ -85,6 +85,7 @@ internal class DomContext2d(
     override fun beginPath() = ctx.beginPath()
     override fun scale(xy: Double) = scale(xy, xy)
     override fun closePath() = ctx.closePath()
+    override fun clip() =  ctx.clip()
     override fun stroke() = ctx.stroke()
     override fun fill() = ctx.fill(CanvasFillRule.NONZERO)
     override fun fillEvenOdd() = ctx.fill(CanvasFillRule.EVENODD)

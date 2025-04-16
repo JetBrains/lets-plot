@@ -30,6 +30,7 @@ interface Context2d {
 
     fun beginPath()
     fun closePath()
+    fun clip()
     fun stroke()
     fun fill()
     fun fillEvenOdd()

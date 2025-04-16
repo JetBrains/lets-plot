@@ -64,6 +64,7 @@ internal class ScaledContext2d(
 
     override fun beginPath() = ctx.beginPath()
     override fun closePath() = ctx.closePath()
+    override fun clip() = ctx.clip()
     override fun stroke() = ctx.stroke()
     override fun fill() = ctx.fill()
 

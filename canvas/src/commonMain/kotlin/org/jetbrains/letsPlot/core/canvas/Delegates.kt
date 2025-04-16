@@ -38,6 +38,7 @@ class Context2dDelegate(
     override fun drawImage(snapshot: Canvas.Snapshot, sx: Double, sy: Double, sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) { log("drawImage: $snapshot, sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh") }
     override fun beginPath() { log("beginPath") }
     override fun closePath() { log("closePath") }
+    override fun clip() { log("clip") }
     override fun stroke() { log("stroke") }
     override fun fill() { log("fill") }
     override fun fillEvenOdd() { log("fillEvenOdd") }
