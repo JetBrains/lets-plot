@@ -26,7 +26,15 @@ object ReferenceSvgModel {
                 }
 
                 slimCircle(300.0, 60.0, 50.0, Color.DARK_BLUE, Color.LIGHT_YELLOW, 3.0)
-                slimPath(createClosedPathFrom(150.0, 175.0), Color.DARK_GREEN, Color.CYAN, 2.0)
+
+                // Abs path
+                slimPath(pathData = SvgPathDataBuilder(false)
+                        .moveTo(150.0, 175.0, true)
+                        .verticalLineTo(75.0, true)//.verticalLineTo(-100.0)
+                        .ellipticalArc(100.0, 100.0, 0.0, false, false, 50.0, 175.0, true) //.ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+                        .closePath()
+                        .build(), Color.DARK_GREEN, Color.CYAN, 2.0
+                )
                 slimRect(160.0, 50.0, 80.0, 50.0, Color.DARK_MAGENTA, Color.LIGHT_MAGENTA, 1.0)
             }
 
@@ -144,15 +152,6 @@ object ReferenceSvgModel {
                 )
             }
         }
-    }
-
-    private fun createClosedPathFrom(x: Double, y: Double): SvgPathData {
-        return SvgPathDataBuilder(false)
-            .moveTo(x, y, true)
-            .verticalLineTo(-100.0)
-            .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
-            .closePath()
-            .build()
     }
 
     private fun createUnclosedPathFrom(x: Double, y: Double): SvgPathData {
