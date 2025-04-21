@@ -24,6 +24,22 @@ class MagickContext2dTest {
     )
 
     @Test
+    fun simpleClipPath() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.fillStyle = "black"
+        ctx.beginPath()
+        ctx.moveTo(50.0, 10.0)
+        ctx.lineTo(90.0, 90.0)
+        ctx.lineTo(10.0, 90.0)
+        ctx.closePath()
+
+        ctx.clip()
+        ctx.fill()
+        imageComparer.assertImageEquals("simple_clip_path.bmp", canvas.wand!!)
+    }
+
+    @Test
     fun shouldRenderClipPathIfBeginPathIsNotCalled() {
         val canvas = MagickCanvas.create(100, 100)
         val ctx = canvas.context2d

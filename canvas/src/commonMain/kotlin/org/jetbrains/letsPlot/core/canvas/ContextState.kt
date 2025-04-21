@@ -20,7 +20,6 @@ class ContextState {
     private val states = ArrayList<StateEntry>()
     private var currentState = StateEntry.create()
     private var currentPath: Path = Path()
-    private var clipPath: Path? = null
 
     fun getCurrentState(): StateEntry {
         return currentState.copy()
@@ -41,7 +40,7 @@ class ContextState {
         var fillColor: Color,
         var font: Font,
         var transform: AffineTransform,
-        var clipPath: Path? = null,
+        var clipPath: Path?,
     ) {
         fun copy(): StateEntry {
             return StateEntry(
@@ -148,8 +147,8 @@ class ContextState {
     }
 
     fun clip() {
-        log { "clip()" }
-        clipPath = Path(currentPath)
+        log { "clip() - ${currentPath.getCommands()}" }
+        currentState.clipPath = Path(currentPath)
     }
 
     fun moveTo(x: Double, y: Double) {

@@ -124,10 +124,29 @@ class Path constructor(){
     }
 
     sealed class PathCommand
-    object ClosePath : PathCommand()
-    class MoveTo(val x: Double, val y: Double) : PathCommand()
-    class LineTo(val x: Double, val y: Double) : PathCommand()
-    class BezierCurveTo(val controlPoints: List<DoubleVector>) : PathCommand()
+    object ClosePath : PathCommand() {
+        override fun toString(): String {
+            return "Z"
+        }
+    }
+
+    class MoveTo(val x: Double, val y: Double) : PathCommand() {
+        override fun toString(): String {
+            return "M($x, $y)"
+        }
+    }
+
+    class LineTo(val x: Double, val y: Double) : PathCommand() {
+        override fun toString(): String {
+            return "L($x, $y)"
+        }
+    }
+
+    class BezierCurveTo(val controlPoints: List<DoubleVector>) : PathCommand() {
+        override fun toString(): String {
+            return "C($controlPoints)"
+        }
+    }
 
     companion object {
         fun approximateEllipseWithBezierCurve(

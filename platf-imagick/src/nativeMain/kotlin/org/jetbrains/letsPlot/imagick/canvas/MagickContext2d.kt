@@ -91,12 +91,6 @@ class MagickContext2d(
         val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
         val state = contextState.getCurrentState()
 
-        state.clipPath?.let { clipPath ->
-            drawPath(clipPath.getCommands(), wand)
-            ImageMagick.DrawSetClipPath(wand, "asd")
-            //ImageMagick.DrawClipPath()
-        }
-
         DrawAffineTransofrm(wand, affineTransform ?: state.transform)
         ImageMagick.DrawSetFontSize(wand, state.font.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.font.fontFamily)
@@ -112,6 +106,19 @@ class MagickContext2d(
             FontWeight.BOLD -> 800.toULong()
         }
         ImageMagick.DrawSetFontWeight(wand, fontWeight)
+
+        state.clipPath?.let { clipPath ->
+            println("MagickContext2d.clipPath: ${clipPath.getCommands()}")
+            ImageMagick.DrawPushDefs(wand)
+            ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
+            ImageMagick.PushDrawingWand(wand)
+            drawPath(clipPath.getCommands(), wand)
+            ImageMagick.PopDrawingWand(wand)
+
+            ImageMagick.DrawPopClipPath(wand)
+            ImageMagick.DrawPopDefs(wand)
+            ImageMagick.DrawSetClipPath(wand, clipPath.hashCode().toString())
+        }
 
         block(wand)
         ImageMagick.DestroyDrawingWand(wand)
@@ -204,8 +211,6 @@ class MagickContext2d(
                 is ClosePath -> ImageMagick.DrawPathClose(drawingWand)
             }
         }
-
-        ImageMagick.PopDrawingWand(drawingWand)
         ImageMagick.DrawPathFinish(drawingWand)
     }
 

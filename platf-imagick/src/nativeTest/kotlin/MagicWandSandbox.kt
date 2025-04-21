@@ -13,156 +13,56 @@ import kotlin.test.Test
 class MagicWandSandbox {
 
     @Test
-    fun testDrawSetClipPath() {
+    fun simpleClipPath() {
         memScoped {
             ImageMagick.MagickWandGenesis()
-
-            val width = 200
-            val height = 200
-
-            // Create a new MagickWand
             val wand = ImageMagick.NewMagickWand() ?: error("Failed to create MagickWand")
-            ImageMagick.MagickNewImage(wand, width.convert(), height.convert(), ImageMagick.NewPixelWand() ?: error("Failed to create pixel wand"))
 
-            // Create a DrawingWand
+            val w = 100
+            val h = 100
+
+            val background = ImageMagick.NewPixelWand()
+            ImageMagick.PixelSetColor(background, "white")
+            ImageMagick.MagickNewImage(wand, w.convert(), h.convert(), background)
             val drawingWand = ImageMagick.NewDrawingWand() ?: error("Failed to create DrawingWand")
 
-            // Draw a rectangle to provide base context
-            ImageMagick.DrawSetFillColor(drawingWand, ImageMagick.NewPixelWand().apply { ImageMagick.PixelSetColor(this, "white") })
-            ImageMagick.DrawRectangle(drawingWand, 0.0, 0.0, width.toDouble(), height.toDouble())
-            ImageMagick.MagickDrawImage(wand, drawingWand)
+            val clipPathId = "clip_42"
 
-            // Define the clipping path (a triangle)
+            run {
+                ImageMagick.DrawPushDefs(drawingWand)
+                ImageMagick.DrawPushClipPath(drawingWand, clipPathId)
+                ImageMagick.PushDrawingWand(drawingWand)
+                ImageMagick.DrawPathStart(drawingWand)
+                ImageMagick.DrawPathMoveToAbsolute(drawingWand, 25.0, 25.0)
+                ImageMagick.DrawPathLineToAbsolute(drawingWand, 75.0, 25.0)
+                ImageMagick.DrawPathLineToAbsolute(drawingWand, 75.0, 75.0)
+                ImageMagick.DrawPathLineToAbsolute(drawingWand, 25.0, 75.0)
+                ImageMagick.DrawPathClose(drawingWand)
+                ImageMagick.DrawPathFinish(drawingWand)
+                ImageMagick.PopDrawingWand(drawingWand)
+
+                ImageMagick.DrawPopClipPath(drawingWand)
+                ImageMagick.DrawPopDefs(drawingWand)
+            }
+
+            ImageMagick.DrawSetClipPath(drawingWand, clipPathId)
             ImageMagick.DrawPathStart(drawingWand)
-            ImageMagick.DrawPathMoveToAbsolute(drawingWand, 50.0, 50.0)
-            ImageMagick.DrawPathLineToAbsolute(drawingWand, 150.0, 50.0)
-            ImageMagick.DrawPathLineToAbsolute(drawingWand, 100.0, 150.0)
+            ImageMagick.DrawPathMoveToAbsolute(drawingWand, 50.0, 10.0)
+            ImageMagick.DrawPathLineToAbsolute(drawingWand, 90.0, 90.0)
+            ImageMagick.DrawPathLineToAbsolute(drawingWand, 10.0, 90.0)
             ImageMagick.DrawPathClose(drawingWand)
             ImageMagick.DrawPathFinish(drawingWand)
 
-            // Set a unique name for the clipping path
-            val clipPathName = "myClipPath_42"
-            ImageMagick.DrawSetClipPath(drawingWand, clipPathName)
-
-            // Draw a red circle - only the part inside the triangle should be visible
-            ImageMagick.DrawSetFillColor(drawingWand, ImageMagick.NewPixelWand().apply { ImageMagick.PixelSetColor(this, "red") })
-            ImageMagick.DrawCircle(drawingWand, 100.0, 100.0, 100.0, 70.0)
+            ImageMagick.DrawSetFillColor(drawingWand, ImageMagick.NewPixelWand().apply { ImageMagick.PixelSetColor(this, "black") })
             ImageMagick.MagickDrawImage(wand, drawingWand)
 
-            // Reset the clip path so other drawing will not be clipped
-            ImageMagick.DrawSetClipPath(drawingWand, null)
+            ImageMagick.MagickWriteImage(wand, "simple_clip_path.bmp") // Changed filename
 
-            // Draw a green rectangle - should be visible outside clip area
-            ImageMagick.DrawSetFillColor(drawingWand, ImageMagick.NewPixelWand().apply { ImageMagick.PixelSetColor(this, "green") })
-            ImageMagick.DrawRectangle(drawingWand, 0.0, 0.0, 40.0, 40.0)
-            ImageMagick.MagickDrawImage(wand, drawingWand)
-
-            // Save the image
-            ImageMagick.MagickWriteImage(wand, "clip_path_test.bmp")
-
-            // Clean up
             ImageMagick.DestroyMagickWand(wand)
             ImageMagick.DestroyDrawingWand(drawingWand)
-
             ImageMagick.MagickWandTerminus()
-
-            // Verify that the file was created and contains expected data visually.
-            println("Image created at clip_path_test.png")
         }
     }
-
-    private fun newImage(w: UInt, h: UInt, color: String): CPointer<ImageMagick.MagickWand> {
-        val wand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
-        val pixelWand = ImageMagick.NewPixelWand() ?: throw RuntimeException("Failed to create PixelWand")
-        ImageMagick.PixelSetColor(pixelWand, color)
-        ImageMagick.MagickNewImage(wand, w.convert(), h.convert(), pixelWand)
-        ImageMagick.DestroyPixelWand(pixelWand)
-        return wand
-    }
-
-    @Test
-    fun applySimulatedClipMask() {
-        val width = 200u
-        val height = 200u
-
-        // Create red background image
-        val red = ImageMagick.NewPixelWand()!!
-        ImageMagick.PixelSetColor(red, "red")
-        val canvas = ImageMagick.NewMagickWand()!!
-        ImageMagick.MagickNewImage(canvas, width.convert(), height.convert(), red)
-
-        // Create alpha mask image (white circle on black)
-        val black = ImageMagick.NewPixelWand()!!
-        ImageMagick.PixelSetColor(black, "black")
-        val mask = ImageMagick.NewMagickWand()!!
-        ImageMagick.MagickNewImage(mask, width.convert(), height.convert(), black)
-
-        val white = ImageMagick.NewPixelWand()!!
-        ImageMagick.PixelSetColor(white, "white")
-        val dw = ImageMagick.NewDrawingWand()!!
-        ImageMagick.DrawSetFillColor(dw, white)
-        ImageMagick.DrawCircle(dw, 100.0, 100.0, 100.0, 0.0)
-        ImageMagick.MagickDrawImage(mask, dw)
-
-        // Convert to grayscale + alpha
-        ImageMagick.MagickSetImageFormat(mask, "GRAY")
-        ImageMagick.MagickSetImageAlphaChannel(canvas, ImageMagick.AlphaChannelOption.ExtractAlphaChannel)
-        ImageMagick.MagickCompositeImage(canvas, mask, ImageMagick.CompositeOperator.CopyAlphaCompositeOp, ImageMagick.MagickFalse, 0.convert(), 0.convert())
-
-        // Save result
-        ImageMagick.MagickSetImageFormat(canvas, "PNG")
-        ImageMagick.MagickWriteImage(canvas, "alpha_mask_result.png")
-
-        println("Saved to alpha_mask_result.png")
-
-    }
-
-
-    @Test
-    fun clipPath() {
-        // 1. Create base image (blue background)
-        val baseWand = ImageMagick.NewMagickWand()!!
-        val blue = ImageMagick.NewPixelWand()!!
-        ImageMagick.PixelSetColor(blue, "blue")
-        ImageMagick.MagickNewImage(baseWand, 200u, 200u, blue)
-
-        // 2. Create grayscale mask image (white rectangle in black background)
-        val maskWand = ImageMagick.NewMagickWand()!!
-        val black = ImageMagick.NewPixelWand()!!
-        ImageMagick.PixelSetColor(black, "black")
-        ImageMagick.MagickNewImage(maskWand, 200u, 200u, black)
-
-        val white = ImageMagick.NewPixelWand()!!
-        ImageMagick.PixelSetColor(white, "white")
-        val drawingWand = ImageMagick.NewDrawingWand()!!
-        ImageMagick.DrawSetFillColor(drawingWand, white)
-        ImageMagick.DrawRectangle(drawingWand, 50.0, 50.0, 150.0, 150.0)
-        ImageMagick.MagickDrawImage(maskWand, drawingWand)
-
-        // 3. Set mask image as alpha channel
-        ImageMagick.MagickSetImageMatte(baseWand, ImageMagick.MagickTrue) // Enable alpha
-        ImageMagick.MagickCompositeImage(
-            baseWand,
-            maskWand,
-            ImageMagick.CompositeOperator.CopyAlphaCompositeOp,
-            ImageMagick.MagickTrue,  // Use geometry
-            0,
-            0
-        )
-
-        // 4. Save result
-        ImageMagick.MagickSetImageFormat(baseWand, "png")
-        ImageMagick.MagickWriteImage(baseWand, "alpha_mask_result.png")
-
-        // 5. Cleanup
-        ImageMagick.DestroyMagickWand(baseWand)
-        ImageMagick.DestroyMagickWand(maskWand)
-        ImageMagick.DestroyDrawingWand(drawingWand)
-        ImageMagick.DestroyPixelWand(blue)
-        ImageMagick.DestroyPixelWand(black)
-        ImageMagick.DestroyPixelWand(white)
-    }
-
 
     @OptIn(ExperimentalStdlibApi::class)
     @Ignore
