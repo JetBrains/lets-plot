@@ -87,12 +87,12 @@ elif this_system == 'Windows':
             f'-L{imagemagick_lib_path}/lib',
             '-lMagickWand-7.Q8',
             '-lMagickCore-7.Q8',
-            '-lz',
             '-lfontconfig',
             '-lfreetype',
-            '-lpthread',
+            '-lexpat',
+            '-lurlmon',
             '-lgdi32',
-            '-lurlmon'
+            '-lz'
         ]
 
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.

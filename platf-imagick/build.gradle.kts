@@ -9,7 +9,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val imagickDir = rootProject.file("platf-imagick/ImageMagick")
+val imagickDir = rootProject.file("platf-imagick/imagick_deps")
 
 if (!imagickDir.exists() || !imagickDir.isDirectory) {
     logger.warn("⚠️ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n./gradlew :initImageMagick")
@@ -39,18 +39,22 @@ kotlin {
         }
     }
 
-    target.binaries.forEach {
-        it.linkerOpts += listOf(
+    target.binaries.all {
+        linkerOpts += listOf(
             "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-            "-L/usr/lib/x86_64-linux-gnu/",
-            "-L/opt/homebrew/opt/fontconfig/lib",
-            "-L/opt/homebrew/opt/freetype/lib",
-            "-lfreetype",
-            "-lfontconfig",
             "-lMagickWand-7.Q8",
             "-lMagickCore-7.Q8",
+            "-lfontconfig",
+            "-lfreetype",
+            "-lexpat",
             "-lz"
         )
+        if (target == mingwX64()) {
+            linkerOpts += listOf(
+                "-lurlmon",
+                "-lgdi32"
+            )
+        }
     }
 
     sourceSets {

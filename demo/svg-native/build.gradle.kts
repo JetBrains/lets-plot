@@ -40,18 +40,23 @@ kotlin {
         }
     }
 
-    target.binaries.forEach {
-        it.linkerOpts += listOf(
+    target.binaries.all {
+        linkerOpts += listOf(
             "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-            "-L/usr/lib/x86_64-linux-gnu",
-            "-L/opt/homebrew/opt/fontconfig/lib",
-            "-L/opt/homebrew/opt/freetype/lib",
             "-lMagickWand-7.Q8",
             "-lMagickCore-7.Q8",
             "-lfontconfig",
             "-lfreetype",
+            "-lexpat",
             "-lz"
         )
+
+        if (target == mingwX64()) {
+            linkerOpts += listOf(
+                "-lurlmon",
+                "-lgdi32"
+            )
+        }
     }
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
