@@ -10,7 +10,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import kotlin.math.*
 
-class Path {
+class Path constructor(){
+    constructor(path: Path) : this() {
+        path.commands.forEach { commands.add(it) }
+    }
+
     private val commands = mutableListOf<PathCommand>()
 
     fun applyToContext(ctx: Context2d) {

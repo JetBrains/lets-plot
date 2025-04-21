@@ -91,6 +91,12 @@ class MagickContext2d(
         val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
         val state = contextState.getCurrentState()
 
+        state.clipPath?.let { clipPath ->
+            drawPath(clipPath.getCommands(), wand)
+            ImageMagick.DrawSetClipPath(wand, "asd")
+            //ImageMagick.DrawClipPath()
+        }
+
         DrawAffineTransofrm(wand, affineTransform ?: state.transform)
         ImageMagick.DrawSetFontSize(wand, state.font.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.font.fontFamily)
@@ -174,7 +180,7 @@ class MagickContext2d(
         }
     }
 
-    fun drawPath(commands: List<PathCommand>, drawingWand: CPointer<ImageMagick.DrawingWand>) {
+    private fun drawPath(commands: List<PathCommand>, drawingWand: CPointer<ImageMagick.DrawingWand>) {
         ImageMagick.DrawPathStart(drawingWand)
 
         commands.forEach { cmd ->

@@ -24,6 +24,42 @@ class MagickContext2dTest {
     )
 
     @Test
+    fun shouldRenderClipPathIfBeginPathIsNotCalled() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.fillStyle = "black"
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(50.0, 0.0)
+        ctx.lineTo(50.0, 50.0)
+        ctx.lineTo(0.0, 50.0)
+        ctx.closePath()
+
+        ctx.clip()
+        ctx.fill()
+        imageComparer.assertImageEquals("clip_fill.bmp", canvas.wand!!)
+    }
+
+    @Test
+    fun simpleClip() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.fillStyle = "black"
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(50.0, 0.0)
+        ctx.lineTo(50.0, 50.0)
+        ctx.lineTo(0.0, 50.0)
+        ctx.closePath()
+        ctx.clip()
+
+        ctx.beginPath()
+        ctx.arc(50.0, 50.0, 50.0, 0.0, 2 * PI)
+        ctx.fill()
+        imageComparer.assertImageEquals("simple_clip.bmp", canvas.wand!!)
+    }
+
+    @Test
     fun shearedEllipse() {
         val canvas = MagickCanvas.create(100, 100)
         val ctx = canvas.context2d

@@ -20,6 +20,7 @@ class ContextState {
     private val states = ArrayList<StateEntry>()
     private var currentState = StateEntry.create()
     private var currentPath: Path = Path()
+    private var clipPath: Path? = null
 
     fun getCurrentState(): StateEntry {
         return currentState.copy()
@@ -39,7 +40,8 @@ class ContextState {
         var lineJoin: LineJoin,
         var fillColor: Color,
         var font: Font,
-        var transform: AffineTransform
+        var transform: AffineTransform,
+        var clipPath: Path? = null,
     ) {
         fun copy(): StateEntry {
             return StateEntry(
@@ -53,6 +55,7 @@ class ContextState {
                 font = font,
                 transform = transform,
                 lineDashPattern = lineDashPattern,
+                clipPath = clipPath
             )
         }
 
@@ -67,7 +70,8 @@ class ContextState {
                 fillColor: Color = Color.TRANSPARENT,
                 font: Font = Font(),
                 transform: AffineTransform = AffineTransform.IDENTITY,
-                lineDashPattern: List<Double>? = null
+                lineDashPattern: List<Double>? = null,
+                clipPath: Path? = null
             ): StateEntry {
                 return StateEntry(
                     strokeColor = strokeColor,
@@ -79,7 +83,8 @@ class ContextState {
                     lineJoin = lineJoin,
                     fillColor = fillColor,
                     font = font,
-                    transform = transform
+                    transform = transform,
+                    clipPath = clipPath
                 )
             }
         }
@@ -140,6 +145,11 @@ class ContextState {
 
     fun closePath() {
         currentPath.closePath()
+    }
+
+    fun clip() {
+        log { "clip()" }
+        clipPath = Path(currentPath)
     }
 
     fun moveTo(x: Double, y: Double) {
@@ -258,10 +268,6 @@ class ContextState {
     }
 
     fun setTextAlign(align: TextAlign) {
-        TODO("Not yet implemented")
-    }
-
-    fun clip() {
         TODO("Not yet implemented")
     }
 }

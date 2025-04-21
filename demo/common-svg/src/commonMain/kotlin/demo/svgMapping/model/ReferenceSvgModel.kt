@@ -8,17 +8,25 @@ package demo.svgMapping.model
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Color.Companion.LIGHT_GREEN
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.Companion.create
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.NONE
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object ReferenceSvgModel {
     fun createModel(): SvgSvgElement = SvgSvgElement(500.0, 500.0).apply {
         g {
+            style(
+                mapOf(
+                    "TEXT1" to TextStyle(FontFamily.SERIF.name, FontFace.ITALIC, 15.0, Color.BLUE),
+                    "TEXT2" to TextStyle(FontFamily.SERIF.name, FontFace.BOLD, 20.0, Color.RED),
+                    "DARK_GREEN" to TextStyle(FontFamily.SERIF.name, FontFace.BOLD, 20.0, Color.DARK_GREEN),
+                    "EMC2" to TextStyle(FontFamily.HELVETICA.name, FontFace.BOLD, 22.0, Color.BLUE),
+                )
+            )
+
+/*
             slimG(16) {
                 var i = 20.0
                 while (i < 400) {
@@ -39,14 +47,6 @@ object ReferenceSvgModel {
                 slimRect(160.0, 50.0, 80.0, 50.0, Color.DARK_MAGENTA, Color.LIGHT_MAGENTA, 1.0)
             }
 
-            style(
-                mapOf(
-                    "TEXT1" to TextStyle(FontFamily.SERIF.name, FontFace.ITALIC, 15.0, Color.BLUE),
-                    "TEXT2" to TextStyle(FontFamily.SERIF.name, FontFace.BOLD, 20.0, Color.RED),
-                    "DARK_GREEN" to TextStyle(FontFamily.SERIF.name, FontFace.BOLD, 20.0, Color.DARK_GREEN),
-                    "EMC2" to TextStyle(FontFamily.HELVETICA.name, FontFace.BOLD, 22.0, Color.BLUE),
-                )
-            )
 
             // Superscript with baseline-shift
             text(x = 300.0, y = 150.0, styleClass = "EMC2") {
@@ -152,9 +152,13 @@ object ReferenceSvgModel {
                         .build()
                 )
             }
+*/
+
         }
 
-        val abs = false
+
+
+        val abs = true
         // Clip path
         g(
             transform = if (abs) {

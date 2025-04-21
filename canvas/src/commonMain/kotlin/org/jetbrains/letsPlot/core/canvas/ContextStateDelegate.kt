@@ -20,6 +20,10 @@ class ContextStateDelegate(
         state.closePath()
     }
 
+    override fun clip() {
+        state.clip()
+    }
+
     override fun moveTo(x: Double, y: Double) {
         state.moveTo(x, y)
     }
