@@ -69,10 +69,8 @@ class SinaGeom : PointGeom() {
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             // Almost the same as in PointGeom::buildIntern()
-            val count = points.size
-            val slimGroup = SvgSlimElements.g(count)
-            for (i in 0 until count) {
-                val p = points[i]
+            val slimGroup = SvgSlimElements.g(points.size)
+            for (p in points) {
                 if (p.finiteOrNull(Aes.SIZE) == null) continue
                 val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
                 val jitteredPoint = jitterTransform(p)
@@ -80,7 +78,7 @@ class SinaGeom : PointGeom() {
                 val shape = p.shape()!!
                 val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
                 targetCollector.addPoint(
-                    i, location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
+                    p.index(), location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     )
