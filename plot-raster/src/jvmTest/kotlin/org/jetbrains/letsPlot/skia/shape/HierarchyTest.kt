@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.skia.shape
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle.Companion.LTRB
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.HIDDEN
-import org.jetbrains.letsPlot.raster.shape.Matrix33
 import org.junit.Test
 
 class HierarchyTest {
@@ -46,7 +46,7 @@ class HierarchyTest {
             assertThat(element("root_g").screenBounds).isEqualTo(LTRB(5f, 20f, 20f, 60f))
         }
 
-        doc.element("hidden_g").transform = Matrix33.makeTranslate(60f, 20f)
+        doc.element("hidden_g").transform = AffineTransform.makeTranslation(60f, 20f)
 
         with(doc) {
             val hiddenBounds = LTRB(60f, 20f, 70f, 25f)

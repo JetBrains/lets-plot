@@ -106,6 +106,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.closePath()
     }
 
+    override fun clip() {
+        myContext2d.clip()
+    }
+
     override fun stroke() {
         myContext2d.stroke()
     }
@@ -231,8 +235,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.translate(x, y)
     }
 
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        myContext2d.transform(m11, m12, m21, m22, dx, dy)
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
+        myContext2d.transform(sx, ry, rx, sy, tx, ty)
     }
 
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) {
@@ -259,8 +263,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.textAlign = convertTextAlign(align)
     }
 
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        myContext2d.setTransform(m11, m12, m21, m22, dx, dy)
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        myContext2d.setTransform(m00, m10, m01, m11, m02, m12)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {

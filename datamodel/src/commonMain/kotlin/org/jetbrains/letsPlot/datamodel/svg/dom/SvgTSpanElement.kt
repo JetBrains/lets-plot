@@ -24,10 +24,8 @@ class SvgTSpanElement() : SvgStylableElement(), SvgTextContent {
             SvgAttributeSpec.createSpec("x")
         private val Y: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("y")
-        val DY: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("dy")
-        val FONT_SIZE: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("font-size")
+        val BASELINE_SHIFT: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("baseline-shift")
     }
 
     override val elementName = "tspan"

@@ -36,7 +36,7 @@ internal class Path : Figure() {
 
         context2d.beginPath()
 
-        pathData.commands.forEach {  cmd ->
+        pathData.commands.forEach { cmd ->
             when (cmd.name) {
                 "M" -> {
                     curX = cmd.args[0]!!.toDouble()
@@ -62,52 +62,64 @@ internal class Path : Figure() {
                     context2d.lineTo(curX, curY)
                 }
 
-                "A" -> {
+                "A", "a" -> {
                     val rx = cmd.args[0]!!.toDouble()
                     val ry = cmd.args[1]!!.toDouble()
                     val angle = toRadians(cmd.args[2]!!.toDouble())
                     val largeArcFlag = cmd.args[3]!!.toInt()
                     val sweepFlag = cmd.args[4]!!.toInt()
-                    val x2 = cmd.args[5]!!.toDouble()
-                    val y2 = cmd.args[6]!!.toDouble()
-                    println("A: rx=$rx, ry=$ry, angle=$angle, largeArcFlag=$largeArcFlag, sweepFlag=$sweepFlag, x2=$x2, y2=$y2")
+                    val x = cmd.args[5]!!.toDouble()
+                    val y = cmd.args[6]!!.toDouble()
 
-                    drawRelativeSvgEllipse(curX, curY, rx, ry, angle, largeArcFlag, sweepFlag, x2 - curX, y2 - curY) { x, y, rx, ry, rotation, startAngle, endAngle, anticlockwise ->
-                        context2d.ellipse(x, y, rx, ry, rotation, startAngle, endAngle, anticlockwise)
-                        println("A: ellipse(x=$x, y=$y, rx=$rx, ry=$ry, rotation=$rotation, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise)")
+                    val (dx, dy) = when (cmd.name) {
+                        "A" -> (x - curX) to (y - curY)
+                        "a" -> x to y
+                        else -> error("Should not happen")
                     }
-                    curX = x2
-                    curY = y2
-                }
 
-                "a" -> {
-                    val rx = cmd.args[0]!!.toDouble()
-                    val ry = cmd.args[1]!!.toDouble()
-                    val angle = toRadians(cmd.args[2]!!.toDouble())
-                    val largeArcFlag = cmd.args[3]!!.toInt()
-                    val sweepFlag = cmd.args[4]!!.toInt()
-                    val dx = cmd.args[5]!!.toDouble()
-                    val dy = cmd.args[6]!!.toDouble()
-                    val (newX, newY) = drawRelativeSvgEllipse(curX, curY, rx, ry, angle, largeArcFlag, sweepFlag, dx, dy) { x, y, rx, ry, rotation, startAngle, endAngle, anticlockwise ->
-                        context2d.ellipse(x, y, rx, ry, rotation, startAngle, endAngle, anticlockwise)
-                    }
+                    val (newX, newY) = drawRelativeSvgEllipse(curX, curY, rx, ry, angle, largeArcFlag, sweepFlag, dx, dy, context2d)
                     curX += newX
                     curY += newY
                 }
 
                 "h" -> {
-                    curX += cmd.args[0]!!.toDouble()
+                    curX += cmd.args[0]!!
+                    context2d.lineTo(curX, curY)
+                }
+
+                "V" -> {
+                    curY = cmd.args[0]!!.toDouble()
                     context2d.lineTo(curX, curY)
                 }
 
                 "v" -> {
-                    curY += cmd.args[0]!!.toDouble()
+                    curY += cmd.args[0]!!
                     context2d.lineTo(curX, curY)
+                }
+
+                "C" -> {
+                    val cp1x = cmd.args[0]!!.toDouble()
+                    val cp1y = cmd.args[1]!!.toDouble()
+                    val cp2x = cmd.args[2]!!.toDouble()
+                    val cp2y = cmd.args[3]!!.toDouble()
+                    curX = cmd.args[4]!!.toDouble()
+                    curY = cmd.args[5]!!.toDouble()
+                    context2d.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, curX, curY)
+                }
+
+                "c" -> {
+                    val cp1x = cmd.args[0]!!.toDouble()
+                    val cp1y = cmd.args[1]!!.toDouble()
+                    val cp2x = cmd.args[2]!!.toDouble()
+                    val cp2y = cmd.args[3]!!.toDouble()
+                    curX += cmd.args[4]!!.toDouble()
+                    curY += cmd.args[5]!!.toDouble()
+                    context2d.bezierCurveTo(curX + cp1x, curY + cp1y, curX + cp2x, curY + cp2y, curX, curY)
                 }
 
                 "Z", "z" -> context2d.closePath()
 
-                else -> println("Unsupported command: ${cmd.name}")
+                else -> println("Path - Unsupported command: ${cmd.name}")
             }
         }
     }
@@ -119,7 +131,7 @@ internal class Path : Figure() {
         rxIn: Double, ryIn: Double,
         angle: Double, largeArcFlag: Int, sweepFlag: Int,
         dx: Double, dy: Double,
-        ellipse: (x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) -> Unit
+        context2d: Context2d
     ): Pair<Double, Double> {
         val x1 = curX
         val y1 = curY
@@ -185,7 +197,7 @@ internal class Path : Figure() {
         val anticlockwise = sweepFlag == 0
 
         // Call the canvas ellipse function
-        ellipse(cx, cy, rx, ry, angle, startAngle, endAngle, anticlockwise)
+        context2d.ellipse(cx, cy, rx, ry, angle, startAngle, endAngle, anticlockwise)
 
         // Return new position (for updating curX, curY)
         return Pair(x2, y2)

@@ -26,6 +26,10 @@ interface SvgTextContent {
             SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE)
         val TEXT_DY: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_DY_ATTRIBUTE)
+        val FONT_FAMILY: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("font-family")
+        val FONT_SIZE: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("font-size")
         val FONT_WEIGHT: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("font-weight")
         val FONT_STYLE: SvgAttributeSpec<String> =

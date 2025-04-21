@@ -18,11 +18,16 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 
 class Context2dDelegate(
-    private val logEnabled: Boolean = false
+    private val logEnabled: Boolean = false,
+    private val failIfNotImplemented: Boolean = false
 ) : Context2d {
     private fun log(msg: String) {
         if (logEnabled) {
             println(msg)
+        }
+
+        if (failIfNotImplemented) {
+            throw UnsupportedOperationException(msg)
         }
     }
 
@@ -33,6 +38,7 @@ class Context2dDelegate(
     override fun drawImage(snapshot: Canvas.Snapshot, sx: Double, sy: Double, sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) { log("drawImage: $snapshot, sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh") }
     override fun beginPath() { log("beginPath") }
     override fun closePath() { log("closePath") }
+    override fun clip() { log("clip") }
     override fun stroke() { log("stroke") }
     override fun fill() { log("fill") }
     override fun fillEvenOdd() { log("fillEvenOdd") }
@@ -55,14 +61,14 @@ class Context2dDelegate(
     override fun scale(xy: Double) { log("scale: xy=$xy") }
     override fun rotate(angle: Double) { log("rotate: angle=$angle") }
     override fun translate(x: Double, y: Double) { log("translate: x=$x, y=$y") }
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { log("transform: m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy") }
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) { log("transform: m11=$sx, m12=$ry, m21=$rx, m22=$sy, dx=$tx, dy=$ty") }
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) { log("bezierCurveTo: cp1x=$cp1x, cp1y=$cp1y, cp2x=$cp2x, cp2y=$cp2y, x=$x, y=$y") }
     override fun setLineJoin(lineJoin: LineJoin) { log("setLineJoin: $lineJoin") }
     override fun setLineCap(lineCap: LineCap) { log("setLineCap: $lineCap") }
     override fun setStrokeMiterLimit(miterLimit: Double) { log("setStrokeMiterLimit: $miterLimit") }
     override fun setTextBaseline(baseline: TextBaseline) { log("setTextBaseline: $baseline") }
     override fun setTextAlign(align: TextAlign) { log("setTextAlign: $align") }
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { log("setTransform: m11=$m11, m12=$m12, m21=$m21, m22=$m22, dx=$dx, dy=$dy") }
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) { log("setTransform: m11=$m00, m12=$m10, m21=$m01, m22=$m11, dx=$m02, dy=$m12") }
     override fun setLineDash(lineDash: DoubleArray) { log("setLineDash: $lineDash") }
     override fun setLineDashOffset(lineDashOffset: Double) { log("setLineDashOffset: $lineDashOffset") }
     override fun measureTextWidth(str: String): Double {

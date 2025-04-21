@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -159,16 +160,16 @@ internal object Latex {
         }
 
         val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
-            setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
+            setAttribute(SvgTextContent.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
         }
         val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
         val indexTSpanElements = content.render(ctx).mapIndexed { i, element ->
             element.apply {
-                if (getAttribute(SvgTSpanElement.FONT_SIZE).get() == null) {
-                    setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
+                if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
+                    setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
                 }
                 if (i == 0) {
-                    setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
+                    setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
                 }
             }
         }
@@ -180,8 +181,8 @@ internal object Latex {
         // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
         val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
             // Size of shift depends on the font size, and it should be equal to the superscript shift size
-            setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
-            setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
+            setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
+            setAttribute(SvgTextContent.TEXT_DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
         }
 
         return listOf(ctx.apply(indentTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)

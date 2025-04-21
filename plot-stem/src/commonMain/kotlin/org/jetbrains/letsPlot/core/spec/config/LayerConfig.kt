@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -45,6 +46,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
+import kotlin.collections.contains
 
 class LayerConfig constructor(
     layerOptions: Map<String, Any>,
@@ -182,7 +184,6 @@ class LayerConfig constructor(
             else -> emptyMap()
         }
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
-        val combinedMappings = plotMappings + layerMappings
 
         val combinedDiscreteMappings = combinedDiscreteMapping(
             commonMappings = plotMappings,
@@ -191,43 +192,7 @@ class LayerConfig constructor(
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
         )
 
-        val hasHorizontalAes = setOf(Aes.XMIN, Aes.XMAX).any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
-        isYOrientation = when (hasOwn(ORIENTATION)) {
-            true -> getString(ORIENTATION)?.lowercase()?.let {
-                when (it) {
-                    "y" -> true
-                    "x" -> false
-                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
-                }
-            } ?: false
-
-            false -> {
-                when {
-                    clientSide -> false
-                    !isOrientationApplicable() -> false
-                    DataConfigUtil.isAesDiscrete(
-                        Aes.X,
-                        plotData,
-                        ownData,
-                        plotMappings,
-                        layerMappings,
-                        combinedDiscreteMappings
-                    ) -> false
-                    !DataConfigUtil.isAesDiscrete(
-                        Aes.Y,
-                        plotData,
-                        ownData,
-                        plotMappings,
-                        layerMappings,
-                        combinedDiscreteMappings
-                    ) && !hasHorizontalAes -> false
-                    else -> {
-                        setOrientationY()
-                        true
-                    }
-                }
-            }
-        }
+        isYOrientation = initYOrientation(plotData, plotMappings, layerMappings, combinedDiscreteMappings)
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
@@ -329,6 +294,93 @@ class LayerConfig constructor(
         )
     }
 
+    private fun initYOrientation(
+        plotData: DataFrame,
+        plotMappings: Map<String, String>,
+        layerMappings: Map<String, String>,
+        combinedDiscreteMappings: Map<String, String>
+    ): Boolean {
+        if (hasOwn(ORIENTATION)) {
+            getString(ORIENTATION)?.lowercase()?.let {
+                // Return explicitly defined orientation
+                return when (it) {
+                    "y" -> true
+                    "x" -> false
+                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
+                }
+            }
+        }
+
+        // Auto-detection of orientation
+
+        if (clientSide) {
+            // On client-side orientation should be detected as "X"
+            return false
+        }
+
+        fun isAesDiscrete(aes: Aes<*>): Boolean {
+            return DataConfigUtil.isAesDiscrete(
+                aes,
+                plotData,
+                ownData,
+                plotMappings,
+                layerMappings,
+                combinedDiscreteMappings
+            )
+        }
+        fun isYOrientedByAes(verticalAesthetics: Set<Aes<*>>): Boolean {
+            val combinedMappings = plotMappings + layerMappings
+            val hasVerticalAesthetics = verticalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            if (hasVerticalAesthetics) {
+                return false
+            }
+            val horizontalAesthetics = verticalAesthetics.map { YOrientationBaseUtil.flipAes(it) }
+            val hasHorizontalAesthetics = horizontalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            if (hasHorizontalAesthetics) {
+                return true
+            }
+            return false
+        }
+
+        val isYOriented = when {
+            statKind in listOf(
+                StatKind.COUNT,
+                StatKind.SUMMARY,
+                StatKind.BOXPLOT,
+                StatKind.BOXPLOT_OUTLIER,
+                StatKind.YDOTPLOT,
+                StatKind.YDENSITY
+            ) -> {
+                !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
+            }
+            geomProto.geomKind in listOf(
+                GeomKind.BAR,
+                GeomKind.VIOLIN,
+                GeomKind.LOLLIPOP,
+                GeomKind.Y_DOT_PLOT
+            ) -> {
+                !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
+            }
+            geomProto.geomKind == GeomKind.BOX_PLOT -> {
+                isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
+            }
+            geomProto.geomKind in listOf(
+                GeomKind.CROSS_BAR,
+                GeomKind.ERROR_BAR,
+                GeomKind.LINE_RANGE,
+                GeomKind.POINT_RANGE,
+                GeomKind.RIBBON
+            ) -> {
+                isYOrientedByAes(setOf(Aes.YMIN, Aes.YMAX))
+            }
+            else -> false
+        }
+        if (isYOriented) {
+            setOrientationY()
+        }
+        return isYOriented
+    }
+
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
         var fieldName: String? = when (val groupBy = mappingOptions[Option.Mapping.GROUP]) {
             is String -> groupBy
@@ -362,33 +414,6 @@ class LayerConfig constructor(
 
         // Invalidate layer' "combined data"
         combinedDataValid = false
-    }
-
-    private fun isOrientationApplicable(): Boolean {
-        val isSuitableGeomKind = geomProto.geomKind in listOf(
-            GeomKind.BAR,
-            GeomKind.BOX_PLOT,
-            GeomKind.VIOLIN,
-            GeomKind.SINA,
-            GeomKind.LOLLIPOP,
-            GeomKind.Y_DOT_PLOT,
-            GeomKind.CROSS_BAR,
-            GeomKind.ERROR_BAR,
-            GeomKind.LINE_RANGE,
-            GeomKind.POINT_RANGE,
-            GeomKind.RIBBON
-        )
-        val isSuitableStatKind = statKind in listOf(
-            StatKind.COUNT,
-            StatKind.SUMMARY,
-            StatKind.BOXPLOT,
-            StatKind.BOXPLOT_OUTLIER,
-            StatKind.YDOTPLOT,
-            StatKind.YDENSITY,
-            StatKind.SINA
-        )
-
-        return isSuitableGeomKind || isSuitableStatKind
     }
 
     private fun setOrientationY() {

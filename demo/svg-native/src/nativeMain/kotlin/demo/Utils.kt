@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2025. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package demo
+
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
-import org.jetbrains.letsPlot.raster.builderLW.MonolithicSkiaLW
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 /*
@@ -22,7 +29,7 @@ fun savePlot(plotSpec: MutableMap<String, Any>, filePath: String) {
             frontendOnly = false
         )
 
-        val vm = MonolithicSkiaLW.buildPlotFromProcessedSpecs(
+        val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
             plotSpec = processedSpec,
             computationMessagesHandler = { println(it.joinToString("\n")) }
         )

@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
 
 class TooltipSpecFactory(
     private val contextualMapping: ContextualMapping,
@@ -159,7 +158,7 @@ class TooltipSpecFactory(
                 Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
                         coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                        axisRadius = AXIS_RADIUS,
+                        axisRadius = xAxisTheme.lineWidth() / 2,
                         fillColor = xAxisTheme.tooltipFill()
                     )
                 }
@@ -167,7 +166,7 @@ class TooltipSpecFactory(
                 Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                        axisRadius = AXIS_RADIUS,
+                        axisRadius = yAxisTheme.lineWidth() / 2,
                         fillColor = yAxisTheme.tooltipFill()
                     )
                 }

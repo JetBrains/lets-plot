@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.canvas
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
@@ -29,6 +30,7 @@ interface Context2d {
 
     fun beginPath()
     fun closePath()
+    fun clip()
     fun stroke()
     fun fill()
     fun fillEvenOdd()
@@ -51,14 +53,14 @@ interface Context2d {
     fun scale(xy: Double)
     fun rotate(angle: Double)
     fun translate(x: Double, y: Double)
-    fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
+    fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double)
     fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
     fun setLineJoin(lineJoin: LineJoin)
     fun setLineCap(lineCap: LineCap)
     fun setStrokeMiterLimit(miterLimit: Double)
     fun setTextBaseline(baseline: TextBaseline)
     fun setTextAlign(align: TextAlign)
-    fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
+    fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double)
     fun setLineDash(lineDash: DoubleArray)
     fun setLineDashOffset(lineDashOffset: Double)
     fun measureTextWidth(str: String): Double
@@ -100,8 +102,16 @@ interface Context2d {
     }
 }
 
-fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
+fun Context2d.affineTransform(matrix: AffineTransform) = transform(
+    sx = matrix.sx,
+    ry = matrix.ry,
+    rx = matrix.rx,
+    sy = matrix.sy,
+    tx = matrix.tx,
+    ty = matrix.ty
+)
 
+fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
 
 enum class TextBaseline {
     ALPHABETIC, BOTTOM, MIDDLE, TOP
