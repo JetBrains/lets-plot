@@ -17,16 +17,9 @@ class SinaStat(
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
     private val kernel: DensityStat.Kernel,
-    private val n: Int,
     private val fullScanMax: Int,
     private val quantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
-
-    init {
-        require(n <= DensityStat.MAX_N) {
-            "The input n = $n > ${DensityStat.MAX_N} is too large!"
-        }
-    }
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
@@ -55,7 +48,20 @@ class SinaStat(
         }
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
-        val statData = DensityStatUtil.binnedStat(xs, ys, ws, true, null, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange, quantiles, resetValueRange = false) // Differences is: trim = true, tailsCutoff = null, resetValueRange = false
+        val statData = DensityStatUtil.binnedStat(
+            xs, ys, ws,
+            trim = true, // Doesn't make sense for the SinaStat
+            tailsCutoff = null, // Doesn't make sense for the SinaStat
+            bandWidth = bandWidth,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            n = -1, // Not used in calculations because of resetValueRange = false
+            fullScanMax = fullScanMax,
+            overallValuesRange = overallYRange,
+            quantiles = quantiles,
+            resetValueRange = false // Compute the density exactly for the data points, not for a uniform grid
+        )
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
