@@ -230,5 +230,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
                 vRange.length
             )
         }
+
+        val ZERO = DoubleRectangle(0.0, 0.0, 0.0, 0.0)
     }
 }

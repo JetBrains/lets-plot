@@ -80,7 +80,7 @@ internal object BreakLabelsLayoutUtil {
             }
 
             theme.showTickMarks() -> {
-                val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+                val labelsBounds = DoubleRectangle.ZERO
                 applyLabelMargins(
                     labelsBounds,
                     tickLength,
@@ -89,7 +89,7 @@ internal object BreakLabelsLayoutUtil {
                 )
             }
 
-            else -> DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            else -> DoubleRectangle.ZERO
         }
 
         return AxisLabelsLayoutInfo.Builder()

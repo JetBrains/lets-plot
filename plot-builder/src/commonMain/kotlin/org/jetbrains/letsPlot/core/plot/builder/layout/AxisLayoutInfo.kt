@@ -44,7 +44,7 @@ class AxisLayoutInfo constructor(
     }
 
     fun axisBounds(): DoubleRectangle {
-        return tickLabelsBounds.union(DoubleRectangle(0.0, 0.0, 0.0, 0.0))
+        return tickLabelsBounds.union(DoubleRectangle.ZERO)
     }
 
     fun axisBoundsAbsolute(geomBounds: DoubleRectangle): DoubleRectangle {

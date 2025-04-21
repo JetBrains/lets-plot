@@ -13,8 +13,8 @@ class DoubleRectangleTest {
     @Test
     fun hashCodeWorks() {
         assertEquals(
-            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode(),
-            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode()
+            DoubleRectangle.ZERO.hashCode(),
+            DoubleRectangle.ZERO.hashCode()
         )
     }
 
