@@ -24,22 +24,6 @@ class MagickContext2dTest {
     )
 
     @Test
-    fun simpleClipPath() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
-        ctx.fillStyle = "black"
-        ctx.beginPath()
-        ctx.moveTo(50.0, 10.0)
-        ctx.lineTo(90.0, 90.0)
-        ctx.lineTo(10.0, 90.0)
-        ctx.closePath()
-
-        ctx.clip()
-        ctx.fill()
-        imageComparer.assertImageEquals("simple_clip_path.bmp", canvas.wand!!)
-    }
-
-    @Test
     fun shouldRenderClipPathIfBeginPathIsNotCalled() {
         val canvas = MagickCanvas.create(100, 100)
         val ctx = canvas.context2d
@@ -73,6 +57,30 @@ class MagickContext2dTest {
         ctx.arc(50.0, 50.0, 50.0, 0.0, 2 * PI)
         ctx.fill()
         imageComparer.assertImageEquals("simple_clip.bmp", canvas.wand!!)
+    }
+
+    @Test
+    fun doubleMoveToClip() {
+        val canvas = MagickCanvas.create(100, 100)
+        val ctx = canvas.context2d
+        ctx.fillStyle = "black"
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(50.0, 0.0)
+        ctx.lineTo(50.0, 50.0)
+        ctx.lineTo(0.0, 50.0)
+
+        ctx.moveTo(50.0, 50.0)
+        ctx.lineTo(100.0, 50.0)
+        ctx.lineTo(100.0, 100.0)
+        ctx.lineTo(50.0, 100.0)
+        ctx.closePath()
+        ctx.clip()
+
+        ctx.beginPath()
+        ctx.arc(50.0, 50.0, 50.0, 0.0, 2 * PI)
+        ctx.fill()
+        imageComparer.assertImageEquals("double_move_to_clip.bmp", canvas.wand!!)
     }
 
     @Test

@@ -108,7 +108,6 @@ class MagickContext2d(
         ImageMagick.DrawSetFontWeight(wand, fontWeight)
 
         state.clipPath?.let { clipPath ->
-            println("MagickContext2d.clipPath: ${clipPath.getCommands()}")
             ImageMagick.DrawPushDefs(wand)
             ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
             ImageMagick.PushDrawingWand(wand)

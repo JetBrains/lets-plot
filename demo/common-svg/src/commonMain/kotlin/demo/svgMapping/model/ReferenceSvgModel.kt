@@ -8,10 +8,12 @@ package demo.svgMapping.model
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Color.Companion.LIGHT_GREEN
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.NONE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.Companion.create
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object ReferenceSvgModel {
@@ -26,7 +28,6 @@ object ReferenceSvgModel {
                 )
             )
 
-/*
             slimG(16) {
                 var i = 20.0
                 while (i < 400) {
@@ -63,7 +64,7 @@ object ReferenceSvgModel {
             }
 
             // Multi-style text
-            text(x = 300.0, y = 210.0, fill = ORANGE, styleClass = "DARK_GREEN") {
+            text(x = 300.0, y = 210.0, fill = SvgColors.ORANGE, styleClass = "DARK_GREEN") {
                 tspan("Red", fill = RED)
                 tspan("-")
                 tspan("brown", fill = BROWN)
@@ -152,8 +153,6 @@ object ReferenceSvgModel {
                         .build()
                 )
             }
-*/
-
         }
 
 
