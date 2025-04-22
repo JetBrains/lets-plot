@@ -10,38 +10,14 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.test.Test
 
-class YDensityStatTest : BaseStatTest() {
-
-    private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
-        return YDensityStat(
-            scale = scale ?: YDensityStat.DEF_SCALE,
-            trim = YDensityStat.DEF_TRIM,
-            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
-            bandWidth = null,
-            bandWidthMethod = DensityStat.DEF_BW,
-            adjust = DensityStat.DEF_ADJUST,
-            kernel = DensityStat.DEF_KERNEL,
-            n = DensityStat.DEF_N,
-            fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
-            quantiles = YDensityStat.DEF_QUANTILES
-        )
-    }
-
-    private fun filteredDataFrame(df: DataFrame, variable: DataFrame.Variable, filterFun: (Double?) -> Boolean): DataFrame {
-        val indices = df.getNumeric(variable)
-            .mapIndexed { index, v -> if (filterFun(v)) index else null }
-            .filterNotNull()
-
-        return df.selectIndices(indices)
-    }
-
+open class YDensityStatTest : BaseStatTest() {
     @Test
-    fun emptyDataFrame() {
+    open fun emptyDataFrame() {
         testEmptyDataFrame(yDensityStat())
     }
 
     @Test
-    fun oneElementDataFrame() {
+    open fun oneElementDataFrame() {
         val yValue = 3.14
         val df = dataFrame(mapOf(
             TransformVar.Y to listOf(yValue)
@@ -92,7 +68,7 @@ class YDensityStatTest : BaseStatTest() {
             TransformVar.Y to y
         ))
 
-        for (scale in YDensityStat.Scale.values()) {
+        for (scale in YDensityStat.Scale.entries) {
             val stat = yDensityStat(scale = scale)
             val statDf = stat.normalize(stat.apply(df, statContext(df)))
             val statDf0 = filteredDataFrame(statDf, Stats.X) { it == 0.0 }
@@ -116,5 +92,28 @@ class YDensityStatTest : BaseStatTest() {
                 }
             }
         }
+    }
+
+    protected fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
+        return YDensityStat(
+            scale = scale ?: YDensityStat.DEF_SCALE,
+            trim = YDensityStat.DEF_TRIM,
+            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
+            bandWidth = null,
+            bandWidthMethod = DensityStat.DEF_BW,
+            adjust = DensityStat.DEF_ADJUST,
+            kernel = DensityStat.DEF_KERNEL,
+            n = DensityStat.DEF_N,
+            fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
+            quantiles = YDensityStat.DEF_QUANTILES
+        )
+    }
+
+    private fun filteredDataFrame(df: DataFrame, variable: DataFrame.Variable, filterFun: (Double?) -> Boolean): DataFrame {
+        val indices = df.getNumeric(variable)
+            .mapIndexed { index, v -> if (filterFun(v)) index else null }
+            .filterNotNull()
+
+        return df.selectIndices(indices)
     }
 }
