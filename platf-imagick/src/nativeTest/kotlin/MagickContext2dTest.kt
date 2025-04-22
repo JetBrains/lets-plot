@@ -1,7 +1,9 @@
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
 import kotlin.math.PI
 import kotlin.test.Test
 
@@ -12,7 +14,9 @@ import kotlin.test.Test
 
 
 class MagickContext2dTest {
-    val outDir: String = getCurrentDir() + "/build/image-test/"
+    private val outDir: String = getCurrentDir() + "/build/image-test/"
+    private val w = 100.0
+    private val h = 100.0
 
     init {
         mkDir(outDir)
@@ -23,10 +27,90 @@ class MagickContext2dTest {
         outDir = outDir
     )
 
+    fun createCanvas(): Pair<MagickCanvas, MagickContext2d> {
+        val canvas = MagickCanvas.create(w, h)
+        return canvas to canvas.context2d as MagickContext2d
+    }
+
     @Test
-    fun shouldRenderClipPathIfBeginPathIsNotCalled() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+    fun cliPath_withTransform() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "black"
+        ctx.translate(25.0, 0.0)
+
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(w, 0.0)
+        ctx.lineTo(w, h / 2)
+        ctx.lineTo(0.0, h / 2)
+        ctx.closePath()
+        ctx.clip()
+
+        ctx.beginPath()
+        ctx.moveTo(w / 2, 0.0)
+        ctx.lineTo(w, h)
+        ctx.lineTo(0.0, h)
+        ctx.fill()
+
+        imageComparer.assertImageEquals("clip_transform.bmp", canvas.wand!!)
+    }
+
+
+    @Test
+    fun cliPath_text() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "black"
+        ctx.strokeStyle = "black"
+        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
+
+        //ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
+
+        ctx.beginPath()
+        ctx.moveTo(w * 0.5, h * 0.5)
+        ctx.lineTo(w * 0.5, h * 0.5 - 30)
+        ctx.lineTo(w * 0.5 + 35, h * 0.5 - 30)
+        ctx.lineTo(w * 0.5 + 35, h * 0.5)
+        ctx.closePath()
+        ctx.stroke()
+        ctx.clip()
+
+
+        ctx.fillText("Test", w * 0.5, h * 0.5)
+
+        imageComparer.assertImageEquals("clip_text.bmp", canvas.wand!!)
+    }
+
+    @Test
+    fun cliPath_textWithTransform() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "black"
+        ctx.strokeStyle = "black"
+        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
+
+        ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
+
+        ctx.beginPath()
+        ctx.moveTo(w * 0.5, h * 0.5)
+        ctx.lineTo(w * 0.5, h * 0.5 - 30)
+        ctx.lineTo(w * 0.5 + 35, h * 0.5 - 30)
+        ctx.lineTo(w * 0.5 + 35, h * 0.5)
+        ctx.closePath()
+        ctx.stroke()
+        ctx.clip()
+
+
+        ctx.fillText("Test", w * 0.5, h * 0.5)
+
+        imageComparer.assertImageEquals("clip_text_transform.bmp", canvas.wand!!)
+    }
+
+    @Test
+    fun clipPath_shouldRenderPathIfBeginPathIsNotCalled() {
+        val (canvas, ctx) = createCanvas()
+
         ctx.fillStyle = "black"
         ctx.beginPath()
         ctx.moveTo(0.0, 0.0)
@@ -34,16 +118,16 @@ class MagickContext2dTest {
         ctx.lineTo(50.0, 50.0)
         ctx.lineTo(0.0, 50.0)
         ctx.closePath()
-
         ctx.clip()
+
         ctx.fill()
         imageComparer.assertImageEquals("clip_fill.bmp", canvas.wand!!)
     }
 
     @Test
-    fun simpleClip() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+    fun clipPath_simple() {
+        val (canvas, ctx) = createCanvas()
+
         ctx.fillStyle = "black"
         ctx.beginPath()
         ctx.moveTo(0.0, 0.0)
@@ -60,9 +144,9 @@ class MagickContext2dTest {
     }
 
     @Test
-    fun doubleMoveToClip() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+    fun clipPath_twoClippingPolygons() {
+        val (canvas, ctx) = createCanvas()
+
         ctx.fillStyle = "black"
         ctx.beginPath()
         ctx.moveTo(0.0, 0.0)
@@ -84,9 +168,44 @@ class MagickContext2dTest {
     }
 
     @Test
+    fun clipPath_afterRestoreShouldNotClip() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)"
+        ctx.save()
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(w, 0.0)
+        ctx.lineTo(w, h / 2)
+        ctx.lineTo(0.0, h / 2)
+        ctx.closePath()
+        ctx.clip()
+
+        // draws the upper half of the triangle - the lower half is clipped
+        ctx.beginPath()
+        ctx.moveTo(w / 2, 0.0)
+        ctx.lineTo(w, h)
+        ctx.lineTo(0.0, h)
+        ctx.fill()
+
+        // disables clipping
+        ctx.restore()
+
+        // draw the same triangle again - this time it should be visible
+        // the upper half should be darker because of the previous fill
+        ctx.beginPath()
+        ctx.moveTo(w / 2, 0.0)
+        ctx.lineTo(w, h)
+        ctx.lineTo(0.0, h)
+        ctx.fill()
+
+        imageComparer.assertImageEquals("clip_reset.bmp", canvas.wand!!)
+    }
+
+    @Test
     fun shearedEllipse() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+        val (canvas, ctx) = createCanvas()
+
         ctx.strokeStyle = "black"
         ctx.beginPath()
         ctx.save()
@@ -110,8 +229,8 @@ class MagickContext2dTest {
 
     @Test
     fun shearedCircularArc() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+        val (canvas, ctx) = createCanvas()
+
         ctx.strokeStyle = "black"
         ctx.beginPath()
         ctx.save()
@@ -137,57 +256,55 @@ class MagickContext2dTest {
 
     @Test
     fun nestedTranslates() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            fillStyle = "black"
+        val (canvas, ctx) = createCanvas()
 
-            save()
-            translate(0.0, 50.0)
-            save()
-            translate(33.0, 0.0)
-            beginPath()
-            arc(0.0, 0.0, 5.0, 0.0, 2 * PI)
-            fill()
-            restore()
+        ctx.fillStyle = "black"
 
-            save()
-            translate(66.0, 0.0)
-            beginPath()
-            arc(x = 0.0, y = 0.0, radius = 5.0, startAngle = 0.0, endAngle = 2 * PI)
-            fill()
-            restore()
+        ctx.save()
+        ctx.translate(0.0, 50.0)
+        ctx.save()
+        ctx.translate(33.0, 0.0)
+        ctx.beginPath()
+        ctx.arc(0.0, 0.0, 5.0, 0.0, 2 * PI)
+        ctx.fill()
+        ctx.restore()
 
-            restore()
-        }
+        ctx.save()
+        ctx.translate(66.0, 0.0)
+        ctx.beginPath()
+        ctx.arc(x = 0.0, y = 0.0, radius = 5.0, startAngle = 0.0, endAngle = 2 * PI)
+        ctx.fill()
+        ctx.restore()
+
+        ctx.restore()
 
         imageComparer.assertImageEquals("nested_translates.bmp", canvas.wand!!)
     }
 
     @Test
     fun multiPathFill() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            fillStyle = "orange"
-            lineWidth = 5.0
-            strokeStyle = "dark_blue"
+        val (canvas, ctx) = createCanvas()
+        ctx.fillStyle = "orange"
+        ctx.lineWidth = 5.0
+        ctx.strokeStyle = "dark_blue"
 
-            moveTo(50.0, 50.0)
-            lineTo(125.0, 125.0)
+        ctx.moveTo(50.0, 50.0)
+        ctx.lineTo(125.0, 125.0)
 
-            beginPath()
-            moveTo(0.0, 0.0)
-            lineTo(25.0, 25.0)
-            lineTo(50.0, 0.0)
-            closePath()
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(25.0, 25.0)
+        ctx.lineTo(50.0, 0.0)
+        ctx.closePath()
 
-            moveTo(100.0, 100.0)
-            lineTo(75.0, 75.0)
-            lineTo(50.0, 100.0)
-            closePath()
+        ctx.moveTo(100.0, 100.0)
+        ctx.lineTo(75.0, 75.0)
+        ctx.lineTo(50.0, 100.0)
+        ctx.closePath()
 
-            fill()
-            stroke()
-        }
+        ctx.fill()
+        ctx.stroke()
+
         imageComparer.assertImageEquals(
             expectedFileName = "multi_path_fill.bmp",
             actualWand = canvas.wand!!,
@@ -196,24 +313,23 @@ class MagickContext2dTest {
 
     @Test
     fun multiPathStroke() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            strokeStyle = "orange"
-            lineWidth = 2.0
+        val (canvas, ctx) = createCanvas()
 
-            beginPath()
-            moveTo(0.0, 0.0)
-            lineTo(25.0, 25.0)
-            lineTo(50.0, 0.0)
-            closePath()
+        ctx.strokeStyle = "orange"
+        ctx.lineWidth = 2.0
 
-            moveTo(100.0, 100.0)
-            lineTo(75.0, 75.0)
-            lineTo(50.0, 100.0)
-            closePath()
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(25.0, 25.0)
+        ctx.lineTo(50.0, 0.0)
+        ctx.closePath()
 
-            stroke()
-        }
+        ctx.moveTo(100.0, 100.0)
+        ctx.lineTo(75.0, 75.0)
+        ctx.lineTo(50.0, 100.0)
+        ctx.closePath()
+
+        ctx.stroke()
 
         imageComparer.assertImageEquals(
             expectedFileName = "multi_path_stroke.bmp",
@@ -223,27 +339,25 @@ class MagickContext2dTest {
 
     @Test
     fun zigZagStroke() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            strokeStyle = "orange"
-            fillStyle = "dark_blue"
-            lineWidth = 3.0
+        val (canvas, ctx) = createCanvas()
+        ctx.strokeStyle = "orange"
+        ctx.fillStyle = "dark_blue"
+        ctx.lineWidth = 3.0
 
-            beginPath()
-            moveTo(0.0, 0.0)
-            lineTo(50.0, 25.0)
-            lineTo(0.0, 50.0)
-            lineTo(50.0, 75.0)
-            lineTo(0.0, 100.0)
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(50.0, 25.0)
+        ctx.lineTo(0.0, 50.0)
+        ctx.lineTo(50.0, 75.0)
+        ctx.lineTo(0.0, 100.0)
 
-            moveTo(100.0, 0.0)
-            lineTo(50.0, 25.0)
-            lineTo(100.0, 50.0)
-            lineTo(50.0, 75.0)
-            lineTo(100.0, 100.0)
+        ctx.moveTo(100.0, 0.0)
+        ctx.lineTo(50.0, 25.0)
+        ctx.lineTo(100.0, 50.0)
+        ctx.lineTo(50.0, 75.0)
+        ctx.lineTo(100.0, 100.0)
 
-            stroke()
-        }
+        ctx.stroke()
 
         imageComparer.assertImageEquals(
             expectedFileName = "zigzag_stroke.bmp",
@@ -253,29 +367,27 @@ class MagickContext2dTest {
 
     @Test
     fun zigZagFill() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            strokeStyle = "orange"
-            fillStyle = "dark_blue"
-            lineWidth = 1.0
+        val (canvas, ctx) = createCanvas()
+        ctx.strokeStyle = "orange"
+        ctx.fillStyle = "dark_blue"
+        ctx.lineWidth = 1.0
 
-            beginPath()
-            moveTo(0.0, 0.0)
-            lineTo(50.0, 25.0)
-            lineTo(0.0, 50.0)
-            lineTo(50.0, 75.0)
-            lineTo(0.0, 100.0)
-            closePath()
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(50.0, 25.0)
+        ctx.lineTo(0.0, 50.0)
+        ctx.lineTo(50.0, 75.0)
+        ctx.lineTo(0.0, 100.0)
+        ctx.closePath()
 
-            moveTo(50.0, 0.0)
-            lineTo(100.0, 25.0)
-            lineTo(50.0, 50.0)
-            lineTo(100.0, 75.0)
-            lineTo(50.0, 100.0)
-            closePath()
+        ctx.moveTo(50.0, 0.0)
+        ctx.lineTo(100.0, 25.0)
+        ctx.lineTo(50.0, 50.0)
+        ctx.lineTo(100.0, 75.0)
+        ctx.lineTo(50.0, 100.0)
+        ctx.closePath()
 
-            fill()
-        }
+        ctx.fill()
 
         imageComparer.assertImageEquals(
             expectedFileName = "zigzag_fill.bmp",
@@ -285,16 +397,14 @@ class MagickContext2dTest {
 
     @Test
     fun circleStroke() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            strokeStyle = "orange"
-            fillStyle = "dark_blue"
-            lineWidth = 1.0
+        val (canvas, ctx) = createCanvas()
+        ctx.strokeStyle = "orange"
+        ctx.fillStyle = "dark_blue"
+        ctx.lineWidth = 1.0
 
-            beginPath()
-            arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
-            stroke()
-        }
+        ctx.beginPath()
+        ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
+        ctx.stroke()
 
         imageComparer.assertImageEquals(
             expectedFileName = "circle_stroke.bmp",
@@ -304,18 +414,16 @@ class MagickContext2dTest {
 
     @Test
     fun circleFill() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            strokeStyle = "orange"
-            fillStyle = "dark_blue"
-            lineWidth = 1.0
+        val (canvas, ctx) = createCanvas()
+        ctx.strokeStyle = "orange"
+        ctx.fillStyle = "dark_blue"
+        ctx.lineWidth = 1.0
 
-            beginPath()
-            arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
-            closePath()
+        ctx.beginPath()
+        ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
+        ctx.closePath()
 
-            fill()
-        }
+        ctx.fill()
 
         imageComparer.assertImageEquals(
             expectedFileName = "circle_fill.bmp",
@@ -325,19 +433,17 @@ class MagickContext2dTest {
 
     @Test
     fun circleFillStroke() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            beginPath()
-            arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
-            closePath()
+        val (canvas, ctx) = createCanvas()
+        ctx.beginPath()
+        ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
+        ctx.closePath()
 
-            fillStyle = "dark_blue"
-            fill()
+        ctx.fillStyle = "dark_blue"
+        ctx.fill()
 
-            strokeStyle = "red"
-            setLineWidth(2.0)
-            stroke()
-        }
+        ctx.strokeStyle = "red"
+        ctx.setLineWidth(2.0)
+        ctx.stroke()
 
         imageComparer.assertImageEquals(
             expectedFileName = "circle_fill_stroke.bmp",
@@ -347,9 +453,10 @@ class MagickContext2dTest {
 
     @Test
     fun ellipse() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+        val (canvas, ctx) = createCanvas()
+
         ctx.fillStyle = "dark_blue"
+
         ctx.beginPath()
         //ctx.moveTo(50.0, 50.0)
         ctx.ellipse(
@@ -373,8 +480,7 @@ class MagickContext2dTest {
 
     @Test
     fun rotatedEllipse() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
+        val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
         ctx.beginPath()
@@ -399,46 +505,42 @@ class MagickContext2dTest {
 
     @Test
     fun ellipseWithRotation() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            fillStyle = "dark_blue"
+        val (canvas, ctx) = createCanvas()
+        ctx.fillStyle = "dark_blue"
 
-            beginPath()
-            ellipse(
-                x = 50.0,
-                y = 50.0,
-                radiusX = 20.0,
-                radiusY = 50.0,
-                rotation = PI,
-                startAngle = -PI,
-                endAngle = -2 * PI,
-                anticlockwise = true
-            )
-            closePath()
-            fill()
-        }
+        ctx.beginPath()
+        ctx.ellipse(
+            x = 50.0,
+            y = 50.0,
+            radiusX = 20.0,
+            radiusY = 50.0,
+            rotation = PI,
+            startAngle = -PI,
+            endAngle = -2 * PI,
+            anticlockwise = true
+        )
+        ctx.closePath()
+        ctx.fill()
+
 
         canvas.saveBmp("ellipse_with_rotation.bmp")
     }
 
     @Test
     fun pathTransformOnBuild() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            strokeStyle = "black"
-            lineWidth = 2.0
+        val (canvas, ctx) = createCanvas()
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2.0
 
-            save()
-            translate(50.0, 50.0)
-            rotate(PI / 2)
-            scale(0.5, 0.5)
-            beginPath()
-            moveTo(0.0, 0.0)
-            lineTo(50.0, 50.0)
-            restore()
-            stroke()
-
-        }
+        ctx.save()
+        ctx.translate(50.0, 50.0)
+        ctx.rotate(PI / 2)
+        ctx.scale(0.5, 0.5)
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.lineTo(50.0, 50.0)
+        ctx.restore()
+        ctx.stroke()
 
         imageComparer.assertImageEquals(
             expectedFileName = "path_transform_on_build.bmp",
@@ -448,22 +550,64 @@ class MagickContext2dTest {
 
     @Test
     fun arcTransformsAfterRestore() {
-        val canvas = MagickCanvas.create(100, 100)
-        with(canvas.context2d) {
-            fillStyle = "black"
+        val (canvas, ctx) = createCanvas()
+        ctx.fillStyle = "black"
 
-            save()
-            translate(50.0, 50.0)
-            beginPath()
-            scale(1.0, 0.5)
-            arc(0.0, 0.0, 50.0, 0.0, 2 * PI)
-            restore()
+        ctx.save()
+        ctx.translate(50.0, 50.0)
+        ctx.beginPath()
+        ctx.scale(1.0, 0.5)
+        ctx.arc(0.0, 0.0, 50.0, 0.0, 2 * PI)
+        ctx.restore()
 
-            fill()
-        }
+        ctx.fill()
 
         imageComparer.assertImageEquals(
             expectedFileName = "arc_transform_after_restore.bmp",
+            actualWand = canvas.wand!!
+        )
+    }
+
+    @Test
+    fun text_SkewTransform() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "black"
+        ctx.strokeStyle = "black"
+        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
+
+        ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
+
+        ctx.beginPath()
+        ctx.moveTo(w * 0.5, h * 0.5)
+        ctx.lineTo(w * 0.5, h * 0.5 - 30)
+        ctx.lineTo(w * 0.5 + 35, h * 0.5 - 30)
+        ctx.lineTo(w * 0.5 + 35, h * 0.5)
+        ctx.closePath()
+        ctx.stroke()
+        //ctx.clip()
+
+
+        ctx.fillText("Test", w * 0.5, h * 0.5)
+
+        imageComparer.assertImageEquals("text_skew_transform.bmp", canvas.wand!!)
+    }
+
+
+    @Test
+    fun simpleBezierCurve() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2.0
+
+        ctx.beginPath()
+        ctx.moveTo(0.0, 0.0)
+        ctx.bezierCurveTo(50.0, 0.0, 50.0, 100.0, 100.0, 100.0)
+        ctx.stroke()
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "simple_bezier_curve.bmp",
             actualWand = canvas.wand!!
         )
     }
@@ -502,21 +646,4 @@ class MagickContext2dTest {
             }
     }
 
-    @Test
-    fun simpleBezierCurve() {
-        val canvas = MagickCanvas.create(100, 100)
-        val ctx = canvas.context2d
-        ctx.strokeStyle = "black"
-        ctx.lineWidth = 2.0
-
-        ctx.beginPath()
-        ctx.moveTo(0.0, 0.0)
-        ctx.bezierCurveTo(50.0, 0.0, 50.0, 100.0, 100.0, 100.0)
-        ctx.stroke()
-
-        imageComparer.assertImageEquals(
-            expectedFileName = "simple_bezier_curve.bmp",
-            actualWand = canvas.wand!!
-        )
-    }
 }

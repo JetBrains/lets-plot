@@ -89,9 +89,24 @@ class MagickContext2d(
 
     private fun withWand(affineTransform: AffineTransform? = null, block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
         val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
-        val state = contextState.getCurrentState()
+        ImageMagick.PushDrawingWand(wand)
 
-        DrawAffineTransofrm(wand, affineTransform ?: state.transform)
+        val state = contextState.getCurrentState()
+        log { "withWand(${wand.hashCode()}: clipPath: ${state.clipPath.joinToString()}" }
+
+        state.clipPath.takeIf { it.isNotEmpty() }?.let { clipPath ->
+            ImageMagick.DrawPushDefs(wand)
+            ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
+
+            log { "DrawingWand pushed to clip path: ${clipPath.joinToString()}" }
+            drawPath(clipPath, wand)
+
+            ImageMagick.DrawPopClipPath(wand)
+            ImageMagick.DrawPopDefs(wand)
+
+            ImageMagick.DrawSetClipPath(wand, clipPath.hashCode().toString())
+        }
+
         ImageMagick.DrawSetFontSize(wand, state.font.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.font.fontFamily)
 
@@ -106,20 +121,13 @@ class MagickContext2d(
             FontWeight.BOLD -> 800.toULong()
         }
         ImageMagick.DrawSetFontWeight(wand, fontWeight)
-
-        state.clipPath?.let { clipPath ->
-            ImageMagick.DrawPushDefs(wand)
-            ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
-            ImageMagick.PushDrawingWand(wand)
-            drawPath(clipPath.getCommands(), wand)
-            ImageMagick.PopDrawingWand(wand)
-
-            ImageMagick.DrawPopClipPath(wand)
-            ImageMagick.DrawPopDefs(wand)
-            ImageMagick.DrawSetClipPath(wand, clipPath.hashCode().toString())
-        }
+        DrawAffineTransofrm(wand, affineTransform ?: state.transform)
 
         block(wand)
+
+        ImageMagick.PopDrawingWand(wand)
+
+        ImageMagick.MagickDrawImage(magickWand, wand)
         ImageMagick.DestroyDrawingWand(wand)
     }
 
@@ -164,8 +172,6 @@ class MagickContext2d(
             ImageMagick.DrawSetFillColor(strokeWand, pixelWand)
 
             block(strokeWand)
-
-            ImageMagick.MagickDrawImage(magickWand, strokeWand)
         }
     }
 
@@ -181,8 +187,6 @@ class MagickContext2d(
             ImageMagick.DrawSetStrokeColor(fillWand, pixelWand)
 
             block(fillWand)
-
-            ImageMagick.MagickDrawImage(magickWand, fillWand)
         }
     }
 
@@ -215,7 +219,7 @@ class MagickContext2d(
 
 
     companion object {
-        val logEnabled = true
+        const val logEnabled = false
         fun log(str: () -> String) {
             if (logEnabled)
                 println(str())

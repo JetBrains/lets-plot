@@ -40,7 +40,7 @@ class ContextState {
         var fillColor: Color,
         var font: Font,
         var transform: AffineTransform,
-        var clipPath: Path?,
+        var clipPath: List<PathCommand> = emptyList()
     ) {
         fun copy(): StateEntry {
             return StateEntry(
@@ -70,7 +70,7 @@ class ContextState {
                 font: Font = Font(),
                 transform: AffineTransform = AffineTransform.IDENTITY,
                 lineDashPattern: List<Double>? = null,
-                clipPath: Path? = null
+                clipPath: List<PathCommand> = emptyList()
             ): StateEntry {
                 return StateEntry(
                     strokeColor = strokeColor,
@@ -136,6 +136,7 @@ class ContextState {
             currentState = states.removeAt(states.size - 1)
         }
         log { "\t  to: [${currentState.transform.repr()}]" }
+        log { "\t clipPath: ${currentState.clipPath}" }
     }
 
     fun beginPath() {
@@ -148,7 +149,7 @@ class ContextState {
 
     fun clip() {
         log { "clip() - ${currentPath.getCommands()}" }
-        currentState.clipPath = Path(currentPath)
+        currentState.clipPath = currentPath.getCommands()
     }
 
     fun moveTo(x: Double, y: Double) {

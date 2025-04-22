@@ -1,4 +1,3 @@
-
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.test.Ignore
@@ -10,67 +9,12 @@ import kotlin.test.Test
  */
 
 // This test class is used to demonstrate the usage of the ImageMagick library
-class MagicWandSandbox {
-
-    @Test
-    fun simpleClipPath() {
-        memScoped {
-            ImageMagick.MagickWandGenesis()
-            val wand = ImageMagick.NewMagickWand() ?: error("Failed to create MagickWand")
-
-            val w = 100
-            val h = 100
-
-            val background = ImageMagick.NewPixelWand()
-            ImageMagick.PixelSetColor(background, "white")
-            ImageMagick.MagickNewImage(wand, w.convert(), h.convert(), background)
-            val drawingWand = ImageMagick.NewDrawingWand() ?: error("Failed to create DrawingWand")
-
-            val clipPathId = "clip_42"
-
-            run {
-                ImageMagick.DrawPushDefs(drawingWand)
-                ImageMagick.DrawPushClipPath(drawingWand, clipPathId)
-                ImageMagick.PushDrawingWand(drawingWand)
-                ImageMagick.DrawPathStart(drawingWand)
-                ImageMagick.DrawPathMoveToAbsolute(drawingWand, 25.0, 25.0)
-                ImageMagick.DrawPathLineToAbsolute(drawingWand, 75.0, 25.0)
-                ImageMagick.DrawPathLineToAbsolute(drawingWand, 75.0, 75.0)
-                ImageMagick.DrawPathLineToAbsolute(drawingWand, 25.0, 75.0)
-                ImageMagick.DrawPathClose(drawingWand)
-                ImageMagick.DrawPathFinish(drawingWand)
-                ImageMagick.PopDrawingWand(drawingWand)
-
-                ImageMagick.DrawPopClipPath(drawingWand)
-                ImageMagick.DrawPopDefs(drawingWand)
-            }
-
-            ImageMagick.DrawSetClipPath(drawingWand, clipPathId)
-            ImageMagick.DrawPathStart(drawingWand)
-            ImageMagick.DrawPathMoveToAbsolute(drawingWand, 50.0, 10.0)
-            ImageMagick.DrawPathLineToAbsolute(drawingWand, 90.0, 90.0)
-            ImageMagick.DrawPathLineToAbsolute(drawingWand, 10.0, 90.0)
-            ImageMagick.DrawPathClose(drawingWand)
-            ImageMagick.DrawPathFinish(drawingWand)
-
-            ImageMagick.DrawSetFillColor(drawingWand, ImageMagick.NewPixelWand().apply { ImageMagick.PixelSetColor(this, "black") })
-            ImageMagick.MagickDrawImage(wand, drawingWand)
-
-            ImageMagick.MagickWriteImage(wand, "simple_clip_path.bmp") // Changed filename
-
-            ImageMagick.DestroyMagickWand(wand)
-            ImageMagick.DestroyDrawingWand(drawingWand)
-            ImageMagick.MagickWandTerminus()
-        }
-    }
-
+class MagickWandSandbox {
     @OptIn(ExperimentalStdlibApi::class)
     @Ignore
     @Test
     fun simple() {
-        // Initialize the MagickWand environment
         ImageMagick.MagickWandGenesis()
-        // Create a MagickWand instance
         val wand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
         try {
@@ -78,9 +22,7 @@ class MagicWandSandbox {
             val h = 50
 
             // Set the canvas size and background color
-            val background = ImageMagick.NewPixelWand()
-            ImageMagick.PixelSetColor(background, "white")
-            ImageMagick.MagickNewImage(wand, w.toULong(), h.toULong(), background)
+            ImageMagick.MagickNewImage(wand, w.toULong(), h.toULong(), white)
 
             // Draw a rectangle
             val draw = ImageMagick.NewDrawingWand()
@@ -101,8 +43,7 @@ class MagicWandSandbox {
             ImageMagick.DrawCircle(draw, 25.0, 25.0, 25.0, 20.0)
 
             // Draw text with a font name
-            ImageMagick.PixelSetColor(pixel, "black") // Set text color
-            ImageMagick.DrawSetFillColor(draw, pixel)
+            ImageMagick.DrawSetFillColor(draw, black)
             ImageMagick.DrawSetFont(draw, "DejaVu-Sans-Bold") // Use font name
             ImageMagick.DrawSetFontSize(draw, 36.0) // Set font size
 
@@ -157,9 +98,7 @@ class MagicWandSandbox {
         ImageMagick.MagickWandGenesis()
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
-        val backgroundWand = ImageMagick.NewPixelWand()
-        ImageMagick.PixelSetColor(backgroundWand, "white")
-        ImageMagick.MagickNewImage(magickWand, 100u, 100u, backgroundWand)
+        ImageMagick.MagickNewImage(magickWand, 100u, 100u, white)
 
         val drawingWand = ImageMagick.NewDrawingWand()
         val strokeWand = ImageMagick.NewPixelWand()
@@ -194,7 +133,6 @@ class MagicWandSandbox {
             throw RuntimeException("Failed to write image")
         }
 
-        ImageMagick.DestroyPixelWand(backgroundWand)
         ImageMagick.DestroyPixelWand(strokeWand)
         ImageMagick.DestroyDrawingWand(drawingWand)
         ImageMagick.DestroyMagickWand(magickWand)
@@ -207,15 +145,12 @@ class MagicWandSandbox {
         ImageMagick.MagickWandGenesis()
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
-        val backgroundWand = ImageMagick.NewPixelWand()
-        ImageMagick.PixelSetColor(backgroundWand, "white")
-        ImageMagick.MagickNewImage(magickWand, 300u, 300u, backgroundWand)
+        ImageMagick.MagickNewImage(magickWand, 300u, 300u, white)
 
         val drawingWand = ImageMagick.NewDrawingWand()
         val pixelWand = ImageMagick.NewPixelWand()
 
-        ImageMagick.PixelSetColor(pixelWand, "black")
-        ImageMagick.DrawSetFillColor(drawingWand, pixelWand)
+        ImageMagick.DrawSetFillColor(drawingWand, black)
         ImageMagick.DrawRectangle(drawingWand, 50.0, 50.0, 200.0, 200.0)
 
         memScoped {
@@ -241,7 +176,6 @@ class MagicWandSandbox {
             throw RuntimeException("Failed to write image")
         }
 
-        ImageMagick.DestroyPixelWand(backgroundWand)
         ImageMagick.DestroyPixelWand(pixelWand)
         ImageMagick.DestroyDrawingWand(drawingWand)
         ImageMagick.DestroyMagickWand(magickWand)
@@ -254,16 +188,13 @@ class MagicWandSandbox {
         ImageMagick.MagickWandGenesis()
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
-        val backgroundWand = ImageMagick.NewPixelWand()
-        ImageMagick.PixelSetColor(backgroundWand, "white")
-        ImageMagick.MagickNewImage(magickWand, 300u, 300u, backgroundWand)
+        ImageMagick.MagickNewImage(magickWand, 300u, 300u, white)
 
         val drawingWand = ImageMagick.NewDrawingWand()
         val pixelWand = ImageMagick.NewPixelWand()
 
-        ImageMagick.PixelSetColor(pixelWand, "black")
-        ImageMagick.DrawSetFillColor(drawingWand, pixelWand)
-        ImageMagick.DrawSetStrokeColor(drawingWand, pixelWand)
+        ImageMagick.DrawSetFillColor(drawingWand, black)
+        ImageMagick.DrawSetStrokeColor(drawingWand, black)
         ImageMagick.DrawSetStrokeWidth(drawingWand, 2.0)
 
         // Draw a simple Bezier curve
@@ -283,7 +214,6 @@ class MagicWandSandbox {
             throw RuntimeException("Failed to write image")
         }
 
-        ImageMagick.DestroyPixelWand(backgroundWand)
         ImageMagick.DestroyPixelWand(pixelWand)
         ImageMagick.DestroyDrawingWand(drawingWand)
         ImageMagick.DestroyMagickWand(magickWand)
@@ -350,16 +280,13 @@ class MagicWandSandbox {
 
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
 
-        val backgroundWand = ImageMagick.NewPixelWand()
-        ImageMagick.PixelSetColor(backgroundWand, "white")
-        ImageMagick.MagickNewImage(magickWand, 500.convert(), 500.convert(), backgroundWand)
+        ImageMagick.MagickNewImage(magickWand, 500.convert(), 500.convert(), white)
         ImageMagick.MagickDrawImage(magickWand, drawingWand)
 
         val outputFilename = "bezier.bmp"
         if (true && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
-        ImageMagick.DestroyPixelWand(backgroundWand)
         ImageMagick.DestroyDrawingWand(drawingWand)
         ImageMagick.DestroyMagickWand(magickWand)
         ImageMagick.MagickWandTerminus()

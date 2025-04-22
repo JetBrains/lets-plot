@@ -40,18 +40,21 @@ class Path constructor(){
 
     fun getCommands() = commands.toList()
 
-    fun closePath() {
+    fun closePath(): Path {
         commands.add(ClosePath)
+        return this
     }
 
-    fun moveTo(x: Double, y: Double, transform: AffineTransform = AffineTransform.IDENTITY) {
+    fun moveTo(x: Double, y: Double, transform: AffineTransform = AffineTransform.IDENTITY): Path {
         val (x, y) = transform.transform(x, y)
         commands.add(MoveTo(x, y))
+        return this
     }
 
-    fun lineTo(x: Double, y: Double, transform: AffineTransform = AffineTransform.IDENTITY) {
+    fun lineTo(x: Double, y: Double, transform: AffineTransform = AffineTransform.IDENTITY): Path {
         val (x, y) = transform.transform(x, y)
         commands.add(LineTo(x, y))
+        return this
     }
 
     fun arc(
@@ -62,7 +65,7 @@ class Path constructor(){
         endAngleDeg: Double,
         anticlockwise: Boolean,
         transform: AffineTransform = AffineTransform.IDENTITY
-    ) {
+    ): Path {
         ellipse(
             x = x,
             y = y,
@@ -74,6 +77,8 @@ class Path constructor(){
             anticlockwise = anticlockwise,
             transform = transform
         )
+
+        return this
     }
 
     fun ellipse(
@@ -83,7 +88,7 @@ class Path constructor(){
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean,
         transform: AffineTransform = AffineTransform.IDENTITY
-    ) {
+    ): Path {
         val controlPoints = approximateEllipseWithBezierCurve(
             x = x,
             y = y,
@@ -101,6 +106,7 @@ class Path constructor(){
         }
 
         commands.add(BezierCurveTo(controlPoints.drop(1)))
+        return this
     }
 
     fun bezierCurveTo(
@@ -111,7 +117,7 @@ class Path constructor(){
         x: Double,
         y: Double,
         transform: AffineTransform = AffineTransform.IDENTITY
-    ) {
+    ): Path {
         commands.add(
             BezierCurveTo(
                 listOf(
@@ -121,6 +127,8 @@ class Path constructor(){
                 )
             )
         )
+
+        return this
     }
 
     sealed class PathCommand
