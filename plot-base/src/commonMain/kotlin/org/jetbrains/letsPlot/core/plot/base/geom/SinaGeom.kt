@@ -32,6 +32,7 @@ class SinaGeom : PointGeom() {
     var seed: Long? = null
     var jitterY: Boolean = DEF_JITTER_Y
     var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
+    var showHalf: Double = DEF_SHOW_HALF
 
     override fun buildIntern(
         root: SvgRoot,
@@ -97,7 +98,11 @@ class SinaGeom : PointGeom() {
         val resolutionX = ctx.getResolution(Aes.X)
         val resolutionY = ctx.getResolution(Aes.Y)
         return fun(p: DataPointAesthetics): DoubleVector {
-            val signX = if (rand.nextBoolean()) 1 else -1
+            val signX = when {
+                showHalf > 0 -> 1
+                showHalf < 0 -> -1
+                else -> if (rand.nextBoolean()) 1 else -1
+            }
             val signY = if (rand.nextBoolean()) 1 else -1
             val randomWidthShift = rand.nextDouble()
             val randomHeightShift = rand.nextDouble()
@@ -115,7 +120,9 @@ class SinaGeom : PointGeom() {
 
     companion object {
         const val HANDLES_GROUPS = true
+
         const val DEF_JITTER_Y = true
+        const val DEF_SHOW_HALF = 0.0
 
         private const val DY = 0.25
         private const val INTEGERISH_EPSILON = 1e-12

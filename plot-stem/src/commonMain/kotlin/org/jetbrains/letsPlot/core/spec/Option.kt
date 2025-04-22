@@ -307,6 +307,12 @@ object Option {
             const val SHOW_HALF = "show_half"
         }
 
+        object Sina {
+            const val SEED = "seed"
+            const val JITTER_Y = "jitter_y"
+            const val SHOW_HALF = "show_half"
+        }
+
         object YDotplot {
             const val DOTSIZE = "dotsize"
             const val STACKRATIO = "stackratio"
@@ -532,8 +538,6 @@ object Option {
         object Sina {
             const val SCALE = "scale"
             const val QUANTILES = "quantiles"
-            const val SEED = "seed"
-            const val JITTER_Y = "jitter_y"
         }
 
         object QQ {

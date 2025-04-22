@@ -4104,7 +4104,8 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
               tooltips=None,
               orientation=None,
               quantiles=None,
-              scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
+              show_half=None,
+              scale=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
               color_by=None, fill_by=None,
               **other_args):
     return _geom('sina',
@@ -4119,7 +4120,8 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  orientation=orientation,
                  quantiles=quantiles,
-                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
+                 show_half=show_half,
+                 scale=scale, kernel=kernel, bw=bw, adjust=adjust, n=n,
                  fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
