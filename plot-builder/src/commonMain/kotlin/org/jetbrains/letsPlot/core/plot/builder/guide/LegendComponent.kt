@@ -67,12 +67,14 @@ class LegendComponent(
         val label = MultilineLabel(br.label)
         val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
         label.addClassName(Style.LEGEND_ITEM)
-        label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setLineHeight(lineHeight)
-        label.moveTo(labelBox.origin.add(DoubleVector(0.0, lineHeight * 0.35)))// centre the first line
+        label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
+        label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+        label.moveTo(labelBox.origin)
         breakComponent.add(label)
 
         breakComponent.moveTo(keyLabelBox.origin)
+        breakComponent.moveTo(keyLabelBox.origin.add(DoubleVector(0.0,keyLabelBox.height * 0.5 - keySize.y * 0.5)))
         return breakComponent.rootGroup
     }
 
