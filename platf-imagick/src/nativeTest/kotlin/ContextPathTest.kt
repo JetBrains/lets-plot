@@ -335,7 +335,7 @@ class ContextPathTest {
     @Test
     fun ellipseWithRotation() {
         val (canvas, ctx) = createCanvas()
-        ctx.fillStyle = "dark_blue"
+        ctx.fillStyle = "black"
 
         ctx.beginPath()
         ctx.ellipse(
@@ -351,8 +351,10 @@ class ContextPathTest {
         ctx.closePath()
         ctx.fill()
 
-
-        canvas.saveBmp("ellipse_with_rotation.bmp")
+        imageComparer.assertImageEquals(
+            expectedFileName = "ellipse_with_rotation.bmp",
+            actualWand = canvas.wand!!
+        )
     }
 
     @Test

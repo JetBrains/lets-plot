@@ -15,6 +15,7 @@ class MagickWandClippingPlayground {
     lateinit var img: CPointer<MagickWand>
     lateinit var wand: CPointer<DrawingWand>
     var outFile: String? = null
+    var saveFile = false
 
     @BeforeTest
     fun setUp() {
@@ -31,8 +32,11 @@ class MagickWandClippingPlayground {
 
     @AfterTest
     fun tearDown() {
-        check(outFile != null) { "outFile is null" }
-        ImageMagick.MagickWriteImage(img, outFile)
+        if (saveFile) {
+            check(outFile != null) { "outFile is null" }
+            ImageMagick.MagickWriteImage(img, outFile)
+        }
+        saveFile = false
 
         ImageMagick.DestroyMagickWand(img)
         ImageMagick.DestroyDrawingWand(wand)
