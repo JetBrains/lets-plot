@@ -172,11 +172,8 @@ class SinaStat(
     private fun minApprox(x: Double, xs: List<Double>, ys: List<Double>): Double {
         if (xs.isEmpty()) return 0.0
         if (xs.size == 1) return ys.first()
-        for (i in xs.indices) {
-            if (x < xs[i]) continue
-            return ys[i]
-        }
-        return ys.last()
+        val i = xs.indices.lastOrNull { i -> xs[i] <= x } ?: return ys.last()
+        return ys[i]
     }
 
     // The same as in YDensityStat::Scale
