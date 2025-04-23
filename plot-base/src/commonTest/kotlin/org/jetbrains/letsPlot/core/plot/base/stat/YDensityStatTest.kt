@@ -10,14 +10,14 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.test.Test
 
-open class YDensityStatTest : BaseStatTest() {
+class YDensityStatTest : BaseStatTest() {
     @Test
-    open fun emptyDataFrame() {
+    fun emptyDataFrame() {
         testEmptyDataFrame(yDensityStat())
     }
 
     @Test
-    open fun oneElementDataFrame() {
+    fun oneElementDataFrame() {
         val yValue = 3.14
         val df = dataFrame(mapOf(
             TransformVar.Y to listOf(yValue)
@@ -94,7 +94,7 @@ open class YDensityStatTest : BaseStatTest() {
         }
     }
 
-    protected fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
+    private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
             trim = YDensityStat.DEF_TRIM,
