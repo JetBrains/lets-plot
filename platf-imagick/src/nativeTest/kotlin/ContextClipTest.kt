@@ -27,6 +27,18 @@ class ContextClipTest {
         ctx.lineTo(0, 50)
     }
 
+    private fun nwRectWithTranslates(ctx: Context2d) {
+        ctx.save()
+        ctx.moveTo(0, 0)
+        ctx.translate(50, 0)
+        ctx.lineTo(0, 0)
+        ctx.translate(0, 50)
+        ctx.lineTo(0, 0)
+        ctx.translate(-50, 0)
+        ctx.lineTo(0, 0)
+        ctx.restore()
+    }
+
     private fun seRect(ctx: Context2d) {
         ctx.moveTo(50, 50)
         ctx.lineTo(100, 50)
@@ -199,9 +211,32 @@ class ContextClipTest {
 
         ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
 
+        ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
         imageComparer.assertImageEquals("clip_text_before_transform.bmp", canvas.wand!!)
+    }
+
+
+    @Test
+    fun clip_text_with_translates_before_transform() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "black"
+        ctx.strokeStyle = "black"
+        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+
+        ctx.beginPath()
+        nwRectWithTranslates(ctx)
+        ctx.closePath()
+        ctx.clip()
+
+        ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
+
+        ctx.stroke()
+        ctx.fillText("Test", 0.0, 47.0)
+
+        imageComparer.assertImageEquals("clip_text_with_translates_before_transform.bmp", canvas.wand!!)
     }
 
 
@@ -220,9 +255,32 @@ class ContextClipTest {
         ctx.closePath()
         ctx.clip()
 
+        ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
         imageComparer.assertImageEquals("clip_text_after_transform.bmp", canvas.wand!!)
+    }
+
+
+    @Test
+    fun clip_text_with_translates_after_transform() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = "black"
+        ctx.strokeStyle = "black"
+        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+
+        ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
+
+        ctx.beginPath()
+        nwRectWithTranslates(ctx)
+        ctx.closePath()
+        ctx.clip()
+
+        ctx.stroke()
+        ctx.fillText("Test", 0.0, 47.0)
+
+        imageComparer.assertImageEquals("clip_text_with_translates_after_transform.bmp", canvas.wand!!)
     }
 
 

@@ -51,6 +51,10 @@ fun Context2d.lineTo(x: Number, y: Number) {
     lineTo(x.toDouble(), y.toDouble())
 }
 
+fun Context2d.translate(x: Number, y: Number) {
+    translate(x.toDouble(), y.toDouble())
+}
+
 fun Context2d.arc(
     x: Number,
     y: Number,

@@ -16,6 +16,7 @@ class MagickWandClippingPlayground {
     lateinit var wand: CPointer<DrawingWand>
     var outFile: String? = null
     var saveFile = false
+    val forceSaveFile = true
 
     @BeforeTest
     fun setUp() {
@@ -32,7 +33,7 @@ class MagickWandClippingPlayground {
 
     @AfterTest
     fun tearDown() {
-        if (saveFile) {
+        if (forceSaveFile || saveFile) {
             check(outFile != null) { "outFile is null" }
             ImageMagick.MagickWriteImage(img, outFile)
         }
@@ -138,15 +139,18 @@ class MagickWandClippingPlayground {
         defineClipPath(wand, clipPathId) {
             drawNWRect(wand)
         }
+        ImageMagick.DrawSetStrokeColor(wand, black)
+        ImageMagick.DrawSetFillColor(wand, none)
+        drawNWRect(wand)
 
         ImageMagick.DrawSetClipPath(wand, clipPathId)
 
         drawAffine(wand, ry = -0.33, tx = 25)
 
+        ImageMagick.DrawSetStrokeColor(wand, none)
+        ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawSetFontSize(wand, 50.0)
         ImageMagick.DrawSetFontFamily(wand, "Times New Roman")
-        ImageMagick.DrawSetFillColor(wand, black)
-
         drawAnnotation(wand, 0.0, 47.0, "Test")
 
         ImageMagick.MagickDrawImage(img, wand)
@@ -167,10 +171,14 @@ class MagickWandClippingPlayground {
 
         ImageMagick.DrawSetClipPath(wand, clipPathId)
 
+        ImageMagick.DrawSetStrokeColor(wand, black)
+        ImageMagick.DrawSetFillColor(wand, none)
+        drawNWRect(wand)
+
+        ImageMagick.DrawSetStrokeColor(wand, none)
+        ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawSetFontSize(wand, 50.0)
         ImageMagick.DrawSetFontFamily(wand, "Times New Roman")
-        ImageMagick.DrawSetFillColor(wand, black)
-
         drawAnnotation(wand, 0.0, 47.0, "Test")
 
         ImageMagick.MagickDrawImage(img, wand)

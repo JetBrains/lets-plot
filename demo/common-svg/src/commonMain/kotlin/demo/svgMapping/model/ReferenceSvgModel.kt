@@ -30,40 +30,6 @@ object ReferenceSvgModel {
                 )
             )
 
-            // Clip path
-            val absClip = false
-            if (absClip) {
-                g {
-                    circle(200, 373, 20)
-                    text("Invisible text", 180, 333, styleClass = "TEXT2")
-                    text("Visible text", 180, 373, styleClass = "TEXT2")
-                    val clipRect = DoubleRectangle.XYWH(180, 343, 150, 60)
-
-                    setAttribute(SvgGraphicsElement.CLIP_BOUNDS_JFX, clipRect)
-                    clipPath().set(SvgIRI("myClip"))
-                    children().add(SvgClipPathElement().apply {
-                        id().set("myClip")
-                        children().add(SvgRectElement(clipRect))
-                    })
-                }
-            } else {
-                g(
-                    transform = SvgTransformBuilder().translate(180.0, 313.0).build()
-                ) {
-                    circle(20, 60, 20)
-                    text("Invisible text", 0, 20, styleClass = "TEXT2")
-                    text("Visible text", 0, 60, styleClass = "TEXT2")
-                    val clipRect = DoubleRectangle.XYWH(0, 40, 150, 60)
-
-                    setAttribute(SvgGraphicsElement.CLIP_BOUNDS_JFX, clipRect)
-                    clipPath().set(SvgIRI("myClip"))
-                    children().add(SvgClipPathElement().apply {
-                        id().set("myClip")
-                        children().add(SvgRectElement(clipRect))
-                    })
-                }
-            }
-
             if (!compact) {
                 slimG(16) {
                     var i = 20.0
@@ -201,8 +167,39 @@ object ReferenceSvgModel {
                     )
                 }
             }
-        }
 
+            // Clip path
+            val absClip = false
+            if (absClip) {
+                g {
+                    text("Invisible text", 180, 333, styleClass = "TEXT2")
+                    text("Visible text", 180, 373, styleClass = "TEXT2")
+                    val clipRect = DoubleRectangle.XYWH(180, 343, 150, 60)
+
+                    setAttribute(SvgGraphicsElement.CLIP_BOUNDS_JFX, clipRect)
+                    clipPath().set(SvgIRI("myClip"))
+                    children().add(SvgClipPathElement().apply {
+                        id().set("myClip")
+                        children().add(SvgRectElement(clipRect))
+                    })
+                }
+            } else {
+                g(
+                    transform = SvgTransformBuilder().translate(180.0, 313.0).build()
+                ) {
+                    text("Invisible text", 0, 20, styleClass = "TEXT2")
+                    text("Visible text", 0, 60, styleClass = "TEXT2")
+                    val clipRect = DoubleRectangle.XYWH(0, 40, 150, 60)
+
+                    setAttribute(SvgGraphicsElement.CLIP_BOUNDS_JFX, clipRect)
+                    clipPath().set(SvgIRI("myClip"))
+                    children().add(SvgClipPathElement().apply {
+                        id().set("myClip")
+                        children().add(SvgRectElement(clipRect))
+                    })
+                }
+            }
+        }
     }
 
     private fun createUnclosedPathFrom(x: Double, y: Double): SvgPathData {

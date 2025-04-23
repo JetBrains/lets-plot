@@ -92,14 +92,14 @@ class MagickContext2d(
         ImageMagick.PushDrawingWand(wand)
 
         val state = contextState.getCurrentState()
-        log { "withWand(${wand.hashCode()}: clipPath: ${state.clipPath.joinToString()}" }
+        log { "withWand(${wand.hashCode()}: clipPath: ${(state.clipPath?.getCommands() ?: emptyList()).joinToString()}" }
 
-        state.clipPath.takeIf { it.isNotEmpty() }?.let { clipPath ->
+        state.clipPath?.let { clipPath ->
             ImageMagick.DrawPushDefs(wand)
             ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
 
-            log { "DrawingWand pushed to clip path: ${clipPath.joinToString()}" }
-            drawPath(clipPath, wand)
+            val at = affineTransform ?: state.transform
+            drawPath(clipPath.transformed(at.inverse()).getCommands(), wand)
 
             ImageMagick.DrawPopClipPath(wand)
             ImageMagick.DrawPopDefs(wand)

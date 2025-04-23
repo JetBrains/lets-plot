@@ -13,35 +13,34 @@
         ctx.lineTo(0, 50)
     }
 
+    function nwRectWithTranslate(ctx) {
+        ctx.save()
+        ctx.moveTo(0, 0)
+        ctx.translate(50, 0)
+        ctx.lineTo(0, 0)
+        ctx.translate(0, 50)
+        ctx.lineTo(0, 0)
+        ctx.translate(-50, 0)
+        ctx.lineTo(0, 0)
+        ctx.restore()
+    }
+
     const PI = Math.PI;
     const c = document.getElementById("myCanvas");
     const ctx = c.getContext("2d");
 
-
     ctx.fillStyle = "black"
     ctx.strokeStyle = "black"
-
-    ctx.moveTo(0, 0)
-    ctx.translate(20, 20)
-    ctx.lineTo(0, 0)
-    ctx.translate(20, 20)
-    ctx.lineTo(0, 0)
-    ctx.translate(20, 20)
-    ctx.lineTo(0, 0)
-    ctx.translate(20, 20)
-    ctx.lineTo(0, 0)
-    ctx.stroke()
-
     ctx.font = "50px Times New Roman"
 
-
-    ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
-
     ctx.beginPath()
-    nwRect(ctx)
+    nwRectWithTranslate(ctx)
     ctx.closePath()
     ctx.clip()
 
+    ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
+
+    ctx.stroke()
     ctx.fillText("Test", 0.0, 47.0)
 
 </script>

@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.canvas
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.RecursiveComparisonAssert
 import org.assertj.core.util.DoubleComparator
-import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.canvas.Path.Companion.approximateEllipseWithBezierCurve
 import kotlin.test.Test
@@ -24,8 +23,7 @@ class PathTest {
             rotation = 0.0,
             startAngleDeg = 0.0,
             endAngleDeg = 360.0,
-            anticlockwise = false,
-            transform = AffineTransform.IDENTITY,
+            anticlockwise = false
         )
 
         assertControlPoints(cpts, DoubleVector(100.0, 100.0))
@@ -41,8 +39,7 @@ class PathTest {
             rotation = 0.0,
             startAngleDeg = 0.0,
             endAngleDeg = 90.0,
-            anticlockwise = false,
-            transform = AffineTransform.IDENTITY,
+            anticlockwise = false
         )
 
         assertControlPoints(
@@ -64,8 +61,7 @@ class PathTest {
             rotation = 0.0,
             startAngleDeg = 0.0,
             endAngleDeg = 180.0,
-            anticlockwise = false,
-            transform = AffineTransform.IDENTITY,
+            anticlockwise = false
         )
 
         assertControlPoints(
@@ -90,8 +86,7 @@ class PathTest {
             rotation = 0.0,
             startAngleDeg = -90.0,
             endAngleDeg = -180.0,
-            anticlockwise = true,
-            transform = AffineTransform.IDENTITY,
+            anticlockwise = true
         )
 
         assertControlPoints(
@@ -113,8 +108,7 @@ class PathTest {
             rotation = 0.0,
             startAngleDeg = 0.0,
             endAngleDeg = 360.0,
-            anticlockwise = false,
-            transform = AffineTransform.IDENTITY,
+            anticlockwise = false
         )
 
         assertControlPoints(cpts,

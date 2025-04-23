@@ -17,6 +17,14 @@ class Path constructor(){
 
     private val commands = mutableListOf<PathCommand>()
 
+    fun transformed(at: AffineTransform): Path {
+        val transformedPath = Path()
+        for (command in commands) {
+            transformedPath.commands.add(command.transformed(at))
+        }
+        return transformedPath
+    }
+
     fun applyToContext(ctx: Context2d) {
         for (command in commands) {
             when (command) {
@@ -131,16 +139,26 @@ class Path constructor(){
         return this
     }
 
-    sealed class PathCommand
+    sealed class PathCommand {
+        abstract fun transformed(at: AffineTransform): PathCommand
+    }
+
     object ClosePath : PathCommand() {
         override fun toString(): String {
             return "Z"
         }
+
+        override fun transformed(at: AffineTransform): PathCommand = this
     }
 
     class MoveTo(val x: Double, val y: Double) : PathCommand() {
         override fun toString(): String {
             return "M($x, $y)"
+        }
+
+        override fun transformed(at: AffineTransform): PathCommand {
+            val (tx, ty) = at.transform(x, y)
+            return MoveTo(tx, ty)
         }
     }
 
@@ -148,11 +166,21 @@ class Path constructor(){
         override fun toString(): String {
             return "L($x, $y)"
         }
+
+        override fun transformed(at: AffineTransform): PathCommand {
+            val (tx, ty) = at.transform(x, y)
+            return LineTo(tx, ty)
+        }
     }
 
     class BezierCurveTo(val controlPoints: List<DoubleVector>) : PathCommand() {
         override fun toString(): String {
             return "C($controlPoints)"
+        }
+
+        override fun transformed(at: AffineTransform): PathCommand {
+            val transformedPoints = controlPoints.map { at.transform(it) }
+            return BezierCurveTo(transformedPoints)
         }
     }
 
