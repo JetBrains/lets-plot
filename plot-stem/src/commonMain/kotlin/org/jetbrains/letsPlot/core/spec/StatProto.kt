@@ -330,10 +330,13 @@ object StatProto {
 
         return SinaStat(
             scale = scale ?: SinaStat.DEF_SCALE,
+            trim = options.getBoolean(Sina.TRIM, SinaStat.DEF_TRIM),
+            tailsCutoff = options.getDoubleDef(Sina.TAILS_CUTOFF, SinaStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
             kernel = kernel ?: DensityStat.DEF_KERNEL,
+            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
             quantiles = quantiles
         )

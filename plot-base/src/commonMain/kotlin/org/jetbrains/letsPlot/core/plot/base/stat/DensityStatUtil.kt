@@ -43,14 +43,8 @@ object DensityStatUtil {
         overallValuesRange: DoubleSpan,
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
-        valueVarName: DataFrame.Variable = Stats.Y,
-        resetValueRange: Boolean = true
+        valueVarName: DataFrame.Variable = Stats.Y
     ): Map<DataFrame.Variable, List<Double>> {
-        val binnedData = (bins zip (values zip weights))
-            .filter { it.first?.isFinite() == true }
-            .groupBy({ it.first!! }, { it.second })
-            .mapValues { it.value.unzip() }
-
         val statBin = ArrayList<Double>()
         val statValue = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
@@ -58,18 +52,9 @@ object DensityStatUtil {
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
 
-        for ((bin, binData) in binnedData) {
-            val (filteredValue, filteredWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
-            val (binValue, binWeight) = (filteredValue zip filteredWeight)
-                .sortedBy { it.first }
-                .unzip()
-            if (binValue.isEmpty()) continue
-            val binStatValue = if (resetValueRange) {
-                val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
-                createStepValues(valueRange, n)
-            } else {
-                binValue
-            }
+        processBinnedData(bins, values, weights) { bin, binValue, binWeight ->
+            val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
+            val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
                 binValue, binWeight,
                 bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
@@ -95,10 +80,26 @@ object DensityStatUtil {
             Stats.QUANTILE to statQuantile.toList()
         )
 
-        return if (resetValueRange) {
-            expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
-        } else {
-            statData
+        return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
+    }
+
+    fun processBinnedData(
+        bins: List<Double?>,
+        values: List<Double?>,
+        weights: List<Double?>,
+        processor: (Double, List<Double>, List<Double>) -> Unit,
+    ) {
+        val binnedData = (bins zip (values zip weights))
+            .filter { it.first?.isFinite() == true }
+            .groupBy({ it.first!! }, { it.second })
+            .mapValues { it.value.unzip() }
+        for ((bin, binData) in binnedData) {
+            val (filteredValue, filteredWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
+            val (binValue, binWeight) = (filteredValue zip filteredWeight)
+                .sortedBy { it.first }
+                .unzip()
+            if (binValue.isEmpty()) continue
+            processor(bin, binValue, binWeight)
         }
     }
 
