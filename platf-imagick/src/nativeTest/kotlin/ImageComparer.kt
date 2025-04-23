@@ -12,14 +12,14 @@ class ImageComparer(
     private val outDir: String,
 ) {
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
-        val expectedPath = expectedDir + expectedFileName
         val testName = expectedFileName.removeSuffix(".bmp")
+        val expectedPath = expectedDir + expectedFileName
+        val actualFilePath = outDir + "${testName}.bmp"
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
         if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
             println(getMagickError(expectedWand))
             // Write the  actual image to a file for debugging
-            val actualFilePath = outDir + "${testName}.bmp"
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(actualWand))
             } else {
@@ -38,9 +38,18 @@ class ImageComparer(
             val diffWand = composeVisualDiff(expectedWand, actualWand, createDiffImage(expected, actual, width, height))
             if (ImageMagick.MagickWriteImage(diffWand, diffFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(diffWand))
+                error("Failed to write diff image")
             }
 
-            error("Image mismatch. See diff:\nfile:/$diffFilePath")
+            if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
+                println(getMagickError(actualWand))
+                error("Failed to write actual image")
+            }
+
+            error("""Image mismatch.
+                |    Diff: $diffFilePath
+                |    Actual: $actualFilePath""".trimMargin()
+            )
         }
     }
 

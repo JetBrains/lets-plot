@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
+    Your browser does not support the HTML canvas tag.</canvas>
+
+<script>
+    function nwRect(ctx) {
+        ctx.moveTo(0, 0)
+        ctx.lineTo(50, 0)
+        ctx.lineTo(50, 50)
+        ctx.lineTo(0, 50)
+    }
+
+    const PI = Math.PI;
+    const c = document.getElementById("myCanvas");
+    const ctx = c.getContext("2d");
+
+
+    ctx.fillStyle = "black"
+    ctx.strokeStyle = "black"
+    ctx.font = "50px Times New Roman"
+
+
+    ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
+
+    ctx.beginPath()
+    nwRect(ctx)
+    ctx.closePath()
+    ctx.clip()
+
+    ctx.fillText("Test", 0.0, 47.0)
+
+</script>
+
+</body>
+</html>
+

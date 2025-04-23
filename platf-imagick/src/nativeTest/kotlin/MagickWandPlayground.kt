@@ -9,7 +9,7 @@ import kotlin.test.Test
  */
 
 // This test class is used to demonstrate the usage of the ImageMagick library
-class MagickWandSandbox {
+class MagickWandPlayground {
     @OptIn(ExperimentalStdlibApi::class)
     @Ignore
     @Test

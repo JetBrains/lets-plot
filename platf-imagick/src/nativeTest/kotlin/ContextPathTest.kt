@@ -1,6 +1,4 @@
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.core.canvas.Context2d
+
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
@@ -13,7 +11,7 @@ import kotlin.test.Test
  */
 
 
-class MagickContext2dTest {
+class ContextPathTest {
     private val outDir: String = getCurrentDir() + "/build/image-test/"
     private val w = 100.0
     private val h = 100.0
@@ -32,175 +30,6 @@ class MagickContext2dTest {
         return canvas to canvas.context2d as MagickContext2d
     }
 
-    @Test
-    fun cliPath_withTransform() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "black"
-        ctx.translate(25.0, 0.0)
-
-        ctx.beginPath()
-        ctx.moveTo(0.0, 0.0)
-        ctx.lineTo(w, 0.0)
-        ctx.lineTo(w, h / 2)
-        ctx.lineTo(0.0, h / 2)
-        ctx.closePath()
-        ctx.clip()
-
-        ctx.beginPath()
-        ctx.moveTo(w / 2, 0.0)
-        ctx.lineTo(w, h)
-        ctx.lineTo(0.0, h)
-        ctx.fill()
-
-        imageComparer.assertImageEquals("clip_transform.bmp", canvas.wand!!)
-    }
-
-
-    @Test
-    fun cliPath_text() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "black"
-        ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
-
-        //ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
-
-        ctx.beginPath()
-        ctx.moveTo(w * 0.5, h * 0.5)
-        ctx.lineTo(w * 0.5, h * 0.5 - 30)
-        ctx.lineTo(w * 0.5 + 35, h * 0.5 - 30)
-        ctx.lineTo(w * 0.5 + 35, h * 0.5)
-        ctx.closePath()
-        ctx.stroke()
-        ctx.clip()
-
-
-        ctx.fillText("Test", w * 0.5, h * 0.5)
-
-        imageComparer.assertImageEquals("clip_text.bmp", canvas.wand!!)
-    }
-
-    @Test
-    fun cliPath_textWithTransform() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "black"
-        ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
-
-        ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
-
-        ctx.beginPath()
-        ctx.moveTo(w * 0.5, h * 0.5)
-        ctx.lineTo(w * 0.5, h * 0.5 - 30)
-        ctx.lineTo(w * 0.5 + 35, h * 0.5 - 30)
-        ctx.lineTo(w * 0.5 + 35, h * 0.5)
-        ctx.closePath()
-        ctx.stroke()
-        ctx.clip()
-
-
-        ctx.fillText("Test", w * 0.5, h * 0.5)
-
-        imageComparer.assertImageEquals("clip_text_transform.bmp", canvas.wand!!)
-    }
-
-    @Test
-    fun clipPath_shouldRenderPathIfBeginPathIsNotCalled() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "black"
-        ctx.beginPath()
-        ctx.moveTo(0.0, 0.0)
-        ctx.lineTo(50.0, 0.0)
-        ctx.lineTo(50.0, 50.0)
-        ctx.lineTo(0.0, 50.0)
-        ctx.closePath()
-        ctx.clip()
-
-        ctx.fill()
-        imageComparer.assertImageEquals("clip_fill.bmp", canvas.wand!!)
-    }
-
-    @Test
-    fun clipPath_simple() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "black"
-        ctx.beginPath()
-        ctx.moveTo(0.0, 0.0)
-        ctx.lineTo(50.0, 0.0)
-        ctx.lineTo(50.0, 50.0)
-        ctx.lineTo(0.0, 50.0)
-        ctx.closePath()
-        ctx.clip()
-
-        ctx.beginPath()
-        ctx.arc(50.0, 50.0, 50.0, 0.0, 2 * PI)
-        ctx.fill()
-        imageComparer.assertImageEquals("simple_clip.bmp", canvas.wand!!)
-    }
-
-    @Test
-    fun clipPath_twoClippingPolygons() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "black"
-        ctx.beginPath()
-        ctx.moveTo(0.0, 0.0)
-        ctx.lineTo(50.0, 0.0)
-        ctx.lineTo(50.0, 50.0)
-        ctx.lineTo(0.0, 50.0)
-
-        ctx.moveTo(50.0, 50.0)
-        ctx.lineTo(100.0, 50.0)
-        ctx.lineTo(100.0, 100.0)
-        ctx.lineTo(50.0, 100.0)
-        ctx.closePath()
-        ctx.clip()
-
-        ctx.beginPath()
-        ctx.arc(50.0, 50.0, 50.0, 0.0, 2 * PI)
-        ctx.fill()
-        imageComparer.assertImageEquals("double_move_to_clip.bmp", canvas.wand!!)
-    }
-
-    @Test
-    fun clipPath_afterRestoreShouldNotClip() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = "rgba(0, 0, 0, 0.5)"
-        ctx.save()
-        ctx.beginPath()
-        ctx.moveTo(0.0, 0.0)
-        ctx.lineTo(w, 0.0)
-        ctx.lineTo(w, h / 2)
-        ctx.lineTo(0.0, h / 2)
-        ctx.closePath()
-        ctx.clip()
-
-        // draws the upper half of the triangle - the lower half is clipped
-        ctx.beginPath()
-        ctx.moveTo(w / 2, 0.0)
-        ctx.lineTo(w, h)
-        ctx.lineTo(0.0, h)
-        ctx.fill()
-
-        // disables clipping
-        ctx.restore()
-
-        // draw the same triangle again - this time it should be visible
-        // the upper half should be darker because of the previous fill
-        ctx.beginPath()
-        ctx.moveTo(w / 2, 0.0)
-        ctx.lineTo(w, h)
-        ctx.lineTo(0.0, h)
-        ctx.fill()
-
-        imageComparer.assertImageEquals("clip_reset.bmp", canvas.wand!!)
-    }
 
     @Test
     fun shearedEllipse() {
@@ -610,40 +439,6 @@ class MagickContext2dTest {
             expectedFileName = "simple_bezier_curve.bmp",
             actualWand = canvas.wand!!
         )
-    }
-
-    companion object {
-        var Context2d.lineWidth: Double
-            get() = error("lineWidth is write only")
-            set(value) {
-                setLineWidth(value)
-            }
-
-        var Context2d.fillStyle: Any?
-            get() = error("fillStyle is write only")
-            set(value) {
-                val color = when (value) {
-                    is Color -> value
-                    is String -> Colors.parseColor(value)
-                    null -> null
-                    else -> error("Unsupported fill style: $value")
-                }
-
-                setFillStyle(color)
-            }
-
-        var Context2d.strokeStyle: Any?
-            get() = error("strokeStyle is write only")
-            set(value) {
-                val color = when (value) {
-                    is Color -> value
-                    is String -> Colors.parseColor(value)
-                    null -> null
-                    else -> error("Unsupported fill style: $value")
-                }
-
-                setStrokeStyle(color)
-            }
     }
 
 }
