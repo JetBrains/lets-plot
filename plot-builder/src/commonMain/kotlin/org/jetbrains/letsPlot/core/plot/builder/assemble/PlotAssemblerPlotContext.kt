@@ -33,7 +33,7 @@ internal class PlotAssemblerPlotContext constructor(
     override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String {
         checkPositionalAes(aes)
         return tooltipFormatters.getOrPut(aes) {
-            TooltipFormatting.createFormatter(aes, this)
+            TooltipFormatting.fromScale(aes, this)
         }
     }
 

@@ -6,7 +6,7 @@
 package demo.common.utils.swingCanvas
 
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
-import org.jetbrains.letsPlot.raster.builderLW.MonolithicSkiaLW
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
@@ -85,7 +85,7 @@ class PlotSpecsDemoWindowSwingCanvas(
     ): JComponent {
         val rawSpec = this
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-        val vm = MonolithicSkiaLW.buildPlotFromProcessedSpecs(
+        val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
             processedSpec,
             computationMessagesHandler
         )

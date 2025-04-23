@@ -72,13 +72,10 @@ abstract class PlotGeomTilesBase(
             scaleMap: Map<Aes<*>, Scale>
         ): DoubleSpan {
 
-            fun isMatching(v: DataFrame.Variable, aes: Aes<*>, isYOrientation: Boolean): Boolean {
+            fun isMatching(v: DataFrame.Variable, aes: Aes<*>): Boolean {
                 val varAes = TransformVar.toAes(v)
                 return when {
-                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(
-                        varAes,
-                        isYOrientation
-                    ) == aes // collecting pos variables
+                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(varAes) == aes // collecting pos variables
                     else -> varAes == aes
                 }
             }
@@ -87,7 +84,7 @@ abstract class PlotGeomTilesBase(
             for (layer in layersByTile.flatten()) {
                 val variables = layer.dataFrame.variables()
                     .filter { it.isTransform }
-                    .filter { isMatching(it, aes, layer.isYOrientation) }
+                    .filter { isMatching(it, aes) }
 
                 for (transformVar in variables) {
                     layer.dataFrame.range(transformVar)?.let {

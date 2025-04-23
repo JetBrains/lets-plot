@@ -10,12 +10,17 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCo
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.SimpleCollectionProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgTSpanElementAttrMapping
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgTextElementAttrMapping
-import org.jetbrains.letsPlot.raster.shape.*
+import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.shape.TSpan
+import org.jetbrains.letsPlot.raster.shape.Text
 
 internal class SvgTextElementMapper(
     source: SvgTextElement,
@@ -170,5 +175,17 @@ internal class SvgTextElementMapper(
                 SvgTextElementAttrMapping.setAttribute(target, name, value)
             }
         }
+
+        fun toFontStyle(face: FontFace): FontStyle =
+            when (face.italic) {
+                true -> FontStyle.ITALIC
+                false -> FontStyle.NORMAL
+            }
+
+        fun toFontWeight(face: FontFace): FontWeight =
+            when (face.bold) {
+                true -> FontWeight.BOLD
+                false -> FontWeight.NORMAL
+            }
     }
 }

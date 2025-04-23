@@ -5,9 +5,9 @@
 
 package demo.plot
 
+import demo.savePlot
 import demoAndTestShared.parsePlotSpec
 import kotlinx.cinterop.ExperimentalForeignApi
-import savePlot
 
 object BarPlotMagickCanvasDemo {
     @OptIn(ExperimentalForeignApi::class)

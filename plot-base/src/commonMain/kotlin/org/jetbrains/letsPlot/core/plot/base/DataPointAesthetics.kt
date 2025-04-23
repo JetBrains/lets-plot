@@ -125,6 +125,18 @@ abstract class DataPointAesthetics {
         return get(Aes.UPPER)
     }
 
+    fun xlower(): Double? {
+        return get(Aes.XLOWER)
+    }
+
+    fun xmiddle(): Double? {
+        return get(Aes.XMIDDLE)
+    }
+
+    fun xupper(): Double? {
+        return get(Aes.XUPPER)
+    }
+
     fun sample(): Double? {
         return get(Aes.SAMPLE)
     }

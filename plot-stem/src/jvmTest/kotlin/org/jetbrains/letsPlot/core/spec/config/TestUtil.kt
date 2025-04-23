@@ -6,16 +6,33 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 object TestUtil {
-    fun assertClientWontFail(opts: Map<String, Any>): PlotConfigFrontend {
-        return PlotConfigFrontend.create(opts) {}
+    fun assertPlotWontFail(plotSpecProcessed: Map<String, Any>) {
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
+            plotSpecProcessed,
+            containerSize = DoubleVector(600, 400),
+            sizingPolicy = SizingPolicy.notebookCell()
+        )
+
+        if (buildResult.isError) {
+            val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
+            fail("Error when building plot: $errorMessage")
+        }
+    }
+
+    fun createPlotConfigFrontend(plotSpecProcessed: Map<String, Any>): PlotConfigFrontend {
+        return PlotConfigFrontend.create(plotSpecProcessed) {}
     }
 
     fun getPlotData(plotSpec: Map<String, Any>): Map<String, Any> {
@@ -45,7 +62,7 @@ object TestUtil {
     }
 
     fun checkOptionsFrontend(opts: Map<String, Any>, expectedNumLayers: Int) {
-        val plotConfigFrontend = assertClientWontFail(opts)
+        val plotConfigFrontend = createPlotConfigFrontend(opts)
         assertEquals(expectedNumLayers, plotConfigFrontend.layerConfigs.size)
     }
 

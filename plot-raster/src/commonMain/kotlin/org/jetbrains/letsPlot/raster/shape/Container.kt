@@ -64,7 +64,7 @@ internal abstract class Container : Element() {
                 .filterNot { it is Container && it.children.isEmpty() }
                 .map(Element::screenBounds)
                 .let(::union)
-                ?: DoubleRectangle.XYWH(ctm.translateX, ctm.translateY, 0, 0)
+                ?: DoubleRectangle.XYWH(ctm.tx, ctm.ty, 0, 0)
         }
 
 

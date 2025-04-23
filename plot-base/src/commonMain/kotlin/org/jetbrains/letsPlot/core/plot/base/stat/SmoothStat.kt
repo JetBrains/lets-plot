@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -13,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.stat.regression.LinearRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LocalPolynomialRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.PolynomialRegression
 import org.jetbrains.letsPlot.core.plot.base.util.SamplingUtil
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.random.Random
 
 
@@ -140,7 +140,7 @@ class SmoothStat constructor(
             }
         }
 
-        SeriesUtil.range(valuesX) ?: return withEmptyStatValues()
+        DoubleSpan.encloseAllQ(valuesX) ?: return withEmptyStatValues()
 
         // do stat for each group separately
 
@@ -202,15 +202,17 @@ class SmoothStat constructor(
                     PolynomialRegression.fit(valuesX, valuesY, confidenceLevel, polynomialDegree)
                 }
             }
+
             Method.LOESS -> {
                 LocalPolynomialRegression.fit(valuesX, valuesY, confidenceLevel, span)
             }
+
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )
         } ?: return result
 
-        val rangeX = SeriesUtil.range(valuesX) ?: return result
+        val rangeX = DoubleSpan.encloseAllQ(valuesX) ?: return result
 
         val startX = rangeX.lowerEnd
         val spanX = rangeX.upperEnd - startX

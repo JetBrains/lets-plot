@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.affineTransform
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
@@ -23,7 +24,6 @@ import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
 import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
 import org.jetbrains.letsPlot.raster.shape.Pane
-import org.jetbrains.letsPlot.raster.shape.transform
 import kotlin.math.ceil
 
 class SvgCanvasFigure(
@@ -80,7 +80,7 @@ class SvgCanvasFigure(
         }
 
         canvas.context2d.save()
-        canvas.context2d.transform(element.transform)
+        canvas.context2d.affineTransform(element.transform)
 
         //element.clipPath?.let(canvas::clipPath)
         //val globalAlphaSet = element.opacity?.let {

@@ -55,7 +55,7 @@ abstract class LegendBox : SvgComponent() {
         val l = spec.layout
 
         val titleBoundingRect = let {
-            if (!hasTitle()) return@let DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            if (!hasTitle()) return@let DoubleRectangle.ZERO
 
             val titleRectSize = when {
                 l.isHorizontal -> {

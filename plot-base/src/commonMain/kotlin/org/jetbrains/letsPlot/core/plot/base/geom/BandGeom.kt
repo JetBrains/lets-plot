@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection
@@ -20,17 +19,13 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 /*
   For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
+
+  Instead of using this parameter, 'band' could be added to the list of orientable geoms in the LayerConfig::isOrientationApplicable(),
+  but it's hard to get the correct behavior with polar coordinates that way.
 */
 class BandGeom(private val isVertical: Boolean) : GeomBase() {
-    private val flipHelper = FlippableGeomHelper(isVertical)
-
-    private val yMinAes = flipHelper.getEffectiveAes(Aes.YMIN)
-    private val yMaxAes = flipHelper.getEffectiveAes(Aes.YMAX)
-
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.XMIN, Aes.XMAX).map(flipHelper::getEffectiveAes)
-        }
+    private val yMinAes = if (isVertical) Aes.YMIN else Aes.XMIN
+    private val yMaxAes = if (isVertical) Aes.YMAX else Aes.XMAX
 
     override fun buildIntern(
         root: SvgRoot,

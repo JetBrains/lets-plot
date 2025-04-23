@@ -8,13 +8,11 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
 interface MappedDataAccess {
-    val isYOrientation: Boolean
-
     fun isMapped(aes: Aes<*>): Boolean
 
     fun getOriginalValue(aes: Aes<*>, index: Int): Any?
 
-//    fun getMappedDataValue(aes: Aes<*>, index: Int, ctx: PlotContext): String
+    fun getTransformedValue(aes: Aes<*>, index: Int): Double?
 
     fun getMappedDataLabel(aes: Aes<*>): String
 

@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
-import org.jetbrains.letsPlot.raster.builderLW.MonolithicSkiaLW
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 object PlotReprGenerator {
@@ -151,7 +151,7 @@ object PlotReprGenerator {
                 frontendOnly = false
             )
 
-            val vm = MonolithicSkiaLW.buildPlotFromProcessedSpecs(
+            val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
                 plotSpec = processedSpec,
                 computationMessagesHandler = { println(it.joinToString("\n")) }
             )

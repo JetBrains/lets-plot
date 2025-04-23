@@ -27,7 +27,8 @@ typealias AwtFont = Font
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath = GeneralPath()
     private var state = ContextState()
-    private val stack = ArrayList<ContextState>()
+    private val stateStack = ArrayList<ContextState>()
+    private var clipStack = ArrayList<GeneralPath>()
 
     init {
         RenderingHints(
@@ -43,6 +44,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     internal data class ContextState(
+        var numClipPath: Int = 0,
         var strokeColor: AwtColor = AwtColor.BLACK,
         var fillColor: AwtColor = AwtColor.BLACK,
         var stroke: BasicStroke = BasicStroke(),
@@ -134,9 +136,17 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath.closePath()
     }
 
+    override fun clip() {
+        clipStack.add(currentPath)
+        state.numClipPath = clipStack.size
+        graphics.clip = currentPath
+    }
+
     override fun stroke() {
         graphics.color = state.strokeColor
-        graphics.strokePath(currentPath)
+        graphics.stroke = state.stroke.copy(width = (state.stroke.lineWidth * minOf(state.transform.scaleX, state.transform.scaleY)).toFloat())
+        graphics.paintPath(currentPath, Graphics2D::draw)
+        graphics.stroke = state.stroke
     }
 
     override fun fill() {
@@ -193,8 +203,26 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath.append(path, true)
     }
 
-    override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
-        val path = buildArc(x, y, radiusX, radiusY, toDegrees(rotation), toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
+    override fun ellipse(
+        x: Double,
+        y: Double,
+        radiusX: Double,
+        radiusY: Double,
+        rotation: Double,
+        startAngle: Double,
+        endAngle: Double,
+        anticlockwise: Boolean
+    ) {
+        val path = buildArc(
+            x,
+            y,
+            radiusX,
+            radiusY,
+            toDegrees(rotation),
+            toDegrees(startAngle),
+            toDegrees(endAngle),
+            anticlockwise
+        )
         currentPath.append(path, true)
     }
 
@@ -243,20 +271,25 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun save() {
-        stack.add(state.copy())
+        stateStack.add(state.copy())
     }
 
     override fun restore() {
-        stack.lastOrNull()
+        stateStack.lastOrNull()
             ?.let {
                 state = it
 
+                if (state.numClipPath < clipStack.size) {
+                    clipStack.subList(state.numClipPath, clipStack.size).clear()
+                }
+
+                graphics.clip = clipStack.lastOrNull()
                 graphics.transform = state.transform
                 graphics.stroke = state.stroke
                 graphics.font = state.font
                 graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
 
-                stack.removeAt(stack.lastIndex)
+                stateStack.removeAt(stateStack.lastIndex)
             }
     }
 
@@ -279,7 +312,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun setLineWidth(lineWidth: Double) {
-        state.stroke = state.stroke.change(
+        state.stroke = state.stroke.copy(
             width = lineWidth.toFloat()
         )
 
@@ -320,14 +353,15 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         state.transform = graphics.transform
     }
 
-    override fun transform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        val tx = AffineTransform(m11, m21, m12, m22, dx, dy)
-        graphics.transform(tx)
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
+        val t = AffineTransform(sx, ry, rx, sy, tx, ty)
+
+        graphics.transform(t)
         state.transform = graphics.transform
     }
 
     override fun setLineJoin(lineJoin: LineJoin) {
-        state.stroke = state.stroke.change(
+        state.stroke = state.stroke.copy(
             join = convertLineJoin(lineJoin)
         )
 
@@ -335,7 +369,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun setLineCap(lineCap: LineCap) {
-        state.stroke = state.stroke.change(
+        state.stroke = state.stroke.copy(
             cap = convertLineCap(lineCap)
         )
 
@@ -343,7 +377,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun setStrokeMiterLimit(miterLimit: Double) {
-        state.stroke = state.stroke.change(
+        state.stroke = state.stroke.copy(
             miterlimit = miterLimit.toFloat()
         )
 
@@ -358,13 +392,13 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         state.textAlign = align
     }
 
-    override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
-        graphics.transform = AffineTransform(m11, m12, m21, m22, dx, dy)
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        graphics.transform = AffineTransform(m00, m10, m01, m11, m02, m12)
         state.transform = graphics.transform
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
-        state.stroke = state.stroke.change(
+        state.stroke = state.stroke.copy(
             dash = if (lineDash.isEmpty()) null else lineDash.map(Double::toFloat).toFloatArray()
         )
 
@@ -372,7 +406,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun setLineDashOffset(lineDashOffset: Double) {
-        state.stroke = state.stroke.change(
+        state.stroke = state.stroke.copy(
             dashPhase = lineDashOffset.toFloat()
         )
 
@@ -403,10 +437,6 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
         private fun Graphics2D.fillPath(path: Path2D) {
             paintPath(path, Graphics2D::fill)
-        }
-
-        private fun Graphics2D.strokePath(path: Path2D) {
-            paintPath(path, Graphics2D::draw)
         }
 
         private fun Color.toAwtColor(): AwtColor {
@@ -443,7 +473,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
             }
         }
 
-        private fun BasicStroke.change(
+        private fun BasicStroke.copy(
             width: Float = this.lineWidth,
             join: Int = this.lineJoin,
             cap: Int = this.endCap,

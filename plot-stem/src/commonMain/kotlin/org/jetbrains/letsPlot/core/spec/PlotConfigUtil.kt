@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -183,7 +182,7 @@ internal object PlotConfigUtil {
             val filtered = data.getNumeric(variable).filter {
                 transform.isInDomain(it)
             }
-            SeriesUtil.range(filtered)
+            DoubleSpan.encloseAllQ(filtered)
         }
     }
 

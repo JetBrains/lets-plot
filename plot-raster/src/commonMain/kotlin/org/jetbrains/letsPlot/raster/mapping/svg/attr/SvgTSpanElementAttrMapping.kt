@@ -6,8 +6,11 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.toColor
 import org.jetbrains.letsPlot.raster.shape.TSpan
 import org.jetbrains.letsPlot.raster.shape.Text.BaselineShift
@@ -21,7 +24,9 @@ internal object SvgTSpanElementAttrMapping : SvgShapeMapping<TSpan>() {
             SvgShape.STROKE.name -> target.stroke = toColor(value)
             //SvgShape.STROKE_OPACITY.name -> target.strokeOpacity = value!!.asFloat
             SvgShape.STROKE_WIDTH.name -> target.strokeWidth = value!!.asFloat
-            "font-size" -> {
+
+            SvgTextContent.FONT_FAMILY.name -> target.fontFamily = value?.asFontFamily ?: DEFAULT_FONT_FAMILY
+            SvgTextContent.FONT_SIZE.name -> {
                 require(value is String) { "font-size: only string value is supported" }
                 target.fontScale = when {
                     "em" in value -> value.removeSuffix("em").toFloat()
@@ -29,15 +34,18 @@ internal object SvgTSpanElementAttrMapping : SvgShapeMapping<TSpan>() {
                     else -> 1f
                 }
             }
-            "font-family" -> target.fontFamily = value?.asFontFamily ?: DEFAULT_FONT_FAMILY
-
-            "baseline-shift" -> target.baselineShift = when (value) {
-                "sub" -> BaselineShift.SUB
-                "super" -> BaselineShift.SUPER
-                else -> error("Unexpected baseline-shift value: $value")
+            SvgTextContent.FONT_WEIGHT.name -> target.fontWeight = when (value) {
+                "normal" -> FontWeight.NORMAL
+                "bold" -> FontWeight.BOLD
+                else -> error("Unexpected font-weight value: $value")
             }
 
-            "dy" -> {
+            SvgTextContent.FONT_STYLE.name -> target.fontStyle = when (value) {
+                "normal" -> FontStyle.NORMAL
+                "italic" -> FontStyle.ITALIC
+                else -> error("Unexpected font-style value: $value")
+            }
+            SvgTextContent.TEXT_DY.name -> {
                 require(value is String) { "dy: only string value is supported" }
                 target.dy = when {
                     "em" in value -> value.removeSuffix("em").toFloat()
@@ -45,6 +53,13 @@ internal object SvgTSpanElementAttrMapping : SvgShapeMapping<TSpan>() {
                     else -> 0f
                 }
             }
+
+            SvgTSpanElement.BASELINE_SHIFT.name -> target.baselineShift = when (value) {
+                "sub" -> BaselineShift.SUB
+                "super" -> BaselineShift.SUPER
+                else -> error("Unexpected baseline-shift value: $value")
+            }
+
             else -> super.setAttribute(target, name, value)
         }
     }

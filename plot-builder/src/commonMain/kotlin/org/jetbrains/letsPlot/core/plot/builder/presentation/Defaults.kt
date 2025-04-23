@@ -91,7 +91,10 @@ object Defaults {
 
             const val AXIS_TOOLTIP_FONT_SIZE = Plot.Axis.TICK_FONT_SIZE
             val AXIS_TOOLTIP_COLOR = Plot.Axis.LINE_COLOR
-            const val AXIS_RADIUS = 1.5 // fix a tooltip border overlapping an axis
+
+            // Consider to remove.
+            // was 1.5 to fix a tooltip border overlapping an axis, but now TipLayoutHint has stroke property
+            const val AXIS_RADIUS = 0.0
 
             const val ROTATION_ANGLE = 15.0
         }

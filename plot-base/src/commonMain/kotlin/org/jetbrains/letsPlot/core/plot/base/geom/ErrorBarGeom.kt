@@ -11,38 +11,20 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
-class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, WithHeight {
+class ErrorBarGeom : GeomBase(), WithWidth {
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
-
-    private val flipHelper = FlippableGeomHelper(isVertical)
-
-    private fun afterRotation(aes: Aes<Double>): Aes<Double> {
-        return flipHelper.getEffectiveAes(aes)
-    }
-
-    private fun afterRotation(rectangle: DoubleRectangle): DoubleRectangle {
-        return flipHelper.flip(rectangle)
-    }
-
-    private fun afterRotation(segment: DoubleSegment): DoubleSegment {
-        return flipHelper.flip(segment)
-    }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = ErrorBarLegendKeyElementFactory()
-
-    override val wontRender: List<Aes<*>>
-        get() {
-            return listOf(Aes.Y, Aes.XMIN, Aes.XMAX).map(::afterRotation)
-        }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -51,55 +33,43 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val xAes = afterRotation(Aes.X)
-        val minAes = afterRotation(Aes.YMIN)
-        val maxAes = afterRotation(Aes.YMAX)
-
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
+        val tooltipHelper = RectangleTooltipHelper(
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            hintAesList = listOf(Aes.YMIN, Aes.YMAX),
+            colorMarkerMapper = colorsByDataPoint
+        )
 
         for (p in aesthetics.dataPoints()) {
-            val x = p.finiteOrNull(xAes) ?: continue
-            val ymin = p.finiteOrNull(minAes) ?: continue
-            val ymax = p.finiteOrNull(maxAes) ?: continue
+            val x = p.finiteOrNull(Aes.X) ?: continue
+            val ymin = p.finiteOrNull(Aes.YMIN) ?: continue
+            val ymax = p.finiteOrNull(Aes.YMAX) ?: continue
 
             val width = widthOrNull(p, geomHelper) ?: continue
             val height = ymax - ymin
 
             val rect = DoubleRectangle(x - width / 2, ymin, width, height)
-            val segments = errorBarShapeSegments(rect).map(::afterRotation)
+            val segments = errorBarShapeSegments(rect)
             val g = errorBarShape(segments, p, geomHelper)
             root.add(g)
         }
         // tooltip
-        flipHelper.buildHints(
-            listOf(minAes, maxAes),
-            aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(geomHelper),
-            { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
-        )
+        val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, rectByDataPoint(geomHelper))
+        hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
     }
 
-    private fun clientRectByDataPoint(
-        geomHelper: GeomHelper
-    ): (DataPointAesthetics) -> DoubleRectangle? {
+    private fun rectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
-            val xAes = afterRotation(Aes.X)
-            val minAes = afterRotation(Aes.YMIN)
-            val maxAes = afterRotation(Aes.YMAX)
-
-            val x = p.finiteOrNull(xAes) ?: return null
-            val ymin = p.finiteOrNull(minAes) ?: return null
-            val ymax = p.finiteOrNull(maxAes) ?: return null
+            val x = p.finiteOrNull(Aes.X) ?: return null
+            val ymin = p.finiteOrNull(Aes.YMIN) ?: return null
+            val ymax = p.finiteOrNull(Aes.YMAX) ?: return null
             val width = widthOrNull(p, geomHelper) ?: return null
 
             val height = ymax - ymin
-            val rect = geomHelper.toClient(
-                afterRotation(DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)),
-                p
-            )!!
-            return rect
+            return DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)
         }
 
         return ::factory
@@ -110,7 +80,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         helper: GeomHelper
     ): Double? {
         val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-        return width * helper.getUnitResolution(widthUnit, afterRotation(Aes.X))
+        return width * helper.getUnitResolution(widthUnit, Aes.X)
     }
 
     override fun widthSpan(
@@ -119,25 +89,6 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase(), WithWidth, Wit
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
-        // widthSpan() should only be used when error bar is vertical.
-        if (!isVertical) {
-            return null
-        }
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
-    }
-
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        // Since both WithWidth and WithHeight interfaces are available, to prevent breaking the axis range,
-        // heightSpan() should only be used when error bar is horizontal.
-        if (isVertical) {
-            return null
-        }
         return DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, widthUnit)
     }
 

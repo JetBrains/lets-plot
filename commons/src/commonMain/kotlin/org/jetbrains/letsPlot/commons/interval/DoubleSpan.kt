@@ -104,14 +104,20 @@ class DoubleSpan(
         fun withUpperEnd(upperEnd: Double, length: Double) = DoubleSpan(upperEnd - length, upperEnd)
         fun singleton(v: Double) = DoubleSpan(v, v)
 
-        fun encloseAll(values: Iterable<Double?>): DoubleSpan {
-            val min = values.filterNotNull().minOrNull()
-            val max = values.filterNotNull().maxOrNull()
-            return if (min != null && max != null) {
-                DoubleSpan(min, max)
-            } else {
-                throw NoSuchElementException("Can't create DoubleSpan: the input is empty or contains NULLs.")
+        fun encloseAllQ(values: Iterable<Double?>): DoubleSpan? {
+            val (min, max) = values.filterNotNull().filter { it.isFinite() }.let {
+                Pair(it.minOrNull(), it.maxOrNull())
             }
+            return if (min == null || max == null) {
+                null
+            } else {
+                DoubleSpan(min, max)
+            }
+        }
+
+        fun encloseAll(values: Iterable<Double?>): DoubleSpan {
+            return encloseAllQ(values.toList())
+                ?: throw NoSuchElementException("Can't create DoubleSpan: the input is empty or contains NULLs.")
         }
     }
 }

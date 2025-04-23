@@ -16,6 +16,7 @@ interface LineSpec {
         val value: String,
         val aes: Aes<*>?,
         val isAxis: Boolean,
-        val isSide: Boolean
+        val isSide: Boolean,
+        val isBlank: Boolean = false,
     )
 }

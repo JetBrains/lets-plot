@@ -46,7 +46,7 @@ object TestUtil {
         override fun titleStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
         override fun titleMargins() = Thickness()
-        override fun lineWidth() = TODO("Not yet implemented")
+        override fun lineWidth() = 1.0
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
         override fun lineType() = NamedLineType.SOLID

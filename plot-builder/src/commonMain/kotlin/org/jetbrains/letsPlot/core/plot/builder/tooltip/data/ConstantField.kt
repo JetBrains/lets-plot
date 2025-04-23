@@ -20,14 +20,12 @@ class ConstantField(
 ) : ValueSource {
 
     private var formattedValue: String? = null
-    private var isYOrientation: Boolean? = null
     private var myDataLabel: String? = label
 
     override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
-        isYOrientation = mappedDataAccess.isYOrientation
         if (myDataLabel == null) {
             myDataLabel = if (mappedDataAccess.isMapped(aes)) {
                 mappedDataAccess.getMappedDataLabel(aes)
@@ -53,7 +51,7 @@ class ConstantField(
             StringFormat.forOneArg(format, expFormat = ctx.expFormat).format(value)
         } ?: run {
             val tooltipAes = when {
-                Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, isYOrientation!!)
+                Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes)
                 else -> aes
             }
 

@@ -45,7 +45,7 @@ internal class VerticalRotatedLabelsLayout(
             GeometryUtil.union(b, acc)
         }
             ?: // labels can be empty so bounds may be null, it is safe to use empty rect
-            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            DoubleRectangle.ZERO
 	    
         val maxLabelWidth = labelBoundsList.maxOf { it.width }
 

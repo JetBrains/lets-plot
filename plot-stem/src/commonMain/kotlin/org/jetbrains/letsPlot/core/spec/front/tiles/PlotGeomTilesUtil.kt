@@ -35,8 +35,7 @@ internal object PlotGeomTilesUtil {
         val layerCommonScales = when (layerConfig.isMarginal) {
             true -> MarginalLayerUtil.toMarginalScaleMap(
                 commonScales,
-                layerConfig.marginalSide,
-                flipOrientation = false    // Positional aes are already flipped in the "common scale map".
+                layerConfig.marginalSide
             )
 
             false -> commonScales
@@ -44,14 +43,12 @@ internal object PlotGeomTilesUtil {
 
         val layerAddedScales = createScalesForPositionalStatVariables(
             layerConfig.varBindings,
-            layerConfig.isYOrientation,
             commonScales
         ).let { scaleByAes ->
             when (layerConfig.isMarginal) {
                 true -> MarginalLayerUtil.toMarginalScaleMap(
                     scaleByAes,
-                    layerConfig.marginalSide,
-                    flipOrientation = layerConfig.isYOrientation
+                    layerConfig.marginalSide
                 )
 
                 false -> scaleByAes
@@ -63,7 +60,6 @@ internal object PlotGeomTilesUtil {
 
     private fun createScalesForPositionalStatVariables(
         layerVarBindings: List<VarBinding>,
-        isYOrientation: Boolean,
         commonScaleMap: Map<Aes<*>, Scale>,
     ): Map<Aes<*>, Scale> {
         val statPositionalBindings =
@@ -72,9 +68,10 @@ internal object PlotGeomTilesUtil {
                 .filter { Aes.isPositionalXY(it.aes) }
 
         return statPositionalBindings.associate { binding ->
-            val positionalAes = when (isYOrientation) {
-                true -> if (Aes.isPositionalX(binding.aes)) Aes.Y else Aes.X
-                false -> if (Aes.isPositionalX(binding.aes)) Aes.X else Aes.Y
+            val positionalAes = when {
+                Aes.isPositionalX(binding.aes) -> Aes.X
+                Aes.isPositionalY(binding.aes) -> Aes.Y
+                else -> throw IllegalStateException("Positional aes expected but was ${binding.aes}.")
             }
             val scaleProto = commonScaleMap.getValue(positionalAes)
             val aesScale = scaleProto.with().name(binding.variable.label).build()

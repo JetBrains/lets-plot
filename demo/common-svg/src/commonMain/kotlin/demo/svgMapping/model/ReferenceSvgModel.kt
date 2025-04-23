@@ -26,7 +26,15 @@ object ReferenceSvgModel {
                 }
 
                 slimCircle(300.0, 60.0, 50.0, Color.DARK_BLUE, Color.LIGHT_YELLOW, 3.0)
-                slimPath(createClosedPathFrom(150.0, 175.0), Color.DARK_GREEN, Color.CYAN, 2.0)
+
+                // Abs path
+                slimPath(pathData = SvgPathDataBuilder(false)
+                        .moveTo(150.0, 175.0, true)
+                        .verticalLineTo(75.0, true)//.verticalLineTo(-100.0)
+                        .ellipticalArc(100.0, 100.0, 0.0, false, false, 50.0, 175.0, true) //.ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+                        .closePath()
+                        .build(), Color.DARK_GREEN, Color.CYAN, 2.0
+                )
                 slimRect(160.0, 50.0, 80.0, 50.0, Color.DARK_MAGENTA, Color.LIGHT_MAGENTA, 1.0)
             }
 
@@ -58,7 +66,10 @@ object ReferenceSvgModel {
                 tspan("Red", fill = RED)
                 tspan("-")
                 tspan("brown", fill = BROWN)
-                tspan(" green")
+                tspan(" green") {
+                    fontWeight().set("normal")
+                    fontStyle().set("italic")
+                }
             }
 
             text("Slim elements", x = 30.0, y = 85.0, styleClass = "TEXT1") {
@@ -83,9 +94,21 @@ object ReferenceSvgModel {
                 getAttribute(SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE).set(getDashes(4.3, 4.3, 1.0))
             }
 
-            path(stroke = ORANGE, fill = NONE, pathData = createClosedPathFrom(150.0, 375.0), strokeWidth = 2.0) {
-                transform().set(SvgTransformBuilder().translate(0.0, -30.0).skewY(20.0).build())
-            }
+            path(
+                stroke = ORANGE,
+                fill = NONE,
+                strokeWidth = 2.0,
+                pathData = SvgPathDataBuilder(false)
+                    .moveTo(150.0, 375.0, true)
+                    .verticalLineTo(-100.0)
+                    .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+                    .closePath()
+                    .build(),
+                transform = SvgTransformBuilder()
+                    .translate(0.0, -30.0)
+                    .skewY(20.0)
+                    .build()
+            )
 
             path(stroke = ORANGE, fill = NONE, pathData = createUnclosedPathFrom(0.0, 200.0), strokeWidth = 1.5)
             path(fill = LIGHT_BLUE, pathData = createHoledPathFrom(350.0, 350.0))
@@ -102,16 +125,33 @@ object ReferenceSvgModel {
                     strokeWidth().set(1.0)
                 }
             }
-        }
-    }
 
-    private fun createClosedPathFrom(x: Double, y: Double): SvgPathData {
-        return SvgPathDataBuilder(false)
-            .moveTo(x, y, true)
-            .verticalLineTo(-100.0)
-            .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
-            .closePath()
-            .build()
+            // curveTo
+            g(
+                transform = SvgTransformBuilder()
+                    .translate(180.0, 120.0)
+                    .scale(3.0)
+                    .build()
+            ) {
+                path(
+                    stroke = RED,
+                    fill = RED,
+                    fillOpacity = 0.3,
+                    strokeWidth = 2,
+                    pathData = SvgPathDataBuilder(true)
+                        .moveTo(25.6086387569017, 21.0)
+                        .curveTo(25.6086387569017, 21.0, 28.7586387569017, 21.0, 28.7586387569017, 17.85)
+                        .lineTo(28.7586387569017, 3.15)
+                        .curveTo(28.7586387569017, 3.15, 28.7586387569017, 0.0, 25.6086387569017, 0.0)
+                        .lineTo(3.37605456734872, 0.0)
+                        .curveTo(3.37605456734872, 0.0, 0.2260545673487, 0.0, 0.2260545673487, 3.15)
+                        .lineTo(0.2260545673487, 17.85)
+                        .curveTo(0.2260545673487, 17.85, 0.2260545673487, 21.0, 3.37605456734872, 21.0)
+                        .closePath()
+                        .build()
+                )
+            }
+        }
     }
 
     private fun createUnclosedPathFrom(x: Double, y: Double): SvgPathData {

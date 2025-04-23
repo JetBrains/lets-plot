@@ -14,7 +14,7 @@ fun simpleMagickCanvasDemoMain() {
 }
 
 @Suppress("unused")
-fun simpleSvgDemoMain() {
+fun referenceSvgDemoMain() {
     ReferenceSvgDemo.main()
 }
 

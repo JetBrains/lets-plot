@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
-import org.jetbrains.letsPlot.raster.shape.Matrix33
 import kotlin.math.PI
 import kotlin.math.sin
 
@@ -31,42 +31,42 @@ internal object SvgTransformParser {
 
     private fun toRadians(degrees: Float): Float = (degrees * PI / 180).toFloat()
 
-    fun parseSvgTransform(svgTransform: String): List<Matrix33> {
+    fun parseSvgTransform(svgTransform: String): List<AffineTransform> {
         val results = parseTransform(svgTransform)
 
-        val transforms = ArrayList<Matrix33>()
+        val transforms = ArrayList<AffineTransform>()
         for (res in results) {
-            val transform: Matrix33 =
+            val transform: AffineTransform =
                 when (res.name) {
                     SvgTransform.SCALE -> {
                         val scaleX = res.getParam(SCALE_X)!!
                         val scaleY = res.getParam(SCALE_Y) ?: scaleX
-                        Matrix33.makeScale(scaleX, scaleY)
+                        AffineTransform.makeScale(scaleX, scaleY)
                     }
 
                     SvgTransform.SKEW_X -> {
                         val angle = res.getParam(SKEW_X_ANGLE)!!
                         val factor = sin(toRadians(angle))
-                        Matrix33.makeSkew(factor, 0.0f)
+                        AffineTransform.makeShear(factor, 0.0f)
                     }
 
                     SvgTransform.SKEW_Y -> {
                         val angle = res.getParam(SKEW_Y_ANGLE)!!
                         val factor = sin(toRadians(angle))
-                        Matrix33.makeSkew(0.0f, factor)
+                        AffineTransform.makeShear(0.0f, factor)
                     }
 
                     SvgTransform.ROTATE -> {
-                        val angle = res.getParam(ROTATE_ANGLE)!!
+                        val angle = toRadians(res.getParam(ROTATE_ANGLE)!!)
                         val pivotX = if (res.paramCount == 3) res.getParam(ROTATE_X)!! else 0.0f
                         val pivotY = if (res.paramCount == 3) res.getParam(ROTATE_Y)!! else 0.0f
-                        Matrix33.makeRotate(angle, pivotX, pivotY)
+                        AffineTransform.makeRotation(angle, pivotX, pivotY)
                     }
 
                     SvgTransform.TRANSLATE -> {
                         val dX = res.getParam(TRANSLATE_X)!!
                         val dY = res.getParam(TRANSLATE_Y) ?: 0.0f
-                        Matrix33.makeTranslate(dX, dY)
+                        AffineTransform.makeTranslation(dX, dY)
                     }
 
                     SvgTransform.MATRIX -> error("UNSUPPORTED: We don't use MATRIX")
@@ -91,7 +91,7 @@ internal object SvgTransformParser {
     )
         .append(")\\( ?(-?\\d+\\.?\\d*),? ?").pluralAppend(OPTIONAL_PARAM, 5).append("\\)").toString()
 
-    private val PATH = MyPatternBuilder("(").charset(SvgPathData.Action.values()).append(") ?")
+    private val PATH = MyPatternBuilder("(").charset(SvgPathData.Action.entries.toTypedArray()).append(") ?")
         .pluralAppend(OPTIONAL_PARAM, 7).toString()
 
     private val TRANSFORM_EXP = Regex(TRANSFORM) //RegExp.compile(TRANSFORM, "g")
