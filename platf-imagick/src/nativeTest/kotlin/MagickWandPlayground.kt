@@ -1,6 +1,9 @@
+import ImageMagick.DrawingWand
+import ImageMagick.MagickWand
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import kotlin.test.Ignore
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 /*
@@ -10,285 +13,165 @@ import kotlin.test.Test
 
 // This test class is used to demonstrate the usage of the ImageMagick library
 class MagickWandPlayground {
+    lateinit var img: CPointer<MagickWand>
+    lateinit var wand: CPointer<DrawingWand>
+    var outFile: String? = null
+    var saveFile = false
+
+    @BeforeTest
+    fun setUp() {
+        ImageMagick.MagickWandGenesis()
+        img = ImageMagick.NewMagickWand() ?: error("Failed to create MagickWand")
+
+        val w = 100
+        val h = 100
+
+        ImageMagick.MagickNewImage(img, w.convert(), h.convert(), white)
+        wand = ImageMagick.NewDrawingWand() ?: error("Failed to create DrawingWand")
+        outFile = null
+    }
+
+    @AfterTest
+    fun tearDown() {
+        if (saveFile) {
+            check(outFile != null) { "outFile is null" }
+            ImageMagick.MagickWriteImage(img, outFile)
+        }
+        saveFile = false
+
+        ImageMagick.DestroyMagickWand(img)
+        ImageMagick.DestroyDrawingWand(wand)
+        ImageMagick.MagickWandTerminus()
+    }
+
+
     @OptIn(ExperimentalStdlibApi::class)
-    @Ignore
     @Test
     fun simple() {
-        ImageMagick.MagickWandGenesis()
-        val wand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+        outFile = "magickwand_simple.wand"
 
-        try {
-            val w = 50
-            val h = 50
+        ImageMagick.DrawSetFillColor(wand, black)
+        ImageMagick.DrawRectangle(wand, 10.0, 10.0, 90.0, 90.0)
 
-            // Set the canvas size and background color
-            ImageMagick.MagickNewImage(wand, w.toULong(), h.toULong(), white)
+        ImageMagick.DrawSetFillColor(wand, white)
+        ImageMagick.DrawCircle(wand, 50.0, 50.0, 100.0, 50.0)
 
-            // Draw a rectangle
-            val draw = ImageMagick.NewDrawingWand()
-            val pixel = ImageMagick.NewPixelWand()
+        // Draw text with a font name
+        ImageMagick.DrawSetFillColor(wand, black)
+        ImageMagick.DrawSetFont(wand, "DejaVu-Sans-Bold") // Use font name
+        ImageMagick.DrawSetFontSize(wand, 36.0) // Set font size
 
-            // Set rectangle color
-            ImageMagick.PixelSetColor(pixel, "orange")
-            ImageMagick.DrawSetFillColor(draw, pixel)
+        drawAnnotation(wand, 150.0, 300.0, "Hello, MagicWand!")
 
-            // Draw the rectangle
-            ImageMagick.DrawRectangle(draw, 10.0, 10.0, 40.0, 40.0)
-
-            // Set circle color
-            ImageMagick.PixelSetColor(pixel, "red")
-            ImageMagick.DrawSetFillColor(draw, pixel)
-
-            // Draw the circle inside the rectangle
-            ImageMagick.DrawCircle(draw, 25.0, 25.0, 25.0, 20.0)
-
-            // Draw text with a font name
-            ImageMagick.DrawSetFillColor(draw, black)
-            ImageMagick.DrawSetFont(draw, "DejaVu-Sans-Bold") // Use font name
-            ImageMagick.DrawSetFontSize(draw, 36.0) // Set font size
-
-            memScoped {
-                val text: CValues<ByteVar> = "Hello, MagicWand!".cstr // Convert to C string
-                //DrawAnnotation(draw, 150.0, 300.0, text.getPointer(this)) // Get pointer within scope
-            }
-
-            // Apply the drawing to the MagickWand
-            ImageMagick.MagickDrawImage(wand, draw)
-
-            // Never saves the image - this is just a test to check if the code compiles and runs
-            val outputFilename = "magickwand_simple.bmp"
-            if (false && ImageMagick.MagickWriteImage(wand, outputFilename) == ImageMagick.MagickFalse) {
-                throw RuntimeException("Failed to write image")
-            }
-
-            println("Image saved to $outputFilename")
-
-            val pixelData = ByteArray(w * h * 4) // RGBA 8-bit per channel
-            memScoped {
-                val byteBuffer = pixelData.refTo(0) // Pointer to ByteArray
-                val success = ImageMagick.MagickExportImagePixels(
-                    wand,
-                    0, 0, w.toULong(), h.toULong(),
-                    "RGBA", ImageMagick.StorageType.CharPixel, byteBuffer
-                )
-                require(success == ImageMagick.MagickTrue) { "Failed to export pixels" }
-
-                val lines = pixelData.asSequence().windowed(4 * w.toInt(), 4 * h.toInt()).toList()
-                val strLines = lines.map { line ->
-                    line.windowed(4, 4).joinToString { pixel ->
-                        pixel.joinToString(separator = "") { it.toHexString() }
-                    }
-                }
-                val str = strLines.joinToString("\n")
-                println("Simple demo")
-                println("${strLines.size} * ${lines[0].size}")
-                println(str)
-            }
-
-        } finally {
-            // Clean up resources
-            ImageMagick.DestroyMagickWand(wand)
-            ImageMagick.MagickWandTerminus()
-        }
+        // Apply the drawing to the MagickWand
+        ImageMagick.MagickDrawImage(img, wand)
     }
 
-    @Ignore
     @Test
     fun miterJoinWithOppositeSegments() {
-        ImageMagick.MagickWandGenesis()
-        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+        outFile = "magickwand_bug_miter_join.bmp"
 
-        ImageMagick.MagickNewImage(magickWand, 100u, 100u, white)
-
-        val drawingWand = ImageMagick.NewDrawingWand()
-        val strokeWand = ImageMagick.NewPixelWand()
-
-        ImageMagick.PixelSetColor(strokeWand, "orange")
-        ImageMagick.DrawSetStrokeColor(drawingWand, strokeWand)
-
-        ImageMagick.DrawSetStrokeWidth(drawingWand, 20.0)
+        ImageMagick.DrawSetStrokeColor(wand, black)
+        ImageMagick.DrawSetStrokeWidth(wand, 20.0)
 
         // MiterJoin with a line in the opposite direction
-        ImageMagick.DrawSetStrokeLineJoin(drawingWand, ImageMagick.LineJoin.MiterJoin)
-        ImageMagick.DrawPathStart(drawingWand)
-        ImageMagick.DrawPathMoveToAbsolute(drawingWand, 5.0, 30.0)
-        ImageMagick.DrawPathLineToAbsolute(drawingWand, 95.0, 30.0)
-        ImageMagick.DrawPathLineToAbsolute(drawingWand, 5.0, 30.0)
-        ImageMagick.DrawPathFinish(drawingWand)
-
-        // BevelJoin with a line in the opposite direction
-        ImageMagick.DrawSetStrokeLineJoin(drawingWand, ImageMagick.LineJoin.BevelJoin)
-        ImageMagick.DrawPathStart(drawingWand)
-        ImageMagick.DrawPathMoveToAbsolute(drawingWand, 5.0, 70.0)
-        ImageMagick.DrawPathLineToAbsolute(drawingWand, 95.0, 70.0)
-        ImageMagick.DrawPathLineToAbsolute(drawingWand, 5.0, 70.0)
-        ImageMagick.DrawPathFinish(drawingWand)
-
-
-        ImageMagick.MagickDrawImage(magickWand, drawingWand)
-        val outputFilename = "magickwand_miter_join_artifact.bmp"
-
-        // Never saves the image - this is just a test to check if the code compiles and runs
-        if (false && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
-            throw RuntimeException("Failed to write image")
-        }
-
-        ImageMagick.DestroyPixelWand(strokeWand)
-        ImageMagick.DestroyDrawingWand(drawingWand)
-        ImageMagick.DestroyMagickWand(magickWand)
-        ImageMagick.MagickWandTerminus()
+        ImageMagick.DrawSetStrokeLineJoin(wand, ImageMagick.LineJoin.MiterJoin)
+        ImageMagick.DrawPathStart(wand)
+        ImageMagick.DrawPathMoveToAbsolute(wand, 5.0, 50.0)
+        ImageMagick.DrawPathLineToAbsolute(wand, 95.0, 50.0)
+        ImageMagick.DrawPathLineToAbsolute(wand, 5.0, 50.0)
+        ImageMagick.DrawPathFinish(wand)
+        ImageMagick.MagickDrawImage(img, wand)
     }
 
-    @Ignore
     @Test
     fun affine_ry() {
-        ImageMagick.MagickWandGenesis()
-        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+        outFile = "magickwand_bug_affine_ry.bmp"
 
-        ImageMagick.MagickNewImage(magickWand, 300u, 300u, white)
+        ImageMagick.DrawSetFillColor(wand, black)
+        ImageMagick.DrawRectangle(wand, 30.0, 30.0, 70.0, 70.0)
 
-        val drawingWand = ImageMagick.NewDrawingWand()
-        val pixelWand = ImageMagick.NewPixelWand()
+        drawAffine(wand, ry = 0.3420201241970062)
 
-        ImageMagick.DrawSetFillColor(drawingWand, black)
-        ImageMagick.DrawRectangle(drawingWand, 50.0, 50.0, 200.0, 200.0)
+        ImageMagick.DrawSetFillColor(wand, green)
+        ImageMagick.DrawSetFillOpacity(wand, 0.7)
+        ImageMagick.DrawRectangle(wand, 30.0, 30.0, 70.0, 70.0)
 
-        memScoped {
-            val m = alloc<ImageMagick.AffineMatrix>()
-            m.sx = 1.0
-            m.sy = 1.0
-            m.ry = 0.3420201241970062
-            m.rx = 0.0
-            m.tx = 0.0
-            m.ty = 0.0
-            ImageMagick.DrawAffine(drawingWand, m.ptr)
-        }
-
-        ImageMagick.PixelSetColor(pixelWand, "green")
-        ImageMagick.DrawSetFillColor(drawingWand, pixelWand)
-        ImageMagick.DrawSetFillOpacity(drawingWand, 0.7)
-        ImageMagick.DrawRectangle(drawingWand, 50.0, 50.0, 200.0, 200.0)
-
-        ImageMagick.MagickDrawImage(magickWand, drawingWand)
-        val outputFilename = "affine_ry.bmp"
-
-        if (false && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
-            throw RuntimeException("Failed to write image")
-        }
-
-        ImageMagick.DestroyPixelWand(pixelWand)
-        ImageMagick.DestroyDrawingWand(drawingWand)
-        ImageMagick.DestroyMagickWand(magickWand)
-        ImageMagick.MagickWandTerminus()
+        ImageMagick.MagickDrawImage(img, wand)
     }
 
-    @Ignore
     @Test
     fun simpleBezierCurve() {
-        ImageMagick.MagickWandGenesis()
-        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+        outFile = "magickwand_bezier.bmp"
 
-        ImageMagick.MagickNewImage(magickWand, 300u, 300u, white)
-
-        val drawingWand = ImageMagick.NewDrawingWand()
-        val pixelWand = ImageMagick.NewPixelWand()
-
-        ImageMagick.DrawSetFillColor(drawingWand, black)
-        ImageMagick.DrawSetStrokeColor(drawingWand, black)
-        ImageMagick.DrawSetStrokeWidth(drawingWand, 2.0)
+        ImageMagick.DrawSetFillColor(wand, none)
+        ImageMagick.DrawSetStrokeColor(wand, black)
+        ImageMagick.DrawSetStrokeWidth(wand, 2.0)
 
         // Draw a simple Bezier curve
         memScoped {
             val bezierPoints = allocArray<ImageMagick.PointInfo>(3)
-            bezierPoints[0].x = 50.0; bezierPoints[0].y = 50.0
-            bezierPoints[1].x = 150.0; bezierPoints[1].y = 50.0
-            bezierPoints[2].x = 150.0; bezierPoints[2].y = 150.0
+            bezierPoints[0].x = 0.0; bezierPoints[0].y = 0.0
+            bezierPoints[1].x = 100.0; bezierPoints[1].y = 0.0
+            bezierPoints[2].x = 100.0; bezierPoints[2].y = 100.0
 
-            ImageMagick.DrawBezier(drawingWand, 3.convert(), bezierPoints)
+            ImageMagick.DrawBezier(wand, 3.convert(), bezierPoints)
         }
 
-        ImageMagick.MagickDrawImage(magickWand, drawingWand)
-        val outputFilename = "simple_bezier_curve.bmp"
-
-        if (true && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
-            throw RuntimeException("Failed to write image")
-        }
-
-        ImageMagick.DestroyPixelWand(pixelWand)
-        ImageMagick.DestroyDrawingWand(drawingWand)
-        ImageMagick.DestroyMagickWand(magickWand)
-        ImageMagick.MagickWandTerminus()
+        ImageMagick.MagickDrawImage(img, wand)
     }
 
-    @Ignore
     @Test
-    fun bezier() {
-        // Positive arc
-        //val cp0 = DoubleVector(150.0, 100.0)
-        //val cp1 = DoubleVector(150.0, 127.614237)
-        //val cp2 = DoubleVector(127.614237, 150.0)
-        //val cp3 = DoubleVector(100.0, 150.0)
+    fun circleWihCurve() {
+        outFile = "magickwand_circle_with_curve.bmp"
 
-        // Negative arc
-        //val cps = listOf(
-        //    DoubleVector(150.0, 50.0),
-        //    DoubleVector(94.7715, 50.0),
-        //    DoubleVector(50.0, 94.7715),
-        //    DoubleVector(50.0, 150.0)
-        //)
-
-        // Circle
         val cps = listOf(
-            DoubleVector(150.0, 100.0),
-            DoubleVector(150.0, 127.614237),
-            DoubleVector(127.614237, 150.0),
-            DoubleVector(100.0, 150.0),
-            DoubleVector(72.38576250846033, 150.0),
-            DoubleVector(50.0, 127.61423749153968),
-            DoubleVector(50.0, 100.0),
-            DoubleVector(50.0, 72.38576250846033),
-            DoubleVector(72.38576250846033, 50.0),
             DoubleVector(100.0, 50.0),
-            DoubleVector(127.61423749153968, 50.0),
-            DoubleVector(150.0, 72.38576250846033),
-            DoubleVector(150.0, 100.0)
+            DoubleVector(100.0, 77.614237),
+            DoubleVector(77.614237, 100.0),
+            DoubleVector(50.0, 100.0),
+            DoubleVector(22.38576250846033, 100.0),
+            DoubleVector(0.0, 77.61423749153968),
+            DoubleVector(0.0, 50.0),
+            DoubleVector(0.0, 22.38576250846033),
+            DoubleVector(22.38576250846033, 0.0),
+            DoubleVector(50.0, 0.0),
+            DoubleVector(77.61423749153968, 0.0),
+            DoubleVector(100.0, 22.38576250846033),
+            DoubleVector(100.0, 50.0)
         )
 
-
-        //val cp0 = DoubleVector(150.0, 50.0)
-        //val cp1 = DoubleVector(94.7715, 50.0)
-        //val cp2 = DoubleVector(50.0, 94.7715)
-        //val cp3 = DoubleVector(50.0, 150.0)
-
-        // Circle
-
-
-        ImageMagick.MagickWandGenesis()
-
-        val drawingWand = ImageMagick.NewDrawingWand()
-
-        ImageMagick.DrawPathStart(drawingWand)
-        ImageMagick.DrawPathMoveToAbsolute(drawingWand, cps[0].x, cps[0].y)
+        ImageMagick.DrawPathStart(wand)
+        ImageMagick.DrawPathMoveToAbsolute(wand, cps[0].x, cps[0].y)
 
         cps.drop(1)
             .windowed(size = 3, step = 3)
             .forEach { (cp1, cp2, cp3) ->
-                ImageMagick.DrawPathCurveToAbsolute(drawingWand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+                ImageMagick.DrawPathCurveToAbsolute(wand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
             }
 
-        ImageMagick.DrawPathFinish(drawingWand)
+        ImageMagick.DrawPathFinish(wand)
+        ImageMagick.MagickDrawImage(img, wand)
+    }
 
-        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create MagickWand")
+    @Test
+    fun curve() {
+        outFile = "magickwand_curve.bmp"
 
-        ImageMagick.MagickNewImage(magickWand, 500.convert(), 500.convert(), white)
-        ImageMagick.MagickDrawImage(magickWand, drawingWand)
+        val cp0 = DoubleVector(50.0, 0.0)
+        val cp1 = DoubleVector(-100.0, 50.0)
+        val cp2 = DoubleVector(200.0, 50.0)
+        val cp3 = DoubleVector(50.0, 100.0)
 
-        val outputFilename = "bezier.bmp"
-        if (true && ImageMagick.MagickWriteImage(magickWand, outputFilename) == ImageMagick.MagickFalse) {
-            throw RuntimeException("Failed to write image")
-        }
-        ImageMagick.DestroyDrawingWand(drawingWand)
-        ImageMagick.DestroyMagickWand(magickWand)
-        ImageMagick.MagickWandTerminus()
+        ImageMagick.DrawSetFillColor(wand, none)
+        ImageMagick.DrawSetStrokeColor(wand, black)
+        ImageMagick.DrawSetStrokeWidth(wand, 2.0)
+
+        ImageMagick.DrawPathStart(wand)
+        ImageMagick.DrawPathMoveToAbsolute(wand, cp0.x, cp0.y)
+        ImageMagick.DrawPathCurveToAbsolute(wand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+        ImageMagick.DrawPathFinish(wand)
+
+        ImageMagick.MagickDrawImage(img, wand)
     }
 }

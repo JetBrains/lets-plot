@@ -101,6 +101,10 @@ val white = ImageMagick.NewPixelWand().apply {
     ImageMagick.PixelSetColor(this, "white")
 }
 
+val green = ImageMagick.NewPixelWand().apply {
+    ImageMagick.PixelSetColor(this, "green")
+}
+
 val alphaBlack = ImageMagick.NewPixelWand().apply {
     ImageMagick.PixelSetColor(this, "rgba(0,0,0,0.5)")
 }
