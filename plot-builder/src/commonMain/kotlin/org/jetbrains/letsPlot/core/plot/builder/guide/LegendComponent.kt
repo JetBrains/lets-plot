@@ -74,6 +74,7 @@ class LegendComponent(
         breakComponent.add(label)
 
         breakComponent.moveTo(keyLabelBox.origin)
+
         breakComponent.moveTo(keyLabelBox.origin.add(DoubleVector(0.0,keyLabelBox.height * 0.5 - keySize.y * 0.5)))
         return breakComponent.rootGroup
     }
