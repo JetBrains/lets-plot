@@ -59,15 +59,13 @@ check_exec_status () {
 current_path=$(pwd)
 current_dir=$(basename "$current_path")
 
-if [[ current_dir = "$PLATF_IMAGICK_DIR" ]]; then
+if [[ $current_dir = "$PLATF_IMAGICK_DIR" ]]; then
   WORKING_DIR=$current_path
+elif [[ $current_dir = "lets-plot" ]]; then
+  cd $PLATF_IMAGICK_DIR || exit_with_error "Could not find '${PLATF_IMAGICK_DIR}' directory."
+  WORKING_DIR=$(pwd)
 else
-  if [[ $current_dir = "lets-plot" ]]; then
-    cd $PLATF_IMAGICK_DIR || exit_with_error "Could not find '${PLATF_IMAGICK_DIR}' directory."
-    WORKING_DIR=$(pwd)
-  else
-    exit_with_error "Please run this script from lets-plot/${PLATF_IMAGICK_DIR} directory."
-  fi
+  exit_with_error "Please run this script from lets-plot/${PLATF_IMAGICK_DIR} directory."
 fi
 
 # Prefix path for libraries installation can be set as a script argument.
@@ -265,7 +263,7 @@ if [[ -d "$INSTALL_PREFIX" && -n $(ls -A "$INSTALL_PREFIX") ]]; then
   read -p "If you continue, ${INSTALL_PREFIX} content will be removed.
   Type 'yes' to confirm: " confirmation
   if [[ "${confirmation,,}" != "yes" ]]; then
-    printf "\n Operation was cancelled due to user request."
+    printf "\n Operation was cancelled due to user request.\n\n"
     exit 0
   else
     find "$INSTALL_PREFIX" -mindepth 1 -delete
