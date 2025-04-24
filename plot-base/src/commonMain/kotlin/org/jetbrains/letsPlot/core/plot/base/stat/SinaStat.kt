@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -134,16 +135,16 @@ class SinaStat(
             statX += List(yDensityDfSlice.rowCount() + binValue.size) { x }
             statY += yValues + binValue
             statDensity += yDensityDfSlice.getNumeric(Stats.DENSITY).map { it!! }.let { densities ->
-                densities + binValue.map { linApprox(it, yValues, densities) }
+                densities + mapToPolygonalChain(binValue, yValues, densities, ::toSegment)
             }
             statCount += yDensityDfSlice.getNumeric(Stats.COUNT).map { it!! }.let { counts ->
-                counts + binValue.map { linApprox(it, yValues, counts) }
+                counts + mapToPolygonalChain(binValue, yValues, counts, ::toSegment)
             }
             statScaled += yDensityDfSlice.getNumeric(Stats.SCALED).map { it!! }.let { scaled ->
-                scaled + binValue.map { linApprox(it, yValues, scaled) }
+                scaled + mapToPolygonalChain(binValue, yValues, scaled, ::toSegment)
             }
             statQuantile += yDensityDfSlice.getNumeric(Stats.QUANTILE).map { it!! }.let { quantiles ->
-                quantiles + binValue.map { minApprox(it, yValues, quantiles) }
+                quantiles + mapToPolygonalChain(binValue, yValues, quantiles, ::toSegmentStart)
             }
             statN += List(yDensityDfSlice.rowCount()) { 0.0 } + List(binValue.size) { 1.0 }
         }
@@ -159,21 +160,35 @@ class SinaStat(
             .build()
     }
 
-    private fun linApprox(x: Double, xs: List<Double>, ys: List<Double>): Double {
-        if (xs.isEmpty()) return 0.0
-        if (xs.size == 1) return ys.first()
-        val i = xs.indices.lastOrNull { i -> xs[i] <= x } ?: return ys.last()
-        val j = xs.indices.firstOrNull { j -> x < xs[j] } ?: return ys.last()
-        if (i == j) return ys[i]
-        val alpha = (x - xs[i]) / (xs[j] - xs[i])
-        return ys[i] + alpha * (ys[j] - ys[i])
+    private fun mapToPolygonalChain(
+        xs: List<Double>,
+        chainX: List<Double>,
+        chainY: List<Double>,
+        mapToSegment: (Double, DoubleVector, DoubleVector) -> Double
+    ): List<Double> {
+        var startIndex = 0
+        return xs.map { x ->
+            indicesOfNeighbourValues(x, chainX, startIndex)?.let { (i, j) ->
+                startIndex = i
+                mapToSegment(x, DoubleVector(chainX[i], chainY[i]), DoubleVector(chainX[j], chainY[j]))
+            } ?: 0.0
+        }
     }
 
-    private fun minApprox(x: Double, xs: List<Double>, ys: List<Double>): Double {
-        if (xs.isEmpty()) return 0.0
-        if (xs.size == 1) return ys.first()
-        val i = xs.indices.lastOrNull { i -> xs[i] <= x } ?: return ys.last()
-        return ys[i]
+    private fun indicesOfNeighbourValues(v: Double, values: List<Double>, startIndex: Int): Pair<Int, Int>? {
+        val lastIndex = values.size - 1
+        val i = (startIndex..lastIndex).lastOrNull { i -> values[i] <= v } ?: return Pair(lastIndex, lastIndex)
+        val j = (i until values.size).firstOrNull { j -> v < values[j] } ?: return Pair(lastIndex, lastIndex)
+        return Pair(i, j)
+    }
+
+    private fun toSegment(x: Double, start: DoubleVector, end: DoubleVector): Double {
+        if (start.x == end.x) return start.y
+        return start.y + (x - start.x) * (end.y - start.y) / (end.x - start.x)
+    }
+
+    private fun toSegmentStart(x: Double, start: DoubleVector, end: DoubleVector): Double {
+        return start.y
     }
 
     // The same as in YDensityStat::Scale

@@ -100,16 +100,16 @@ class SinaStatTest : BaseStatTest() {
         val sinaViolinWidth = sinaStatDf.getNumeric(Stats.VIOLIN_WIDTH).map(::assertNotNull)
         val yDensityY = yDensityStatDf.getNumeric(Stats.Y).map(::assertNotNull)
         val yDensityViolinWidth = yDensityStatDf.getNumeric(Stats.VIOLIN_WIDTH).map(::assertNotNull)
-        val sortedIndices = yDensityY.withIndex().sortedBy(IndexedValue<Double?>::value).map(IndexedValue<Double?>::index)
-        val sortedYDensityY = sortedIndices.map { yDensityY[it] }
-        val sortedYDensityViolinWidth = sortedIndices.map { yDensityViolinWidth[it] }
+        var startIndex = 0
+        val lastIndex = yDensityY.size - 1
         for (i in 0 until sinaStatDf.rowCount()) {
             val y = sinaY[i]
             val violinWidth = sinaViolinWidth[i]
-            val minIndex = sortedYDensityY.indices.lastOrNull { j -> sortedYDensityY[j] <= y } ?: sortedYDensityY.indices.last()
-            val maxIndex = sortedYDensityY.indices.firstOrNull { j -> y < sortedYDensityY[j] } ?: sortedYDensityY.indices.last()
-            val violinWidthForMinIndex = sortedYDensityViolinWidth[minIndex]
-            val violinWidthForMaxIndex = sortedYDensityViolinWidth[maxIndex]
+            val minIndex = (startIndex..lastIndex).lastOrNull { j -> yDensityY[j] <= y } ?: lastIndex
+            val maxIndex = (minIndex..lastIndex).firstOrNull { j -> y < yDensityY[j] } ?: lastIndex
+            startIndex = minIndex
+            val violinWidthForMinIndex = yDensityViolinWidth[minIndex]
+            val violinWidthForMaxIndex = yDensityViolinWidth[maxIndex]
             val minViolinWidth = min(violinWidthForMinIndex, violinWidthForMaxIndex)
             val maxViolinWidth = max(violinWidthForMinIndex, violinWidthForMaxIndex)
             assertTrue(
