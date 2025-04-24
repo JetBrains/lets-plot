@@ -133,6 +133,9 @@ build_library () {
     "--enable-static"
   )
 
+  export CFLAGS="-O2"
+  export CXXFLAGS="-O2"
+
   print_message "Building ${lib_name}..."
 
   case "$lib_name" in
