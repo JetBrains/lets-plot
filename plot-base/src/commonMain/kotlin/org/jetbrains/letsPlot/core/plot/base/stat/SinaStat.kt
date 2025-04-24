@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -135,16 +134,16 @@ class SinaStat(
             statX += List(yDensityDfSlice.rowCount() + binValue.size) { x }
             statY += yValues + binValue
             statDensity += yDensityDfSlice.getNumeric(Stats.DENSITY).map { it!! }.let { densities ->
-                densities + mapToPolygonalChain(binValue, yValues, densities, ::toSegment)
+                densities + binValue.map(DensityStatUtil.pwLinInterp(yValues, densities))
             }
             statCount += yDensityDfSlice.getNumeric(Stats.COUNT).map { it!! }.let { counts ->
-                counts + mapToPolygonalChain(binValue, yValues, counts, ::toSegment)
+                counts + binValue.map(DensityStatUtil.pwLinInterp(yValues, counts))
             }
             statScaled += yDensityDfSlice.getNumeric(Stats.SCALED).map { it!! }.let { scaled ->
-                scaled + mapToPolygonalChain(binValue, yValues, scaled, ::toSegment)
+                scaled + binValue.map(DensityStatUtil.pwLinInterp(yValues, scaled))
             }
             statQuantile += yDensityDfSlice.getNumeric(Stats.QUANTILE).map { it!! }.let { quantiles ->
-                quantiles + mapToPolygonalChain(binValue, yValues, quantiles, ::toSegmentStart)
+                quantiles + binValue.map(pwCeilInterp(yValues, quantiles))
             }
             statN += List(yDensityDfSlice.rowCount()) { 0.0 } + List(binValue.size) { 1.0 }
         }
@@ -160,35 +159,14 @@ class SinaStat(
             .build()
     }
 
-    private fun mapToPolygonalChain(
-        xs: List<Double>,
-        chainX: List<Double>,
-        chainY: List<Double>,
-        mapToSegment: (Double, DoubleVector, DoubleVector) -> Double
-    ): List<Double> {
-        var startIndex = 0
-        return xs.map { x ->
-            indicesOfNeighbourValues(x, chainX, startIndex)?.let { (i, j) ->
-                startIndex = i
-                mapToSegment(x, DoubleVector(chainX[i], chainY[i]), DoubleVector(chainX[j], chainY[j]))
-            } ?: 0.0
+    // Analogue of the DensityStatUtil.pwLinInterp() function, but returns appropriate vertices of the piecewise linear interpolation function
+    private fun pwCeilInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
+        return fun(t: Double): Double {
+            val i = x.indexOfFirst { it >= t }
+            if (i == 0) return y.first()
+            if (i == -1) return y.last()
+            return y[i]
         }
-    }
-
-    private fun indicesOfNeighbourValues(v: Double, values: List<Double>, startIndex: Int): Pair<Int, Int>? {
-        val lastIndex = values.size - 1
-        val i = (startIndex..lastIndex).lastOrNull { i -> values[i] <= v } ?: return Pair(lastIndex, lastIndex)
-        val j = (i until values.size).firstOrNull { j -> v < values[j] } ?: return Pair(lastIndex, lastIndex)
-        return Pair(i, j)
-    }
-
-    private fun toSegment(x: Double, start: DoubleVector, end: DoubleVector): Double {
-        if (start.x == end.x) return start.y
-        return start.y + (x - start.x) * (end.y - start.y) / (end.x - start.x)
-    }
-
-    private fun toSegmentStart(x: Double, start: DoubleVector, end: DoubleVector): Double {
-        return start.y
     }
 
     // The same as in YDensityStat::Scale

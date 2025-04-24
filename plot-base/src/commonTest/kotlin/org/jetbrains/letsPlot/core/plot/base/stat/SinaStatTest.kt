@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
@@ -98,8 +99,10 @@ class SinaStatTest : BaseStatTest() {
     private fun compareGroup(sinaStatDf: DataFrame, yDensityStatDf: DataFrame, x: Double) {
         val sinaY = sinaStatDf.getNumeric(Stats.Y).map(::assertNotNull)
         val sinaViolinWidth = sinaStatDf.getNumeric(Stats.VIOLIN_WIDTH).map(::assertNotNull)
+        val sinaQuantile = sinaStatDf.getNumeric(Stats.QUANTILE).map(::assertNotNull)
         val yDensityY = yDensityStatDf.getNumeric(Stats.Y).map(::assertNotNull)
         val yDensityViolinWidth = yDensityStatDf.getNumeric(Stats.VIOLIN_WIDTH).map(::assertNotNull)
+        val yDensityQuantile = yDensityStatDf.getNumeric(Stats.QUANTILE).map(::assertNotNull)
         var startIndex = 0
         val lastIndex = yDensityY.size - 1
         for (i in 0 until sinaStatDf.rowCount()) {
@@ -113,12 +116,18 @@ class SinaStatTest : BaseStatTest() {
             val minViolinWidth = min(violinWidthForMinIndex, violinWidthForMaxIndex)
             val maxViolinWidth = max(violinWidthForMinIndex, violinWidthForMaxIndex)
             assertTrue(
-                minViolinWidth <= violinWidth,
-                "For X = $x and Y = $y it should be: $minViolinWidth <= $violinWidth"
+                violinWidth - minViolinWidth > -EPSILON,
+                "ViolinWidth: For X = $x and Y = $y it should be: $minViolinWidth <= $violinWidth"
             )
             assertTrue(
-                violinWidth <= maxViolinWidth,
-                "For X = $x and Y = $y it should be: $violinWidth <= $maxViolinWidth"
+                maxViolinWidth - violinWidth > -EPSILON,
+                "ViolinWidth: For X = $x and Y = $y it should be: $violinWidth <= $maxViolinWidth"
+            )
+            assertEquals(
+                yDensityQuantile[minIndex],
+                sinaQuantile[i],
+                EPSILON,
+                "Quantile: For X = $x and Y = $y it should be: ${sinaQuantile[i]} == ${yDensityQuantile[minIndex]}"
             )
         }
     }
@@ -151,5 +160,9 @@ class SinaStatTest : BaseStatTest() {
             fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
             quantiles = YDensityStat.DEF_QUANTILES
         )
+    }
+
+    companion object {
+        const val EPSILON = 1e-12
     }
 }

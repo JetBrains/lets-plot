@@ -180,7 +180,7 @@ object DensityStatUtil {
         }
     }
 
-    private fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
+    fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
         // Returns (bounded) piecewise linear interpolation function
         return fun(t: Double): Double {
             val i = x.indexOfFirst { it >= t }
