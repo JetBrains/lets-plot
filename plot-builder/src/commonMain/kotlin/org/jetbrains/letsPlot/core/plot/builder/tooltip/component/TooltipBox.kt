@@ -338,7 +338,7 @@ class TooltipBox(
 
             // title component
             val titleComponent = title?.let(::initTitleComponent)
-            val rawTitleBBox = getBBox(titleComponent) ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            val rawTitleBBox = getBBox(titleComponent) ?: DoubleRectangle.ZERO
 
             // detect min tooltip width
             val minWidthWithTitle = listOfNotNull(tooltipMinWidth, rawTitleBBox.width).maxOrNull()

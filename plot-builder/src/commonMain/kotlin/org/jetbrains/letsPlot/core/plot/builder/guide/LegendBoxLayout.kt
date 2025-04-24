@@ -52,7 +52,7 @@ abstract class LegendBoxLayout(
     val size: DoubleVector
         get() {
             val graphBounds = DoubleRectangle(graphOrigin, graphSize)
-            val titleAndContent = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            val titleAndContent = DoubleRectangle.ZERO
                 .union(titleBounds)
                 .union(graphBounds)
             return titleAndContent.dimension
