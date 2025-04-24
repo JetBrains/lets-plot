@@ -133,6 +133,12 @@ internal class Path : Figure() {
         dx: Double, dy: Double,
         context2d: Context2d
     ): Pair<Double, Double> {
+        if (rxIn == 0.0 || ryIn == 0.0) {
+            // If either radius is zero, draw a line
+            context2d.lineTo(curX + dx, curY + dy)
+            return Pair(curX + dx, curY + dy)
+        }
+
         val x1 = curX
         val y1 = curY
         val x2 = curX + dx

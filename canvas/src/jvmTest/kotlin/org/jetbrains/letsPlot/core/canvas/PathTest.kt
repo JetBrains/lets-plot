@@ -26,6 +26,22 @@ class PathTest {
         val arc = Path.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
         return listOfNotNull(arc.start) + arc.controlPoints
     }
+
+    @Test
+    fun `ellipse with zero radius returns center point`() {
+        val cpts = arcControlPoints(
+            x = 100.0,
+            y = 100.0,
+            radiusX = 0.0,
+            radiusY = 0.0,
+            rotation = 0.0,
+            startAngle = 0.0,
+            endAngle = 2 * PI,
+            anticlockwise = false
+        )
+
+        assertControlPoints(cpts, DoubleVector(100.0, 100.0))
+    }
     
     @Test
     fun `negative radius returns center point`() {
