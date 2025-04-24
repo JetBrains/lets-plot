@@ -36,8 +36,8 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
                         x = it.center.x,
                         y = it.center.y,
                         radius = it.width / 2,
-                        startAngleDeg = 0.0,
-                        endAngleDeg = 2 * PI,
+                        startAngle = 0.0,
+                        endAngle = 2 * PI,
                         anticlockwise = false
                     )
                 }

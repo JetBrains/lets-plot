@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Path.PathCommand
 
@@ -149,15 +148,17 @@ class ContextState {
 
     fun clip() {
         log { "clip() - ${currentPath.getCommands()}" }
-        currentState.clipPath = Path(currentPath)
+        currentState.clipPath = currentPath.copy()
     }
 
     fun moveTo(x: Double, y: Double) {
-        currentPath.moveTo(x, y, currentState.transform)
+        val (tx, ty) = currentState.transform.transform(x, y)
+        currentPath.moveTo(tx, ty)
     }
 
     fun lineTo(x: Double, y: Double) {
-        currentPath.lineTo(x, y, currentState.transform)
+        val (tx, ty) = currentState.transform.transform(x, y)
+        currentPath.lineTo(tx, ty)
     }
 
     fun arc(
@@ -168,7 +169,8 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise, currentState.transform)
+        val arc = Path.arc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
+        currentPath.append(arc.transform(currentState.transform))
     }
 
     fun ellipse(
@@ -178,17 +180,8 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        currentPath.ellipse(
-            x,
-            y,
-            radiusX,
-            radiusY,
-            toDegrees(rotation),
-            toDegrees(startAngle),
-            toDegrees(endAngle),
-            anticlockwise,
-            currentState.transform
-        )
+        val arc = Path.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        currentPath.append(arc.transform(currentState.transform))
     }
 
     fun bezierCurveTo(
@@ -199,15 +192,10 @@ class ContextState {
         x: Double,
         y: Double
     ) {
-        currentPath.bezierCurveTo(
-            cp1x,
-            cp1y,
-            cp2x,
-            cp2y,
-            x,
-            y,
-            currentState.transform
-        )
+        val (cp1x, cp1y) = currentState.transform.transform(cp1x, cp1y)
+        val (cp2x, cp2y) = currentState.transform.transform(cp2x, cp2y)
+        val (x, y) = currentState.transform.transform(x, y)
+        currentPath.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
     fun setStrokeStyle(color: Color?) {

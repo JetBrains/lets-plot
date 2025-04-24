@@ -48,7 +48,8 @@ class ImageComparer(
 
             error("""Image mismatch.
                 |    Diff: $diffFilePath
-                |    Actual: $actualFilePath""".trimMargin()
+                |    Actual: $actualFilePath
+                |    Expected: $expectedPath""".trimMargin()
             )
         }
     }

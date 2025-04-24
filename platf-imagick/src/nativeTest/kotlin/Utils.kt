@@ -51,6 +51,46 @@ fun Context2d.lineTo(x: Number, y: Number) {
     lineTo(x.toDouble(), y.toDouble())
 }
 
+fun Context2d.bezierCurveTo(
+    cp1x: Number,
+    cp1y: Number,
+    cp2x: Number,
+    cp2y: Number,
+    x: Number,
+    y: Number
+) {
+    bezierCurveTo(
+        cp1x.toDouble(),
+        cp1y.toDouble(),
+        cp2x.toDouble(),
+        cp2y.toDouble(),
+        x.toDouble(),
+        y.toDouble()
+    )
+}
+
+fun Context2d.ellipse(
+    x: Number,
+    y: Number,
+    radiusX: Number,
+    radiusY: Number,
+    rotation: Number,
+    startAngle: Number,
+    endAngle: Number,
+    anticlockwise: Boolean = false
+) {
+    ellipse(
+        x.toDouble(),
+        y.toDouble(),
+        radiusX.toDouble(),
+        radiusY.toDouble(),
+        rotation.toDouble(),
+        startAngle.toDouble(),
+        endAngle.toDouble(),
+        anticlockwise
+    )
+}
+
 fun Context2d.translate(x: Number, y: Number) {
     translate(x.toDouble(), y.toDouble())
 }

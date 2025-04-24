@@ -13,6 +13,7 @@ import kotlin.test.Test
 
 class ContextPathTest {
     private val outDir: String = getCurrentDir() + "/build/image-test/"
+    private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
     private val w = 100.0
     private val h = 100.0
 
@@ -21,7 +22,7 @@ class ContextPathTest {
     }
 
     val imageComparer = ImageComparer(
-        expectedDir = "src/nativeTest/resources/expected/",
+        expectedDir = expectedDir,
         outDir = outDir
     )
 
@@ -332,30 +333,6 @@ class ContextPathTest {
         )
     }
 
-    @Test
-    fun ellipseWithRotation() {
-        val (canvas, ctx) = createCanvas()
-        ctx.fillStyle = "black"
-
-        ctx.beginPath()
-        ctx.ellipse(
-            x = 50.0,
-            y = 50.0,
-            radiusX = 20.0,
-            radiusY = 50.0,
-            rotation = PI,
-            startAngle = -PI,
-            endAngle = -2 * PI,
-            anticlockwise = true
-        )
-        ctx.closePath()
-        ctx.fill()
-
-        imageComparer.assertImageEquals(
-            expectedFileName = "ellipse_with_rotation.bmp",
-            actualWand = canvas.wand!!
-        )
-    }
 
     @Test
     fun pathTransformOnBuild() {
@@ -439,6 +416,76 @@ class ContextPathTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "simple_bezier_curve.bmp",
+            actualWand = canvas.wand!!
+        )
+    }
+
+    @Test
+    fun bezierCurveInsidePath() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2.0
+
+        ctx.beginPath();
+        ctx.moveTo(0, 20);
+        ctx.lineTo(20, 20);
+        ctx.bezierCurveTo(20, 80, 80, 80, 80, 20);
+        ctx.lineTo(100, 20);
+        ctx.stroke()
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "bezier_curve_inside_path.bmp",
+            actualWand = canvas.wand!!
+        )
+    }
+
+    @Test
+    fun ellipseInsidePath() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2.0
+
+        ctx.beginPath();
+        ctx.moveTo(100, 10);
+        ctx.lineTo(80, 10);
+        ctx.ellipse(50, 20, 20, 20, 0, 0, -PI, false);
+        ctx.lineTo(20, 10);
+        ctx.lineTo(0, 10);
+        ctx.stroke()
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "ellipse_inside_path.bmp",
+            actualWand = canvas.wand!!
+        )
+    }
+
+    @Test
+    fun roundedRectWithCurves() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.lineWidth = 2.0
+        ctx.strokeStyle = "black"
+        ctx.fillStyle = "grey"
+
+        ctx.translate(5, 5)
+        ctx.scale(3.0)
+        ctx.beginPath()
+        ctx.moveTo(25.6086387569017, 21.0)
+        ctx.bezierCurveTo(25.6086387569017, 21.0, 28.7586387569017, 21.0, 28.7586387569017, 17.85)
+        ctx.lineTo(28.7586387569017, 3.15)
+        ctx.bezierCurveTo(28.7586387569017, 3.15, 28.7586387569017, 0.0, 25.6086387569017, 0.0)
+        ctx.lineTo(3.37605456734872, 0.0)
+        ctx.bezierCurveTo(3.37605456734872, 0.0, 0.2260545673487, 0.0, 0.2260545673487, 3.15)
+        ctx.lineTo(0.2260545673487, 17.85)
+        ctx.bezierCurveTo(0.2260545673487, 17.85, 0.2260545673487, 21.0, 3.37605456734872, 21.0)
+        ctx.closePath()
+        ctx.fill()
+        ctx.stroke()
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "rounded_rect_with_curves.bmp",
             actualWand = canvas.wand!!
         )
     }

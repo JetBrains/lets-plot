@@ -199,6 +199,34 @@ object ReferenceSvgModel {
                     })
                 }
             }
+
+            g(transform = SvgTransformBuilder().translate(0.0, 260.0).build()) {
+                path(
+                    fill = SvgColors.LIGHT_STEEL_BLUE,
+                    stroke = SvgColors.STEEL_BLUE,
+                    strokeWidth = 4.0,
+                    pathData = SvgPathDataBuilder()
+                        .moveTo(232.97984468811742, 170.5)
+                        .lineTo(189.6785744988955, 195.5)
+                        .ellipticalArc(50.0, 50.0, 0.0, false, true, 232.97984468811742, 120.5)
+                        .lineTo(232.97984468811742, 170.5)
+                        .ellipticalArc(0.0, 0.0, 0.0, false, false, 232.97984468811742, 170.5)
+                        .build()
+                )
+
+                path(
+                    fill = SvgColors.LIGHT_PINK,
+                    stroke = SvgColors.DARK_ORANGE,
+                    strokeWidth = 4.0,
+                    pathData = SvgPathDataBuilder(myDefaultAbsolute = true)
+                        .moveTo(232.97984468811742, 170.5)
+                        .lineTo(232.97984468811742, 120.5)
+                        .ellipticalArc(50.0, 50.0, 0.0, true, true, 189.6785744988955, 195.50000000000003)
+                        .lineTo(232.97984468811742, 170.5)
+                        .ellipticalArc(0.0, 0.0, 0.0, true, false, 232.97984468811742, 170.5)
+                        .build()
+                )
+            }
         }
     }
 

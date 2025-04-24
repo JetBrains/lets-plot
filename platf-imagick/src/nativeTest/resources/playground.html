@@ -29,19 +29,24 @@
     const c = document.getElementById("myCanvas");
     const ctx = c.getContext("2d");
 
-    ctx.fillStyle = "black"
+    ctx.lineWidth = 2.0
     ctx.strokeStyle = "black"
-    ctx.font = "50px Times New Roman"
+    ctx.fillStyle = "grey"
 
+    ctx.translate(5, 5)
+    ctx.scale(3, 3)
     ctx.beginPath()
-    nwRectWithTranslate(ctx)
+    ctx.moveTo(25.6086387569017, 21.0)
+    ctx.bezierCurveTo(25.6086387569017, 21.0, 28.7586387569017, 21.0, 28.7586387569017, 17.85)
+    ctx.lineTo(28.7586387569017, 3.15)
+    ctx.bezierCurveTo(28.7586387569017, 3.15, 28.7586387569017, 0.0, 25.6086387569017, 0.0)
+    ctx.lineTo(3.37605456734872, 0.0)
+    ctx.bezierCurveTo(3.37605456734872, 0.0, 0.2260545673487, 0.0, 0.2260545673487, 3.15)
+    ctx.lineTo(0.2260545673487, 17.85)
+    ctx.bezierCurveTo(0.2260545673487, 17.85, 0.2260545673487, 21.0, 3.37605456734872, 21.0)
     ctx.closePath()
-    ctx.clip()
-
-    ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
-
+    ctx.fill()
     ctx.stroke()
-    ctx.fillText("Test", 0.0, 47.0)
 
 </script>
 

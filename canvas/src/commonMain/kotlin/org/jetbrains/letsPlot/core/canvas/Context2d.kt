@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
+import org.jetbrains.letsPlot.core.canvas.Path.*
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
@@ -135,4 +136,25 @@ enum class FontWeight {
 
 enum class FontStyle {
     NORMAL, ITALIC
+}
+
+fun Context2d.applyPath(commands: List<Path.PathCommand>) {
+    for (command in commands) {
+        when (command) {
+            is ClosePath -> closePath()
+            is MoveTo -> moveTo(command.x, command.y)
+            is LineTo -> lineTo(command.x, command.y)
+            is Arc -> {
+                command.start?.let { (x, y) -> lineTo(x, y) }
+                bezierCurveTo(
+                    command.controlPoints[0].x,
+                    command.controlPoints[0].y,
+                    command.controlPoints[1].x,
+                    command.controlPoints[1].y,
+                    command.controlPoints[2].x,
+                    command.controlPoints[2].y
+                )
+            }
+        }
+    }
 }

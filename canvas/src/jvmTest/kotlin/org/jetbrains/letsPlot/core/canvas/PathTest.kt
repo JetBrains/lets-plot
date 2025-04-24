@@ -9,20 +9,34 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.RecursiveComparisonAssert
 import org.assertj.core.util.DoubleComparator
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvas.Path.Companion.approximateEllipseWithBezierCurve
+import kotlin.math.PI
 import kotlin.test.Test
 
 class PathTest {
+    fun arcControlPoints(
+        x: Double,
+        y: Double,
+        radiusX: Double,
+        radiusY: Double,
+        rotation: Double,
+        startAngle: Double,
+        endAngle: Double,
+        anticlockwise: Boolean
+    ): List<DoubleVector> {
+        val arc = Path.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        return listOfNotNull(arc.start) + arc.controlPoints
+    }
+    
     @Test
     fun `negative radius returns center point`() {
-        val cpts = approximateEllipseWithBezierCurve(
+        val cpts = arcControlPoints(
             x = 100.0,
             y = 100.0,
             radiusX = -50.0,
             radiusY = 50.0,
             rotation = 0.0,
-            startAngleDeg = 0.0,
-            endAngleDeg = 360.0,
+            startAngle = 0.0,
+            endAngle = 2 * PI,
             anticlockwise = false
         )
 
@@ -31,14 +45,14 @@ class PathTest {
 
     @Test
     fun `bezier curve from 90degree circle arc`() {
-        val cpts = approximateEllipseWithBezierCurve(
+        val cpts = arcControlPoints(
             x = 100.0,
             y = 100.0,
             radiusX = 50.0,
             radiusY = 50.0,
             rotation = 0.0,
-            startAngleDeg = 0.0,
-            endAngleDeg = 90.0,
+            startAngle = 0.0,
+            endAngle = PI / 2,
             anticlockwise = false
         )
 
@@ -53,14 +67,14 @@ class PathTest {
 
     @Test
     fun `bezier curve from 180degree circle arc`() {
-        val cpts = approximateEllipseWithBezierCurve(
+        val cpts = arcControlPoints(
             x = 100.0,
             y = 100.0,
             radiusX = 50.0,
             radiusY = 50.0,
             rotation = 0.0,
-            startAngleDeg = 0.0,
-            endAngleDeg = 180.0,
+            startAngle = 0.0,
+            endAngle = PI,
             anticlockwise = false
         )
 
@@ -78,14 +92,14 @@ class PathTest {
 
     @Test
     fun `bezier curve from negative angle circle arc`() {
-        val cpts = approximateEllipseWithBezierCurve(
+        val cpts = arcControlPoints(
             x = 150.0,
             y = 150.0,
             radiusX = 100.0,
             radiusY = 100.0,
             rotation = 0.0,
-            startAngleDeg = -90.0,
-            endAngleDeg = -180.0,
+            startAngle = -PI / 2,
+            endAngle = -PI,
             anticlockwise = true
         )
 
@@ -100,14 +114,14 @@ class PathTest {
 
     @Test
     fun `bezier curve from full circle`() {
-        val cpts = approximateEllipseWithBezierCurve(
+        val cpts = arcControlPoints(
             x = 100.0,
             y = 100.0,
             radiusX = 50.0,
             radiusY = 50.0,
             rotation = 0.0,
-            startAngleDeg = 0.0,
-            endAngleDeg = 360.0,
+            startAngle = 0.0,
+            endAngle = 2 * PI,
             anticlockwise = false
         )
 

@@ -10,10 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.affineTransform
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
@@ -84,9 +81,9 @@ class SvgCanvasFigure(
         ctx.save()
         ctx.affineTransform(element.transform)
 
-        element.clipPath?.let {
+        element.clipPath?.let { clipPath ->
             ctx.beginPath()
-            it.applyToContext(ctx)
+            ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
             canvas.context2d.clip()
         }
