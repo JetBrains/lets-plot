@@ -92,7 +92,8 @@ case $getPlatform in
     PLATFORM="Mac"
 
     if [[ -z "$HOMEBREW_PREFIX" ]]; then
-      if [[ $(brew --prefix) -ne 0 ]]; then
+      brew --prefix
+      if [[ "$?" -ne 0 ]]; then
         exit_with_error "Could not find Homebrew installation on your Mac"
       else
         brew_prefix=$(brew --prefix)
