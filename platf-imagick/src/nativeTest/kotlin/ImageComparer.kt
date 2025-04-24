@@ -270,12 +270,12 @@ class ImageComparer(
 }
 
 fun mkDir(dir: String): Boolean {
-    /*val access = S_IRWXU.convert<mode_t>() or S_IRWXG.convert() or S_IRWXO.convert() TODO: Update after fix.
+    val access = S_IRWXU.convert<mode_t>() or S_IRWXG.convert() or S_IRWXO.convert()
     if (access(dir, F_OK) == 0) {
         return true
-    }*/
+    }
 
-    if (mkdir(dir) != 0 && errno != EEXIST) { //TODO: Update after fix.
+    if (mkdir(dir, access) != 0 && errno != EEXIST) {
         return false
     }
 
@@ -286,7 +286,7 @@ fun getCurrentDir(): String {
     return memScoped {
         val bufferSize = 4096 * 8
         val buffer = allocArray<ByteVar>(bufferSize)
-        if (getcwd(buffer, bufferSize.toULong().toInt()) != null) { //TODO: Update after fix.
+        if (getcwd(buffer, bufferSize.toULong()) != null) {
             buffer.toKString()
         } else {
             "." // Default to current directory on error
