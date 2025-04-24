@@ -51,12 +51,12 @@ kotlin {
             "-lz"
         )
 
-        if (target == mingwX64()) {
+      /*  if (target == mingwX64()) {
             linkerOpts += listOf(
                 "-lurlmon",
                 "-lgdi32"
             )
-        }
+        }*/
     }
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
