@@ -18,7 +18,7 @@ class TypedContinuousIdentityMappersTest {
     @Test
     fun colorValues() {
         assertColor(Color.RED, 0xff0000.toDouble())
-        assertColor(Color.GREEN, 0x00ff00.toDouble())
+        assertColor(Color.LIME, 0x00ff00.toDouble())
         assertColor(Color.BLUE, 0x0000ff.toDouble())
         assertColor(Color.BLACK, 0.0)
         assertColor(Color.WHITE, 0xffffff.toDouble())
@@ -27,7 +27,7 @@ class TypedContinuousIdentityMappersTest {
     @Test
     fun colorValuesNeg() {
         assertColor(Color.RED, (-0xff0000).toDouble())
-        assertColor(Color.GREEN, (-0x00ff00).toDouble())
+        assertColor(Color.LIME, (-0x00ff00).toDouble())
         assertColor(Color.BLUE, (-0x0000ff).toDouble())
         assertColor(Color.BLACK, -0.0)
         assertColor(Color.WHITE, (-0xffffff).toDouble())

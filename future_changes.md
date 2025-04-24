@@ -1,6 +1,9 @@
 ## [4.6.3] - 2025-mm-dd
 
 ### Added
+- More named colors, including all HTML/CSS colors.
+- Support different color naming styles like `dark-gray`, `darkgrey`, `dark_grey`, `DARKGRAY`, etc.
+- Grayscale colors from `gray0` (black) to `gray100` (white).
 
 - Geometries:
 
@@ -9,6 +12,7 @@
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
 
 ### Changed
+- Updated RGB values for `lightgray` and `green`. To restore the previous colors, use `gray75` and `lime`, respectively. 
 
 ### Fixed
 
