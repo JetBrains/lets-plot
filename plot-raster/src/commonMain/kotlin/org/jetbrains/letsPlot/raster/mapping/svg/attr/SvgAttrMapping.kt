@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.canvas.Path
+import org.jetbrains.letsPlot.core.canvas.Path2d
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.PointerEvents
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgTransformParser.parseSvgTransform
@@ -20,7 +20,7 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
             SvgGraphicsElement.VISIBILITY.name -> target.isVisible = visibilityAsBoolean(value)
             SvgGraphicsElement.OPACITY.name -> target.opacity = value?.asFloat
             SvgGraphicsElement.CLIP_BOUNDS_JFX.name -> target.clipPath = (value as DoubleRectangle).let {
-                Path().apply {
+                Path2d().apply {
                     moveTo(it.left, it.top)
                     lineTo(it.right, it.top)
                     lineTo(it.right, it.bottom)
@@ -31,7 +31,7 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
             }
 
             SvgGraphicsElement.CLIP_CIRCLE_JFX.name -> target.clipPath = (value as DoubleRectangle).let {
-                Path().apply {
+                Path2d().apply {
                     arc(
                         x = it.center.x,
                         y = it.center.y,

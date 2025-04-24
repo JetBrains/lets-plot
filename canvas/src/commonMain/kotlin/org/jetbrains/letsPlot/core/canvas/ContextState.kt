@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Path.PathCommand
+import org.jetbrains.letsPlot.core.canvas.Path2d.PathCommand
 
 private const val logEnabled = false
 private fun log(str: () -> String) {
@@ -18,7 +18,7 @@ private fun log(str: () -> String) {
 class ContextState {
     private val states = ArrayList<StateEntry>()
     private var currentState = StateEntry.create()
-    private var currentPath: Path = Path()
+    private var currentPath: Path2d = Path2d()
 
     fun getCurrentState(): StateEntry {
         return currentState.copy()
@@ -39,7 +39,7 @@ class ContextState {
         var fillColor: Color,
         var font: Font,
         var transform: AffineTransform,
-        var clipPath: Path? = null
+        var clipPath: Path2d? = null
     ) {
         fun copy(): StateEntry {
             return StateEntry(
@@ -69,7 +69,7 @@ class ContextState {
                 font: Font = Font(),
                 transform: AffineTransform = AffineTransform.IDENTITY,
                 lineDashPattern: List<Double>? = null,
-                clipPath: Path? = null
+                clipPath: Path2d? = null
             ): StateEntry {
                 return StateEntry(
                     strokeColor = strokeColor,
@@ -139,7 +139,7 @@ class ContextState {
     }
 
     fun beginPath() {
-        currentPath = Path()
+        currentPath = Path2d()
     }
 
     fun closePath() {
@@ -169,7 +169,7 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        val arc = Path.arc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
+        val arc = Path2d.arc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
         currentPath.append(arc.transform(currentState.transform))
     }
 
@@ -180,7 +180,7 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        val arc = Path.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        val arc = Path2d.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
         currentPath.append(arc.transform(currentState.transform))
     }
 

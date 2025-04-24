@@ -11,7 +11,7 @@ import kotlin.test.Test
  */
 
 
-class ContextPathTest {
+class ContextPath2dTest {
     private val outDir: String = getCurrentDir() + "/build/image-test/"
     private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
     private val w = 100.0

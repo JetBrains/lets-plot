@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.math.PI
 import kotlin.test.Test
 
-class PathTest {
+class Path2dTest {
     fun arcControlPoints(
         x: Double,
         y: Double,
@@ -23,7 +23,7 @@ class PathTest {
         endAngle: Double,
         anticlockwise: Boolean
     ): List<DoubleVector> {
-        val arc = Path.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        val arc = Path2d.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
         return listOfNotNull(arc.start) + arc.controlPoints
     }
 

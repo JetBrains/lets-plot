@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.Path.*
+import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 
 class MagickContext2d(

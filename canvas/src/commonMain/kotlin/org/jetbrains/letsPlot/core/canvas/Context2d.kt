@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
-import org.jetbrains.letsPlot.core.canvas.Path.*
+import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
@@ -138,7 +138,7 @@ enum class FontStyle {
     NORMAL, ITALIC
 }
 
-fun Context2d.applyPath(commands: List<Path.PathCommand>) {
+fun Context2d.applyPath(commands: List<PathCommand>) {
     for (command in commands) {
         when (command) {
             is ClosePath -> closePath()

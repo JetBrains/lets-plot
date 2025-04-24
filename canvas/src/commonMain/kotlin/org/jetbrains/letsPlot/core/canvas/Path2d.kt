@@ -9,19 +9,19 @@ import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.math.*
 
-class Path() {
+class Path2d() {
     private constructor(commands: List<PathCommand>) : this() {
         this.commands += commands
     }
 
     private val commands = mutableListOf<PathCommand>()
 
-    fun copy(): Path {
-        return Path(commands)
+    fun copy(): Path2d {
+        return Path2d(commands)
     }
 
-    fun transform(affineTransform: AffineTransform): Path {
-        return Path(commands.map { it.transform(affineTransform) })
+    fun transform(affineTransform: AffineTransform): Path2d {
+        return Path2d(commands.map { it.transform(affineTransform) })
     }
 
     fun append(cmd: PathCommand) {
@@ -30,22 +30,22 @@ class Path() {
 
     fun getCommands() = commands.toList()
 
-    fun closePath(): Path {
+    fun closePath(): Path2d {
         commands += ClosePath
         return this
     }
 
-    fun moveTo(x: Double, y: Double): Path {
+    fun moveTo(x: Double, y: Double): Path2d {
         commands += MoveTo(x, y)
         return this
     }
 
-    fun lineTo(x: Double, y: Double): Path {
+    fun lineTo(x: Double, y: Double): Path2d {
         commands += LineTo(x, y)
         return this
     }
 
-    fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean): Path {
+    fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean): Path2d {
         commands += arc(
             x = x,
             y = y,
@@ -65,7 +65,7 @@ class Path() {
         rotation: Double,
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
-    ): Path {
+    ): Path2d {
         commands += arc(
             x = x,
             y = y,
@@ -86,7 +86,7 @@ class Path() {
         cp2y: Double,
         x: Double,
         y: Double
-    ): Path {
+    ): Path2d {
         commands += Arc(
             start = null,
             controlPoints = listOf(

@@ -22,7 +22,7 @@ class StateTest {
         assertThat(context.state.getCurrentState().clipPath)
             .usingRecursiveComparison()
             .isEqualTo(
-            Path()
+            Path2d()
                 .moveTo(0.0, 0.0)
                 .lineTo(1.0, 1.0)
                 .closePath()
