@@ -23,7 +23,7 @@ print_message () {
   local message="$1"
   printf "==========================================================\n\n"
   printf "${message}\n\n"
-  printf "==========================================================\n"
+  printf "==========================================================\n\n"
 }
 
 print_warning () {
@@ -35,7 +35,7 @@ print_warning () {
 
 exit_with_error () {
   local error_text="$1"
-  >&2 printf "\033[1mERROR:\033[0m \n${error_text}"
+  >&2 printf "\033[1mERROR:\033[0m \n${error_text}\n\n"
   exit 1
 }
 
@@ -87,7 +87,32 @@ getPlatform="$(uname -s)"
 
 case $getPlatform in
   Linux*)   PLATFORM="Linux";;
-  Darwin*)  PLATFORM="Mac";;
+
+  Darwin*)
+    PLATFORM="Mac"
+
+    if [[ -z "$HOMEBREW_PREFIX" ]]; then
+      if [[ $(brew --prefix) -ne 0 ]]; then
+        exit_with_error "Could not find Homebrew installation on your Mac"
+      else
+        brew_prefix=$(brew --prefix)
+      fi
+    else
+      brew_prefix="$HOMEBREW_PREFIX"
+    fi
+
+    if [[ -d "${brew_prefix}/opt/libtool" ]]; then
+      libtool_gnubin_path="${brew_prefix}/opt/libtool/libexec/gnubin"
+      if [[ -d "$libtool_gnubin_path" ]]; then
+        export PATH="${libtool_gnubin_path}:${PATH}"
+      else
+        exit_with_error "A 'gnubin' directory is expected, but was not found. Check your 'libtool' installation."
+      fi
+    else
+      exit_with_error "Could not find 'libtool' installation. Please, install 'libtool':\nbrew install libtool"
+    fi
+  ;;
+
   MINGW*)   PLATFORM="MinGw";;
 
   # IN CASE OF UNSUPPORTED PLATFORM EXIT WITH ERROR
@@ -270,4 +295,4 @@ if [[ "$PATH_WARNING" -eq 1 ]]; then
   printf "   You have chosen custom installation path. Do not forget to adjust project settings:\n\n"
   printf "   ${INSTALL_PREFIX}/lib\n"
 fi
-printf "*******************************************************************"
+printf "*******************************************************************\n\n"
