@@ -40,6 +40,9 @@ kotlin {
             executable("PolarPlotDemo") {
                 entryPoint = "polarPlotMain"
             }
+            executable("PerformanceDemo") {
+                entryPoint = "performanceMain"
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 @file:Suppress("unused")
 
 import demo.plot.BarPlotMagickCanvasDemo
+import demo.plot.PerformanceMagickCanvasDemo
 import demo.plot.PolarPlotMagickCanvasDemo
 import demo.svg.ReferenceSvgDemo
 import demo.svg.SimpleMagickCanvasDemo
@@ -26,3 +27,8 @@ fun barPlotMain() {
 fun polarPlotMain() {
     PolarPlotMagickCanvasDemo.main()
 }
+
+fun performanceMain() {
+    PerformanceMagickCanvasDemo.main()
+}
+
