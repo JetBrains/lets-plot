@@ -11,12 +11,11 @@ import kotlinx.cinterop.ExperimentalForeignApi
 
 object PerformanceMagickCanvasDemo {
     @OptIn(ExperimentalForeignApi::class)
-    fun main() {
-        savePlot(basic(), "performance.bmp")
+    fun main(n: Int) {
+        savePlot(basic(n), "performance_$n.bmp")
     }
 
-    fun basic(): MutableMap<String, Any> {
-        val n = 100
+    fun basic(n: Int): MutableMap<String, Any> {
         val xs = List(n) { it } .joinToString(", ")
         val ys = List(n) { 0 }.joinToString(", ")
         val data = """ { "x": [$xs], "y": [$ys] }"""
