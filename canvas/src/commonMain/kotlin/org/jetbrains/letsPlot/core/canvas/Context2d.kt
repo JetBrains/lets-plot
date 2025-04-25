@@ -146,14 +146,8 @@ fun Context2d.applyPath(commands: List<PathCommand>) {
             is LineTo -> lineTo(command.x, command.y)
             is Arc -> {
                 command.start?.let { (x, y) -> lineTo(x, y) }
-                bezierCurveTo(
-                    command.controlPoints[0].x,
-                    command.controlPoints[0].y,
-                    command.controlPoints[1].x,
-                    command.controlPoints[1].y,
-                    command.controlPoints[2].x,
-                    command.controlPoints[2].y
-                )
+                command.controlPoints.windowed(size = 3, step = 3)
+                    .forEach { (cp1, cp2, cp3) -> bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y) }
             }
         }
     }

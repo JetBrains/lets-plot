@@ -94,12 +94,13 @@ class MagickContext2d(
         val transform = affineTransform ?: state.transform
 
         state.clipPath?.let { clipPath ->
+            val unTransformedClipPath = clipPath.transform(transform.inverse())
+
             ImageMagick.DrawPushDefs(wand)
             ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
 
             // DrawAffine transforms clipPath, but a path already has transform applied.
             // So we need to inversely transform it to prevent double transform.
-            val unTransformedClipPath = clipPath.transform(transform.inverse())
             drawPath(unTransformedClipPath.getCommands(), wand)
 
             ImageMagick.DrawPopClipPath(wand)

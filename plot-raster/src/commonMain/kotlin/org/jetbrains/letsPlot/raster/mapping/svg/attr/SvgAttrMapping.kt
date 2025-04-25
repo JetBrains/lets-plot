@@ -44,7 +44,7 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
             }
 
             SvgGraphicsElement.CLIP_PATH.name -> {
-                println(value)
+                //println(value)
             } // Not supported.
             SvgConstants.SVG_STYLE_ATTRIBUTE -> {
                 splitStyle(value as? String)

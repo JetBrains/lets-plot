@@ -37,6 +37,9 @@ kotlin {
             executable("BarPlotDemo") {
                 entryPoint = "barPlotMain"
             }
+            executable("PolarPlotDemo") {
+                entryPoint = "polarPlotMain"
+            }
         }
     }
 
