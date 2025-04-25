@@ -276,7 +276,6 @@ class Path2d() {
             cx: Double, cy: Double, // Ellipse center
             rotation: Double // Ellipse rotation
         ): DoubleVector {
-            println("px: $px, py: $py, cx: $cx, cy: $cy, rotation: $rotation")
             val cosRot = cos(rotation)
             val sinRot = sin(rotation)
             val pxRotated = px * cosRot - py * sinRot

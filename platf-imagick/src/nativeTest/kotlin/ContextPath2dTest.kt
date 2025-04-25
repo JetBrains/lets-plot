@@ -17,6 +17,11 @@ class ContextPath2dTest {
     private val w = 100.0
     private val h = 100.0
 
+    private val strokeColor = "#000000"
+    private val fillColor = "#000000"
+    private val filledStrokeColor = "#000080"
+    private val strokedFillColor = "#FFC000"
+
     init {
         mkDir(outDir)
     }
@@ -36,7 +41,7 @@ class ContextPath2dTest {
     fun shearedEllipse() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = strokeColor
         ctx.beginPath()
         ctx.save()
         ctx.transform(sx = 1.0, ry = 0.3420201241970062, rx = 0.0, sy = 1.0, tx = 0.0, ty = -30.0)
@@ -61,7 +66,7 @@ class ContextPath2dTest {
     fun shearedCircularArc() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = strokeColor
         ctx.beginPath()
         ctx.save()
         ctx.transform(sx = 1.0, ry = 0.3420201241970062, rx = 0.0, sy = 1.0, tx = 0.0, ty = -30.0)
@@ -88,7 +93,7 @@ class ContextPath2dTest {
     fun nestedTranslates() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.fillStyle = "black"
+        ctx.fillStyle = fillColor
 
         ctx.save()
         ctx.translate(0.0, 50.0)
@@ -114,9 +119,9 @@ class ContextPath2dTest {
     @Test
     fun multiPathFill() {
         val (canvas, ctx) = createCanvas()
-        ctx.fillStyle = "orange"
+        ctx.fillStyle = strokedFillColor
+        ctx.strokeStyle = filledStrokeColor
         ctx.lineWidth = 5.0
-        ctx.strokeStyle = "dark_blue"
 
         ctx.moveTo(50.0, 50.0)
         ctx.lineTo(125.0, 125.0)
@@ -145,7 +150,7 @@ class ContextPath2dTest {
     fun multiPathStroke() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.strokeStyle = "orange"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
 
         ctx.beginPath()
@@ -170,8 +175,7 @@ class ContextPath2dTest {
     @Test
     fun zigZagStroke() {
         val (canvas, ctx) = createCanvas()
-        ctx.strokeStyle = "orange"
-        ctx.fillStyle = "dark_blue"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 3.0
 
         ctx.beginPath()
@@ -198,8 +202,7 @@ class ContextPath2dTest {
     @Test
     fun zigZagFill() {
         val (canvas, ctx) = createCanvas()
-        ctx.strokeStyle = "orange"
-        ctx.fillStyle = "dark_blue"
+        ctx.fillStyle = fillColor
         ctx.lineWidth = 1.0
 
         ctx.beginPath()
@@ -228,8 +231,7 @@ class ContextPath2dTest {
     @Test
     fun circleStroke() {
         val (canvas, ctx) = createCanvas()
-        ctx.strokeStyle = "orange"
-        ctx.fillStyle = "dark_blue"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 1.0
 
         ctx.beginPath()
@@ -245,8 +247,7 @@ class ContextPath2dTest {
     @Test
     fun circleFill() {
         val (canvas, ctx) = createCanvas()
-        ctx.strokeStyle = "orange"
-        ctx.fillStyle = "dark_blue"
+        ctx.fillStyle = fillColor
         ctx.lineWidth = 1.0
 
         ctx.beginPath()
@@ -268,10 +269,10 @@ class ContextPath2dTest {
         ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
         ctx.closePath()
 
-        ctx.fillStyle = "dark_blue"
+        ctx.fillStyle = strokedFillColor
         ctx.fill()
 
-        ctx.strokeStyle = "red"
+        ctx.strokeStyle = filledStrokeColor
         ctx.setLineWidth(2.0)
         ctx.stroke()
 
@@ -285,7 +286,7 @@ class ContextPath2dTest {
     fun ellipse() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.fillStyle = "dark_blue"
+        ctx.fillStyle = fillColor
 
         ctx.beginPath()
         //ctx.moveTo(50.0, 50.0)
@@ -312,7 +313,7 @@ class ContextPath2dTest {
     fun rotatedEllipse() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.fillStyle = "black"
+        ctx.fillStyle = fillColor
         ctx.beginPath()
         ctx.ellipse(
             x = 50.0,
@@ -337,7 +338,7 @@ class ContextPath2dTest {
     @Test
     fun pathTransformOnBuild() {
         val (canvas, ctx) = createCanvas()
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
 
         ctx.save()
@@ -359,7 +360,7 @@ class ContextPath2dTest {
     @Test
     fun arcTransformsAfterRestore() {
         val (canvas, ctx) = createCanvas()
-        ctx.fillStyle = "black"
+        ctx.fillStyle = fillColor
 
         ctx.save()
         ctx.translate(50.0, 50.0)
@@ -380,8 +381,8 @@ class ContextPath2dTest {
     fun text_SkewTransform() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.fillStyle = "black"
-        ctx.strokeStyle = "black"
+        ctx.fillStyle = strokeColor
+        ctx.strokeStyle = strokeColor
         ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
 
         ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
@@ -406,7 +407,7 @@ class ContextPath2dTest {
     fun simpleBezierCurve() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
 
         ctx.beginPath()
@@ -424,7 +425,7 @@ class ContextPath2dTest {
     fun bezierCurveInsidePath() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
 
         ctx.beginPath();
@@ -444,7 +445,7 @@ class ContextPath2dTest {
     fun ellipseInsidePath() {
         val (canvas, ctx) = createCanvas()
 
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
 
         ctx.beginPath();
@@ -466,8 +467,8 @@ class ContextPath2dTest {
         val (canvas, ctx) = createCanvas()
 
         ctx.lineWidth = 2.0
-        ctx.strokeStyle = "black"
-        ctx.fillStyle = "grey"
+        ctx.strokeStyle = filledStrokeColor
+        ctx.fillStyle = strokedFillColor
 
         ctx.translate(5, 5)
         ctx.scale(3.0)
