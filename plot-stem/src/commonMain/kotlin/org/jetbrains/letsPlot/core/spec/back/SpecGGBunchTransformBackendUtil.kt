@@ -68,7 +68,7 @@ internal object SpecGGBunchTransformBackendUtil {
     }
 
     private fun plotBunchSize(bunchItemBoundsIterable: Iterable<DoubleRectangle>): DoubleVector {
-        return bunchItemBoundsIterable.fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
+        return bunchItemBoundsIterable.fold(DoubleRectangle.ZERO) { acc, bounds ->
                 acc.union(bounds)
             }.dimension
     }
