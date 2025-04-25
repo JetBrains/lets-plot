@@ -10,10 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.affineTransform
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
@@ -79,10 +76,18 @@ class SvgCanvasFigure(
             return
         }
 
-        canvas.context2d.save()
-        canvas.context2d.affineTransform(element.transform)
+        val ctx = canvas.context2d
 
-        //element.clipPath?.let(canvas::clipPath)
+        ctx.save()
+        ctx.affineTransform(element.transform)
+
+        element.clipPath?.let { clipPath ->
+            ctx.beginPath()
+            ctx.applyPath(clipPath.getCommands())
+            ctx.closePath()
+            canvas.context2d.clip()
+        }
+
         //val globalAlphaSet = element.opacity?.let {
         //    val paint = Paint().apply {
         //        setAlphaf(it)

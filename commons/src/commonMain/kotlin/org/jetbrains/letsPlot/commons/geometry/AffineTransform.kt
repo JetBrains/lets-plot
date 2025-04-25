@@ -68,6 +68,21 @@ class AffineTransform(
         )
     }
 
+    fun inverse(): AffineTransform {
+        val det = m00 * m11 - m01 * m10
+        if (det == 0.0) {
+            throw IllegalStateException("Matrix is not invertible")
+        }
+        return AffineTransform(
+            m00 = m11 / det,
+            m10 = -m10 / det,
+            m01 = -m01 / det,
+            m11 = m00 / det,
+            m02 = (m01 * m12 - m02 * m11) / det,
+            m12 = (m02 * m10 - m00 * m12) / det
+        )
+    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -96,6 +111,9 @@ class AffineTransform(
     }
 
     fun repr(): String {
+        if (m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0) {
+            return "IDENTITY"
+        }
         return """m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12"""
     }
 

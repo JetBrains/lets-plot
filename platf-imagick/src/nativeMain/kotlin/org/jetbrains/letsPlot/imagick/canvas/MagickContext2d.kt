@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.Path.*
+import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 
 class MagickContext2d(
@@ -21,7 +21,6 @@ class MagickContext2d(
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
 
     override fun fillText(text: String, x: Double, y: Double) {
-        //println("FillText(\'$text\') [${state.affineMatrix.sx}, ${state.affineMatrix.rx}, ${state.affineMatrix.tx}, ${state.affineMatrix.ry}, ${state.affineMatrix.sy}, ${state.affineMatrix.ty}]")
         withFillWand { fillWand ->
             memScoped {
                 val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
@@ -89,9 +88,27 @@ class MagickContext2d(
 
     private fun withWand(affineTransform: AffineTransform? = null, block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
         val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
-        val state = contextState.getCurrentState()
+        ImageMagick.PushDrawingWand(wand)
 
-        DrawAffineTransofrm(wand, affineTransform ?: state.transform)
+        val state = contextState.getCurrentState()
+        val transform = affineTransform ?: state.transform
+
+        state.clipPath?.let { clipPath ->
+            val unTransformedClipPath = clipPath.transform(transform.inverse())
+
+            ImageMagick.DrawPushDefs(wand)
+            ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
+
+            // DrawAffine transforms clipPath, but a path already has transform applied.
+            // So we need to inversely transform it to prevent double transform.
+            drawPath(unTransformedClipPath.getCommands(), wand)
+
+            ImageMagick.DrawPopClipPath(wand)
+            ImageMagick.DrawPopDefs(wand)
+
+            ImageMagick.DrawSetClipPath(wand, clipPath.hashCode().toString())
+        }
+
         ImageMagick.DrawSetFontSize(wand, state.font.fontSize)
         ImageMagick.DrawSetFontFamily(wand, state.font.fontFamily)
 
@@ -107,7 +124,12 @@ class MagickContext2d(
         }
         ImageMagick.DrawSetFontWeight(wand, fontWeight)
 
+        DrawAffineTransofrm(wand, transform)
+
         block(wand)
+
+        ImageMagick.PopDrawingWand(wand)
+        ImageMagick.MagickDrawImage(magickWand, wand)
         ImageMagick.DestroyDrawingWand(wand)
     }
 
@@ -119,7 +141,10 @@ class MagickContext2d(
             val state = contextState.getCurrentState()
             ImageMagick.PixelSetColor(pixelWand, state.strokeColor.toCssColor())
             ImageMagick.DrawSetStrokeColor(strokeWand, pixelWand)
-            ImageMagick.DrawSetStrokeWidth(strokeWand, state.strokeWidth)
+
+            val strokeWidth = minOf(state.transform.sx, state.transform.sy) * state.strokeWidth
+            ImageMagick.DrawSetStrokeWidth(strokeWand, strokeWidth)
+
             ImageMagick.DrawSetStrokeMiterLimit(strokeWand, state.miterLimit.toULong())
             val lineCap = when (state.lineCap) {
                 LineCap.BUTT -> ImageMagick.LineCap.ButtCap
@@ -152,8 +177,6 @@ class MagickContext2d(
             ImageMagick.DrawSetFillColor(strokeWand, pixelWand)
 
             block(strokeWand)
-
-            ImageMagick.MagickDrawImage(magickWand, strokeWand)
         }
     }
 
@@ -169,43 +192,48 @@ class MagickContext2d(
             ImageMagick.DrawSetStrokeColor(fillWand, pixelWand)
 
             block(fillWand)
-
-            ImageMagick.MagickDrawImage(magickWand, fillWand)
         }
     }
 
-    fun drawPath(commands: List<PathCommand>, drawingWand: CPointer<ImageMagick.DrawingWand>) {
-        ImageMagick.DrawPathStart(drawingWand)
+    private fun drawPath(commands: List<PathCommand>, wand: CPointer<ImageMagick.DrawingWand>) {
+        if (commands.isEmpty()) {
+            return
+        }
 
-        commands.forEach { cmd ->
-            when (cmd) {
-                is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(drawingWand, cmd.x, cmd.y)
-                is LineTo -> ImageMagick.DrawPathLineToAbsolute(drawingWand, cmd.x, cmd.y)
-                is BezierCurveTo -> cmd.controlPoints.asSequence()
-                    .windowed(size = 3, step = 3)
-                    .forEach { (cp1, cp2, cp3) ->
-                        ImageMagick.DrawPathCurveToAbsolute(
-                            drawingWand,
-                            cp1.x,
-                            cp1.y,
-                            cp2.x,
-                            cp2.y,
-                            cp3.x,
-                            cp3.y
-                        )
-                    }
+        var started = commands.first() is MoveTo
 
-                is ClosePath -> ImageMagick.DrawPathClose(drawingWand)
+        fun lineTo(x: Double, y: Double) {
+            if (started) {
+                ImageMagick.DrawPathLineToAbsolute(wand, x, y)
+            } else {
+                ImageMagick.DrawPathMoveToAbsolute(wand, x, y)
+                started = true
             }
         }
 
-        ImageMagick.PopDrawingWand(drawingWand)
-        ImageMagick.DrawPathFinish(drawingWand)
+        ImageMagick.DrawPathStart(wand)
+        commands.forEach { cmd ->
+            when (cmd) {
+                is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(wand, cmd.x, cmd.y)
+                is LineTo -> lineTo(cmd.x, cmd.y)
+                is Arc -> {
+                    cmd.start?.let { (x, y) -> lineTo(x, y) }
+                    cmd.controlPoints.asSequence()
+                        .windowed(size = 3, step = 3)
+                        .forEach { (cp1, cp2, cp3) ->
+                            ImageMagick.DrawPathCurveToAbsolute(wand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+                        }
+                }
+
+                is ClosePath -> ImageMagick.DrawPathClose(wand)
+            }
+        }
+        ImageMagick.DrawPathFinish(wand)
     }
 
 
     companion object {
-        val logEnabled = true
+        const val logEnabled = false
         fun log(str: () -> String) {
             if (logEnabled)
                 println(str())

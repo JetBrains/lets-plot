@@ -61,14 +61,20 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     private fun Graphics2D.glyphVector(str: String): GlyphVector = font.createGlyphVector(fontRenderContext, str)
 
-    private fun Graphics2D.paintText(text: String, x: Double, y: Double, painter: (Graphics2D, Shape) -> Unit) {
-        val gv = glyphVector(text)
+    private fun paintText(text: String, x: Double, y: Double, fill: Boolean) {
+        val gv = graphics.glyphVector(text)
         val position = textPosition(gv, x, y)
 
-        val savedTransform = transform
-        translate(position.x, position.y)
-        painter(this, gv.outline)
-        transform = savedTransform
+        val savedTransform = graphics.transform
+        graphics.translate(position.x, position.y)
+        if (fill) {
+            graphics.color = state.fillColor
+            graphics.fill(gv.outline)
+        } else {
+            graphics.color = state.strokeColor
+            graphics.draw(gv.outline)
+        }
+        graphics.transform = savedTransform
     }
 
     private fun textPosition(glyphVector: GlyphVector, x: Double, y: Double): DoubleVector {
@@ -139,7 +145,15 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     override fun clip() {
         clipStack.add(currentPath)
         state.numClipPath = clipStack.size
-        graphics.clip = currentPath
+
+        val currentTransform = graphics.transform
+        val invCurrentPath = GeneralPath(currentPath)
+        val invCurrentTransform = AffineTransform(currentTransform)
+        invCurrentTransform.invert()
+        invCurrentPath.transform(currentTransform)
+        graphics.transform = AffineTransform()
+        graphics.clip = invCurrentPath
+        graphics.transform = currentTransform
     }
 
     override fun stroke() {
@@ -325,13 +339,11 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
-        graphics.color = state.strokeColor
-        graphics.paintText(text, x, y, Graphics2D::draw)
+        paintText(text, x, y, fill = false)
     }
 
     override fun fillText(text: String, x: Double, y: Double) {
-        graphics.color = state.fillColor
-        graphics.paintText(text, x, y, Graphics2D::fill)
+        paintText(text, x, y, fill = true)
     }
 
     override fun scale(xy: Double) {
