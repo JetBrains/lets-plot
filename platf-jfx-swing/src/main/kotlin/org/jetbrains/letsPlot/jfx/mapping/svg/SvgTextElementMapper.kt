@@ -81,8 +81,11 @@ internal class SvgTextElementMapper(
                     require(child is SvgTextNode)
                     val fontScale = node.getAttribute("font-size").get()?.let {
                         require(it is String) { "font-size: only string value is supported, but was $it" }
-                        require(it.endsWith("em")) { "font-size: only `em` value is supported, but was $it" }
-                        it.removeSuffix("em").toDouble()
+                        when {
+                            it.endsWith("em") -> it.removeSuffix("em").toDouble()
+                            it.endsWith("%") -> it.removeSuffix("%").toDouble() / 100
+                            else -> error("Unexpected font-size value: $it")
+                        }
                     }
 
                     val baselineShift = node.getAttribute("baseline-shift").get()?.let {

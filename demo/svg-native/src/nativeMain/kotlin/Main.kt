@@ -1,4 +1,7 @@
+@file:Suppress("unused")
+
 import demo.plot.BarPlotMagickCanvasDemo
+import demo.plot.PolarPlotMagickCanvasDemo
 import demo.svg.ReferenceSvgDemo
 import demo.svg.SimpleMagickCanvasDemo
 
@@ -8,17 +11,18 @@ import demo.svg.SimpleMagickCanvasDemo
  */
 
 
-@Suppress("unused")
 fun simpleMagickCanvasDemoMain() {
     SimpleMagickCanvasDemo.main()
 }
 
-@Suppress("unused")
 fun referenceSvgDemoMain() {
     ReferenceSvgDemo.main()
 }
 
-@Suppress("unused")
 fun barPlotMain() {
     BarPlotMagickCanvasDemo.main()
+}
+
+fun polarPlotMain() {
+    PolarPlotMagickCanvasDemo.main()
 }
