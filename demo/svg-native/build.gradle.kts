@@ -87,4 +87,25 @@ kotlin {
             }
         }
     }
+
 }
+
+val demos = listOf("100", "200", "400", "800", "1600", "3200")
+
+demos.forEach { demoSize ->
+    tasks.register<Exec>("runPerformance${demoSize}Demo") {
+        dependsOn("linkPerformanceDemoDebugExecutableLinuxX64") // ensure it's built
+        group = "run"
+        description = "Runs Performance${demoSize}Demo with argument ${demoSize}"
+        executable = "${project.buildDir}/bin/linuxX64/PerformanceDemoDebugExecutable/PerformanceDemo.kexe" // Ensure correct path
+
+        doFirst {
+            args(demoSize) // Use the args() method to add arguments
+        }
+
+        standardOutput = System.out
+        errorOutput = System.err
+    }
+
+}
+

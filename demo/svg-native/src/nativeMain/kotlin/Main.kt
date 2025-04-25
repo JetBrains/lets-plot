@@ -28,7 +28,17 @@ fun polarPlotMain() {
     PolarPlotMagickCanvasDemo.main()
 }
 
-fun performanceMain() {
-    PerformanceMagickCanvasDemo.main()
-}
+fun performanceMain(args: Array<String>) {
+    if (args.isEmpty()) {
+        println("Usage: pass <number of points>")
+        return
+    }
 
+    val n = args[0].toIntOrNull()
+        ?: run {
+            println("Invalid number of points: ${args[0]}")
+            return
+        }
+
+    PerformanceMagickCanvasDemo.main(n)
+}
