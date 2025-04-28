@@ -8,16 +8,28 @@ package org.jetbrains.letsPlot.imagick.canvas
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.refTo
+import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 
 class MagickCanvas(
-    val wand: CPointer<ImageMagick.MagickWand>?,
+    private val _img: CPointer<ImageMagick.MagickWand>?,
     size: Vector,
     pixelRatio: Double,
-) : ScaledCanvas(MagickContext2d(wand), size, pixelRatio) {
+) : ScaledCanvas(MagickContext2d(_img), size, pixelRatio) {
+
+    val img: CPointer<ImageMagick.MagickWand>? get ()  {
+        val wand = (context2d as MagickContext2d).wand
+
+        if (REUSE_WAND) {
+            val v = ImageMagick.DrawGetVectorGraphics(wand)
+            println(v!!.toKString())
+            ImageMagick.MagickDrawImage(_img, wand)
+        }
+        return _img
+    }
 
     override fun takeSnapshot(): Async<Canvas.Snapshot> {
         TODO("Not yet implemented")
@@ -36,7 +48,7 @@ class MagickCanvas(
         memScoped {
             val byteBuffer = pixelData.refTo(0) // Pointer to ByteArray
             val success = ImageMagick.MagickExportImagePixels(
-                wand,
+                _img,
                 0, 0, w.toULong(), h.toULong(),
                 "RGBA", ImageMagick.StorageType.CharPixel, byteBuffer
             )
@@ -53,7 +65,13 @@ class MagickCanvas(
     }
 
     fun saveBmp(filename: String) {
-        if (ImageMagick.MagickWriteImage(wand, filename) == ImageMagick.MagickFalse) {
+        val wand = (context2d as MagickContext2d).wand
+
+        if (REUSE_WAND) {
+            ImageMagick.MagickDrawImage(_img, wand)
+        }
+
+        if (ImageMagick.MagickWriteImage(_img, filename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
     }

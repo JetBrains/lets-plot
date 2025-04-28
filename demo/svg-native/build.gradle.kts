@@ -90,14 +90,28 @@ kotlin {
 
 }
 
-val demos = listOf("100", "200", "400", "800", "1600", "3200")
+val demos = listOf("0", "10", "100", "200", "400", "800", "1600", "3200")
+
+// Can't use destructuring declaration here
+// Caused by: java.lang.Throwable: Rewrite at slice SCRIPT_SCOPE key: class Build_gradle old value:
+val platf = when {
+    os.isMacOsX && arch == "arm64" -> "macosArm64" to "MacosArm64"
+    os.isMacOsX && arch == "x86_64" -> "macosX64" to "MacosX64"
+    os.isLinux && arch == "arm64" -> "linuxArm64" to "LinuxArm64"
+    os.isLinux && arch == "x86_64" -> "linuxX64" to "LinuxX64"
+    os.isWindows -> "mingwX64" to "MingwX64"
+    else -> "" to ""
+}
+
+val dirName = platf.first
+val taskName = platf.second
 
 demos.forEach { demoSize ->
     tasks.register<Exec>("runPerformance${demoSize}Demo") {
-        dependsOn("linkPerformanceDemoDebugExecutableLinuxX64") // ensure it's built
+        dependsOn("linkPerformanceDemoDebugExecutable$taskName") // ensure it's built
         group = "run"
         description = "Runs Performance${demoSize}Demo with argument ${demoSize}"
-        executable = "${project.buildDir}/bin/linuxX64/PerformanceDemoDebugExecutable/PerformanceDemo.kexe" // Ensure correct path
+        executable = "${project.buildDir}/bin/$dirName/PerformanceDemoDebugExecutable/PerformanceDemo.kexe" // Ensure correct path
 
         doFirst {
             args(demoSize) // Use the args() method to add arguments

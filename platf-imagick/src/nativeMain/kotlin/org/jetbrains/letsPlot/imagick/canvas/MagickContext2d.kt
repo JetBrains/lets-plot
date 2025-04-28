@@ -13,12 +13,16 @@ import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 
+const val REUSE_WAND = true
+
 class MagickContext2d(
-    private val magickWand: CPointer<ImageMagick.MagickWand>?,
+    private val img: CPointer<ImageMagick.MagickWand>?,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate()
 ) : Context2d by stateDelegate {
     private val contextState: ContextState get() = stateDelegate.state
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
+    val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
+    val clips = mutableSetOf<String>()
 
     override fun fillText(text: String, x: Double, y: Double) {
         withFillWand { fillWand ->
@@ -68,7 +72,7 @@ class MagickContext2d(
         var metrics: CPointer<DoubleVar>? = null
         memScoped {
             withStrokeWand { strokeWand ->
-                metrics = ImageMagick.MagickQueryFontMetrics(magickWand, strokeWand, str)
+                metrics = ImageMagick.MagickQueryFontMetrics(img, strokeWand, str)
                     ?: error("Failed to measure text")
             }
         }
@@ -87,50 +91,65 @@ class MagickContext2d(
     }
 
     private fun withWand(affineTransform: AffineTransform? = null, block: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
-        val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
-        ImageMagick.PushDrawingWand(wand)
-
         val state = contextState.getCurrentState()
         val transform = affineTransform ?: state.transform
-
-        state.clipPath?.let { clipPath ->
-            val unTransformedClipPath = clipPath.transform(transform.inverse())
-
-            ImageMagick.DrawPushDefs(wand)
-            ImageMagick.DrawPushClipPath(wand, clipPath.hashCode().toString())
-
-            // DrawAffine transforms clipPath, but a path already has transform applied.
-            // So we need to inversely transform it to prevent double transform.
-            drawPath(unTransformedClipPath.getCommands(), wand)
-
-            ImageMagick.DrawPopClipPath(wand)
-            ImageMagick.DrawPopDefs(wand)
-
-            ImageMagick.DrawSetClipPath(wand, clipPath.hashCode().toString())
+        val wnd = if (REUSE_WAND) {
+            wand
+        } else {
+            ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
         }
 
-        ImageMagick.DrawSetFontSize(wand, state.font.fontSize)
-        ImageMagick.DrawSetFontFamily(wand, state.font.fontFamily)
+        state.clipPath?.let { clipPath ->
+            if (!REUSE_WAND || clipPath.hashCode().toString() !in clips) {
+                clips.add(clipPath.hashCode().toString())
+
+                val unTransformedClipPath = clipPath.transform(transform.inverse())
+
+                ImageMagick.DrawPushDefs(wnd)
+                ImageMagick.DrawPushClipPath(wnd, clipPath.hashCode().toString())
+
+                // DrawAffine transforms clipPath, but a path already has transform applied.
+                // So we need to inversely transform it to prevent double transform.
+                drawPath(unTransformedClipPath.getCommands(), wnd)
+
+                ImageMagick.DrawPopClipPath(wnd)
+                ImageMagick.DrawPopDefs(wnd)
+            }
+        }
+
+        if (REUSE_WAND) {
+            ImageMagick.PushDrawingWand(wnd)
+        }
+        state.clipPath?.let { clipPath ->
+            ImageMagick.DrawSetClipPath(wnd, clipPath.hashCode().toString())
+        }
+        ImageMagick.DrawSetFontSize(wnd, state.font.fontSize)
+        ImageMagick.DrawSetFontFamily(wnd, state.font.fontFamily)
 
         val fontStyle = when (state.font.fontStyle) {
             FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
             FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
         }
-        ImageMagick.DrawSetFontStyle(wand, fontStyle)
+        ImageMagick.DrawSetFontStyle(wnd, fontStyle)
 
         val fontWeight = when (state.font.fontWeight) {
             FontWeight.NORMAL -> 400.toULong()
             FontWeight.BOLD -> 800.toULong()
         }
-        ImageMagick.DrawSetFontWeight(wand, fontWeight)
+        ImageMagick.DrawSetFontWeight(wnd, fontWeight)
 
-        DrawAffineTransofrm(wand, transform)
+        DrawAffineTransofrm(wnd, transform)
 
-        block(wand)
+        block(wnd)
 
-        ImageMagick.PopDrawingWand(wand)
-        ImageMagick.MagickDrawImage(magickWand, wand)
-        ImageMagick.DestroyDrawingWand(wand)
+
+        if (REUSE_WAND) {
+            ImageMagick.PopDrawingWand(wnd)
+        } else {
+            ImageMagick.MagickDrawImage(img, wnd)
+            ImageMagick.DestroyDrawingWand(wnd)
+        }
+
     }
 
     private fun withStrokeWand(
