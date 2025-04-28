@@ -52,7 +52,7 @@ object DensityStatUtil {
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
 
-        processBinnedData(bins, values, weights) { bin, binValue, binWeight ->
+        handleBinnedData(bins, values, weights) { bin, binValue, binWeight ->
             val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
@@ -83,11 +83,11 @@ object DensityStatUtil {
         return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
     }
 
-    fun processBinnedData(
+    fun handleBinnedData(
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
-        processor: (Double, List<Double>, List<Double>) -> Unit,
+        binHandler: (Double, List<Double>, List<Double>) -> Unit,
     ) {
         val binnedData = (bins zip (values zip weights))
             .filter { it.first?.isFinite() == true }
@@ -99,7 +99,7 @@ object DensityStatUtil {
                 .sortedBy { it.first }
                 .unzip()
             if (binValue.isEmpty()) continue
-            processor(bin, binValue, binWeight)
+            binHandler(bin, binValue, binWeight)
         }
     }
 

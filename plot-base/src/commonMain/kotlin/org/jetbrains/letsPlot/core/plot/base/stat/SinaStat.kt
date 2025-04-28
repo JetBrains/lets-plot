@@ -63,11 +63,7 @@ class SinaStat(
 
     // Similar to YDensityStat::normalize()
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
-        val sinaIndices = if (dataAfterStat.rowCount() == 0) {
-            emptyList()
-        } else {
-            dataAfterStat.getNumeric(Stats.N).indicesOf { it == 1.0 }
-        }
+        val sinaIndices = dataAfterStat.getNumeric(Stats.N).indicesOf { it == 1.0 }
         val sinaDf = dataAfterStat.slice(sinaIndices)
         val statViolinWidth = when {
             sinaDf.rowCount() == 0 -> emptyList()
@@ -75,11 +71,7 @@ class SinaStat(
             sinaDf.rowCount() == dataAfterStat.rowCount() -> List(sinaDf.rowCount()) { 0.0 }
 
             else -> {
-                val yDensityIndices = if (dataAfterStat.rowCount() == 0) {
-                    emptyList()
-                } else {
-                    dataAfterStat.getNumeric(Stats.N).indicesOf { it == 0.0 }
-                }
+                val yDensityIndices = dataAfterStat.getNumeric(Stats.N).indicesOf { it == 0.0 }
                 val yDensityDf = dataAfterStat.slice(yDensityIndices)
                 when (scale) {
                     Scale.AREA -> {
@@ -127,7 +119,7 @@ class SinaStat(
         val statQuantile = ArrayList<Double>()
         val statN = ArrayList<Double>()
 
-        DensityStatUtil.processBinnedData(xs, ys, ws) { x, binValue, _ ->
+        DensityStatUtil.handleBinnedData(xs, ys, ws) { x, binValue, _ ->
             val indices = yDensityDf.getNumeric(Stats.X).indicesOf { it == x }
             val yDensityDfSlice = yDensityDf.slice(indices)
             val yValues = yDensityDfSlice.getNumeric(Stats.Y).map { it!! }

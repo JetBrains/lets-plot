@@ -11,6 +11,30 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.test.Test
 
 class YDensityStatTest : BaseStatTest() {
+
+    private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
+        return YDensityStat(
+            scale = scale ?: YDensityStat.DEF_SCALE,
+            trim = YDensityStat.DEF_TRIM,
+            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
+            bandWidth = null,
+            bandWidthMethod = DensityStat.DEF_BW,
+            adjust = DensityStat.DEF_ADJUST,
+            kernel = DensityStat.DEF_KERNEL,
+            n = DensityStat.DEF_N,
+            fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
+            quantiles = YDensityStat.DEF_QUANTILES
+        )
+    }
+
+    private fun filteredDataFrame(df: DataFrame, variable: DataFrame.Variable, filterFun: (Double?) -> Boolean): DataFrame {
+        val indices = df.getNumeric(variable)
+            .mapIndexed { index, v -> if (filterFun(v)) index else null }
+            .filterNotNull()
+
+        return df.selectIndices(indices)
+    }
+
     @Test
     fun emptyDataFrame() {
         testEmptyDataFrame(yDensityStat())
@@ -92,28 +116,5 @@ class YDensityStatTest : BaseStatTest() {
                 }
             }
         }
-    }
-
-    private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
-        return YDensityStat(
-            scale = scale ?: YDensityStat.DEF_SCALE,
-            trim = YDensityStat.DEF_TRIM,
-            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
-            bandWidth = null,
-            bandWidthMethod = DensityStat.DEF_BW,
-            adjust = DensityStat.DEF_ADJUST,
-            kernel = DensityStat.DEF_KERNEL,
-            n = DensityStat.DEF_N,
-            fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
-            quantiles = YDensityStat.DEF_QUANTILES
-        )
-    }
-
-    private fun filteredDataFrame(df: DataFrame, variable: DataFrame.Variable, filterFun: (Double?) -> Boolean): DataFrame {
-        val indices = df.getNumeric(variable)
-            .mapIndexed { index, v -> if (filterFun(v)) index else null }
-            .filterNotNull()
-
-        return df.selectIndices(indices)
     }
 }

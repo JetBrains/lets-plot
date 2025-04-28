@@ -42,8 +42,8 @@ class SinaGeom : PointGeom() {
         ctx: GeomContext
     ) {
         val rand = seed?.let { Random(seed!!) } ?: Random.Default
-        // Almost the same as in ViolinGeom::buildLines()
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
+        // Similar to ViolinGeom::buildLines()
+        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
         if (!integerish(dataPoints.map { it.y()!! })) {
             jitterY = false
         }
@@ -53,7 +53,7 @@ class SinaGeom : PointGeom() {
             .forEach { (_, dataPoints) -> buildGroup(root, dataPoints, pos, coord, ctx, rand) }
     }
 
-    // Almost the same as in ViolinGeom::buildViolin()
+    // Similar to ViolinGeom::buildViolin()
     private fun buildGroup(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
@@ -66,17 +66,16 @@ class SinaGeom : PointGeom() {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
-        val jitterTransform = toLocationBound(ctx, rand)
+        val jitterTransform = toJitterTransform(ctx, rand)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
-            // Almost the same as in PointGeom::buildIntern()
+            // Similar to PointGeom::buildIntern()
             val slimGroup = SvgSlimElements.g(points.size)
             for (p in points) {
-                if (p.finiteOrNull(Aes.SIZE) == null) continue
-                val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-                val jitteredPoint = jitterTransform(p)
-                val location = helper.toClient(jitteredPoint, p) ?: continue
-                val shape = p.shape()!!
+                p.size() ?: continue
+                val shape = p.shape() ?: continue
+                val point = jitterTransform(p) ?: continue
+                val location = helper.toClient(point, p) ?: continue
                 val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
                 targetCollector.addPoint(
                     p.index(), location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
@@ -91,13 +90,15 @@ class SinaGeom : PointGeom() {
         }
     }
 
-    private fun toLocationBound(
+    private fun toJitterTransform(
         ctx: GeomContext,
         rand: Random
-    ): (p: DataPointAesthetics) -> DoubleVector {
+    ): (p: DataPointAesthetics) -> DoubleVector? {
         val resolutionX = ctx.getResolution(Aes.X)
         val resolutionY = ctx.getResolution(Aes.Y)
-        return fun(p: DataPointAesthetics): DoubleVector {
+        return fun(p: DataPointAesthetics): DoubleVector? {
+            val (x, y, violinWidth) = p.finiteOrNull(Aes.X, Aes.Y, Aes.VIOLINWIDTH) ?: return null
+            val width = p.width() ?: return null
             val signX = when {
                 showHalf > 0 -> 1
                 showHalf < 0 -> -1
@@ -106,11 +107,12 @@ class SinaGeom : PointGeom() {
             val signY = if (rand.nextBoolean()) 1 else -1
             val randomWidthShift = rand.nextDouble()
             val randomHeightShift = rand.nextDouble()
-            val widthLimit = resolutionX / 2 * p.width()!! * p.violinwidth()!!
-            val heightLimit = if (jitterY) DY * resolutionY else 0.0
-            val x = p.x()!! + signX * randomWidthShift * widthLimit // This formula is used to treat both sides equally (do not include ends)
-            val y = p.y()!! + signY * randomHeightShift * heightLimit
-            return DoubleVector(x, y)
+            val widthLimit = resolutionX / 2.0 * width * violinWidth
+            val heightLimit = if (jitterY) resolutionY * JITTER_HEIGHT / 2.0 else 0.0
+            return DoubleVector(
+                x + signX * randomWidthShift * widthLimit, // This formula with sign is used to treat both sides equally (do not include ends)
+                y + signY * randomHeightShift * heightLimit
+            )
         }
     }
 
@@ -124,7 +126,7 @@ class SinaGeom : PointGeom() {
         const val DEF_JITTER_Y = true
         const val DEF_SHOW_HALF = 0.0
 
-        private const val DY = 0.25
+        private const val JITTER_HEIGHT = 0.5
         private const val INTEGERISH_EPSILON = 1e-12
     }
 }
