@@ -169,15 +169,17 @@ object PlotReprGenerator {
             val plotCanvas = canvasControl.children.single() as MagickCanvas
 
             // Save the image to a file
+            plotCanvas.saveBmp(filePath.toKString())
             val outputFilePath = filePath.toKString()
-            if (ImageMagick.MagickWriteImage(plotCanvas.wand, outputFilePath) == ImageMagick.MagickFalse) {
-                println("Failed to save image $outputFilePath")
-                println(getMagickError(plotCanvas.wand))
-                throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.wand)}")
-            } else {
-                println("Image saved to $outputFilePath")
-                return Py_BuildValue("s", outputFilePath)
-            }
+            return Py_BuildValue("s", outputFilePath)
+            //if (ImageMagick.MagickWriteImage(plotCanvas.img, outputFilePath) == ImageMagick.MagickFalse) {
+            //    println("Failed to save image $outputFilePath")
+            //    println(getMagickError(plotCanvas.img))
+            //    throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.img)}")
+            //} else {
+            //    println("Image saved to $outputFilePath")
+            //    return Py_BuildValue("s", outputFilePath)
+            //}
         } catch (e: Throwable) {
             return null
         } finally {

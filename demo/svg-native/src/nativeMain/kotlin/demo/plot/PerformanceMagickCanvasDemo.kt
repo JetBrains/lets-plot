@@ -25,7 +25,7 @@ object PerformanceMagickCanvasDemo {
             |  "kind": "plot",
             |  "layers": [
             |    {
-            |      "geom": "point",
+            |      "geom": "line",
             |      "mapping": { "x": "x", "y": "y" }
             |    }
             |  ]

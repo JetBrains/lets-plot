@@ -28,7 +28,7 @@ object ReferenceSvgDemo {
 
         // Save the image to a file
         val outputFilename = "svg_demo.bmp"
-        if (ImageMagick.MagickWriteImage(canvas.wand, outputFilename) == ImageMagick.MagickFalse) {
+        if (ImageMagick.MagickWriteImage(canvas.img, outputFilename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
 
