@@ -6,6 +6,7 @@
 - Grayscale colors from `gray0` (black) to `gray100` (white).
 
 ### Changed
+- [**BREAKING**] The `position_dodgev()` function and the `'dodgev'` value for the `position` parameter are deprecated and will be removed in future releases.
 - Updated RGB values for `lightgray` and `green`. To restore the previous colors, use `gray75` and `lime`, respectively. 
 
 ### Fixed
