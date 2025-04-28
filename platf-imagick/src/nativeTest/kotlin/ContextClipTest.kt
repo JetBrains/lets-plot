@@ -2,9 +2,7 @@
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
 import kotlin.math.PI
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -12,8 +10,8 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
 class ContextClipTest {
+    private val expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/"
     private val outDir: String = getCurrentDir() + "/build/image-test/"
     private val w = 100.0
     private val h = 100.0
@@ -49,13 +47,13 @@ class ContextClipTest {
     }
 
     private val imageComparer = ImageComparer(
-        expectedDir = "src/nativeTest/resources/expected/",
+        expectedDir = expectedDir,
         outDir = outDir
     )
 
-    private fun createCanvas(): Pair<MagickCanvas, MagickContext2d> {
+    private fun createCanvas(): Pair<MagickCanvas, Context2d> {
         val canvas = MagickCanvas.create(w, h)
-        return canvas to canvas.context2d as MagickContext2d
+        return canvas to canvas.context2d
     }
 
 

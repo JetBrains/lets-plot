@@ -31,8 +31,6 @@ object SimpleMagickCanvasDemo {
         ctx.lineTo(width, 0.0)
         ctx.stroke()
 
-        val str = canvas.dumpPixels()
-
         // Save the image to a file
         val outputFilename = "simple_demo.bmp"
         if (ImageMagick.MagickWriteImage(canvas.img, outputFilename) == ImageMagick.MagickFalse) {
@@ -42,6 +40,5 @@ object SimpleMagickCanvasDemo {
         ImageMagick.MagickWandTerminus()
 
         println("Simple demo")
-        println(str)
     }
 }
