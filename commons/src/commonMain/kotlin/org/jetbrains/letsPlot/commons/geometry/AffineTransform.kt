@@ -68,10 +68,10 @@ class AffineTransform(
         )
     }
 
-    fun inverse(): AffineTransform {
+    fun inverse(): AffineTransform? {
         val det = m00 * m11 - m01 * m10
         if (det == 0.0) {
-            throw IllegalStateException("Matrix is not invertible")
+            return null
         }
         return AffineTransform(
             m00 = m11 / det,

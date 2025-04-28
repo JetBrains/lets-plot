@@ -24,8 +24,16 @@ class ContextState {
         return currentState.copy()
     }
 
+    fun getCTM(): AffineTransform {
+        return currentState.transform
+    }
+
     fun getCurrentPath(): List<PathCommand> {
         return currentPath.getCommands()
+    }
+
+    fun getClipPath(): Path2d? {
+        return currentState.clipPath
     }
 
     class StateEntry(

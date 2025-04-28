@@ -51,6 +51,8 @@ class ImageComparer(
                 |    Actual: $actualFilePath
                 |    Expected: $expectedPath""".trimMargin()
             )
+        } else {
+            println("Image comparison passed: $expectedPath")
         }
     }
 

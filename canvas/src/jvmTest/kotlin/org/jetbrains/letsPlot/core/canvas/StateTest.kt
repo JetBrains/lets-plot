@@ -19,7 +19,7 @@ class StateTest {
         context.closePath()
         context.clip()
 
-        assertThat(context.state.getCurrentState().clipPath)
+        assertThat(context.getClipPath())
             .usingRecursiveComparison()
             .isEqualTo(
             Path2d()
@@ -30,7 +30,7 @@ class StateTest {
 
         context.restore()
 
-        assertThat(context.state.getCurrentState().clipPath)
+        assertThat(context.getClipPath())
             .usingRecursiveComparison()
             .isEqualTo(null)
     }

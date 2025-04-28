@@ -5,12 +5,25 @@
 
 package org.jetbrains.letsPlot.core.canvas
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.values.Color
 
 class ContextStateDelegate(
     logEnabled: Boolean = true, failIfNotImplemented: Boolean = true
 ) : Context2d by Context2dDelegate(logEnabled = logEnabled, failIfNotImplemented = failIfNotImplemented) {
-    val state = ContextState()
+    private val state = ContextState()
+
+    fun getCTM(): AffineTransform {
+        return state.getCTM()
+    }
+
+    fun getCurrentPath(): List<Path2d.PathCommand> {
+        return state.getCurrentPath()
+    }
+
+    fun getClipPath(): Path2d? {
+        return state.getClipPath()
+    }
 
     override fun beginPath() {
         state.beginPath()
@@ -142,14 +155,7 @@ class ContextStateDelegate(
         state.setTextAlign(align)
     }
 
-    override fun setTransform(
-        m00: Double,
-        m10: Double,
-        m01: Double,
-        m11: Double,
-        m02: Double,
-        m12: Double
-    ) {
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
         state.setTransform(m00, m10, m01, m11, m02, m12)
     }
 

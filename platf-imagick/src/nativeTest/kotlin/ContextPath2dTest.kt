@@ -1,9 +1,8 @@
 
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
 import kotlin.math.PI
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -12,7 +11,6 @@ import kotlin.test.Test
  */
 
 
-@Ignore
 class ContextPath2dTest {
     private val outDir: String = getCurrentDir() + "/build/image-test/"
     private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
@@ -33,9 +31,9 @@ class ContextPath2dTest {
         outDir = outDir
     )
 
-    fun createCanvas(): Pair<MagickCanvas, MagickContext2d> {
+    fun createCanvas(): Pair<MagickCanvas, Context2d> {
         val canvas = MagickCanvas.create(w, h)
-        return canvas to canvas.context2d as MagickContext2d
+        return canvas to canvas.context2d
     }
 
 
