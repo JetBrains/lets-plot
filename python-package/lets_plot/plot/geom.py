@@ -3729,12 +3729,12 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     `geom_boxplot()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - lower : lower hinge.
-    - middle : median.
-    - upper : upper hinge.
-    - ymin : lower whisker.
-    - ymax : upper whisker.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal boxplot, respectively.
+    - lower or xlower : lower hinge.
+    - middle or xmiddle : median.
+    - upper or xupper : upper hinge.
+    - ymin or xmin : lower whisker.
+    - ymax or xmax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
