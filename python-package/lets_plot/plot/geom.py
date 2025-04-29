@@ -2079,7 +2079,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
@@ -3654,7 +3654,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
@@ -3890,7 +3890,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydensity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
@@ -5471,7 +5471,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='jitter'
+    position : str or `FeatureSpec`, default=position_jitter(width=.4, height=.4)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).

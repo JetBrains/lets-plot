@@ -22,6 +22,7 @@ def position_dodge(width=None):
         This is useful when you want to align narrow geoms with wider geoms.
         The value of width is relative and typically ranges between 0 and 1.
         Values that are greater than 1 lead to overlapping of the objects.
+        The default value is taken from the width aesthetics of the data point.
 
     Returns
     -------
@@ -102,11 +103,11 @@ def position_jitter(width=None, height=None, seed=None):
 
     Parameters
     ----------
-    width : float
+    width : float, default=.4
         Jittering width.
         The value of width is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
-    height : float
+    height : float, default=.4
         Jittering height.
         The value of height is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
@@ -152,9 +153,9 @@ def position_nudge(x=None, y=None, unit=None):
 
     Parameters
     ----------
-    x : float
+    x : float, default=0.0
         Nudging width.
-    y : float
+    y : float, default=0.0
         Nudging height.
     unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -206,11 +207,12 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
         Bin width.
         The value of `dodge_width` is relative and typically ranges between 0 and 1.
         Values that are greater than 1 lead to overlapping of the boxes.
-    jitter_width : float
+        The default value is taken from the width aesthetics of the data point.
+    jitter_width : float, default=.4
         Jittering width.
         The value of `jitter_width` is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
-    jitter_height : float
+    jitter_height : float, default=.4
         Jittering height.
         The value of `jitter_height` is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
@@ -259,7 +261,7 @@ def position_stack(vjust=None, mode=None):
 
     Parameters
     ----------
-    vjust : float
+    vjust : float, default=1.0
         Vertical adjustment for geoms that have a position (like points or lines),
         not a dimension (like bars or areas).
         Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
@@ -305,7 +307,7 @@ def position_fill(vjust=None, mode=None):
 
     Parameters
     ----------
-    vjust : float
+    vjust : float, default=1.0
         Vertical adjustment for geoms that have a position (like points or lines),
         not a dimension (like bars or areas).
         Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
