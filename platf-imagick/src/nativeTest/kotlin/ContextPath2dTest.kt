@@ -1,4 +1,5 @@
 
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
@@ -487,6 +488,37 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "rounded_rect_with_curves.bmp",
+            actualWand = canvas.img!!
+        )
+    }
+
+    @Test
+    fun perf_5_000_points() {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = fillColor
+        ctx.strokeStyle = strokeColor
+        ctx.lineWidth = 1.0
+
+        for (i in 0 until 3_200) {
+            ctx.setFillStyle(Color.HOT_PINK)
+            ctx.setStrokeStyle(Color.TRANSPARENT)
+            ctx.beginPath()
+            ctx.arc(
+                x = 25.0,
+                y = 25.0,
+                radius = 1.0,
+                startAngle = 0.0,
+                endAngle = 2 * PI,
+                anticlockwise = true
+            )
+            ctx.closePath()
+            ctx.fill()
+            ctx.setStrokeStyle(Color.HOT_PINK)
+        }
+
+        imageComparer.assertImageEquals(
+            expectedFileName = "perf_5_000_points.bmp",
             actualWand = canvas.img!!
         )
     }

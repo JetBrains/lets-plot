@@ -78,10 +78,20 @@ class SvgCanvasFigure(
 
         val ctx = canvas.context2d
 
-        ctx.save()
-        ctx.affineTransform(element.transform)
+        var needRestore = false
+        if (!element.transform.isIdentity) {
+            if (!needRestore) {
+                ctx.save()
+                needRestore = true
+            }
+            ctx.affineTransform(element.transform)
+        }
 
         element.clipPath?.let { clipPath ->
+            if (!needRestore) {
+                ctx.save()
+                needRestore = true
+            }
             ctx.beginPath()
             ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
@@ -102,7 +112,9 @@ class SvgCanvasFigure(
 
         //globalAlphaSet?.let { canvas.restore() }
 
-        canvas.context2d.restore()
+        if (needRestore) {
+            ctx.restore()
+        }
     }
 
     fun makeSnapshot(): Canvas.Snapshot {

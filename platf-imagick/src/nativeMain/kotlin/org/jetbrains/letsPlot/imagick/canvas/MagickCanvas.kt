@@ -21,8 +21,11 @@ class MagickCanvas(
     val img: CPointer<ImageMagick.MagickWand>? get ()  {
         val wand = (context2d as MagickContext2d).wand
 
-        val v = ImageMagick.DrawGetVectorGraphics(wand)
-        println(v!!.toKString())
+        if (false) {
+            val v = ImageMagick.DrawGetVectorGraphics(wand)
+            println(v!!.toKString())
+        }
+
         ImageMagick.MagickDrawImage(_img, wand)
         return _img
     }
@@ -38,9 +41,9 @@ class MagickCanvas(
     fun saveBmp(filename: String) {
         val wand = (context2d as MagickContext2d).wand
 
-        ImageMagick.MagickDrawImage(_img, wand)
+        //ImageMagick.MagickDrawImage(_img, wand)
 
-        if (ImageMagick.MagickWriteImage(_img, filename) == ImageMagick.MagickFalse) {
+        if (ImageMagick.MagickWriteImage(img, filename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
     }
