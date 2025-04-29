@@ -42,8 +42,8 @@ class MagickContext2d(
         ImageMagick.DrawSetStrokeColor(wand, pixelWand)
     }
 
-    override fun setLineWidth(width: Double) {
-        ImageMagick.DrawSetStrokeWidth(wand, width)
+    override fun setLineWidth(lineWidth: Double) {
+        ImageMagick.DrawSetStrokeWidth(wand, lineWidth)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
@@ -80,17 +80,17 @@ class MagickContext2d(
         ImageMagick.DrawSetStrokeMiterLimit(wand, miterLimit.toULong())
     }
 
-    override fun setFont(font: Font) {
-        ImageMagick.DrawSetFontSize(wand, font.fontSize)
-        ImageMagick.DrawSetFontFamily(wand, font.fontFamily)
+    override fun setFont(f: Font) {
+        ImageMagick.DrawSetFontSize(wand, f.fontSize)
+        ImageMagick.DrawSetFontFamily(wand, f.fontFamily)
 
-        val fontStyle = when (font.fontStyle) {
+        val fontStyle = when (f.fontStyle) {
             FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
             FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
         }
         ImageMagick.DrawSetFontStyle(wand, fontStyle)
 
-        val fontWeight = when (font.fontWeight) {
+        val fontWeight = when (f.fontWeight) {
             FontWeight.NORMAL -> 400.toULong()
             FontWeight.BOLD -> 800.toULong()
         }
