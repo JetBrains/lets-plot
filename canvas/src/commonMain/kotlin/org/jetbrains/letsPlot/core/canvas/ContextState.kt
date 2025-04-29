@@ -6,9 +6,8 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Path.PathCommand
+import org.jetbrains.letsPlot.core.canvas.Path2d.PathCommand
 
 private const val logEnabled = false
 private fun log(str: () -> String) {
@@ -19,14 +18,22 @@ private fun log(str: () -> String) {
 class ContextState {
     private val states = ArrayList<StateEntry>()
     private var currentState = StateEntry.create()
-    private var currentPath: Path = Path()
+    private var currentPath: Path2d = Path2d()
 
     fun getCurrentState(): StateEntry {
         return currentState.copy()
     }
 
+    fun getCTM(): AffineTransform {
+        return currentState.transform
+    }
+
     fun getCurrentPath(): List<PathCommand> {
         return currentPath.getCommands()
+    }
+
+    fun getClipPath(): Path2d? {
+        return currentState.clipPath
     }
 
     class StateEntry(
@@ -39,7 +46,8 @@ class ContextState {
         var lineJoin: LineJoin,
         var fillColor: Color,
         var font: Font,
-        var transform: AffineTransform
+        var transform: AffineTransform,
+        var clipPath: Path2d? = null
     ) {
         fun copy(): StateEntry {
             return StateEntry(
@@ -53,6 +61,7 @@ class ContextState {
                 font = font,
                 transform = transform,
                 lineDashPattern = lineDashPattern,
+                clipPath = clipPath
             )
         }
 
@@ -67,7 +76,8 @@ class ContextState {
                 fillColor: Color = Color.TRANSPARENT,
                 font: Font = Font(),
                 transform: AffineTransform = AffineTransform.IDENTITY,
-                lineDashPattern: List<Double>? = null
+                lineDashPattern: List<Double>? = null,
+                clipPath: Path2d? = null
             ): StateEntry {
                 return StateEntry(
                     strokeColor = strokeColor,
@@ -79,7 +89,8 @@ class ContextState {
                     lineJoin = lineJoin,
                     fillColor = fillColor,
                     font = font,
-                    transform = transform
+                    transform = transform,
+                    clipPath = clipPath
                 )
             }
         }
@@ -132,22 +143,30 @@ class ContextState {
             currentState = states.removeAt(states.size - 1)
         }
         log { "\t  to: [${currentState.transform.repr()}]" }
+        log { "\t clipPath: ${currentState.clipPath}" }
     }
 
     fun beginPath() {
-        currentPath = Path()
+        currentPath = Path2d()
     }
 
     fun closePath() {
         currentPath.closePath()
     }
 
+    fun clip() {
+        log { "clip() - ${currentPath.getCommands()}" }
+        currentState.clipPath = currentPath.copy()
+    }
+
     fun moveTo(x: Double, y: Double) {
-        currentPath.moveTo(x, y, currentState.transform)
+        val (tx, ty) = currentState.transform.transform(x, y)
+        currentPath.moveTo(tx, ty)
     }
 
     fun lineTo(x: Double, y: Double) {
-        currentPath.lineTo(x, y, currentState.transform)
+        val (tx, ty) = currentState.transform.transform(x, y)
+        currentPath.lineTo(tx, ty)
     }
 
     fun arc(
@@ -158,7 +177,8 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise, currentState.transform)
+        val arc = Path2d.arc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
+        currentPath.append(arc.transform(currentState.transform))
     }
 
     fun ellipse(
@@ -168,17 +188,8 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        currentPath.ellipse(
-            x,
-            y,
-            radiusX,
-            radiusY,
-            toDegrees(rotation),
-            toDegrees(startAngle),
-            toDegrees(endAngle),
-            anticlockwise,
-            currentState.transform
-        )
+        val arc = Path2d.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
+        currentPath.append(arc.transform(currentState.transform))
     }
 
     fun bezierCurveTo(
@@ -189,15 +200,10 @@ class ContextState {
         x: Double,
         y: Double
     ) {
-        currentPath.bezierCurveTo(
-            cp1x,
-            cp1y,
-            cp2x,
-            cp2y,
-            x,
-            y,
-            currentState.transform
-        )
+        val (cp1x, cp1y) = currentState.transform.transform(cp1x, cp1y)
+        val (cp2x, cp2y) = currentState.transform.transform(cp2x, cp2y)
+        val (x, y) = currentState.transform.transform(x, y)
+        currentPath.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
     fun setStrokeStyle(color: Color?) {

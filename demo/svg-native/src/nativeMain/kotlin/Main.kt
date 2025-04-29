@@ -1,4 +1,8 @@
+@file:Suppress("unused")
+
 import demo.plot.BarPlotMagickCanvasDemo
+import demo.plot.PerformanceMagickCanvasDemo
+import demo.plot.PolarPlotMagickCanvasDemo
 import demo.svg.ReferenceSvgDemo
 import demo.svg.SimpleMagickCanvasDemo
 
@@ -8,17 +12,33 @@ import demo.svg.SimpleMagickCanvasDemo
  */
 
 
-@Suppress("unused")
 fun simpleMagickCanvasDemoMain() {
     SimpleMagickCanvasDemo.main()
 }
 
-@Suppress("unused")
 fun referenceSvgDemoMain() {
     ReferenceSvgDemo.main()
 }
 
-@Suppress("unused")
 fun barPlotMain() {
     BarPlotMagickCanvasDemo.main()
+}
+
+fun polarPlotMain() {
+    PolarPlotMagickCanvasDemo.main()
+}
+
+fun performanceMain(args: Array<String>) {
+    if (args.isEmpty()) {
+        println("Usage: pass <number of points>")
+        return
+    }
+
+    val n = args[0].toIntOrNull()
+        ?: run {
+            println("Invalid number of points: ${args[0]}")
+            return
+        }
+
+    PerformanceMagickCanvasDemo.main(n)
 }

@@ -48,13 +48,8 @@ fun savePlot(plotSpec: MutableMap<String, Any>, filePath: String) {
 
         // Save the image to a file
         val outputFilePath = filePath
-        if (ImageMagick.MagickWriteImage(plotCanvas.wand, outputFilePath) == ImageMagick.MagickFalse) {
-            println("Failed to save image $outputFilePath")
-            println(getMagickError(plotCanvas.wand))
-            throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.wand)}")
-        } else {
-            println("Image saved to $outputFilePath")
-        }
+        plotCanvas.saveBmp(outputFilePath)
+        println("Image saved to $outputFilePath")
     } finally {
         canvasReg?.dispose()
     }

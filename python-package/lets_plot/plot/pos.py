@@ -56,44 +56,11 @@ def position_dodge(width=None):
 
 def position_dodgev(height=None):
     """
-    Adjust position by dodging overlaps to the side.
-
-    Parameters
-    ----------
-    height : float
-        Dodging height, when different to the height of the individual elements.
-        This is useful when you want to align narrow geoms with taller geoms.
-        The value of height is relative and typically ranges between 0 and 1.
-        Values that are greater than 1 lead to overlapping of the objects.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Geom object position specification.
-
-    Notes
-    -----
-    Adjust position by dodging overlaps to the side.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 11
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'xmin': [0.2, 4.6, 1.6, 3.5],
-            'xmax': [1.5, 5.3, 3.0, 4.4],
-            'y': ['a', 'a', 'b', 'b'],
-            'c': ['gr1', 'gr2', 'gr1', 'gr2']
-        }
-        ggplot(data, aes(y='y', color='c')) + \\
-            geom_errorbar(aes(xmin='xmin', xmax='xmax'), height=0.1, size=2, \\
-                          position=position_dodgev(height=0.2))
+    Function `position_dodgev()` is deprecated and will be removed in future releases.
 
     """
+    print("WARN: The function position_dodgev() is deprecated and will be removed in future releases.")
+
     return _pos('dodgev', height=height)
 
 

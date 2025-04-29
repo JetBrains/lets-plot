@@ -92,7 +92,7 @@ internal object Utils {
 //            is SvgTextNode -> myDoc.createTextNode(null)
 //            is SvgTSpanElement -> SVGOMTSpanElement(null, myDoc)
             is SvgDefsElement -> Group() // ignore
-//            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
+            is SvgClipPathElement -> Group()
             is SvgImageElement -> ImageView()
             else -> throw IllegalArgumentException("Unsupported source svg element: ${source.javaClass.simpleName}")
         }
