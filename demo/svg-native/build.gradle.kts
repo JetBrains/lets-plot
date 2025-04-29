@@ -108,10 +108,10 @@ val taskName = platf.second
 
 demos.forEach { demoSize ->
     tasks.register<Exec>("runPerformance${demoSize}Demo") {
-        dependsOn("linkPerformanceDemoDebugExecutable$taskName") // ensure it's built
+        dependsOn("linkPerformanceDemoReleaseExecutable$taskName") // ensure it's built
         group = "run"
         description = "Runs Performance${demoSize}Demo with argument ${demoSize}"
-        executable = "${project.buildDir}/bin/$dirName/PerformanceDemoDebugExecutable/PerformanceDemo.kexe" // Ensure correct path
+        executable = "${project.buildDir}/bin/$dirName/PerformanceDemoReleaseExecutable/PerformanceDemo.kexe" // Ensure correct path
 
         doFirst {
             args(demoSize) // Use the args() method to add arguments

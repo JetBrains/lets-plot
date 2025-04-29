@@ -26,6 +26,8 @@ class AffineTransform(
     val m12: Double // ty
 ) {
 
+    val isIdentity: Boolean = m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0
+
     // synonyms
     val sx: Double get() = m00
     val sy: Double get() = m11

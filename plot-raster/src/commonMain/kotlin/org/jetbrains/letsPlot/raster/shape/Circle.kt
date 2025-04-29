@@ -20,15 +20,12 @@ internal class Circle : Figure() {
             return
         }
 
-        canvas.context2d.save()
         canvas.context2d.beginPath()
         canvas.context2d.arc(centerX.toDouble(), centerY.toDouble(), radius.toDouble(), 0.0, 2* PI)
         canvas.context2d.closePath()
 
         fillPaint?.let { canvas.context2d.fill(it) }
         strokePaint?.let { canvas.context2d.stroke(it) }
-
-        canvas.context2d.restore()
     }
 
     override val localBounds: DoubleRectangle
