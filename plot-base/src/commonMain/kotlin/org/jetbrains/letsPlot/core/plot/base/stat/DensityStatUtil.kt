@@ -60,12 +60,12 @@ object DensityStatUtil {
                 bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
             )
             val binStatCount = binStatValue.map { densityFunction(it) }
-            val widthsSum = binWeight.sum()
+            val weightsSum = binWeight.sum()
             val maxBinCount = binStatCount.maxOrNull()!!
 
             statBin += MutableList(binStatValue.size) { bin }
             statValue += binStatValue
-            statDensity += binStatCount.map { it / widthsSum }
+            statDensity += binStatCount.map { it / weightsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
             statQuantile += calculateStatQuantile(binStatValue, binStatCount, quantiles)
