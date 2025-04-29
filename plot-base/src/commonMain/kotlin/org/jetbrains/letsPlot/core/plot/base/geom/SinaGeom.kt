@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.math.abs
+import kotlin.math.floor
 import kotlin.random.Random
 
 class SinaGeom : PointGeom() {
@@ -117,7 +118,7 @@ class SinaGeom : PointGeom() {
     }
 
     private fun integerish(values: List<Double>): Boolean {
-        return values.all { abs(it - it.toLong()) < INTEGERISH_EPSILON }
+        return values.all { abs(it - floor(it)) < INTEGERISH_EPSILON }
     }
 
     companion object {

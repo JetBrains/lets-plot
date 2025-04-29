@@ -89,17 +89,15 @@ object DensityStatUtil {
         weights: List<Double?>,
         binHandler: (Double, List<Double>, List<Double>) -> Unit,
     ) {
-        val binnedData = (bins zip (values zip weights))
-            .filter { it.first?.isFinite() == true }
-            .groupBy({ it.first!! }, { it.second })
-            .mapValues { it.value.unzip() }
+        val binnedData = (bins.asSequence() zip (values.asSequence() zip weights.asSequence()))
+            .filter { (bin, _) -> bin?.isFinite() == true }
+            .groupBy({ (bin, _) -> bin!! }, { (_, binValues) -> binValues })
+            .mapValues { (_, binData) -> binData.unzip() }
         for ((bin, binData) in binnedData) {
-            val (filteredValue, filteredWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
-            val (binValue, binWeight) = (filteredValue zip filteredWeight)
-                .sortedBy { it.first }
-                .unzip()
+            val (binValue, binWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
             if (binValue.isEmpty()) continue
-            binHandler(bin, binValue, binWeight)
+            val sortingIndices = binValue.indices.sortedBy { binValue[it] }
+            binHandler(bin, binValue.slice(sortingIndices), binWeight.slice(sortingIndices))
         }
     }
 

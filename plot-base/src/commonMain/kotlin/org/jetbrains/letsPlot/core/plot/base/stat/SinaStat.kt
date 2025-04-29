@@ -25,6 +25,12 @@ class SinaStat(
     private val quantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
 
+    init {
+        require(n <= DensityStat.MAX_N) {
+            "The input n = $n > ${DensityStat.MAX_N} is too large!"
+        }
+    }
+
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
@@ -77,17 +83,17 @@ class SinaStat(
                     Scale.AREA -> {
                         val yStatDensity = yDensityDf.getNumeric(Stats.DENSITY).map { it!! }
                         val sinaStatDensity = sinaDf.getNumeric(Stats.DENSITY).map { it!! }
-                        val yDensityMax = yStatDensity.maxOrNull()!!
+                        val yDensityMax = yStatDensity.max()
                         sinaStatDensity.map { it / yDensityMax }
                     }
 
                     Scale.COUNT -> {
                         val yStatDensity = yDensityDf.getNumeric(Stats.DENSITY).map { it!! }
-                        val yDensityMax = yStatDensity.maxOrNull()!!
                         val yStatCount = yDensityDf.getNumeric(Stats.COUNT).map { it!! }
-                        val yWidthsSumMax = yStatDensity.mapIndexed { i, d ->
-                            if (d > 0) yStatCount[i] / d else Double.NaN
-                        }.maxOrNull()!!
+                        val yDensityMax = yStatDensity.max()
+                        val yWidthsSumMax = (yStatCount.asSequence() zip yStatDensity.asSequence())
+                            .filter { (_, density) -> density > 0 }
+                            .maxOf { (count, density) -> count / density }
                         val norm = yDensityMax * yWidthsSumMax
                         val sinaStatCount = sinaDf.getNumeric(Stats.COUNT).map { it!! }
                         sinaStatCount.map { it / norm }

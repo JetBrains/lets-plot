@@ -68,16 +68,16 @@ class YDensityStat(
             when (scale) {
                 Scale.AREA -> {
                     val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
-                    val densityMax = statDensity.maxOrNull()!!
+                    val densityMax = statDensity.max()
                     statDensity.map { it / densityMax }
                 }
                 Scale.COUNT -> {
                     val statDensity = dataAfterStat.getNumeric(Stats.DENSITY).map { it!! }
-                    val densityMax = statDensity.maxOrNull()!!
                     val statCount = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
-                    val widthsSumMax = statDensity.mapIndexed { i, d ->
-                        if (d > 0) statCount[i] / d else Double.NaN
-                    }.maxOrNull()!!
+                    val densityMax = statDensity.max()
+                    val widthsSumMax = (statCount.asSequence() zip statDensity.asSequence())
+                        .filter { (_, density) -> density > 0 }
+                        .maxOf { (count, density) -> count / density }
                     val norm = densityMax * widthsSumMax
                     statCount.map { it / norm }
                 }
