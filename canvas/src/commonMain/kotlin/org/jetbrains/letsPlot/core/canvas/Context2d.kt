@@ -144,8 +144,7 @@ fun Context2d.applyPath(commands: List<PathCommand>) {
             is ClosePath -> closePath()
             is MoveTo -> moveTo(command.x, command.y)
             is LineTo -> lineTo(command.x, command.y)
-            is Arc -> {
-                command.start?.let { (x, y) -> lineTo(x, y) }
+            is CubicCurveTo -> {
                 command.controlPoints.windowed(size = 3, step = 3)
                     .forEach { (cp1, cp2, cp3) -> bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y) }
             }

@@ -6,8 +6,6 @@
 package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 import kotlin.math.PI
 import kotlin.math.sin
@@ -91,11 +89,7 @@ internal object SvgTransformParser {
     )
         .append(")\\( ?(-?\\d+\\.?\\d*),? ?").pluralAppend(OPTIONAL_PARAM, 5).append("\\)").toString()
 
-    private val PATH = MyPatternBuilder("(").charset(SvgPathData.Action.entries.toTypedArray()).append(") ?")
-        .pluralAppend(OPTIONAL_PARAM, 7).toString()
-
     private val TRANSFORM_EXP = Regex(TRANSFORM) //RegExp.compile(TRANSFORM, "g")
-    private val PATH_EXP = Regex(PATH) //RegExp.compile(PATH, "g")
 
     private const val NAME_INDEX = 1
     private const val FIRST_PARAM_INDEX = 2
@@ -105,13 +99,6 @@ internal object SvgTransformParser {
         return parse(
             input,
             TRANSFORM_EXP
-        )
-    }
-
-    fun parsePath(input: String?): List<Result> {
-        return parse(
-            input,
-            PATH_EXP
         )
     }
 
@@ -148,22 +135,22 @@ internal object SvgTransformParser {
         return results
     }
 
-    private class MyPatternBuilder internal constructor(s: String) {
+    private class MyPatternBuilder(s: String) {
         private val sb: StringBuilder = StringBuilder(s)
 
-        internal fun append(s: String): MyPatternBuilder {
+        fun append(s: String): MyPatternBuilder {
             sb.append(s)
             return this
         }
 
-        internal fun pluralAppend(s: String, count: Int): MyPatternBuilder {
+        fun pluralAppend(s: String, count: Int): MyPatternBuilder {
             for (i in 0 until count) {
                 sb.append(s)
             }
             return this
         }
 
-        internal fun or(vararg ss: String): MyPatternBuilder {
+        fun or(vararg ss: String): MyPatternBuilder {
             val ssLastIndex = ss.size - 1
             for ((index, s) in ss.withIndex()) {
                 sb.append(s)
@@ -171,16 +158,6 @@ internal object SvgTransformParser {
                     sb.append('|')
                 }
             }
-            return this
-        }
-
-        internal fun charset(actions: Array<SvgPathData.Action>): MyPatternBuilder {
-            sb.append('[')
-            for (v in actions) {
-                sb.append(v.absoluteCmd())
-                sb.append(v.relativeCmd())
-            }
-            sb.append(']')
             return this
         }
 
@@ -207,10 +184,6 @@ internal object SvgTransformParser {
                 return null
             }
             return myParams[i]
-        }
-
-        fun getVector(startIndex: Int): DoubleVector {
-            return DoubleVector(getParam(startIndex)!!, getParam(startIndex + 1)!!)
         }
 
         fun containsParam(i: Int): Boolean {

@@ -13,6 +13,67 @@ import kotlin.math.PI
 import kotlin.test.Test
 
 class Path2dTest {
+    @Test
+    fun `arc command should insert moveTo as first command`() {
+        val path = Path2d()
+            .arc(
+                x = 100.0,
+                y = 100.0,
+                radiusX = 50.0,
+                radiusY = 50.0,
+                rotation = 0.0,
+                startAngle = 0.0,
+                endAngle = PI / 2,
+                anticlockwise = false
+            )
+
+        assertThat(path).hasCommands(
+            Path2d.MoveTo(150.0, 100.0),
+            Path2d.CubicCurveTo(
+                listOf(
+                    DoubleVector(150, 127),
+                    DoubleVector(127, 150.0),
+                    DoubleVector(100.0, 150.0),
+                )
+            )
+        )
+
+    }
+
+    @Test
+    fun `arc command should insert lineTo as non-first command`() {
+        val path = Path2d()
+            .moveTo(100.0, 10.0)
+            .lineTo(80.0, 10.0)
+            .arc(
+                x = 50.0,
+                y = 20.0,
+                radiusX = 20.0,
+                radiusY = 20.0,
+                rotation = 0.0,
+                startAngle = 0.0,
+                endAngle = -PI,
+                anticlockwise = false
+            )
+
+        assertThat(path).hasCommands(
+            Path2d.MoveTo(100.0, 10.0),
+            Path2d.LineTo(80.0, 10.0),
+            Path2d.LineTo(70.0, 20.0),
+            Path2d.CubicCurveTo(
+                listOf(
+                    DoubleVector(70, 31),
+                    DoubleVector(61, 40),
+                    DoubleVector(50, 40),
+                    DoubleVector(38, 40),
+                    DoubleVector(30, 31),
+                    DoubleVector(30, 20),
+                )
+            )
+
+        )
+    }
+
     fun arcControlPoints(
         x: Double,
         y: Double,
@@ -23,8 +84,16 @@ class Path2dTest {
         endAngle: Double,
         anticlockwise: Boolean
     ): List<DoubleVector> {
-        val arc = Path2d.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
-        return listOfNotNull(arc.start) + arc.controlPoints
+        val cmds = Path2d().arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise).getCommands()
+
+        return cmds.flatMap {
+            when (it) {
+                is Path2d.MoveTo -> listOf(DoubleVector(it.x, it.y))
+                is Path2d.LineTo -> listOf(DoubleVector(it.x, it.y))
+                is Path2d.CubicCurveTo -> it.controlPoints
+                else -> throw IllegalArgumentException("Unexpected command: $it")
+            }
+        }
     }
 
     @Test
@@ -42,7 +111,7 @@ class Path2dTest {
 
         assertControlPoints(cpts, DoubleVector(100.0, 100.0))
     }
-    
+
     @Test
     fun `negative radius returns center point`() {
         val cpts = arcControlPoints(
@@ -141,7 +210,8 @@ class Path2dTest {
             anticlockwise = false
         )
 
-        assertControlPoints(cpts,
+        assertControlPoints(
+            cpts,
             DoubleVector(150.0, 100.0),
             DoubleVector(150, 127.614),
             DoubleVector(127.614, 150.0),
@@ -158,6 +228,7 @@ class Path2dTest {
         )
     }
 
+
     private fun assertControlPoints(
         actual: List<DoubleVector>,
         vararg expected: DoubleVector
@@ -167,4 +238,5 @@ class Path2dTest {
             .withComparatorForType(DoubleComparator(0.01), Double::class.javaObjectType)
             .isEqualTo(expected.toList())
     }
+
 }
