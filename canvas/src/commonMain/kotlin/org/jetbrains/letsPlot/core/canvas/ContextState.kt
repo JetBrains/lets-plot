@@ -177,8 +177,17 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        val arc = Path2d.arc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
-        currentPath.append(arc.transform(currentState.transform))
+        currentPath.arc(
+            x = x,
+            y = y,
+            radiusX = radius,
+            radiusY = radius,
+            rotation = 0.0,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = currentState.transform
+        )
     }
 
     fun ellipse(
@@ -188,8 +197,17 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        val arc = Path2d.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
-        currentPath.append(arc.transform(currentState.transform))
+        currentPath.arc(
+            x = x,
+            y = y,
+            radiusX = radiusX,
+            radiusY = radiusY,
+            rotation = rotation,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = currentState.transform
+        )
     }
 
     fun bezierCurveTo(

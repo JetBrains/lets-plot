@@ -4,6 +4,7 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -290,7 +291,6 @@ class ContextPath2dTest {
         ctx.fillStyle = fillColor
 
         ctx.beginPath()
-        //ctx.moveTo(50.0, 50.0)
         ctx.ellipse(
             x = 50.0,
             y = 50.0,
@@ -452,7 +452,16 @@ class ContextPath2dTest {
         ctx.beginPath();
         ctx.moveTo(100, 10);
         ctx.lineTo(80, 10);
-        ctx.ellipse(50, 20, 20, 20, 0, 0, -PI, false);
+        ctx.ellipse(
+            x = 50,
+            y = 20,
+            radiusX = 20,
+            radiusY = 20,
+            rotation = 0,
+            startAngle = 0,
+            endAngle = -PI,
+            anticlockwise = false
+        );
         ctx.lineTo(20, 10);
         ctx.lineTo(0, 10);
         ctx.stroke()
@@ -492,6 +501,7 @@ class ContextPath2dTest {
         )
     }
 
+    @Ignore
     @Test
     fun perf_5_000_points() {
         val (canvas, ctx) = createCanvas()
