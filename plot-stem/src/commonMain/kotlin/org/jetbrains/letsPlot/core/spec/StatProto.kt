@@ -216,20 +216,10 @@ object StatProto {
     }
 
     private fun configureDensityRidgesStat(options: OptionsAccessor): DensityRidgesStat {
-        var bwValue: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
-        options[Density.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValue = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            }
-        }
-
+        val (bwValue, bwMethod) = getBandWidth(options)
         val kernel = options.getString(Density.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
         val quantiles = if (options.hasOwn(DensityRidges.QUANTILES)) {
             options.getBoundedDoubleList(DensityRidges.QUANTILES, 0.0, 1.0)
         } else DensityRidgesStat.DEF_QUANTILES
@@ -248,42 +238,21 @@ object StatProto {
     }
 
     private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
-        val scale = options.getString(YDensity.SCALE)?.let {
-            when (it.lowercase()) {
-                "area" -> YDensityStat.Scale.AREA
-                "count" -> YDensityStat.Scale.COUNT
-                "width" -> YDensityStat.Scale.WIDTH
-                else -> throw IllegalArgumentException(
-                    "Unsupported scale: '$it'\n" +
-                            "Use one of: area, count, width."
-                )
-            }
-        }
-
-        var bwValue: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
-        options[Density.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValue = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            }
-        }
-
+        val scale = getYDensityScale(options)
+        val (bwValue, bwMethod) = getBandWidth(options)
         val kernel = options.getString(Density.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
         val quantiles = if (options.hasOwn(YDensity.QUANTILES)) {
             options.getBoundedDoubleList(YDensity.QUANTILES, 0.0, 1.0)
         } else {
-            YDensityStat.DEF_QUANTILES
+            BaseYDensityStat.DEF_QUANTILES
         }
 
         return YDensityStat(
-            scale = scale ?: YDensityStat.DEF_SCALE,
-            trim = options.getBoolean(YDensity.TRIM, YDensityStat.DEF_TRIM),
-            tailsCutoff = options.getDoubleDef(YDensity.TAILS_CUTOFF, YDensityStat.DEF_TAILS_CUTOFF),
+            scale = scale ?: BaseYDensityStat.DEF_SCALE,
+            trim = options.getBoolean(YDensity.TRIM, BaseYDensityStat.DEF_TRIM),
+            tailsCutoff = options.getDoubleDef(YDensity.TAILS_CUTOFF, BaseYDensityStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
@@ -296,42 +265,21 @@ object StatProto {
 
     // Almost the same as configureYDensityStat()
     private fun configureSinaStat(options: OptionsAccessor): SinaStat {
-        val scale = options.getString(Sina.SCALE)?.let {
-            when (it.lowercase()) {
-                "area" -> SinaStat.Scale.AREA
-                "count" -> SinaStat.Scale.COUNT
-                "width" -> SinaStat.Scale.WIDTH
-                else -> throw IllegalArgumentException(
-                    "Unsupported scale: '$it'\n" +
-                    "Use one of: area, count, width."
-                )
-            }
-        }
-
-        var bwValue: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
-        options[Density.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValue = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            }
-        }
-
+        val scale = getYDensityScale(options)
+        val (bwValue, bwMethod) = getBandWidth(options)
         val kernel = options.getString(Density.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
         val quantiles = if (options.hasOwn(Sina.QUANTILES)) {
             options.getBoundedDoubleList(Sina.QUANTILES, 0.0, 1.0)
         } else {
-            SinaStat.DEF_QUANTILES
+            BaseYDensityStat.DEF_QUANTILES
         }
 
         return SinaStat(
-            scale = scale ?: SinaStat.DEF_SCALE,
-            trim = options.getBoolean(Sina.TRIM, SinaStat.DEF_TRIM),
-            tailsCutoff = options.getDoubleDef(Sina.TAILS_CUTOFF, SinaStat.DEF_TAILS_CUTOFF),
+            scale = scale ?: BaseYDensityStat.DEF_SCALE,
+            trim = options.getBoolean(Sina.TRIM, BaseYDensityStat.DEF_TRIM),
+            tailsCutoff = options.getDoubleDef(Sina.TAILS_CUTOFF, BaseYDensityStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
@@ -358,20 +306,10 @@ object StatProto {
     }
 
     private fun configureDensityStat(options: OptionsAccessor): DensityStat {
-        var bwValue: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
-        options[Density.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValue = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            }
-        }
-
+        val (bwValue, bwMethod) = getBandWidth(options)
         val kernel = options.getString(Density.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
         val quantiles = if (options.hasOwn(Density.QUANTILES)) {
             options.getBoundedDoubleList(Density.QUANTILES, 0.0, 1.0)
         } else DensityStat.DEF_QUANTILES
@@ -516,6 +454,33 @@ object StatProto {
             xPos,
             yAggFun, yMinFun, yMaxFun
         )
+    }
+
+    private fun getBandWidth(options: OptionsAccessor): Pair<Double?, DensityStat.BandWidthMethod> {
+        var bwValue: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
+        options[Density.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValue = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            }
+        }
+        return Pair(bwValue, bwMethod)
+    }
+
+    private fun getYDensityScale(options: OptionsAccessor): BaseYDensityStat.Scale? {
+        return options.getString(YDensity.SCALE)?.let {
+            when (it.lowercase()) {
+                "area" -> BaseYDensityStat.Scale.AREA
+                "count" -> BaseYDensityStat.Scale.COUNT
+                "width" -> BaseYDensityStat.Scale.WIDTH
+                else -> throw IllegalArgumentException(
+                    "Unsupported scale: '$it'\n" +
+                    "Use one of: area, count, width."
+                )
+            }
+        }
     }
 
     private fun getSummaryAggFunctions(options: OptionsAccessor): Triple<(List<Double>) -> Double, (List<Double>) -> Double, (List<Double>) -> Double> {

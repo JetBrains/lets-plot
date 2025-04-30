@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.QuantilesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
-import org.jetbrains.letsPlot.core.plot.base.stat.YDensityStat
+import org.jetbrains.letsPlot.core.plot.base.stat.BaseYDensityStat
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import kotlin.collections.component1
@@ -32,7 +32,7 @@ import kotlin.random.Random
 class SinaGeom : PointGeom() {
     var seed: Long? = null
     var jitterY: Boolean = DEF_JITTER_Y
-    var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
+    var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
 
     override fun buildIntern(

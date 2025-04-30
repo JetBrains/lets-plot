@@ -53,13 +53,8 @@ class SinaStatTest : BaseStatTest() {
             TransformVar.X to listOf(0.0, 0.0, 0.0, 0.0, 1.0, 1.0),
             TransformVar.Y to listOf(0.0, 1.0, 2.0, 3.0, 0.0, 1.0)
         ))
-        val scales = listOf(
-            Pair(SinaStat.Scale.AREA, YDensityStat.Scale.AREA),
-            Pair(SinaStat.Scale.COUNT, YDensityStat.Scale.COUNT),
-            Pair(SinaStat.Scale.WIDTH, YDensityStat.Scale.WIDTH),
-        )
-        for ((sinaScale, yDensityScale) in scales) {
-            compareWithYDensity(df, sinaScale, yDensityScale)
+        for (scale in BaseYDensityStat.Scale.entries) {
+            compareWithYDensity(df, scale, scale)
         }
     }
 
@@ -83,7 +78,7 @@ class SinaStatTest : BaseStatTest() {
         compareWithYDensity(df)
     }
 
-    private fun compareWithYDensity(df: DataFrame, sinaScale: SinaStat.Scale? = null, yDensityScale: YDensityStat.Scale? = null) {
+    private fun compareWithYDensity(df: DataFrame, sinaScale: BaseYDensityStat.Scale? = null, yDensityScale: BaseYDensityStat.Scale? = null) {
         val sinaStat = sinaStat(sinaScale)
         val sinaStatDf = sinaStat.normalize(sinaStat.apply(df, statContext(df)))
         val yDensityStat = yDensityStat(yDensityScale)
@@ -132,33 +127,33 @@ class SinaStatTest : BaseStatTest() {
         }
     }
 
-    private fun sinaStat(scale: SinaStat.Scale? = null): SinaStat {
+    private fun sinaStat(scale: BaseYDensityStat.Scale? = null): SinaStat {
         return SinaStat(
-            scale = scale ?: SinaStat.DEF_SCALE,
-            trim = SinaStat.DEF_TRIM,
-            tailsCutoff = SinaStat.DEF_TAILS_CUTOFF,
+            scale = scale ?: BaseYDensityStat.DEF_SCALE,
+            trim = BaseYDensityStat.DEF_TRIM,
+            tailsCutoff = BaseYDensityStat.DEF_TAILS_CUTOFF,
             bandWidth = null,
             bandWidthMethod = DensityStat.DEF_BW,
             adjust = DensityStat.DEF_ADJUST,
             kernel = DensityStat.DEF_KERNEL,
             n = DensityStat.DEF_N,
             fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
-            quantiles = SinaStat.DEF_QUANTILES
+            quantiles = BaseYDensityStat.DEF_QUANTILES
         )
     }
 
-    private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
+    private fun yDensityStat(scale: BaseYDensityStat.Scale? = null): YDensityStat {
         return YDensityStat(
-            scale = scale ?: YDensityStat.DEF_SCALE,
-            trim = YDensityStat.DEF_TRIM,
-            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
+            scale = scale ?: BaseYDensityStat.DEF_SCALE,
+            trim = BaseYDensityStat.DEF_TRIM,
+            tailsCutoff = BaseYDensityStat.DEF_TAILS_CUTOFF,
             bandWidth = null,
             bandWidthMethod = DensityStat.DEF_BW,
             adjust = DensityStat.DEF_ADJUST,
             kernel = DensityStat.DEF_KERNEL,
             n = DensityStat.DEF_N,
             fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
-            quantiles = YDensityStat.DEF_QUANTILES
+            quantiles = BaseYDensityStat.DEF_QUANTILES
         )
     }
 
