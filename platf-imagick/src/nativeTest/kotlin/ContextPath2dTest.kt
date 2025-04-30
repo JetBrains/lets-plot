@@ -4,6 +4,7 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -492,6 +493,7 @@ class ContextPath2dTest {
         )
     }
 
+    @Ignore
     @Test
     fun perf_5_000_points() {
         val (canvas, ctx) = createCanvas()

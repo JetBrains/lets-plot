@@ -6,15 +6,19 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import kotlin.math.*
 
 class Path2d() {
-    private constructor(commands: List<PathCommand>) : this() {
+    private constructor(commands: List<PaintCommand>) : this() {
         this.commands += commands
     }
 
-    private val commands = mutableListOf<PathCommand>()
+    val bounds: DoubleRectangle = DoubleRectangle.ZERO
+
+    private val commands = mutableListOf<PaintCommand>()
 
     fun copy(): Path2d {
         return Path2d(commands)
@@ -24,7 +28,7 @@ class Path2d() {
         return Path2d(commands.map { it.transform(affineTransform) })
     }
 
-    fun append(cmd: PathCommand) {
+    fun append(cmd: PaintCommand) {
         commands += cmd
     }
 
@@ -45,8 +49,16 @@ class Path2d() {
         return this
     }
 
-    fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean): Path2d {
-        commands += arc(
+    fun arc(
+        x: Double,
+        y: Double,
+        radius: Double,
+        startAngle: Double,
+        endAngle: Double,
+        anticlockwise: Boolean,
+        at: AffineTransform = AffineTransform.IDENTITY
+    ): Path2d {
+        arc(
             x = x,
             y = y,
             radiusX = radius,
@@ -54,19 +66,24 @@ class Path2d() {
             rotation = 0.0,
             startAngle = startAngle,
             endAngle = endAngle,
-            anticlockwise = anticlockwise
+            anticlockwise = anticlockwise,
+            at = at
         )
         return this
     }
 
-    fun ellipse(
-        x: Double, y: Double,
-        radiusX: Double, radiusY: Double,
+    fun arc(
+        x: Double,
+        y: Double,
+        radiusX: Double,
+        radiusY: Double,
         rotation: Double,
-        startAngle: Double, endAngle: Double,
-        anticlockwise: Boolean
+        startAngle: Double,
+        endAngle: Double,
+        anticlockwise: Boolean,
+        at: AffineTransform = AffineTransform.IDENTITY
     ): Path2d {
-        commands += arc(
+        val (moveTo, controlPoints) = approximateEllipseWithBezierCurve(
             x = x,
             y = y,
             radiusX = radiusX,
@@ -75,6 +92,40 @@ class Path2d() {
             startAngle = startAngle,
             endAngle = endAngle,
             anticlockwise = anticlockwise
+        )
+
+        if (at.isIdentity) {
+            commands += CubicCurveTo(moveTo, controlPoints)
+        } else {
+            val transformedMoveTo = at.transform(moveTo)
+            val transformedControlPoints = controlPoints.map { at.transform(it) }
+            commands += CubicCurveTo(
+                start = transformedMoveTo,
+                controlPoints = transformedControlPoints
+            )
+        }
+        return this
+    }
+
+
+    fun ellipse(
+        x: Double, y: Double,
+        radiusX: Double, radiusY: Double,
+        rotation: Double,
+        startAngle: Double, endAngle: Double,
+        anticlockwise: Boolean,
+        at: AffineTransform = AffineTransform.IDENTITY
+    ): Path2d {
+        arc(
+            x = x,
+            y = y,
+            radiusX = radiusX,
+            radiusY = radiusY,
+            rotation = rotation,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = at
         )
         return this
     }
@@ -87,7 +138,7 @@ class Path2d() {
         x: Double,
         y: Double
     ): Path2d {
-        commands += Arc(
+        commands += CubicCurveTo(
             start = null,
             controlPoints = listOf(
                 DoubleVector(cp1x, cp1y),
@@ -99,31 +150,102 @@ class Path2d() {
         return this
     }
 
-    companion object {
-        fun arc(
-            x: Double,
-            y: Double,
-            radiusX: Double,
-            radiusY: Double,
-            rotation: Double,
-            startAngle: Double,
-            endAngle: Double,
-            anticlockwise: Boolean
-        ): Arc {
-            val (moveTo, controlPoints) = approximateEllipseWithBezierCurve(
-                x = x,
-                y = y,
-                radiusX = radiusX,
-                radiusY = radiusY,
-                rotation = rotation,
-                startAngle = startAngle,
-                endAngle = endAngle,
-                anticlockwise = anticlockwise
-            )
-
-            return Arc(moveTo, controlPoints)
+    // see:
+    // https://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
+    // May return a LineTo command if the radii are zero
+    fun arc(
+        x1: Number, y1: Number,
+        x2: Number, y2: Number,
+        rxIn: Number, ryIn: Number,
+        angle: Number,
+        largeArcFlag: Boolean, sweepFlag: Boolean,
+        at: AffineTransform = AffineTransform.IDENTITY
+    ): Path2d {
+        if (rxIn == 0.0 || ryIn == 0.0) {
+            // If either radius is zero, draw a line
+            lineTo(x2.toDouble(), y2.toDouble())
+            return this
         }
 
+        val x1 = x1.toDouble()
+        val y1 = y1.toDouble()
+        val x2 = x2.toDouble()
+        val y2 = y2.toDouble()
+        val angle = toRadians(angle.toDouble())
+
+        // Ensure radii are positive
+        var rx = abs(rxIn.toDouble())
+        var ry = abs(ryIn.toDouble())
+
+        // Step 1: Transform start/end points into ellipse space
+        val dx2 = (x1 - x2) / 2.0
+        val dy2 = (y1 - y2) / 2.0
+
+        val x1p = cos(angle) * dx2 + sin(angle) * dy2
+        val y1p = -sin(angle) * dx2 + cos(angle) * dy2
+
+        // Correct radii if they are too small
+        val lambda = x1p * x1p / (rx * rx) + y1p * y1p / (ry * ry)
+        if (lambda > 1) {
+            val sqrtLambda = sqrt(lambda)
+            rx *= sqrtLambda
+            ry *= sqrtLambda
+        }
+
+        val rxSq = rx * rx
+        val rySq = ry * ry
+        val x1pSq = x1p * x1p
+        val y1pSq = y1p * y1p
+
+        // Step 2: Compute center (cx, cy) of the ellipse
+        val denom = (rxSq * y1pSq + rySq * x1pSq)
+        val num = (rxSq * rySq - rxSq * y1pSq - rySq * x1pSq)
+        val factor = sqrt(max(0.0, num / denom)) * if (largeArcFlag == sweepFlag) -1 else 1
+
+        val cxp = factor * (rx * y1p / ry)
+        val cyp = factor * (-ry * x1p / rx)
+
+        // Step 3: Transform center back to the original coordinate system
+        val cx = cos(angle) * cxp - sin(angle) * cyp + (x1 + x2) / 2.0
+        val cy = sin(angle) * cxp + cos(angle) * cyp + (y1 + y2) / 2.0
+
+        // Step 4: Compute start angle and end angle
+        val v1x = (x1p - cxp) / rx
+        val v1y = (y1p - cyp) / ry
+        val v2x = (-x1p - cxp) / rx
+        val v2y = (-y1p - cyp) / ry
+
+        val theta1 = atan2(v1y, v1x)
+        var deltaTheta = atan2(v2y, v2x) - theta1
+
+        // Ensure correct arc selection
+        if (sweepFlag) {
+            if (deltaTheta < 0) deltaTheta += 2 * PI
+        } else {
+            if (deltaTheta > 0) deltaTheta -= 2 * PI
+        }
+
+        val startAngle = theta1
+        val endAngle = theta1 + deltaTheta
+
+        // Determine direction (anticlockwise = !sweepFlag)
+        val anticlockwise = !sweepFlag
+
+        arc(
+            x = cx,
+            y = cy,
+            radiusX = rx,
+            radiusY = ry,
+            rotation = angle,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise
+        )
+
+        return this
+    }
+
+    companion object {
         private fun approximateEllipseWithBezierCurve(
             x: Double,
             y: Double,
@@ -164,11 +286,10 @@ class Path2d() {
             val normStart = (startAngle % twoPi + twoPi) % twoPi
             val normEnd = (endAngle % twoPi + twoPi) % twoPi
 
-            var sweepMagnitude: Double
-            if (!anticlockwise) { // Clockwise sweep magnitude
-                sweepMagnitude = if (normEnd >= normStart) normEnd - normStart else twoPi - normStart + normEnd
+            var sweepMagnitude = if (!anticlockwise) { // Clockwise sweep magnitude
+                if (normEnd >= normStart) normEnd - normStart else twoPi - normStart + normEnd
             } else { // Anticlockwise sweep magnitude
-                sweepMagnitude = if (normStart >= normEnd) normStart - normEnd else twoPi - normEnd + normStart
+                if (normStart >= normEnd) normStart - normEnd else twoPi - normEnd + normStart
             }
 
             // Adjust sweep magnitude for multiple wraps indicated by original angles
@@ -238,12 +359,16 @@ class Path2d() {
                 val angle2 = currentAngle + deltaAngle
 
                 // Calculate points for this segment
-                val cosA1 = cos(angle1); val sinA1 = sin(angle1)
-                val cosA2 = cos(angle2); val sinA2 = sin(angle2)
+                val cosA1 = cos(angle1);
+                val sinA1 = sin(angle1)
+                val cosA2 = cos(angle2);
+                val sinA2 = sin(angle2)
 
                 // Start and End points (local)
-                val p0xLocal = rx * cosA1; val p0yLocal = ry * sinA1 // P0
-                val p3xLocal = rx * cosA2; val p3yLocal = ry * sinA2 // P3
+                val p0xLocal = rx * cosA1;
+                val p0yLocal = ry * sinA1 // P0
+                val p3xLocal = rx * cosA2;
+                val p3yLocal = ry * sinA2 // P3
 
                 // Calculate tangent vector components at angle1 and angle2
                 val tx1 = -rx * sinA1 // Tangent component X at angle1
@@ -282,39 +407,47 @@ class Path2d() {
             val pyRotated = px * sinRot + py * cosRot
             return DoubleVector(pxRotated + cx, pyRotated + cy)
         }
+
     }
 
-    sealed class PathCommand {
-        abstract fun transform(at: AffineTransform): PathCommand
+    sealed class PaintCommand {
+        abstract fun transform(at: AffineTransform): PaintCommand
     }
 
-    object ClosePath : PathCommand() {
-        override fun transform(at: AffineTransform): PathCommand = this
+    object ClosePath : PaintCommand() {
+        override fun transform(at: AffineTransform): PaintCommand = this
+        override fun toString() = "Z"
     }
 
-    class MoveTo(val x: Double, val y: Double) : PathCommand() {
-        override fun transform(at: AffineTransform): PathCommand {
+    class MoveTo(val x: Double, val y: Double) : PaintCommand() {
+        override fun transform(at: AffineTransform): PaintCommand {
             val (tx, ty) = at.transform(x, y)
             return MoveTo(tx, ty)
         }
+        override fun toString() = "M $x $y"
     }
 
-    class LineTo(val x: Double, val y: Double) : PathCommand() {
-        override fun transform(at: AffineTransform): PathCommand {
+    class LineTo(val x: Double, val y: Double) : PaintCommand() {
+        override fun transform(at: AffineTransform): PaintCommand {
             val (tx, ty) = at.transform(x, y)
             return LineTo(tx, ty)
         }
+        override fun toString() = "L $x $y"
     }
 
-    class Arc(
+    class CubicCurveTo(
         val start: DoubleVector?, // start point of the arc, null if no start point, e.g., consecutive Bézier curves
         val controlPoints: List<DoubleVector>
-    ) : PathCommand() {
-        override fun transform(affineTransform: AffineTransform): PathCommand {
-            return Arc(
+    ) : PaintCommand() {
+        override fun transform(affineTransform: AffineTransform): PaintCommand {
+            return CubicCurveTo(
                 start = start?.let { affineTransform.transform(it) },
                 controlPoints = controlPoints.map { affineTransform.transform(it) }
             )
+        }
+        override fun toString(): String {
+            val controlPointsStr = controlPoints.joinToString(" ") { "${it.x} ${it.y}" }
+            return "C $controlPointsStr"
         }
     }
 }

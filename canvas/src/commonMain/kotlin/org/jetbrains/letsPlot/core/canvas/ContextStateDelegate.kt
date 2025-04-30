@@ -17,7 +17,7 @@ class ContextStateDelegate(
         return state.getCTM()
     }
 
-    fun getCurrentPath(): List<Path2d.PathCommand> {
+    fun getCurrentPath(): List<Path2d.PaintCommand> {
         return state.getCurrentPath()
     }
 

@@ -232,7 +232,7 @@ class MagickContext2d(
                 println(str())
         }
 
-        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
+        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PaintCommand>, transform: AffineTransform) {
             if (commands.isEmpty()) {
                 return
             }
@@ -257,8 +257,8 @@ class MagickContext2d(
                     when (cmd) {
                         is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(wand, cmd.x, cmd.y)
                         is LineTo -> lineTo(cmd.x, cmd.y)
-                        is Arc -> {
-                            cmd.start?.let { (x, y) -> lineTo(x, y) }
+                        is CubicCurveTo -> {
+                            //cmd.start?.let { (x, y) -> lineTo(x, y) }
                             cmd.controlPoints.asSequence()
                                 .windowed(size = 3, step = 3)
                                 .forEach { (cp1, cp2, cp3) ->

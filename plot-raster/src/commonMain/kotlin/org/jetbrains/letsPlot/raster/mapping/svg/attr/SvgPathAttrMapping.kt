@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
+import org.jetbrains.letsPlot.raster.mapping.svg.SvgPathParser
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgTransformParser.parsePath
 import org.jetbrains.letsPlot.raster.shape.Path
-import org.jetbrains.letsPlot.raster.shape.Path.PathData
 
 internal object SvgPathAttrMapping : SvgShapeMapping<Path>() {
     override fun setAttribute(target: Path, name: String, value: Any?) {
@@ -35,7 +35,10 @@ internal object SvgPathAttrMapping : SvgShapeMapping<Path>() {
                     else -> throw IllegalArgumentException("Unexpected `path data` type: ${value::class.simpleName}")
                 }
 
-                target.pathData = PathData(parsePath(pathStr))
+                target.pathData = SvgPathParser.parse(pathStr)
+                println("SvgPathElement.D:\nsvg\n\t$pathStr\nPath:\n\t${target.pathData!!.getCommands().joinToString(", ")}")
+
+                target.pathData2 = Path.PathData(parsePath(pathStr))
             }
             else -> super.setAttribute(target, name, value)
         }
