@@ -4123,9 +4123,9 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='sina'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
