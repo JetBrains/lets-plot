@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Path2d.PaintCommand
+import org.jetbrains.letsPlot.core.canvas.Path2d.PathCommand
 
 private const val logEnabled = false
 private fun log(str: () -> String) {
@@ -28,7 +28,7 @@ class ContextState {
         return currentState.transform
     }
 
-    fun getCurrentPath(): List<PaintCommand> {
+    fun getCurrentPath(): List<PathCommand> {
         return currentPath.getCommands()
     }
 

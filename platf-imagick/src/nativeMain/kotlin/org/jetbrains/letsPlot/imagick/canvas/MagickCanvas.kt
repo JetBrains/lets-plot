@@ -21,7 +21,7 @@ class MagickCanvas(
     val img: CPointer<ImageMagick.MagickWand>? get ()  {
         val wand = (context2d as MagickContext2d).wand
 
-        if (true) {
+        if (false) {
             val v = ImageMagick.DrawGetVectorGraphics(wand)
             println(v!!.toKString())
         }

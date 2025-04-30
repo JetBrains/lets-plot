@@ -232,7 +232,7 @@ class MagickContext2d(
                 println(str())
         }
 
-        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PaintCommand>, transform: AffineTransform) {
+        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
             if (commands.isEmpty()) {
                 return
             }
