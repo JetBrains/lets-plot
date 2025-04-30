@@ -37,10 +37,25 @@ class AffineTransform(
     val ty: Double get() = m12
 
     fun transform(p: DoubleVector): DoubleVector {
+        if (isIdentity) {
+            return p
+        }
         return transform(p.x, p.y)
     }
 
+    // If identity, return the same list
+    fun transform(p: List<DoubleVector>): List<DoubleVector> {
+        if (isIdentity) {
+            return p
+        }
+        return p.map { transform(it) }
+    }
+
     fun transform(r: DoubleRectangle): DoubleRectangle {
+        if (isIdentity) {
+            return r
+        }
+
         val lt = transform(r.left, r.top)
         val rt = transform(r.right, r.top)
         val rb = transform(r.right, r.bottom)
@@ -53,6 +68,10 @@ class AffineTransform(
     }
 
     fun transform(x: Number, y: Number): DoubleVector {
+        if (isIdentity) {
+            return DoubleVector(x.toDouble(), y.toDouble())
+        }
+
         return DoubleVector(
             x = m00 * x.toDouble() + m01 * y.toDouble() + m02,
             y = m10 * x.toDouble() + m11 * y.toDouble() + m12

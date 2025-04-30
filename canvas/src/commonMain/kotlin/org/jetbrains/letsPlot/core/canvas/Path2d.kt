@@ -94,16 +94,8 @@ class Path2d() {
             anticlockwise = anticlockwise
         )
 
-        if (at.isIdentity) {
-            commands += CubicCurveTo(moveTo, controlPoints)
-        } else {
-            val transformedMoveTo = at.transform(moveTo)
-            val transformedControlPoints = controlPoints.map { at.transform(it) }
-            commands += CubicCurveTo(
-                start = transformedMoveTo,
-                controlPoints = transformedControlPoints
-            )
-        }
+        commands += CubicCurveTo(start = at.transform(moveTo), controlPoints = at.transform(controlPoints))
+
         return this
     }
 
@@ -424,6 +416,7 @@ class Path2d() {
             val (tx, ty) = at.transform(x, y)
             return MoveTo(tx, ty)
         }
+
         override fun toString() = "M $x $y"
     }
 
@@ -432,6 +425,7 @@ class Path2d() {
             val (tx, ty) = at.transform(x, y)
             return LineTo(tx, ty)
         }
+
         override fun toString() = "L $x $y"
     }
 
@@ -442,9 +436,10 @@ class Path2d() {
         override fun transform(affineTransform: AffineTransform): PaintCommand {
             return CubicCurveTo(
                 start = start?.let { affineTransform.transform(it) },
-                controlPoints = controlPoints.map { affineTransform.transform(it) }
+                controlPoints = affineTransform.transform(controlPoints)
             )
         }
+
         override fun toString(): String {
             val controlPointsStr = controlPoints.joinToString(" ") { "${it.x} ${it.y}" }
             return "C $controlPointsStr"
