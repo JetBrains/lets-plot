@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
-import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
@@ -31,9 +30,15 @@ import kotlin.random.Random
 
 class SinaGeom : GeomBase() {
     var seed: Long? = null
-    var jitterY: Boolean = DEF_JITTER_Y
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
+    var jitterY: Boolean = true
+        // The variable is initially true. It can only be changed to false once.
+        set(value) {
+            if (!value) {
+                field = false
+            }
+        }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -44,9 +49,7 @@ class SinaGeom : GeomBase() {
     ) {
         val rand = seed?.let { Random(seed!!) } ?: Random.Default
         val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
-        if (!integerish(dataPoints.map { it.y()!! })) {
-            jitterY = false
-        }
+        jitterY = integerish(dataPoints.map { it.y()!! })
         dataPoints
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
@@ -120,7 +123,6 @@ class SinaGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = true
 
-        const val DEF_JITTER_Y = true
         const val DEF_SHOW_HALF = 0.0
 
         private const val JITTER_HEIGHT = 0.5
