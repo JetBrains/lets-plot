@@ -74,14 +74,13 @@ class SinaGeom : GeomBase() {
                 val shape = p.shape() ?: continue
                 val point = jitterTransform(p) ?: continue
                 val location = helper.toClient(point, p) ?: continue
-                val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, null, AesScaling.POINT_UNIT_SIZE)
                 targetCollector.addPoint(
-                    p.index(), location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
+                    p.index(), location, (shape.size(p) + shape.strokeWidth(p)) / 2,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     )
                 )
-                val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
+                val o = PointShapeSvg.create(shape, location, p)
                 o.appendTo(slimGroup)
             }
             root.add(wrap(slimGroup))
