@@ -43,7 +43,6 @@ class SinaGeom : PointGeom() {
         ctx: GeomContext
     ) {
         val rand = seed?.let { Random(seed!!) } ?: Random.Default
-        // Similar to ViolinGeom::buildLines()
         val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
         if (!integerish(dataPoints.map { it.y()!! })) {
             jitterY = false
@@ -54,7 +53,6 @@ class SinaGeom : PointGeom() {
             .forEach { (_, dataPoints) -> buildGroup(root, dataPoints, pos, coord, ctx, rand) }
     }
 
-    // Similar to ViolinGeom::buildViolin()
     private fun buildGroup(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
@@ -70,7 +68,6 @@ class SinaGeom : PointGeom() {
         val jitterTransform = toJitterTransform(ctx, rand)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
-            // Similar to PointGeom::buildIntern()
             val slimGroup = SvgSlimElements.g(points.size)
             for (p in points) {
                 p.size() ?: continue

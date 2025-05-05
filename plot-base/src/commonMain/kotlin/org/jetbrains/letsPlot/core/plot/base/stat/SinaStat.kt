@@ -76,7 +76,6 @@ class SinaStat(
             .build()
     }
 
-    // Similar to YDensityStat::normalize()
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
         val sinaIndices = dataAfterStat.getNumeric(Stats.N).indicesOf { it == 1.0 }
         val sinaData = dataAfterStat.slice(sinaIndices)
