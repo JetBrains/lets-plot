@@ -459,11 +459,11 @@ object StatProto {
     private fun getBandWidth(options: OptionsAccessor): Pair<Double?, DensityStat.BandWidthMethod> {
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
-        options[Density.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValue = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+        options[Density.BAND_WIDTH]?.let {
+            if (it is Number) {
+                bwValue = it.toDouble()
+            } else if (it is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(it)
             }
         }
         return Pair(bwValue, bwMethod)
