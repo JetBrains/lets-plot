@@ -54,19 +54,19 @@ abstract class BaseYDensityStat(
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
         val statData = DensityStatUtil.binnedStat(
-            xs,
-            ys,
-            ws,
-            trim,
-            tailsCutoff,
-            bandWidth,
-            bandWidthMethod,
-            adjust,
-            kernel,
-            n,
-            fullScanMax,
-            overallYRange,
-            quantiles
+            bins = xs,
+            values = ys,
+            weights = ws,
+            trim = trim,
+            tailsCutoff = tailsCutoff,
+            bandWidth = bandWidth,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            n = n,
+            fullScanMax = fullScanMax,
+            overallValuesRange =  overallYRange,
+            quantiles = quantiles
         )
 
         val builder = DataFrame.Builder()
