@@ -29,7 +29,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.random.Random
 
-class SinaGeom : PointGeom() {
+class SinaGeom : GeomBase() {
     var seed: Long? = null
     var jitterY: Boolean = DEF_JITTER_Y
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
@@ -74,7 +74,7 @@ class SinaGeom : PointGeom() {
                 val shape = p.shape() ?: continue
                 val point = jitterTransform(p) ?: continue
                 val location = helper.toClient(point, p) ?: continue
-                val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
+                val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, null, AesScaling.POINT_UNIT_SIZE)
                 targetCollector.addPoint(
                     p.index(), location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
                     GeomTargetCollector.TooltipParams(
