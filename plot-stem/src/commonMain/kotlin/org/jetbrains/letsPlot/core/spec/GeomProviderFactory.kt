@@ -206,6 +206,23 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.SINA -> GeomProvider.sina {
+                val geom = SinaGeom()
+                if (layerConfig.hasOwn(Option.Geom.Sina.SEED)) {
+                    geom.seed = layerConfig.getLong(Option.Geom.Sina.SEED)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Sina.JITTER_Y)) {
+                    geom.jitterY = layerConfig.getBoolean(Option.Geom.Sina.JITTER_Y, SinaGeom.DEF_JITTER_Y)
+                }
+                if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
+                    geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
+                }
+                if (layerConfig.hasOwn(Option.Geom.Sina.SHOW_HALF)) {
+                    geom.showHalf = layerConfig.getDouble(Option.Geom.Sina.SHOW_HALF)!!
+                }
+                geom
+            }
+
             GeomKind.Y_DOT_PLOT -> GeomProvider.ydotplot {
                 val geom = YDotplotGeom()
                 if (layerConfig.hasOwn(Option.Geom.YDotplot.DOTSIZE)) {

@@ -49,6 +49,7 @@ internal class DefaultGeomTheme private constructor(
             val size = when (geomKind) {
                 GeomKind.POINT,
                 GeomKind.JITTER,
+                GeomKind.SINA,
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> COMMON_POINT_SIZE
 

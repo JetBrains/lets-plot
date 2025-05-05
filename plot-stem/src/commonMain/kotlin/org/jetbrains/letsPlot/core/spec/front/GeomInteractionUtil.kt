@@ -242,6 +242,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN,
+            GeomKind.SINA,
             GeomKind.LOLLIPOP,
             GeomKind.SPOKE,
             GeomKind.CURVE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
@@ -283,6 +284,7 @@ object GeomInteractionUtil {
             GeomKind.AREA -> listOf(Aes.QUANTILE)
             GeomKind.DENSITY -> listOf(Aes.QUANTILE)
             GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
+            GeomKind.SINA -> listOf(Aes.VIOLINWIDTH, Aes.QUANTILE)
             GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
             GeomKind.CROSS_BAR -> listOf(Aes.Y)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
@@ -410,6 +412,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,
+            GeomKind.SINA,
             GeomKind.Q_Q,
             GeomKind.Q_Q_2,
             GeomKind.LINE,

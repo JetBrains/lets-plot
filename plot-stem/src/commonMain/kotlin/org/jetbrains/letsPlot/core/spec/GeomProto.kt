@@ -84,6 +84,7 @@ class GeomProto(val geomKind: GeomKind) {
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
             AREA_RIDGES -> DefaultSampling.AREA_RIDGES
             VIOLIN -> DefaultSampling.VIOLIN
+            SINA -> DefaultSampling.SINA
             Y_DOT_PLOT -> DefaultSampling.Y_DOT_PLOT
             RIBBON -> DefaultSampling.RIBBON
             AREA -> DefaultSampling.AREA
@@ -194,6 +195,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[BOX_PLOT] = boxplotDefaults()
             DEFAULTS[AREA_RIDGES] = areaRidgesDefaults()
             DEFAULTS[VIOLIN] = violinDefaults()
+            DEFAULTS[SINA] = sinaDefaults()
             DEFAULTS[Y_DOT_PLOT] = yDotplotDefaults()
             DEFAULTS[AREA] = areaDefaults()
             DEFAULTS[DENSITY] = densityDefaults()
@@ -283,6 +285,16 @@ class GeomProto(val geomKind: GeomKind) {
         private fun violinDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "ydensity"
+            defaults[Layer.POS] = mapOf(
+                Meta.NAME to PosProto.DODGE,
+                Pos.Dodge.WIDTH to 0.95
+            )
+            return defaults
+        }
+
+        private fun sinaDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "sina"
             defaults[Layer.POS] = mapOf(
                 Meta.NAME to PosProto.DODGE,
                 Pos.Dodge.WIDTH to 0.95

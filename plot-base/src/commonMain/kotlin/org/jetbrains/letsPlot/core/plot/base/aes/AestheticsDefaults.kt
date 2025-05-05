@@ -129,6 +129,7 @@ class AestheticsDefaults private constructor(
             return when (geomKind) {
                 GeomKind.POINT,
                 GeomKind.JITTER,
+                GeomKind.SINA,
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> point(geomTheme)
 

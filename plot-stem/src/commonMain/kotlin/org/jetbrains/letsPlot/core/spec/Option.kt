@@ -307,6 +307,12 @@ object Option {
             const val SHOW_HALF = "show_half"
         }
 
+        object Sina {
+            const val SEED = "seed"
+            const val JITTER_Y = "jitter_y"
+            const val SHOW_HALF = "show_half"
+        }
+
         object YDotplot {
             const val DOTSIZE = "dotsize"
             const val STACKRATIO = "stackratio"
@@ -524,6 +530,12 @@ object Option {
 
         object YDensity {
             const val SCALE = "scale"
+            const val TRIM = "trim"
+            const val TAILS_CUTOFF = "tails_cutoff"
+            const val QUANTILES = "quantiles"
+        }
+
+        object Sina {
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
             const val QUANTILES = "quantiles"
@@ -1001,6 +1013,7 @@ object Option {
         const val BOX_PLOT = "boxplot"
         private const val AREA_RIDGES = "area_ridges"
         private const val VIOLIN = "violin"
+        private const val SINA = "sina"
         const val Y_DOT_PLOT = "ydotplot"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
@@ -1057,6 +1070,7 @@ object Option {
             map[BOX_PLOT] = GeomKind.BOX_PLOT
             map[AREA_RIDGES] = GeomKind.AREA_RIDGES
             map[VIOLIN] = GeomKind.VIOLIN
+            map[SINA] = GeomKind.SINA
             map[LIVE_MAP] = GeomKind.LIVE_MAP
             map[POINT] = GeomKind.POINT
             map[RIBBON] = GeomKind.RIBBON

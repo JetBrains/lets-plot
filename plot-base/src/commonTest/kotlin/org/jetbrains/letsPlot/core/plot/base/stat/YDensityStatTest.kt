@@ -12,18 +12,18 @@ import kotlin.test.Test
 
 class YDensityStatTest : BaseStatTest() {
 
-    private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
+    private fun yDensityStat(scale: BaseYDensityStat.Scale? = null): YDensityStat {
         return YDensityStat(
-            scale = scale ?: YDensityStat.DEF_SCALE,
-            trim = YDensityStat.DEF_TRIM,
-            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
+            scale = scale ?: BaseYDensityStat.DEF_SCALE,
+            trim = BaseYDensityStat.DEF_TRIM,
+            tailsCutoff = BaseYDensityStat.DEF_TAILS_CUTOFF,
             bandWidth = null,
             bandWidthMethod = DensityStat.DEF_BW,
             adjust = DensityStat.DEF_ADJUST,
             kernel = DensityStat.DEF_KERNEL,
             n = DensityStat.DEF_N,
             fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
-            quantiles = YDensityStat.DEF_QUANTILES
+            quantiles = BaseYDensityStat.DEF_QUANTILES
         )
     }
 
@@ -92,7 +92,7 @@ class YDensityStatTest : BaseStatTest() {
             TransformVar.Y to y
         ))
 
-        for (scale in YDensityStat.Scale.values()) {
+        for (scale in BaseYDensityStat.Scale.entries) {
             val stat = yDensityStat(scale = scale)
             val statDf = stat.normalize(stat.apply(df, statContext(df)))
             val statDf0 = filteredDataFrame(statDf, Stats.X) { it == 0.0 }
@@ -102,15 +102,15 @@ class YDensityStatTest : BaseStatTest() {
             checkStatVarRange(statDf0, Stats.Y, DoubleSpan(0.0, 3.0))
             checkStatVarRange(statDf1, Stats.Y, DoubleSpan(0.0, 1.0))
             when (scale) {
-                YDensityStat.Scale.AREA -> {
+                BaseYDensityStat.Scale.AREA -> {
                     checkStatVarMaxLimit(statDf0, Stats.VIOLIN_WIDTH, 0.5)
                     checkStatVarMaxValue(statDf1, Stats.VIOLIN_WIDTH, 1.0)
                 }
-                YDensityStat.Scale.COUNT -> {
+                BaseYDensityStat.Scale.COUNT -> {
                     checkStatVarMaxLimit(statDf0, Stats.VIOLIN_WIDTH, 0.5)
                     checkStatVarMaxValue(statDf1, Stats.VIOLIN_WIDTH, 0.5)
                 }
-                YDensityStat.Scale.WIDTH -> {
+                BaseYDensityStat.Scale.WIDTH -> {
                     checkStatVarMaxValue(statDf0, Stats.VIOLIN_WIDTH, 1.0)
                     checkStatVarMaxValue(statDf1, Stats.VIOLIN_WIDTH, 1.0)
                 }

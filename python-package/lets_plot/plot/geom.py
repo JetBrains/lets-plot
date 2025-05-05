@@ -19,7 +19,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
            'geom_band',
-           'geom_boxplot', 'geom_violin', 'geom_ydotplot',
+           'geom_boxplot', 'geom_violin', 'geom_sina', 'geom_ydotplot',
            'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
@@ -3917,7 +3917,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 1, another half is drawn.
         If 0, violins look as usual.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        Draw horizontal lines at the given quantiles of the density estimate.
+        A list of quantiles to be calculated and written to the `..quantile..` variable.
     quantile_lines : bool, default=False
         Show the quantile lines.
     scale : {'area', 'count', 'width'}, default='area'
@@ -4092,6 +4092,214 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_half=show_half,
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
+                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
+                 fs_max=fs_max,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
+              orientation=None,
+              jitter_y=None,
+              seed=None,
+              show_half=None,
+              quantiles=None,
+              scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
+              color_by=None, fill_by=None,
+              **other_args):
+    """
+    A sina plot visualizes a single variable across classes, with jitter width reflecting the data's density in each class.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='sina'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    orientation : str
+        Specify the axis that the layer's stat and geom should run along.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
+    jitter_y : bool
+        If y is integer-valued, slight jittering is applied by default to improve distribution.
+        Use this parameter to explicitly enable or disable jittering.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
+    show_half : float, default=0
+        If -1, only half of each group is drawn.
+        If 1, another half is drawn.
+        If 0, sina look as usual.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        A list of quantiles to be calculated and written to the `..quantile..` variable.
+    scale : {'area', 'count', 'width'}, default='area'
+        If 'area', all groups have the same area.
+        If 'count', areas are scaled proportionally to the number of observations.
+        If 'width', all groups have the same maximum width.
+    trim : bool, default=True
+        Trim the tails of the violins, which limit the area for sina points, to the range of the data.
+    tails_cutoff : float, default=3.0
+        Extend domain of each violin, which limit the area for sina points, on `tails_cutoff * bw` if `trim=False`.
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float
+        Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
+    n : int, default=512
+        The number of sampled points for plotting the function, that limit the area for sina points.
+    fs_max : int, default=500
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..violinwidth.. : density scaled for the sina plot, according to area, counts or to a constant maximum width (mapped by default).
+    - ..density.. : density estimate.
+    - ..count.. : density * number of points.
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : quantile estimate.
+
+    `geom_sina()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a point. Accept values between 0 and 1.
+    - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
+    - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
+    - weight : used by 'sina' stat to compute weighted density.
+    - quantile : quantile values.
+    - width : maximal width of sina plot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the geometries.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'c'], size=n)
+        y = np.random.randint(10, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_violin() + \\
+            geom_sina(jitter_y=False, seed=42)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        quantiles = [.02, .25, .5, .75, .98]
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_violin(aes(fill='..quantile..'), scale='count', alpha=.5, \\
+                        quantiles=quantiles, quantile_lines=True) + \\
+            geom_sina(aes(color='..quantile..'), scale='count', quantiles=quantiles, seed=42) + \\
+            scale_continuous(['color', 'fill'], low="black", high="#6baed6")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14-17
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(["a", "b", "c", "d"], size=n)
+        y1 = np.random.normal(size=n)
+        y2 = np.random.normal(size=n)
+        ggplot({'x': x, 'y1': y1, 'y2': y2}) + \\
+            geom_violin(aes('x', 'y1'), show_half=-1, \\
+                        trim=False, fill='#ffffb2') + \\
+            geom_violin(aes('x', 'y2'), show_half=1, \\
+                        trim=False, fill='#74c476') + \\
+            geom_sina(aes('x', 'y1'), show_half=-1, \\
+                      fill='#ffffb2', shape=24, size=2, seed=42) + \\
+            geom_sina(aes('x', 'y2'), show_half=1, \\
+                      fill='#74c476', shape=25, size=2, seed=42)
+
+    """
+    return _geom('sina',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
+                 jitter_y=jitter_y,
+                 seed=seed,
+                 show_half=show_half,
+                 quantiles=quantiles,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
                  fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,

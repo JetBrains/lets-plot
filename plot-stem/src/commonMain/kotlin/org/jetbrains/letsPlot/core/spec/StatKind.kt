@@ -22,6 +22,7 @@ enum class StatKind {
     BOXPLOT_OUTLIER,
     DENSITYRIDGES,
     YDENSITY,
+    SINA,
     YDOTPLOT,
     DENSITY,
     DENSITY2D,
