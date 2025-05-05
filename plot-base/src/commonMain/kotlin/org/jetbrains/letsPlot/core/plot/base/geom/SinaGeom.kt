@@ -32,13 +32,7 @@ class SinaGeom : GeomBase() {
     var seed: Long? = null
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
-    var jitterY: Boolean = true
-        // The variable is initially true. It can only be changed to false once.
-        set(value) {
-            if (!value) {
-                field = false
-            }
-        }
+    var jitterY: Boolean? = null
 
     override fun buildIntern(
         root: SvgRoot,
@@ -49,7 +43,9 @@ class SinaGeom : GeomBase() {
     ) {
         val rand = seed?.let { Random(seed!!) } ?: Random.Default
         val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
-        jitterY = integerish(dataPoints.map { it.y()!! })
+        if (jitterY == null) {
+            jitterY = integerish(dataPoints.map { it.y()!! })
+        }
         dataPoints
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
@@ -108,7 +104,7 @@ class SinaGeom : GeomBase() {
             val randomWidthShift = rand.nextDouble()
             val randomHeightShift = rand.nextDouble()
             val widthLimit = resolutionX / 2.0 * width * violinWidth
-            val heightLimit = if (jitterY) resolutionY * JITTER_HEIGHT / 2.0 else 0.0
+            val heightLimit = if (jitterY ?: DEF_JITTER_Y) resolutionY * JITTER_HEIGHT / 2.0 else 0.0
             return DoubleVector(
                 x + signX * randomWidthShift * widthLimit, // This formula with sign is used to treat both sides equally (do not include ends)
                 y + signY * randomHeightShift * heightLimit
@@ -124,6 +120,7 @@ class SinaGeom : GeomBase() {
         const val HANDLES_GROUPS = true
 
         const val DEF_SHOW_HALF = 0.0
+        const val DEF_JITTER_Y = true
 
         private const val JITTER_HEIGHT = 0.5
         private const val INTEGERISH_EPSILON = 1e-12

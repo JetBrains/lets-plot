@@ -4145,9 +4145,9 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
         If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
-    jitter_y : bool, default=True
+    jitter_y : bool
         If y is integer-valued, slight jittering is applied by default to improve distribution.
-        Set `jitter_y=False` to disable it.
+        Use this parameter to explicitly enable or disable jittering.
     seed : int
         A random seed to make the jitter reproducible.
         If None (the default value), the seed is initialised with a random value.
