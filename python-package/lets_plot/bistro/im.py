@@ -53,8 +53,8 @@ def image_matrix(image_data_array,
 
     Returns
     -------
-    `ggbunch`
-        Plot bunch object.
+    `SupPlotsSpec`
+        A specification describing the combined figure with all plots and their layout.
 
     Examples
     --------
