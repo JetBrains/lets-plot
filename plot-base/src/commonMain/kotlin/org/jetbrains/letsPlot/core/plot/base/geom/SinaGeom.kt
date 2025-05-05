@@ -97,8 +97,8 @@ class SinaGeom : GeomBase() {
         val resolutionX = ctx.getResolution(Aes.X)
         val resolutionY = ctx.getResolution(Aes.Y)
         return fun(p: DataPointAesthetics): DoubleVector? {
-            val (x, y, violinWidth) = p.finiteOrNull(Aes.X, Aes.Y, Aes.VIOLINWIDTH) ?: return null
-            val width = p.width() ?: return null
+            val (x, y) = p.finiteOrNull(Aes.X, Aes.Y) ?: return null
+            val (width, violinWidth) = p.finiteOrNull(Aes.WIDTH, Aes.VIOLINWIDTH) ?: return null
             val signX = when {
                 showHalf > 0 -> 1
                 showHalf < 0 -> -1
