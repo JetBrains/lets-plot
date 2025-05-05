@@ -2079,7 +2079,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
@@ -3654,7 +3654,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
@@ -3729,12 +3729,12 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     `geom_boxplot()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - lower : lower hinge.
-    - middle : median.
-    - upper : upper hinge.
-    - ymin : lower whisker.
-    - ymax : upper whisker.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal boxplot, respectively.
+    - lower or xlower : lower hinge.
+    - middle or xmiddle : median.
+    - upper or xupper : upper hinge.
+    - ymin or xmin : lower whisker.
+    - ymax or xmax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
@@ -3890,7 +3890,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydensity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
@@ -5471,7 +5471,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='jitter'
+    position : str or `FeatureSpec`, default=position_jitter(width=.4, height=.4)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
