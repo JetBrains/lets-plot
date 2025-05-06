@@ -67,8 +67,12 @@ class ViolinGeom : GeomBase() {
             root.appendNodes(helper.createLines(points, leftBoundTransform))
             root.appendNodes(helper.createLines(points, rightBoundTransform))
 
-            buildHints(points, ctx, helper, leftBoundTransform)
-            buildHints(points, ctx, helper, rightBoundTransform)
+            if (showHalf <= 0.0) {
+                buildHints(points, ctx, helper, leftBoundTransform)
+            }
+            if (showHalf >= 0.0) {
+                buildHints(points, ctx, helper, rightBoundTransform)
+            }
         }
 
         if (quantileLines) {
