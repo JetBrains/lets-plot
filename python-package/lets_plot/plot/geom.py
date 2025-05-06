@@ -4145,9 +4145,8 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
         If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
-    jitter_y : bool
-        If y is integer-valued, slight jittering is applied by default to improve distribution.
-        Use this parameter to explicitly enable or disable jittering.
+    jitter_y : bool, default=False
+        Slight vertical jitter to avoid overlapping points.
     seed : int
         A random seed to make the jitter reproducible.
         If None (the default value), the seed is initialised with a random value.
@@ -4238,7 +4237,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         y = np.random.randint(10, size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_violin() + \\
-            geom_sina(jitter_y=False, seed=42)
+            geom_sina(seed=42)
 
     |
 
