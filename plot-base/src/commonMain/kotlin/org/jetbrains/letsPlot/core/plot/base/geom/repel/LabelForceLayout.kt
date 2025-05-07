@@ -22,7 +22,7 @@ import kotlin.random.Random
  * CRPIT Volume 45, pp. 131–140.
  * https://crpit.scem.westernsydney.edu.au/confpapers/CRPITV45Li.pdf
  */
-class LabelReplacer(
+class LabelForceLayout(
     boxes: Map<Int, TransformedRectangle>,
     circles: Map<Int, DoubleCircle>,
     hjust: Map<Int, Double>,
@@ -34,8 +34,8 @@ class LabelReplacer(
     val maxIter: Int = 2000,
     val direction: Direction = Direction.BOTH
 ) {
-    private val labels = mutableListOf<LabelItem>()
-    private val buddies = mutableListOf<LayoutItem>()
+    private val labelItems = mutableListOf<LabelItem>()
+    private val layoutItems = mutableListOf<LayoutItem>()
     private val rnd = if (seed == null) Random.Default else Random(seed)
 
     init {
@@ -50,16 +50,16 @@ class LabelReplacer(
                 circles[dpIndex]!!.radius
             )
 
-            labels.add(label)
-            buddies.add(label)
+            labelItems.add(label)
+            layoutItems.add(label)
         }
 
         circles.forEach { (dpIndex, circle) ->
-            buddies.add(PointItem(dpIndex, circle))
+            layoutItems.add(PointItem(dpIndex, circle))
         }
     }
 
-    fun replace(): List<ReplaceResult> {
+    fun doLayout(): List<LabelItem> {
         val pauseIter = 0
         val firstRepulsionIter = 1
         val hideLineIter = 2
@@ -67,9 +67,9 @@ class LabelReplacer(
             if (iter <= pauseIter) continue
 
             if (iter == firstRepulsionIter) {
-                labels.forEach { label ->
+                labelItems.forEach { label ->
                     val force = selfRepulsion(label)
-                    label.update(force)
+                    label.setForce(force)
                     clampToBounds(label, bounds)
                 }
                 continue
@@ -77,7 +77,7 @@ class LabelReplacer(
 
             var overlapsCount = 0
 
-            for (label in labels) {
+            for (label in labelItems) {
                 if (label.hidden) continue
 
                 if (iter % 10 == 0) {
@@ -97,7 +97,7 @@ class LabelReplacer(
                     force = selfAttraction(label)
                 }
 
-                label.update(force.mul(easeOutQuint(1 - iter.toDouble() / maxIter)))
+                label.setForce(force.mul(easeOutQuint(1 - iter.toDouble() / maxIter)))
                 clampToBounds(label, bounds)
                 // todo: try to add random force if boundary is reached
 
@@ -108,46 +108,34 @@ class LabelReplacer(
                 break
         }
 
-        val results = mutableListOf<ReplaceResult>()
-
-        for (label in labels) {
-            results.add(
-                ReplaceResult(
-                    label.dpIndex,
-                    label.position,
-                    label.hidden,
-                )
-            )
-        }
-
-        return results
+        return labelItems
     }
 
-    private fun aggregateForces(buddy: LabelItem): Pair<DoubleVector, Int> {
+    private fun aggregateForces(labelItem: LabelItem): Pair<DoubleVector, Int> {
         var force = DoubleVector.ZERO
         var overlaps = 0
 
-        for (other in buddies) {
-            if (buddy == other || other.hidden) continue
+        for (other in layoutItems) {
+            if (labelItem == other || other.hidden) continue
 
-            if (buddy.intersects(other)) {
+            if (labelItem.intersects(other)) {
                 overlaps++
-                force = force.add(repulsion(buddy, other))
+                force = force.add(repulsion(labelItem, other))
             }
         }
 
         return force to overlaps
     }
 
-    private fun repulsion(buddy: LabelItem, other: LayoutItem): DoubleVector {
-        val dir = normalizedNonZeroDirection(buddy.position, other.position)
+    private fun repulsion(labelItem: LabelItem, otherItem: LayoutItem): DoubleVector {
+        val dir = normalizedNonZeroDirection(labelItem.position, otherItem.position)
 
-        val dnl = buddy.dLength + other.dLength
-        val d = distance(buddy, other)
+        val dnl = labelItem.dLength + otherItem.dLength
+        val d = distance(labelItem, otherItem)
         var forceValue = dnl / (dnl + d)
 
-        if (buddy.dpIndex == other.dpIndex) {
-            if (other is PointItem && other.circle.radius == 0.0) {
+        if (labelItem.dpIndex == otherItem.dpIndex) {
+            if (otherItem is PointItem && otherItem.circle.radius == 0.0) {
                 return DoubleVector.ZERO
             }
             forceValue *= 2
@@ -156,22 +144,22 @@ class LabelReplacer(
         return applyDirection(dir.negate().mul(forceValue))
     }
 
-    private fun selfAttraction(label: LabelItem): DoubleVector {
-        val dir = normalizedNonZeroDirection(label.position, label.point)
-        val d = label.point.subtract(label.position).length()
-        val dnl = label.dLength + label.pointRadius
+    private fun selfAttraction(labelItem: LabelItem): DoubleVector {
+        val dir = normalizedNonZeroDirection(labelItem.position, labelItem.point)
+        val d = labelItem.point.subtract(labelItem.position).length()
+        val dnl = labelItem.dLength + labelItem.pointRadius
 
         val forceValue = d / dnl
 
         return applyDirection(dir.mul(forceValue))
     }
 
-    private fun selfRepulsion(label: LabelItem): DoubleVector {
-        if (label.pointRadius == 0.0) {
+    private fun selfRepulsion(labelItem: LabelItem): DoubleVector {
+        if (labelItem.pointRadius == 0.0) {
             return DoubleVector.ZERO
         }
 
-        val dir = normalizedNonZeroDirection(label.position, label.point)
+        val dir = normalizedNonZeroDirection(labelItem.position, labelItem.point)
 
         val forceValue = 8.0
 
@@ -186,8 +174,8 @@ class LabelReplacer(
         }
     }
 
-    private fun clampToBounds(label: LabelItem, bounds: DoubleRectangle) {
-        val bbox = label.box.bbox
+    private fun clampToBounds(labelItem: LabelItem, bounds: DoubleRectangle) {
+        val bbox = labelItem.box.bbox
 
         val dx = when {
             bbox.left < bounds.left -> bounds.left - bbox.left
@@ -201,21 +189,21 @@ class LabelReplacer(
             else -> 0.0
         }
 
-        label.move(DoubleVector(dx, dy))
+        labelItem.updatePosition(DoubleVector(dx, dy))
     }
 
-    private fun resolveSegmentIntersection(label: LabelItem) {
-        for (other in labels) {
-            if (label == other || other.hidden) continue
-            if (label.point == other.point)
+    private fun resolveSegmentIntersection(labelItem: LabelItem) {
+        for (otherItem in labelItems) {
+            if (labelItem == otherItem || otherItem.hidden) continue
+            if (labelItem.point == otherItem.point)
                 continue
-            val labelSegment = DoubleSegment(label.point, label.position)
-            val otherSegment = DoubleSegment(other.point, other.position)
+            val labelSegment = DoubleSegment(labelItem.point, labelItem.position)
+            val otherSegment = DoubleSegment(otherItem.point, otherItem.position)
 
             if (labelSegment.intersection(otherSegment) != null) {
-                val delta = other.position.subtract(label.position)
-                label.move(delta)
-                other.move(delta.mul(-1.0))
+                val delta = otherItem.position.subtract(labelItem.position)
+                labelItem.updatePosition(delta)
+                otherItem.updatePosition(delta.mul(-1.0))
             }
         }
     }
@@ -274,9 +262,9 @@ class LabelReplacer(
             position = box.anchor(hjust, vjust)
         }
 
-        fun update(force: DoubleVector) {
+        fun setForce(force: DoubleVector) {
             velocity = velocity.mul(friction).add(force)
-            move(velocity)
+            updatePosition(velocity)
         }
 
         fun intersects(other: LayoutItem): Boolean {
@@ -288,7 +276,7 @@ class LabelReplacer(
             return false
         }
 
-        fun move(delta: DoubleVector) {
+        fun updatePosition(delta: DoubleVector) {
             position = position.add(delta)
             box = box.add(delta)
         }
@@ -304,11 +292,5 @@ class LabelReplacer(
         override val dLength: Double
             get() = circle.radius
     }
-
-    data class ReplaceResult(
-        val index: Int,
-        val point: DoubleVector,
-        val hidden: Boolean
-    )
 }
 

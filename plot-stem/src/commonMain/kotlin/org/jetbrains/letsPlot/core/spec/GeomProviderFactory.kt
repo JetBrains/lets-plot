@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
-import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelReplacer
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -524,11 +524,11 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun directionValue(value: String): LabelReplacer.Direction {
+    private fun directionValue(value: String): LabelForceLayout.Direction {
         return when (value.lowercase()) {
-            "x" -> LabelReplacer.Direction.X
-            "y" -> LabelReplacer.Direction.Y
-            "both" -> LabelReplacer.Direction.BOTH
+            "x" -> LabelForceLayout.Direction.X
+            "y" -> LabelForceLayout.Direction.Y
+            "both" -> LabelForceLayout.Direction.BOTH
             else -> throw IllegalArgumentException(
                 "Unsupported value for ${Option.Geom.Repel.DIRECTION} parameter: '$value'. " +
                         "Use one of: x, y, both."

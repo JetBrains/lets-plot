@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling.POINT_UNIT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleCircle
-import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelReplacer
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle.Companion.savedNormalize
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
@@ -28,7 +28,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 open class TextRepelGeom: TextGeom() {
     var seed: Long? = null
     var maxIter: Int? = null
-    var direction: LabelReplacer.Direction? = null
+    var direction: LabelForceLayout.Direction? = null
     var pointPadding: Double? = null
     var boxPadding: Double? = null
     var maxOverlaps: Int? = null
@@ -85,7 +85,7 @@ open class TextRepelGeom: TextGeom() {
             vjusts[dp.index()] = vjust
         }
 
-        val replacer = LabelReplacer(
+        val replacer = LabelForceLayout(
             boxes,
             circles,
             hjusts,
@@ -95,10 +95,10 @@ open class TextRepelGeom: TextGeom() {
             maxOverlaps = maxOverlaps ?: 10,
             seed = seed,
             maxIter = maxIter ?: 2000,
-            direction = direction ?: LabelReplacer.Direction.BOTH
+            direction = direction ?: LabelForceLayout.Direction.BOTH
         )
 
-        val results = replacer.replace()
+        val results = replacer.doLayout()
 
         for (i in results.indices) {
             val result = results[i]
@@ -107,16 +107,16 @@ open class TextRepelGeom: TextGeom() {
                 continue
             }
 
-            val dp = aesthetics.dataPointAt(result.index)
+            val dp = aesthetics.dataPointAt(result.dpIndex)
             val text = toString(dp.label(), ctx)
             // Adapt point size to plot 'grid step' if necessary (i.e., in correlation matrix).
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(result.point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(result.position, coord, sizeUnit, BASELINE_TEXT_WIDTH)
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val pointLocation = coord.toClient(point) ?: continue
             val size = dp.finiteOrNull(Aes.POINT_SIZE) ?: continue
-            val rect = TransformedRectangle(getRect(dp, result.point, text, sizeUnitRatio, ctx, aesBoundsCenter))
+            val rect = TransformedRectangle(getRect(dp, result.position, text, sizeUnitRatio, ctx, aesBoundsCenter))
 
-            val tc = buildTextComponent(dp, result.point, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            val tc = buildTextComponent(dp, result.position, text, sizeUnitRatio, ctx, aesBoundsCenter)
             root.add(tc)
 
             val segmentLocation = getSegmentLocation(pointLocation, size, rect, hjusts[dp.index()] ?: 0.5, vjusts[dp.index()] ?: 0.5)
@@ -128,7 +128,7 @@ open class TextRepelGeom: TextGeom() {
 
             targetCollector.addPoint(
                 dp.index(),
-                result.point,
+                result.position,
                 sizeUnitRatio * AesScaling.textSize(dp) / 2,
                 GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(dp)
