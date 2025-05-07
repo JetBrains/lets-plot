@@ -123,9 +123,8 @@ internal object Latex {
     private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
         val nodes = mutableListOf<RichTextNode.Span>()
         while (iterator.hasNext()) {
-            val token = iterator.next()
-            when (token) {
-                is Token.Command -> nodes.add(parseCommand(token)) // For now, we just replace the command with its name if it's not a special symbol
+            when (val token = iterator.next()) {
+                is Token.Command -> nodes.add(parseCommand(token, iterator, level))
                 is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
                 is Token.CloseBrace -> break
                 is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1), level))
@@ -142,14 +141,26 @@ internal object Latex {
         return when (val nextToken = iterator.next()) {
             is Token.OpenBrace -> parseGroup(iterator, level)
             is Token.Text -> TextNode(nextToken.content)
-            is Token.Command -> parseCommand(nextToken)
+            is Token.Command -> parseCommand(nextToken, iterator, level)
             else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
         }
     }
 
-    private fun parseCommand(token: Token.Command): RichTextNode.Span {
-        // For now, we just replace the command with its name if it's not a special symbol
-        return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
+    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int): RichTextNode.Span {
+        return when (token.name) {
+            // TODO: Refactor
+            "frac" -> {
+                val numeratorOpenBrace = iterator.next()
+                require(numeratorOpenBrace is Token.OpenBrace) { "Expected '{' after '\\frac'" }
+                val numerator = parseGroup(iterator, level)
+                val denominatorOpenBrace = iterator.next()
+                require(denominatorOpenBrace is Token.OpenBrace) { "Expected '{' after '\\frac{...}'" }
+                val denominator = parseGroup(iterator, level)
+                FractionNode(numerator, denominator)
+            }
+            // For other commands, we just replace the command with its name if it's not a special symbol
+            else -> TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
+        }
     }
 
     private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState): List<SvgElement> {
@@ -357,6 +368,18 @@ internal object Latex {
 
         override fun render(context: RenderState): List<SvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context)
+        }
+    }
+
+    data class FractionNode(val numerator: RichTextNode.Span, val denominator: RichTextNode.Span) : RichTextNode.Span {
+        override val visualCharCount: Int = numerator.visualCharCount + denominator.visualCharCount // TODO
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return numerator.estimateWidth(font, widthCalculator) + denominator.estimateWidth(font, widthCalculator) // TODO
+        }
+
+        override fun render(context: RenderState): List<SvgElement> {
+            val result = numerator.render(context)
+            return numerator.render(context) + denominator.render(context) // TODO
         }
     }
 }
