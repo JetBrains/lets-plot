@@ -212,9 +212,6 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.Sina.SEED)) {
                     geom.seed = layerConfig.getLong(Option.Geom.Sina.SEED)!!
                 }
-                if (layerConfig.hasOwn(Option.Geom.Sina.JITTER_Y)) {
-                    geom.jitterY = layerConfig.getBoolean(Option.Geom.Sina.JITTER_Y, SinaGeom.DEF_JITTER_Y)
-                }
                 if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
                     geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
                 }

@@ -309,7 +309,6 @@ object Option {
 
         object Sina {
             const val SEED = "seed"
-            const val JITTER_Y = "jitter_y"
             const val SHOW_HALF = "show_half"
         }
 

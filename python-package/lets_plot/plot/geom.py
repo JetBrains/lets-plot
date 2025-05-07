@@ -4102,7 +4102,6 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
               manual_key=None, sampling=None,
               tooltips=None,
               orientation=None,
-              jitter_y=None,
               seed=None,
               show_half=None,
               quantiles=None,
@@ -4145,8 +4144,6 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
         If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
-    jitter_y : bool, default=False
-        Slight vertical jitter to avoid overlapping points.
     seed : int
         A random seed to make the jitter reproducible.
         If None (the default value), the seed is initialised with a random value.
@@ -4295,7 +4292,6 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
-                 jitter_y=jitter_y,
                  seed=seed,
                  show_half=show_half,
                  quantiles=quantiles,
