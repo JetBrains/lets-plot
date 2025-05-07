@@ -55,7 +55,9 @@ class LabelForceLayout(
         }
 
         circles.forEach { (dpIndex, circle) ->
-            layoutItems.add(PointItem(dpIndex, circle))
+            if (circle.radius > 0.0) {
+                layoutItems.add(PointItem(dpIndex, circle))
+            }
         }
     }
 
@@ -135,9 +137,6 @@ class LabelForceLayout(
         var forceValue = dnl / (dnl + d)
 
         if (labelItem.dpIndex == otherItem.dpIndex) {
-            if (otherItem is PointItem && otherItem.circle.radius == 0.0) {
-                return DoubleVector.ZERO
-            }
             forceValue *= 2
         }
 
