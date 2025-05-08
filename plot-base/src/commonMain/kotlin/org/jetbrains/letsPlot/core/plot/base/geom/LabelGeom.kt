@@ -8,16 +8,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.geom.util.Label
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
-open class LabelGeom : TextGeom(), Label {
-
-    override var paddingFactor: Double = 0.25    //  Amount of padding around label
-    override var radiusFactor: Double = 0.15     //  Radius of rounded corners
-    override var borderWidth: Double = 1.0       //  Size of a label border
-    override var alphaStroke: Boolean = false    //  Apply alpha to text and border
+open class LabelGeom : TextGeom() {
+    val labelOptions = LabelOptions()
 
     override fun buildTextComponent(
         p: DataPointAesthetics,
@@ -27,7 +23,7 @@ open class LabelGeom : TextGeom(), Label {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): SvgGElement {
-        return buildLabelComponent(p, location, text, sizeUnitRatio, ctx, boundsCenter)
+        return LabelOptions.buildLabelComponent(p, location, text, sizeUnitRatio, ctx, boundsCenter, labelOptions)
     }
 
     override fun objectRectangle(
@@ -37,6 +33,6 @@ open class LabelGeom : TextGeom(), Label {
         hAnchor: Text.HorizontalAnchor,
         vAnchor: Text.VerticalAnchor
     ): DoubleRectangle {
-        return labelRectangle(location, textSize, fontSize, hAnchor, vAnchor)
+        return LabelOptions.labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
     }
 }

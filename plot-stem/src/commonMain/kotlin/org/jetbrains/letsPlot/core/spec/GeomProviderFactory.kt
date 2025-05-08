@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -330,12 +331,7 @@ internal object GeomProviderFactory {
                 val geom = LabelGeom()
 
                 applyTextOptions(layerConfig, geom, expFormat)
-                layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
-                layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
-                layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
-                if (layerConfig.hasOwn(Option.Geom.Label.ALPHA_STROKE)) {
-                    geom.alphaStroke = layerConfig.getBoolean(Option.Geom.Label.ALPHA_STROKE)
-                }
+                applyLabelOptions(layerConfig, geom.labelOptions)
 
                 geom
             }
@@ -343,14 +339,15 @@ internal object GeomProviderFactory {
             GeomKind.TEXT_REPEL -> GeomProvider.textRepel {
                 val geom = TextRepelGeom()
                 applyTextOptions(layerConfig, geom, expFormat)
-                applyRepelOptions(layerConfig, geom, expFormat)
+                applyRepelOptions(layerConfig, geom)
                 geom
             }
 
             GeomKind.LABEL_REPEL -> GeomProvider.labelRepel {
                 val geom = LabelRepelGeom()
                 applyTextOptions(layerConfig, geom, expFormat)
-                applyRepelOptions(layerConfig, geom, expFormat)
+                applyLabelOptions(layerConfig, geom.labelOptions)
+                applyRepelOptions(layerConfig, geom)
                 geom
             }
 
@@ -470,7 +467,16 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyRepelOptions(layerConfig: LayerConfig, geom: TextRepelGeom, expFormat: ExponentFormat) {
+    private fun applyLabelOptions(layerConfig: LayerConfig, factory: LabelOptions) {
+        layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { factory.paddingFactor = it }
+        layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { factory.radiusFactor = it }
+        layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { factory.borderWidth = it }
+        if (layerConfig.hasOwn(Option.Geom.Label.ALPHA_STROKE)) {
+            factory.alphaStroke = layerConfig.getBoolean(Option.Geom.Label.ALPHA_STROKE)
+        }
+    }
+
+    private fun applyRepelOptions(layerConfig: LayerConfig, geom: TextRepelGeom) {
         layerConfig.getLong(Option.Geom.Repel.SEED)?.let {
             geom.seed = it
         }
