@@ -28,6 +28,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 open class TextRepelGeom: TextGeom() {
     var seed: Long? = null
     var maxIter: Int? = null
+    var maxTime: Double? = null
     var direction: LabelForceLayout.Direction? = null
     var pointPadding: Double? = null
     var boxPadding: Double? = null
@@ -95,6 +96,7 @@ open class TextRepelGeom: TextGeom() {
             maxOverlaps = maxOverlaps ?: 10,
             seed = seed,
             maxIter = maxIter ?: 2000,
+            maxTime = maxTime ?: 5000.0   ,
             direction = direction ?: LabelForceLayout.Direction.BOTH
         )
 

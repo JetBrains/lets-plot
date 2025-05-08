@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.repel
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -29,11 +30,13 @@ class LabelForceLayout(
     vjust: Map<Int, Double>,
     boxPadding: Double,
     val bounds: DoubleRectangle,
-    val maxOverlaps: Int = 10,
-    val seed: Long? = null,
-    val maxIter: Int = 2000,
-    val direction: Direction = Direction.BOTH
+    val maxOverlaps: Int,
+    val seed: Long?,
+    val maxIter: Int,
+    val maxTime: Double,
+    val direction: Direction
 ) {
+    private val systemTime = SystemTime()
     private val labelItems = mutableListOf<LabelItem>()
     private val layoutItems = mutableListOf<LayoutItem>()
     private val rnd = if (seed == null) Random.Default else Random(seed)
@@ -62,6 +65,7 @@ class LabelForceLayout(
     }
 
     fun doLayout(): List<LabelItem> {
+        val start = systemTime.getTimeMs()
         val pauseIter = 0
         val firstRepulsionIter = 1
         val hideLineIter = 2
@@ -108,6 +112,10 @@ class LabelForceLayout(
 
             if (overlapsCount == 0)
                 break
+
+            if (maxTime > 0 && systemTime.getTimeMs() - start > maxTime) {
+                break
+            }
         }
 
         return labelItems

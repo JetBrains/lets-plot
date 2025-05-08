@@ -483,6 +483,9 @@ internal object GeomProviderFactory {
         layerConfig.getInteger(Option.Geom.Repel.MAX_ITER)?.let {
             geom.maxIter = it
         }
+        layerConfig.getDouble(Option.Geom.Repel.MAX_TIME)?.let {
+            geom.maxTime = it * 1000.0 // convert to milliseconds
+        }
         layerConfig.getString(Option.Geom.Repel.DIRECTION)?.let {
             geom.direction = directionValue(it)
         }

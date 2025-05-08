@@ -390,6 +390,7 @@ object Option {
         object Repel {
             const val SEED = "seed"
             const val MAX_ITER = "max_iter"
+            const val MAX_TIME = "max_time"
             const val DIRECTION = "direction"
             const val POINT_PADDING = "point_padding"
             const val BOX_PADDING = "box_padding"

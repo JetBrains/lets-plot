@@ -7,11 +7,11 @@
 
 package org.jetbrains.letsPlot.livemap
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.api.FeatureLayerBuilder
 import org.jetbrains.letsPlot.livemap.config.createMapProjection
 import org.jetbrains.letsPlot.livemap.core.Projections
-import org.jetbrains.letsPlot.livemap.core.SystemTime
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.graphics.TextMeasurer
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskCooperativeExecutor

@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.livemap.core.ecs
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.livemap.core.MetricsService
-import org.jetbrains.letsPlot.livemap.core.SystemTime
 
 open class EcsContext(
     val eventSource: MouseEventSource

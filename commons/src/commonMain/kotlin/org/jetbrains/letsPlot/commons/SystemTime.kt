@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.livemap.core
+package org.jetbrains.letsPlot.commons
 
 expect open class SystemTime() {
     fun getTimeMs(): Long

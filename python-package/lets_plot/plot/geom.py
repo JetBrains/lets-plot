@@ -7700,6 +7700,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
               color_by=None,
               seed=None,
               max_iter=None,
+              max_time=None,
               direction=None,
               point_padding=None,
               box_padding=None,
@@ -7788,6 +7789,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Random seed used for reproducibility of label positions.
     max_iter : int
         Maximum number of iterations used to resolve label collisions.
+    max_time : float
+        Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
         Limit direction of repulsion movement.
     point_padding : float
@@ -7860,6 +7863,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                  check_overlap=check_overlap,
                  color_by=color_by,
                  max_iter=max_iter,
+                 max_time=max_time,
                  seed=seed,
                  direction=direction,
                  point_padding = point_padding,
@@ -7883,6 +7887,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                color_by=None, fill_by=None,
                seed=None,
                max_iter=None,
+               max_time=None,
                direction=None,
                point_padding=None,
                box_padding=None,
@@ -7982,6 +7987,8 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Random seed for reproducibility.
     max_iter : int
         Maximum number of iterations for the repulsion algorithm.
+    max_time : float
+        Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
         Direction in which labels can be moved.
     point_padding : float
@@ -8058,6 +8065,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                  check_overlap=check_overlap,
                  color_by=color_by, fill_by=fill_by,
                  max_iter=max_iter,
+                 max_time=max_time,
                  seed=seed,
                  direction=direction,
                  point_padding = point_padding,

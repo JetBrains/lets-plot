@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.livemap.core.multitasking
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.livemap.core.SystemTime
 import kotlin.math.max
 
 class DebugMicroTask<ItemT>(
