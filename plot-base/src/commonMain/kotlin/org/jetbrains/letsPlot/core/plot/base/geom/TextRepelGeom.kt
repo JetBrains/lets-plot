@@ -114,12 +114,11 @@ open class TextRepelGeom: TextGeom() {
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val pointLocation = coord.toClient(point) ?: continue
             val size = dp.finiteOrNull(Aes.POINT_SIZE) ?: continue
-            val rect = TransformedRectangle(getRect(dp, result.position, text, sizeUnitRatio, ctx, aesBoundsCenter))
 
             val tc = buildTextComponent(dp, result.position, text, sizeUnitRatio, ctx, aesBoundsCenter)
             root.add(tc)
 
-            val segmentLocation = getSegmentLocation(pointLocation, size, rect, hjusts[dp.index()] ?: 0.5, vjusts[dp.index()] ?: 0.5)
+            val segmentLocation = getSegmentLocation(pointLocation, size, result.box, hjusts[dp.index()] ?: 0.5, vjusts[dp.index()] ?: 0.5)
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
