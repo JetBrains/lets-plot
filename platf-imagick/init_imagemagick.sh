@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 #
 # Copyright (c) 2025. JetBrains s.r.o.
@@ -88,7 +88,7 @@ case $getPlatform in
 
   Darwin*)
     PLATFORM="Mac"
-
+    # Check Homebrew installation:
     if [[ -z "$HOMEBREW_PREFIX" ]]; then
       brew --prefix
       if [[ "$?" -ne 0 ]]; then
@@ -100,15 +100,30 @@ case $getPlatform in
       brew_prefix="$HOMEBREW_PREFIX"
     fi
 
+    # Check libtool and add it to env
     if [[ -d "${brew_prefix}/opt/libtool" ]]; then
       libtool_gnubin_path="${brew_prefix}/opt/libtool/libexec/gnubin"
       if [[ -d "$libtool_gnubin_path" ]]; then
         export PATH="${libtool_gnubin_path}:${PATH}"
       else
-        exit_with_error "A 'gnubin' directory is expected, but was not found. Check your 'libtool' installation."
+        exit_with_error "A 'gnubin' directory is expected, but was not found here:\n ${libtool_gnubin_path}\n\n
+         Check your 'libtool' installation."
       fi
     else
       exit_with_error "Could not find 'libtool' installation. Please, install 'libtool':\nbrew install libtool"
+    fi
+
+    # Check zlib and add it to env
+    if [[ -d "${brew_prefix}/opt/zlib" ]]; then
+      zlib_pkgconfig_path="${brew_prefix}/opt/zlib/lib/pkgconfig"
+      if [[ -d "$zlib_pkgconfig_path" ]]; then
+        export PKG_CONFIG_PATH="${zlib_pkgconfig_path}:$PKG_CONFIG_PATH"
+      else
+        exit_with_error "A 'pkgconfig' directory is expected, but was not found here:\n ${zlib_pkgconfig_path}\n\n
+        Check your 'zlib' installation."
+      fi
+    else
+      exit_with_error "Could not find 'zlib' installation. Please, install 'zlib':\nbrew install zlib"
     fi
   ;;
 
@@ -129,8 +144,8 @@ build_library () {
   local available_proc="$(nproc --ignore=1)"
   base_configure_args=(
     "--prefix=${INSTALL_PREFIX}"
-    "--disable-shared"
-    "--enable-static"
+    "--enable-shared"
+    "--disable-static"
   )
 
   export CFLAGS="-O2"
@@ -179,7 +194,6 @@ build_library () {
       export ac_cv_func_getentropy=no
       export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
       extra_configure_args=(
-        "--with-pic"
         "--enable-zero-configuration"
         "--with-quantum-depth=8"
         "--with-fontconfig"
