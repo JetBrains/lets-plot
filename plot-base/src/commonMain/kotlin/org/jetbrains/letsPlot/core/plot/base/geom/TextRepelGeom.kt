@@ -59,6 +59,7 @@ open class TextRepelGeom: TextGeom() {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
+        val bounds = DoubleRectangle(DoubleVector.ZERO, ctx.getContentBounds().dimension)
 
         val boxes = HashMap<Int, TransformedRectangle>()
         val circles = HashMap<Int, DoubleCircle>()
@@ -70,6 +71,8 @@ open class TextRepelGeom: TextGeom() {
             val loc = helper.toClient(point, dp) ?: continue
             val pointLocation = coord.toClient(point) ?: continue
             val size = dp.finiteOrNull(Aes.POINT_SIZE) ?: continue
+
+            if (!bounds.contains(pointLocation)) continue
 
             circles[dp.index()] = DoubleCircle(pointLocation, size * POINT_UNIT_SIZE / 2 + (pointPadding ?: 0.0))
 
@@ -92,7 +95,7 @@ open class TextRepelGeom: TextGeom() {
             hjusts,
             vjusts,
             boxPadding ?: 0.0,
-            bounds = DoubleRectangle(DoubleVector.ZERO, ctx.getContentBounds().dimension),
+            bounds = bounds,
             maxOverlaps = maxOverlaps ?: 10,
             seed = seed,
             maxIter = maxIter ?: 2000,
