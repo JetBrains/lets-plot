@@ -6,12 +6,12 @@
 package org.jetbrains.letsPlot.commons
 
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
-import platform.posix.timespec
 import platform.posix.CLOCK_REALTIME
 import platform.posix.clock_gettime
+import platform.posix.timespec
 
 actual open class SystemTime actual constructor() {
 
@@ -19,7 +19,7 @@ actual open class SystemTime actual constructor() {
     actual open fun getTimeMs(): Long {
         memScoped {
             val timeSpec = alloc<timespec>()
-            clock_gettime(CLOCK_REALTIME, timeSpec.ptr)
+            clock_gettime(CLOCK_REALTIME.toUInt(), timeSpec.ptr)
             return timeSpec.tv_sec * 1_000L + timeSpec.tv_nsec / 1_000_000L
         }
     }
