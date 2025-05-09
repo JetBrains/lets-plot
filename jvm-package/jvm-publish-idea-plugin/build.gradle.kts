@@ -13,6 +13,7 @@ plugins {
 val artifactBaseName = "lets-plot-idea-plugin"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
 val packagePrefix = "lpip"
@@ -31,6 +32,8 @@ dependencies {
     implementation(project(":gis"))
     implementation(project(":livemap"))
     implementation(project(":plot-livemap"))
+
+    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 }
 
 // Disable the default JAR task since we're using shadow JAR
