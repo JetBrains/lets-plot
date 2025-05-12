@@ -60,10 +60,10 @@ current_path=$(pwd)
 current_dir=$(basename "$current_path")
 
 if [[ $current_dir = "$PLATF_IMAGICK_DIR" ]]; then
-  WORKING_DIR=$current_path
+  export WORKING_DIR=$current_path
 elif [[ $current_dir = "lets-plot" ]]; then
   cd $PLATF_IMAGICK_DIR || exit_with_error "Could not find '${PLATF_IMAGICK_DIR}' directory."
-  WORKING_DIR=$(pwd)
+  export WORKING_DIR=$(pwd)
 else
   exit_with_error "Please run this script from lets-plot/${PLATF_IMAGICK_DIR} directory."
 fi
@@ -84,7 +84,15 @@ export SOURCES_DIR="${WORKING_DIR}/build/dependencies/sources"
 getPlatform="$(uname -s)"
 
 case $getPlatform in
-  Linux*)   PLATFORM="Linux";;
+  Linux*)
+    PLATFORM="Linux"
+    # TODO: Make func with execution check.
+    if [[ "$DOCKER_TRUE" != "1" ]]; then
+      docker run -it --rm -e DOCKER_TRUE="1" -v "$WORKING_DIR":/opt/platf-imagick --name imagick_build quay.io/pypa/manylinux2014_x86_64
+      print_message "Build was performed inside Docker container."
+      exit 0
+    fi
+  ;;
 
   Darwin*)
     PLATFORM="Mac"
@@ -195,7 +203,7 @@ build_library () {
       export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
       extra_configure_args=(
         "--enable-zero-configuration"
-        "--with-quantum-depth=8"
+        "--with-quantum-depth=16"
         "--with-fontconfig"
         "--with-freetype"
         "--without-modules"
@@ -203,7 +211,7 @@ build_library () {
         "--without-threads"
         "--disable-opencl"
         "--disable-assert"
-        "--disable-hdri"
+        "--enable-hdri"
         "--disable-installed"
         "--without-bzlib"
         "--without-autotrace"

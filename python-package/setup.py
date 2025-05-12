@@ -107,8 +107,8 @@ elif this_system == 'Linux':
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
-            '-lMagickWand-7.Q8',
-            '-lMagickCore-7.Q8',
+            '-lMagickWand-7.Q16HDRI',
+            '-lMagickCore-7.Q16HDRI',
             '-lfontconfig',
             '-lfreetype',
         ]

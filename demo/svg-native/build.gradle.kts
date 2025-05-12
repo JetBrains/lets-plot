@@ -43,8 +43,8 @@ kotlin {
     target.binaries.all {
         linkerOpts += listOf(
             "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-            "-lMagickWand-7.Q8",
-            "-lMagickCore-7.Q8",
+            "-lMagickWand-7.Q16HDRI",
+            "-lMagickCore-7.Q16HDRI",
             "-lfontconfig",
             "-lfreetype",
             "-lexpat",
