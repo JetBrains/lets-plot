@@ -287,18 +287,20 @@ if [[ -d "$INSTALL_PREFIX" && -n $(ls -A "$INSTALL_PREFIX") ]]; then
   print_warning "${INSTALL_PREFIX} directory exists and is not empty."
   read -p "If you continue, ${INSTALL_PREFIX} content will be removed.
   Type 'yes' to confirm: " confirmation
-  if [[ "${confirmation,,}" != "yes" ]]; then
+  if [[ "$confirmation" != "yes" ]]; then
     printf "\n Operation was cancelled due to user request.\n\n"
     exit 0
   else
-    find "$INSTALL_PREFIX" -mindepth 1 -delete
+    print_message "$INSTALL_PREFIX"
+    rm -rf "$INSTALL_PREFIX"
   fi
 fi
 
 if [[ -d "$SOURCES_DIR" && -n $(ls -A "$SOURCES_DIR") ]]; then
   print_warning "${SOURCES_DIR} is not empty. Cleaning..."
-  find "$SOURCES_DIR" -mindepth 1 -delete
+  rm -rf "$SOURCES_DIR"
   check_exec_status "$?" "Deleting ${SOURCES_DIR}"
+  mkdir -p "$SOURCES_DIR"
 else
   mkdir -p "$SOURCES_DIR"
 fi
