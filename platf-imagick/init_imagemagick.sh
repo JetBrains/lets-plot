@@ -200,7 +200,7 @@ build_library () {
       local git_local_name="imagemagick"
       local git_hash="$IMAGEMAGICK_GIT_HASH"
       export ac_cv_func_getentropy=no
-      export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
+      #export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
       extra_configure_args=(
         "--enable-zero-configuration"
         "--with-quantum-depth=16"
