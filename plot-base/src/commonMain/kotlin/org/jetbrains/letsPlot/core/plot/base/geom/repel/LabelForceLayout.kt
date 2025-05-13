@@ -81,6 +81,7 @@ class LabelForceLayout(
                 continue
             }
 
+            val easeFactor = easeOutQuint(1 - iter.toDouble() / maxIter)
             var overlapsCount = 0
 
             for (label in labelItems) {
@@ -103,7 +104,7 @@ class LabelForceLayout(
                     force = selfAttraction(label)
                 }
 
-                label.setForce(force.mul(easeOutQuint(1 - iter.toDouble() / maxIter)))
+                label.setForce(force.mul(easeFactor))
                 clampToBounds(label, bounds)
                 // todo: try to add random force if boundary is reached
 
@@ -131,6 +132,15 @@ class LabelForceLayout(
             if (labelItem.intersects(other)) {
                 overlaps++
                 force = force.add(repulsion(labelItem, other))
+            } else {
+                if (other is LabelItem) {
+                    val segment = other.segment() ?: continue
+                    if (labelItem.box.intersects(segment)) {
+                        val delta = perpendicularVectorFromSegment(labelItem.position, segment).savedNormalize()
+                        force = force.add(applyDirection(delta))
+                        overlaps++
+                    }
+                }
             }
         }
 
@@ -215,6 +225,20 @@ class LabelForceLayout(
         }
     }
 
+    fun perpendicularVectorFromSegment(p: DoubleVector, segment: DoubleSegment): DoubleVector {
+        val ab = segment.end.subtract(segment.start)
+        val ap = p.subtract(segment.start)
+
+        val abLengthSquared = ab.dotProduct(ab)
+        if (abLengthSquared == 0.0) {
+            return segment.start.subtract(p)
+        }
+
+        val t = (ap.dotProduct(ab) / abLengthSquared).coerceIn(0.0, 1.0)
+        val projection = segment.start.add(ab.mul(t))
+        return p.subtract(projection)
+    }
+
     fun distance(n1: LayoutItem, n2: LayoutItem): Double {
         return n1.position.subtract(n2.position).length()
     }
@@ -272,6 +296,10 @@ class LabelForceLayout(
         fun setForce(force: DoubleVector) {
             velocity = velocity.mul(friction).add(force)
             updatePosition(velocity)
+        }
+
+        fun segment(): DoubleSegment? {
+            return box.shortestSegmentToRectangleEdgeCenter(point)
         }
 
         fun intersects(other: LayoutItem): Boolean {

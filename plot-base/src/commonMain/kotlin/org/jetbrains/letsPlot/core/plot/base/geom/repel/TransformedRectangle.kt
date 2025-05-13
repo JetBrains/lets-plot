@@ -112,6 +112,43 @@ class TransformedRectangle(
         return true
     }
 
+    fun intersects(segment: DoubleSegment): Boolean {
+        for (edge in edges) {
+            if (segment.intersection(edge) != null) {
+                return true
+            }
+        }
+
+        return pointInRectangle(segment.start) || pointInRectangle(segment.end)
+    }
+
+    fun shortestSegmentToRectangleEdgeCenter(point: DoubleVector): DoubleSegment? {
+        val candidates = mutableListOf<DoubleSegment>()
+
+        if (pointInRectangle(point)) {
+            return null
+        }
+
+        for (edge in edges) {
+            val edgeCenter = DoubleVector(
+                (edge.start.x + edge.end.x) / 2,
+                (edge.start.y + edge.end.y) / 2
+            )
+
+            val candidate = DoubleSegment(point, edgeCenter)
+
+            val intersects = edges.any { otherEdge ->
+                otherEdge != edge && candidate.intersection(otherEdge) != null
+            }
+
+            if (!intersects) {
+                candidates.add(candidate)
+            }
+        }
+
+        return candidates.minByOrNull { it.start.subtract(it.end).length() }
+    }
+
     fun pointInRectangle(point: DoubleVector): Boolean {
         val ab = lb.subtract(lt)
         val ad = rt.subtract(lt)
@@ -150,6 +187,8 @@ class TransformedRectangle(
     private fun DoubleVector.normal(): DoubleVector {
         return DoubleVector(-y, x).savedNormalize()
     }
+
+    private fun DoubleVector.lengthSquared(): Double = x * x + y * y
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
