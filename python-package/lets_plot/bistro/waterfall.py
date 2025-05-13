@@ -43,10 +43,14 @@ def waterfall_plot(data, x, y, *,
         Color of the box boundary lines.
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color lines by the direction of the flow.
+        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
+        You could use these names to change the default colors with the `scale_color_manual()` function.
     fill : str
         Fill color of the boxes.
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color boxes by the direction of the flow.
+        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
+        You could use these names to change the default colors with the `scale_fill_manual()` function.
     size : float, default=0.0
         Line width of the box boundary lines.
     alpha : float
@@ -103,6 +107,8 @@ def waterfall_plot(data, x, y, *,
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_text()` to specify parameters.
         Use 'flow_type' for `color` parameter of the `element_text()` to color labels by the direction of the flow.
+        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
+        You could use these names to change the default colors with the `scale_color_manual()` function.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
