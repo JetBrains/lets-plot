@@ -67,8 +67,8 @@ if this_system == 'Darwin':
             f'-L{imagemagick_lib_path}/lib',
             '-lfontconfig',
             '-lfreetype',
-            '-lMagickWand-7.Q8',
-            '-lMagickCore-7.Q8',
+            '-lMagickWand-7.Q16HDRI',
+            '-lMagickCore-7.Q16HDRI'
         ]
 
 elif this_system == 'Windows':
