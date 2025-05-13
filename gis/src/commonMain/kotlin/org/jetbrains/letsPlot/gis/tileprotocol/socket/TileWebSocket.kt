@@ -39,6 +39,7 @@ class TileWebSocket(
             } catch (ex: Exception) {
                 println("TileWebSocket.connect() failed: ${ex.message}")
                 ex.printStackTrace()
+                myHandler.onError(ex)
             }
         }
     }
