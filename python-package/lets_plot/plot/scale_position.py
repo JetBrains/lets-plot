@@ -1012,7 +1012,8 @@ def scale_x_datetime(name=None, *,
                      position=None
                      ):
     """
-    Position scale x for date/time data.
+    Position scale for the x-axis with date/time data.
+    The input is expected to be a series of timestamps in milliseconds since the Unix epoch.
 
     Parameters
     ----------
@@ -1099,7 +1100,8 @@ def scale_y_datetime(name=None, *,
                      position=None
                      ):
     """
-    Position scale y for date/time data.
+    Position scale for the y-axis with date/time data.
+    The input is expected to be a series of timestamps in milliseconds since the Unix epoch.
 
     Parameters
     ----------
