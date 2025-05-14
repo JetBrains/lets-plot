@@ -76,7 +76,6 @@ class LabelForceLayout(
                 labelItems.forEach { label ->
                     val force = selfRepulsion(label)
                     label.setForce(force)
-                    clampToBounds(label, bounds)
                 }
                 continue
             }
@@ -176,11 +175,7 @@ class LabelForceLayout(
             return DoubleVector.ZERO
         }
 
-        val dir = normalizedNonZeroDirection(labelItem.position, labelItem.point)
-
-        val forceValue = 8.0
-
-        return applyDirection(dir.negate().mul(forceValue))
+        return applyDirection(randomVector().mul(8.0))
     }
 
     private fun applyDirection(force: DoubleVector): DoubleVector {

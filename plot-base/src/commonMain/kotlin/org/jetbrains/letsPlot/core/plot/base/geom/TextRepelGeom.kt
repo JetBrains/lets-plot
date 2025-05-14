@@ -99,7 +99,7 @@ open class TextRepelGeom: TextGeom() {
             maxOverlaps = maxOverlaps ?: 10,
             seed = seed,
             maxIter = maxIter ?: 2000,
-            maxTime = maxTime ?: 5000.0   ,
+            maxTime = maxTime ?: 5000.0,
             direction = direction ?: LabelForceLayout.Direction.BOTH
         )
 
