@@ -48,6 +48,7 @@ internal object Latex {
     private const val INDENT_SIZE_FACTOR = 0.1
     private const val INDEX_SIZE_FACTOR = 0.7
     private const val INDEX_RELATIVE_SHIFT = 0.4
+    private const val FRACTION_RELATIVE_SHIFT = 0.5
 
     private val GREEK_LETTERS = mapOf(
         "Alpha" to "Α",
@@ -372,14 +373,43 @@ internal object Latex {
     }
 
     data class FractionNode(val numerator: RichTextNode.Span, val denominator: RichTextNode.Span) : RichTextNode.Span {
-        override val visualCharCount: Int = numerator.visualCharCount + denominator.visualCharCount // TODO
+        override val visualCharCount: Int = denominator.visualCharCount // TODO
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return numerator.estimateWidth(font, widthCalculator) + denominator.estimateWidth(font, widthCalculator) // TODO
+            return denominator.estimateWidth(font, widthCalculator) // TODO
         }
 
         override fun render(context: RenderState): List<SvgElement> {
-            val result = numerator.render(context)
-            return numerator.render(context) + denominator.render(context) // TODO
+            val prefixWidth = 5 // TODO: use actual width
+            val fractionWidth = 60 // TODO: use actual width
+            val fractionCenter = prefixWidth + fractionWidth / 2.0
+            val fractionBarLength = 3 // TODO: use actual length
+            val numeratorTSpanElements = numerator.render(context).mapIndexed { i, element ->
+                element.apply {
+                    setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
+                    if (i == 0) {
+                        setAttribute(SvgTextContent.X, fractionCenter.toString())
+                        setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
+                    }
+                }
+            }
+            val denominatorTSpanElements = denominator.render(context).mapIndexed { i, element ->
+                element.apply {
+                    setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
+                    if (i == 0) {
+                        setAttribute(SvgTextContent.X, fractionCenter.toString())
+                        setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
+                    }
+                }
+            }
+            val fractionBarTSpanElement = SvgTSpanElement("–".repeat(fractionBarLength)).apply {
+                setAttribute(SvgTextContent.X, fractionCenter.toString())
+                setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
+                setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
+            }
+            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+                setAttribute(SvgTextContent.X, (prefixWidth + fractionWidth).toString())
+            }
+            return numeratorTSpanElements + denominatorTSpanElements + listOf(context.apply(fractionBarTSpanElement), context.apply(restoreBaselineTSpan))
         }
     }
 }

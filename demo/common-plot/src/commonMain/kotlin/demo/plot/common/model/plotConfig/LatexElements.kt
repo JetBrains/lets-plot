@@ -40,7 +40,7 @@ class LatexElements {
             )),
             */
             getPlotSpec("Fractions", listOf(
-                """\( \frac{a^2}{b + 1} - 2 \)""",
+                """\( 10 + \frac{a^2}{b + 1} - 2 \)""",
             )),
         )
     }
