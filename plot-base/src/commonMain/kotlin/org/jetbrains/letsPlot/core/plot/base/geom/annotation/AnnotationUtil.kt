@@ -120,7 +120,7 @@ object AnnotationUtil {
         geomContext: GeomContext
     ): SvgGElement {
         return LabelGeom()
-            .apply { borderWidth = 0.0; paddingFactor = 0.0 }
+            .apply { labelOptions.borderWidth = 0.0; labelOptions.paddingFactor = 0.0 }
             .buildTextComponent(
                 toTextDataPointAesthetics(textParams),
                 location,

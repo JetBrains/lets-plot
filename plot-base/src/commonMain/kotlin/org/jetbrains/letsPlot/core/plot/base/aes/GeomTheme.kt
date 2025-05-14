@@ -20,6 +20,8 @@ interface GeomTheme {
 
     fun pen(): Color
 
+    fun pointSize(): Double
+
     companion object {
         val NONE = object : GeomTheme {
             override fun pen(): Color = Color.PACIFIC_BLUE
@@ -28,6 +30,7 @@ interface GeomTheme {
             override fun alpha() = 1.0
             override fun size() = 1.0
             override fun lineWidth() = 1.0
+            override fun pointSize() = 1.0
         }
     }
 }

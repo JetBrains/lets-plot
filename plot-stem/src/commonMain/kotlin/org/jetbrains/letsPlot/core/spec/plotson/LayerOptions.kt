@@ -88,6 +88,7 @@ open class LayerOptions(
     var radius: Double? by map(Aes.RADIUS)
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
+    var pointSize: Double? by map(Aes.POINT_SIZE)
 
     fun const(aes: Aes<*>, value: Any?) {
         properties[toOption(aes)] = value
@@ -131,6 +132,8 @@ class TextLayer : LayerOptions(GeomKind.TEXT) {
         val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Text.SIZE_UNIT)
     }
 }
+
+//todo: Add TextRepelLayer?
 
 class LiveMapLayer : LayerOptions(GeomKind.LIVE_MAP) {
     var tiles: TileOptions? by map(Geom.LiveMap.TILES)

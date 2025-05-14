@@ -213,6 +213,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun sina(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.SINA,
+                SinaGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun ydotplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.Y_DOT_PLOT,
@@ -357,6 +365,22 @@ class GeomProvider internal constructor(
         fun label(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.LABEL,
+                TextGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
+        fun textRepel(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.TEXT_REPEL,
+                TextGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
+        fun labelRepel(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.LABEL_REPEL,
                 TextGeom.HANDLES_GROUPS,
                 supplier
             )

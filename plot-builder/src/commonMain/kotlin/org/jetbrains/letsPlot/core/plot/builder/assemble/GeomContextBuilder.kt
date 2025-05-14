@@ -29,6 +29,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var backgroundColor: Color = Color.WHITE
     private var plotContext: PlotContext = NullPlotContext
     private var coordinateSystem: CoordinateSystem? = null
+    private var contentBounds: DoubleRectangle? = null
 
     constructor()
 
@@ -100,6 +101,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun contentBounds(contentBounds: DoubleRectangle): ImmutableGeomContext.Builder {
+        this.contentBounds = contentBounds
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -111,6 +117,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val _aesBounds: DoubleRectangle? = b.aesBounds
         val defaultFormatters = b.defaultFormatters
         val _coordinateSystem = b.coordinateSystem
+        val _contentBounds = b.contentBounds
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -167,6 +174,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override fun getCoordinateSystem(): CoordinateSystem? {
             return _coordinateSystem
+        }
+
+        override fun getContentBounds(): DoubleRectangle {
+            return _contentBounds ?: DoubleRectangle(0.0, 0.0, 0.0, 0.0)
         }
 
         override fun getAesBounds(): DoubleRectangle {

@@ -29,6 +29,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
@@ -139,6 +140,8 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
         this.put(SIZE_END, DOUBLE_CVT)
         this.put(STROKE_START, DOUBLE_CVT)
         this.put(STROKE_END, DOUBLE_CVT)
+
+        this.put(POINT_SIZE, DOUBLE_CVT)
     }
 
     internal fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {

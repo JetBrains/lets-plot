@@ -83,14 +83,7 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): Boolean {
-        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
-        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val angle = toRadians(TextUtil.angle(p))
-
-        val rectangle = objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
-            .rotate(angle, location)
+        val rectangle = getRect(p, location, text, sizeUnitRatio, ctx, boundsCenter)
 
         if (myRestrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
             return true
@@ -140,7 +133,25 @@ open class TextGeom : GeomBase() {
         vAnchor: Text.VerticalAnchor,
     ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
-    private fun toString(label: Any?, geomContext: GeomContext): String {
+    fun getRect(
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        text: String,
+        sizeUnitRatio: Double,
+        ctx: GeomContext,
+        boundsCenter: DoubleVector?
+    ): List<DoubleVector> {
+        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
+        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
+        val angle = toRadians(TextUtil.angle(p))
+
+        return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
+            .rotate(angle, location)
+    }
+
+    fun toString(label: Any?, geomContext: GeomContext): String {
         if (label == null) return naValue
 
         val formatter = formatter ?: geomContext.getDefaultFormatter(Aes.LABEL)
@@ -153,7 +164,7 @@ open class TextGeom : GeomBase() {
 
         // Current implementation works for label_format ='.2f'
         // and values between -1.0 and 1.0.
-        private const val BASELINE_TEXT_WIDTH = 6.0
+        const val BASELINE_TEXT_WIDTH = 6.0
     }
 }
 

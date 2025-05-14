@@ -273,6 +273,22 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
+            GeomKind.SINA -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.VIOLINWIDTH,
+                Aes.QUANTILE,
+                Aes.WIDTH,
+
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE,
+                Aes.ANGLE
+            )
+
             GeomKind.Y_DOT_PLOT -> listOf(
                 Aes.X,
                 Aes.Y,
@@ -399,6 +415,37 @@ object GeomMeta {
                 Aes.VJUST,
                 Aes.ANGLE,
                 Aes.LINEHEIGHT
+            )
+
+            GeomKind.TEXT_REPEL -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.POINT_SIZE
+            )
+
+            GeomKind.LABEL_REPEL -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.POINT_SIZE
             )
 
             GeomKind.LIVE_MAP -> listOf(

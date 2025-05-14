@@ -356,6 +356,7 @@ class LayerConfig constructor(
             geomProto.geomKind in listOf(
                 GeomKind.BAR,
                 GeomKind.VIOLIN,
+                GeomKind.SINA,
                 GeomKind.LOLLIPOP,
                 GeomKind.Y_DOT_PLOT
             ) -> {

@@ -57,33 +57,22 @@ env["GS"] = "none"  # disable Ghostscript delegate
 
 # Run configure script
 print("Configuring ImageMagick...")
+env["CFLAGS"] = "-O2 -fPIC -DNDEBUG"
+env["CXXFLAGS"] = "-O2 -fPIC -DNDEBUG"
+env["ac_cv_func_getentropy"] = "no"
+
 configure_cmd = [
-    # env vars
-
-    # Fix linker error: undefined getentropy symbol
-    # IM built with Local sysroot with newer glibc than konan has (2.19)
-    # TODO: try to use konan compilers with `f"CC={CC}", f"CXX={CXX}"` to get rid of ac_cv_func_getentropy=no
-    "ac_cv_func_getentropy=no",
-    #
-
-    # For static linking
-    "CFLAGS=-fPIC", "CXXFLAGS=-fPIC",
-
-    # Configure command
     "../src/configure",
     f"--prefix={INSTALL_DIR}",
-
-    # Required features
     "--with-pic",
     "--enable-static",
+    "--disable-shared",
     "--enable-zero-configuration",
     "--with-quantum-depth=8",
     "--with-fontconfig",
     "--with-freetype",
 
-    # Disable features
     "--without-modules",
-    "--disable-shared",
     "--disable-openmp",
     "--without-threads",
     "--disable-opencl",
@@ -91,7 +80,6 @@ configure_cmd = [
     "--disable-hdri",
     "--disable-installed",
 
-    # Delegates and formats
     "--without-bzlib",
     "--without-autotrace",
     "--without-djvu",
@@ -108,7 +96,6 @@ configure_cmd = [
     "--without-dmr",
     "--without-lcms",
     "--without-lqr",
-    "--without-ltdl",
     "--without-lzma",
     "--without-magick-plus-plus",
     "--without-openexr",
@@ -130,7 +117,7 @@ configure_cmd = [
     "--without-zstd",
 ]
 
-subprocess.run(" ".join(configure_cmd), shell=True, env=env, cwd=BUILD_DIR, check=True)
+subprocess.run(configure_cmd, cwd=BUILD_DIR, env=env, check=True)
 
 print("Building ImageMagick...")
 subprocess.run(["make", "-j", str(os.cpu_count())], cwd=BUILD_DIR, check=True)

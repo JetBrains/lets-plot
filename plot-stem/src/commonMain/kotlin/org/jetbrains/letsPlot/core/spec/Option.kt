@@ -307,6 +307,11 @@ object Option {
             const val SHOW_HALF = "show_half"
         }
 
+        object Sina {
+            const val SEED = "seed"
+            const val SHOW_HALF = "show_half"
+        }
+
         object YDotplot {
             const val DOTSIZE = "dotsize"
             const val STACKRATIO = "stackratio"
@@ -380,6 +385,18 @@ object Option {
             const val LABEL_R = "label_r"
             const val LABEL_SIZE = "label_size"
             const val ALPHA_STROKE = "alpha_stroke"
+        }
+
+        object Repel {
+            const val SEED = "seed"
+            const val MAX_ITER = "max_iter"
+            const val MAX_TIME = "max_time"
+            const val DIRECTION = "direction"
+            const val POINT_PADDING = "point_padding"
+            const val BOX_PADDING = "box_padding"
+            const val MAX_OVERLAPS = "max_overlaps"
+
+            const val MIN_SEGMENT_LENGTH = "min_segment_length"
         }
 
         object Pie {
@@ -524,6 +541,12 @@ object Option {
 
         object YDensity {
             const val SCALE = "scale"
+            const val TRIM = "trim"
+            const val TAILS_CUTOFF = "tails_cutoff"
+            const val QUANTILES = "quantiles"
+        }
+
+        object Sina {
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
             const val QUANTILES = "quantiles"
@@ -1001,6 +1024,7 @@ object Option {
         const val BOX_PLOT = "boxplot"
         private const val AREA_RIDGES = "area_ridges"
         private const val VIOLIN = "violin"
+        private const val SINA = "sina"
         const val Y_DOT_PLOT = "ydotplot"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
@@ -1024,6 +1048,8 @@ object Option {
         private const val SPOKE = "spoke"
         const val TEXT = "text"
         const val LABEL = "label"
+        private const val TEXT_REPEL = "text_repel"
+        private const val LABEL_REPEL = "label_repel"
         private const val RASTER = "raster"
         const val IMAGE = "image"
         const val PIE = "pie"
@@ -1057,6 +1083,7 @@ object Option {
             map[BOX_PLOT] = GeomKind.BOX_PLOT
             map[AREA_RIDGES] = GeomKind.AREA_RIDGES
             map[VIOLIN] = GeomKind.VIOLIN
+            map[SINA] = GeomKind.SINA
             map[LIVE_MAP] = GeomKind.LIVE_MAP
             map[POINT] = GeomKind.POINT
             map[RIBBON] = GeomKind.RIBBON
@@ -1079,6 +1106,8 @@ object Option {
             map[SPOKE] = GeomKind.SPOKE
             map[TEXT] = GeomKind.TEXT
             map[LABEL] = GeomKind.LABEL
+            map[TEXT_REPEL] = GeomKind.TEXT_REPEL
+            map[LABEL_REPEL] = GeomKind.LABEL_REPEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE

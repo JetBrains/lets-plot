@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.debug
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
-import org.jetbrains.letsPlot.livemap.core.SystemTime
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DebugDataComponent.Companion.BIGGEST_LAYER
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DebugDataComponent.Companion.CELL_DATA_SIZE
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DebugDataComponent.Companion.LOADING_TIME

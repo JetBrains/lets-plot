@@ -18,7 +18,8 @@ internal class DefaultGeomTheme private constructor(
     private val alpha: Double,
     private val size: Double,
     private val lineWidth: Double,
-    private val pen: Color
+    private val pen: Color,
+    private val pointSize: Double
 ) : GeomTheme {
     override fun color() = color
 
@@ -31,6 +32,8 @@ internal class DefaultGeomTheme private constructor(
     override fun lineWidth() = lineWidth
 
     override fun pen() = pen
+
+    override fun pointSize() = pointSize
 
     companion object {
         private const val COMMON_POINT_SIZE = 3.0
@@ -49,6 +52,7 @@ internal class DefaultGeomTheme private constructor(
             val size = when (geomKind) {
                 GeomKind.POINT,
                 GeomKind.JITTER,
+                GeomKind.SINA,
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> COMMON_POINT_SIZE
 
@@ -65,7 +69,9 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.LOLLIPOP -> LOLLIPOP_SIZE            // point size
 
                 GeomKind.TEXT,
-                GeomKind.LABEL -> TEXT_SIZE
+                GeomKind.LABEL,
+                GeomKind.TEXT_REPEL,
+                GeomKind.LABEL_REPEL -> TEXT_SIZE
 
                 GeomKind.PIE -> PIE_SIZE
 
@@ -74,6 +80,12 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.HEX -> ZERO_LINE_WIDTH
 
                 else -> COMMON_LINE_WIDTH
+            }
+
+            val pointSize = when (geomKind) {
+                GeomKind.TEXT_REPEL,
+                GeomKind.LABEL_REPEL -> COMMON_POINT_SIZE
+                else -> 1.0
             }
 
             // Linewidth (also used for "stroke")
@@ -132,7 +144,7 @@ internal class DefaultGeomTheme private constructor(
                 else -> DEFAULT_ALPHA
             }
 
-            return DefaultGeomTheme(color, fill, alpha, size, lineWidth, colorTheme.pen())
+            return DefaultGeomTheme(color, fill, alpha, size, lineWidth, colorTheme.pen(), pointSize)
         }
     }
 }

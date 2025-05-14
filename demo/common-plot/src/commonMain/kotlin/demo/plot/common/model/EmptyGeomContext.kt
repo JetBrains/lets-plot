@@ -51,6 +51,10 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
+    override fun getContentBounds(): DoubleRectangle {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
     override fun isMappedAes(aes: Aes<*>): Boolean = false
     override fun estimateTextSize(
         text: String,

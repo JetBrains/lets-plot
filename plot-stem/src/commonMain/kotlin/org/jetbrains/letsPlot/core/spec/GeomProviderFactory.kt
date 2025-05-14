@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -206,6 +208,20 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.SINA -> GeomProvider.sina {
+                val geom = SinaGeom()
+                if (layerConfig.hasOwn(Option.Geom.Sina.SEED)) {
+                    geom.seed = layerConfig.getLong(Option.Geom.Sina.SEED)!!
+                }
+                if (layerConfig.hasOwn(Option.Stat.Sina.QUANTILES)) {
+                    geom.quantiles = layerConfig.getBoundedDoubleList(Option.Stat.Sina.QUANTILES, 0.0, 1.0)
+                }
+                if (layerConfig.hasOwn(Option.Geom.Sina.SHOW_HALF)) {
+                    geom.showHalf = layerConfig.getDouble(Option.Geom.Sina.SHOW_HALF)!!
+                }
+                geom
+            }
+
             GeomKind.Y_DOT_PLOT -> GeomProvider.ydotplot {
                 val geom = YDotplotGeom()
                 if (layerConfig.hasOwn(Option.Geom.YDotplot.DOTSIZE)) {
@@ -315,13 +331,23 @@ internal object GeomProviderFactory {
                 val geom = LabelGeom()
 
                 applyTextOptions(layerConfig, geom, expFormat)
-                layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
-                layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
-                layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
-                if (layerConfig.hasOwn(Option.Geom.Label.ALPHA_STROKE)) {
-                    geom.alphaStroke = layerConfig.getBoolean(Option.Geom.Label.ALPHA_STROKE)
-                }
+                applyLabelOptions(layerConfig, geom.labelOptions)
 
+                geom
+            }
+
+            GeomKind.TEXT_REPEL -> GeomProvider.textRepel {
+                val geom = TextRepelGeom()
+                applyTextOptions(layerConfig, geom, expFormat)
+                applyRepelOptions(layerConfig, geom)
+                geom
+            }
+
+            GeomKind.LABEL_REPEL -> GeomProvider.labelRepel {
+                val geom = LabelRepelGeom()
+                applyTextOptions(layerConfig, geom, expFormat)
+                applyLabelOptions(layerConfig, geom.labelOptions)
+                applyRepelOptions(layerConfig, geom)
                 geom
             }
 
@@ -441,6 +467,43 @@ internal object GeomProviderFactory {
         }
     }
 
+    private fun applyLabelOptions(layerConfig: LayerConfig, factory: LabelOptions) {
+        layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { factory.paddingFactor = it }
+        layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { factory.radiusFactor = it }
+        layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { factory.borderWidth = it }
+        if (layerConfig.hasOwn(Option.Geom.Label.ALPHA_STROKE)) {
+            factory.alphaStroke = layerConfig.getBoolean(Option.Geom.Label.ALPHA_STROKE)
+        }
+    }
+
+    private fun applyRepelOptions(layerConfig: LayerConfig, geom: TextRepelGeom) {
+        layerConfig.getLong(Option.Geom.Repel.SEED)?.let {
+            geom.seed = it
+        }
+        layerConfig.getInteger(Option.Geom.Repel.MAX_ITER)?.let {
+            geom.maxIter = it
+        }
+        layerConfig.getDouble(Option.Geom.Repel.MAX_TIME)?.let {
+            geom.maxTime = it * 1000.0 // convert to milliseconds
+        }
+        layerConfig.getString(Option.Geom.Repel.DIRECTION)?.let {
+            geom.direction = directionValue(it)
+        }
+        layerConfig.getDouble(Option.Geom.Repel.POINT_PADDING)?.let {
+            geom.pointPadding = it
+        }
+        layerConfig.getDouble(Option.Geom.Repel.BOX_PADDING)?.let {
+            geom.boxPadding = it
+        }
+        layerConfig.getInteger(Option.Geom.Repel.MAX_OVERLAPS)?.let {
+            geom.maxOverlaps = it
+        }
+
+        layerConfig.getDouble(Option.Geom.Repel.MIN_SEGMENT_LENGTH)?.let {
+            geom.minSegmentLength = it
+        }
+    }
+
     // Should be removed when band geom will be refactored
     private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {
         // Horizontal or vertical
@@ -464,6 +527,18 @@ internal object GeomProviderFactory {
                     "Use one of: res, identity, size, px."
                 )
             }
+        }
+    }
+
+    private fun directionValue(value: String): LabelForceLayout.Direction {
+        return when (value.lowercase()) {
+            "x" -> LabelForceLayout.Direction.X
+            "y" -> LabelForceLayout.Direction.Y
+            "both" -> LabelForceLayout.Direction.BOTH
+            else -> throw IllegalArgumentException(
+                "Unsupported value for ${Option.Geom.Repel.DIRECTION} parameter: '$value'. " +
+                        "Use one of: x, y, both."
+            )
         }
     }
 }

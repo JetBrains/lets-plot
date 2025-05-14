@@ -51,6 +51,10 @@ object BogusContext : GeomContext {
         error("Not available in a bogus geom context")
     }
 
+    override fun getContentBounds(): DoubleRectangle {
+        error("Not available in a bogus geom context")
+    }
+
     override fun estimateTextSize(
         text: String,
         family: String,

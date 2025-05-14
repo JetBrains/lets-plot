@@ -307,13 +307,6 @@ internal class DataPointsConverter(
         }
     }
 
-    data class LabelOptions(
-        val padding: Double,
-        val radius: Double,
-        val size: Double,
-        val alphaStroke: Boolean
-    )
-
     private class PointFeatureConverter(
         private val myAesthetics: Aesthetics
     ) {
@@ -359,12 +352,7 @@ internal class DataPointsConverter(
 
         fun text(geom: Geom): List<DataPointLiveMapAesthetics> {
             if (geom is LabelGeom) {
-                myLabelOptions = LabelOptions(
-                    padding = geom.paddingFactor,
-                    radius = geom.radiusFactor,
-                    size = geom.borderWidth,
-                    alphaStroke = geom.alphaStroke
-                )
+                myLabelOptions = geom.labelOptions
             }
             return process(MapLayerKind.TEXT) { explicitVec(it.x()!!, it.y()!!) }
         }

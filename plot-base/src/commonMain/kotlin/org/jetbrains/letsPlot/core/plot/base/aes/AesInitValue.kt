@@ -38,6 +38,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
@@ -131,6 +132,7 @@ object AesInitValue {
         VALUE_MAP[SIZE_END] = 0.0
         VALUE_MAP[STROKE_START] = 0.0
         VALUE_MAP[STROKE_END] = 0.0
+        VALUE_MAP[POINT_SIZE] = 0.5
     }
 
     /**

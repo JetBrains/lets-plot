@@ -250,7 +250,7 @@ class GeoDataFrameProcessor(
 
         val coordinatesCollector = when (geomKind) {
             MAP, POLYGON -> BoundaryCoordinatesCollector(dataFrame, geometries)
-            LIVE_MAP, POINT, TEXT, LABEL, PIE -> PointCoordinatesCollector(dataFrame, geometries)
+            LIVE_MAP, POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE -> PointCoordinatesCollector(dataFrame, geometries)
             RECT -> BboxCoordinatesCollector(dataFrame, geometries)
             PATH -> PathCoordinatesCollector(dataFrame, geometries)
             else -> error("Unsupported geom: $geomKind")

@@ -177,8 +177,17 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        val arc = Path2d.arc(x, y, radius, radius, 0.0, startAngle, endAngle, anticlockwise)
-        currentPath.append(arc.transform(currentState.transform))
+        currentPath.arc(
+            x = x,
+            y = y,
+            radiusX = radius,
+            radiusY = radius,
+            rotation = 0.0,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = currentState.transform
+        )
     }
 
     fun ellipse(
@@ -188,8 +197,17 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        val arc = Path2d.arc(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise)
-        currentPath.append(arc.transform(currentState.transform))
+        currentPath.arc(
+            x = x,
+            y = y,
+            radiusX = radiusX,
+            radiusY = radiusY,
+            rotation = rotation,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = currentState.transform
+        )
     }
 
     fun bezierCurveTo(
@@ -200,10 +218,15 @@ class ContextState {
         x: Double,
         y: Double
     ) {
-        val (cp1x, cp1y) = currentState.transform.transform(cp1x, cp1y)
-        val (cp2x, cp2y) = currentState.transform.transform(cp2x, cp2y)
-        val (x, y) = currentState.transform.transform(x, y)
-        currentPath.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
+        currentPath.bezierCurveTo(
+            cp1x = cp1x,
+            cp1y = cp1y,
+            cp2x = cp2x,
+            cp2y = cp2y,
+            x = x,
+            y = y,
+            at = currentState.transform
+        )
     }
 
     fun setStrokeStyle(color: Color?) {
