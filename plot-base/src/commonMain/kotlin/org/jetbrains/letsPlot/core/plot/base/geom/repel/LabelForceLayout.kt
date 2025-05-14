@@ -201,7 +201,7 @@ class LabelForceLayout(
             else -> 0.0
         }
 
-        labelItem.updatePosition(DoubleVector(dx, dy))
+        labelItem.updatePosition(applyDirection(DoubleVector(dx, dy)))
     }
 
     private fun resolveSegmentIntersection(labelItem: LabelItem) {
