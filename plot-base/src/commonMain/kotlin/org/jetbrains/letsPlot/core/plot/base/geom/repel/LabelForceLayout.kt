@@ -87,7 +87,6 @@ class LabelForceLayout(
                 if (label.hidden) continue
 
                 if (iter % 10 == 0) {
-                    // todo: add counter of intersection and use it to break main loop to avoid intersected segments on end
                     resolveSegmentIntersection(label)
                 }
 
@@ -133,10 +132,17 @@ class LabelForceLayout(
                 force = force.add(repulsion(labelItem, other))
             } else {
                 if (other is LabelItem) {
-                    val segment = other.segment() ?: continue
-                    if (labelItem.box.intersects(segment)) {
-                        val delta = perpendicularVectorFromSegment(labelItem.position, segment).savedNormalize()
+                    val otherSegment = other.segment()
+                    if (otherSegment != null && labelItem.box.intersects(otherSegment)) {
+                        val delta = perpendicularVectorFromSegment(labelItem.position, otherSegment).savedNormalize()
                         force = force.add(applyDirection(delta))
+                        overlaps++
+                    }
+
+                    val labelSegment = labelItem.segment()
+                    if (labelSegment != null && other.box.intersects(labelSegment)) {
+                        val delta = perpendicularVectorFromSegment(other.position, labelSegment).savedNormalize()
+                        force = force.add(applyDirection(delta.negate()))
                         overlaps++
                     }
                 }
