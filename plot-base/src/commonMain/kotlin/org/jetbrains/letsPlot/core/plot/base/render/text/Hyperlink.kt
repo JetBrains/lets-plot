@@ -12,24 +12,26 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 
 internal object Hyperlink {
-    fun parse(text: String): List<RichTextNode> {
+    fun parse(font: Font, widthCalculator: (String, Font) -> Double, text: String): List<RichTextNode> {
         val links = anchorTagRegex.findAll(text)
             .map { match ->
                 val (href, label) = match.destructured
-                HyperlinkElement(label, href) to match.range
+                HyperlinkElement(font, widthCalculator, label, href) to match.range
             }.toList()
 
-        return RichText.fillTextTermGaps(text, links)
+        return RichText.fillTextTermGaps(font, widthCalculator, text, links)
     }
 
     private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
 
     class HyperlinkElement(
+        font: Font,
+        widthCalculator: (String, Font) -> Double,
         private val text: String,
         private val href: String,
-    ) : RichTextNode.Span {
+    ) : RichTextNode.Span(font, widthCalculator) {
         override val visualCharCount: Int = text.length
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+        override fun estimateWidth(): Double {
             return widthCalculator(text, font)
         }
 
