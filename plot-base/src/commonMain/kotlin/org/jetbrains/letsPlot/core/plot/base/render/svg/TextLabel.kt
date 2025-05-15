@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
@@ -26,7 +28,17 @@ class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
     init {
         // TextLabel is a single-line text element
         val singleLineText = text.replace("\n", " ")
-        myText = RichText.toSvg(singleLineText, markdown = markdown).firstOrNull() ?: SvgTextElement()
+        myText = RichText.toSvg(
+            Font(
+                family = FontFamily("Lucida Grande, sans-serif", false),
+                size = 16,
+                isBold = false,
+                isItalic = false
+            ),
+            MultilineLabel::widthCalculator,
+            singleLineText,
+            markdown = markdown
+        ).firstOrNull() ?: SvgTextElement()
         rootGroup.children().add(myText)
     }
 
