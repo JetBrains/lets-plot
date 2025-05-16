@@ -8,10 +8,13 @@
 package org.jetbrains.letsPlot.core.platf.dom
 
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.events.EventTarget
@@ -341,6 +344,16 @@ class DomMouseEventMapperTest {
             events.clear()
             eventTarget.dispatchEvent(event)
             return events.toMap() // copy
+        }
+    }
+
+    companion object {
+        fun MouseEventSource.on(eventSpec: MouseEventSpec, eventHandler: (MouseEvent) -> Unit): Registration {
+            return addEventHandler(eventSpec, object : EventHandler<MouseEvent> {
+                override fun onEvent(event: MouseEvent) {
+                    eventHandler(event)
+                }
+            })
         }
     }
 }

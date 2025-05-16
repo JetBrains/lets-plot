@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.raster.shape.Pane
 import org.jetbrains.letsPlot.raster.shape.reversedDepthFirstTraversal
 import kotlin.math.ceil
 
+// TODO: remove
 abstract class SvgCanvasView() : Disposable {
     private var eventReg: Registration = Registration.EMPTY
     private var clickedElement: Element? = null

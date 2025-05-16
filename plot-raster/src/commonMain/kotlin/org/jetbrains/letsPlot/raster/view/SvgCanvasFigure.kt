@@ -14,8 +14,8 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
 import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
@@ -30,10 +30,20 @@ class SvgCanvasFigure(
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
     private val rootElement: Pane get() = rootMapper.target
     private lateinit var canvasControl: CanvasControl
+    private val nodeContainer = SvgNodeContainer(SvgSvgElement())  // attach root
 
     val width = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
     val height = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
     private val myBounds = ValueProperty(Rectangle(0, 0, width, height))
+
+    init {
+        nodeContainer.addListener(object : SvgNodeContainerListener {
+            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = needRedraw()
+            override fun onNodeAttached(node: SvgNode) = needRedraw()
+
+            override fun onNodeDetached(node: SvgNode) = needRedraw()
+        })
+    }
 
     override fun bounds(): ReadableProperty<Rectangle> {
         return myBounds
@@ -46,8 +56,6 @@ class SvgCanvasFigure(
         )
 
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-        @Suppress("unused")
-        val nodeContainer = SvgNodeContainer(svgSvgElement)  // attach root
         rootMapper.attachRoot(MappingContext())
 
         val canvas = canvasControl.createCanvas(Vector(width, height))
@@ -125,5 +133,11 @@ class SvgCanvasFigure(
         render(rootElement, canvas)
         return canvas.immidiateSnapshot()
     }
+
+    private fun needRedraw() {
+
+    }
+
+
 
 }

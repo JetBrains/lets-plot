@@ -19,6 +19,7 @@ import java.awt.event.*
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 
+// TODO: remove
 class SwingSvgCanvasView : SvgCanvasView() {
     val container = JPanel(null)
     private var awtCanvasControl: AwtCanvasControl? = null

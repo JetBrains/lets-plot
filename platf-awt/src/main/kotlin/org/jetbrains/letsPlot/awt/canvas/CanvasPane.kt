@@ -29,12 +29,14 @@ import javax.imageio.ImageIO
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
 
-open class CanvasPane(
+class CanvasPane(
     figure: CanvasFigure? = null,
     private val pixelDensity: Double = 1.0
 ) : JLayeredPane() {
     private val canvasControl: CanvasControl = AwtCanvasControl()
     private var figureRegistration: Registration = Registration.EMPTY
+    var mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+
     var figure: CanvasFigure? = null
         set(value) {
             if (field == value) {
@@ -53,7 +55,6 @@ open class CanvasPane(
         this.figure = figure
     }
 
-    var mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
     override fun isPaintingOrigin(): Boolean = true
 

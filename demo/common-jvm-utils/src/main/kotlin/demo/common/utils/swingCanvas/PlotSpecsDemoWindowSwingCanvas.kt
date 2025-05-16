@@ -6,11 +6,6 @@
 package demo.common.utils.swingCanvas
 
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane
-import org.jetbrains.letsPlot.commons.event.MouseEvent
-import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
@@ -97,23 +92,11 @@ class PlotSpecsDemoWindowSwingCanvas(
             computationMessagesHandler
         )
 
-        if (true) {
-            val view = SwingSvgCanvasView().apply {
-                this.eventDispatcher = vm.eventDispatcher
-                this.svg = vm.svg
-            }
-            return view.container
-        } else {
-            val svgCanvasFigure = SvgCanvasFigure(vm.svg)
-            val canvasPane = CanvasPane(svgCanvasFigure)
-            canvasPane.mouseEventSource = object : MouseEventSource {
-                override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-                    return vm.eventDispatcher.addEventHandler(eventSpec, eventHandler)
-                }
-            }
+        val svgCanvasFigure = SvgCanvasFigure(vm.svg)
+        val canvasPane = CanvasPane(svgCanvasFigure)
 
-            return canvasPane
-        }
+        vm.eventDispatcher.dispatchFrom(canvasPane.mouseEventSource)
+        return canvasPane
     }
 
 }
