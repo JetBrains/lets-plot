@@ -1,99 +1,70 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
-import kotlin.jvm.JvmOverloads
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.LocalDateTime as KotlinxLocalDateTime
 
-class DateTime @JvmOverloads constructor(val date: Date, val time: Time = Time.DAY_START) : Comparable<DateTime> {
-
-    val year: Int
-        get() = date.year
-
-    val month: Month
-        get() = date.month
-
-    val day: Int
-        get() = date.day
-
-    val weekDay: WeekDay
-        get() = date.weekDay
-
-    val hours: Int
-        get() = time.hours
-
-    val minutes: Int
-        get() = time.minutes
-
-    val seconds: Int
-        get() = time.seconds
-
-    val milliseconds: Int
-        get() = time.milliseconds
-
-    fun changeDate(date: Date): DateTime {
-        return DateTime(date, time)
+/**
+ * Represents a date and time without timezone information.
+ * I.e. this is a representation of a calendar date and wall-clock time.
+ * A.k.a. local date and time.
+ */
+class DateTime : Comparable<DateTime> {
+    constructor(date: Date, time: Time = Time(0, 0, 0)) {
+        this.kotlinxLocalDateTime = KotlinxLocalDateTime(date.kotlinxLocalDate, time.kotlinxLocalTime)
     }
 
-    fun changeTime(time: Time): DateTime {
-        return DateTime(date, time)
+    internal constructor(kotlinxLocalDateTime: KotlinxLocalDateTime) {
+        this.kotlinxLocalDateTime = kotlinxLocalDateTime
     }
 
-    fun add(duration: Duration): DateTime {
-        val utcInstant = TimeZone.UTC.toInstant(this)
-        return TimeZone.UTC.toDateTime(utcInstant.add(duration))
+    internal val kotlinxLocalDateTime: KotlinxLocalDateTime
+
+    val year: Int get() = kotlinxLocalDateTime.year
+    val month: Month get() = Month.of(kotlinxLocalDateTime.monthNumber)
+    val day: Int get() = kotlinxLocalDateTime.dayOfMonth
+    val hours: Int get() = kotlinxLocalDateTime.hour
+    val minutes: Int get() = kotlinxLocalDateTime.minute
+    val seconds: Int get() = kotlinxLocalDateTime.second
+    val milliseconds: Int get() = kotlinxLocalDateTime.nanosecond / 1_000_000
+
+    val date: Date get() = Date(kotlinxLocalDateTime.date)
+    val time: Time get() = Time(kotlinxLocalDateTime.time)
+
+    val weekDay: WeekDay get() = WeekDay.entries[kotlinxLocalDateTime.dayOfWeek.ordinal]
+
+    fun toInstant(tz: TimeZone): Instant {
+        return Instant(kotlinxLocalDateTime.toInstant(tz.kotlinxTz))
     }
 
-    fun to(otherTime: DateTime): Duration {
-        val currentInstant = TimeZone.UTC.toInstant(this)
-        val otherInstant = TimeZone.UTC.toInstant(otherTime)
-        return currentInstant.to(otherInstant)
+    fun add(duration: Duration, tz: TimeZone): DateTime {
+        val instant = toInstant(tz)
+        val instant2 = instant.add(duration)
+        return instant2.toDateTime(tz)
     }
 
-    fun isBefore(dateTime: DateTime): Boolean {
-        return compareTo(dateTime) < 0
-    }
+    override fun compareTo(other: DateTime) = kotlinxLocalDateTime.compareTo(other.kotlinxLocalDateTime)
 
-    fun isAfter(dateTime: DateTime): Boolean {
-        return compareTo(dateTime) > 0
-    }
-
-    override fun hashCode(): Int {
-        return date.hashCode() * 31 + time.hashCode()
-    }
-
+    override fun hashCode() = kotlinxLocalDateTime.hashCode()
     override fun equals(other: Any?): Boolean {
+        if (this === other) return true
         if (other !is DateTime) return false
-
-        val otherDateTime = other as DateTime?
-
-        return date == otherDateTime!!.date && time == otherDateTime.time
+        return kotlinxLocalDateTime == other.kotlinxLocalDateTime
     }
 
-    override fun compareTo(other: DateTime): Int {
-        val dateComparison = date.compareTo(other.date)
-        return if (dateComparison != 0) dateComparison else time.compareTo(other.time)
-    }
+    override fun toString() = kotlinxLocalDateTime.toString()
 
-    override fun toString(): String {
-        return date.toString() + "T" + time
-    }
-
-    fun toPrettyString(): String {
-        return time.toPrettyHMString() + " " + date.toPrettyString()
-    }
+//    fun toPrettyString(): String {
+//        return time.toPrettyString() + " " + date.toPrettyString()
+//    }
 
     companion object {
+        val EPOCH = DateTime(Date.EPOCH, Time(0, 0, 0))
 
-        fun parse(s: String): DateTime {
-            if (s.length < 15) {
-                throw IllegalArgumentException()
-            }
-
-            return DateTime(Date.parse(s.substring(0, 8)), Time.parse(s.substring(9)))
-        }
+        fun parse(s: String): DateTime = DateTime(KotlinxLocalDateTime.parse(s))
     }
 }

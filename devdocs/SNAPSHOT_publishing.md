@@ -1,13 +1,38 @@
 ## Publishing SNAPSHOT versions of JVM artifacts.
 
-### 1. Prepare for publishing:
+### Publishing to Local Maven Repository
 
- - Check `version` in the root `build.gradle.kts` file: version must be like `X.X.X-SNAPSHOT`.
- - Add token to the `sonatype` section of the `local.properties` file.
+> **Note**: our custom local Maven repository location is `<project root>/.maven-publish-dev-repo`.
 
-### 2. Publish:
+> **Note**: make sure that **version** is set to "0.0.0-SNAPSHOT" in `build.gradle.kts`.
 
-Run tne next gradle tasks from the project root:
+```shell
+./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository
+./gradlew publishLetsPlotJvmJfxPublicationToMavenLocalRepository
+./gradlew publishLetsPlotJvmBatikPublicationToMavenLocalRepository
+./gradlew publishLetsPlotImageExportPublicationToMavenLocalRepository
+./gradlew publishLetsPlotGISPublicationToMavenLocalRepository
+./gradlew publishLetsPlotCoreModulesToMavenLocalRepository
+./gradlew publishLetsPlotIdeaPluginPublicationToMavenLocalRepository
+
+```
+
+### Publishing to Sonatype Maven Repository
+
+#### Credentials
+
+In the `local.properties` file:
+```properties
+sonatype.username=<your Sonatype username>
+sonatype.password=<your Sonatype access token>
+sonatype.profileID=<your Sonatype profile ID>
+```
+
+#### SNAPSHOT Version
+
+Make sure the `version` in the root `build.gradle.kts` file is a SNAPSHOT version: `X.X.X-SNAPSHOT`.
+
+#### Publish
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
@@ -19,13 +44,13 @@ Run tne next gradle tasks from the project root:
           publishLetsPlotIdeaPluginPublicationToMavenRepository
 ```
 
-### 3. Check uploaded artifacts:
+#### Check Uploaded Artifacts
 
 Check uploaded artifacts here:
 
 https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/lets-plot/
                 
-### 4. Use SNAPSHOT artifacts:
+#### Using SNAPSHOT artifacts
 
 Add snapshots repository to the `repositories` section of the `build.gradle.kts` file:
 
@@ -37,5 +62,5 @@ repositories {
 }
 ```
 
-### 5. Snapshot vertsion of JS artifacts.
-TBD
+#### Snapshot Vertsion of JS Artifacts
+ToDo.

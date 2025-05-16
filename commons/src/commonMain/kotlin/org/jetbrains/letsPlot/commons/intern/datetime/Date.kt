@@ -1,219 +1,90 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
-import kotlin.jvm.JvmOverloads
-import kotlin.math.max
-import kotlin.math.min
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.daysUntil
+import kotlinx.datetime.plus
+import kotlinx.datetime.LocalDate as KotlinxLocalDate
 
-class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
-
-    val weekDay: WeekDay
-        get() {
-            val daysFromOrigin = daysFrom(EPOCH)
-            return WeekDay.values()[(daysFromOrigin + EPOCH_WEEKDAY.ordinal) % WeekDay.values().size]
-        }
-
-    val dateStart: DateTime
-        get() = DateTime(this)
-
-    val dateEnd: DateTime
-        get() = DateTime(this, Time.DAY_END)
-
-    init {
-        validate()
+/**
+ * Represents a calendar date (year, month, day).
+ * Since it represents only a calendar date, no timezone information is needed or used.
+ *
+ */
+class Date : Comparable<Date> {
+    /**
+     * The [day] is 1-based
+     */
+    constructor(day: Int, month: Month, year: Int) {
+        this.kotlinxLocalDate = KotlinxLocalDate(year, month.number, day)
     }
 
-    private fun validate() {
-        val daysInMonth = month.getDaysInYear(year)
-        val isValid = day in 1..daysInMonth
-
-        if (!isValid) {
-            throw IllegalArgumentException()
-        }
+    internal constructor(kotlinxLocalDate: KotlinxLocalDate) {
+        this.kotlinxLocalDate = kotlinxLocalDate
     }
 
-    fun daysFrom(date: Date): Int {
-        val daysBetweenYears = run {
-            val fromYear = min(date.year, year)
-            val toYear = max(date.year, year)
-            val leapYears = DateTimeUtil.leapYearsBetween(fromYear, toYear)
-            val commonYears = toYear - fromYear - leapYears
-            leapYears * DateTimeUtil.DAYS_IN_LEAP_YEAR + commonYears * DateTimeUtil.DAYS_IN_YEAR
-        }
+    internal val kotlinxLocalDate: KotlinxLocalDate
 
-        return when (this >= date) {
-            true -> daysFromYearStart() - date.daysFromYearStart() + daysBetweenYears
-            false -> daysFromYearStart() - date.daysFromYearStart() - daysBetweenYears
-        }
-    }
+    val day: Int get() = kotlinxLocalDate.dayOfMonth
+    val month: Month get() = Month.of(kotlinxLocalDate.monthNumber)
+    val year: Int get() = kotlinxLocalDate.year
+    val weekDay: WeekDay get() = WeekDay.entries[kotlinxLocalDate.dayOfWeek.ordinal]
+
+    fun nextDate(): Date = Date(kotlinxLocalDate.plus(1, DateTimeUnit.DAY))
+    fun prevDate(): Date = Date(kotlinxLocalDate.plus(-1, DateTimeUnit.DAY))
 
     fun daysFromYearStart(): Int {
-        var result = day
-        var current = month.prev()
-        while (current != null) {
-            result += current.getDaysInYear(year)
-            current = current.prev()
-        }
-        return result
+        val yearStart = KotlinxLocalDate(year, 1, 1)
+        return kotlinxLocalDate.toEpochDays() - yearStart.toEpochDays()
     }
 
-    fun addDays(days: Int): Date {
-        @Suppress("NAME_SHADOWING")
-        var days = days
-        if (days < 0) {
-            throw IllegalArgumentException()
-        }
-        if (days == 0) return this
-
-        var day = this.day
-        var month = this.month
-        var year = this.year
-        var lessThanYear = false
-
-        if (days >= CACHE_DAYS && year == EPOCH.year) {
-            year = CACHE_STAMP.year
-            month = CACHE_STAMP.month
-            day = CACHE_STAMP.day
-            days -= CACHE_DAYS
-        }
-
-        while (days > 0) {
-            val daysToNextMonth = month.getDaysInYear(year) - day + 1
-            if (days < daysToNextMonth) {
-                return Date(day + days, month, year)
-            } else {
-                if (lessThanYear) {
-                    month = month.next()!!
-                    day = 1
-                    days -= daysToNextMonth
-                } else {
-                    val daysToNextYear = lastDayOf(year).daysFrom(Date(day, month, year)) + 1
-                    if (days >= daysToNextYear) {
-                        day = 1
-                        month = Month.JANUARY
-                        year += 1
-                        days -= daysToNextYear
-                    } else {
-                        month = month.next()!!
-                        day = 1
-                        days -= daysToNextMonth
-                        lessThanYear = true
-                    }
-                }
-            }
-        }
-
-        return Date(day, month, year)
+    fun daysUntil(other: Date): Int {
+        return kotlinxLocalDate.daysUntil(other.kotlinxLocalDate)
     }
 
-    fun nextDate(): Date {
-        return addDays(1)
-    }
+    override fun compareTo(other: Date) = kotlinxLocalDate.compareTo(other.kotlinxLocalDate)
 
-    fun prevDate(): Date {
-        return subtractDays(1)
-    }
-
-    fun subtractDays(days: Int): Date {
-        if (days < 0) {
-            throw IllegalArgumentException()
-        }
-        if (days == 0) return this
-
-        if (days < day) {
-            return Date(day - days, month, year)
-        } else {
-            val daysToPrevYear = daysFrom(firstDayOf(year))
-            return if (days > daysToPrevYear) {
-                lastDayOf(year - 1).subtractDays(days - daysToPrevYear - 1)
-            } else {
-                lastDayOf(year, month.prev()!!).subtractDays(days - day)
-            }
-        }
-    }
-
-    override fun compareTo(other: Date): Int {
-        if (year != other.year) return year - other.year
-        return if (month.ordinal() != other.month.ordinal()) month.ordinal() - other.month.ordinal() else day - other.day
-
-    }
-
+    override fun hashCode() = kotlinxLocalDate.hashCode()
     override fun equals(other: Any?): Boolean {
+        if (this === other) return true
         if (other !is Date) return false
-
-        val date = other as Date?
-        return date!!.year == year &&
-                date.month === month &&
-                date.day == day
+        return kotlinxLocalDate == other.kotlinxLocalDate
     }
 
-    override fun hashCode(): Int {
-        return year * 239 + month.hashCode() * 31 + day
-    }
+    override fun toString() = kotlinxLocalDate.toString()
 
-    override fun toString(): String {
-        val result = StringBuilder()
-        result.append(year)
-        appendMonth(result)
-        appendDay(result)
-        return result.toString()
-    }
-
-    private fun appendDay(result: StringBuilder) {
-        if (day < 10) {
-            result.append("0")
-        }
-        result.append(day)
-    }
-
-    private fun appendMonth(result: StringBuilder) {
-        val month = this.month.ordinal() + 1
-        if (month < 10) {
-            result.append("0")
-        }
-        result.append(month)
-    }
-
-    fun toPrettyString(): String {
-        val result = StringBuilder()
-        appendDay(result)
-        result.append(".")
-        appendMonth(result)
-        result.append(".")
-        result.append(year)
-        return result.toString()
-    }
+//    fun toPrettyString(): String {
+//        fun appendDay(result: StringBuilder) {
+//            if (day < 10) {
+//                result.append("0")
+//            }
+//            result.append(day)
+//        }
+//
+//        fun appendMonth(result: StringBuilder) {
+//            val month = this.month.number
+//            if (month < 10) {
+//                result.append("0")
+//            }
+//            result.append(month)
+//        }
+//
+//        val result = StringBuilder()
+//        appendDay(result)
+//        result.append(".")
+//        appendMonth(result)
+//        result.append(".")
+//        result.append(year)
+//        return result.toString()
+//    }
 
     companion object {
         val EPOCH = Date(1, Month.JANUARY, 1970)
-        private val EPOCH_WEEKDAY = WeekDay.THURSDAY
 
-        private val CACHE_STAMP = Date(1, Month.JANUARY, 2012)
-        private val CACHE_DAYS = CACHE_STAMP.daysFrom(EPOCH)
-
-        fun parse(str: String): Date {
-            if (str.length != 8) {
-                throw RuntimeException()
-            }
-
-            val year = str.substring(0, 4).toInt()
-            val month = str.substring(4, 6).toInt()
-            val day = str.substring(6, 8).toInt()
-            return Date(day, Month.values()[month - 1], year)
-        }
-
-        @JvmOverloads
-        fun firstDayOf(year: Int, month: Month = Month.JANUARY): Date {
-            return Date(1, month, year)
-        }
-
-        @JvmOverloads
-        fun lastDayOf(year: Int, month: Month = Month.DECEMBER): Date {
-            return Date(month.days, month, year)
-        }
+        fun parse(s: String): Date = Date(KotlinxLocalDate.parse(s))
     }
 }

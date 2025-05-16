@@ -8,6 +8,7 @@ plugins {
 }
 
 val ktorVersion = project.extra["ktor_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val mockitoVersion = project.extra["mockito_version"] as String
 val assertjVersion = project.extra["assertj_version"] as String
@@ -49,6 +50,8 @@ kotlin {
                 implementation(project(":datamodel"))
                 implementation(project(":canvas"))
                 implementation(project(":gis"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
 

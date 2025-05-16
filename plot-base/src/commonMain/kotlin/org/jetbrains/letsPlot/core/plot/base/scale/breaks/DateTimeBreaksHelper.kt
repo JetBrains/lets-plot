@@ -56,7 +56,10 @@ class DateTimeBreaksHelper(
                 ticks = ArrayList()
                 val startDateTime = TimeUtil.asDateTimeUTC(start)
                 var startYear = startDateTime.year
-                if (startDateTime.isAfter(TimeUtil.yearStart(startYear))) {
+//                if (startDateTime.isAfter(TimeUtil.yearStart(startYear))) {
+//                    startYear++
+//                }
+                if (startDateTime > TimeUtil.yearStart(startYear)) {
                     startYear++
                 }
                 val endYear = TimeUtil.asDateTimeUTC(end).year

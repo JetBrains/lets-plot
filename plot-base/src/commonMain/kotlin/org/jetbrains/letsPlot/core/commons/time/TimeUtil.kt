@@ -8,13 +8,15 @@ package org.jetbrains.letsPlot.core.commons.time
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Instant
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.Time
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.math.roundToLong
 
 object TimeUtil {
     fun asDateTimeUTC(instant: Double): DateTime {
         try {
-            return TimeZone.UTC.toDateTime(Instant(instant.roundToLong()))
+            return (Instant(instant.roundToLong())).toDateTime(TimeZone.UTC)
         } catch (ignored: RuntimeException) {
             throw IllegalArgumentException("Can't create DateTime from instant $instant")
         }
@@ -22,10 +24,13 @@ object TimeUtil {
     }
 
     fun asInstantUTC(dateTime: DateTime): Long {
-        return TimeZone.UTC.toInstant(dateTime).timeSinceEpoch
+        return dateTime.toInstant(TimeZone.UTC).toEpochMilliseconds()
     }
 
     fun yearStart(year: Int): DateTime {
-        return DateTime(Date.firstDayOf(year))
+        return DateTime(
+            Date(1, Month.JANUARY, year),
+            Time.DAY_START
+        )
     }
 }

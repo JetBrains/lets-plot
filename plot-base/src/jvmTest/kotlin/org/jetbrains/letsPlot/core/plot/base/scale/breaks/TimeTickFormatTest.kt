@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -60,7 +60,9 @@ class TimeTickFormatTest {
     }
 
     private fun format(dateTime: DateTime, pattern: String): String {
-        return DateTimeFormatUtil.formatDateUTC(TimeZone.UTC.toInstant(dateTime).timeSinceEpoch, pattern)
+//        return DateTimeFormatUtil.formatDateUTC(TimeZone.UTC.toInstant(dateTime).timeSinceEpoch, pattern)
+        val millis = dateTime.toInstant(TimeZone.UTC).toEpochMilliseconds()
+        return DateTimeFormatUtil.formatDateUTC(millis, pattern)
     }
 
     companion object {
@@ -70,11 +72,16 @@ class TimeTickFormatTest {
             BASE_DATE,
             BASE_TIME
         )
-        private val baseInstant = TimeZone.UTC.toInstant(
-            DateTime(
+
+        //        private val baseInstant = TimeZone.UTC.toInstant(
+//            DateTime(
+//                BASE_DATE,
+//                BASE_TIME
+//            )
+//        )
+        private val baseInstant = DateTime(
             BASE_DATE,
             BASE_TIME
-        )
-        )
+        ).toInstant(TimeZone.UTC)
     }
 }

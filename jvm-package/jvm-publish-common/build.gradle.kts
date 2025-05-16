@@ -13,10 +13,12 @@ kotlin {
     jvm()
 }
 
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+
 val artifactBaseName = "lets-plot-common"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
 val jvmJarCommon by tasks.named<Jar>("jvmJar") {
@@ -37,7 +39,10 @@ val pomDependencies = listOf(
     listOf(project.group, "plot-base-jvm", project.version),
     listOf(project.group, "plot-builder-jvm", project.version),
     listOf(project.group, "plot-stem-jvm", project.version),
-    // Kotlin logging.
+
+    // Libs
+    // ToDo: coroutines ?
+    listOf("org.jetbrains.kotlinx", "kotlinx-datetime-jvm", kotlinxDatetimeVersion),
     listOf("io.github.microutils", "kotlin-logging", kotlinLoggingVersion)
 )
 

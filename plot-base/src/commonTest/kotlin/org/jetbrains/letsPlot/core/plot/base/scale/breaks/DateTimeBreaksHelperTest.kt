@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import demoAndTestShared.assertArrayEquals
 import org.jetbrains.letsPlot.commons.intern.datetime.*
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import kotlin.test.Test
@@ -179,37 +178,36 @@ class DateTimeBreaksHelperTest {
         )
     }
 
-    private fun asString(dateTime: DateTime): String {
-        return (dateTime.toPrettyString()
-                + " and "
-                + dateTime.seconds + " s, "
-                + dateTime.milliseconds + " ms / "
-                + dateTime)
-    }
+//    private fun asString(dateTime: DateTime): String {
+//        return (dateTime.toPrettyString()
+//                + " and "
+//                + dateTime.seconds + " s, "
+//                + dateTime.milliseconds + " ms / "
+//                + dateTime)
+//    }
 
     companion object {
         private val BASE_DATE = Date(1, Month.JANUARY, 2013)
         private val BASE_TIME = Time(7, 7, 7, 7)             // 07:07:07.007
-        private val BASE_INSTANT = TimeZone.UTC.toInstant(
-            DateTime(
-                BASE_DATE,
-                BASE_TIME
-            )
-        )
+        private val BASE_INSTANT: Instant = DateTime(
+            BASE_DATE,
+            BASE_TIME
+        ).toInstant(TimeZone.UTC)
+
         private val MILLISECONDS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).milliseconds }
         private val SECONDS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).seconds }
         private val MINUTES = { instant: Double -> TimeUtil.asDateTimeUTC(instant).minutes }
         private val HOURS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).hours }
         private val DAYS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).day }
         private val WEEKDAYS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).weekDay.ordinal }
-        private val MONTHS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).month.ordinal() }
+        private val MONTHS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).month.ordinal }
         private val YEARS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).year }
 
         private fun assertMilliseconds(expected: IntArray, msCount: Long, targetBreakCount: Int) {
             val instant2 = BASE_INSTANT.add(Duration.MS.mul(msCount))
             val breaks = computeBreaks(
-                BASE_INSTANT.timeSinceEpoch,
-                instant2.timeSinceEpoch,
+                BASE_INSTANT.toEpochMilliseconds(),
+                instant2.toEpochMilliseconds(),
                 targetBreakCount
             )
             assertTimePartEquals(
@@ -222,8 +220,8 @@ class DateTimeBreaksHelperTest {
         private fun assertSeconds(expected: IntArray, sCount: Long, targetBreakCount: Int) {
             val instant2 = BASE_INSTANT.add(Duration.SECOND.mul(sCount))
             val breaks = computeBreaks(
-                BASE_INSTANT.timeSinceEpoch,
-                instant2.timeSinceEpoch,
+                BASE_INSTANT.toEpochMilliseconds(),
+                instant2.toEpochMilliseconds(),
                 targetBreakCount
             )
             assertTimePartEquals(
@@ -236,8 +234,8 @@ class DateTimeBreaksHelperTest {
         private fun assertMinutes(expected: IntArray, mCount: Long, targetBreakCount: Int) {
             val instant2 = BASE_INSTANT.add(Duration.MINUTE.mul(mCount))
             val breaks = computeBreaks(
-                BASE_INSTANT.timeSinceEpoch,
-                instant2.timeSinceEpoch,
+                BASE_INSTANT.toEpochMilliseconds(),
+                instant2.toEpochMilliseconds(),
                 targetBreakCount
             )
             assertTimePartEquals(
@@ -250,8 +248,8 @@ class DateTimeBreaksHelperTest {
         private fun assertHours(expected: IntArray, mCount: Long, targetBreakCount: Int) {
             val instant2 = BASE_INSTANT.add(Duration.HOUR.mul(mCount))
             val breaks = computeBreaks(
-                BASE_INSTANT.timeSinceEpoch,
-                instant2.timeSinceEpoch,
+                BASE_INSTANT.toEpochMilliseconds(),
+                instant2.toEpochMilliseconds(),
                 targetBreakCount
             )
             assertTimePartEquals(
@@ -269,8 +267,8 @@ class DateTimeBreaksHelperTest {
         ) {
             val instant2 = BASE_INSTANT.add(Duration.DAY.mul(dCount))
             val breaks = computeBreaks(
-                BASE_INSTANT.timeSinceEpoch,
-                instant2.timeSinceEpoch,
+                BASE_INSTANT.toEpochMilliseconds(),
+                instant2.toEpochMilliseconds(),
                 targetBreakCount,
                 minInterval
             )
@@ -288,8 +286,8 @@ class DateTimeBreaksHelperTest {
         private fun assertWeeks(expected: IntArray, wCount: Long, targetBreakCount: Int) {
             val instant2 = BASE_INSTANT.add(Duration.WEEK.mul(wCount))
             val breaks = computeBreaks(
-                BASE_INSTANT.timeSinceEpoch,
-                instant2.timeSinceEpoch,
+                BASE_INSTANT.toEpochMilliseconds(),
+                instant2.toEpochMilliseconds(),
                 targetBreakCount
             )
             assertTimePartEquals(
@@ -310,7 +308,7 @@ class DateTimeBreaksHelperTest {
             minInterval: TimeInterval? = null
         ) {
             val date = Date(1, Month.APRIL, 2013)
-            val month1 = date.month.ordinal()
+            val month1 = date.month.ordinal
             val month2 = (month1 + mCount) % 12
             val addYear = (month1 + mCount) / 12
             val dateTime1 = DateTime(
@@ -401,10 +399,11 @@ class DateTimeBreaksHelperTest {
             }
         }
 
-        private fun assertDaysOfYearEqual(dateTimeArr: Array<Double>, dayOfTheYear: Int) {
-            for ((i, dt) in dateTimeArr.withIndex()) {
+        private fun assertDaysOfYearEqual(instants: Array<Double>, dayOfTheYear: Int) {
+            for ((i, dt) in instants.withIndex()) {
                 val dateTime = TimeUtil.asDateTimeUTC(dt)
-                val daysFromYearStart = dateTime.date.daysFrom(Date.firstDayOf(dateTime.year))
+//                val daysFromYearStart = dateTime.date.daysFrom(Date.firstDayOf(dateTime.year))
+                val daysFromYearStart = dateTime.date.daysFromYearStart()
                 assertEquals(dayOfTheYear, daysFromYearStart, "Index $i")
             }
         }

@@ -1,12 +1,16 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.intern.datetime.tz
 
-import org.jetbrains.letsPlot.commons.intern.datetime.*
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZones.offset
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Instant
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.Time
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -25,129 +29,193 @@ class TimeZonesTest {
 
     @Test
     fun fromRealMillis() {
-        assertEquals(Date(4, Month.APRIL, 2012), TimeZone.UTC.toDateTime(Instant(1333497600000L)).date)
+        assertEquals(Date(4, Month.APRIL, 2012), Instant(1333497600000L).toDateTime(TimeZone.UTC).date)
     }
 
-    @Test
-    fun offsetFromUtc() {
-        val instant = Instant(1335423695381L)
-        assertEquals("20120426T110135", offset("", Duration.HOUR.mul(4), TimeZone.UTC).toDateTime(instant).toString())
-    }
+//    @Test
+//    fun offsetFromUtc() {
+//        val instant = Instant(1335423695381L)
+//        assertEquals(
+//            "20120426T110135",
+//            offset("", Duration.HOUR.mul(4), TimeZone.Companion.UTC).toDateTime(instant).toString()
+//        )
+//    }
 
     @Test
     fun convertFromMoscowToBerlinSummer() {
-        val dt = DateTime(Date(26, Month.APRIL, 2012), Time(21, 13))
-        assertEquals(DateTime(Date(26, Month.APRIL, 2012), Time(19, 13)), TimeZone.MOSCOW.convertTo(dt, TimeZone.BERLIN))
+        val mdt = DateTime(Date(26, Month.APRIL, 2012), Time(21, 13))
+        val bdt = DateTime(Date(26, Month.APRIL, 2012), Time(19, 13))
+        val bdtConv = mdt
+            .toInstant(TZs.moscow)
+            .toDateTime(TZs.berlin)
+        assertEquals(
+            bdt,
+            bdtConv
+        )
     }
 
     @Test
     fun convertFromMoscowToBerlinWinter() {
-        val dt = DateTime(Date(26, Month.FEBRUARY, 2012), Time(19, 40))
+        val mdt = DateTime(Date(26, Month.FEBRUARY, 2012), Time(19, 40))
+        val bdt = DateTime(Date(26, Month.FEBRUARY, 2012), Time(16, 40))
+        val bdtConv = mdt
+            .toInstant(TZs.moscow)
+            .toDateTime(TZs.berlin)
         assertEquals(
-                DateTime(Date(26, Month.FEBRUARY, 2012), Time(16, 40)),
-                TimeZone.MOSCOW.convertTo(dt, TimeZone.BERLIN)
+            bdt,
+            bdtConv
         )
     }
 
     @Test
     fun convertFromMoscowToBostonSummer() {
-        val dt = DateTime(Date(26, Month.APRIL, 2012), Time(20, 57))
+        val mdt = DateTime(Date(26, Month.APRIL, 2012), Time(20, 57))
+        val bdt = DateTime(Date(26, Month.APRIL, 2012), Time(12, 57))
+        val bdtConv = mdt
+            .toInstant(TZs.moscow)
+            .toDateTime(TZs.newYork)
         assertEquals(
-                DateTime(Date(26, Month.APRIL, 2012), Time(12, 57)),
-                TimeZone.MOSCOW.convertTo(dt, TimeZone.NY)
+            bdt,
+            bdtConv
         )
     }
 
     @Test
     fun convertFromMoscowToBostonWinter() {
-        val dt = DateTime(Date(26, Month.JANUARY, 2012), Time(20, 57))
+        val mdt = DateTime(Date(26, Month.JANUARY, 2012), Time(20, 57))
+        val bdt = DateTime(Date(26, Month.JANUARY, 2012), Time(11, 57))
+        val bdtConv = mdt
+            .toInstant(TZs.moscow)
+            .toDateTime(TZs.newYork)
         assertEquals(
-                DateTime(Date(26, Month.JANUARY, 2012), Time(11, 57)),
-                TimeZone.MOSCOW.convertTo(dt, TimeZone.NY)
+            bdt,
+            bdtConv
         )
     }
 
-    @Test
-    fun timeDifferences() {
-        val dt = DateTime(Date(1, Month.MAY, 2012))
-        val instant = TimeZone.MOSCOW.toInstant(dt)
-
-        assertEquals(4, TimeZone.MOSCOW.getTimeZoneShift(instant).div(Duration.HOUR).toInt())
-
-    }
+//    @Test
+//    fun timeDifferences() {
+//        val dt = DateTime(Date(1, Month.MAY, 2012))
+//        val instant = TimeZone.Companion.MOSCOW.toInstant(dt)
+//
+//        assertEquals(4, TimeZone.Companion.MOSCOW.getTimeZoneShift(instant).div(Duration.HOUR).toInt())
+//
+//    }
 
     @Test
     fun convertTimeAtDay() {
         val dsOffDate = Date(19, Month.SEPTEMBER, 2012)
         val dsOnDate = Date(6, Month.NOVEMBER, 2012)
 
-        var t = TimeZone.BERLIN.convertTimeAtDay(Time(15, 0), dsOnDate, TimeZone.MOSCOW)
+        var t = convertTimeAtDay(Time(15, 0), dsOnDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(18, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(21, 0), dsOnDate, TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(21, 0), dsOnDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(0, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(22, 0), dsOnDate, TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(22, 0), dsOnDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(1, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(15, 0), dsOffDate, TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(15, 0), dsOffDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(17, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(22, 0), dsOffDate, TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(22, 0), dsOffDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(0, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(23, 0), dsOffDate, TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(23, 0), dsOffDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(1, 0), t)
 
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(18, 0), dsOnDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(18, 0), dsOnDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(15, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(0, 0), dsOnDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(0, 0), dsOnDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(21, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(2, 0), dsOnDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(2, 0), dsOnDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(23, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(3, 0), dsOnDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(3, 0), dsOnDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(0, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(17, 0), dsOffDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(17, 0), dsOffDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(15, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(0, 0), dsOffDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(0, 0), dsOffDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(22, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(2, 0), dsOffDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(2, 0), dsOffDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(0, 0), t)
-        t = TimeZone.MOSCOW.convertTimeAtDay(Time(3, 0), dsOffDate, TimeZone.BERLIN)
+        t = convertTimeAtDay(Time(3, 0), dsOffDate, TZs.moscow, TZs.berlin)
         assertEquals(Time(1, 0), t)
     }
 
     @Test
     fun convertTimeAtDSChangeDay() {
+        // On October 28, 2012, at 02:00, Berlin was transitioning from CEST (UTC+2) to CET (UTC+1)
         val dsChangeDate = Date(28, Month.OCTOBER, 2012)
-        var t = TimeZone.BERLIN.convertTimeAtDay(Time(15, 0), dsChangeDate, TimeZone.MOSCOW)
+
+        var t = convertTimeAtDay(Time(15, 0), dsChangeDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(18, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(15, 0), dsChangeDate.prevDate(), TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(15, 0), dsChangeDate.prevDate(), TZs.berlin, TZs.moscow)
         assertEquals(Time(17, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(15, 0), dsChangeDate.nextDate(), TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(15, 0), dsChangeDate.nextDate(), TZs.berlin, TZs.moscow)
         assertEquals(Time(18, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(1, 59), dsChangeDate, TimeZone.MOSCOW)
+        t = convertTimeAtDay(Time(1, 59), dsChangeDate, TZs.berlin, TZs.moscow)
         assertEquals(Time(3, 59), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(2, 0), dsChangeDate, TimeZone.MOSCOW)
-        assertEquals(Time(5, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(22, 0), dsChangeDate, TimeZone.MOSCOW)
-        assertEquals(Time(0, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(23, 0), dsChangeDate.nextDate(), TimeZone.MOSCOW)
-        assertEquals(Time(2, 0), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(1, 59), dsChangeDate.nextDate(), TimeZone.MOSCOW)
-        assertEquals(Time(4, 59), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(2, 0), dsChangeDate.prevDate(), TimeZone.MOSCOW)
+
+        // This is tricky because 02:00 actually occurs twice on this day in Berlin
+        // due to the time change.
+
+//        t = TimeZone.BERLIN.convertTimeAtDay(Time(2, 0), dsChangeDate, TZs.moscow)
+//        assertEquals(Time(5, 0), t)           <-- wrong
+
+        // 1. Before the time change: 02:00 CEST (UTC+2), which is 04:00 MSK (UTC+4)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate, TimeZone("UTC+2"), TZs.moscow)
         assertEquals(Time(4, 0), t)
 
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(1, 59), dsChangeDate, TimeZone.NY)
-        assertEquals(Time(20, 59), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(2, 0), dsChangeDate, TimeZone.NY)
-        assertEquals(Time(21, 0), t)
+        // 2. After the time change: 02:00 CET (UTC+1), which is 05:00 MSK (UTC+4)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate, TimeZone("UTC+1"), TZs.moscow)
+        assertEquals(Time(5, 0), t)
 
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(1, 59), dsChangeDate.prevDate(), TimeZone.NY)
+        // When unspecified time zone is used, the first occurrence of 02:00 is taken
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate, TZs.berlin, TZs.moscow)
+        assertEquals(Time(4, 0), t)
+
+
+        t = convertTimeAtDay(Time(22, 0), dsChangeDate, TZs.berlin, TZs.moscow)
+        assertEquals(Time(1, 0), t)
+        t = convertTimeAtDay(Time(23, 0), dsChangeDate.nextDate(), TZs.berlin, TZs.moscow)
+        assertEquals(Time(2, 0), t)
+
+        t = convertTimeAtDay(Time(1, 59), dsChangeDate.nextDate(), TZs.berlin, TZs.moscow)
+        assertEquals(Time(4, 59), t)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate.prevDate(), TZs.berlin, TZs.moscow)
+        assertEquals(Time(4, 0), t)
+
+        t = convertTimeAtDay(Time(1, 59), dsChangeDate, TZs.berlin, TZs.newYork)
         assertEquals(Time(19, 59), t)
-        t = TimeZone.BERLIN.convertTimeAtDay(Time(2, 0), dsChangeDate.prevDate(), TimeZone.NY)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate, TZs.berlin, TZs.newYork)
+        assertEquals(Time(20, 0), t)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate, TimeZone("UTC+2"), TZs.newYork)
+        assertEquals(Time(20, 0), t)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate, TimeZone("UTC+1"), TZs.newYork)
         assertEquals(Time(21, 0), t)
 
+        t = convertTimeAtDay(Time(1, 59), dsChangeDate.prevDate(), TZs.berlin, TZs.newYork)
+        assertEquals(Time(19, 59), t)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate.prevDate(), TZs.berlin, TZs.newYork)
+        assertEquals(Time(20, 0), t)
+
+        t = convertTimeAtDay(Time(1, 59), dsChangeDate.nextDate(), TZs.berlin, TZs.newYork)
+        assertEquals(Time(20, 59), t)
+        t = convertTimeAtDay(Time(2, 0), dsChangeDate.nextDate(), TZs.berlin, TZs.newYork)
+        assertEquals(Time(21, 0), t)
     }
 
     private fun assertConversion(date: Date) {
-        val instant = TimeZone.UTC.toInstant(DateTime(date))
-        assertEquals(date, TimeZone.UTC.toDateTime(instant).date)
+        val instant = DateTime(date).toInstant(TimeZone.UTC)
+        assertEquals(date, instant.toDateTime(TimeZone.UTC).date)
+    }
+
+    fun convertTimeAtDay(
+        time: Time,
+        date: Date,
+        timeZone: TimeZone,
+        dstTimeZone: TimeZone
+    ): Time {
+        var dateTime = DateTime(date, time)
+        var dateTimeConv = dateTime
+            .toInstant(timeZone)
+            .toDateTime(dstTimeZone)
+        return dateTimeConv.time
     }
 }

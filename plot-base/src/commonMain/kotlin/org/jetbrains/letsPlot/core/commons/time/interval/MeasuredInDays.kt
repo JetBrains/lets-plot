@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 
 abstract class MeasuredInDays protected constructor(count: Int) : TimeInterval(count) {
 
-    protected abstract fun getFirstDayContaining(instant: DateTime): Date
+    protected abstract fun getFirstDayContaining(dateTime: DateTime): Date
 
     override fun range(start: Double, end: Double): List<Double> {
         if (start > end) {
@@ -37,6 +37,6 @@ abstract class MeasuredInDays protected constructor(count: Int) : TimeInterval(c
         return result
     }
 
-    protected abstract fun addInterval(toInstant: DateTime): DateTime
+    protected abstract fun addInterval(dateTime: DateTime): DateTime
 
 }

@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
@@ -262,7 +263,10 @@ class TooltipAxisConfigTest {
     @Test
     fun dateTime() {
         val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.WEEK.mul(it.toLong()))
+            DateTime(Date(1, Month.JANUARY, 2021)).add(
+                Duration.WEEK.mul(it.toLong()),
+                TimeZone.UTC
+            )
         }.map { TimeUtil.asInstantUTC(it).toDouble() }
         val dtData = mapOf("date" to instants, "v" to listOf(0, 1, 2))
         val dtMapping = mapOf(

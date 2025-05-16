@@ -5,8 +5,12 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
-import org.jetbrains.letsPlot.commons.intern.datetime.*
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Instant
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.Time
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone.Companion.UTC
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -267,9 +271,9 @@ internal object Util {
             val adjustedTimeSeries = timeSeries.map {
                 if (it !is Number) return@map null
                 val instant = Instant(it.toLong())
-                val dateTime = UTC.toDateTime(instant)
+                val dateTime = instant.toDateTime(UTC)
                 val adjustedDateTime = applyTimeUnit(dateTime, timeUnit)
-                UTC.toInstant(adjustedDateTime).timeSinceEpoch
+                adjustedDateTime.toInstant(UTC).toEpochMilliseconds()
             }
 
             data.write(field) { adjustedTimeSeries }
@@ -380,7 +384,7 @@ internal object Util {
         var ms = 0
 
         if (TimeUnit.YEAR in unitsTemplate) year = dateTime.year
-        if (TimeUnit.MONTH in unitsTemplate) month = Month.values()[dateTime.month.ordinal()]
+        if (TimeUnit.MONTH in unitsTemplate) month = Month.values()[dateTime.month.ordinal]
         if (TimeUnit.DAY in unitsTemplate) day = dateTime.day
         if (TimeUnit.HOURS in unitsTemplate) hours = dateTime.time.hours
         if (TimeUnit.MINUTES in unitsTemplate) minutes = dateTime.time.minutes

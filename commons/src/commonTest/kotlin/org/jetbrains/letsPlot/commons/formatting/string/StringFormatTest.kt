@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -168,9 +168,12 @@ class StringFormatTest {
         )
     }
 
-    private val dateTimeToFormat = TimeZone.UTC.toInstant(
-        DateTime(Date(6, Month.AUGUST, 2019), Time(4, 46, 35))
-    ).timeSinceEpoch
+//    private val dateTimeToFormat = TimeZone.UTC.toInstant(
+//        DateTime(Date(6, Month.AUGUST, 2019), Time(4, 46, 35))
+//    ).timeSinceEpoch
+
+    private val dateTimeToFormat = DateTime(Date(6, Month.AUGUST, 2019), Time(4, 46, 35))
+        .toInstant(TimeZone.UTC).toEpochMilliseconds()
 
     @Test
     fun DateTime_format() {

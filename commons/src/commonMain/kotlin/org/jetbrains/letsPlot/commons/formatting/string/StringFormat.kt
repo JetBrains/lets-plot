@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.commons.formatting.string
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
 import org.jetbrains.letsPlot.commons.intern.datetime.Instant
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 class StringFormat private constructor(
     private val pattern: String,
@@ -57,6 +57,7 @@ class StringFormat private constructor(
                 require(myFormatters.size == 1)
                 myFormatters.single()(values.single())
             }
+
             STRING_FORMAT -> {
                 var index = 0
                 BRACES_REGEX.replace(pattern) {
@@ -70,7 +71,11 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(formatPattern: String, formatType: FormatType, expFormat: ExponentFormat?): ((Any) -> String) {
+    private fun initFormatter(
+        formatPattern: String,
+        formatType: FormatType,
+        expFormat: ExponentFormat?
+    ): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
             return Any::toString
         }
@@ -93,6 +98,7 @@ class StringFormat private constructor(
                     }
                 }
             }
+
             DATETIME_FORMAT -> {
                 val dateTimeFormatter = DateTimeFormat(formatPattern)
                 return { value: Any ->
@@ -101,10 +107,12 @@ class StringFormat private constructor(
                     }
                     value.toLong()
                         .let(::Instant)
-                        .let(TimeZone.UTC::toDateTime)
+//                        .let(TimeZone.UTC::toDateTime)
+                        .toDateTime(TimeZone.UTC)
                         .let(dateTimeFormatter::apply)
                 }
             }
+
             else -> {
                 error("Undefined format pattern $formatPattern")
             }
