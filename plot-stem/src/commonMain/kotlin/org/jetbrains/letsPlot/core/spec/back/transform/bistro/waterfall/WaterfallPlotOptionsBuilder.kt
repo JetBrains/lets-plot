@@ -213,7 +213,7 @@ class WaterfallPlotOptionsBuilder(
     }
 
     private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions): LayerOptions {
-        return LayerOptions().also {
+        return CrossbarLayer().also {
             it.geom = GeomKind.CROSS_BAR
             it.data = DataFrameUtil.toMap(statDf)
             it.mapping = boxMappings()
@@ -223,6 +223,7 @@ class WaterfallPlotOptionsBuilder(
             it.alpha = alpha
             it.linetype = LineTypeOptionConverter().apply(lineType)
             it.width = width
+            it.fatten = 0.0 // Removes the midline from the legend elements
             it.showLegend = showLegend
             it.tooltipsOptions = tooltipsOptions
         }
@@ -287,7 +288,8 @@ class WaterfallPlotOptionsBuilder(
             it.angle = labelOptions.angle
             it.hjust = labelOptions.hjust
             it.vjust = labelOptions.vjust
-            it.showLegend = showLegend
+            // Show legend with letter only when color and fill are not mapped
+            it.showLegend = showLegend.takeIf { color != COLOR_FLOW_TYPE && fill != COLOR_FLOW_TYPE } ?: false
             it.labelFormat = labelFormat
         }
     }
