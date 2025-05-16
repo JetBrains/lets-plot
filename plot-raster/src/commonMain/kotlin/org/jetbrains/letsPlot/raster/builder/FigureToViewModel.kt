@@ -12,13 +12,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.interact.CompositeToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
-import org.jetbrains.letsPlot.raster.view.CanvasEventDispatcher
 
 internal object FigureToViewModel {
     fun eval(buildInfo: FigureBuildInfo): ViewModel {

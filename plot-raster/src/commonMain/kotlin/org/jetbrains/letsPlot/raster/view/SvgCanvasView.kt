@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.raster.shape.Element
@@ -108,9 +109,7 @@ abstract class SvgCanvasView() : Disposable {
     }
 
     private fun needRedraw() {
-        if (!disposed) {
-            //skiaLayer.needRedraw()
-        }
+
     }
 
     protected fun dispatchEvent(spec: MouseEventSpec, event: MouseEvent) {

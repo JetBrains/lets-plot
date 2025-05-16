@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
@@ -32,10 +33,10 @@ class SvgCanvasFigure(
 
     val width = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
     val height = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
-
+    private val myBounds = ValueProperty(Rectangle(0, 0, width, height))
 
     override fun bounds(): ReadableProperty<Rectangle> {
-        TODO("Not yet implemented")
+        return myBounds
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
@@ -45,6 +46,7 @@ class SvgCanvasFigure(
         )
 
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
+        @Suppress("unused")
         val nodeContainer = SvgNodeContainer(svgSvgElement)  // attach root
         rootMapper.attachRoot(MappingContext())
 
@@ -116,6 +118,7 @@ class SvgCanvasFigure(
         }
     }
 
+    @Suppress("unused")
     fun makeSnapshot(): Canvas.Snapshot {
         val canvas = canvasControl.createCanvas(Vector(width, height))
         canvas.context2d.clearRect(DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble()))

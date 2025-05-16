@@ -11,9 +11,9 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.view.CanvasEventDispatcher
 
 sealed class ViewModel(
     val svg: SvgSvgElement,
@@ -22,10 +22,12 @@ sealed class ViewModel(
 ) : Disposable {
     internal abstract val bounds: Rectangle
 
+    @Suppress("unused")
     fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
         toolEventDispatcher.activateInteractions(origin, interactionSpecList)
     }
 
+    @Suppress("unused")
     fun deactivateInteractions(origin: String) {
         toolEventDispatcher.deactivateInteractions(origin)
     }
