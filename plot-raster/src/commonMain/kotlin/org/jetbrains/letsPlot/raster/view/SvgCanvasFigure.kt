@@ -58,7 +58,6 @@ class SvgCanvasFigure(
         })
 
         canvasControl.addChild(canvas)
-        render(rootElement, canvas)
 
         anim.start()
 

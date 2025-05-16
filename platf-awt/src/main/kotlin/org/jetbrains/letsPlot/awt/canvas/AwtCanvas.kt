@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
@@ -19,16 +19,16 @@ internal class AwtCanvas
 private constructor(
     val image: BufferedImage,
     size: Vector,
-    pixelRatio: Double,
-) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelRatio) {
+    pixelDensity: Double,
+) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelDensity) {
 
     companion object {
-        fun create(size: Vector, pixelRatio: Double): Canvas {
+        fun create(size: Vector, pixelDensity: Double): Canvas {
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage(s.x, s.y, TYPE_4BYTE_ABGR), s, pixelRatio)
+            return AwtCanvas(BufferedImage(s.x, s.y, TYPE_4BYTE_ABGR), s, pixelDensity)
         }
     }
 

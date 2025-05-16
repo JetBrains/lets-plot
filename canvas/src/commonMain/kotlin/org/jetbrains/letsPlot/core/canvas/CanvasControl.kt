@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.Vector
 
 interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, Dispatcher {
+    val pixelDensity: Double
 
     val size: Vector
 

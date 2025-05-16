@@ -160,7 +160,8 @@ object PlotReprGenerator {
 
             val canvasControl = MagickCanvasControl(
                 w = svgCanvasFigure.width,
-                h = svgCanvasFigure.height
+                h = svgCanvasFigure.height,
+                pixelDensity = 1.0
             )
 
             canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)

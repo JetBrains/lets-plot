@@ -98,6 +98,7 @@ object NullSnapshot : Canvas.Snapshot {
 open class CanvasControlDelegate(
     width: Int,
     height: Int,
+    override val pixelDensity: Double = 1.0,
 ) : CanvasControl {
     override val size: Vector = Vector(width, height)
     override fun addChild(canvas: Canvas) {}

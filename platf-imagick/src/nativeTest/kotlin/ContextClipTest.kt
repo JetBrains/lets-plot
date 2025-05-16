@@ -52,7 +52,7 @@ class ContextClipTest {
     )
 
     private fun createCanvas(): Pair<MagickCanvas, Context2d> {
-        val canvas = MagickCanvas.create(w, h)
+        val canvas = MagickCanvas.create(width = w, height = h, pixelDensity = 1.0)
         return canvas to canvas.context2d
     }
 
