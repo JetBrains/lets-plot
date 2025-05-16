@@ -22,7 +22,7 @@
 - [**BREAKING**] The `position_dodgev()` function and the `'dodgev'` value for the `position` parameter are deprecated and will be removed in future releases.
 - Updated RGB values for `lightgray` and `green`. To restore the previous colors, use `gray75` and `lime`, respectively. 
 - `geom_violin`: tooltips are not shown in the centerline of the violin if `show_half != 0`.
-- `geom_crossbar`: the midline is not shown in the legend when `fatten` is set to 0.
+- `geom_crossbar`: the midline is not shown in the legend when `fatten` is set to 0, or when there is no mapping for it.
 - `waterfall_plot`: the appearance of the legend has been improved.
 
 ### Fixed

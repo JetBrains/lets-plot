@@ -142,6 +142,12 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.CrossBar.FATTEN)!!
                 }
+                val isVertical = isVertical(ctx, geomKind.name)
+                val midlineAes = if (isVertical) Aes.Y else Aes.X
+                val midlineIsMapped = ctx.hasBinding(midlineAes) || ctx.hasConstant(midlineAes)
+                if (!midlineIsMapped) {
+                    geom.fattenMidline = 0.0 // The `fattenMidline` variable affects the legend: if set to 0, the midline is omitted.
+                }
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.WIDTH_UNIT)) {
                     geom.widthUnit = dimensionUnit(layerConfig, Option.Geom.CrossBar.WIDTH_UNIT)!!
                 }

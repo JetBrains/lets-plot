@@ -213,7 +213,7 @@ class WaterfallPlotOptionsBuilder(
     }
 
     private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions): LayerOptions {
-        return CrossbarLayer().also {
+        return LayerOptions().also {
             it.geom = GeomKind.CROSS_BAR
             it.data = DataFrameUtil.toMap(statDf)
             it.mapping = boxMappings()
@@ -223,7 +223,6 @@ class WaterfallPlotOptionsBuilder(
             it.alpha = alpha
             it.linetype = LineTypeOptionConverter().apply(lineType)
             it.width = width
-            it.fatten = 0.0 // Removes the midline from the legend elements
             it.showLegend = showLegend
             it.tooltipsOptions = tooltipsOptions
         }
