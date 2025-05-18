@@ -21,26 +21,23 @@ import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
 import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
 import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.Pane
 import kotlin.math.ceil
 
 class SvgCanvasFigure(
-    val svgSvgElement: SvgSvgElement
+    private val svgSvgElement: SvgSvgElement
 ) : CanvasFigure {
-    internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-    private val rootElement: Pane get() = rootMapper.target
-    private lateinit var canvasControl: CanvasControl
-    private val nodeContainer = SvgNodeContainer(SvgSvgElement())  // attach root
-
     val width = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
     val height = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+
+    internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
+    private lateinit var canvasControl: CanvasControl
+    private val nodeContainer = SvgNodeContainer(svgSvgElement)  // attach root
     private val myBounds = ValueProperty(Rectangle(0, 0, width, height))
 
     init {
         nodeContainer.addListener(object : SvgNodeContainerListener {
             override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = needRedraw()
             override fun onNodeAttached(node: SvgNode) = needRedraw()
-
             override fun onNodeDetached(node: SvgNode) = needRedraw()
         })
     }
@@ -62,7 +59,7 @@ class SvgCanvasFigure(
         val anim = canvasControl.createAnimationTimer(object : AnimationProvider.AnimationEventHandler {
             override fun onEvent(millisTime: Long): Boolean {
                 canvas.context2d.clearRect(DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble()))
-                render(rootElement, canvas)
+                render(rootMapper.target, canvas)
                 return true
             }
         })
@@ -126,18 +123,6 @@ class SvgCanvasFigure(
         }
     }
 
-    @Suppress("unused")
-    fun makeSnapshot(): Canvas.Snapshot {
-        val canvas = canvasControl.createCanvas(Vector(width, height))
-        canvas.context2d.clearRect(DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble()))
-        render(rootElement, canvas)
-        return canvas.immidiateSnapshot()
-    }
-
     private fun needRedraw() {
-
     }
-
-
-
 }
