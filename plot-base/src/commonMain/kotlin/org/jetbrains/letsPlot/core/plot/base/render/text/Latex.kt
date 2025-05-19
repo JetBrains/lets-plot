@@ -54,6 +54,7 @@ internal object Latex {
     private const val INDEX_SIZE_FACTOR = 0.7
     private const val INDEX_RELATIVE_SHIFT = 0.4
     private const val FRACTION_RELATIVE_SHIFT = 0.5
+    private const val FRACTION_BAR_SYMBOL = "–"
 
     private val GREEK_LETTERS = mapOf(
         "Alpha" to "Α",
@@ -418,7 +419,8 @@ internal object Latex {
             val prefixWidth = previousNodes.sumOf { it.estimateWidth() }
             val fractionWidth = max(numerator.estimateWidth(), denominator.estimateWidth())
             val fractionCenter = prefixWidth + fractionWidth / 2.0
-            val fractionBarLength = 3
+            val fractionBarWidth = TextNode(font, widthCalculator, FRACTION_BAR_SYMBOL).estimateWidth()
+            val fractionBarLength = (fractionWidth / fractionBarWidth).roundToInt()
             val numeratorTSpanElements = numerator.render(context).mapIndexed { i, element ->
                 element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
@@ -437,13 +439,14 @@ internal object Latex {
                     }
                 }
             }
-            val fractionBarTSpanElement = SvgTSpanElement("–".repeat(fractionBarLength)).apply {
+            val fractionBarTSpanElement = SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
                 setAttribute(SvgTextContent.X, fractionCenter.toString())
                 setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                 setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
             }
             val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 setAttribute(SvgTextContent.X, (prefixWidth + fractionWidth).toString())
+                setAttribute(SvgTextContent.TEXT_ANCHOR, "start")
             }
             return numeratorTSpanElements + denominatorTSpanElements + listOf(context.apply(fractionBarTSpanElement), context.apply(restoreBaselineTSpan))
         }
