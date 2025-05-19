@@ -31,7 +31,8 @@ def waterfall_plot(data, x, y, *,
         Name of a numeric variable.
     measure : str
         Kind of a calculation.
-        Values in 'measure' column could be:
+        It takes the name of a data column.
+        The values in the column could be:
 
         'absolute' - the value is shown as is;
         'relative' - the value is shown as a difference from the previous value;
@@ -212,7 +213,7 @@ def waterfall_plot(data, x, y, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 17
 
         from lets_plot import *
         from lets_plot.bistro.waterfall import *
@@ -220,11 +221,18 @@ def waterfall_plot(data, x, y, *,
         data = {
             'company': ["Badgersoft"] * 7 + ["AIlien Co."] * 7,
             'accounts': ["initial", "revenue", "costs", "Q1", "revenue", "costs", "Q2"] * 2,
-            'values': [200, 200, -100, None, 250, -100, None, \\
+            'values': [200, 200, -100, None, 250, -100, None,
                        150, 50, -100, None, 100, -100, None],
             'measure': ['absolute', 'relative', 'relative', 'total', 'relative', 'relative', 'total'] * 2,
         }
+        colors = {
+            "Absolute": "rebeccapurple",
+            "Increase": "seagreen",
+            "Decrease": "crimson",
+            "Total": "darkblue",
+        }
         waterfall_plot(data, 'accounts', 'values', measure='measure', group='company') + \\
+            scale_fill_manual(values=colors) + \\
             facet_wrap(facets='company', scales='free_x')
 
     """
