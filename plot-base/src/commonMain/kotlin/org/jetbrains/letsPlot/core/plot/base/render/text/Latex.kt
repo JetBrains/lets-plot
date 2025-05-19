@@ -136,11 +136,11 @@ internal object Latex {
         val nodes = mutableListOf<RichTextNode.Span>()
         while (iterator.hasNext()) {
             when (val token = iterator.next()) {
-                is Token.Command -> nodes.add(parseCommand(font, widthCalculator, token, iterator, level, nodes.map { it }))
+                is Token.Command -> nodes.add(parseCommand(font, widthCalculator, token, iterator, level, nodes.toList()))
                 is Token.OpenBrace -> nodes.add(parseGroup(font, widthCalculator, iterator, level))
                 is Token.CloseBrace -> break
-                is Token.Superscript -> nodes.add(SuperscriptNode(font, widthCalculator, parseSupOrSub(font, widthCalculator, iterator, level + 1, nodes.map { it }), level))
-                is Token.Subscript -> nodes.add(SubscriptNode(font, widthCalculator, parseSupOrSub(font, widthCalculator, iterator, level + 1, nodes.map { it }), level))
+                is Token.Superscript -> nodes.add(SuperscriptNode(font, widthCalculator, parseSupOrSub(font, widthCalculator, iterator, level + 1, nodes.toList()), level))
+                is Token.Subscript -> nodes.add(SubscriptNode(font, widthCalculator, parseSupOrSub(font, widthCalculator, iterator, level + 1, nodes.toList()), level))
                 is Token.Text -> nodes.add(TextNode(font, widthCalculator, token.content))
                 is Token.Space -> continue
                 is Token.ExplicitSpace -> nodes.add(TextNode(font, widthCalculator, token.space))
