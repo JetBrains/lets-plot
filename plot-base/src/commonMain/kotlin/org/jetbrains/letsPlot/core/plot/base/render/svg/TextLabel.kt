@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
@@ -35,7 +36,7 @@ class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
                 isBold = false,
                 isItalic = false
             ),
-            MultilineLabel::widthCalculator,
+            TextWidthEstimator::widthCalculator,
             singleLineText,
             markdown = markdown
         ).firstOrNull() ?: SvgTextElement()
