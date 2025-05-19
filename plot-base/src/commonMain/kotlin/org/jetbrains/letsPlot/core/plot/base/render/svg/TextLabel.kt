@@ -30,6 +30,7 @@ class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
         // TextLabel is a single-line text element
         val singleLineText = text.replace("\n", " ")
         myText = RichText.toSvg(
+            singleLineText,
             Font(
                 family = FontFamily("Lucida Grande, sans-serif", false),
                 size = 16,
@@ -37,7 +38,6 @@ class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
                 isItalic = false
             ),
             TextWidthEstimator::widthCalculator,
-            singleLineText,
             markdown = markdown
         ).firstOrNull() ?: SvgTextElement()
         rootGroup.children().add(myText)

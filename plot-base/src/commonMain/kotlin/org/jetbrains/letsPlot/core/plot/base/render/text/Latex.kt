@@ -15,18 +15,17 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
-internal object Latex {
-    fun parse(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        text: String
-    ): List<RichTextNode> {
+internal class Latex(
+    private val font: Font,
+    private val widthCalculator: (String, Font) -> Double
+) {
+    fun parse(text: String): List<RichTextNode> {
         val formulas = extractFormulas(text).map { (formula, range) ->
             val prettyFormula = formula.replace("-", "−") // Use minus sign instead of hyphen
-            LatexElement(font, widthCalculator, parse(font, widthCalculator, Token.tokenize(prettyFormula))) to range
+            LatexElement(parse(Token.tokenize(prettyFormula))) to range
         }.toList()
 
-        return fillTextTermGaps(font, widthCalculator, text, formulas)
+        return fillTextTermGaps(text, formulas)
     }
 
     private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
@@ -48,130 +47,50 @@ internal object Latex {
         return formulas
     }
 
-    private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
-    private const val INDENT_SYMBOL = " "
-    private const val INDENT_SIZE_FACTOR = 0.1
-    private const val INDEX_SIZE_FACTOR = 0.7
-    private const val INDEX_RELATIVE_SHIFT = 0.4
-    private const val FRACTION_RELATIVE_SHIFT = 0.5
-    private const val FRACTION_BAR_SYMBOL = "–"
-
-    private val GREEK_LETTERS = mapOf(
-        "Alpha" to "Α",
-        "Beta" to "Β",
-        "Gamma" to "Γ",
-        "Delta" to "Δ",
-        "Epsilon" to "Ε",
-        "Zeta" to "Ζ",
-        "Eta" to "Η",
-        "Theta" to "Θ",
-        "Iota" to "Ι",
-        "Kappa" to "Κ",
-        "Lambda" to "Λ",
-        "Mu" to "Μ",
-        "Nu" to "Ν",
-        "Xi" to "Ξ",
-        "Omicron" to "Ο",
-        "Pi" to "Π",
-        "Rho" to "Ρ",
-        "Sigma" to "Σ",
-        "Tau" to "Τ",
-        "Upsilon" to "Υ",
-        "Phi" to "Φ",
-        "Chi" to "Χ",
-        "Psi" to "Ψ",
-        "Omega" to "Ω",
-        "alpha" to "α",
-        "beta" to "β",
-        "gamma" to "γ",
-        "delta" to "δ",
-        "epsilon" to "ε",
-        "zeta" to "ζ",
-        "eta" to "η",
-        "theta" to "θ",
-        "iota" to "ι",
-        "kappa" to "κ",
-        "lambda" to "λ",
-        "mu" to "μ",
-        "nu" to "ν",
-        "xi" to "ξ",
-        "omicron" to "ο",
-        "pi" to "π",
-        "rho" to "ρ",
-        "sigma" to "σ",
-        "tau" to "τ",
-        "upsilon" to "υ",
-        "phi" to "φ",
-        "chi" to "χ",
-        "psi" to "ψ",
-        "omega" to "ω",
-    )
-    private val OPERATIONS = mapOf(
-        "pm" to "±",
-        "mp" to "∓",
-        "times" to "×",
-        "div" to "÷",
-        "cdot" to "·",
-    )
-    private val RELATIONS = mapOf(
-        "leq" to "≤",
-        "geq" to "≥",
-        "neq" to "≠",
-    )
-    private val MISCELLANEOUS = mapOf(
-        "infty" to "∞",
-    )
-    private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
-
-    private fun parse(font: Font, widthCalculator: (String, Font) -> Double, tokens: Sequence<Token>): RichTextNode.Span {
-        return parseGroup(font, widthCalculator, tokens.iterator(), level = 0)
+    private fun parse(tokens: Sequence<Token>): RichTextNode.Span {
+        return parseGroup(tokens.iterator(), level = 0)
     }
 
-    private fun parseGroup(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        iterator: Iterator<Token>,
-        level: Int
-    ): GroupNode {
+    private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
         val nodes = mutableListOf<RichTextNode.Span>()
         while (iterator.hasNext()) {
             when (val token = iterator.next()) {
-                is Token.Command -> nodes.add(parseCommand(font, widthCalculator, token, iterator, level, nodes.toList()))
-                is Token.OpenBrace -> nodes.add(parseGroup(font, widthCalculator, iterator, level))
+                is Token.Command -> nodes.add(parseCommand(token, iterator, level, nodes.toList()))
+                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
                 is Token.CloseBrace -> break
-                is Token.Superscript -> nodes.add(SuperscriptNode(font, widthCalculator, parseSupOrSub(font, widthCalculator, iterator, level + 1, nodes.toList()), level))
-                is Token.Subscript -> nodes.add(SubscriptNode(font, widthCalculator, parseSupOrSub(font, widthCalculator, iterator, level + 1, nodes.toList()), level))
-                is Token.Text -> nodes.add(TextNode(font, widthCalculator, token.content))
+                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1, nodes.toList()), level))
+                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1, nodes.toList()), level))
+                is Token.Text -> nodes.add(TextNode(token.content))
                 is Token.Space -> continue
-                is Token.ExplicitSpace -> nodes.add(TextNode(font, widthCalculator, token.space))
+                is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
             }
         }
-        return GroupNode(font, widthCalculator, nodes)
+        return GroupNode(nodes)
     }
 
-    private fun parseSupOrSub(font: Font, widthCalculator: (String, Font) -> Double, iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
+    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
         return when (val nextToken = iterator.next()) {
-            is Token.OpenBrace -> parseGroup(font, widthCalculator, iterator, level)
-            is Token.Text -> TextNode(font, widthCalculator, nextToken.content)
-            is Token.Command -> parseCommand(font, widthCalculator, nextToken, iterator, level, previousNodes)
+            is Token.OpenBrace -> parseGroup(iterator, level)
+            is Token.Text -> TextNode(nextToken.content)
+            is Token.Command -> parseCommand(nextToken, iterator, level, previousNodes)
             else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
         }
     }
 
-    private fun parseCommand(font: Font, widthCalculator: (String, Font) -> Double, token: Token.Command, iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
+    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
         return when (token.name) {
             // TODO: Refactor
             "frac" -> {
                 val numeratorOpenBrace = iterator.next()
                 require(numeratorOpenBrace is Token.OpenBrace) { "Expected '{' after '\\frac'" }
-                val numerator = parseGroup(font, widthCalculator, iterator, level)
+                val numerator = parseGroup(iterator, level)
                 val denominatorOpenBrace = iterator.next()
                 require(denominatorOpenBrace is Token.OpenBrace) { "Expected '{' after '\\frac{...}'" }
-                val denominator = parseGroup(font, widthCalculator, iterator, level)
-                FractionNode(font, widthCalculator, previousNodes, numerator, denominator)
+                val denominator = parseGroup(iterator, level)
+                FractionNode(previousNodes, numerator, denominator)
             }
             // For other commands, we just replace the command with its name if it's not a special symbol
-            else -> TextNode(font, widthCalculator, SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
+            else -> TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
         }
     }
 
@@ -211,19 +130,14 @@ internal object Latex {
         return listOf(ctx.apply(indentTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)
     }
 
-    private fun estimateWidthForIndexNode(
-        content: RichTextNode.Span,
-        level: Int,
-        font: Font,
-        widthCalculator: (String, Font) -> Double
-    ): Double {
+    private fun estimateWidthForIndexNode(content: RichTextNode.Span, level: Int): Double {
         val indexFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
         val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
-        return content.estimateWidth()
+        return content.estimateWidth(indexFont, widthCalculator)
     }
 
 
-    internal open class Token {
+    private open class Token {
         data class Command(val name: String) : Token()
         object OpenBrace : Token()
         object CloseBrace : Token()
@@ -328,28 +242,20 @@ internal object Latex {
         }
     }
 
-    private class LatexElement(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        private val node: RichTextNode.Span
-    ) : RichTextNode.Span(font, widthCalculator) {
+    private inner class LatexElement(private val node: RichTextNode.Span) : RichTextNode.Span() {
         override val visualCharCount: Int = node.visualCharCount
 
-        override fun estimateWidth(): Double =
-            node.estimateWidth()
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            node.estimateWidth(font, widthCalculator)
 
         override fun render(context: RenderState): List<SvgElement> {
             return node.render(context)
         }
     }
 
-    class TextNode(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        val content: String
-    ) : RichTextNode.Span(font, widthCalculator) {
+    private inner class TextNode(val content: String) : RichTextNode.Span() {
         override val visualCharCount: Int = content.length
-        override fun estimateWidth(): Double {
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(content, font)
         }
 
@@ -358,14 +264,10 @@ internal object Latex {
         }
     }
 
-    class GroupNode(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        val children: List<RichTextNode.Span>
-    ) : RichTextNode.Span(font, widthCalculator) {
+    private inner class GroupNode(val children: List<RichTextNode.Span>) : RichTextNode.Span() {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
-        override fun estimateWidth(): Double {
-            return children.sumOf { it.estimateWidth() }
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
 
         override fun render(context: RenderState): List<SvgElement> {
@@ -373,53 +275,41 @@ internal object Latex {
         }
     }
 
-    class SuperscriptNode(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        val content: RichTextNode.Span,
-        val level: Int
-    ) : RichTextNode.Span(font, widthCalculator) {
+    private inner class SuperscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span() {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateWidth(): Double =
-            estimateWidthForIndexNode(content, level, font, widthCalculator)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            estimateWidthForIndexNode(content, level)
 
         override fun render(context: RenderState): List<SvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context)
         }
     }
 
-    class SubscriptNode(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        val content: RichTextNode.Span,
-        val level: Int
-    ) : RichTextNode.Span(font, widthCalculator) {
+    private inner class SubscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span() {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateWidth(): Double =
-            estimateWidthForIndexNode(content, level, font, widthCalculator)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            estimateWidthForIndexNode(content, level)
 
         override fun render(context: RenderState): List<SvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context)
         }
     }
 
-    class FractionNode(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
+    private inner class FractionNode(
         val previousNodes: List<RichTextNode.Span> = emptyList(),
         val numerator: RichTextNode.Span,
         val denominator: RichTextNode.Span
-    ) : RichTextNode.Span(font, widthCalculator) {
+    ) : RichTextNode.Span() {
         override val visualCharCount: Int = denominator.visualCharCount
-        override fun estimateWidth(): Double {
-            return denominator.estimateWidth()
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return denominator.estimateWidth(font, widthCalculator)
         }
 
         override fun render(context: RenderState): List<SvgElement> {
-            val prefixWidth = previousNodes.sumOf { it.estimateWidth() }
-            val fractionWidth = max(numerator.estimateWidth(), denominator.estimateWidth())
+            val prefixWidth = previousNodes.sumOf { it.estimateWidth(font, widthCalculator) }
+            val fractionWidth = max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
             val fractionCenter = prefixWidth + fractionWidth / 2.0
-            val fractionBarWidth = TextNode(font, widthCalculator, FRACTION_BAR_SYMBOL).estimateWidth()
+            val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL).estimateWidth(font, widthCalculator)
             val fractionBarLength = (fractionWidth / fractionBarWidth).roundToInt()
             val numeratorTSpanElements = numerator.render(context).mapIndexed { i, element ->
                 element.apply {
@@ -450,5 +340,82 @@ internal object Latex {
             }
             return numeratorTSpanElements + denominatorTSpanElements + listOf(context.apply(fractionBarTSpanElement), context.apply(restoreBaselineTSpan))
         }
+    }
+
+    companion object {
+        private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
+        private const val INDENT_SYMBOL = " "
+        private const val INDENT_SIZE_FACTOR = 0.1
+        private const val INDEX_SIZE_FACTOR = 0.7
+        private const val INDEX_RELATIVE_SHIFT = 0.4
+        private const val FRACTION_RELATIVE_SHIFT = 0.5
+        private const val FRACTION_BAR_SYMBOL = "–"
+
+        private val GREEK_LETTERS = mapOf(
+            "Alpha" to "Α",
+            "Beta" to "Β",
+            "Gamma" to "Γ",
+            "Delta" to "Δ",
+            "Epsilon" to "Ε",
+            "Zeta" to "Ζ",
+            "Eta" to "Η",
+            "Theta" to "Θ",
+            "Iota" to "Ι",
+            "Kappa" to "Κ",
+            "Lambda" to "Λ",
+            "Mu" to "Μ",
+            "Nu" to "Ν",
+            "Xi" to "Ξ",
+            "Omicron" to "Ο",
+            "Pi" to "Π",
+            "Rho" to "Ρ",
+            "Sigma" to "Σ",
+            "Tau" to "Τ",
+            "Upsilon" to "Υ",
+            "Phi" to "Φ",
+            "Chi" to "Χ",
+            "Psi" to "Ψ",
+            "Omega" to "Ω",
+            "alpha" to "α",
+            "beta" to "β",
+            "gamma" to "γ",
+            "delta" to "δ",
+            "epsilon" to "ε",
+            "zeta" to "ζ",
+            "eta" to "η",
+            "theta" to "θ",
+            "iota" to "ι",
+            "kappa" to "κ",
+            "lambda" to "λ",
+            "mu" to "μ",
+            "nu" to "ν",
+            "xi" to "ξ",
+            "omicron" to "ο",
+            "pi" to "π",
+            "rho" to "ρ",
+            "sigma" to "σ",
+            "tau" to "τ",
+            "upsilon" to "υ",
+            "phi" to "φ",
+            "chi" to "χ",
+            "psi" to "ψ",
+            "omega" to "ω",
+        )
+        private val OPERATIONS = mapOf(
+            "pm" to "±",
+            "mp" to "∓",
+            "times" to "×",
+            "div" to "÷",
+            "cdot" to "·",
+        )
+        private val RELATIONS = mapOf(
+            "leq" to "≤",
+            "geq" to "≥",
+            "neq" to "≠",
+        )
+        private val MISCELLANEOUS = mapOf(
+            "infty" to "∞",
+        )
+        private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
     }
 }

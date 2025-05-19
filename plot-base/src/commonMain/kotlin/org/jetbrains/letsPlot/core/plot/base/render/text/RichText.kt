@@ -15,14 +15,14 @@ object RichText {
     const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
 
     fun toSvg(
+        text: String,
         font: Font,
         widthCalculator: (String, Font) -> Double,
-        text: String,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
     ): List<SvgTextElement> {
-        val lines = parse(font, widthCalculator, text, wrapLength, maxLinesCount, markdown)
+        val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
         val svgLines = render(lines)
         return svgLines
     }
@@ -30,23 +30,23 @@ object RichText {
     fun estimateWidth(
         text: String,
         font: Font,
+        widthCalculator: (String, Font) -> Double,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-        widthEstimator: (String, Font) -> Double,
     ): Double {
-        val lines = parse(font, widthEstimator, text, wrapLength, maxLinesCount, markdown)
+        val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
         val widths = lines.map { line ->
-            line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth() ?: 0.0 }
+            line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth(font, widthCalculator) ?: 0.0 }
         }
 
         return widths.maxOrNull() ?: 0.0
     }
 
     private fun parse(
+        text: String,
         font: Font,
         widthCalculator: (String, Font) -> Double,
-        text: String,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false
@@ -60,43 +60,37 @@ object RichText {
             }
         }
 
-        val terms = listOf(RichTextNode.Text(font, widthCalculator, text))
-            .let { it.takeUnless { markdown } ?: parse(it, { t -> Markdown.parse(font, widthCalculator, t) }) }
-            .let { parse(it) { t -> Latex.parse(font, widthCalculator, t) } }
-            .let { parse(it) { t -> Hyperlink.parse(font, widthCalculator, t) } }
-            .let { parseBreaks(font, widthCalculator, it) }
+        val terms = listOf(RichTextNode.Text(text))
+            .let { it.takeUnless { markdown } ?: parse(it, Markdown::parse) }
+            .let { parse(it, Latex(font, widthCalculator)::parse) }
+            .let { parse(it, Hyperlink::parse) }
+            .let { parseBreaks(it) }
 
         val lines = buildLines(terms)
 
-        val wrappedLines = wrap(font, widthCalculator, lines, wrapLength, maxLinesCount)
+        val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
 
         return wrappedLines
     }
 
     private fun wrap(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
         lines: List<List<RichTextNode>>,
         wrapLength: Int,
         maxLinesCount: Int
     ): List<List<RichTextNode>> {
-        val wrappedLines = lines.flatMap { line -> wrapLine(font, widthCalculator, line, wrapLength) }
+        val wrappedLines = lines.flatMap { line -> wrapLine(line, wrapLength) }
         return when {
             maxLinesCount < 0 -> wrappedLines
             wrappedLines.size < maxLinesCount -> wrappedLines
             else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(
                 mutableListOf(
-                    RichTextNode.Text(font, widthCalculator, "...")
+                    RichTextNode.Text("...")
                 )
             )
         }
     }
 
-    private fun parseBreaks(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
-        terms: List<RichTextNode>
-    ): List<RichTextNode> {
+    private fun parseBreaks(terms: List<RichTextNode>): List<RichTextNode> {
         val result = mutableListOf<RichTextNode>()
         terms.forEach { term ->
             if (term is RichTextNode.Text) {
@@ -104,7 +98,7 @@ object RichText {
 
                 lines.forEachIndexed { i, line ->
                     if (line.isNotEmpty()) {
-                        result.add(RichTextNode.Text(font, widthCalculator, line))
+                        result.add(RichTextNode.Text(line))
                     }
 
                     if (i != lines.lastIndex) {
@@ -147,8 +141,6 @@ object RichText {
     }
 
     internal fun fillTextTermGaps(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
         text: String,
         specialTerms: List<Pair<RichTextNode.Span, IntRange>>
     ): List<RichTextNode.Span> {
@@ -168,15 +160,13 @@ object RichText {
         }
 
         val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
-            .map { pos -> RichTextNode.Text(font, widthCalculator, text.substring(pos)) to pos }
+            .map { pos -> RichTextNode.Text(text.substring(pos)) to pos }
         return (specialTerms + textTerms)
             .sortedBy { (_, termLocation) -> termLocation.first }
             .map { (term, _) -> term }
     }
 
     private fun wrapLine(
-        font: Font,
-        widthCalculator: (String, Font) -> Double,
         line: List<RichTextNode>,
         wrapLength: Int = -1
     ): List<List<RichTextNode>> {
@@ -194,11 +184,11 @@ object RichText {
                 term !is RichTextNode.Text -> wrappedLines.add(mutableListOf(term)) // can't fit in one line, but can't split power or link
                 else -> { // split text
                     wrappedLines.last().takeIf { availableSpace > 0 }
-                        ?.add(RichTextNode.Text(font, widthCalculator, term.text.take(availableSpace)))
+                        ?.add(RichTextNode.Text(term.text.take(availableSpace)))
                     wrappedLines += term.text
                         .drop(availableSpace)
                         .chunked(wrapLength)
-                        .map { mutableListOf(RichTextNode.Text(font, widthCalculator, it)) }
+                        .map { mutableListOf(RichTextNode.Text(it)) }
                 }
             }
         }
@@ -240,25 +230,18 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        abstract class Span(
-            protected val font: Font,
-            protected val widthCalculator: (String, Font) -> Double
-        ) : RichTextNode {
+        abstract class Span() : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
-            abstract fun estimateWidth(): Double
+            abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
             abstract fun render(context: RenderState): List<SvgElement>
             fun render(): List<SvgElement> = render(RenderState())
         }
 
-        class Text(
-            font: Font,
-            widthCalculator: (String, Font) -> Double,
-            val text: String,
-        ) : Span(font, widthCalculator) {
+        class Text(val text: String) : Span() {
             override val visualCharCount: Int = text.length
 
-            override fun estimateWidth(): Double {
+            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
                 return widthCalculator(text, font)
             }
 

@@ -25,6 +25,7 @@ class MultilineLabel(
     markdown: Boolean = false
 ) : SvgComponent() {
     private var myLines: List<SvgTextElement> = RichText.toSvg(
+        text,
         Font(
             family = FontFamily("Lucida Grande, sans-serif", false),
             size = 16,
@@ -32,7 +33,6 @@ class MultilineLabel(
             isItalic = false
         ),
         TextWidthEstimator::widthCalculator,
-        text,
         wrapWidth,
         markdown = markdown
     )

@@ -7,15 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
-import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 
 internal object Markdown {
-    fun parse(font: Font, widthCalculator: (String, Font) -> Double, text: String): List<RichTextNode> {
+    fun parse(text: String): List<RichTextNode> {
         if (text.isEmpty()) {
-            return listOf(RichTextNode.Text(font, widthCalculator, ""))
+            return listOf(RichTextNode.Text(""))
         }
 
         val html = Markdown.mdToHtml(text)
@@ -30,19 +29,19 @@ internal object Markdown {
                 }
             }
 
-        return renderRichText(font, widthCalculator, doc)
+        return renderRichText(doc)
     }
 
-    private fun renderRichText(font: Font, widthCalculator: (String, Font) -> Double, node: XmlNode): List<RichTextNode> {
+    private fun renderRichText(node: XmlNode): List<RichTextNode> {
         val output = mutableListOf<RichTextNode>()
 
         when (node) {
-            is XmlNode.Text -> output += RichTextNode.Text(font, widthCalculator, node.content)
+            is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
                 if (node.name == "a") {
                     val href = node.attributes["href"] ?: ""
                     val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
-                    output += Hyperlink.HyperlinkElement(font, widthCalculator, text, href)
+                    output += Hyperlink.HyperlinkElement(text, href)
                     return output
                 }
 
@@ -52,7 +51,7 @@ internal object Markdown {
                 }
 
                 if (node.name == "softbreak") {
-                    output += RichTextNode.Text(font, widthCalculator, " ")
+                    output += RichTextNode.Text(" ")
                     return output
                 }
 
@@ -65,7 +64,7 @@ internal object Markdown {
                     ?: Pair(emptyList(), emptyList())
 
                 output += prefix
-                output += node.children.flatMap { renderRichText(font, widthCalculator, it) }
+                output += node.children.flatMap(::renderRichText)
                 output += suffix
             }
         }
