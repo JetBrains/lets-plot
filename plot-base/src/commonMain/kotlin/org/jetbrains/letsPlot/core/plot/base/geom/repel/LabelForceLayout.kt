@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.getXVector
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.getYVector
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.hadamard
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.sign
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle.Companion.savedNormalize
 import kotlin.math.*
 import kotlin.random.Random
@@ -103,8 +105,7 @@ class LabelForceLayout(
                 }
 
                 label.setForce(force.mul(easeFactor))
-                clampToBounds(label, bounds)
-                // todo: try to add random force if boundary is reached
+                clampToBounds(label)
 
                 overlapsCount += overlaps
             }
@@ -192,7 +193,7 @@ class LabelForceLayout(
         }
     }
 
-    private fun clampToBounds(labelItem: LabelItem, bounds: DoubleRectangle) {
+    private fun clampToBounds(labelItem: LabelItem) {
         val bbox = labelItem.box.bbox
 
         val dx = when {
@@ -207,7 +208,18 @@ class LabelForceLayout(
             else -> 0.0
         }
 
-        labelItem.updatePosition(applyDirection(DoubleVector(dx, dy)))
+        val shift = DoubleVector(dx, dy)
+
+        if (shift == DoubleVector.ZERO) {
+            labelItem.clamped = false
+        } else {
+            if (labelItem.clamped) {
+                val additional = shift.sign().hadamard(bbox.dimension)
+                labelItem.updatePosition(applyDirection(shift.add(additional)))
+            }
+            labelItem.updatePosition(applyDirection(shift))
+            labelItem.clamped = true
+        }
     }
 
     private fun resolveSegmentIntersection(labelItem: LabelItem) {
@@ -286,6 +298,7 @@ class LabelForceLayout(
             get() = box.hypot / 2
         val expanded: TransformedRectangle
             get() = box.expand(padding / 2)
+        var clamped = false
 
         private var velocity = DoubleVector.ZERO
         private val friction = 0.7
