@@ -66,6 +66,9 @@ class SvgCanvasFigure(
 
         canvasControl.addChild(canvas)
 
+        // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
+        render(rootMapper.target, canvas)
+
         anim.start()
 
         return Registration.Companion.EMPTY

@@ -68,7 +68,8 @@ class MagickCanvasControl(
         eventSpec: MouseEventSpec,
         eventHandler: EventHandler<MouseEvent>
     ): Registration {
-        TODO("Not yet implemented")
+        println("MagickCanvasControl.addEventHandler: $eventSpec")
+        return Registration.EMPTY
     }
 
     override fun <T> schedule(f: () -> T) {

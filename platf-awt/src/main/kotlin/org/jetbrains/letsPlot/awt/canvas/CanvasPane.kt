@@ -35,7 +35,7 @@ class CanvasPane(
 ) : JLayeredPane() {
     private val canvasControl: CanvasControl = AwtCanvasControl()
     private var figureRegistration: Registration = Registration.EMPTY
-    var mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
     var figure: CanvasFigure? = null
         set(value) {
@@ -147,5 +147,4 @@ class CanvasPane(
             animationTimerPeer.executor { f() }
         }
     }
-
 }

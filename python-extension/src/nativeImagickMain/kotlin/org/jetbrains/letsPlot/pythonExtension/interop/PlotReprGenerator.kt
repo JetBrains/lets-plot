@@ -153,6 +153,7 @@ object PlotReprGenerator {
 
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
                 plotSpec = processedSpec,
+                sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                 computationMessagesHandler = { println(it.joinToString("\n")) }
             )
 
