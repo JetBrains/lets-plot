@@ -17,25 +17,15 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import kotlin.math.roundToInt
 
 
 class MultilineLabel(
     val text: String,
-    wrapWidth: Int = -1,
-    markdown: Boolean = false
+    private val wrapWidth: Int = -1,
+    private val markdown: Boolean = false
 ) : SvgComponent() {
-    private var myLines: List<SvgTextElement> = RichText.toSvg(
-        text,
-        Font(
-            family = FontFamily("Lucida Grande, sans-serif", false),
-            size = 16,
-            isBold = false,
-            isItalic = false
-        ),
-        TextWidthEstimator::widthCalculator,
-        wrapWidth,
-        markdown = markdown
-    )
+    private var myLines: List<SvgTextElement> = emptyList()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -46,7 +36,7 @@ class MultilineLabel(
     private var yStart = 0.0
 
     init {
-        myLines.forEach(rootGroup.children()::add)
+        resetLines()
     }
 
     override fun buildComponent() {
@@ -117,6 +107,7 @@ class MultilineLabel(
     }
 
     private fun updateStyleAttribute() {
+        resetLines()
         val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
@@ -139,6 +130,20 @@ class MultilineLabel(
     fun setLineHeight(v: Double) {
         myLineHeight = v
         repositionLines()
+    }
+
+    private fun resetLines() {
+        // If there are any, remove the current text elements from the rootGroup
+        repeat(linesCount()) { rootGroup.children().removeLastOrNull() }
+        // The font is used here to estimate the width of the text
+        val font = Font(
+            family = FontFamily( myFontFamily ?: "sans-serif", false),
+            size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
+            isBold = myFontWeight == "bold",
+            isItalic = myFontStyle == "italic"
+        )
+        myLines = RichText.toSvg(text, font, TextWidthEstimator::widthCalculator, wrapWidth, markdown = markdown)
+        myLines.forEach(rootGroup.children()::add)
     }
 
     private fun repositionLines() {

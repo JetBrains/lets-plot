@@ -17,9 +17,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import kotlin.math.roundToInt
 
-class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
-    private val myText: SvgTextElement
+class TextLabel(private val text: String, private val markdown: Boolean = false) : SvgComponent() {
+    private var myText: SvgTextElement = SvgTextElement()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -27,20 +28,7 @@ class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
     private var myFontStyle: String? = null
 
     init {
-        // TextLabel is a single-line text element
-        val singleLineText = text.replace("\n", " ")
-        myText = RichText.toSvg(
-            singleLineText,
-            Font(
-                family = FontFamily("Lucida Grande, sans-serif", false),
-                size = 16,
-                isBold = false,
-                isItalic = false
-            ),
-            TextWidthEstimator::widthCalculator,
-            markdown = markdown
-        ).firstOrNull() ?: SvgTextElement()
-        rootGroup.children().add(myText)
+        resetText(init = true)
     }
 
     override fun buildComponent() {
@@ -115,7 +103,25 @@ class TextLabel(text: String, markdown: Boolean = false) : SvgComponent() {
         updateStyleAttribute()
     }
 
+    private fun resetText(init: Boolean = false) {
+        if (!init) {
+            rootGroup.children().removeLastOrNull()
+        }
+        // The font is used here to estimate the width of the text
+        val font = Font(
+            family = FontFamily( myFontFamily ?: "sans-serif", false),
+            size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
+            isBold = myFontWeight == "bold",
+            isItalic = myFontStyle == "italic"
+        )
+        // TextLabel is a single-line text element
+        val singleLineText = text.replace("\n", " ")
+        myText = RichText.toSvg(singleLineText, font, TextWidthEstimator::widthCalculator, markdown = markdown).firstOrNull() ?: SvgTextElement()
+        rootGroup.children().add(myText)
+    }
+
     private fun updateStyleAttribute() {
+        resetText()
         val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
