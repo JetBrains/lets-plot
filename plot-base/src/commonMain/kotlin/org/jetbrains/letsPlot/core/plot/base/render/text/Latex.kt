@@ -311,9 +311,9 @@ internal class Latex(
         val numerator: RichTextNode.Span,
         val denominator: RichTextNode.Span
     ) : RichTextNode.Span {
-        override val visualCharCount: Int = denominator.visualCharCount
+        override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return denominator.estimateWidth(font, widthCalculator)
+            return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
         }
 
         override fun render(context: RenderState): List<SvgElement> {
