@@ -10,7 +10,6 @@ import demoAndTestShared.parsePlotSpec
 class LatexElements {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            /*
             getPlotSpec("""Power degree: \\(a^b\\)""", listOf(
                 """\(2^a x^2\)""",
                 """\((1 + 2)(2^2 - (2 - 10^0))\)""",
@@ -38,9 +37,13 @@ class LatexElements {
                 """\( \omega \) and \( \Omega \)""",
                 """\( \pm \) and \( \neq \) and \( \unknown \)""",
             )),
-            */
             getPlotSpec("Fractions", listOf(
-                """\( 10 + \frac{a^2}{b + 1} - 2 \)""",
+                """\( \frac{a}{b} \)""",
+                """\( a + \frac{b}{c} \)""",
+                """\( \frac{a}{b} + c \)""",
+                """\( \frac{a}{b} + \frac{c}{d} \)""",
+                """\( \frac{a + 1}{b} + \frac{c}{d + 1} \)""",
+                """\( 10^{1000} - \frac{\Alpha^\beta - \gamma_\Delta}{\Omega} - \frac{\omega}{\alpha_\Beta - \Gamma^\delta} - 1000^{10} \)""",
             )),
         )
     }
