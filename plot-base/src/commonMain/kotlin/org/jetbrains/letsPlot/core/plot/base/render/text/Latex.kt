@@ -78,15 +78,22 @@ internal class Latex(
     }
 
     private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
+        fun parseNArgs(n: Int): List<RichTextNode.Span> {
+            val args = mutableListOf<RichTextNode.Span>()
+            repeat(n) {
+                require(iterator.next() is Token.OpenBrace) { "The formula cannot be parsed because the opening bracket '{' after the '${token.name}' command is missing" }
+                if (!iterator.hasNext()) {
+                    throw IllegalArgumentException("Expected $n arguments for command '${token.name}'")
+                }
+                val arg = parseGroup(iterator, level)
+                args.add(arg)
+            }
+            return args
+        }
+
         return when (token.name) {
-            // TODO: Refactor
-            "frac" -> {
-                val numeratorOpenBrace = iterator.next()
-                require(numeratorOpenBrace is Token.OpenBrace) { "Expected '{' after '\\frac'" }
-                val numerator = parseGroup(iterator, level)
-                val denominatorOpenBrace = iterator.next()
-                require(denominatorOpenBrace is Token.OpenBrace) { "Expected '{' after '\\frac{...}'" }
-                val denominator = parseGroup(iterator, level)
+            Token.Command.FRACTION -> {
+                val (numerator, denominator) = parseNArgs(2)
                 FractionNode(previousNodes, numerator, denominator)
             }
             // For other commands, we just replace the command with its name if it's not a special symbol
@@ -138,7 +145,11 @@ internal class Latex(
 
 
     private open class Token {
-        data class Command(val name: String) : Token()
+        data class Command(val name: String) : Token() {
+            companion object {
+                const val FRACTION = "frac"
+            }
+        }
         object OpenBrace : Token()
         object CloseBrace : Token()
         object Superscript : Token()
