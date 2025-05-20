@@ -115,16 +115,17 @@ class RichTextMarkdownTest {
     fun latex() {
         val richTextSvg = RichText.toSvg("""**foo** ***<span style="color:red">\\( bar^2 \\)</span>*** baz""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
 
-        assertThat(richTextSvg.tspans()).hasSize(7)
+        assertThat(richTextSvg.tspans()).hasSize(8)
 
-        val (foo, space, bar, pow, square) = richTextSvg.tspans()
-        val (lower, baz) = richTextSvg.tspans().drop(5)
+        val (foo, space, bar, pow, upper) = richTextSvg.tspans()
+        val (square, lower, baz) = richTextSvg.tspans().drop(5)
 
         assertTSpan(foo, "foo", bold = true)
         assertTSpan(space, " ")
         assertTSpan(bar, "bar", bold = true, italic = true, color = "red")
         assertTSpan(pow, " ", bold = true, italic = true, color = "red")
-        assertTSpan(square, "2", bold = true, italic = true, color = "red", sup = true)
+        assertTSpan(upper, "\u200B", bold = true, italic = true, color = "red", sup = true) // upper baseline
+        assertTSpan(square, "2", bold = true, italic = true, color = "red")
         assertTSpan(lower, "\u200B", bold = true, italic = true, color = "red", sub = true) // lower baseline
         assertTSpan(baz, " baz", sup = false)
     }

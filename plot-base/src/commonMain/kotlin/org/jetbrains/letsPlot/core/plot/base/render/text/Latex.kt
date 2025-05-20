@@ -112,13 +112,17 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
         }
         val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
+        // It is an analog of restoreBaselineTSpan, but for the initial shifting
+        // This is necessary for more complex formulas in which the index starts from another shift
+        val setBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+            // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
+            setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
+            setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
+        }
         val indexTSpanElements = content.render(ctx).mapIndexed { i, element ->
             element.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
-                }
-                if (i == 0) {
-                    setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
                 }
             }
         }
@@ -129,12 +133,12 @@ internal class Latex(
         // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
         // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
         val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-            // Size of shift depends on the font size, and it should be equal to the superscript shift size
+            // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
         }
 
-        return listOf(ctx.apply(indentTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)
+        return listOf(ctx.apply(indentTSpan), ctx.apply(setBaselineTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)
     }
 
     private fun estimateWidthForIndexNode(content: RichTextNode.Span, level: Int): Double {
