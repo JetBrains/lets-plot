@@ -44,6 +44,7 @@ class LatexElements {
                 """\( \frac{a}{b} + \frac{c}{d} \)""",
                 """\( \frac{a + 1}{b} + \frac{c}{d + 1} \)""",
                 """\( 10^{1000} - \frac{\Alpha^\beta - \gamma_\Delta}{\Omega} - \frac{\omega}{\alpha_\Beta - \Gamma^\delta} - 1000^{10} \)""",
+                """\( \alpha^\frac{1 + 2}{3} + \beta_{\frac{4}{5 + 6}} \)""",
             )),
         )
     }
