@@ -27,7 +27,7 @@ internal object Hyperlink {
     class HyperlinkElement(
         private val text: String,
         private val href: String,
-    ) : RichTextNode.Span() {
+    ) : RichTextNode.Span {
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)

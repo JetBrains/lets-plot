@@ -73,18 +73,16 @@ object RichText {
         return wrappedLines
     }
 
-    private fun wrap(
-        lines: List<List<RichTextNode>>,
-        wrapLength: Int,
-        maxLinesCount: Int
-    ): List<List<RichTextNode>> {
+    private fun wrap(lines: List<List<RichTextNode>>, wrapLength: Int, maxLinesCount: Int): List<List<RichTextNode>> {
         val wrappedLines = lines.flatMap { line -> wrapLine(line, wrapLength) }
         return when {
             maxLinesCount < 0 -> wrappedLines
             wrappedLines.size < maxLinesCount -> wrappedLines
             else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(
                 mutableListOf(
-                    RichTextNode.Text("...")
+                    RichTextNode.Text(
+                        "..."
+                    )
                 )
             )
         }
@@ -166,10 +164,7 @@ object RichText {
             .map { (term, _) -> term }
     }
 
-    private fun wrapLine(
-        line: List<RichTextNode>,
-        wrapLength: Int = -1
-    ): List<List<RichTextNode>> {
+    private fun wrapLine(line: List<RichTextNode>, wrapLength: Int = -1): List<List<RichTextNode>> {
         if (wrapLength <= 0) {
             return listOf(line)
         }
@@ -230,15 +225,17 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        abstract class Span() : RichTextNode {
-            abstract val visualCharCount: Int // in chars, used for line wrapping
+        interface Span : RichTextNode {
+            val visualCharCount: Int // in chars, used for line wrapping
 
-            abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun render(context: RenderState): List<SvgElement>
+            fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+            fun render(context: RenderState): List<SvgElement>
             fun render(): List<SvgElement> = render(RenderState())
         }
 
-        class Text(val text: String) : Span() {
+        class Text(
+            val text: String
+        ) : Span {
             override val visualCharCount: Int = text.length
 
             override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {

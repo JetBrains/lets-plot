@@ -242,7 +242,7 @@ internal class Latex(
         }
     }
 
-    private inner class LatexElement(private val node: RichTextNode.Span) : RichTextNode.Span() {
+    private inner class LatexElement(private val node: RichTextNode.Span) : RichTextNode.Span {
         override val visualCharCount: Int = node.visualCharCount
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
@@ -253,7 +253,7 @@ internal class Latex(
         }
     }
 
-    private inner class TextNode(val content: String) : RichTextNode.Span() {
+    private inner class TextNode(val content: String) : RichTextNode.Span {
         override val visualCharCount: Int = content.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(content, font)
@@ -264,7 +264,7 @@ internal class Latex(
         }
     }
 
-    private inner class GroupNode(val children: List<RichTextNode.Span>) : RichTextNode.Span() {
+    private inner class GroupNode(val children: List<RichTextNode.Span>) : RichTextNode.Span {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
@@ -275,7 +275,7 @@ internal class Latex(
         }
     }
 
-    private inner class SuperscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span() {
+    private inner class SuperscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
@@ -285,7 +285,7 @@ internal class Latex(
         }
     }
 
-    private inner class SubscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span() {
+    private inner class SubscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
@@ -299,7 +299,7 @@ internal class Latex(
         val previousNodes: List<RichTextNode.Span> = emptyList(),
         val numerator: RichTextNode.Span,
         val denominator: RichTextNode.Span
-    ) : RichTextNode.Span() {
+    ) : RichTextNode.Span {
         override val visualCharCount: Int = denominator.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return denominator.estimateWidth(font, widthCalculator)
