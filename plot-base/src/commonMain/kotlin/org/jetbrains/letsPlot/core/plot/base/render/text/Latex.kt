@@ -48,18 +48,18 @@ internal class Latex(
     }
 
     private fun parse(tokens: Sequence<Token>): RichTextNode.Span {
-        return parseGroup(tokens.iterator(), level = 0)
+        return parseGroup(tokens.iterator(), level = 0, emptyList())
     }
 
-    private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
+    private fun parseGroup(iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): GroupNode {
         val nodes = mutableListOf<RichTextNode.Span>()
         while (iterator.hasNext()) {
             when (val token = iterator.next()) {
-                is Token.Command -> nodes.add(parseCommand(token, iterator, level, nodes.toList()))
-                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
+                is Token.Command -> nodes.add(parseCommand(token, iterator, level, previousNodes + nodes.toList()))
+                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level, previousNodes + nodes.toList()))
                 is Token.CloseBrace -> break
-                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1, nodes.toList()), level))
-                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1, nodes.toList()), level))
+                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1, previousNodes + nodes.toList()), level))
+                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1, previousNodes + nodes.toList()), level))
                 is Token.Text -> nodes.add(TextNode(token.content))
                 is Token.Space -> continue
                 is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
@@ -70,7 +70,7 @@ internal class Latex(
 
     private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
         return when (val nextToken = iterator.next()) {
-            is Token.OpenBrace -> parseGroup(iterator, level)
+            is Token.OpenBrace -> parseGroup(iterator, level, previousNodes)
             is Token.Text -> TextNode(nextToken.content)
             is Token.Command -> parseCommand(nextToken, iterator, level, previousNodes)
             else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
@@ -85,7 +85,7 @@ internal class Latex(
                 if (!iterator.hasNext()) {
                     throw IllegalArgumentException("Expected $n arguments for command '${token.name}'")
                 }
-                val arg = parseGroup(iterator, level)
+                val arg = parseGroup(iterator, level, previousNodes + args)
                 args.add(arg)
             }
             return args
