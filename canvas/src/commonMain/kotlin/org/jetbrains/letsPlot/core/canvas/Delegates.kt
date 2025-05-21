@@ -104,6 +104,14 @@ open class CanvasControlDelegate(
     override fun addChild(canvas: Canvas) {}
     override fun addChild(index: Int, canvas: Canvas) {}
     override fun removeChild(canvas: Canvas) {}
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
+    }
+
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : AnimationTimer {
             override fun start() {}

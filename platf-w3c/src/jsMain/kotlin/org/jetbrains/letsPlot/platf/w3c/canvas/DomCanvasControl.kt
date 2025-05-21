@@ -104,6 +104,15 @@ class DomCanvasControl(
         myRootElement.removeChild((canvas as DomCanvas).canvasElement)
     }
 
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        println("DomCanvasControl.onResize() - NOT IMPLEMENTED")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
+    }
+
     override fun <T> schedule(f: () -> T) {
         f()
     }

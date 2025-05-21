@@ -37,6 +37,15 @@ class MagickCanvasControl(
         children.remove(canvas)
     }
 
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        //TODO("onResize() - Not yet implemented")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("snapshot() - Not yet implemented")
+    }
+
     override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
         return object : AnimationProvider.AnimationTimer {
             override fun start() {
@@ -68,7 +77,7 @@ class MagickCanvasControl(
         eventSpec: MouseEventSpec,
         eventHandler: EventHandler<MouseEvent>
     ): Registration {
-        TODO("Not yet implemented")
+        return Registration.EMPTY
     }
 
     override fun <T> schedule(f: () -> T) {

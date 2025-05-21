@@ -153,6 +153,7 @@ object PlotReprGenerator {
 
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
                 plotSpec = processedSpec,
+                sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                 computationMessagesHandler = { println(it.joinToString("\n")) }
             )
 
@@ -182,6 +183,7 @@ object PlotReprGenerator {
             //    return Py_BuildValue("s", outputFilePath)
             //}
         } catch (e: Throwable) {
+            e.printStackTrace()
             return null
         } finally {
             canvasReg?.dispose()

@@ -78,6 +78,15 @@ class JavafxCanvasControl(
         myRoot.children.remove((canvas as JavafxCanvas).nativeCanvas)
     }
 
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        println("JavafxCanvasControl.onResize() - NOT IMPLEMENTED")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
+    }
+
     override fun <T> schedule(f: () -> T) {
         JavafxCanvasUtil.runInJavafxThread(f)
     }

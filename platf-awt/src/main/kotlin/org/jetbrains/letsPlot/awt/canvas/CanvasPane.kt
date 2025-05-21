@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import java.awt.Graphics2D
 import java.awt.Rectangle
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -35,7 +37,7 @@ class CanvasPane(
 ) : JLayeredPane() {
     private val canvasControl: CanvasControl = AwtCanvasControl()
     private var figureRegistration: Registration = Registration.EMPTY
-    var mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
     var figure: CanvasFigure? = null
         set(value) {
@@ -59,13 +61,17 @@ class CanvasPane(
     override fun isPaintingOrigin(): Boolean = true
 
     inner class AwtCanvasControl : CanvasControl {
-        private val animationTimerPeer: AwtAnimationTimerPeer = AwtAnimationTimerPeer()
-
-        private val myMappedCanvases = HashMap<Canvas, JComponent>()
         override val pixelDensity: Double
             get() = this@CanvasPane.pixelDensity
+
         override val size: Vector
-            get() = TODO()
+            get() = Vector(
+                x = this@CanvasPane.width,
+                y = this@CanvasPane.height
+            )
+
+        private val animationTimerPeer: AwtAnimationTimerPeer = AwtAnimationTimerPeer()
+        private val myMappedCanvases = HashMap<Canvas, JComponent>()
 
         override fun addChild(canvas: Canvas) {
             addChild(componentCount, canvas)
@@ -82,6 +88,26 @@ class CanvasPane(
             remove(myMappedCanvases[canvas])
             revalidate()
             myMappedCanvases.remove(canvas)
+        }
+
+        override fun onResize(listener: (Vector) -> Unit): Registration {
+            val sizeListener = object : ComponentAdapter() {
+                override fun componentResized(e: ComponentEvent?) {
+                    listener(size)
+                }
+            }
+
+            addComponentListener(sizeListener)
+
+            return object : Registration() {
+                override fun doRemove() {
+                    this@CanvasPane.removeComponentListener(sizeListener)
+                }
+            }
+        }
+
+        override fun snapshot(): Canvas.Snapshot {
+            TODO("Not yet implemented")
         }
 
         override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
@@ -147,5 +173,4 @@ class CanvasPane(
             animationTimerPeer.executor { f() }
         }
     }
-
 }
