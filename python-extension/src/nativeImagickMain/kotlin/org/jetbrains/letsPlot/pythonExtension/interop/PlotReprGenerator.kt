@@ -183,6 +183,7 @@ object PlotReprGenerator {
             //    return Py_BuildValue("s", outputFilePath)
             //}
         } catch (e: Throwable) {
+            e.printStackTrace()
             return null
         } finally {
             canvasReg?.dispose()

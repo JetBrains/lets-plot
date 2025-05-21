@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 interface CanvasEventDispatcher {
     fun dispatchMouseEvent(kind: MouseEventSpec, e: MouseEvent)
     fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration
-    fun dispatchFrom(mouseEventSource: MouseEventSource): Registration {
+    fun addEventSource(mouseEventSource: MouseEventSource): Registration {
         val reg = CompositeRegistration()
         reg.add(mouseEventSource.addEventHandler(MouseEventSpec.MOUSE_ENTERED, handler { dispatchMouseEvent(MouseEventSpec.MOUSE_ENTERED, it) }))
         reg.add(mouseEventSource.addEventHandler(MouseEventSpec.MOUSE_LEFT, handler { dispatchMouseEvent(MouseEventSpec.MOUSE_LEFT, it) }))

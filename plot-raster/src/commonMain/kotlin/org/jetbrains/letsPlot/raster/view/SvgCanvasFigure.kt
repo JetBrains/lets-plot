@@ -23,24 +23,23 @@ import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
 import kotlin.math.ceil
 
-class SvgCanvasFigure(
-    private val svgSvgElement: SvgSvgElement
-) : CanvasFigure {
-    val width = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
-    val height = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
+    private var nodeContainer: SvgNodeContainer? = null
+    private var canvasPeer: SvgCanvasPeer? = null
+    private var canvas: Canvas? = null
+
+    var svgSvgElement: SvgSvgElement = svg
+        set(value) {
+            field = value
+            mapSvgSvgElement(value)
+        }
+
+    val width get() = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
+    val height get() = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
     private lateinit var canvasControl: CanvasControl
-    private val nodeContainer = SvgNodeContainer(svgSvgElement)  // attach root
     private val myBounds = ValueProperty(Rectangle(0, 0, width, height))
-
-    init {
-        nodeContainer.addListener(object : SvgNodeContainerListener {
-            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = needRedraw()
-            override fun onNodeAttached(node: SvgNode) = needRedraw()
-            override fun onNodeDetached(node: SvgNode) = needRedraw()
-        })
-    }
 
     override fun bounds(): ReadableProperty<Rectangle> {
         return myBounds
@@ -48,30 +47,54 @@ class SvgCanvasFigure(
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
         this.canvasControl = canvasControl
-        val canvasPeer = SvgCanvasPeer(
-            textMeasurer = TextMeasurer.create(canvasControl)
-        )
+        canvasControl.onResize {
+            val newSize = Vector(it.x, it.y)
+            val old = canvas!!
+            canvas = canvasControl.createCanvas(newSize)
+            canvas!!.context2d.drawImage(old.immidiateSnapshot())
+            canvasControl.addChild(canvas!!)
+            canvasControl.removeChild(old)
+        }
+        canvasPeer = SvgCanvasPeer(textMeasurer = TextMeasurer.create(canvasControl))
+        mapSvgSvgElement(svgSvgElement)
 
-        rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-        rootMapper.attachRoot(MappingContext())
-
-        val canvas = canvasControl.createCanvas(Vector(width, height))
+        canvas = canvasControl.createCanvas(Vector(width, height))
         val anim = canvasControl.createAnimationTimer(object : AnimationProvider.AnimationEventHandler {
             override fun onEvent(millisTime: Long): Boolean {
+                val canvas = canvas ?: return false
                 canvas.context2d.clearRect(DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble()))
                 render(rootMapper.target, canvas)
                 return true
             }
         })
 
-        canvasControl.addChild(canvas)
+        canvasControl.addChild(canvas!!)
 
         // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
-        render(rootMapper.target, canvas)
+
+        render(rootMapper.target, canvas!!)
 
         anim.start()
 
         return Registration.Companion.EMPTY
+    }
+
+    private fun mapSvgSvgElement(value: SvgSvgElement) {
+        val canvasPeer = canvasPeer ?: return // not yet attached
+
+        nodeContainer = SvgNodeContainer(value)  // attach root
+        nodeContainer!!.addListener(object : SvgNodeContainerListener {
+            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = needRedraw()
+            override fun onNodeAttached(node: SvgNode) = needRedraw()
+            override fun onNodeDetached(node: SvgNode) = needRedraw()
+        })
+        rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
+        rootMapper.attachRoot(MappingContext())
+
+        canvas?.let {
+            render(rootMapper.target, it)
+        }
+
     }
 
     private fun render(elements: List<Element>, canvas: Canvas) {

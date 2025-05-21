@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.raster.builder
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -27,12 +28,13 @@ object MonolithicCanvas {
         return plotCanvasFigure
     }
 
-    internal fun buildPlotFromProcessedSpecs(
+    fun buildPlotFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         sizingPolicy: SizingPolicy,
-        computationMessagesHandler: (List<String>) -> Unit
+        computationMessagesHandler: (List<String>) -> Unit,
+        containerSize: DoubleVector? = null,
     ): ViewModel {
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy)
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy)
         if (buildResult is MonolithicCommon.PlotsBuildResult.Error) {
             return SimpleModel(createErrorSvgText(buildResult.error), UnsupportedToolEventDispatcher())
         }

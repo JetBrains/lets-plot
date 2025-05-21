@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
-import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
@@ -16,33 +15,57 @@ import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 
 class PlotCanvasFigure internal constructor(
-    processedSpec: Map<String, Any>,
-    sizingPolicy: SizingPolicy,
-    computationMessagesHandler: (List<String>) -> Unit
+    private val processedSpec: Map<String, Any>,
+    private val sizingPolicy: SizingPolicy,
+    private val computationMessagesHandler: (List<String>) -> Unit
 ) : CanvasFigure {
-    private val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(processedSpec, sizingPolicy, computationMessagesHandler)
-
-    private var plotSvgFigure: SvgCanvasFigure? = null
-
-    val plotWidth = vm.bounds.dimension.x
-    val plotHeight = vm.bounds.dimension.y
+    val plotWidth: Int get() = plotSvgFigure.svgSvgElement.width().get()?.toInt() ?: 0
+    val plotHeight: Int get() = plotSvgFigure.svgSvgElement.height().get()?.toInt() ?: 0
 
     override fun bounds(): ReadableProperty<Rectangle> {
-        return plotSvgFigure?.bounds() ?: ValueProperty(Rectangle(0, 0, 0, 0))
+        return plotSvgFigure.bounds()
     }
 
+    private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure()
+    private var plotReg = CompositeRegistration()
+
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        val plotSvg = vm.svg
-        val plotEventPeer = vm.eventDispatcher
-
-        plotSvgFigure = SvgCanvasFigure(plotSvg)
-        plotEventPeer.dispatchFrom(canvasControl)
-
         val reg = CompositeRegistration(
-            Registration.from(vm),
-            plotSvgFigure!!.mapToCanvas(canvasControl)
+            plotSvgFigure.mapToCanvas(canvasControl),
+            canvasControl.onResize {
+                buildPlot(canvasControl)
+            },
+            // via closure because plotReg may change after resize
+            object : Registration() {
+                override fun doRemove() {
+                    // via closure because plotReg may change after resize
+                    // via closure because plotReg may change after resize
+                    this@PlotCanvasFigure.plotReg.dispose() // via closure because plotReg may change after resize
+                }
+            }
         )
 
+        buildPlot(canvasControl)
+
         return reg
+    }
+
+    private fun buildPlot(canvasControl: CanvasControl) {
+        plotReg.dispose()
+
+        val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
+            plotSpec = processedSpec,
+            sizingPolicy = sizingPolicy,
+            containerSize = canvasControl.size.toDoubleVector(),
+            computationMessagesHandler = computationMessagesHandler
+        )
+
+        plotSvgFigure.svgSvgElement = vm.svg
+
+
+        plotReg = CompositeRegistration(
+            Registration.from(vm),
+            vm.eventDispatcher.addEventSource(canvasControl)
+        )
     }
 }

@@ -26,7 +26,7 @@ import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.JComponent
 
-
+// TODO: remove this class and use CanvasPane instead
 class AwtCanvasControl(
     override val size: Vector,
     private val animationTimerPeer: AwtAnimationTimerPeer,
@@ -54,6 +54,15 @@ class AwtCanvasControl(
         myComponent.remove(myMappedCanvases[canvas])
         myComponent.revalidate()
         myMappedCanvases.remove(canvas)
+    }
+
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        TODO() // never happens. LiveMap (the only user of this class) uses another approach to map canvas to component
+        // See CanvasPane for proper implementation
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
     }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
