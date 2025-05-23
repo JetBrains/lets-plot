@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -22,6 +23,9 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val dataType: DataType
     protected val labelLengthLimit: Int
     protected val expFormat: ExponentFormat
+
+    // TODO: provide scale with tz.
+    private val tz: TimeZone? = null
 
     private var createdScaleBreaks: ScaleBreaks? = null
     private var createdScaleBreaksShortened: Boolean = false
@@ -85,7 +89,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
     protected fun formatValue(value: Any): String {
         val formatter = providedFormatter
-            ?: FormatterUtil.byDataType(dataType, expFormat)
+            ?: FormatterUtil.byDataType(dataType, expFormat, tz = tz)
 
         return formatter.invoke(value)
     }

@@ -6,11 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.Time
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -60,7 +56,7 @@ class TimeTickFormatTest {
     }
 
     companion object {
-        private val TZ = UTC
+        private val TZ = TimeZone.UTC
 
         private val BASE_DATE = Date(1, Month.JANUARY, 2013)
         private val BASE_TIME = Time(7, 7, 7, 7)             // 07:07:07.007

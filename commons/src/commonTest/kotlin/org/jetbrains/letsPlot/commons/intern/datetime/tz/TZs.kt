@@ -18,7 +18,13 @@ internal object TZs {
     const val HONG_KONG = "Asia/Hong_Kong"
     const val SINGAPORE = "Asia/Singapore"
 
-    val moscow: TimeZone get() = TimeZone(MOSCOW)
-    val berlin: TimeZone get() = TimeZone(BERLIN)
-    val newYork: TimeZone get() = TimeZone(NEW_YORK)
+    val moscow: TimeZone = TimeZone(MOSCOW)
+    val berlin: TimeZone = TimeZone(BERLIN)
+    val paris: TimeZone = TimeZone(PARIS)
+    val newYork: TimeZone = TimeZone(NEW_YORK)
+    val london: TimeZone = TimeZone(LONDON)
+    val tokyo: TimeZone = TimeZone(TOKYO)
+    val sydney: TimeZone = TimeZone(SYDNEY)
+    val hongKong: TimeZone = TimeZone(HONG_KONG)
+    val singapore: TimeZone = TimeZone(SINGAPORE)
 }

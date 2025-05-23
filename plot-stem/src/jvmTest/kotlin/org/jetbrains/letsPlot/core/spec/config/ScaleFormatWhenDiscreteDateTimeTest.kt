@@ -6,11 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
@@ -25,9 +21,9 @@ class ScaleFormatWhenDiscreteDateTimeTest {
     @Test
     fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
         val instants = List(5) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), UTC)
+            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ)
         }.map {
-            it.toInstant(UTC).toEpochMilliseconds().toDouble()
+            it.toEpochMilliseconds(TZ).toDouble()
         }
 
         // For a discrete scale, a formatter is applied as for a continuous scale
@@ -41,9 +37,9 @@ class ScaleFormatWhenDiscreteDateTimeTest {
     @Test
     fun `data when discrete scale chooses a better formatter than the continuous scale`() {
         val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), UTC)
+            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ)
         }.map {
-            it.toInstant(UTC).toEpochMilliseconds().toDouble()
+            it.toEpochMilliseconds(TZ).toDouble()
         }
 
         val formattedForContinuous = listOf(
@@ -188,5 +184,9 @@ class ScaleFormatWhenDiscreteDateTimeTest {
             Option.Plot.SCALES to discreteScales.map(::discreteScale),
             Option.Meta.DATA_META to dateTimeAnnotation("v") + mappingAnnotation(asDiscreteAes)
         )
+    }
+
+    companion object {
+        private val TZ = TimeZone.UTC
     }
 }

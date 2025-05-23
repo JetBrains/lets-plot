@@ -185,7 +185,7 @@ class DateTimeBreaksHelperTest {
         private val BASE_INSTANT: Instant = DateTime(
             BASE_DATE,
             BASE_TIME
-        ).toInstant(TimeZone.UTC)
+        ).toInstant(TZ)
 
         private val MILLISECONDS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).milliseconds }
         private val SECONDS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).seconds }

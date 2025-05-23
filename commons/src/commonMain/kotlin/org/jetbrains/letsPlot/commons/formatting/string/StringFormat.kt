@@ -15,7 +15,8 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 class StringFormat private constructor(
     private val pattern: String,
     private val formatType: FormatType,
-    expFormat: ExponentFormat?
+    expFormat: ExponentFormat?,
+    private val tz: TimeZone?,
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
@@ -74,7 +75,7 @@ class StringFormat private constructor(
     private fun initFormatter(
         formatPattern: String,
         formatType: FormatType,
-        expFormat: ExponentFormat?
+        expFormat: ExponentFormat?,
     ): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
             return Any::toString
@@ -100,7 +101,10 @@ class StringFormat private constructor(
             }
 
             DATETIME_FORMAT -> {
-                return DateTimeFormatUtil.createInstantFormatter(formatPattern, TimeZone.UTC)
+                return DateTimeFormatUtil.createInstantFormatter(
+                    formatPattern,
+                    tz ?: TimeZone.UTC,
+                )
             }
 
             else -> {
@@ -121,7 +125,7 @@ class StringFormat private constructor(
 
     companion object {
         // Format strings contain “replacement fields” surrounded by braces {}.
-        // Anything that is not contained in braces is considered literal text, which is copied unchanged to the output.
+        // Anything not contained in braces is considered literal text, which is copied unchanged to the output.
         // If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}.
         //     "text" -> "text"
         //     "{{text}}" -> "{text}"
@@ -136,18 +140,34 @@ class StringFormat private constructor(
             pattern: String,
             type: FormatType? = null,
             formatFor: String? = null,
-            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW)
+            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
+            tz: TimeZone?,
         ): StringFormat {
-            return create(pattern, type, formatFor, expectedArgs = 1, expFormat = expFormat)
+            return create(
+                pattern,
+                type,
+                formatFor,
+                expectedArgs = 1,
+                expFormat = expFormat,
+                tz
+            )
         }
 
         fun forNArgs(
             pattern: String,
             argCount: Int,
             formatFor: String? = null,
-            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW)
+            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
+            tz: TimeZone?,
         ): StringFormat {
-            return create(pattern, STRING_FORMAT, formatFor, argCount, expFormat = expFormat)
+            return create(
+                pattern,
+                STRING_FORMAT,
+                formatFor,
+                argCount,
+                expFormat = expFormat,
+                tz,
+            )
         }
 
         private fun detectFormatType(pattern: String): FormatType {
@@ -163,10 +183,15 @@ class StringFormat private constructor(
             type: FormatType? = null,
             formatFor: String? = null,
             expectedArgs: Int = -1,
-            expFormat: ExponentFormat? = null
+            expFormat: ExponentFormat? = null,
+            tz: TimeZone?,
         ): StringFormat {
             val formatType = type ?: detectFormatType(pattern)
-            return StringFormat(pattern, formatType, expFormat = expFormat).also {
+            return StringFormat(
+                pattern, formatType,
+                expFormat = expFormat,
+                tz
+            ).also {
                 if (expectedArgs > 0) {
                     require(it.argsNumber == expectedArgs) {
                         @Suppress("NAME_SHADOWING")

@@ -5,12 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.datetime.tz
 
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Instant
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.Time
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -29,17 +24,11 @@ class TimeZonesTest {
 
     @Test
     fun fromRealMillis() {
-        assertEquals(Date(4, Month.APRIL, 2012), Instant(1333497600000L).toDateTime(TimeZone.UTC).date)
+        assertEquals(
+            Date(4, Month.APRIL, 2012),
+            Instant(1333497600000L).toDateTime(TimeZone.UTC).date
+        )
     }
-
-//    @Test
-//    fun offsetFromUtc() {
-//        val instant = Instant(1335423695381L)
-//        assertEquals(
-//            "20120426T110135",
-//            offset("", Duration.HOUR.mul(4), TimeZone.Companion.UTC).toDateTime(instant).toString()
-//        )
-//    }
 
     @Test
     fun convertFromMoscowToBerlinSummer() {
@@ -92,15 +81,6 @@ class TimeZonesTest {
             bdtConv
         )
     }
-
-//    @Test
-//    fun timeDifferences() {
-//        val dt = DateTime(Date(1, Month.MAY, 2012))
-//        val instant = TimeZone.Companion.MOSCOW.toInstant(dt)
-//
-//        assertEquals(4, TimeZone.Companion.MOSCOW.getTimeZoneShift(instant).div(Duration.HOUR).toInt())
-//
-//    }
 
     @Test
     fun convertTimeAtDay() {
@@ -202,8 +182,8 @@ class TimeZonesTest {
     }
 
     private fun assertConversion(date: Date) {
-        val instant = DateTime(date).toInstant(TimeZone.UTC)
-        assertEquals(date, instant.toDateTime(TimeZone.UTC).date)
+        val instant = DateTime(date).toInstant(TZs.paris)
+        assertEquals(date, instant.toDateTime(TZs.paris).date)
     }
 
     fun convertTimeAtDay(

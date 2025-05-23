@@ -260,7 +260,7 @@ class TooltipAxisConfigTest {
         val instants = List(3) {
             DateTime(Date(1, Month.JANUARY, 2021)).add(
                 Duration.WEEK.mul(it.toLong()),
-                TimeZone.UTC
+                TZ
             )
         }.map {
             it.toEpochMilliseconds(TZ).toDouble()

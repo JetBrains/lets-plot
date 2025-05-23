@@ -9,7 +9,7 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.random.Random
 
 class DateTimeScaleX {
@@ -21,6 +21,8 @@ class DateTimeScaleX {
     }
 
     companion object {
+        private val TZ = TimeZone.UTC
+
         private const val SECOND = 1000.0
         private const val MINUTE = 60.0 * SECOND
         private const val HOUR = 60.0 * MINUTE
@@ -29,7 +31,7 @@ class DateTimeScaleX {
         fun plot(title: String, timeScale: Double): MutableMap<String, Any> {
             val n = 30
 
-            val instant = DateTime(Date(1, Month.FEBRUARY, 2003)).toInstant(UTC)
+            val instant = DateTime(Date(1, Month.FEBRUARY, 2003)).toInstant(TZ)
 
             val rnd = Random(0)
             val time = (0..n).map { instant.toEpochMilliseconds() + it * timeScale }.joinToString()

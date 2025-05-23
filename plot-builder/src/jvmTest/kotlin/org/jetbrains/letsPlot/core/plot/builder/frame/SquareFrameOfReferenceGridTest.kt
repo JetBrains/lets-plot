@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -195,6 +196,8 @@ class SquareFrameOfReferenceGridTest {
             plotContext = object : PlotContext {
                 override val expFormat: ExponentFormat
                     get() = error("unexpected call")
+
+                override val tz: TimeZone? = null
 
                 override fun hasScale(aes: Aes<*>): Boolean = error("unexpected call")
                 override fun getScale(aes: Aes<*>): Scale = error("unexpected call")

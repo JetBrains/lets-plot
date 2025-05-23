@@ -85,6 +85,6 @@ class DateTimeBreaksHelper(
             pattern
         }
 
-        formatter = providedFormatter ?: createInstantFormatter(pattern, TimeZone.UTC)
+        formatter = providedFormatter ?: createInstantFormatter(pattern, tz)
     }
 }

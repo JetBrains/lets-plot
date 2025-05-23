@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
@@ -60,6 +60,9 @@ abstract class PlotConfig(
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
+    // TODO: provide a time zonr (or null)
+    public val tz: TimeZone? = null
+
     init {
         val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
         val ownTheme = ThemeConfig(getMap(Option.Plot.THEME), fontFamilyRegistry).theme
@@ -106,7 +109,7 @@ abstract class PlotConfig(
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
-            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat)
+            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat, tz = tz)
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {
                 dataByLayer.add(layerConfig.combinedData)

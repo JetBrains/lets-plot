@@ -5,11 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.datetime
 
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.Time
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,7 +16,7 @@ class DateTimeFormatUtilTest {
         val baseInstant = DateTime(
             Date(7, Month.AUGUST, 2013),
             Time(7, 7, 7)
-        ).toInstant(UTC).toEpochMilliseconds()
+        ).toEpochMilliseconds(TZ)
 
         val m = format(
             baseInstant,
@@ -40,7 +36,7 @@ class DateTimeFormatUtilTest {
     }
 
     companion object {
-        private val TZ = UTC
+        private val TZ = TimeZone.UTC
 
         private fun format(epochMillis: Long, pattern: String): String {
             return DateTimeFormatUtil.format(epochMillis, pattern, TZ)

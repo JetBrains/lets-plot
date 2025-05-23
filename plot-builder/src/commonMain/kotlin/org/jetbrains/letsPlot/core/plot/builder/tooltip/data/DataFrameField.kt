@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -23,12 +24,23 @@ class DataFrameField(
     private lateinit var myVariable: DataFrame.Variable
     private var myFormatter: ((Any) -> String)? = null
 
-    private fun initFormatter(expFormat: StringFormat.ExponentFormat): (Any) -> String {
+    private fun initFormatter(expFormat: StringFormat.ExponentFormat, tz: TimeZone?): (Any) -> String {
         require(myFormatter == null)
 
         myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable, myDataAccess.defaultFormatters, expFormat)
-            else -> StringFormat.forOneArg(format, formatFor = name, expFormat = expFormat)::format
+            null -> TooltipFormatting.createFormatter(
+                myVariable,
+                myDataAccess.defaultFormatters,
+                expFormat,
+                tz = tz
+            )
+
+            else -> StringFormat.forOneArg(
+                format,
+                formatFor = name,
+                expFormat = expFormat,
+                tz = tz
+            )::format
         }
         return myFormatter!!
     }
@@ -48,7 +60,7 @@ class DataFrameField(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
-        val formatter = myFormatter ?: initFormatter(ctx.expFormat)
+        val formatter = myFormatter ?: initFormatter(ctx.expFormat, ctx.tz)
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,
