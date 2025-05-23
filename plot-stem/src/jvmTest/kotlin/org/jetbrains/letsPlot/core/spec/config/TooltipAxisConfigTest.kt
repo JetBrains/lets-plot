@@ -5,13 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
@@ -112,7 +107,7 @@ class TooltipAxisConfigTest {
             assertNoYTicks(geomLayer)
         }
 
-        // Unnecessary test - see comment above.
+        // Unnecessary test - see the comment above.
 //        run {
 //            val geomLayer = geomLayer(
 //                additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
@@ -203,7 +198,7 @@ class TooltipAxisConfigTest {
             assertEquals("0.3", getYTick(geomLayer))
         }
         run {
-            // add variable to tooltip line
+            // add variable to the tooltip line
             val geomLayer = geomLayer(
                 scaleFormat = null,
                 tooltipFormat = "tooltip = {} %",
@@ -267,7 +262,9 @@ class TooltipAxisConfigTest {
                 Duration.WEEK.mul(it.toLong()),
                 TimeZone.UTC
             )
-        }.map { TimeUtil.asInstantUTC(it).toDouble() }
+        }.map {
+            it.toEpochMilliseconds(TZ).toDouble()
+        }
         val dtData = mapOf("date" to instants, "v" to listOf(0, 1, 2))
         val dtMapping = mapOf(
             org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "v",
@@ -296,6 +293,9 @@ class TooltipAxisConfigTest {
             assertEquals("Jan 2021", getYTick(geomLayer, closedRange))
         }
         run {
+            // Likely this issue:
+            // "The tooltip format with {} in the pattern ignores the default formatting"
+            // https://github.com/JetBrains/lets-plot/issues/484
             val geomLayer = dtLayer(scaleFormat = "scale = {}", tooltipFormat = "tooltip = {}")
             //todo assertGeneralTooltip(geomLayer, "tooltip = 00:00")
             //todo assertYAxisTooltip(geomLayer, "tooltip = 00:00")
@@ -310,6 +310,8 @@ class TooltipAxisConfigTest {
     }
 
     companion object {
+        private val TZ = TimeZone.UTC
+
         private fun areEqual(expected: String, actual: String?, name: String, method: (String) -> Unit) {
             if (expected != actual) {
                 method("$name:\n\texpected: \"$expected\";\n\tactual: \"$actual\"")

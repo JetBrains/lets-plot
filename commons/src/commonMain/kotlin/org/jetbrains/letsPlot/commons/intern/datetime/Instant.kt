@@ -50,8 +50,4 @@ class Instant : Comparable<Instant> {
     }
 
     override fun toString() = kotlinxInstant.toString()
-
-//    companion object {
-//        fun now(): Instant = Instant(Clock.System.now())
-//    }
 }

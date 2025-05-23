@@ -10,7 +10,7 @@ import kotlinx.datetime.LocalDateTime as KotlinxLocalDateTime
 
 /**
  * Represents a date and time without timezone information.
- * I.e. this is a representation of a calendar date and wall-clock time.
+ * I.e., this is a representation of a calendar date and wall-clock time.
  * A.k.a. local date and time.
  */
 class DateTime : Comparable<DateTime> {
@@ -58,13 +58,23 @@ class DateTime : Comparable<DateTime> {
 
     override fun toString() = kotlinxLocalDateTime.toString()
 
-//    fun toPrettyString(): String {
-//        return time.toPrettyString() + " " + date.toPrettyString()
-//    }
+    fun toEpochMilliseconds(tz: TimeZone): Long {
+        return toInstant(tz).toEpochMilliseconds()
+    }
 
     companion object {
         val EPOCH = DateTime(Date.EPOCH, Time(0, 0, 0))
 
         fun parse(s: String): DateTime = DateTime(KotlinxLocalDateTime.parse(s))
+
+        fun ofYearStart(year: Int): DateTime {
+            val date = Date(1, Month.JANUARY, year)
+            return DateTime(date)
+        }
+
+        fun ofEpochMilliseconds(epochMs: Number, tz: TimeZone): DateTime {
+            val instant = Instant(epochMs.toLong())
+            return instant.toDateTime(tz)
+        }
     }
 }

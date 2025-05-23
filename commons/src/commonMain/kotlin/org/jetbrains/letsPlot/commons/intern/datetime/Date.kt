@@ -57,31 +57,6 @@ class Date : Comparable<Date> {
 
     override fun toString() = kotlinxLocalDate.toString()
 
-//    fun toPrettyString(): String {
-//        fun appendDay(result: StringBuilder) {
-//            if (day < 10) {
-//                result.append("0")
-//            }
-//            result.append(day)
-//        }
-//
-//        fun appendMonth(result: StringBuilder) {
-//            val month = this.month.number
-//            if (month < 10) {
-//                result.append("0")
-//            }
-//            result.append(month)
-//        }
-//
-//        val result = StringBuilder()
-//        appendDay(result)
-//        result.append(".")
-//        appendMonth(result)
-//        result.append(".")
-//        result.append(year)
-//        return result.toString()
-//    }
-
     companion object {
         val EPOCH = Date(1, Month.JANUARY, 1970)
 
