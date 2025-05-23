@@ -33,8 +33,8 @@ class StringFormat private constructor(
                     .map { it.groupValues[TEXT_IN_BRACES] }
                     .map { pattern ->
                         val formatType = detectFormatType(pattern)
-                        require(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
-                            error("Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'")
+                        check(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
+                            "Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'"
                         }
                         initFormatter(pattern, formatType, expFormat)
                     }
@@ -48,9 +48,10 @@ class StringFormat private constructor(
     fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
-        if (argsNumber != values.size) {
-            error("Can't format values $values with pattern '$pattern'. Wrong number of arguments: expected $argsNumber instead of ${values.size}")
+        check(argsNumber == values.size) {
+            "Can't format values $values with pattern '$pattern'. Wrong number of arguments: expected $argsNumber instead of ${values.size}"
         }
+
         return when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> {
                 require(myFormatters.size == 1)
