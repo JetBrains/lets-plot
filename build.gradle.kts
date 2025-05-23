@@ -167,21 +167,6 @@ if ((extra.getOrNull("enable_magick_canvas") as? String ?: "false").toBoolean())
         ?: defaultImageMagickLibPath
 
     extra.set("imagemagick_lib_path", imageMagickLibPath)
-
-    val initImageMagick by tasks.registering {
-        group = letsPlotTaskGroup
-        doLast {
-            exec {
-                this.workingDir = File(rootDir.path + "/platf-imagick")
-                commandLine(
-                    "python",
-                    "init_imagemagick.py"
-                )
-            }
-        }
-    }
-
-    logger.info("Run './gradlew initImageMagick' to initialize ImageMagick.")
 }
 
 // Generating JavaDoc task for each publication task.

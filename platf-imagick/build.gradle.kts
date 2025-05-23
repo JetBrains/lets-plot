@@ -14,7 +14,7 @@ val imagickDir = File(imageMagickLibPath)
 
 if (!imagickDir.exists() || !imagickDir.isDirectory) {
     throw GradleException("⚠️ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n\n" +
-            "./gradlew :initImageMagick\n\n" +
+            "bash platf-imagick/init_imagemagick.sh\n\n" +
             "or install conda-forge package 'imagemagick' (does not work for Windows)\n")
 }
 
