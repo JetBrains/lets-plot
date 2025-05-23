@@ -161,7 +161,12 @@ val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
 }
 
 if ((extra.getOrNull("enable_magick_canvas") as? String ?: "false").toBoolean()) {
-    extra.set("imagemagick_lib_path", rootDir.path + "/platf-imagick/imagick_deps")
+    val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/imagick_deps"
+    val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
+        ?: System.getenv("IMAGICK_LIB_PATH")
+        ?: defaultImageMagickLibPath
+
+    extra.set("imagemagick_lib_path", imageMagickLibPath)
 
     val initImageMagick by tasks.registering {
         group = letsPlotTaskGroup

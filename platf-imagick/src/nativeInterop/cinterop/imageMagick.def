@@ -1,4 +1,3 @@
 headers = MagickWand/MagickWand.h MagickCore/MagickCore.h
-compilerOpts = "-DMAGICKCORE_HDRI_ENABLE=0"
-linkerOpts = -lMagickWand-7.Q16HDRI -lMagickCore-7.Q16HDRI
+compilerOpts = "-DMAGICKCORE_HDRI_ENABLE=1"
 package = ImageMagick

@@ -9,10 +9,13 @@ plugins {
     kotlin("multiplatform")
 }
 
-val imagickDir = rootProject.file("platf-imagick/imagick_deps")
+val imageMagickLibPath = rootProject.project.extra["imagemagick_lib_path"].toString()
+val imagickDir = File(imageMagickLibPath)
 
 if (!imagickDir.exists() || !imagickDir.isDirectory) {
-    logger.warn("⚠️ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n./gradlew :initImageMagick")
+    throw GradleException("⚠️ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n\n" +
+            "./gradlew :initImageMagick\n\n" +
+            "or install conda-forge package 'imagemagick' (does not work for Windows)\n")
 }
 
 val os: OperatingSystem = OperatingSystem.current()
@@ -34,14 +37,15 @@ kotlin {
                 compilerOpts += listOf("-D_LIB")
             }
             compilerOpts += listOf(
-                "-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7",
+                "-I${imageMagickLibPath}/include/ImageMagick-7",
             )
         }
     }
 
     target.binaries.all {
         linkerOpts += listOf(
-            "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
+            "-Wl,-rpath,${imageMagickLibPath}/lib",
+            "-L${imageMagickLibPath}/lib",
             "-lMagickWand-7.Q16HDRI",
             "-lMagickCore-7.Q16HDRI",
             "-lfontconfig",
@@ -49,12 +53,12 @@ kotlin {
             "-lexpat",
             "-lz"
         )
-        /*if (target == mingwX64()) {
+        if (os.isWindows) {
             linkerOpts += listOf(
                 "-lurlmon",
                 "-lgdi32"
             )
-        }*/
+        }
     }
 
     sourceSets {

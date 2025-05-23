@@ -50,13 +50,12 @@ kotlin {
             "-lexpat",
             "-lz"
         )
-
-      /*  if (target == mingwX64()) {
+        if (os.isWindows) {
             linkerOpts += listOf(
                 "-lurlmon",
                 "-lgdi32"
             )
-        }*/
+        }
     }
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
