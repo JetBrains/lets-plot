@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.formatting.string
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil
 import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
@@ -100,8 +99,7 @@ class StringFormat private constructor(
             }
 
             DATETIME_FORMAT -> {
-                val format = DateTimeFormat(formatPattern)
-                return DateTimeFormatUtil.createInstantFormatter(format, TimeZone.UTC)
+                return DateTimeFormatUtil.createInstantFormatter(formatPattern, TimeZone.UTC)
             }
 
             else -> {

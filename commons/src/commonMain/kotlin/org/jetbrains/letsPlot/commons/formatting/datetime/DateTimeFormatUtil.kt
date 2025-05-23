@@ -23,9 +23,14 @@ object DateTimeFormatUtil {
         return format.apply(dateTime)
     }
 
-    fun createInstantFormatter(format: DateTimeFormat, tz: TimeZone): (Any) -> String = { epochMillis ->
-        check(epochMillis is Number) { "Expected millis from epoch (Number), but got '$epochMillis' (${epochMillis::class.simpleName})" }
-        format(epochMillis, format, tz)
+    fun createInstantFormatter(pattern: String, tz: TimeZone): (Any) -> String {
+        val format = DateTimeFormat(pattern)
+        return { epochMillis ->
+            check(epochMillis is Number) {
+                "Expected Unix timestamp in milliseconds (Number), but got '$epochMillis' (${epochMillis::class.simpleName})"
+            }
+            format(epochMillis, format, tz)
+        }
     }
 
     private fun format(epochMillis: Number, format: DateTimeFormat, tz: TimeZone): String {

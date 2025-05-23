@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.createInstantFormatter
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
@@ -30,11 +29,11 @@ class DateTimeBreaksHelper(
     init {
         val step = targetStep
 
-        if (step < 1000) {        // milliseconds
+        pattern = if (step < 1000) {        // milliseconds
             val formatterFactory = TimeScaleTickFormatterFactory(minInterval)
-            pattern = formatterFactory.formatPattern(step)
             // compute a step so that it is multiple of automatic time steps
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
+            formatterFactory.formatPattern(step)
 
         } else {
 
@@ -46,12 +45,11 @@ class DateTimeBreaksHelper(
                 ticks = minInterval.range(start, end).toMutableList()
             }
 
-            if (ticks != null && ticks.size <= count) {
+            val pattern = if (ticks != null && ticks.size <= count) {
                 // same or smaller interval requested -> stay with the min interval
-                pattern = minInterval!!.tickFormatPattern
+                minInterval!!.tickFormatPattern
                 // otherwise - larger step requested -> compute ticks
             } else if (step > YearInterval.MS) {        // years
-                pattern = YearInterval.TICK_FORMAT
                 ticks = ArrayList()
                 val startDateTime = TimeUtil.asDateTimeUTC(start)
                 var startYear = startDateTime.year
@@ -70,19 +68,21 @@ class DateTimeBreaksHelper(
                     val tickDate = TimeUtil.yearStart(round(tickYear).toInt())
                     ticks.add(TimeUtil.asInstantUTC(tickDate).toDouble())
                 }
+                YearInterval.TICK_FORMAT
             } else {
                 val interval = NiceTimeInterval.forMillis(step)
-                pattern = interval.tickFormatPattern
                 ticks = interval.range(start, end).toMutableList()
+                interval.tickFormatPattern
             }
 
             if (isReversed) {
                 ticks.reverse()
             }
             breaks = ticks
+
+            pattern
         }
 
-        val format = DateTimeFormat(pattern)
-        formatter = providedFormatter ?: createInstantFormatter(format, TimeZone.UTC)
+        formatter = providedFormatter ?: createInstantFormatter(pattern, TimeZone.UTC)
     }
 }

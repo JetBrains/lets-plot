@@ -224,7 +224,7 @@ class StringFormatTest {
             StringFormat.create("%d.%m.%y").format("01.01.2000")
         }
         assertEquals(
-            "Expected millis from epoch (Number), but got '01.01.2000' (String)",
+            "Expected Unix timestamp in milliseconds (Number), but got '01.01.2000' (String)",
             exception.message
         )
     }
