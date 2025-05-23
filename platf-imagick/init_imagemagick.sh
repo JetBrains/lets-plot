@@ -61,11 +61,13 @@ current_dir=$(basename "$current_path")
 
 if [[ $current_dir = "$PLATF_IMAGICK_DIR" ]]; then
   export WORKING_DIR=$current_path
-elif [[ $current_dir = "lets-plot" ]]; then
-  cd $PLATF_IMAGICK_DIR || exit_with_error "Could not find '${PLATF_IMAGICK_DIR}' directory."
-  export WORKING_DIR=$(pwd)
 else
-  exit_with_error "Please run this script from lets-plot/${PLATF_IMAGICK_DIR} directory."
+  platf_imagick_path=$(find "$current_path" -type d -name "$PLATF_IMAGICK_DIR")
+  if [[ -d "$platf_imagick_path" ]]; then
+    export WORKING_DIR="$platf_imagick_path"
+  else
+    exit_with_error "Could not find '${PLATF_IMAGICK_DIR}' directory."
+  fi
 fi
 
 # Prefix path for libraries installation can be set as a script argument.
@@ -85,12 +87,25 @@ getPlatform="$(uname -s)"
 
 case $getPlatform in
   Linux*)
-    PLATFORM="Linux"
+    export PLATFORM="Linux"
     # TODO: Make func with execution check.
     if [[ "$DOCKER_TRUE" != "1" ]]; then
-      docker run -it --rm -e DOCKER_TRUE="1" -v "$WORKING_DIR":/opt/platf-imagick --name imagick_build quay.io/pypa/manylinux2014_x86_64
+      user_id=$(id -u)
+      group_id=$(id -g)
+      docker run -it --rm \
+         -e DOCKER_TRUE="1" \
+         -e USER_ID=$user_id \
+         -e GROUP_ID=$group_id \
+         -v "$WORKING_DIR":"/opt/${PLATF_IMAGICK_DIR}" \
+         --name imagick_build \
+         quay.io/pypa/manylinux2014_x86_64 \
+         /bin/bash "/opt/${PLATF_IMAGICK_DIR}/init_imagemagick.sh"
+
       print_message "Build was performed inside Docker container."
       exit 0
+    else
+      yum install -y gperf gettext-devel
+      check_exec_status
     fi
   ;;
 
@@ -152,12 +167,12 @@ build_library () {
   local available_proc="$(nproc --ignore=1)"
   base_configure_args=(
     "--prefix=${INSTALL_PREFIX}"
-    "--enable-shared"
-    "--disable-static"
+    "--enable-static"
+    "--disable-shared"
   )
 
-  export CFLAGS="-O2"
-  export CXXFLAGS="-O2"
+  export CFLAGS="-O2 -fPIC"
+  export CXXFLAGS="-O2 -fPIC"
 
   print_message "Building ${lib_name}..."
 
@@ -200,7 +215,7 @@ build_library () {
       local git_local_name="imagemagick"
       local git_hash="$IMAGEMAGICK_GIT_HASH"
       export ac_cv_func_getentropy=no
-      #export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
+      export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
       extra_configure_args=(
         "--enable-zero-configuration"
         "--with-quantum-depth=16"
@@ -313,6 +328,10 @@ build_library "freetype"
 build_library "fontconfig"
 build_library "imagemagick"
 
+if [[ "$PLATFORM" = "Linux" && "$DOCKER_TRUE" = "1" ]]; then
+  print_message "Fix files ownership..."
+  chown -R $USER_ID:$GROUP_ID "$WORKING_DIR"
+fi
 
 # PRINT FINAL MESSAGE:
 printf "*******************************************************************\n\n"
