@@ -20,6 +20,7 @@ class PlotSpecsDemoWindowSwingCanvas(
     maxCol: Int = 3,
     private val plotSize: Dimension? = null,
     background: Color = Color.WHITE,
+    private val sizingPolicy: SizingPolicy = SizingPolicy.fitContainerSize(false),
 ) : JFrame("$title (Swing Canvas)") {
     private val rootPanel: JPanel
 
@@ -65,7 +66,7 @@ class PlotSpecsDemoWindowSwingCanvas(
 
         val components = specs.map { rawSpec ->
             val canvasPane = CanvasPane()
-            canvasPane.figure = MonolithicCanvas.buildPlotFigureFromRawSpec(rawSpec, SizingPolicy.keepFigureDefaultSize(), ::printAllMessages)
+            canvasPane.figure = MonolithicCanvas.buildPlotFigureFromRawSpec(rawSpec, sizingPolicy, ::printAllMessages)
             canvasPane.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
             canvasPane.preferredSize = plotSize ?: canvasPane.preferredSize
             canvasPane

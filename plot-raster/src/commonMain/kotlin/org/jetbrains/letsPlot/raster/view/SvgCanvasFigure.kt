@@ -38,7 +38,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     val height get() = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-    private lateinit var canvasControl: CanvasControl
     private val myBounds = ValueProperty(Rectangle(0, 0, width, height))
 
     override fun bounds(): ReadableProperty<Rectangle> {
@@ -46,19 +45,23 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        this.canvasControl = canvasControl
-        canvasControl.onResize {
-            val newSize = Vector(it.x, it.y)
-            val old = canvas!!
-            canvas = canvasControl.createCanvas(newSize)
-            canvas!!.context2d.drawImage(old.immidiateSnapshot())
-            canvasControl.addChild(canvas!!)
-            canvasControl.removeChild(old)
+        canvasControl.onResize { size ->
+            val oldCanvas = canvas ?: error("Should not happen - canvas is null")
+            val newCanvas = canvasControl.createCanvas(size)
+            canvas = newCanvas
+
+            canvasControl.removeChild(oldCanvas)
+            canvasControl.addChild(newCanvas)
         }
         canvasPeer = SvgCanvasPeer(textMeasurer = TextMeasurer.create(canvasControl))
         mapSvgSvgElement(svgSvgElement)
 
         canvas = canvasControl.createCanvas(Vector(width, height))
+        canvasControl.addChild(canvas!!)
+
+        // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
+        render(rootMapper.target, canvas!!)
+
         val anim = canvasControl.createAnimationTimer(object : AnimationProvider.AnimationEventHandler {
             override fun onEvent(millisTime: Long): Boolean {
                 val canvas = canvas ?: return false
@@ -67,13 +70,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
                 return true
             }
         })
-
-        canvasControl.addChild(canvas!!)
-
-        // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
-
-        render(rootMapper.target, canvas!!)
-
         anim.start()
 
         return Registration.Companion.EMPTY
@@ -94,7 +90,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         canvas?.let {
             render(rootMapper.target, it)
         }
-
     }
 
     private fun render(elements: List<Element>, canvas: Canvas) {
