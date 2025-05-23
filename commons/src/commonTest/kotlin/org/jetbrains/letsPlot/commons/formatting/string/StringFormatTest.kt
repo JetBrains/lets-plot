@@ -6,11 +6,7 @@
 package org.jetbrains.letsPlot.commons.formatting.string
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.Time
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -228,7 +224,7 @@ class StringFormatTest {
             StringFormat.create("%d.%m.%y").format("01.01.2000")
         }
         assertEquals(
-            "Value '01.01.2000' to be formatted as DateTime expected to be a Number, but was String",
+            "Expected millis from epoch (Number), but got '01.01.2000' (String)",
             exception.message
         )
     }

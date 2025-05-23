@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.commons.formatting.string
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil
+import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
-import org.jetbrains.letsPlot.commons.intern.datetime.Instant
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 class StringFormat private constructor(
@@ -100,17 +100,8 @@ class StringFormat private constructor(
             }
 
             DATETIME_FORMAT -> {
-                val dateTimeFormatter = DateTimeFormat(formatPattern)
-                return { value: Any ->
-                    require(value is Number) {
-                        error("Value '$value' to be formatted as DateTime expected to be a Number, but was ${value::class.simpleName}")
-                    }
-                    value.toLong()
-                        .let(::Instant)
-//                        .let(TimeZone.UTC::toDateTime)
-                        .toDateTime(TimeZone.UTC)
-                        .let(dateTimeFormatter::apply)
-                }
+                val format = DateTimeFormat(formatPattern)
+                return DateTimeFormatUtil.createInstantFormatter(format, TimeZone.UTC)
             }
 
             else -> {

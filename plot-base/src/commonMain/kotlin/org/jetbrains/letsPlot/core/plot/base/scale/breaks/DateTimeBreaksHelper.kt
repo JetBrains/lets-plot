@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.createInstantFormatter
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
@@ -81,9 +82,7 @@ class DateTimeBreaksHelper(
             breaks = ticks
         }
 
-        val dateTimeFormatter = createInstantFormatter(pattern, TimeZone.UTC)
-        formatter = providedFormatter ?: { v: Any ->
-            dateTimeFormatter(v as Number)
-        }
+        val format = DateTimeFormat(pattern)
+        formatter = providedFormatter ?: createInstantFormatter(format, TimeZone.UTC)
     }
 }

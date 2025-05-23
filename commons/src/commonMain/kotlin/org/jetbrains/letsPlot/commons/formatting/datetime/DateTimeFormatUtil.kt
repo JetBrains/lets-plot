@@ -10,17 +10,26 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Instant
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 object DateTimeFormatUtil {
-    fun format(epochMillis: Number, pattern: String, tz: TimeZone): String {
+    // For tests only.
+    internal fun format(epochMillis: Number, pattern: String, tz: TimeZone): String {
         val dateTime = Instant(epochMillis.toLong()).toDateTime(tz)
-        return format(dateTime, pattern)
+        val format = DateTimeFormat(pattern)
+        return format.apply(dateTime)
     }
 
+    // For tests only.
     fun format(dateTime: DateTime, pattern: String): String {
         val format = DateTimeFormat(pattern)
         return format.apply(dateTime)
     }
 
-    fun createInstantFormatter(pattern: String, tz: TimeZone): (Number) -> String = { epochMillis ->
-        format(epochMillis, pattern, tz)
+    fun createInstantFormatter(format: DateTimeFormat, tz: TimeZone): (Any) -> String = { epochMillis ->
+        check(epochMillis is Number) { "Expected millis from epoch (Number), but got '$epochMillis' (${epochMillis::class.simpleName})" }
+        format(epochMillis, format, tz)
+    }
+
+    private fun format(epochMillis: Number, format: DateTimeFormat, tz: TimeZone): String {
+        val dateTime = Instant(epochMillis.toLong()).toDateTime(tz)
+        return format.apply(dateTime)
     }
 }
