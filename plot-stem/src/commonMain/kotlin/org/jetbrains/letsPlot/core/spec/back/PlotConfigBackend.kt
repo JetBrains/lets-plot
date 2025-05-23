@@ -400,7 +400,7 @@ open class PlotConfigBackend(
                 return null
             }
 
-            // Try the same formatter that is used for the continuous scale
+            // Try using the same formatter that is applied to the continuous scale.
             val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
                 ?.let { doubleList -> DoubleSpan.encloseAllQ(doubleList) }
                 ?.let { range ->
@@ -412,7 +412,7 @@ open class PlotConfigBackend(
                     ).pattern
                 }
 
-            // Other patterns to choose the most good one
+            // Other patterns to choose the best one
             val patterns = listOf(
                 "%Y",
                 "%Y-%m",

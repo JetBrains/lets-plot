@@ -15,9 +15,6 @@ internal class MonthInterval(count: Int) : MeasuredInDays(count) {
         get() = "%b"
 
     override fun getFirstDayContaining(dateTime: DateTime): Date {
-//        var firstDay = dateTime.date
-//        firstDay = Date.firstDayOf(firstDay.year, firstDay.month)
-//        return firstDay
         return firstDay(dateTime.year, dateTime.month)
     }
 

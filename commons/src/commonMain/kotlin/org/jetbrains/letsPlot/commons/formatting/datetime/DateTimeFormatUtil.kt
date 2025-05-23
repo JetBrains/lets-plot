@@ -5,24 +5,22 @@
 
 package org.jetbrains.letsPlot.commons.formatting.datetime
 
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Instant
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 object DateTimeFormatUtil {
-    private fun formatDate(instant: Number, pattern: String, timeZone: TimeZone = TimeZone.UTC): String {
+    fun format(epochMillis: Number, pattern: String, tz: TimeZone): String {
+        val dateTime = Instant(epochMillis.toLong()).toDateTime(tz)
+        return format(dateTime, pattern)
+    }
+
+    fun format(dateTime: DateTime, pattern: String): String {
         val format = DateTimeFormat(pattern)
-        return instant.toLong()
-            .let(::Instant).toDateTime(timeZone)
-            .let(format::apply)
+        return format.apply(dateTime)
     }
 
-    fun formatterDate(pattern: String, timeZone: TimeZone = TimeZone.UTC): (Number) -> String = { input ->
-        formatDate(input, pattern, timeZone)
+    fun createInstantFormatter(pattern: String, tz: TimeZone): (Number) -> String = { epochMillis ->
+        format(epochMillis, pattern, tz)
     }
-
-    fun formatDateUTC(instant: Number, pattern: String): String =
-        formatDate(instant, pattern, TimeZone.UTC)
-
-    fun formatterDateUTC(pattern: String): (Number) -> String =
-        formatterDate(pattern, TimeZone.UTC)
 }
