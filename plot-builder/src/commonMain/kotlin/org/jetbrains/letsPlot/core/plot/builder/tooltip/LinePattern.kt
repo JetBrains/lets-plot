@@ -42,7 +42,13 @@ class LinePattern(
         val formatter = myLineFormatter ?: initFormatter(ctx.expFormat, ctx.tz)
 
         val dataValues = fields.map { dataValue ->
-            dataValue.getDataPoint(index, ctx) ?: return null
+            val p = dataValue.getDataPoint(index, ctx)
+            if (p == null || p.isBlank) {
+                // If the data point is blank, we return null to skip it.
+                return null
+            }
+
+            p
         }
         return if (dataValues.size == 1) {
             val dataValue = dataValues.single()

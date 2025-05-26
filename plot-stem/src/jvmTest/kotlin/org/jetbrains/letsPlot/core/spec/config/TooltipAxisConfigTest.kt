@@ -99,8 +99,7 @@ class TooltipAxisConfigTest {
             assertGeneralTooltip(geomLayer, "0.34")  // default numeric format ".2f"
 
             // "axis" tooltip should not be shown for numeric data on discrete axis.
-//            assertYAxisTooltip(geomLayer, "scale = 0.34447 %")
-            assertYAxisTooltip(geomLayer, "**blank**")
+            assertYAxisTooltip(geomLayer, null) // null means no tooltip
 
             // discrete axis does not create tooltips for numeric data.
 //            assertEquals("scale = 0.34447 %", getYTick(geomLayer))
@@ -312,7 +311,7 @@ class TooltipAxisConfigTest {
     companion object {
         private val TZ = TimeZone.UTC
 
-        private fun areEqual(expected: String, actual: String?, name: String, method: (String) -> Unit) {
+        private fun areEqual(expected: String?, actual: String?, name: String, method: (String) -> Unit) {
             if (expected != actual) {
                 method("$name:\n\texpected: \"$expected\";\n\tactual: \"$actual\"")
             }
@@ -328,7 +327,7 @@ class TooltipAxisConfigTest {
             areEqual(expected, generalTooltip, "general tooltip", method)
         }
 
-        private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
+        private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String?, method: (String) -> Unit = ::fail) {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val yAxisTooltip = dataPoints
