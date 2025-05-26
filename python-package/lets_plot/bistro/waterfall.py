@@ -17,7 +17,8 @@ def waterfall_plot(data, x, y, *,
                    calc_total=None, total_title=None,
                    hline=None, hline_ontop=None,
                    connector=None,
-                   label=None, label_format=None) -> PlotSpec:
+                   label=None, label_format=None,
+                   background_layers=None) -> PlotSpec:
     """
     A waterfall plot shows the cumulative effect of sequentially introduced positive or negative values.
 
@@ -112,6 +113,8 @@ def waterfall_plot(data, x, y, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+    background_layers : list of `LayerSpec` or `LayerSpec`
+        Background layers to be added to the plot.
 
     Returns
     -------
@@ -149,6 +152,51 @@ def waterfall_plot(data, x, y, *,
             'y': np.random.normal(size=len(categories))
         }
         waterfall_plot(data, 'x', 'y')
+
+    |
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.bistro.waterfall import *
+
+        LetsPlot.setup_html()
+
+        categories = list("ABCDEF")
+
+        np.random.seed(42)
+        data = {
+            'x': categories,
+            'y': np.random.normal(size=len(categories))
+        }
+
+        rect_data = {
+            'xmin': [-0.5, 2.5],
+            'ymin': [0, 0],
+            'xmax': [2.5, 5.5],
+            'ymax': [2.55, 2.55],
+            'name': ['foo', 'bar']
+        }
+
+        text_data = {
+            'x': [0, 3],
+            'y': [2.7, 2.7],
+            'name': ['Foo', 'Bar']
+        }
+
+        waterfall_plot(data, 'x', 'y',
+                       background_layers=[
+                           geom_rect(
+                               aes(xmin='xmin', ymin='ymin', xmax='xmax', ymax='ymax', fill='name', color='name'),
+                               data=rect_data,
+                               alpha=0.2
+                           )
+                       ]) + \\
+            geom_text(aes(x='x', y='y', label='name'), data=text_data, size=10) + \\
+            ggsize(750, 450) + \\
+            ggtitle("Waterfall with custom layers")
 
     |
 
@@ -249,4 +297,5 @@ def waterfall_plot(data, x, y, *,
         'connector': connector,
         'label': label,
         'label_format': label_format,
+        'background_layers': [layer.as_dict() for layer in background_layers]
     }, **data_meta)

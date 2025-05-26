@@ -38,7 +38,10 @@ class WaterfallPlotSpecChange : SpecChange {
         val waterfallPlotSpec = buildWaterfallPlotSpec(spec)
 
         // Set layers
-        spec[Option.Plot.LAYERS] = waterfallPlotSpec.get(Option.Plot.LAYERS) ?: error("Missing layers in waterfall plot")
+        val backgroundLayers = spec.getList(Option.Plot.BISTRO, Waterfall.BACKGROUND_LAYERS) ?: emptyList<Any>()
+        val waterfallLayers = waterfallPlotSpec.getList(Option.Plot.LAYERS) ?: error("Missing layers in waterfall plot")
+        val topLayers = spec.getList(Option.Plot.LAYERS) ?: emptyList<Any>()
+        spec[Option.Plot.LAYERS] = backgroundLayers + waterfallLayers + topLayers
 
         // Merge data_meta
         waterfallPlotSpec.getMap(Option.Meta.DATA_META)?.let { waterfallDataMeta ->
