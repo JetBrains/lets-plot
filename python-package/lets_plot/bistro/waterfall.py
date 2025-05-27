@@ -271,6 +271,7 @@ def waterfall_plot(data, x, y, *,
 
     """
     data, mapping, data_meta = as_annotated_data(data, aes(x=x, y=y))
+    background_layers = [] if background_layers is None else background_layers
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'waterfall',
         'x': x,
@@ -297,5 +298,5 @@ def waterfall_plot(data, x, y, *,
         'connector': connector,
         'label': label,
         'label_format': label_format,
-        'background_layers': [layer.as_dict() for layer in background_layers or []]
+        'background_layers': [layer.as_dict() for layer in background_layers]
     }, **data_meta)
