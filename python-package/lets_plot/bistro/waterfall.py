@@ -305,5 +305,5 @@ def waterfall_plot(data, x, y, *,
         'connector': connector,
         'label': label,
         'label_format': label_format,
-        'background_layers': [layer.as_dict() for layer in background_layers]
+        'background_layers': [layer.as_dict() for layer in background_layers or []]
     }, **data_meta)
