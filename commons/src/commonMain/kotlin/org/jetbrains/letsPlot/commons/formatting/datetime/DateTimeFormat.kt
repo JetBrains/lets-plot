@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,14 +12,15 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Time
 
 class DateTimeFormat(private val spec: List<SpecPart>) {
 
-    constructor(spec: String): this(parse(spec))
+    constructor(spec: String) : this(parse(spec))
 
     open class SpecPart(val str: String) {
         open fun exec(dateTime: DateTime) = str
     }
 
-    class PatternSpecPart(str: String): SpecPart(str) {
-        val pattern: Pattern = Pattern.patternByString(str) ?: throw IllegalArgumentException("Wrong date-time pattern: '$str'")
+    class PatternSpecPart(str: String) : SpecPart(str) {
+        val pattern: Pattern =
+            Pattern.Companion.patternByString(str) ?: throw IllegalArgumentException("Wrong date-time pattern: '$str'")
 
         override fun exec(dateTime: DateTime): String {
             return getValueForPattern(pattern, dateTime)
@@ -53,7 +54,7 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
     companion object {
         fun parse(str: String): List<SpecPart> {
             val result = mutableListOf<SpecPart>()
-            val resultSequence = Pattern.PATTERN_REGEX.findAll(str)
+            val resultSequence = Pattern.Companion.PATTERN_REGEX.findAll(str)
             var lastIndex = 0
             resultSequence.forEach {
                 val value = it.value
@@ -76,7 +77,7 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
         }
 
         private fun getValueForPattern(type: Pattern, dateTime: DateTime): String =
-            when(type) {
+            when (type) {
                 Pattern.SECOND -> leadZero(dateTime.seconds)
                 Pattern.MINUTE -> leadZero(dateTime.minutes)
                 Pattern.HOUR_12 -> getHours12(dateTime).toString()
@@ -89,8 +90,9 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
                 Pattern.DAY_OF_WEEK_FULL -> DateLocale.weekDayFull[dateTime.weekDay] ?: ""
                 Pattern.DAY_OF_MONTH -> dateTime.day.toString()
                 Pattern.DAY_OF_MONTH_LEADING_ZERO -> leadZero(dateTime.day)
-                Pattern.DAY_OF_THE_YEAR -> leadZero(dateTime.date.daysFromYearStart(), 3)
-                Pattern.MONTH -> leadZero(dateTime.month.ordinal() + 1)
+//                Pattern.DAY_OF_THE_YEAR -> leadZero(dateTime.date.daysFromYearStart(), 3)
+                Pattern.DAY_OF_THE_YEAR -> leadZero(dateTime.date.daysFromYearStart() + 1, 3)
+                Pattern.MONTH -> leadZero(dateTime.month.number)
                 Pattern.MONTH_ABBR -> DateLocale.monthAbbr[dateTime.month] ?: ""
                 Pattern.MONTH_FULL -> DateLocale.monthFull[dateTime.month] ?: ""
                 Pattern.YEAR_SHORT -> dateTime.year.toString().substring(2)

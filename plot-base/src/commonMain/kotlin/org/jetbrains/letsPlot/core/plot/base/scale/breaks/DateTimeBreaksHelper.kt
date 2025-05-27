@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.createInstantFormatter
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
-import org.jetbrains.letsPlot.core.commons.time.TimeUtil
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
@@ -18,6 +20,7 @@ class DateTimeBreaksHelper(
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
     minInterval: TimeInterval? = null,
+    tz: TimeZone = TimeZone.UTC,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
@@ -26,14 +29,12 @@ class DateTimeBreaksHelper(
 
     init {
         val step = targetStep
-        var dateTimeFormatter: (Number) -> String
 
-        if (step < 1000) {        // milliseconds
-            val interval = TimeScaleTickFormatterFactory(minInterval)
-            dateTimeFormatter = interval.getFormatter(step)
-            pattern = interval.formatPattern(step)
-            // compute step so that it is multiple of automatic time steps
+        pattern = if (step < 1000) {        // milliseconds
+            val formatterFactory = TimeScaleTickFormatterFactory(minInterval)
+            // compute a step so that it is multiple of automatic time steps
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
+            formatterFactory.formatPattern(step)
 
         } else {
 
@@ -45,21 +46,18 @@ class DateTimeBreaksHelper(
                 ticks = minInterval.range(start, end).toMutableList()
             }
 
-            if (ticks != null && ticks.size <= count) {
-                // same or smaller interval requested -> stay with min interval
-                dateTimeFormatter = minInterval!!.tickFormatter
-                pattern = minInterval.tickFormatPattern
+            val pattern = if (ticks != null && ticks.size <= count) {
+                // same or smaller interval requested -> stay with the min interval
+                minInterval!!.tickFormatPattern
                 // otherwise - larger step requested -> compute ticks
             } else if (step > YearInterval.MS) {        // years
-                dateTimeFormatter = YearInterval.TICK_FORMATTER
-                pattern = YearInterval.TICK_FORMAT
                 ticks = ArrayList()
-                val startDateTime = TimeUtil.asDateTimeUTC(start)
+                val startDateTime = DateTime.ofEpochMilliseconds(start, tz)
                 var startYear = startDateTime.year
-                if (startDateTime.isAfter(TimeUtil.yearStart(startYear))) {
+                if (startDateTime > DateTime.ofYearStart(startYear)) {
                     startYear++
                 }
-                val endYear = TimeUtil.asDateTimeUTC(end).year
+                val endYear = DateTime.ofEpochMilliseconds(end, tz).year
                 val helper = LinearBreaksHelper(
                     startYear.toDouble(),
                     endYear.toDouble(),
@@ -68,22 +66,25 @@ class DateTimeBreaksHelper(
                     providedFormatter = DUMMY_FORMATTER
                 )
                 for (tickYear in helper.breaks) {
-                    val tickDate = TimeUtil.yearStart(round(tickYear).toInt())
-                    ticks.add(TimeUtil.asInstantUTC(tickDate).toDouble())
+                    val tickDate = DateTime.ofYearStart(round(tickYear).toInt())
+                    val tickInstant = tickDate.toInstant(tz)
+                    ticks.add(tickInstant.toEpochMilliseconds().toDouble())
                 }
+                YearInterval.TICK_FORMAT
             } else {
                 val interval = NiceTimeInterval.forMillis(step)
-                dateTimeFormatter = interval.tickFormatter
-                pattern = interval.tickFormatPattern
                 ticks = interval.range(start, end).toMutableList()
+                interval.tickFormatPattern
             }
 
             if (isReversed) {
                 ticks.reverse()
             }
             breaks = ticks
+
+            pattern
         }
 
-        formatter = providedFormatter ?: { v: Any -> dateTimeFormatter(v as Number) }
+        formatter = providedFormatter ?: createInstantFormatter(pattern, tz)
     }
 }

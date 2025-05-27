@@ -31,7 +31,13 @@ class GeomProto(val geomKind: GeomKind) {
         aopConversion: AesOptionConversion,
         expFormat: ExponentFormat
     ): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, expFormat)
+        return GeomProviderFactory.createGeomProvider(
+            geomKind,
+            layerConfig,
+            aopConversion,
+            expFormat,
+            tz = layerConfig.tz
+        )
     }
 
     fun defaultOptions(): Map<String, Any> {
@@ -140,7 +146,10 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)) {
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
+                    Geom.Text.NUDGE_Y
+                )
+            ) {
                 mapOf(
                     Meta.NAME to PosProto.NUDGE,
                     Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),

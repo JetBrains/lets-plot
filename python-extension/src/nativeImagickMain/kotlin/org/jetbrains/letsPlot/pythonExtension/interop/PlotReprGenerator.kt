@@ -153,6 +153,7 @@ object PlotReprGenerator {
 
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
                 plotSpec = processedSpec,
+                sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                 computationMessagesHandler = { println(it.joinToString("\n")) }
             )
 
@@ -160,7 +161,8 @@ object PlotReprGenerator {
 
             val canvasControl = MagickCanvasControl(
                 w = svgCanvasFigure.width,
-                h = svgCanvasFigure.height
+                h = svgCanvasFigure.height,
+                pixelDensity = 1.0
             )
 
             canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
@@ -181,6 +183,7 @@ object PlotReprGenerator {
             //    return Py_BuildValue("s", outputFilePath)
             //}
         } catch (e: Throwable) {
+            e.printStackTrace()
             return null
         } finally {
             canvasReg?.dispose()

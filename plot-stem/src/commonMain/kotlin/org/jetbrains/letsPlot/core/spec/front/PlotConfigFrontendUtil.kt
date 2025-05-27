@@ -208,6 +208,7 @@ object PlotConfigFrontendUtil {
             caption = config.caption,
             guideOptionsMap = config.guideOptionsMap,
             plotSpecId = config.specId,
+            tz = config.tz,
         )
     }
 }

@@ -9,6 +9,7 @@ plugins {
 
 
 val ktorVersion = project.extra["ktor_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val hamcrestVersion = project.extra["hamcrest_version"] as String
 val mockitoVersion = project.extra["mockito_version"] as String
@@ -44,6 +45,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(project(":commons"))
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
 

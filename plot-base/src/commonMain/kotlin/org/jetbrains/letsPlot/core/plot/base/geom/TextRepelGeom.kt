@@ -99,7 +99,7 @@ open class TextRepelGeom: TextGeom() {
             maxOverlaps = maxOverlaps ?: 10,
             seed = seed,
             maxIter = maxIter ?: 2000,
-            maxTime = maxTime ?: 5000.0   ,
+            maxTime = maxTime ?: 5000.0,
             direction = direction ?: LabelForceLayout.Direction.BOTH
         )
 
@@ -123,7 +123,7 @@ open class TextRepelGeom: TextGeom() {
             val tc = buildTextComponent(dp, result.position, text, sizeUnitRatio, ctx, aesBoundsCenter)
             root.add(tc)
 
-            val segmentLocation = getSegmentLocation(pointLocation, size, result.box, hjusts[dp.index()] ?: 0.5, vjusts[dp.index()] ?: 0.5)
+            val segmentLocation = getSegmentLocation(pointLocation, size, result.box)
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
@@ -156,8 +156,8 @@ open class TextRepelGeom: TextGeom() {
         return g
     }
 
-    private fun getSegmentLocation(pointLocation: DoubleVector, size: Double, rect: TransformedRectangle, hjust: Double, vjust: Double): DoubleSegment? {
-        val locEnd = rect.findEdgeConnectionPoint(pointLocation, hjust, vjust) ?: return null
+    private fun getSegmentLocation(pointLocation: DoubleVector, size: Double, rect: TransformedRectangle): DoubleSegment? {
+        val locEnd = rect.shortestSegmentToRectangleEdgeCenter(pointLocation)?.end ?: return null
 
         val locStart = pointLocation.add((locEnd.subtract(pointLocation).savedNormalize().mul(size * POINT_UNIT_SIZE / 2)))
 

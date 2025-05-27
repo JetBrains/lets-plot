@@ -9,6 +9,9 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
+/**
+ * Timescale doesn't need a time zone.
+ */
 class TimeBreaksGen(
     private val providedFormatter: ((Any) -> String)? = null,
 ) : BreaksGenerator {
@@ -17,7 +20,8 @@ class TimeBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
-            providedFormatter
+            providedFormatter,
+            tz = null,
         )
         val ticks = helper.breaks
         val labels = helper.formatBreaks(ticks)
@@ -33,7 +37,8 @@ class TimeBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
-            providedFormatter = null
+            providedFormatter = null,
+            tz = null,
         ).formatter
     }
 }

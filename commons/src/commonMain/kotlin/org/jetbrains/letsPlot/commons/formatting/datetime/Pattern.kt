@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -19,9 +19,11 @@ enum class Pattern(val string: String, val kind: Kind) {
     DAY_OF_MONTH("%e", Kind.DATE),
     DAY_OF_THE_YEAR("%j", Kind.DATE),
     MONTH("%m", Kind.DATE),
+
     //WEEK_NUMBER_FROM_SUNDAY("%U", Kind.DATE),
     //WEEK_NUMBER_FROM_MONDAY("%W", Kind.DATE),
     DAY_OF_WEEK("%w", Kind.DATE),
+
     //LOCALE_DATE("%x", Kind.DATE),
     YEAR_SHORT("%y", Kind.DATE),
     YEAR_FULL("%Y", Kind.DATE),
@@ -43,13 +45,13 @@ enum class Pattern(val string: String, val kind: Kind) {
 
     companion object {
         val PATTERN_REGEX = "(%[aAbBdejmwyYHIlMpPS])".toRegex()
-        
+
         enum class Kind {
             DATE,
             TIME
         }
 
-        fun patternByString(patternString: String) = values().find { it.string == patternString }
+        fun patternByString(patternString: String) = Pattern.entries.find { it.string == patternString }
 
         fun isDateTimeFormat(patternString: String) = PATTERN_REGEX.containsMatchIn(patternString)
     }

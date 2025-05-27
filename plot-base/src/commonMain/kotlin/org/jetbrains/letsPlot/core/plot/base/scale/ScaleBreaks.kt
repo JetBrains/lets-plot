@@ -278,7 +278,11 @@ class ScaleBreaks private constructor(
     object DemoAndTest {
         fun continuous(
             domainValues: List<Double>,
-            formatter: ((Any) -> String) = FormatterUtil.byDataType(DataType.INTEGER, DEF_EXPONENT_FORMAT)
+            formatter: ((Any) -> String) = FormatterUtil.byDataType(
+                DataType.INTEGER,
+                DEF_EXPONENT_FORMAT,
+                tz = null,
+            )
         ): ScaleBreaks {
             return ScaleBreaks(
                 domainValues = domainValues,

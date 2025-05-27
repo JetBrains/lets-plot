@@ -33,6 +33,7 @@ class DomCanvasControl(
     private val myRootElement: HTMLElement,
     override val size: Vector,
     private val mouseEventSource: MouseEventSource,
+    override val pixelDensity: Double = DEVICE_PIXEL_RATIO
 ) : CanvasControl {
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
@@ -48,7 +49,7 @@ class DomCanvasControl(
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        val domCanvas = DomCanvas.create(size, DEVICE_PIXEL_RATIO)
+        val domCanvas = DomCanvas.create(size, pixelDensity)
         domCanvas.canvasElement.style.setPosition(CssPosition.ABSOLUTE)
         return domCanvas
     }
@@ -101,6 +102,15 @@ class DomCanvasControl(
 
     override fun removeChild(canvas: Canvas) {
         myRootElement.removeChild((canvas as DomCanvas).canvasElement)
+    }
+
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        println("DomCanvasControl.onResize() - NOT IMPLEMENTED")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
     }
 
     override fun <T> schedule(f: () -> T) {

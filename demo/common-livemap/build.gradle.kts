@@ -8,6 +8,7 @@ plugins {
 }
 
 val ktorVersion = project.extra["ktor_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {
     jvm()
@@ -42,6 +43,7 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-client-js:${ktorVersion}")
                 implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
     }

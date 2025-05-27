@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.raster.view.CanvasEventDispatcher
+import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 
 class CompositeFigureEventDispatcher() : CanvasEventDispatcher {
     private val dispatchers = LinkedHashMap<Rectangle, CanvasEventDispatcher>()

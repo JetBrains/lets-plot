@@ -5,7 +5,8 @@
 
 package demo.common.utils.swingCanvas
 
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.Color
 import java.awt.Dimension
@@ -19,6 +20,7 @@ class PlotSpecsDemoWindowSwingCanvas(
     maxCol: Int = 3,
     private val plotSize: Dimension? = null,
     background: Color = Color.WHITE,
+    private val sizingPolicy: SizingPolicy = SizingPolicy.fitContainerSize(false),
 ) : JFrame("$title (Swing Canvas)") {
     private val rootPanel: JPanel
 
@@ -56,47 +58,21 @@ class PlotSpecsDemoWindowSwingCanvas(
     }
 
     private fun createWindowContent() {
-        val preferredSizeFromPlot = (plotSize == null)
+        fun printAllMessages(messages: List<String>) {
+            for (message in messages) {
+                println("[Demo Plot Viewer] $message")
+            }
+        }
+
         val components = specs.map { rawSpec ->
-            val figureComponent = rawSpec.createCanvas(
-                preferredSizeFromPlot = preferredSizeFromPlot
-            ) { messages ->
-                for (message in messages) {
-                    println("[Demo Plot Viewer] $message")
-                }
-            }
-
-            plotSize?.let {
-                figureComponent.preferredSize = it
-            }
-
-            figureComponent.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-            figureComponent
+            val canvasPane = CanvasPane()
+            canvasPane.figure = MonolithicCanvas.buildPlotFigureFromRawSpec(rawSpec, sizingPolicy, ::printAllMessages)
+            canvasPane.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
+            canvasPane.preferredSize = plotSize ?: canvasPane.preferredSize
+            canvasPane
         }
 
         components.forEach { rootPanel.add(it) }
     }
 
-    fun MutableMap<String, Any>.createCanvas(
-        preserveAspectRatio: Boolean = false,
-        preferredSizeFromPlot: Boolean = false,
-        repaintDelay: Int = 300,  // ms,
-        computationMessagesHandler: (List<String>) -> Unit
-    ): JComponent {
-        val rawSpec = this
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-        val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
-            processedSpec,
-            computationMessagesHandler
-        )
-
-        val view = SwingSvgCanvasView().apply {
-            this.eventDispatcher = vm.eventDispatcher
-            this.svg = vm.svg
-        }
-
-        return view.container
-    }
-
 }
-

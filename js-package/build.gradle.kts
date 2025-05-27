@@ -10,6 +10,7 @@ plugins {
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val kotlinVersion = project.extra["kotlin_version"] as String
 val ktorVersion = project.extra["ktor_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {
     js {
@@ -36,6 +37,8 @@ kotlin {
                 implementation(project(":gis"))
                 implementation(project(":livemap"))
                 implementation(project(":plot-livemap"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
                 implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
                 implementation("io.ktor:ktor-client-js:${ktorVersion}")

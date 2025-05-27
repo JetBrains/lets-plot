@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +18,7 @@ class Msk2014ChangeTest {
     @Test
     fun testBeforeChange() {
         val utcTime = DateTime(BEFORE, Time(12, 0))
-        val mskDateTime = TimeZone.UTC.convertTo(utcTime, TimeZone.MOSCOW)
+        val mskDateTime = utcTime.toInstant(TimeZone.UTC).toDateTime(TZs.moscow)
         val expected = DateTime(BEFORE, Time(16, 0))
         assertEquals(expected, mskDateTime)
     }
@@ -25,7 +26,7 @@ class Msk2014ChangeTest {
     @Test
     fun testAfterChange() {
         val utcTime = DateTime(AFTER, Time(12, 0))
-        val mskDateTime = TimeZone.UTC.convertTo(utcTime, TimeZone.MOSCOW)
+        val mskDateTime = utcTime.toInstant(TimeZone.UTC).toDateTime(TZs.moscow)
         val expected = DateTime(AFTER, Time(15, 0))
         assertEquals(expected, mskDateTime)
     }

@@ -34,6 +34,7 @@ object Option {
         const val CONNECTOR = "connector"
         const val LABEL = "label"
         const val LABEL_FORMAT = "label_format"
+        const val BACKGROUND_LAYERS = "background_layers"
 
         // Special values that parameters can take
         object Keyword {

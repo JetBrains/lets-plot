@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone.Companion.UTC
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 
 object VegaDataUtil {
@@ -42,6 +42,7 @@ object VegaDataUtil {
                     else -> value
                 }
             }
+
             url.endsWith("data/seattle-weather.csv") -> parseCsv(content) { column: String, value: String ->
                 when (column) {
                     "date" -> {
@@ -49,6 +50,7 @@ object VegaDataUtil {
                         val (year, month, day) = value.split("-")
                         dateTimeToEpoch(year, month, day)
                     }
+
                     "precipitation", "temp_max", "temp_min", "wind" -> value.toDouble()
                     else -> value
                 }
@@ -60,7 +62,7 @@ object VegaDataUtil {
     // Month is 1-based, e.g. "1" for January
     private fun dateTimeToEpoch(year: String, month: String, day: String): Long {
         val date = Date(day = day.toInt(), month = Month.values()[month.toInt() - 1], year = year.toInt())
-        return UTC.toInstant(DateTime(date)).timeSinceEpoch
+        return DateTime(date).toInstant(UTC).toEpochMilliseconds()
     }
 
     private fun parseCsv(
