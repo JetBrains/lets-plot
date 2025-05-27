@@ -161,39 +161,34 @@ def waterfall_plot(data, x, y, *,
         waterfall_plot(data, 'x', 'y')
 
     |
+
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 23-30
 
         import numpy as np
         from lets_plot import *
         from lets_plot.bistro.waterfall import *
-
         LetsPlot.setup_html()
-
         categories = list("ABCDEF")
-
         np.random.seed(42)
         data = {
             'x': categories,
             'y': np.random.normal(size=len(categories))
         }
-
         rect_data = {
             'xmin': [-0.5, 2.5],
             'ymin': [0, 0],
             'xmax': [2.5, 5.5],
             'ymax': [2.55, 2.55],
-            'name': ['foo', 'bar']
+            'name': ['Q1', 'Q2']
         }
-
         text_data = {
             'x': [0, 3],
             'y': [2.7, 2.7],
-            'name': ['Foo', 'Bar']
+            'name': ['Q1', 'Q2']
         }
-
-        waterfall_plot(data, 'x', 'y',
+        waterfall_plot(data, 'x', 'y', label_format='.2f',
                        background_layers=[
                            geom_rect(
                                aes(xmin='xmin', ymin='ymin', xmax='xmax', ymax='ymax', fill='name', color='name'),
@@ -202,7 +197,6 @@ def waterfall_plot(data, x, y, *,
                            )
                        ]) + \\
             geom_text(aes(x='x', y='y', label='name'), data=text_data, size=10) + \\
-            ggsize(750, 450) + \\
             ggtitle("Waterfall with custom layers")
 
     |
