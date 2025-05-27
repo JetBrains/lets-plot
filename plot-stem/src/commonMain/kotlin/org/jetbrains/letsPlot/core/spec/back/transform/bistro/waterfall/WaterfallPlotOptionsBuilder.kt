@@ -287,7 +287,8 @@ class WaterfallPlotOptionsBuilder(
             it.angle = labelOptions.angle
             it.hjust = labelOptions.hjust
             it.vjust = labelOptions.vjust
-            it.showLegend = showLegend
+            // Show legend with letter only when color and fill are not mapped
+            it.showLegend = showLegend.takeIf { color != COLOR_FLOW_TYPE && fill != COLOR_FLOW_TYPE } ?: false
             it.labelFormat = labelFormat
         }
     }

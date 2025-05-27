@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.back
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
@@ -71,7 +72,11 @@ open class PlotConfigBackend(
 
             val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
                 val distinctValues = layerConfig.combinedData.distinctValues(binding.variable)
-                selectDateTimeFormat(distinctValues)?.let { format ->
+
+                // TODO: provide a time zone (or null).
+                val tz = null
+
+                selectDateTimeFormat(distinctValues, tz)?.let { format ->
                     mapOf(
                         Option.Scale.AES to binding.aes.name,
                         Option.Scale.DATE_TIME to true,
@@ -395,12 +400,13 @@ open class PlotConfigBackend(
         }
 
         private const val VALUES_LIMIT_TO_SELECT_FORMAT = 1_000_000
-        private fun selectDateTimeFormat(distinctValues: Set<Any>): String? {
+
+        private fun selectDateTimeFormat(distinctValues: Set<Any>, tz: TimeZone?): String? {
             if (distinctValues.any { it !is Number }) {
                 return null
             }
 
-            // Try the same formatter that is used for the continuous scale
+            // Try using the same formatter that is applied to the continuous scale.
             val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
                 ?.let { doubleList -> DoubleSpan.encloseAllQ(doubleList) }
                 ?.let { range ->
@@ -412,7 +418,7 @@ open class PlotConfigBackend(
                     ).pattern
                 }
 
-            // Other patterns to choose the most good one
+            // Other patterns to choose the best one
             val patterns = listOf(
                 "%Y",
                 "%Y-%m",
@@ -424,7 +430,11 @@ open class PlotConfigBackend(
                 return breaksPattern ?: patterns.last()
             }
             (listOfNotNull(breaksPattern) + patterns).forEach { pattern ->
-                val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
+                val formatter = StringFormat.forOneArg(
+                    pattern,
+                    type = StringFormat.FormatType.DATETIME_FORMAT,
+                    tz = tz
+                )
                 val formattedValues = mutableSetOf<String>()
                 for (value in distinctValues) {
                     if (!formattedValues.add(formatter.format(value))) {

@@ -13,6 +13,7 @@ val hamcrestVersion = project.extra["hamcrest_version"] as String
 val mockitoVersion = project.extra["mockito_version"] as String
 val assertjVersion = project.extra["assertj_version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {
     jvm()
@@ -32,6 +33,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation("io.mockk:mockk-common:$mockkVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
                 implementation(project(":commons"))
             }

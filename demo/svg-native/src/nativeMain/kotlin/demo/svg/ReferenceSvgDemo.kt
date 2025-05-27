@@ -21,7 +21,7 @@ object ReferenceSvgDemo {
         val svgRoot = SvgSvgElement(w.toDouble(), h.toDouble())
         svgRoot.children().add(svgGroup)
 
-        val canvasControl = MagickCanvasControl(w, h)
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0)
         SvgCanvasFigure(svgRoot).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas

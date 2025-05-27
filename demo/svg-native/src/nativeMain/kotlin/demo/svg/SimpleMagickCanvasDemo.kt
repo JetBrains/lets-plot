@@ -16,7 +16,7 @@ object SimpleMagickCanvasDemo {
         ImageMagick.MagickWandGenesis()
         val width = 50.0
         val height = 50.0
-        val canvas = MagickCanvas.create(Vector(width.toInt(), height.toInt()))
+        val canvas = MagickCanvas.create(Vector(width.toInt(), height.toInt()), pixelDensity = 1)
         val ctx = canvas.context2d
 
         ctx.setFillStyle(Color.RED)

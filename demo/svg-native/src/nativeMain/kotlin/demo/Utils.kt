@@ -7,11 +7,10 @@ package demo
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -24,24 +23,20 @@ fun savePlot(plotSpec: MutableMap<String, Any>, filePath: String) {
     var canvasReg: Registration? = null
 
     try {
-        val processedSpec = MonolithicCommon.processRawSpecs(
-            plotSpec = plotSpec,
-            frontendOnly = false
-        )
-
-        val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
-            plotSpec = processedSpec,
+        val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
+            rawSpec = plotSpec,
+            sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
             computationMessagesHandler = { println(it.joinToString("\n")) }
         )
 
-        val svgCanvasFigure = SvgCanvasFigure(vm.svg)
-
+        println("Plot figure: width=${plotFigure.plotWidth}, height=${plotFigure.plotHeight}")
         val canvasControl = MagickCanvasControl(
-            w = svgCanvasFigure.width,
-            h = svgCanvasFigure.height
+            w = plotFigure.plotWidth,
+            h = plotFigure.plotHeight,
+            pixelDensity = 1.0
         )
 
-        canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
+        canvasReg = plotFigure.mapToCanvas(canvasControl)
 
         // TODO: canvasControl can provide takeSnapshot() method
         val plotCanvas = canvasControl.children.single() as MagickCanvas

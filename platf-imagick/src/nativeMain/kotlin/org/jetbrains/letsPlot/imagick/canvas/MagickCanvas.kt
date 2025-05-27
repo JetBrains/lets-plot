@@ -15,9 +15,10 @@ import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 class MagickCanvas(
     private val _img: CPointer<ImageMagick.MagickWand>?,
     size: Vector,
-    pixelRatio: Double,
-) : ScaledCanvas(MagickContext2d(_img), size, pixelRatio) {
+    pixelDensity: Double,
+) : ScaledCanvas(MagickContext2d(_img), size, pixelDensity) {
 
+    // TODO: replace usage in tests with Snapshot
     val img: CPointer<ImageMagick.MagickWand>? get ()  {
         val wand = (context2d as MagickContext2d).wand
 
@@ -39,26 +40,22 @@ class MagickCanvas(
     }
 
     fun saveBmp(filename: String) {
-        val wand = (context2d as MagickContext2d).wand
-
-        //ImageMagick.MagickDrawImage(_img, wand)
-
         if (ImageMagick.MagickWriteImage(img, filename) == ImageMagick.MagickFalse) {
             throw RuntimeException("Failed to write image")
         }
     }
 
     companion object {
-        fun create(width: Number, height: Number): MagickCanvas {
-            return create(Vector(width.toInt(), height.toInt()))
+        fun create(width: Number, height: Number, pixelDensity: Number): MagickCanvas {
+            return create(Vector(width.toInt(), height.toInt()), pixelDensity)
         }
 
-        fun create(size: Vector): MagickCanvas {
+        fun create(size: Vector, pixelDensity: Number): MagickCanvas {
             val wand = ImageMagick.NewMagickWand()
             val background = ImageMagick.NewPixelWand()
             ImageMagick.PixelSetColor(background, "white")
             ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
-            return MagickCanvas(wand, size, 1.0)
+            return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble())
         }
     }
 }

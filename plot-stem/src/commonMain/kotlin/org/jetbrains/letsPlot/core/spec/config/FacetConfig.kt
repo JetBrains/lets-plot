@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
@@ -28,7 +29,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
 internal class FacetConfig(
     options: Map<String, Any>,
-    private val expFormat: ExponentFormat
+    private val expFormat: ExponentFormat,
+    private val tz: TimeZone?,
 ) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
@@ -158,7 +160,11 @@ internal class FacetConfig(
         return when (optionVal) {
             null -> DEF_FORMATTER
             else -> {
-                val fmt = StringFormat.forOneArg(optionVal.toString(), expFormat = PlotAssembler.extractExponentFormat(expFormat))
+                val fmt = StringFormat.forOneArg(
+                    optionVal.toString(),
+                    expFormat = PlotAssembler.extractExponentFormat(expFormat),
+                    tz = tz
+                )
                 return { value: Any -> fmt.format(value) }
             }
         }

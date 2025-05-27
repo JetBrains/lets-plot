@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
@@ -60,7 +61,8 @@ internal object GeomProviderFactory {
         geomKind: GeomKind,
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        expFormat: ExponentFormat
+        expFormat: ExponentFormat,
+        tz: TimeZone?,
     ): GeomProvider {
         return when (geomKind) {
             GeomKind.AREA -> GeomProvider.area {
@@ -118,7 +120,8 @@ internal object GeomProviderFactory {
             GeomKind.TILE -> GeomProvider.tile {
                 TileGeom().apply {
                     this.widthUnit = dimensionUnit(layerConfig, Option.Geom.Tile.WIDTH_UNIT) ?: TileGeom.DEF_WIDTH_UNIT
-                    this.heightUnit = dimensionUnit(layerConfig, Option.Geom.Tile.HEIGHT_UNIT) ?: TileGeom.DEF_HEIGHT_UNIT
+                    this.heightUnit =
+                        dimensionUnit(layerConfig, Option.Geom.Tile.HEIGHT_UNIT) ?: TileGeom.DEF_HEIGHT_UNIT
                 }
             }
 
@@ -141,6 +144,13 @@ internal object GeomProviderFactory {
                 val geom = CrossBarGeom()
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.CrossBar.FATTEN)!!
+                }
+                val isVertical = isVertical(ctx, geomKind.name)
+                val midlineAes = if (isVertical) Aes.Y else Aes.X
+                val midlineIsMapped = ctx.hasBinding(midlineAes) || ctx.hasConstant(midlineAes)
+                if (!midlineIsMapped) {
+                    // The `fattenMidline` variable affects the legend: if set to 0, the midline is omitted.
+                    geom.fattenMidline = 0.0
                 }
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.WIDTH_UNIT)) {
                     geom.widthUnit = dimensionUnit(layerConfig, Option.Geom.CrossBar.WIDTH_UNIT)!!
@@ -323,14 +333,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom, expFormat)
+                applyTextOptions(layerConfig, geom, expFormat, tz)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom, expFormat)
+                applyTextOptions(layerConfig, geom, expFormat, tz)
                 applyLabelOptions(layerConfig, geom.labelOptions)
 
                 geom
@@ -338,14 +348,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT_REPEL -> GeomProvider.textRepel {
                 val geom = TextRepelGeom()
-                applyTextOptions(layerConfig, geom, expFormat)
+                applyTextOptions(layerConfig, geom, expFormat, tz)
                 applyRepelOptions(layerConfig, geom)
                 geom
             }
 
             GeomKind.LABEL_REPEL -> GeomProvider.labelRepel {
                 val geom = LabelRepelGeom()
-                applyTextOptions(layerConfig, geom, expFormat)
+                applyTextOptions(layerConfig, geom, expFormat, tz)
                 applyLabelOptions(layerConfig, geom.labelOptions)
                 applyRepelOptions(layerConfig, geom)
                 geom
@@ -394,7 +404,7 @@ internal object GeomProviderFactory {
                 }
                 geom.sizeUnit = layerConfig.getString(Pie.SIZE_UNIT)?.lowercase()
                 geom.start = layerConfig.getDouble(Pie.START)
-                geom.clockwise = (layerConfig.getInteger(Pie.DIRECTION) ?: 1)  == 1
+                geom.clockwise = (layerConfig.getInteger(Pie.DIRECTION) ?: 1) == 1
                 geom
             }
 
@@ -452,9 +462,13 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat) {
+    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat, tz: TimeZone?) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(it, expFormat = PlotAssembler.extractExponentFormat(expFormat))::format
+            geom.formatter = StringFormat.forOneArg(
+                it,
+                expFormat = PlotAssembler.extractExponentFormat(expFormat),
+                tz = tz
+            )::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it
@@ -524,7 +538,7 @@ internal object GeomProviderFactory {
                 "px" -> DimensionUnit.PIXEL
                 else -> throw IllegalArgumentException(
                     "Unsupported value for $option parameter: '$it'. " +
-                    "Use one of: res, identity, size, px."
+                            "Use one of: res, identity, size, px."
                 )
             }
         }

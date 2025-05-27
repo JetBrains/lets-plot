@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.getXVector
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.getYVector
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.hadamard
+import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleVectorExtensions.sign
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle.Companion.savedNormalize
 import kotlin.math.*
 import kotlin.random.Random
@@ -76,18 +78,17 @@ class LabelForceLayout(
                 labelItems.forEach { label ->
                     val force = selfRepulsion(label)
                     label.setForce(force)
-                    clampToBounds(label, bounds)
                 }
                 continue
             }
 
+            val easeFactor = easeOutQuint(1 - iter.toDouble() / maxIter)
             var overlapsCount = 0
 
             for (label in labelItems) {
                 if (label.hidden) continue
 
                 if (iter % 10 == 0) {
-                    // todo: add counter of intersection and use it to break main loop to avoid intersected segments on end
                     resolveSegmentIntersection(label)
                 }
 
@@ -103,9 +104,8 @@ class LabelForceLayout(
                     force = selfAttraction(label)
                 }
 
-                label.setForce(force.mul(easeOutQuint(1 - iter.toDouble() / maxIter)))
-                clampToBounds(label, bounds)
-                // todo: try to add random force if boundary is reached
+                label.setForce(force.mul(easeFactor))
+                clampToBounds(label)
 
                 overlapsCount += overlaps
             }
@@ -131,6 +131,22 @@ class LabelForceLayout(
             if (labelItem.intersects(other)) {
                 overlaps++
                 force = force.add(repulsion(labelItem, other))
+            } else {
+                if (other is LabelItem) {
+                    val otherSegment = other.segment()
+                    if (otherSegment != null && labelItem.box.intersects(otherSegment)) {
+                        val delta = perpendicularVectorFromSegment(labelItem.position, otherSegment).savedNormalize()
+                        force = force.add(applyDirection(delta))
+                        overlaps++
+                    }
+
+                    val labelSegment = labelItem.segment()
+                    if (labelSegment != null && other.box.intersects(labelSegment)) {
+                        val delta = perpendicularVectorFromSegment(other.position, labelSegment).savedNormalize()
+                        force = force.add(applyDirection(delta.negate()))
+                        overlaps++
+                    }
+                }
             }
         }
 
@@ -166,11 +182,7 @@ class LabelForceLayout(
             return DoubleVector.ZERO
         }
 
-        val dir = normalizedNonZeroDirection(labelItem.position, labelItem.point)
-
-        val forceValue = 8.0
-
-        return applyDirection(dir.negate().mul(forceValue))
+        return applyDirection(randomVector().mul(8.0))
     }
 
     private fun applyDirection(force: DoubleVector): DoubleVector {
@@ -181,7 +193,7 @@ class LabelForceLayout(
         }
     }
 
-    private fun clampToBounds(labelItem: LabelItem, bounds: DoubleRectangle) {
+    private fun clampToBounds(labelItem: LabelItem) {
         val bbox = labelItem.box.bbox
 
         val dx = when {
@@ -196,7 +208,18 @@ class LabelForceLayout(
             else -> 0.0
         }
 
-        labelItem.updatePosition(DoubleVector(dx, dy))
+        val shift = DoubleVector(dx, dy)
+
+        if (shift == DoubleVector.ZERO) {
+            labelItem.clamped = false
+        } else {
+            if (labelItem.clamped) {
+                val additional = shift.sign().hadamard(bbox.dimension)
+                labelItem.updatePosition(applyDirection(shift.add(additional)))
+            }
+            labelItem.updatePosition(applyDirection(shift))
+            labelItem.clamped = true
+        }
     }
 
     private fun resolveSegmentIntersection(labelItem: LabelItem) {
@@ -213,6 +236,20 @@ class LabelForceLayout(
                 otherItem.updatePosition(delta.mul(-1.0))
             }
         }
+    }
+
+    fun perpendicularVectorFromSegment(p: DoubleVector, segment: DoubleSegment): DoubleVector {
+        val ab = segment.end.subtract(segment.start)
+        val ap = p.subtract(segment.start)
+
+        val abLengthSquared = ab.dotProduct(ab)
+        if (abLengthSquared == 0.0) {
+            return segment.start.subtract(p)
+        }
+
+        val t = (ap.dotProduct(ab) / abLengthSquared).coerceIn(0.0, 1.0)
+        val projection = segment.start.add(ab.mul(t))
+        return p.subtract(projection)
     }
 
     fun distance(n1: LayoutItem, n2: LayoutItem): Double {
@@ -261,6 +298,7 @@ class LabelForceLayout(
             get() = box.hypot / 2
         val expanded: TransformedRectangle
             get() = box.expand(padding / 2)
+        var clamped = false
 
         private var velocity = DoubleVector.ZERO
         private val friction = 0.7
@@ -272,6 +310,10 @@ class LabelForceLayout(
         fun setForce(force: DoubleVector) {
             velocity = velocity.mul(friction).add(force)
             updatePosition(velocity)
+        }
+
+        fun segment(): DoubleSegment? {
+            return box.shortestSegmentToRectangleEdgeCenter(point)
         }
 
         fun intersects(other: LayoutItem): Boolean {

@@ -22,8 +22,6 @@ import kotlin.math.abs
 import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
 
-typealias AwtFont = Font
-
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath = GeneralPath()
     private var state = ContextState()

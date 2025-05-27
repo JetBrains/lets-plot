@@ -5,12 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
@@ -103,15 +99,14 @@ class TooltipAxisConfigTest {
             assertGeneralTooltip(geomLayer, "0.34")  // default numeric format ".2f"
 
             // "axis" tooltip should not be shown for numeric data on discrete axis.
-//            assertYAxisTooltip(geomLayer, "scale = 0.34447 %")
-            assertYAxisTooltip(geomLayer, "**blank**")
+            assertYAxisTooltip(geomLayer, null) // null means no tooltip
 
             // discrete axis does not create tooltips for numeric data.
 //            assertEquals("scale = 0.34447 %", getYTick(geomLayer))
             assertNoYTicks(geomLayer)
         }
 
-        // Unnecessary test - see comment above.
+        // Unnecessary test - see the comment above.
 //        run {
 //            val geomLayer = geomLayer(
 //                additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
@@ -202,7 +197,7 @@ class TooltipAxisConfigTest {
             assertEquals("0.3", getYTick(geomLayer))
         }
         run {
-            // add variable to tooltip line
+            // add variable to the tooltip line
             val geomLayer = geomLayer(
                 scaleFormat = null,
                 tooltipFormat = "tooltip = {} %",
@@ -262,8 +257,13 @@ class TooltipAxisConfigTest {
     @Test
     fun dateTime() {
         val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.WEEK.mul(it.toLong()))
-        }.map { TimeUtil.asInstantUTC(it).toDouble() }
+            DateTime(Date(1, Month.JANUARY, 2021)).add(
+                Duration.WEEK.mul(it.toLong()),
+                TZ
+            )
+        }.map {
+            it.toEpochMilliseconds(TZ).toDouble()
+        }
         val dtData = mapOf("date" to instants, "v" to listOf(0, 1, 2))
         val dtMapping = mapOf(
             org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "v",
@@ -292,6 +292,9 @@ class TooltipAxisConfigTest {
             assertEquals("Jan 2021", getYTick(geomLayer, closedRange))
         }
         run {
+            // Likely this issue:
+            // "The tooltip format with {} in the pattern ignores the default formatting"
+            // https://github.com/JetBrains/lets-plot/issues/484
             val geomLayer = dtLayer(scaleFormat = "scale = {}", tooltipFormat = "tooltip = {}")
             //todo assertGeneralTooltip(geomLayer, "tooltip = 00:00")
             //todo assertYAxisTooltip(geomLayer, "tooltip = 00:00")
@@ -306,7 +309,9 @@ class TooltipAxisConfigTest {
     }
 
     companion object {
-        private fun areEqual(expected: String, actual: String?, name: String, method: (String) -> Unit) {
+        private val TZ = TimeZone.UTC
+
+        private fun areEqual(expected: String?, actual: String?, name: String, method: (String) -> Unit) {
             if (expected != actual) {
                 method("$name:\n\texpected: \"$expected\";\n\tactual: \"$actual\"")
             }
@@ -322,7 +327,7 @@ class TooltipAxisConfigTest {
             areEqual(expected, generalTooltip, "general tooltip", method)
         }
 
-        private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
+        private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String?, method: (String) -> Unit = ::fail) {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val yAxisTooltip = dataPoints

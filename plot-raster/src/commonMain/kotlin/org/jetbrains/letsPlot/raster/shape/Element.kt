@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.canvas.Path2d
 internal abstract class Element() : Node() {
     var transform: AffineTransform by visualProp(AffineTransform.IDENTITY)
     var styleClass: List<String>? by visualProp(null)
-    var clipPath: Path2d? by visualProp(null, managed = true)
+    var clipPath: Path2d? by visualProp(null)
     var parent: Container? by visualProp(null)
     var isMouseTransparent: Boolean = true // need proper hitTest for non-rectangular shapes for correct default "false"
 

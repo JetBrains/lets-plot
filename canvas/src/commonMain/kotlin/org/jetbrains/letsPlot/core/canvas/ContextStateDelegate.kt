@@ -25,6 +25,14 @@ class ContextStateDelegate(
         return state.getClipPath()
     }
 
+    fun getLineDash(): List<Double> {
+        return state.getLineDash()
+    }
+
+    fun getLineDashOffset(): Double {
+        return state.getLineDashOffset()
+    }
+
     override fun beginPath() {
         state.beginPath()
     }

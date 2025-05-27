@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.formatting.datetime
 
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,7 +24,7 @@ class FormatTimeTest {
         // Format                  24-hour   12-hour
         // Midnight (start of day)  00:00   12:00 am
         // Noon                     12:00   12:00 pm
-        // Midnight (end of day)    24:00   12:00 am
+        // Midnight (end of day)    00:00   12:00 am
 
         val f12 = DateTimeFormat("%I:%M %P")
         val f24 = DateTimeFormat("%H:%M")
@@ -41,9 +42,14 @@ class FormatTimeTest {
         }
 
         // midnight (end of day)
-        Time(24, 0).run {
-            assertEquals("12:00 am", f12.apply(this))
-            assertEquals("24:00", f24.apply(this))
+        Time(23, 59, 59).run {
+            assertEquals("11:59 pm", f12.apply(this))
+            assertEquals("23:59", f24.apply(this))
+        }
+
+        Time.DAY_END.run {
+            assertEquals("11:59 pm", f12.apply(this))
+            assertEquals("23:59", f24.apply(this))
         }
 
         // minute after midnight

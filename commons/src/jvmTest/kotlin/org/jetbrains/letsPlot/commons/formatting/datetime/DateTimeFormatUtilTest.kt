@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.datetime
 
-import java.util.*
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -13,22 +13,22 @@ class DateTimeFormatUtilTest {
 
     @Test
     fun month() {
-        //    String s = FormatUtil.formatDateUTC(baseDate, "yyyy.MM.dd G 'at' HH:mm:ss vvvv");
-        //    System.out.println(s);
-        //    String s = FormatUtil.formatDateUTC(baseDate, "yyyyy.MMMMM.dd GGG hh:mm aaa");
-        //    System.out.println(s);
+        val baseInstant = DateTime(
+            Date(7, Month.AUGUST, 2013),
+            Time(7, 7, 7)
+        ).toEpochMilliseconds(TZ)
 
-        val m = DateTimeFormatUtil.formatDateUTC(
+        val m = format(
             baseInstant,
             "%m"
         )
         assertEquals("08", m)
-        val b = DateTimeFormatUtil.formatDateUTC(
+        val b = format(
             baseInstant,
             "%b"
         )
         assertEquals("Aug", b)
-        val B = DateTimeFormatUtil.formatDateUTC(
+        val B = format(
             baseInstant,
             "%B"
         )
@@ -36,15 +36,10 @@ class DateTimeFormatUtilTest {
     }
 
     companion object {
-        @Suppress("DEPRECATION")
-        private val baseDate = Date(Date.UTC(
-                2013 - 1900, // 2013
-                7, // Aug
-                7,
-                7,
-                7,
-                7
-        ))
-        private val baseInstant = baseDate.time
+        private val TZ = TimeZone.UTC
+
+        private fun format(epochMillis: Long, pattern: String): String {
+            return DateTimeFormatUtil.format(epochMillis, pattern, TZ)
+        }
     }
 }

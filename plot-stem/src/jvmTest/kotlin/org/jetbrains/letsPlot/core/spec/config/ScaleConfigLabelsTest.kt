@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import org.jetbrains.letsPlot.commons.intern.datetime.*
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -225,12 +224,10 @@ class ScaleConfigLabelsTest {
 
     @Test
     fun datetime() {
-        val instant = TimeZone.UTC.toInstant(
-            DateTime(
-                Date(1, Month.JANUARY, 2021),
-                Time(10, 10)
-            )
-        ).timeSinceEpoch.toDouble()
+        val instant = DateTime(
+            Date(1, Month.JANUARY, 2021),
+            Time(10, 10)
+        ).toEpochMilliseconds(TZ).toDouble()
 
         val scaleMap = getScaleMap(
             data = mapOf(
@@ -269,8 +266,10 @@ class ScaleConfigLabelsTest {
     @Test
     fun `DateTime format should be applied to the breaks`() {
         val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()))
-        }.map { TimeZone.UTC.toInstant(it).timeSinceEpoch.toDouble() }
+            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ)
+        }.map {
+            it.toEpochMilliseconds(TZ).toDouble()
+        }
 
         val scaleMap = getScaleMap(
             data = mapOf(
@@ -384,6 +383,8 @@ class ScaleConfigLabelsTest {
     }
 
     companion object {
+        private val TZ = TimeZone.UTC
+
         private fun getScaleMap(
             data: Map<String, Any>,
             mapping: Map<String, Any>,

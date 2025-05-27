@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
@@ -24,9 +25,12 @@ class LinePattern(
 
     private var myLineFormatter: ((List<Any>) -> String)? = null
 
-    private fun initFormatter(expFormat: StringFormat.ExponentFormat): (List<Any>) -> String {
+    private fun initFormatter(
+        expFormat: StringFormat.ExponentFormat,
+        tz: TimeZone?
+    ): (List<Any>) -> String {
         require(myLineFormatter == null)
-        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", expFormat)::format
+        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", expFormat, tz)::format
         return myLineFormatter!!
     }
 
@@ -35,10 +39,16 @@ class LinePattern(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
-        val formatter = myLineFormatter ?: initFormatter(ctx.expFormat)
+        val formatter = myLineFormatter ?: initFormatter(ctx.expFormat, ctx.tz)
 
         val dataValues = fields.map { dataValue ->
-            dataValue.getDataPoint(index, ctx) ?: return null
+            val p = dataValue.getDataPoint(index, ctx)
+            if (p == null || p.isBlank) {
+                // If the data point is blank, we return null to skip it.
+                return null
+            }
+
+            p
         }
         return if (dataValues.size == 1) {
             val dataValue = dataValues.single()
@@ -73,6 +83,7 @@ class LinePattern(
             pattern = StringFormat.valueInLinePattern(),
             fields = listOf(valueSource)
         )
+
         private const val DEFAULT_LABEL_SPECIFIER = "@"
 
 

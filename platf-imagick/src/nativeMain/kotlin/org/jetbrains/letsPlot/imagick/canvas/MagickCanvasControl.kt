@@ -15,7 +15,11 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 
-class MagickCanvasControl(w: Int, h: Int) : CanvasControl {
+class MagickCanvasControl(
+    w: Int,
+    h: Int,
+    override val pixelDensity: Double,
+) : CanvasControl {
     val children = mutableListOf<Canvas>()
 
     override val size: Vector
@@ -33,6 +37,15 @@ class MagickCanvasControl(w: Int, h: Int) : CanvasControl {
         children.remove(canvas)
     }
 
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        //TODO("onResize() - Not yet implemented")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("snapshot() - Not yet implemented")
+    }
+
     override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
         return object : AnimationProvider.AnimationTimer {
             override fun start() {
@@ -46,7 +59,7 @@ class MagickCanvasControl(w: Int, h: Int) : CanvasControl {
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return MagickCanvas.create(size)
+        return MagickCanvas.create(size, pixelDensity)
     }
 
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
@@ -64,7 +77,7 @@ class MagickCanvasControl(w: Int, h: Int) : CanvasControl {
         eventSpec: MouseEventSpec,
         eventHandler: EventHandler<MouseEvent>
     ): Registration {
-        TODO("Not yet implemented")
+        return Registration.EMPTY
     }
 
     override fun <T> schedule(f: () -> T) {

@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.millis
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.minute
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.second
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.totalDays
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -26,10 +27,15 @@ internal class TimeBreaksHelper(
     rangeEnd: Double,
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
+    tz: TimeZone?,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
     val formatter: (Any) -> String
+
+    private val dayFormat = newStringFormat("{d}d", tz)
+    private val hmsFormat = newStringFormat("{d}:{02d}:{02d}", tz)
+    private val hmFormat = newStringFormat("{d}:{02d}", tz)
 
     init {
         val ticks: List<Double> = when {
@@ -49,6 +55,10 @@ internal class TimeBreaksHelper(
 
         formatter = providedFormatter ?: { v -> formatString((v as Number).toLong()) }
     }
+
+    private fun formatTotalDays(duration: Duration) = dayFormat.apply(duration.totalDays)
+    private fun formatHms(duration: Duration) = hmsFormat.apply(duration.hour, duration.minute, duration.second)
+    private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
 
     fun formatBreaks(ticks: List<Double>): List<String> {
         return when {
@@ -127,15 +137,17 @@ internal class TimeBreaksHelper(
     }
 
     companion object {
-        private val dayFormat = newStringFormat("{d}d")
-        private val hmsFormat = newStringFormat("{d}:{02d}:{02d}")
-        private val hmFormat = newStringFormat("{d}:{02d}")
+//        private val dayFormat = newStringFormat("{d}d")
+//        private val hmsFormat = newStringFormat("{d}:{02d}:{02d}")
+//        private val hmFormat = newStringFormat("{d}:{02d}")
 
-        private fun formatTotalDays(duration: Duration) = dayFormat.apply(duration.totalDays)
-        private fun formatHms(duration: Duration) = hmsFormat.apply(duration.hour, duration.minute, duration.second)
-        private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
+//        private fun formatTotalDays(duration: Duration) = dayFormat.apply(duration.totalDays)
+//        private fun formatHms(duration: Duration) = hmsFormat.apply(duration.hour, duration.minute, duration.second)
+//        private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
 
-        private fun newStringFormat(format: String): StringFormat = StringFormat.forNArgs(format, -1)
+        private fun newStringFormat(format: String, tz: TimeZone?): StringFormat =
+            StringFormat.forNArgs(format, -1, tz = tz)
+
         private fun StringFormat.apply(vararg args: Any): String = format(args.toList())
     }
 }

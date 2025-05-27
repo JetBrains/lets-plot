@@ -36,47 +36,66 @@ class ContextState {
         return currentState.clipPath
     }
 
+    fun getLineDash(): List<Double> {
+        return currentState.lineDashPattern
+    }
+
+    fun getLineDashOffset(): Double {
+        return currentState.lineDashOffset
+    }
+
     class StateEntry(
         var strokeColor: Color,
         var strokeWidth: Double,
-        var lineDashPattern: List<Double>?,
+        var lineDashPattern: List<Double>,
         var lineDashOffset: Double,
         var miterLimit: Double,
         var lineCap: LineCap,
         var lineJoin: LineJoin,
         var fillColor: Color,
         var font: Font,
+        var fontTextAlign: TextAlign,
+        var fontBaseline: TextBaseline,
         var transform: AffineTransform,
-        var clipPath: Path2d? = null
+        var globalAlpha: Double,
+        var clipPath: Path2d? = null,
     ) {
+
+
         fun copy(): StateEntry {
             return StateEntry(
                 strokeColor = strokeColor,
                 strokeWidth = strokeWidth,
+                lineDashPattern = lineDashPattern,
                 lineDashOffset = lineDashOffset,
                 miterLimit = miterLimit,
                 lineCap = lineCap,
                 lineJoin = lineJoin,
                 fillColor = fillColor,
                 font = font,
+                fontTextAlign = fontTextAlign,
+                fontBaseline = fontBaseline,
                 transform = transform,
-                lineDashPattern = lineDashPattern,
+                globalAlpha = globalAlpha,
                 clipPath = clipPath
             )
         }
 
         companion object {
             fun create(
+                fillColor: Color = Color.TRANSPARENT,
                 strokeColor: Color = Color.TRANSPARENT,
                 strokeWidth: Double = 1.0,
+                lineDashPattern: List<Double> = emptyList(),
                 lineDashOffset: Double = 0.0,
                 miterLimit: Double = 10.0,
                 lineCap: LineCap = LineCap.BUTT,
                 lineJoin: LineJoin = LineJoin.MITER,
-                fillColor: Color = Color.TRANSPARENT,
                 font: Font = Font(),
+                fontTextAlign: TextAlign = TextAlign.START,
+                fontBaseline: TextBaseline = TextBaseline.ALPHABETIC,
+                globalAlpha: Double = 1.0,
                 transform: AffineTransform = AffineTransform.IDENTITY,
-                lineDashPattern: List<Double>? = null,
                 clipPath: Path2d? = null
             ): StateEntry {
                 return StateEntry(
@@ -89,6 +108,9 @@ class ContextState {
                     lineJoin = lineJoin,
                     fillColor = fillColor,
                     font = font,
+                    fontTextAlign = fontTextAlign,
+                    fontBaseline = fontBaseline,
+                    globalAlpha = globalAlpha,
                     transform = transform,
                     clipPath = clipPath
                 )
@@ -259,7 +281,7 @@ class ContextState {
         currentState.lineJoin = lineJoin
     }
 
-    fun setLineDashPattern(lineDashPattern: List<Double>?) {
+    fun setLineDashPattern(lineDashPattern: List<Double>) {
         log { "setLineDashPattern($lineDashPattern)" }
         currentState.lineDashPattern = lineDashPattern
     }
@@ -275,7 +297,8 @@ class ContextState {
     }
 
     fun setGlobalAlpha(d: Double) {
-        TODO("Not yet implemented")
+        log { "setGlobalAlpha($d)" }
+        currentState.globalAlpha = d
     }
 
     fun scale(d: Double) {
@@ -283,10 +306,12 @@ class ContextState {
     }
 
     fun setTextBaseline(baseline: TextBaseline) {
-        TODO("Not yet implemented")
+        log { "setTextBaseline($baseline)" }
+        currentState.fontBaseline = baseline
     }
 
     fun setTextAlign(align: TextAlign) {
-        TODO("Not yet implemented")
+        log { "setTextAlign($align)" }
+        currentState.fontTextAlign = align
     }
 }
