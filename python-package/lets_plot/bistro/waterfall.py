@@ -164,7 +164,7 @@ def waterfall_plot(data, x, y, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 23-30
+        :emphasize-lines: 21-25
 
         import numpy as np
         from lets_plot import *
@@ -178,9 +178,7 @@ def waterfall_plot(data, x, y, *,
         }
         rect_data = {
             'xmin': [-0.5, 2.5],
-            'ymin': [0, 0],
             'xmax': [2.5, 5.5],
-            'ymax': [2.55, 2.55],
             'name': ['Q1', 'Q2']
         }
         text_data = {
@@ -190,11 +188,8 @@ def waterfall_plot(data, x, y, *,
         }
         waterfall_plot(data, 'x', 'y', label_format='.2f',
                        background_layers=[
-                           geom_rect(
-                               aes(xmin='xmin', ymin='ymin', xmax='xmax', ymax='ymax', fill='name', color='name'),
-                               data=rect_data,
-                               alpha=0.2
-                           )
+                           geom_band(aes(xmin='xmin', xmax='xmax', fill='name', color='name'),
+                                     data=rect_data, alpha=0.2)
                        ]) + \\
             geom_text(aes(x='x', y='y', label='name'), data=text_data, size=10) + \\
             ggtitle("Waterfall with custom layers")
@@ -255,7 +250,7 @@ def waterfall_plot(data, x, y, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 17
+        :emphasize-lines: 17-18
 
         from lets_plot import *
         from lets_plot.bistro.waterfall import *
@@ -268,12 +263,13 @@ def waterfall_plot(data, x, y, *,
             'measure': ['absolute', 'relative', 'relative', 'total', 'relative', 'relative', 'total'] * 2,
         }
         colors = {
-            "Absolute": "rebeccapurple",
-            "Increase": "seagreen",
-            "Decrease": "crimson",
-            "Total": "darkblue",
+            "Absolute": "darkseagreen",
+            "Increase": "palegoldenrod",
+            "Decrease": "paleturquoise",
+            "Total": "palegreen",
         }
-        waterfall_plot(data, 'accounts', 'values', measure='measure', group='company') + \\
+        waterfall_plot(data, 'accounts', 'values', measure='measure', group='company',
+                       size=.75, label=element_text(color="black")) + \\
             scale_fill_manual(values=colors) + \\
             facet_wrap(facets='company', scales='free_x')
 
