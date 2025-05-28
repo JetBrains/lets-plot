@@ -26,7 +26,7 @@ internal object SvgUtils {
         Circle::class to (SvgCircleAttrMapping as SvgAttrMapping<Element>),
         Text::class to (SvgTextElementAttrMapping as SvgAttrMapping<Element>),
         Path::class to (SvgPathAttrMapping as SvgAttrMapping<Element>),
-        //Image::class to (SvgImageAttrMapping as SvgAttrMapping<Element>),
+        Image::class to (SvgImageAttrMapping as SvgAttrMapping<Element>),
         TSpan::class to (SvgTSpanElementAttrMapping as SvgAttrMapping<Element>),
     )
 
@@ -84,7 +84,7 @@ internal object SvgUtils {
 //            is SvgTSpanElement -> SVGOMTSpanElement(null, myDoc)
             is SvgDefsElement -> Group()
 //            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
-//            is SvgImageElement -> Image()
+            is SvgImageElement -> Image()
             else -> Group() //throw IllegalArgumentException("Unsupported source svg element: ${source::class.simpleName}")
         }
     }

@@ -3,11 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-/*
-package org.jetbrains.letsPlot.rasterizer.mapping.svg.attr
+package org.jetbrains.letsPlot.raster.mapping.svg.attr
+
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
-import org.jetbrains.letsPlot.skia.shape.Image
+import org.jetbrains.letsPlot.raster.shape.Image
+
 
 internal object SvgImageAttrMapping : SvgAttrMapping<Image>() {
     override fun setAttribute(target: Image, name: String, value: Any?) {
@@ -30,8 +31,7 @@ internal object SvgImageAttrMapping : SvgAttrMapping<Image>() {
     }
 
     private fun updateTargetImage(target: Image, imageBytes: ByteArray) {
-        target.img = org.jetbrains.skia.Image.makeFromEncoded(imageBytes)
+        //target.img = org.jetbrains.skia.Image.makeFromEncoded(imageBytes)
+        println("SvgImageAttrMapping.updateTargetImage: Image rendering is not supported in raster backend.")
     }
 }
-
- */

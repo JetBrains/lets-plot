@@ -3,13 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-/*
-package org.jetbrains.letsPlot.rasterizer.shape
 
-import org.jetbrains.skia.Canvas
-import org.jetbrains.skia.Rect
+package org.jetbrains.letsPlot.raster.shape
 
-internal typealias SkImage = org.jetbrains.skia.Image
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.core.canvas.Canvas
+
 
 internal class Image : Element() {
     var preserveRatio: Boolean by visualProp(false)
@@ -17,21 +16,20 @@ internal class Image : Element() {
     var y: Float by visualProp(0.0f)
     var width: Float by visualProp(0.0f)
     var height: Float by visualProp(0.0f)
-    var img: SkImage? by visualProp(null, managed = true)
+    var img: Canvas.Snapshot? by visualProp(null)
 
     override fun render(canvas: Canvas) {
         img?.let {
             if (preserveRatio) {
-                canvas.drawImage(it, x, y)
+                canvas.context2d.drawImage(it, x.toDouble(), y.toDouble())
             } else {
-                canvas.drawImageRect(it, Rect.makeXYWH(x, y, width, height))
+                //canvas.drawImageRect(it, Rect.makeXYWH(x, y, width, height))
+                println("Image rendering with preserveRatio=false is not supported in raster backend.")
             }
         }
     }
 
-    override val localBounds: Rect
-        get() = Rect.makeXYWH(x, y, width, height)
+    override val localBounds: DoubleRectangle
+        get() = DoubleRectangle.XYWH(x, y, width, height)
 
 }
-
- */
