@@ -34,6 +34,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
@@ -173,7 +176,11 @@ object DefaultMapperProvider {
             this.put(SIZE_END, SizeMapperProvider.DEFAULT)
             this.put(STROKE_START, StrokeMapperProvider.DEFAULT)
             this.put(STROKE_END, StrokeMapperProvider.DEFAULT)
+
             this.put(POINT_SIZE, SizeMapperProvider.DEFAULT)
+            this.put(SEGMENT_COLOR, createColorMapperProvider())
+            this.put(SEGMENT_SIZE, SizeMapperProvider.DEFAULT)
+            this.put(SEGMENT_ALPHA, AlphaMapperProvider.DEFAULT)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {

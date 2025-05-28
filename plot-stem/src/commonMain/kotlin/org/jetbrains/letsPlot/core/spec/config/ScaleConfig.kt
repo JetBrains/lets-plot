@@ -101,9 +101,9 @@ class ScaleConfig<T> constructor(
                     ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE
                 )
             }
-        } else if (aes == Aes.ALPHA && has(RANGE)) {
+        } else if ((aes == Aes.ALPHA || aes == Aes.SEGMENT_ALPHA) && has(RANGE)) {
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE) && has(
+        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE || aes == Aes.SEGMENT_SIZE) && has(
                 RANGE
             )
         ) {

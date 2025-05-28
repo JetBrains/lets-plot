@@ -429,7 +429,10 @@ object GeomMeta {
                 Aes.VJUST,
                 Aes.ANGLE,
                 Aes.LINEHEIGHT,
-                Aes.POINT_SIZE
+                Aes.POINT_SIZE,
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
             )
 
             GeomKind.LABEL_REPEL -> listOf(
@@ -445,7 +448,10 @@ object GeomMeta {
                 Aes.VJUST,
                 Aes.ANGLE,
                 Aes.LINEHEIGHT,
-                Aes.POINT_SIZE
+                Aes.POINT_SIZE,
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
             )
 
             GeomKind.LIVE_MAP -> listOf(
