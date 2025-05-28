@@ -1,7 +1,7 @@
 #  Copyright (c) 2024. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from lets_plot.plot.core import PlotSpec, aes
+from lets_plot.plot.core import PlotSpec, LayerSpec, FeatureSpecArray, aes
 from lets_plot.plot.util import as_annotated_data
 
 __all__ = ['waterfall_plot']
@@ -113,7 +113,7 @@ def waterfall_plot(data, x, y, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
-    background_layers : list of `LayerSpec` or `LayerSpec`
+    background_layers : LayerSpec or FeatureSpecArray
         Background layers to be added to the plot.
 
     Returns
@@ -271,7 +271,19 @@ def waterfall_plot(data, x, y, *,
 
     """
     data, mapping, data_meta = as_annotated_data(data, aes(x=x, y=y))
-    background_layers = [] if background_layers is None else background_layers
+
+    if background_layers is None:
+        layers = []
+    elif isinstance(background_layers, LayerSpec):
+        layers = [background_layers]
+    elif isinstance(background_layers, FeatureSpecArray):
+        for sublayer in background_layers.elements():
+            if not isinstance(sublayer, LayerSpec):
+                raise TypeError("Invalid 'layer' type: {}".format(type(sublayer)))
+        layers = background_layers.elements()
+    else:
+        raise TypeError("Invalid 'layer' type: {}".format(type(background_layers)))
+
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'waterfall',
         'x': x,
@@ -298,5 +310,5 @@ def waterfall_plot(data, x, y, *,
         'connector': connector,
         'label': label,
         'label_format': label_format,
-        'background_layers': [layer.as_dict() for layer in background_layers]
+        'background_layers': [layer.as_dict() for layer in layers]
     }, **data_meta)
