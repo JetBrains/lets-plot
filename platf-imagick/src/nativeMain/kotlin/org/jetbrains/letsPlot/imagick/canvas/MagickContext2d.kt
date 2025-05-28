@@ -14,13 +14,39 @@ import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
-    private val stateDelegate: ContextStateDelegate = ContextStateDelegate()
+    pixelDensity: Double,
+    private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
+
 ) : Context2d by stateDelegate {
-    private val none = ImageMagick.NewPixelWand()!!.apply {
-        ImageMagick.PixelSetColor(this, "none")
-    }
+    private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
-    val wand = ImageMagick.NewDrawingWand() ?: error { "DrawingWand was null" }
+    val wand = ImageMagick.NewDrawingWand() ?: error { "Failed to create DrawingWand" }
+
+    init {
+        ImageMagick.PixelSetColor(none, "none")
+        transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
+    }
+
+    override fun drawImage(snapshot: Canvas.Snapshot) {
+        val snap = snapshot as MagickCanvas.MagickSnapshot
+        val srcWand = snap.img
+
+        val success = ImageMagick.MagickCompositeImage(
+            img,
+            srcWand,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            0,
+            0
+        )
+
+        ImageMagick.DestroyMagickWand(srcWand)
+
+        if (success == ImageMagick.MagickFalse) {
+            val err = ImageMagick.MagickGetException(img, null)
+            throw RuntimeException("MagickCompositeImage failed: $err")
+        }
+    }
 
     override fun save() {
         stateDelegate.save()

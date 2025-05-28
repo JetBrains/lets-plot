@@ -70,6 +70,11 @@ object Option {
             const val ORDER = "order"
 
             // Values of the "TYPE" property
+            @Deprecated(
+                "Use Types.DATE_TIME instead",
+                replaceWith = ReplaceWith("Types.DATE_TIME"),
+                level = DeprecationLevel.ERROR
+            )
             object DateTime {
                 const val DATE_TIME = Types.DATE_TIME // TODO: remove. replaced Types.DATE_TIME
                 const val TIME_ZONE = "time_zone" // TODO: remove or move to Types

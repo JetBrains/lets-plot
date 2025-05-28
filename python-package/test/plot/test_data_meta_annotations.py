@@ -1,8 +1,10 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from datetime import datetime
+from datetime import datetime, timezone
+# from zoneinfo import ZoneInfo
 
+from datetime import timedelta
 import numpy as np
 from pandas import DataFrame, Categorical
 
@@ -10,7 +12,11 @@ from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
 
 data_dict = {
-    'python_datetime': [(datetime(2020, 1, 1))],
+    # 'python_datetime': [(datetime(2020, 1, 1))],
+    # 'python_datetime': [(datetime(2020, 1, 1, tzinfo=timezone.utc))],
+    'python_datetime': [(datetime(2020, 1, 1, tzinfo=timezone(-timedelta(hours=6))))],  # CST = UTC-6
+    # Since Python 3.9, ZoneInfo is available in the standard library.
+    # 'python_datetime': [(datetime(2020, 1, 1, tzinfo=timezone.utc).astimezone(ZoneInfo('America/Chicago')))],  # CST
     'python_float': [0.0],
     'python_int': [0],
     'python_str': ['foo'],

@@ -50,7 +50,7 @@ python -m build -w
 ## Installing locally
 
 * change dir to `lets-plot/python-package`
-* create / activate Python environment (if needed)
+* create / activate a Python environment (if needed)
 * run shell command: 
 
 `pip install --no-index --find-links=dist/ lets-plot --no-deps --force-reinstall`
