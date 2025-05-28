@@ -131,6 +131,9 @@ fun Context2d.transform(
     )
 }
 
+fun Context2d.fillRect(x: Number, y: Number, width: Number, height: Number) {
+    fillRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+}
 
 val black = ImageMagick.NewPixelWand().apply {
     ImageMagick.PixelSetColor(this, "black")

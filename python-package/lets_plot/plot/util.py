@@ -8,7 +8,7 @@ from lets_plot._type_utils import is_pandas_data_frame
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes, FeatureSpec
-from lets_plot.plot.series_meta import infer_type, TYPE_UNKNOWN
+from lets_plot.plot.series_meta import _infer_type, TYPE_UNKNOWN, TYPE_DATE_TIME, _detect_time_zone
 
 
 def as_boolean(val, *, default):
@@ -26,10 +26,10 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
     # fill mapping_meta_by_var, mappings and data_type_by_var.
     if mapping_spec is not None:
         for key, spec in mapping_spec.props().items():
-            # key is either an aesthetic name or 'name' (FeatureSpec.name property)
+            # the key is either an aesthetic name or 'name' (FeatureSpec.name property)
             if key == 'name':  # ignore FeatureSpec.name property
                 continue
-                
+
             if isinstance(spec, MappingMeta):
                 mappings[key] = spec.variable
                 mapping_meta_by_var.setdefault(spec.variable, {})[key] = spec
@@ -37,7 +37,13 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
             else:
                 mappings[key] = spec  # spec is a variable name
 
-    data_type_by_var.update(infer_type(data))
+    data_type_by_var.update(_infer_type(data))
+
+    # TMP
+    # for var_name, data_type in data_type_by_var.items():
+    #     if data_type == TYPE_DATE_TIME:
+    #         tz = _detect_time_zone(var_name, data)
+    #         print(f"Detected time zone for '{var_name}': {tz}  ({type(tz)})")
 
     # fill series annotations
     series_annotations = {}  # var to series_annotation

@@ -46,8 +46,8 @@ internal class VerticalRotatedLabelsLayout(
         }
             ?: // labels can be empty so bounds may be null, it is safe to use empty rect
             DoubleRectangle.ZERO
-	    
-        val maxLabelWidth = labelBoundsList.maxOf { it.width }
+
+        val maxLabelWidth = labelBoundsList.maxOfOrNull { it.width } ?: 0.0
 
         val radAngle = toRadians(myRotationAngle)
         val sinA = sin(radAngle)
