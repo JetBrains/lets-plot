@@ -39,11 +39,13 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
 
     data_type_by_var.update(_infer_type(data))
 
-    # TMP
-    # for var_name, data_type in data_type_by_var.items():
-    #     if data_type == TYPE_DATE_TIME:
-    #         tz = _detect_time_zone(var_name, data)
-    #         print(f"Detected time zone for '{var_name}': {tz}  ({type(tz)})")
+    # Detect the tome zone - one for the entire data set.
+    time_zone_by_var_name = {}
+    for var_name, data_type in data_type_by_var.items():
+        if data_type == TYPE_DATE_TIME:
+            time_zone = _detect_time_zone(var_name, data)
+            if time_zone is not None:
+                time_zone_by_var_name[var_name] = time_zone
 
     # fill series annotations
     series_annotations = {}  # var to series_annotation
@@ -52,6 +54,9 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
 
         if data_type != TYPE_UNKNOWN:
             series_annotation['type'] = data_type
+
+        if var_name in time_zone_by_var_name:
+            series_annotation['time_zone'] = time_zone_by_var_name[var_name]
 
         if is_pandas_data_frame(data) and data[var_name].dtype.name == 'category' and data[var_name].dtype.ordered:
             series_annotation['factor_levels'] = data[var_name].cat.categories.to_list()

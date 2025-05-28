@@ -69,7 +69,11 @@ object DataMetaUtil {
             }
     }
 
-    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>, isClientSide: Boolean): List<OrderOptionUtil.OrderOption> {
+    fun getOrderOptions(
+        options: Map<*, *>,
+        commonMappings: Map<*, *>,
+        isClientSide: Boolean
+    ): List<OrderOptionUtil.OrderOption> {
         return getMappingAnnotationsSpec(options, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             .mapNotNull { (aesName, parameters) ->
@@ -106,7 +110,9 @@ object DataMetaUtil {
                 SeriesAnnotation.Types.FLOATING -> DataType.FLOATING
                 SeriesAnnotation.Types.STRING -> DataType.STRING
                 SeriesAnnotation.Types.BOOLEAN -> DataType.BOOLEAN
-                SeriesAnnotation.Types.DATE_TIME -> DataType.INSTANT
+                SeriesAnnotation.Types.DATE_TIME -> DataType.EPOCH_MILLIS
+                SeriesAnnotation.Types.DATE -> DataType.DATE_MILLIS_UTC
+                SeriesAnnotation.Types.TIME -> DataType.MIDNIGHT_MILLIS
                 SeriesAnnotation.Types.UNKNOWN -> DataType.UNKNOWN
                 else -> DataType.UNKNOWN
             }

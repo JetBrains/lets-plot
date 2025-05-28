@@ -10,6 +10,8 @@ enum class DataType {
     INTEGER,
     FLOATING,
     STRING,
-    INSTANT,
     BOOLEAN,
+    EPOCH_MILLIS,
+    DATE_MILLIS_UTC, // Local date.
+    MIDNIGHT_MILLIS, // Local time.
 }
