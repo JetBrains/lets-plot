@@ -29,6 +29,7 @@
 - `geom_crossbar`: the midline is not shown in the legend when `fatten` is set to 0, or when there is no mapping for it.
 - `waterfall_plot`: the appearance of the legend has been improved.
 - `geom_pointrange`: the midpoint will not be drawn if the y aesthetic is set to `None`.
+- `geom_band` - the `alpha` aesthetic only affects the inner part of the geometry, as in `geom_rect()`.
 
 ### Fixed
 
