@@ -22,10 +22,14 @@ import org.jetbrains.letsPlot.core.canvas.*
 typealias JfxFont = Font
 typealias JfxFontWeight = javafx.scene.text.FontWeight
 
-internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
+internal class JavafxContext2d(
+    private val myContext2d: GraphicsContext,
+    pixelRatio: Double
+) : Context2d {
 
     init {
         setLineCap(LineCap.BUTT)
+        myContext2d.scale(pixelRatio, pixelRatio)
     }
 
     private fun convertLineJoin(lineJoin: LineJoin): StrokeLineJoin {

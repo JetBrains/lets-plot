@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setLeft
@@ -23,11 +23,10 @@ import kotlin.math.ceil
 
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
-    size: Vector,
+    override val size: Vector,
     private val pixelRatio: Double
-) : ScaledCanvas(DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D), size, pixelRatio) {
-
-
+) : Canvas {
+    override val context2d: Context2d = DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D, pixelRatio)
     override fun takeSnapshot(): Async<Canvas.Snapshot> = Asyncs.constant(DomSnapshot(canvasElement, size, pixelRatio))
     override fun immidiateSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size, pixelRatio)
 

@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
@@ -18,10 +17,9 @@ import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
 internal class AwtCanvas
 private constructor(
     val image: BufferedImage,
-    size: Vector,
+    override val size: Vector,
     pixelDensity: Double,
-) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelDensity) {
-
+) : Canvas {
     companion object {
         fun create(size: Vector, pixelDensity: Double): Canvas {
             val s = if (size == Vector.ZERO) {
@@ -31,6 +29,8 @@ private constructor(
             return AwtCanvas(BufferedImage(s.x, s.y, TYPE_4BYTE_ABGR), s, pixelDensity)
         }
     }
+
+    override val context2d: AwtContext2d = AwtContext2d(image.createGraphics(), pixelDensity)
 
     override fun takeSnapshot(): Async<Canvas.Snapshot> {
         return Asyncs.constant(AwtSnapshot(image))

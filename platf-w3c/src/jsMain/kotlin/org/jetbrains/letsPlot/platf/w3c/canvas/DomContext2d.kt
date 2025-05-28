@@ -18,8 +18,14 @@ import org.w3c.dom.*
 import kotlin.math.PI
 
 internal class DomContext2d(
-    private val ctx: CanvasRenderingContext2D
+    private val ctx: CanvasRenderingContext2D,
+    pixelRatio: Double
 ) : Context2d {
+
+    init {
+        ctx.scale(2.0, 2.0)
+    }
+
     private fun convertLineJoin(lineJoin: LineJoin): CssLineJoin {
         return when (lineJoin) {
             LineJoin.BEVEL -> CssLineJoin.BEVEL

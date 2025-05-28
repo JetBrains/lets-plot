@@ -28,7 +28,7 @@ open class LiveMapComponentDemoJfx(private val demoModelProvider: (DoubleVector)
         val canvasControl = JavafxCanvasControl(
             group,
             size,
-            1.0,
+            2.0,
             JavafxEventPeer(group, Rectangle(Vector.ZERO, size))
         )
 
