@@ -16,14 +16,14 @@ import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 
 class MagickCanvasControl(
-    w: Int,
-    h: Int,
+    val w: Int,
+    val h: Int,
     override val pixelDensity: Double,
 ) : CanvasControl {
     val children = mutableListOf<Canvas>()
 
     override val size: Vector
-        get() = TODO("Not yet implemented")
+        get() = Vector(w, h)
 
     override fun addChild(canvas: Canvas) {
         children.add(canvas)
