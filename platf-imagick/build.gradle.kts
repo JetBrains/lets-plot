@@ -17,6 +17,7 @@ if (!imagickDir.exists() || !imagickDir.isDirectory) {
 
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
 kotlin {
     val target = when {
@@ -62,6 +63,14 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":canvas"))
+                implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
+            }
+        }
+
+        nativeTest {
+            dependencies {
+                implementation(project(":demo-and-test-shared"))
+
                 implementation(project(":datamodel"))
                 implementation(project(":plot-base"))
                 implementation(project(":plot-builder"))
@@ -69,12 +78,5 @@ kotlin {
                 implementation(project(":plot-raster"))
             }
         }
-
-        //nativeTest {
-        //    dependencies {
-        //        implementation(project(":demo-and-test-shared"))
-        //        implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
-        //    }
-        //}
     }
 }
