@@ -205,6 +205,7 @@ def test_as_annotated_data_polars_dataframe():
     # Polars does not support Numpy datetime64 objects.
     modified_data_dict = {key: value for key, value in data_dict.items() if key != 'np_datetime64'}
 
+    # Uodate expectations accordingly. 
     modified_expected_series_annotations = []
     for item in expected_series_annotations:
         if item['column'] == 'np_datetime64':
