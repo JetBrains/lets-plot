@@ -53,7 +53,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
             canvasControl.removeChild(oldCanvas)
             canvasControl.addChild(newCanvas)
         }
-        canvasPeer = SvgCanvasPeer(textMeasurer = TextMeasurer.create(canvasControl))
+        canvasPeer = SvgCanvasPeer(textMeasurer = TextMeasurer.create(canvasControl), canvasControl)
         mapSvgSvgElement(svgSvgElement)
 
         canvas = canvasControl.createCanvas(Vector(width, height))

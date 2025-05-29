@@ -23,8 +23,7 @@ internal class Image : Element() {
             if (preserveRatio) {
                 canvas.context2d.drawImage(it, x.toDouble(), y.toDouble())
             } else {
-                //canvas.drawImageRect(it, Rect.makeXYWH(x, y, width, height))
-                println("Image rendering with preserveRatio=false is not supported in raster backend.")
+                canvas.context2d.drawImage(it, x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
             }
         }
     }

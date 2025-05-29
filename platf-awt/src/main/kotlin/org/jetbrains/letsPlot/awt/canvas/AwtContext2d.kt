@@ -145,12 +145,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         state.numClipPath = clipStack.size
 
         val currentTransform = graphics.transform
-        val invCurrentPath = GeneralPath(currentPath)
-        val invCurrentTransform = AffineTransform(currentTransform)
-        invCurrentTransform.invert()
-        invCurrentPath.transform(currentTransform)
         graphics.transform = AffineTransform()
-        graphics.clip = invCurrentPath
+        graphics.clip = currentPath
         graphics.transform = currentTransform
     }
 
