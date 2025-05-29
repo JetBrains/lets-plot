@@ -18,7 +18,7 @@ Licensed under the Apache-Style Software License for ColorBrewer Color Schemes, 
 The color maps `viridis`, `magma`, `inferno`, and `plasma` were created by
 Stéfan van der Walt ([@stefanv](https://github.com/stefanv)) and Nathaniel Smith ([@njsmith](https://github.com/njsmith)). 
 
-The color map `cividis` is a corrected version of 'viridis', developed by
+The color map `cividis` is a corrected version of `viridis`, developed by
 Jamie R. Nuñez, Christopher R. Anderton, and Ryan S. Renslow.
 
 The color map `turbo` was developed by Anton Mikhailov to address the
