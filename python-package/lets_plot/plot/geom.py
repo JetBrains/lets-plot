@@ -7706,6 +7706,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
               box_padding=None,
               max_overlaps=None,
               min_segment_length=None,
+              arrow=None,
               **other_args):
     """
     Add text labels that repel away from each other and from data points.
@@ -7802,6 +7803,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     min_segment_length : float
         Minimum length of the line segment connecting the label to the point.
         Shorter segments will be omitted.
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7874,6 +7877,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                  box_padding = box_padding,
                  max_overlaps = max_overlaps,
                  min_segment_length = min_segment_length,
+                 arrow=arrow,
                  **other_args)
 
 def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
@@ -7897,6 +7901,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                box_padding=None,
                max_overlaps=None,
                min_segment_length=None,
+               arrow=None,
                **other_args):
 
     """
@@ -8003,6 +8008,8 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Max number of overlapping labels to allow.
     min_segment_length : float
         Minimum length of the connecting line segment. Shorter ones are omitted.
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8080,6 +8087,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                  box_padding = box_padding,
                  max_overlaps = max_overlaps,
                  min_segment_length = min_segment_length,
+                 arrow=arrow,
                  **other_args)
 
 
