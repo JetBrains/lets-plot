@@ -21,9 +21,7 @@ PLATF_IMAGICK_DIR="platf-imagick"
 # COMMON SCRIPT FUNCTIONS:
 print_message () {
   local message="$1"
-  printf "==========================================================\n\n"
   printf "${message}\n\n"
-  printf "==========================================================\n\n"
 }
 
 print_warning () {
@@ -31,6 +29,7 @@ print_warning () {
   printf "\n\n"
   printf "\033[1mWARNING:\033[0m ${warning}\n\n"
   printf "\n"
+  sleep 2
 }
 
 exit_with_error () {
@@ -56,19 +55,9 @@ check_exec_status () {
 
 
 # GET AND SET BUILD AND INSTALL PATHS
-current_path=$(pwd)
-current_dir=$(basename "$current_path")
-
-if [[ $current_dir = "$PLATF_IMAGICK_DIR" ]]; then
-  export WORKING_DIR=$current_path
-else
-  platf_imagick_path=$(find "$current_path" -type d -name "$PLATF_IMAGICK_DIR")
-  if [[ -d "$platf_imagick_path" ]]; then
-    export WORKING_DIR="$platf_imagick_path"
-  else
-    exit_with_error "Could not find '${PLATF_IMAGICK_DIR}' directory."
-  fi
-fi
+script_dir=$(dirname "${BASH_SOURCE[0]}")
+cd $script_dir || exit_with_error "Could not open ${script_dir}"
+export WORKING_DIR=$(pwd)
 
 # Prefix path for libraries installation can be set as a script argument.
 if [[ -z "$1" ]]; then
@@ -78,7 +67,7 @@ else
   PATH_WARNING=1
 fi
 
-export PKG_CONFIG_PATH="$INSTALL_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="${INSTALL_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 export SOURCES_DIR="${WORKING_DIR}/build/dependencies/sources"
 
 
@@ -88,8 +77,9 @@ getPlatform="$(uname -s)"
 case $getPlatform in
   Linux*)
     export PLATFORM="Linux"
-    # TODO: Make func with execution check.
+    # For Linux run build inside Docker container:
     if [[ "$DOCKER_TRUE" != "1" ]]; then
+      print_warning "Your system is Linux. We will run build process inside the Docker container."
       user_id=$(id -u)
       group_id=$(id -g)
       docker run -it --rm \
@@ -101,11 +91,7 @@ case $getPlatform in
          quay.io/pypa/manylinux2014_x86_64 \
          /bin/bash "/opt/${PLATF_IMAGICK_DIR}/init_imagemagick.sh"
 
-      print_message "Build was performed inside Docker container."
       exit 0
-    else
-      yum install -y gperf gettext-devel
-      check_exec_status
     fi
   ;;
 
@@ -323,6 +309,13 @@ fi
 
 # BUILD LIBRARIES:
 cd "$SOURCES_DIR" || exit_with_error "Could not find ${SOURCES_DIR} directory."
+# INSTALL BUILD DEPENDENCIES IN DOCKER CONTAINER:
+if [[ "$PLATFORM" = "Linux" && "$DOCKER_TRUE" = "1" ]]; then
+  print_message "Installing build dependencies..."
+  yum install -y gperf gettext-devel
+  check_exec_status
+fi
+
 build_library "libexpat"
 build_library "freetype"
 build_library "fontconfig"
@@ -338,6 +331,6 @@ printf "*******************************************************************\n\n"
 printf "  ImageMagick and its dependencies installation completed.\n\n"
 if [[ "$PATH_WARNING" -eq 1 ]]; then
   printf "   You have chosen custom installation path. Do not forget to adjust project settings:\n\n"
-  printf "   ${INSTALL_PREFIX}/lib\n"
+  printf "   imagemagick_lib_path: ${INSTALL_PREFIX}/lib\n"
 fi
 printf "*******************************************************************\n\n"
