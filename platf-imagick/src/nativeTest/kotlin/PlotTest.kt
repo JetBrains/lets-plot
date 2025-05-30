@@ -3,13 +3,6 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import demoAndTestShared.parsePlotSpec
-import kotlinx.cinterop.toKString
-import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
-import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
-import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import kotlin.test.Test
 
 /*
@@ -20,56 +13,72 @@ import kotlin.test.Test
 class PlotTest {
     private val outDir: String = getCurrentDir() + "/build/image-test/"
     private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
-    private val w = 100.0
-    private val h = 100.0
-
-    private val strokeColor = "#000000"
-    private val fillColor = "#000000"
-    private val filledStrokeColor = "#000080"
-    private val strokedFillColor = "#FFC000"
 
     init {
         mkDir(outDir)
     }
 
-    val imageComparer = ImageComparer(
+    private val imageComparer = ImageComparer(
         expectedDir = expectedDir,
         outDir = outDir
     )
 
-    fun createCanvas(
-        width: Number = w,
-        height: Number = h,
-        pixelDensity: Double = 1.0
-    ): Pair<MagickCanvas, MagickContext2d> {
-        val canvas = MagickCanvas.create(width = width, height = height, pixelDensity = pixelDensity)
-        val context2d = canvas.context2d as MagickContext2d
-        return canvas to context2d
+    @Test
+    fun barPlot() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "time": ["Lunch", "Lunch", "Dinner", "Dinner", "Dinner"] },
+            |  "theme": { "text": { "family": "fixed", "blank": false } },
+            |  "mapping": {
+            |    "x": "time",
+            |    "color": "time",
+            |    "fill": "time"
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "bar",
+            |      "alpha": "0.5"
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        imageComparer.assertImageEquals("plot_bar_test.bmp", spec)
     }
 
     @Test
-    fun barPlot() {
-        val OUR_DATA = "   {" +
-                "      'time': ['Lunch','Lunch', 'Dinner', 'Dinner', 'Dinner']" +
-                "   }"
-        val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'data': " + OUR_DATA +
-                    "           ," +
-                    "   'mapping': {" +
-                    "             'x': 'time'," +
-                    "             'color': 'time'," +
-                    "             'fill': 'time'" +
-                    "           }," +
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'bar'," +
-                    "                  'alpha': '0.5'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+    fun polarPlot() {
+            val spec = """
+                |{
+                |  "data": { "foo": [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0 ] },
+                |  "coord": { "name": "polar", "theta": "x" },
+                |  "ggtitle": { "text": "position=dodge, coord_polar(theta=x)" },
+                |  "theme": { "text": { "family": "fixed", "blank": false } },
+                |  "kind": "plot",
+                |  "scales": [
+                |    { "aesthetic": "x", "expand": [ 0.0, 0.0 ] },
+                |    { "aesthetic": "y", "expand": [ 0.0, 0.0 ] }
+                |  ],
+                |  "layers": [
+                |    {
+                |      "geom": "bar",
+                |      "size": 0.0,
+                |      "mapping": { "fill": "foo" },
+                |      "position": "dodge",
+                |      "data_meta": {
+                |        "mapping_annotations": [
+                |          {
+                |            "aes": "fill",
+                |            "annotation": "as_discrete",
+                |            "parameters": { "label": "foo", "order": 1.0 }
+                |          }
+                |        ]
+                |      }
+                |    }
+                |  ]
+                |}               
+        """.trimMargin()
 
-
-        imageComparer.assertImageEquals("plot_bar_test.bmp", spec)
+        imageComparer.assertImageEquals("plot_polar_test.bmp", spec)
     }
 }
