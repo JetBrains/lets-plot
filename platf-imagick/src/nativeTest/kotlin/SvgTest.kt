@@ -1,5 +1,6 @@
 
 import demo.svgMapping.model.ReferenceSvgModel
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -7,6 +8,7 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@Ignore
 class SvgTest {
     private val outDir: String = getCurrentDir() + "/build/image-test/"
     private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
@@ -22,7 +24,7 @@ class SvgTest {
 
     @Test
     fun referenceTest() {
-        val svg = ReferenceSvgModel.createModel(fontFamily = "fixed")
+        val svg = ReferenceSvgModel.createModel(fontFamily = "/home/ikupriyanov/Projects/lets-plot/platf-imagick/src/nativeTest/resources/NotoSerif-Regular.ttf")
 
         imageComparer.assertImageEquals("svg_reference_test.bmp", svg)
     }

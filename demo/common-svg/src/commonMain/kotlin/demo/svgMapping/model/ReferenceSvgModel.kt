@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.Companion.create
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 private const val compact = false
@@ -228,6 +229,9 @@ object ReferenceSvgModel {
                             .build()
                     )
                 }
+
+                image(SampleImageData.MINDUKA_PRESENT_BLUE_PACK, 256.0, 64.0, 128.0, 64.0)
+                bitmap(Bitmap(3, 3, SampleImageData.argb3x3()), 20.0, 230.0, 80.0, 60.0)
             }
         }
     }

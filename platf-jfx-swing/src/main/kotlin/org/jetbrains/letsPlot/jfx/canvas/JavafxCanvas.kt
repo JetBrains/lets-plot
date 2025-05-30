@@ -11,8 +11,8 @@ import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasUtil.asyncTakeSnapshotImage
 import kotlin.math.roundToInt
 
@@ -51,6 +51,11 @@ private constructor(
     }
 
     internal class JavafxSnapshot(val image: Image) : org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot {
+        override val size: Vector = Vector(
+            image.width.roundToInt(),
+            image.height.roundToInt()
+        )
+
         override fun copy() =
             org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas.JavafxSnapshot(
                 WritableImage(
@@ -59,5 +64,9 @@ private constructor(
                     image.height.roundToInt()
                 )
             )
+
+        override fun toDataUrl(): String {
+            TODO("JavafxCanvas.toDataUrl() - Not yet implemented")
+        }
     }
 }

@@ -63,6 +63,7 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":canvas"))
+                implementation(project(":platf-native"))
                 implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
             }
         }

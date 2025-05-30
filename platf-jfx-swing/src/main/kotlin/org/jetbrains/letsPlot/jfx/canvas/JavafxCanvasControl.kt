@@ -58,11 +58,13 @@ class JavafxCanvasControl(
         )
     }
 
-    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Asyncs.constant(
-            JavafxCanvas.JavafxSnapshot(
-                imagePngByteArrayToImage(bytes, size * pixelDensity.toInt())
-            )
+    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return Asyncs.constant(immediateSnapshot(rgba, size))
+    }
+
+    override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
+        return JavafxCanvas.JavafxSnapshot(
+            imagePngByteArrayToImage(rgba, size * pixelDensity.toInt())
         )
     }
 
