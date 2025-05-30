@@ -195,6 +195,7 @@ object RichText {
         val stack = mutableListOf(RenderState())
         val svgLines = lines.map { line ->
             val svg = mutableListOf<SvgElement>()
+            val previousNodes = mutableListOf<RichTextNode.Span>()
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -204,7 +205,10 @@ object RichText {
                     is RichTextNode.EmphasisEnd,
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
-                    is RichTextNode.Span -> svg += term.render(stack.last())
+                    is RichTextNode.Span -> {
+                        svg += term.render(stack.last(), previousNodes.toList())
+                        previousNodes.add(term)
+                    }
                 }
             }
             svg
@@ -229,8 +233,8 @@ object RichText {
             val visualCharCount: Int // in chars, used for line wrapping
 
             fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            fun render(context: RenderState): List<SvgElement>
-            fun render(): List<SvgElement> = render(RenderState())
+            fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement>
+            fun render(): List<SvgElement> = render(RenderState(), emptyList())
         }
 
         class Text(
@@ -242,7 +246,7 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun render(context: RenderState): List<SvgElement> {
+            override fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
                 val tSpan = SvgTSpanElement(text)
                 context.apply(tSpan)
                 return listOf(tSpan)

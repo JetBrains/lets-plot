@@ -51,15 +51,15 @@ internal class Latex(
         return parseGroup(tokens.iterator(), level = 0, emptyList())
     }
 
-    private fun parseGroup(iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): GroupNode {
+    private fun parseGroup(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<RichTextNode.Span>): GroupNode {
         val nodes = mutableListOf<RichTextNode.Span>()
         while (iterator.hasNext()) {
             when (val token = iterator.next()) {
-                is Token.Command -> nodes.add(parseCommand(token, iterator, level, previousNodes + nodes.toList()))
-                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level, previousNodes + nodes.toList()))
+                is Token.Command -> nodes.add(parseCommand(token, iterator, level, previousLatexNodes + nodes.toList()))
+                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level, previousLatexNodes + nodes.toList()))
                 is Token.CloseBrace -> break
-                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1, previousNodes + nodes.toList()), level))
-                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1, previousNodes + nodes.toList()), level))
+                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1, previousLatexNodes + nodes.toList()), level))
+                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1, previousLatexNodes + nodes.toList()), level))
                 is Token.Text -> nodes.add(TextNode(token.content))
                 is Token.Space -> continue
                 is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
@@ -68,16 +68,16 @@ internal class Latex(
         return GroupNode(nodes)
     }
 
-    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
+    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<RichTextNode.Span>): RichTextNode.Span {
         return when (val nextToken = iterator.next()) {
-            is Token.OpenBrace -> parseGroup(iterator, level, previousNodes)
+            is Token.OpenBrace -> parseGroup(iterator, level, previousLatexNodes)
             is Token.Text -> TextNode(nextToken.content)
-            is Token.Command -> parseCommand(nextToken, iterator, level, previousNodes)
+            is Token.Command -> parseCommand(nextToken, iterator, level, previousLatexNodes)
             else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
         }
     }
 
-    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousNodes: List<RichTextNode.Span>): RichTextNode.Span {
+    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousLatexNodes: List<RichTextNode.Span>): RichTextNode.Span {
         fun parseNArgs(n: Int): List<RichTextNode.Span> {
             val args = mutableListOf<RichTextNode.Span>()
             repeat(n) {
@@ -85,7 +85,7 @@ internal class Latex(
                 if (!iterator.hasNext()) {
                     throw IllegalArgumentException("Expected $n arguments for command '${token.name}'")
                 }
-                val arg = parseGroup(iterator, level, previousNodes + args)
+                val arg = parseGroup(iterator, level, previousLatexNodes + args)
                 args.add(arg)
             }
             return args
@@ -94,14 +94,14 @@ internal class Latex(
         return when (token.name) {
             Token.Command.FRACTION -> {
                 val (numerator, denominator) = parseNArgs(2)
-                FractionNode(previousNodes, numerator, denominator)
+                FractionNode(numerator, denominator)
             }
             // For other commands, we just replace the command with its name if it's not a special symbol
             else -> TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
         }
     }
 
-    private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState): List<SvgElement> {
+    private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -119,7 +119,7 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
         }
-        val indexTSpanElements = content.render(ctx).mapIndexed { i, element ->
+        val indexTSpanElements = content.render(ctx, previousNodes).mapIndexed { i, element ->
             element.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
@@ -263,8 +263,8 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             node.estimateWidth(font, widthCalculator)
 
-        override fun render(context: RenderState): List<SvgElement> {
-            return node.render(context)
+        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+            return node.render(context, previousNodes)
         }
     }
 
@@ -274,7 +274,7 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun render(context: RenderState): List<SvgElement> {
+        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             return listOf(context.apply(SvgTSpanElement(content)))
         }
     }
@@ -285,8 +285,14 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
 
-        override fun render(context: RenderState): List<SvgElement> {
-            return children.flatMap { it.render(context) }
+        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+            val svgElements = mutableListOf<SvgElement>()
+            val previousLatexNodes = mutableListOf<RichTextNode.Span>()
+            for (child in children) {
+                svgElements.addAll(child.render(context, previousNodes + previousLatexNodes.toList()))
+                previousLatexNodes.add(child)
+            }
+            return svgElements
         }
     }
 
@@ -295,8 +301,8 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
 
-        override fun render(context: RenderState): List<SvgElement> {
-            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context)
+        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, previousNodes = previousNodes)
         }
     }
 
@@ -305,13 +311,12 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
 
-        override fun render(context: RenderState): List<SvgElement> {
-            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context)
+        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, previousNodes = previousNodes)
         }
     }
 
     private inner class FractionNode(
-        val previousNodes: List<RichTextNode.Span> = emptyList(),
         val numerator: RichTextNode.Span,
         val denominator: RichTextNode.Span
     ) : RichTextNode.Span {
@@ -320,13 +325,13 @@ internal class Latex(
             return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
         }
 
-        override fun render(context: RenderState): List<SvgElement> {
+        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             val prefixWidth = previousNodes.sumOf { it.estimateWidth(font, widthCalculator) }
             val fractionWidth = max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL).estimateWidth(font, widthCalculator)
             val fractionBarLength = (fractionWidth / fractionBarWidth).roundToInt()
-            val numeratorTSpanElements = numerator.render(context).mapIndexed { i, element ->
+            val numeratorTSpanElements = numerator.render(context, previousNodes).mapIndexed { i, element ->
                 element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
@@ -335,7 +340,7 @@ internal class Latex(
                     }
                 }
             }
-            val denominatorTSpanElements = denominator.render(context).mapIndexed { i, element ->
+            val denominatorTSpanElements = denominator.render(context, previousNodes).mapIndexed { i, element ->
                 element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
