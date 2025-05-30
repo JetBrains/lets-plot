@@ -44,6 +44,6 @@ qemu-aarch64-static
 # Junie AI 
 /.junie/guidelines.md
 
-# ImageMagick anf its dependencies.
+# ImageMagick and its dependencies.
 platf-imagick/imagick_deps
 
