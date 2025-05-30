@@ -37,6 +37,15 @@ class Date : Comparable<Date> {
     fun nextDate(): Date = Date(kotlinxLocalDate.plus(1, DateTimeUnit.DAY))
     fun prevDate(): Date = Date(kotlinxLocalDate.plus(-1, DateTimeUnit.DAY))
 
+    fun add(duration: Duration): Date {
+        return Date(
+            kotlinxLocalDate.plus(
+                duration.totalDays,
+                DateTimeUnit.DAY
+            )
+        )
+    }
+
     fun daysFromYearStart(): Int {
         val yearStart = KotlinxLocalDate(year, 1, 1)
         return kotlinxLocalDate.toEpochDays() - yearStart.toEpochDays()

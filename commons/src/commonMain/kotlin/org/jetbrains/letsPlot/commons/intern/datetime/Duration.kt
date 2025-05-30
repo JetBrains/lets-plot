@@ -6,6 +6,23 @@
 package org.jetbrains.letsPlot.commons.intern.datetime
 
 class Duration(val duration: Long) : Comparable<Duration> {
+    val totalWeeks: Long get() = duration / WEEK.duration
+    val totalDays: Long get() = duration / DAY.duration
+    val totalHours: Long get() = duration / DAY.duration
+    val totalMinutes: Long get() = duration / MINUTE.duration
+
+    // Components of the duration.
+    // day: 0..6
+    // hour: 0..23
+    // minute: 0..59
+    // second: 0..59
+    // millis: 0..999
+    val week: Long get() = duration / WEEK.duration
+    val day: Long get() = duration % WEEK.duration / DAY.duration
+    val hour: Long get() = duration % DAY.duration / HOUR.duration
+    val minute: Long get() = duration % HOUR.duration / MINUTE.duration
+    val second: Long get() = duration % MINUTE.duration / SECOND.duration
+    val millis: Long get() = duration % SECOND.duration / MS.duration
 
     val isPositive: Boolean
         get() = duration > 0
@@ -57,17 +74,5 @@ class Duration(val duration: Long) : Comparable<Duration> {
         val HOUR = MINUTE.mul(60)
         val DAY = HOUR.mul(24)
         val WEEK = DAY.mul(7)
-
-        val Duration.week: Long get() = duration / WEEK.duration
-        val Duration.day: Long get() = duration % WEEK.duration / DAY.duration
-        val Duration.hour: Long get() = duration % DAY.duration / HOUR.duration
-        val Duration.minute: Long get() = duration % HOUR.duration / MINUTE.duration
-        val Duration.second: Long get() = duration % MINUTE.duration / SECOND.duration
-        val Duration.millis: Long get() = duration % SECOND.duration / MS.duration
-
-        val Duration.totalWeeks: Long get() = duration / WEEK.duration
-        val Duration.totalDays: Long get() = duration / DAY.duration
-        val Duration.totalHours: Long get() = duration / DAY.duration
-        val Duration.totalMinutes: Long get() = duration / MINUTE.duration
     }
 }

@@ -97,7 +97,11 @@ object DataMetaUtil {
         return options
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
-            ?.filterValues(SeriesAnnotation.Types.DATE_TIME::equals)
+            ?.filterValues {
+                it == SeriesAnnotation.Types.DATE_TIME ||
+                        it == SeriesAnnotation.Types.DATE ||
+                        it == SeriesAnnotation.Types.TIME
+            }
             ?.keys
             ?: emptySet()
     }

@@ -13,11 +13,6 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.WEEK
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.hour
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.millis
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.minute
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.second
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.totalDays
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.math.abs
 import kotlin.math.ceil
