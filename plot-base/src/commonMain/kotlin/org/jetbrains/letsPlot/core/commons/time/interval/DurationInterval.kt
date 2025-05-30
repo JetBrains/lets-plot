@@ -16,16 +16,16 @@ internal class DurationInterval(private val myDuration: Duration, count: Int) : 
 
     override val tickFormatPattern: String
         get() {
-            val duration = myDuration.duration
-            if (duration < Duration.SECOND.duration) {
+            val duration = myDuration.totalMillis
+            if (duration < Duration.SECOND.totalMillis) {
                 return "%S"
-            } else if (duration < Duration.MINUTE.duration) {
+            } else if (duration < Duration.MINUTE.totalMillis) {
                 return "%S"
-            } else if (duration < Duration.HOUR.duration) {
+            } else if (duration < Duration.HOUR.totalMillis) {
                 return "%M"
-            } else if (duration < Duration.DAY.duration) {
+            } else if (duration < Duration.DAY.totalMillis) {
                 return "%H:%M"
-            } else if (duration < Duration.WEEK.duration) {
+            } else if (duration < Duration.WEEK.totalMillis) {
                 return "%b %e"
             }
             return "%b %e"
@@ -36,7 +36,7 @@ internal class DurationInterval(private val myDuration: Duration, count: Int) : 
     }
 
     override fun range(start: Double, end: Double): List<Double> {
-        val step = (myDuration.duration * count).toDouble()
+        val step = (myDuration.totalMillis * count).toDouble()
         var tick = ceil(start / step) * step
         val result = ArrayList<Double>()
         while (tick <= end) {

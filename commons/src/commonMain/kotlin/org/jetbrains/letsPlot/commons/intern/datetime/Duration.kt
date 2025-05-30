@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
-class Duration(val duration: Long) : Comparable<Duration> {
-    val totalWeeks: Long get() = duration / WEEK.duration
-    val totalDays: Long get() = duration / DAY.duration
-    val totalHours: Long get() = duration / DAY.duration
-    val totalMinutes: Long get() = duration / MINUTE.duration
+class Duration(val totalMillis: Long) : Comparable<Duration> {
+    val totalWeeks: Long get() = totalMillis / WEEK.totalMillis
+    val totalDays: Long get() = totalMillis / DAY.totalMillis
+    val totalHours: Long get() = totalMillis / DAY.totalMillis
+    val totalMinutes: Long get() = totalMillis / MINUTE.totalMillis
 
     // Components of the duration.
     // day: 0..6
@@ -17,54 +17,48 @@ class Duration(val duration: Long) : Comparable<Duration> {
     // minute: 0..59
     // second: 0..59
     // millis: 0..999
-    val week: Long get() = duration / WEEK.duration
-    val day: Long get() = duration % WEEK.duration / DAY.duration
-    val hour: Long get() = duration % DAY.duration / HOUR.duration
-    val minute: Long get() = duration % HOUR.duration / MINUTE.duration
-    val second: Long get() = duration % MINUTE.duration / SECOND.duration
-    val millis: Long get() = duration % SECOND.duration / MS.duration
+    val week: Long get() = totalMillis / WEEK.totalMillis
+    val day: Long get() = totalMillis % WEEK.totalMillis / DAY.totalMillis
+    val hour: Long get() = totalMillis % DAY.totalMillis / HOUR.totalMillis
+    val minute: Long get() = totalMillis % HOUR.totalMillis / MINUTE.totalMillis
+    val second: Long get() = totalMillis % MINUTE.totalMillis / SECOND.totalMillis
+    val millis: Long get() = totalMillis % SECOND.totalMillis / MS.totalMillis
 
     val isPositive: Boolean
-        get() = duration > 0
+        get() = totalMillis > 0
 
     fun mul(times: Long): Duration {
-        return Duration(duration * times)
+        return Duration(totalMillis * times)
     }
 
     fun add(duration: Duration): Duration {
-        return Duration(this.duration + duration.duration)
+        return Duration(this.totalMillis + duration.totalMillis)
     }
 
     fun sub(duration: Duration): Duration {
-        return Duration(this.duration - duration.duration)
+        return Duration(this.totalMillis - duration.totalMillis)
     }
 
     operator fun div(duration: Duration): Double {
-        return this.duration / duration.duration.toDouble()
+        return this.totalMillis / duration.totalMillis.toDouble()
     }
 
     override fun compareTo(other: Duration): Int {
-        val delta = duration - other.duration
-        return if (delta > 0) {
-            1
-        } else if (delta == 0L) {
-            0
-        } else {
-            -1
-        }
+        return totalMillis.compareTo(other.totalMillis)
     }
 
     override fun hashCode(): Int {
-        return duration.toInt()
+        return totalMillis.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other !is Duration) false else duration == other.duration
-
+        if (this === other) return true
+        if (other !is Duration) return false
+        return totalMillis == other.totalMillis
     }
 
     override fun toString(): String {
-        return "Duration : " + duration + "ms"
+        return "Duration : " + totalMillis + "ms"
     }
 
     companion object {
