@@ -45,7 +45,6 @@ kotlin {
 
     target.binaries.all {
         linkerOpts += listOf(
-            "-Wl,-rpath,${imageMagickLibPath}/lib",
             "-L${imageMagickLibPath}/lib",
             "-lMagickWand-7.Q16HDRI",
             "-lMagickCore-7.Q16HDRI",
@@ -58,6 +57,10 @@ kotlin {
             linkerOpts += listOf(
                 "-lurlmon",
                 "-lgdi32"
+            )
+        } else {
+            linkerOpts += listOf(
+                "-Wl,-rpath,${imageMagickLibPath}/lib"
             )
         }
     }
