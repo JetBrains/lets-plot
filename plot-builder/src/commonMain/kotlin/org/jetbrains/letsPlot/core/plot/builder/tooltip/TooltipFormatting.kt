@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -17,10 +18,10 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 internal object TooltipFormatting {
     private val FALLBACK_NUMBER_FORMATTER: (v: Number) -> String =
-        StringFormat.forOneArg(".2f", FormatType.NUMBER_FORMAT)::format
+        StringFormat.forOneArg(".2f", FormatType.NUMBER_FORMAT, tz = null)::format
 
     fun fromScale(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
-        // expect only X,Y or not positional
+        // expect only X, Y or not positional
         check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {
             "Positional aesthetic should be either X or Y but was $aes"
         }
@@ -39,13 +40,19 @@ internal object TooltipFormatting {
 //            labelsMap::get
 
             { v ->
-                if (v in labelsMap) {
-                    labelsMap.getValue(v)
-                } else if (v is Number) {
-                    // The case when numeric data is mapped to discrete axis.
-                    FALLBACK_NUMBER_FORMATTER(v)
-                } else {
-                    null
+                when (v) {
+                    in labelsMap -> {
+                        labelsMap.getValue(v)
+                    }
+
+                    is Number -> {
+                        // The case when numeric data is mapped to discrete axis.
+                        FALLBACK_NUMBER_FORMATTER(v)
+                    }
+
+                    else -> {
+                        null
+                    }
                 }
             }
         }
@@ -60,22 +67,25 @@ internal object TooltipFormatting {
     fun createFormatter(
         variable: DataFrame.Variable,
         formatters: Map<Any, (Any) -> String>,
-        expFormat: StringFormat.ExponentFormat
+        expFormat: StringFormat.ExponentFormat,
+        tz: TimeZone?,
     ): (Any) -> String {
         return when (variable) {
             Stats.PROP, Stats.SUMPROP -> StringFormat.forOneArg(
                 ".2f",
                 formatFor = variable.name,
-                expFormat = expFormat
+                expFormat = expFormat,
+                tz = tz
             )::format
 
             Stats.PROPPCT, Stats.SUMPCT -> StringFormat.forOneArg(
                 "{.1f} %",
                 formatFor = variable.name,
-                expFormat = expFormat
+                expFormat = expFormat,
+                tz = tz
             )::format
 
-            else -> formatters[variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat)
+            else -> formatters[variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat, tz = tz)
         }
     }
 }

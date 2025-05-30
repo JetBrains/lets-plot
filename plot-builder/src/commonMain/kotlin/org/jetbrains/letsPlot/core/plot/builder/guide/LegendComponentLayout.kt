@@ -62,52 +62,46 @@ abstract class LegendComponentLayout(
         }
     }
 
-    private fun doLayout() {
-        val horizontalGap = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS)
-        val intervalBetweenLabels = DoubleVector(horizontalGap, PlotLabelSpecFactory.legendItem(theme).height() / 3)
-
-        val contentOrigin = DoubleVector.ZERO
-        var breakBoxBounds: DoubleRectangle? = null
-        for (i in breaks.indices) {
-            val labelSize = labelSize(i).add(intervalBetweenLabels)
-            val keySize = keySizes[i]
-            val height = max(keySize.y, labelSize.y)
-            val labelVOffset = keySize.y / 2
-            val labelHOffset = keySize.x + horizontalGap / 2
-            val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, height)
-                .let {
-                    // Not add a space for the last item in the row/column
-                    val xSpacing = if (i / rowCount != colCount - 1) {
-                        theme.keySpacing().x
-                    } else {
-                        0.0
-                    }
-                    val ySpacing = if (i % rowCount != rowCount - 1) {
-                        theme.keySpacing().y
-                    } else {
-                        0.0
-                    }
-                    it.add(DoubleVector(xSpacing, ySpacing))
-                }
-
-            breakBoxBounds = DoubleRectangle(
-                breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
-                breakBoxSize
-            )
-
-            myKeyLabelBoxes.add(breakBoxBounds)
-            myLabelBoxes.add(
-                DoubleRectangle(
-                    labelHOffset, labelVOffset,
-                    labelSize.x, labelSize.y
-                )
-            )
-        }
-
-        myContentSize = GeometryUtil.union(DoubleRectangle(contentOrigin, DoubleVector.ZERO), myKeyLabelBoxes).dimension
+    private fun indexToPosition(i: Int): Pair<Int, Int> = if (isFillByRow) {
+        val row = i / colCount
+        val col = i % colCount
+        row to col
+    } else {
+        val col = i / rowCount
+        val row = i % rowCount
+        row to col
     }
 
-    protected abstract fun breakBoxOrigin(index: Int, prevBreakBoxBounds: DoubleRectangle): DoubleVector
+    private fun doLayout() {
+        val labelSpec = PlotLabelSpecFactory.legendItem(theme)
+        val keyLabelGap = labelSpec.width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2.0
+        val defaultSpacing = DoubleVector(keyLabelGap, labelSpec.height() / 3.0)
+        val spacingBetweenLabels = theme.keySpacing().add(defaultSpacing)
+
+        val colWidths = DoubleArray(colCount)
+        val rowHeights = DoubleArray(rowCount)
+
+        keySizes.forEachIndexed { i, keySize ->
+            val (row, col) = indexToPosition(i)
+            val labelSize = labelSize(i)
+            val labelOffset = DoubleVector(keySize.x + keyLabelGap, keySize.y / 2)
+            myLabelBoxes += DoubleRectangle(labelOffset, labelSize)
+
+            colWidths[col] = maxOf(colWidths[col], labelOffset.x + labelSize.x)
+            rowHeights[row] = maxOf(rowHeights[row], keySize.y, labelSize.y)
+        }
+
+        val colX = colWidths.runningFold(0.0) { acc, w -> acc + w + spacingBetweenLabels.x }
+        val rowY = rowHeights.runningFold(0.0) { acc, h -> acc + h + spacingBetweenLabels.y }
+
+        breaks.indices.forEach { i ->
+            val (row, col) = indexToPosition(i)
+            val breakBoxBounds = DoubleRectangle(colX[col], rowY[row], colWidths[col], rowHeights[row])
+            myKeyLabelBoxes.add(breakBoxBounds)
+        }
+
+        myContentSize = GeometryUtil.union(DoubleRectangle.ZERO, myKeyLabelBoxes).dimension
+    }
 
     protected abstract fun labelSize(index: Int): DoubleVector
 
@@ -124,10 +118,6 @@ abstract class LegendComponentLayout(
         init {
             colCount = breaks.size
             rowCount = 1
-        }
-
-        override fun breakBoxOrigin(index: Int, prevBreakBoxBounds: DoubleRectangle): DoubleVector {
-            return DoubleVector(prevBreakBoxBounds.right, 0.0)
         }
 
         override fun labelSize(index: Int): DoubleVector {
@@ -175,36 +165,9 @@ abstract class LegendComponentLayout(
         legendDirection: LegendDirection,
         theme: LegendTheme
     ) : LegendComponentLayout(title, breaks, keySizes, legendDirection, theme) {
-        private var myMaxLabelWidth = 0.0
-
-        init {
-            for (br in breaks) {
-                myMaxLabelWidth = max(
-                    myMaxLabelWidth,
-                    PlotLayoutUtil.textDimensions(br.label, PlotLabelSpecFactory.legendItem(theme)).x
-                )
-            }
-        }
-
-        override fun breakBoxOrigin(index: Int, prevBreakBoxBounds: DoubleRectangle): DoubleVector {
-            if (isFillByRow) {
-                return if (index % colCount == 0) {
-                    DoubleVector(0.0, prevBreakBoxBounds.bottom)
-                } else DoubleVector(prevBreakBoxBounds.right, prevBreakBoxBounds.top)
-            }
-
-            // fill by column
-            return if (index % rowCount == 0) {
-                DoubleVector(prevBreakBoxBounds.right, 0.0)
-            } else DoubleVector(prevBreakBoxBounds.left, prevBreakBoxBounds.bottom)
-
-        }
 
         override fun labelSize(index: Int): DoubleVector {
-            return DoubleVector(
-                myMaxLabelWidth,
-                PlotLayoutUtil.textDimensions(breaks[index].label, PlotLabelSpecFactory.legendItem(theme)).y
-            )
+            return PlotLayoutUtil.textDimensions(breaks[index].label, PlotLabelSpecFactory.legendItem(theme))
         }
     }
 

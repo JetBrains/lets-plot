@@ -21,11 +21,11 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
-import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.LabelOptions
 import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.PieOptions
 import org.jetbrains.letsPlot.core.plot.livemap.MapLayerKind.*
@@ -218,11 +218,11 @@ internal class DataPointLiveMapAesthetics {
 
     private var myLabelOptions: LabelOptions? = null
     val labelPadding: Double
-        get() = myLabelOptions?.padding ?: 0.0
+        get() = myLabelOptions?.paddingFactor ?: 0.0
     val labelRadius: Double
-        get() = myLabelOptions?.radius ?: 0.0
+        get() = myLabelOptions?.radiusFactor ?: 0.0
     val labelSize: Double
-        get() = myLabelOptions?.size ?: 0.0
+        get() = myLabelOptions?.borderWidth ?: 0.0
     val alphaStroke: Boolean
         get() = myLabelOptions?.alphaStroke ?: false
 

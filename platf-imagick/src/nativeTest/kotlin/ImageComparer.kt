@@ -1,4 +1,12 @@
+
+import demoAndTestShared.parsePlotSpec
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import platform.posix.*
 import kotlin.math.abs
 
@@ -11,16 +19,43 @@ class ImageComparer(
     private val expectedDir: String,
     private val outDir: String,
 ) {
+
+    fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
+        val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
+        val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0)
+        SvgCanvasFigure(svg).mapToCanvas(canvasControl)
+
+        val canvas = canvasControl.children.single() as MagickCanvas
+        assertImageEquals(expectedFileName, canvas.img!!)
+    }
+
+    fun assertImageEquals(expectedFileName: String, spec: String) {
+        val plotSpec = parsePlotSpec(spec)
+
+        val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(plotSpec, SizingPolicy.keepFigureDefaultSize(), { _ -> })
+        val plotSpecWidth = plotFigure.preferredWidth ?: error("Plot figure has no preferred width")
+        val plotSpecHeight = plotFigure.preferredHeight ?: error("Plot figure has no preferred height")
+
+        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0)
+        plotFigure.mapToCanvas(canvasControl)
+
+        val canvas = canvasControl.children.single() as MagickCanvas
+        assertImageEquals(expectedFileName, canvas.img!!)
+    }
+
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
-        val expectedPath = expectedDir + expectedFileName
         val testName = expectedFileName.removeSuffix(".bmp")
+        val expectedPath = expectedDir + expectedFileName
+        val actualFilePath = outDir + "${testName}.bmp"
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
         if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
+            println("expectedWand failure - $expectedPath")
             println(getMagickError(expectedWand))
             // Write the  actual image to a file for debugging
-            val actualFilePath = outDir + "${testName}.bmp"
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
+                println("actualWand failure - $actualFilePath")
                 println(getMagickError(actualWand))
             } else {
                 println("Failed to read expected image. Actual image saved to $actualFilePath")
@@ -38,9 +73,21 @@ class ImageComparer(
             val diffWand = composeVisualDiff(expectedWand, actualWand, createDiffImage(expected, actual, width, height))
             if (ImageMagick.MagickWriteImage(diffWand, diffFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(diffWand))
+                error("Failed to write diff image")
             }
 
-            error("Image mismatch. See diff:\nfile:/$diffFilePath")
+            if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
+                println(getMagickError(actualWand))
+                error("Failed to write actual image")
+            }
+
+            error("""Image mismatch.
+                |    Diff: $diffFilePath
+                |    Actual: $actualFilePath
+                |    Expected: $expectedPath""".trimMargin()
+            )
+        } else {
+            println("Image comparison passed: $expectedPath")
         }
     }
 

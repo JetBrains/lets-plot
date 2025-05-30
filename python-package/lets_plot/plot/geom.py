@@ -19,14 +19,14 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
            'geom_band',
-           'geom_boxplot', 'geom_violin', 'geom_ydotplot',
+           'geom_boxplot', 'geom_violin', 'geom_sina', 'geom_ydotplot',
            'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
            'geom_segment', 'geom_curve', 'geom_spoke',
-           'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
+           'geom_text', 'geom_label', 'geom_text_repel', 'geom_label_repel', 'geom_pie', 'geom_lollipop',
            'geom_count',
            'geom_blank']
 
@@ -60,7 +60,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'sum' (counts the number of points at each location - might help to workaround overplotting).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -253,7 +253,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -441,7 +441,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -572,7 +572,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -758,7 +758,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='stack'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -926,7 +926,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='stack'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -1266,7 +1266,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -1443,7 +1443,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -1637,7 +1637,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -1810,7 +1810,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -1910,7 +1910,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2079,9 +2079,9 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2235,7 +2235,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2376,7 +2376,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2503,7 +2503,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2657,7 +2657,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2807,7 +2807,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -2998,7 +2998,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3170,7 +3170,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3285,7 +3285,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3399,7 +3399,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3524,7 +3524,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3654,9 +3654,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3729,12 +3729,12 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     `geom_boxplot()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - lower : lower hinge.
-    - middle : median.
-    - upper : upper hinge.
-    - ymin : lower whisker.
-    - ymax : upper whisker.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal boxplot, respectively.
+    - lower or xlower : lower hinge.
+    - middle or xmiddle : median.
+    - upper or xupper : upper hinge.
+    - ymin or xmin : lower whisker.
+    - ymax or xmax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
@@ -3890,9 +3890,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydensity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -3917,7 +3917,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 1, another half is drawn.
         If 0, violins look as usual.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        Draw horizontal lines at the given quantiles of the density estimate.
+        A list of quantiles to be calculated and written to the `..quantile..` variable.
     quantile_lines : bool, default=False
         Show the quantile lines.
     scale : {'area', 'count', 'width'}, default='area'
@@ -4092,6 +4092,209 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_half=show_half,
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
+                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
+                 fs_max=fs_max,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
+              orientation=None,
+              seed=None,
+              show_half=None,
+              quantiles=None,
+              scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
+              color_by=None, fill_by=None,
+              **other_args):
+    """
+    A sina plot visualizes a single variable across classes, with jitter width reflecting the data's density in each class.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='sina'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default=position_dodge(width=.95)
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    orientation : str
+        Specify the axis that the layer's stat and geom should run along.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
+    show_half : float, default=0
+        If -1, only half of each group is drawn.
+        If 1, another half is drawn.
+        If 0, sina look as usual.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        A list of quantiles to be calculated and written to the `..quantile..` variable.
+    scale : {'area', 'count', 'width'}, default='area'
+        If 'area', all groups have the same area.
+        If 'count', areas are scaled proportionally to the number of observations.
+        If 'width', all groups have the same maximum width.
+    trim : bool, default=True
+        Trim the tails of the violins, which limit the area for sina points, to the range of the data.
+    tails_cutoff : float, default=3.0
+        Extend domain of each violin, which limit the area for sina points, on `tails_cutoff * bw` if `trim=False`.
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float
+        Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
+    n : int, default=512
+        The number of sampled points for plotting the function, that limit the area for sina points.
+    fs_max : int, default=500
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..violinwidth.. : density scaled for the sina plot, according to area, counts or to a constant maximum width (mapped by default).
+    - ..density.. : density estimate.
+    - ..count.. : density * number of points.
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : quantile estimate.
+
+    `geom_sina()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a point. Accept values between 0 and 1.
+    - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
+    - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
+    - weight : used by 'sina' stat to compute weighted density.
+    - quantile : quantile values.
+    - width : maximal width of sina plot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the geometries.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'c'], size=n)
+        y = np.random.randint(10, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_violin() + \\
+            geom_sina(seed=42)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
+        y = np.random.normal(size=n)
+        quantiles = [.02, .25, .5, .75, .98]
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_violin(aes(fill='..quantile..'), scale='count', alpha=.5, \\
+                        quantiles=quantiles, quantile_lines=True) + \\
+            geom_sina(aes(color='..quantile..'), scale='count', quantiles=quantiles, seed=42) + \\
+            scale_continuous(['color', 'fill'], low="black", high="#6baed6")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14-17
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(["a", "b", "c", "d"], size=n)
+        y1 = np.random.normal(size=n)
+        y2 = np.random.normal(size=n)
+        ggplot({'x': x, 'y1': y1, 'y2': y2}) + \\
+            geom_violin(aes('x', 'y1'), show_half=-1, \\
+                        trim=False, fill='#ffffb2') + \\
+            geom_violin(aes('x', 'y2'), show_half=1, \\
+                        trim=False, fill='#74c476') + \\
+            geom_sina(aes('x', 'y1'), show_half=-1, \\
+                      fill='#ffffb2', shape=24, size=2, seed=42) + \\
+            geom_sina(aes('x', 'y2'), show_half=1, \\
+                      fill='#74c476', shape=25, size=2, seed=42)
+
+    """
+    return _geom('sina',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
+                 seed=seed,
+                 show_half=show_half,
+                 quantiles=quantiles,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
                  fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,
@@ -4316,7 +4519,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         'densityridges' (computes and draws kernel density estimate for each ridge).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -4504,7 +4707,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -4635,7 +4838,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='gstack'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -4780,7 +4983,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -5000,7 +5203,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -5236,7 +5439,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -5471,9 +5674,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='jitter'
+    position : str or `FeatureSpec`, default=position_jitter(width=.4, height=.4)
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -5617,7 +5820,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -5759,7 +5962,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -5877,7 +6080,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6012,7 +6215,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6115,7 +6318,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6244,7 +6447,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6366,7 +6569,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6545,7 +6748,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6707,7 +6910,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -6860,7 +7063,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
         is inherited from the plot data as specified in the call to ggplot.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -7012,7 +7215,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -7258,7 +7461,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -7484,6 +7687,409 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
+def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
+              map=None, map_join=None, use_crs=None,
+              label_format=None,
+              na_text=None,
+              nudge_x=None, nudge_y=None,
+              size_unit=None,
+              nudge_unit=None,
+              check_overlap=None,
+              color_by=None,
+              seed=None,
+              max_iter=None,
+              max_time=None,
+              direction=None,
+              point_padding=None,
+              box_padding=None,
+              max_overlaps=None,
+              min_segment_length=None,
+              arrow=None,
+              **other_args):
+    """
+    Add text labels that repel away from each other and from data points.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+    label_format : str
+        Format used to transform label mapping values to a string.
+        Examples:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+    na_text : str, default='n/a'
+        Text to show for missing values.
+    nudge_x : float
+        Horizontal adjustment to nudge labels by.
+    nudge_y : float
+        Vertical adjustment to nudge labels by.
+    size_unit : {'x', 'y'}
+        Relate the size of the text to the length of the unit step along one of the axes.
+        If None, no fitting is performed.
+    nudge_unit : {'identity', 'size', 'px'}, default='identity'
+        Units for x and y nudging.
+        Possible values:
+
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
+    check_overlap : bool, default=False
+        If True, skip plotting text that overlaps previous text in the same layer.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    seed : int
+        Random seed used for reproducibility of label positions.
+    max_iter : int
+        Maximum number of iterations used to resolve label collisions.
+    max_time : float
+        Maximum allowed time in seconds for resolving label collisions.
+    direction : {'both', 'x', 'y'}, default='both'
+        Limit direction of repulsion movement.
+    point_padding : float
+        Padding around data points to avoid label overlap.
+    box_padding : float
+        Padding around text labels to avoid label-label overlap.
+    max_overlaps : int
+        Maximum number of overlapping labels allowed. Labels beyond this number will be hidden.
+    min_segment_length : float
+        Minimum length of the line segment connecting the label to the point.
+        Shorter segments will be omitted.
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Adds text annotations to the plot using a force-based layout algorithm
+    designed to prevent overlaps. Labels repel each other and the data points they annotate,
+    resulting in a clearer and more readable visualization.
+
+    This is based on the "repelling labels" idea from the ggrepel package in R,
+    and is especially useful for annotating crowded plots while minimizing collisions
+    between text elements or label boxes.
+
+    `geom_text_repel()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - size : font size.
+    - label : text to add to plot.
+    - family : font family. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
+    - fontface : font style and weight. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
+    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - angle : text rotation angle in degrees.
+    - lineheight : line height multiplier applied to the font size in the case of multi-line text.
+    - point_size : A value representing the visual size of the point associated with the label.
+    - segment_color : Color of the line segment connecting the label to the point.
+    - segment_size : Width of the line segment connecting the label to the point.
+    - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
+
+    See also:
+    - `geom_text()` for placing text without repulsion.
+    - `geom_label_repel()` for repelled labels with background boxes.
+
+    """
+    return _geom('text_repel',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 map=map, map_join=map_join, use_crs=use_crs,
+                 label_format=label_format,
+                 na_text=na_text,
+                 nudge_x=nudge_x, nudge_y=nudge_y,
+                 size_unit=size_unit,
+                 nudge_unit=nudge_unit,
+                 check_overlap=check_overlap,
+                 color_by=color_by,
+                 max_iter=max_iter,
+                 max_time=max_time,
+                 seed=seed,
+                 direction=direction,
+                 point_padding = point_padding,
+                 box_padding = box_padding,
+                 max_overlaps = max_overlaps,
+                 min_segment_length = min_segment_length,
+                 arrow=arrow,
+                 **other_args)
+
+def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
+               map=None, map_join=None, use_crs=None,
+               label_format=None,
+               na_text=None,
+               nudge_x=None, nudge_y=None,
+               label_padding=None, label_r=None, label_size=None,
+               alpha_stroke=None,
+               size_unit=None,
+               nudge_unit=None,
+               check_overlap=None,
+               color_by=None, fill_by=None,
+               seed=None,
+               max_iter=None,
+               max_time=None,
+               direction=None,
+               point_padding=None,
+               box_padding=None,
+               max_overlaps=None,
+               min_segment_length=None,
+               arrow=None,
+               **other_args):
+
+    """
+    Add repelling text labels with background boxes to the plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+    label_format : str
+        Format used to transform label mapping values to a string.
+        Examples:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+    nudge_x : float
+        Horizontal adjustment to nudge labels by.
+    nudge_y : float
+        Vertical adjustment to nudge labels by.
+    na_text : str, default='n/a'
+        Text to show for missing values.
+    label_padding : float
+        Amount of padding around label. Default is 0.25 of font size.
+    label_r : float
+        Radius of rounded corners. Default is 0.15 of label height.
+    label_size : float, default = 1.0
+        Size of label border.
+    alpha_stroke : bool, default=False
+        Enable the applying of 'alpha' to 'color' (label text and border).
+    size_unit : {'x', 'y'}
+        Relate the size of the text label to the length of the unit step along one of the axes.
+        If None, no fitting is performed.
+    nudge_unit : {'identity', 'size', 'px'}, default='identity'
+        Units for x and y nudging.
+        Possible values:
+
+        - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
+        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'px': the unit is measured in screen pixels.
+
+    check_overlap : bool, default=False
+        If True, skip plotting text that overlaps previous text in the same layer.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    seed : int
+        Random seed for reproducibility.
+    max_iter : int
+        Maximum number of iterations for the repulsion algorithm.
+    max_time : float
+        Maximum allowed time in seconds for resolving label collisions.
+    direction : {'both', 'x', 'y'}, default='both'
+        Direction in which labels can be moved.
+    point_padding : float
+        Padding around the data point.
+    box_padding : float
+        Padding around the label box.
+    max_overlaps : int
+        Max number of overlapping labels to allow.
+    min_segment_length : float
+        Minimum length of the connecting line segment. Shorter ones are omitted.
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Adds label annotations to the plot using a force-based layout algorithm
+    designed to prevent overlaps. Labels repel each other and the data points they annotate,
+    resulting in a clearer and more readable visualization.
+
+    This is based on the "repelling labels" idea from the ggrepel package in R,
+    and is especially useful for annotating crowded plots while minimizing collisions
+    between text elements or label boxes.
+
+    `geom_label_repel()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - fill: background color of the label.
+    - size : font size.
+    - label : text to add to plot.
+    - family : font family. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
+    - fontface : font style and weight. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
+    - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
+    - angle : rotation angle in degrees.
+    - lineheight : line height multiplier applied to the font size in the case of multi-line text.
+    - point_size : A value representing the visual size of the point associated with the label.
+    - segment_color : Color of the line segment connecting the label to the point.
+    - segment_size : Width of the line segment connecting the label to the point.
+    - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
+
+    See also:
+    - `geom_text_repel()` for labels without background boxes.
+    - `geom_label()` for static labels with boxes.
+    """
+
+    return _geom('label_repel',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 map=map, map_join=map_join, use_crs=use_crs,
+                 label_format=label_format,
+                 na_text=na_text,
+                 nudge_x=nudge_x, nudge_y=nudge_y,
+                 label_padding=label_padding,
+                 label_r=label_r,
+                 label_size=label_size,
+                 alpha_stroke=alpha_stroke,
+                 size_unit=size_unit,
+                 nudge_unit=nudge_unit,
+                 check_overlap=check_overlap,
+                 color_by=color_by, fill_by=fill_by,
+                 max_iter=max_iter,
+                 max_time=max_time,
+                 seed=seed,
+                 direction=direction,
+                 point_padding = point_padding,
+                 box_padding = box_padding,
+                 max_overlaps = max_overlaps,
+                 min_segment_length = min_segment_length,
+                 arrow=arrow,
+                 **other_args)
+
 
 def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
              manual_key=None, sampling=None,
@@ -7514,7 +8120,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'count2d' (counts number of points with same x,y coordinate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -7771,7 +8377,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -7927,7 +8533,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         The statistical transformation to use on the data for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
@@ -8059,7 +8665,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
         'sum' (counts the number of points at each location - might help to workaround overplotting).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.

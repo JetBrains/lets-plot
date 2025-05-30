@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
@@ -181,6 +182,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             else -> b.axisPosition  // Doesn't matter for aes other than x,y.
         }
 
+        // TODO: provade a time zone or NULL
+        private val tz: TimeZone? = null
 
         private fun scaleName(defaultName: String, guideTitle: String?): String {
             return guideTitle ?: myName ?: defaultName
@@ -189,7 +192,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         /**
          * Discrete domain.
          */
-        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform, guideTitle: String?): Scale {
+        override fun createScale(
+            defaultName: String,
+            discreteTransform: DiscreteTransform,
+            guideTitle: String?
+        ): Scale {
             val scale: Scale = Scales.discreteDomain(
                 scaleName(defaultName, guideTitle),
                 discreteTransform,
@@ -249,7 +256,13 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 with.labelLengthLimit(myLabelLengthLimit)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, expFormat = PlotAssembler.extractExponentFormat(myExpFormat))::format)
+                with.labelFormatter(
+                    StringFormat.forOneArg(
+                        myLabelFormat,
+                        expFormat = PlotAssembler.extractExponentFormat(myExpFormat),
+                        tz = tz
+                    )::format
+                )
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)

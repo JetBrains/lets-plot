@@ -31,7 +31,13 @@ class GeomProto(val geomKind: GeomKind) {
         aopConversion: AesOptionConversion,
         expFormat: ExponentFormat
     ): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, expFormat)
+        return GeomProviderFactory.createGeomProvider(
+            geomKind,
+            layerConfig,
+            aopConversion,
+            expFormat,
+            tz = layerConfig.tz
+        )
     }
 
     fun defaultOptions(): Map<String, Any> {
@@ -84,6 +90,7 @@ class GeomProto(val geomKind: GeomKind) {
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
             AREA_RIDGES -> DefaultSampling.AREA_RIDGES
             VIOLIN -> DefaultSampling.VIOLIN
+            SINA -> DefaultSampling.SINA
             Y_DOT_PLOT -> DefaultSampling.Y_DOT_PLOT
             RIBBON -> DefaultSampling.RIBBON
             AREA -> DefaultSampling.AREA
@@ -101,7 +108,7 @@ class GeomProto(val geomKind: GeomKind) {
             SEGMENT -> DefaultSampling.SEGMENT
             CURVE -> DefaultSampling.SEGMENT
             SPOKE -> DefaultSampling.SPOKE
-            TEXT, LABEL -> DefaultSampling.TEXT
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP
             LIVE_MAP,
@@ -114,7 +121,7 @@ class GeomProto(val geomKind: GeomKind) {
     fun hasOwnPositionAdjustmentOptions(layerOptions: OptionsAccessor): Boolean {
         return when (geomKind) {
             JITTER -> layerOptions.hasOwn(Geom.Jitter.WIDTH) || layerOptions.hasOwn(Geom.Jitter.HEIGHT)
-            TEXT, LABEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
             else -> false
         }
     }
@@ -139,7 +146,10 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)) {
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
+                    Geom.Text.NUDGE_Y
+                )
+            ) {
                 mapOf(
                     Meta.NAME to PosProto.NUDGE,
                     Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
@@ -194,6 +204,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[BOX_PLOT] = boxplotDefaults()
             DEFAULTS[AREA_RIDGES] = areaRidgesDefaults()
             DEFAULTS[VIOLIN] = violinDefaults()
+            DEFAULTS[SINA] = sinaDefaults()
             DEFAULTS[Y_DOT_PLOT] = yDotplotDefaults()
             DEFAULTS[AREA] = areaDefaults()
             DEFAULTS[DENSITY] = densityDefaults()
@@ -283,6 +294,16 @@ class GeomProto(val geomKind: GeomKind) {
         private fun violinDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "ydensity"
+            defaults[Layer.POS] = mapOf(
+                Meta.NAME to PosProto.DODGE,
+                Pos.Dodge.WIDTH to 0.95
+            )
+            return defaults
+        }
+
+        private fun sinaDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "sina"
             defaults[Layer.POS] = mapOf(
                 Meta.NAME to PosProto.DODGE,
                 Pos.Dodge.WIDTH to 0.95

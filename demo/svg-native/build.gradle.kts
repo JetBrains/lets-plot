@@ -37,6 +37,12 @@ kotlin {
             executable("BarPlotDemo") {
                 entryPoint = "barPlotMain"
             }
+            executable("PolarPlotDemo") {
+                entryPoint = "polarPlotMain"
+            }
+            executable("PerformanceDemo") {
+                entryPoint = "performanceMain"
+            }
         }
     }
 
@@ -85,4 +91,39 @@ kotlin {
             }
         }
     }
+
 }
+
+val demos = listOf("0", "10", "100", "200", "400", "800", "1600", "3200")
+
+// Can't use destructuring declaration here
+// Caused by: java.lang.Throwable: Rewrite at slice SCRIPT_SCOPE key: class Build_gradle old value:
+val platf = when {
+    os.isMacOsX && arch == "arm64" -> "macosArm64" to "MacosArm64"
+    os.isMacOsX && arch == "x86_64" -> "macosX64" to "MacosX64"
+    os.isLinux && arch == "arm64" -> "linuxArm64" to "LinuxArm64"
+    os.isLinux && arch == "x86_64" -> "linuxX64" to "LinuxX64"
+    os.isWindows -> "mingwX64" to "MingwX64"
+    else -> "" to ""
+}
+
+val dirName = platf.first
+val taskName = platf.second
+
+demos.forEach { demoSize ->
+    tasks.register<Exec>("runPerformance${demoSize}Demo") {
+        dependsOn("linkPerformanceDemoReleaseExecutable$taskName") // ensure it's built
+        group = "run"
+        description = "Runs Performance${demoSize}Demo with argument ${demoSize}"
+        executable = "${project.buildDir}/bin/$dirName/PerformanceDemoReleaseExecutable/PerformanceDemo.kexe" // Ensure correct path
+
+        doFirst {
+            args(demoSize) // Use the args() method to add arguments
+        }
+
+        standardOutput = System.out
+        errorOutput = System.err
+    }
+
+}
+

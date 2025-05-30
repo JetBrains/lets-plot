@@ -67,6 +67,10 @@ object TransformVar {
     val SIZE_END = DataFrame.Variable("transform.SIZE_END", TRANSFORM)
     val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
     val STROKE_END = DataFrame.Variable("transform.STROKE_END", TRANSFORM)
+    val POINT_SIZE = DataFrame.Variable("transform.POINT_SIZE", TRANSFORM)
+    val SEGMENT_COLOR = DataFrame.Variable("transform.SEGMENT_COLOR", TRANSFORM)
+    val SEGMENT_SIZE = DataFrame.Variable("transform.SEGMENT_SIZE", TRANSFORM)
+    val SEGMENT_ALPHA = DataFrame.Variable("transform.SEGMENT_ALPHA", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VAR_BY_NAME: Map<String, DataFrame.Variable>
@@ -324,6 +328,22 @@ object TransformVar {
 
         override fun strokeEnd(): DataFrame.Variable {
             return STROKE_END
+        }
+
+        override fun pointSize(): DataFrame.Variable {
+            return POINT_SIZE
+        }
+
+        override fun segmentColor(): DataFrame.Variable {
+            return SEGMENT_COLOR
+        }
+
+        override fun segmentSize(): DataFrame.Variable {
+            return SEGMENT_SIZE
+        }
+
+        override fun segmentAlpha(): DataFrame.Variable {
+            return SEGMENT_ALPHA
         }
     }
 }

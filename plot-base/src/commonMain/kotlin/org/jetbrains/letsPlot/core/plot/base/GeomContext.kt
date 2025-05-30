@@ -47,4 +47,6 @@ interface GeomContext {
     fun getDefaultFormatter(varName: String): (Any) -> String
 
     fun getCoordinateSystem(): CoordinateSystem?
+
+    fun getContentBounds(): DoubleRectangle
 }

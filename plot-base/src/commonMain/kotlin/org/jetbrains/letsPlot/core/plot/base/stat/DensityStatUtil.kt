@@ -45,11 +45,6 @@ object DensityStatUtil {
         binVarName: DataFrame.Variable = Stats.X,
         valueVarName: DataFrame.Variable = Stats.Y
     ): Map<DataFrame.Variable, List<Double>> {
-        val binnedData = (bins zip (values zip weights))
-            .filter { it.first?.isFinite() == true }
-            .groupBy({ it.first!! }, { it.second })
-            .mapValues { it.value.unzip() }
-
         val statBin = ArrayList<Double>()
         val statValue = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
@@ -57,12 +52,7 @@ object DensityStatUtil {
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
 
-        for ((bin, binData) in binnedData) {
-            val (filteredValue, filteredWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
-            val (binValue, binWeight) = (filteredValue zip filteredWeight)
-                .sortedBy { it.first }
-                .unzip()
-            if (binValue.isEmpty()) continue
+        handleBinnedData(bins, values, weights) { bin, binValue, binWeight ->
             val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
@@ -70,12 +60,12 @@ object DensityStatUtil {
                 bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
             )
             val binStatCount = binStatValue.map { densityFunction(it) }
-            val widthsSum = binWeight.sum()
+            val weightsSum = binWeight.sum()
             val maxBinCount = binStatCount.maxOrNull()!!
 
             statBin += MutableList(binStatValue.size) { bin }
             statValue += binStatValue
-            statDensity += binStatCount.map { it / widthsSum }
+            statDensity += binStatCount.map { it / weightsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
             statQuantile += calculateStatQuantile(binStatValue, binStatCount, quantiles)
@@ -91,6 +81,24 @@ object DensityStatUtil {
         )
 
         return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
+    }
+
+    fun handleBinnedData(
+        bins: List<Double?>,
+        values: List<Double?>,
+        weights: List<Double?>,
+        binHandler: (Double, List<Double>, List<Double>) -> Unit,
+    ) {
+        val binnedData = (bins.asSequence() zip (values.asSequence() zip weights.asSequence()))
+            .filter { (bin, _) -> bin?.isFinite() == true }
+            .groupBy({ (bin, _) -> bin!! }, { (_, binValues) -> binValues })
+            .mapValues { (_, binData) -> binData.unzip() }
+        for ((bin, binData) in binnedData) {
+            val (binValue, binWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
+            if (binValue.isEmpty()) continue
+            val sortingIndices = binValue.indices.sortedBy { binValue[it] }
+            binHandler(bin, binValue.slice(sortingIndices), binWeight.slice(sortingIndices))
+        }
     }
 
     private fun trimValueRange(
@@ -170,7 +178,7 @@ object DensityStatUtil {
         }
     }
 
-    private fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
+    fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
         // Returns (bounded) piecewise linear interpolation function
         return fun(t: Double): Double {
             val i = x.indexOfFirst { it >= t }

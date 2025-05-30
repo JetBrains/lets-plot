@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.DATETIME_FORMAT
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -100,13 +101,16 @@ class ScaleConfig<T> constructor(
                     ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE
                 )
             }
-        } else if (aes == Aes.ALPHA && has(RANGE)) {
+        } else if ((aes == Aes.ALPHA || aes == Aes.SEGMENT_ALPHA) && has(RANGE)) {
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END) && has(RANGE)) {
+        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE || aes == Aes.SEGMENT_SIZE) && has(
+                RANGE
+            )
+        ) {
             mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
         } else if (aes == Aes.LINEWIDTH && has(RANGE)) {
             mapperProvider = LinewidthMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if ((aes == Aes.STROKE|| aes == Aes.STROKE_START || aes == Aes.STROKE_END) && has(RANGE)) {
+        } else if ((aes == Aes.STROKE || aes == Aes.STROKE_START || aes == Aes.STROKE_END) && has(RANGE)) {
             mapperProvider = StrokeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
@@ -209,8 +213,11 @@ class ScaleConfig<T> constructor(
         b.discreteDomainReverse(reverse)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
+            // TODO: provide time zone
+            val tz: TimeZone? = null
+
             val dateTimeFormatter = getString(FORMAT)?.let { pattern ->
-                val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT)
+                val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
             b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))

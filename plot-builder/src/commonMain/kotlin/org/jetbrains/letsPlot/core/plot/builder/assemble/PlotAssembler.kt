@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -41,6 +42,7 @@ class PlotAssembler constructor(
     caption: String? = null,
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
     private val plotSpecId: String?,
+    private val tz: TimeZone?,
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -60,7 +62,8 @@ class PlotAssembler constructor(
     init {
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
-            expFormat = extractExponentFormat(theme.exponentFormat)
+            expFormat = extractExponentFormat(theme.exponentFormat),
+            tz = tz
         )
 
         val legendBoxInfos: List<LegendBoxInfo> = when {
@@ -186,7 +189,8 @@ class PlotAssembler constructor(
                 xAxisPosition = xAxisPosition,
                 yAxisPosition = yAxisPosition,
                 theme = theme,
-                plotSpecId = null
+                plotSpecId = null,
+                tz = null
             )
         }
 

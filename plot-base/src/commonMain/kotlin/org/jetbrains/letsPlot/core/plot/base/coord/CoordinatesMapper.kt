@@ -29,8 +29,8 @@ class CoordinatesMapper(
     val isLinear: Boolean = !projection.nonlinear
 
     fun toClient(p: DoubleVector): DoubleVector? {
-        return projection.project(p)
-            ?.flipIf(flipAxis)
+        return p.flipIf(flipAxis)
+            .let { projection.project(it) }
             ?.let { (projectedH, projectedV) ->
                 val mappedH = hScaleMapper(projectedH)
                 val mappedV = vScaleMapper(projectedV)

@@ -24,6 +24,8 @@ class SeriesAnnotationOptions : Options() {
         val value: String
     ) {
         DATE_TIME(Option.Meta.SeriesAnnotation.Types.DATE_TIME),
+        DATE(Option.Meta.SeriesAnnotation.Types.DATE),
+        TIME(Option.Meta.SeriesAnnotation.Types.TIME),
         INTEGER(Option.Meta.SeriesAnnotation.Types.INTEGER),
         FLOATING(Option.Meta.SeriesAnnotation.Types.FLOATING),
         STRING(Option.Meta.SeriesAnnotation.Types.STRING),

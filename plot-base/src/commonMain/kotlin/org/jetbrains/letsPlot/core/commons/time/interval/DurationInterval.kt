@@ -8,16 +8,13 @@ package org.jetbrains.letsPlot.core.commons.time.interval
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import kotlin.math.ceil
 
+/**
+ * Duration interval represents a fixed-length time span (such as "5 minutes" or "2 hours")
+ * that can be used for creating regular time-based tick marks on an axis.
+ */
 internal class DurationInterval(private val myDuration: Duration, count: Int) : TimeInterval(count) {
 
-    override// milliseconds
-    // fractional seconds
-    // seconds
-    // minutes
-    // hours
-    // days
-    // weeks
-    val tickFormatPattern: String
+    override val tickFormatPattern: String
         get() {
             val duration = myDuration.duration
             if (duration < Duration.SECOND.duration) {
@@ -35,9 +32,7 @@ internal class DurationInterval(private val myDuration: Duration, count: Int) : 
         }
 
     init {
-        if (!myDuration.isPositive) {
-            throw RuntimeException("Duration must be positive")
-        }
+        check(myDuration.isPositive) { "Duration must be positive." }
     }
 
     override fun range(start: Double, end: Double): List<Double> {

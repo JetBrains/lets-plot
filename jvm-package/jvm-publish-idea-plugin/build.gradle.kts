@@ -10,6 +10,9 @@ plugins {
     id("com.gradleup.shadow") version "8.3.6"
 }
 
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+
 val artifactBaseName = "lets-plot-idea-plugin"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
@@ -31,6 +34,8 @@ dependencies {
     implementation(project(":gis"))
     implementation(project(":livemap"))
     implementation(project(":plot-livemap"))
+
+    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
 }
 
 // Disable the default JAR task since we're using shadow JAR
@@ -65,7 +70,8 @@ val shadowJar = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.Sha
     exclude("org/slf4j/**")
     exclude("org/intellij/**")
     exclude("org/jetbrains/annotations/**")
-    exclude("kotlinx/coroutines/**")
+//    exclude("kotlinx/coroutines/**")
+    exclude("kotlinx/**")
     exclude("kotlin/**")
     exclude("javax/xml/**")
     exclude("_COROUTINE/**")

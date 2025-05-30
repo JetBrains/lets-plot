@@ -60,19 +60,18 @@ class LegendComponent(
     ): SvgElement {
         val breakComponent = GroupComponent()
 
-        // key element
         breakComponent.add(createKeyElement(br, keySize))
 
         // add label at position as was layout
         val label = MultilineLabel(br.label)
         val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
         label.addClassName(Style.LEGEND_ITEM)
-        label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setLineHeight(lineHeight)
-        label.moveTo(labelBox.origin.add(DoubleVector(0.0, lineHeight * 0.35)))// centre the first line
+        label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
+        label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+        label.moveTo(labelBox.origin)
         breakComponent.add(label)
-
-        breakComponent.moveTo(keyLabelBox.origin)
+        breakComponent.moveTo(keyLabelBox.origin.add(DoubleVector(0.0, 0.5 * (keyLabelBox.height - keySize.y))))
         return breakComponent.rootGroup
     }
 

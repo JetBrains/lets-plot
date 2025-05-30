@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.core
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.livemap.containers.PriorityQueue
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsSystem
 

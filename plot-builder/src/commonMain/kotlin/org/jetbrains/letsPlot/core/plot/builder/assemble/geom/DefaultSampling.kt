@@ -43,6 +43,7 @@ object DefaultSampling {
     val BIN_2D = POINT
     val HEX = POINT
     val JITTER = POINT
+    val SINA = POINT
     val Q_Q = POINT
     val PIE = POINT
 

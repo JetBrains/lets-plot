@@ -26,7 +26,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
@@ -225,6 +229,22 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun strokeEnd(v: (Int) -> Double?): AestheticsBuilder {
         return aes(STROKE_END, v)
+    }
+
+    fun pointSize(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(POINT_SIZE, v)
+    }
+
+    fun segmentColor(v: (Int) -> Color?): AestheticsBuilder {
+        return aes(SEGMENT_COLOR, v)
+    }
+
+    fun segmentSize(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SEGMENT_SIZE, v)
+    }
+
+    fun segmentAlpha(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SEGMENT_ALPHA, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {

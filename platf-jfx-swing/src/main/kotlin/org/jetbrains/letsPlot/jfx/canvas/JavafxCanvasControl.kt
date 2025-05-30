@@ -23,7 +23,7 @@ import org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasUtil.imagePngByteArrayToIma
 class JavafxCanvasControl(
     private val myRoot: Group,
     override val size: Vector,
-    private val myPixelRatio: Double,
+    override val pixelDensity: Double,
     private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent> // TODO: replace with MouseEventPeer
 ) : CanvasControl {
 
@@ -45,7 +45,7 @@ class JavafxCanvasControl(
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return JavafxCanvas.create(size, myPixelRatio)
+        return JavafxCanvas.create(size, pixelDensity)
     }
 
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
@@ -58,11 +58,13 @@ class JavafxCanvasControl(
         )
     }
 
-    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Asyncs.constant(
-            JavafxCanvas.JavafxSnapshot(
-                imagePngByteArrayToImage(bytes, size * myPixelRatio.toInt())
-            )
+    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return Asyncs.constant(immediateSnapshot(rgba, size))
+    }
+
+    override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
+        return JavafxCanvas.JavafxSnapshot(
+            imagePngByteArrayToImage(rgba, size * pixelDensity.toInt())
         )
     }
 
@@ -76,6 +78,15 @@ class JavafxCanvasControl(
 
     override fun removeChild(canvas: Canvas) {
         myRoot.children.remove((canvas as JavafxCanvas).nativeCanvas)
+    }
+
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        println("JavafxCanvasControl.onResize() - NOT IMPLEMENTED")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
     }
 
     override fun <T> schedule(f: () -> T) {

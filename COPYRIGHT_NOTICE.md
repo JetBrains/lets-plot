@@ -18,7 +18,7 @@ Licensed under the Apache-Style Software License for ColorBrewer Color Schemes, 
 The color maps `viridis`, `magma`, `inferno`, and `plasma` were created by
 Stéfan van der Walt ([@stefanv](https://github.com/stefanv)) and Nathaniel Smith ([@njsmith](https://github.com/njsmith)). 
 
-The color map `cividis` is a corrected version of 'viridis', developed by
+The color map `cividis` is a corrected version of `viridis`, developed by
 Jamie R. Nuñez, Christopher R. Anderton, and Ryan S. Renslow.
 
 The color map `turbo` was developed by Anton Mikhailov to address the
@@ -36,4 +36,8 @@ A free software, distributed under the LGPL-3.0 license : [documentation](https:
 ### PNGJ: Java library for PNG encoding.
 Copyright (c) 2009-2012, Hernán J. González.
 Licensed under the Apache Software License, Version 2.0.
+
+### js-joda
+Date and time library for JavaScript.
+Copyright © 2016, Philipp Thürwächter & Pattrick Hüper. Licensed under BSD License.
 

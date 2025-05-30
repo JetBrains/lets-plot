@@ -44,6 +44,10 @@ class FormatterUtilTest {
     }
 
     private fun formatDType(value: Any, dataType: DataType): String {
-        return FormatterUtil.byDataType(dataType, ExponentFormat(E))(value)
+        return FormatterUtil.byDataType(
+            dataType,
+            ExponentFormat(E),
+            tz = null,
+        ).invoke(value)
     }
 }

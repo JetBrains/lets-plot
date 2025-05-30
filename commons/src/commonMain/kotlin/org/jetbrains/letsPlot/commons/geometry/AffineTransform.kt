@@ -26,6 +26,8 @@ class AffineTransform(
     val m12: Double // ty
 ) {
 
+    val isIdentity: Boolean = m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0
+
     // synonyms
     val sx: Double get() = m00
     val sy: Double get() = m11
@@ -35,10 +37,25 @@ class AffineTransform(
     val ty: Double get() = m12
 
     fun transform(p: DoubleVector): DoubleVector {
+        if (isIdentity) {
+            return p
+        }
         return transform(p.x, p.y)
     }
 
+    // If identity, return the same list
+    fun transform(p: List<DoubleVector>): List<DoubleVector> {
+        if (isIdentity) {
+            return p
+        }
+        return p.map { transform(it) }
+    }
+
     fun transform(r: DoubleRectangle): DoubleRectangle {
+        if (isIdentity) {
+            return r
+        }
+
         val lt = transform(r.left, r.top)
         val rt = transform(r.right, r.top)
         val rb = transform(r.right, r.bottom)
@@ -51,6 +68,10 @@ class AffineTransform(
     }
 
     fun transform(x: Number, y: Number): DoubleVector {
+        if (isIdentity) {
+            return DoubleVector(x.toDouble(), y.toDouble())
+        }
+
         return DoubleVector(
             x = m00 * x.toDouble() + m01 * y.toDouble() + m02,
             y = m10 * x.toDouble() + m11 * y.toDouble() + m12
@@ -65,6 +86,21 @@ class AffineTransform(
             m11 = m10 * other.m01 + m11 * other.m11,
             m02 = m00 * other.m02 + m01 * other.m12 + m02,
             m12 = m10 * other.m02 + m11 * other.m12 + m12
+        )
+    }
+
+    fun inverse(): AffineTransform? {
+        val det = m00 * m11 - m01 * m10
+        if (det == 0.0) {
+            return null
+        }
+        return AffineTransform(
+            m00 = m11 / det,
+            m10 = -m10 / det,
+            m01 = -m01 / det,
+            m11 = m00 / det,
+            m02 = (m01 * m12 - m02 * m11) / det,
+            m12 = (m02 * m10 - m00 * m12) / det
         )
     }
 
@@ -96,6 +132,9 @@ class AffineTransform(
     }
 
     fun repr(): String {
+        if (m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0) {
+            return "IDENTITY"
+        }
         return """m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12"""
     }
 

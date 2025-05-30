@@ -6,9 +6,8 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Path.PathCommand
+import org.jetbrains.letsPlot.core.canvas.Path2d.PathCommand
 
 private const val logEnabled = false
 private fun log(str: () -> String) {
@@ -19,55 +18,85 @@ private fun log(str: () -> String) {
 class ContextState {
     private val states = ArrayList<StateEntry>()
     private var currentState = StateEntry.create()
-    private var currentPath: Path = Path()
+    private var currentPath: Path2d = Path2d()
 
     fun getCurrentState(): StateEntry {
         return currentState.copy()
+    }
+
+    fun getCTM(): AffineTransform {
+        return currentState.transform
     }
 
     fun getCurrentPath(): List<PathCommand> {
         return currentPath.getCommands()
     }
 
+    fun getClipPath(): Path2d? {
+        return currentState.clipPath
+    }
+
+    fun getLineDash(): List<Double> {
+        return currentState.lineDashPattern
+    }
+
+    fun getLineDashOffset(): Double {
+        return currentState.lineDashOffset
+    }
+
     class StateEntry(
         var strokeColor: Color,
         var strokeWidth: Double,
-        var lineDashPattern: List<Double>?,
+        var lineDashPattern: List<Double>,
         var lineDashOffset: Double,
         var miterLimit: Double,
         var lineCap: LineCap,
         var lineJoin: LineJoin,
         var fillColor: Color,
         var font: Font,
-        var transform: AffineTransform
+        var fontTextAlign: TextAlign,
+        var fontBaseline: TextBaseline,
+        var transform: AffineTransform,
+        var globalAlpha: Double,
+        var clipPath: Path2d? = null,
     ) {
+
+
         fun copy(): StateEntry {
             return StateEntry(
                 strokeColor = strokeColor,
                 strokeWidth = strokeWidth,
+                lineDashPattern = lineDashPattern,
                 lineDashOffset = lineDashOffset,
                 miterLimit = miterLimit,
                 lineCap = lineCap,
                 lineJoin = lineJoin,
                 fillColor = fillColor,
                 font = font,
+                fontTextAlign = fontTextAlign,
+                fontBaseline = fontBaseline,
                 transform = transform,
-                lineDashPattern = lineDashPattern,
+                globalAlpha = globalAlpha,
+                clipPath = clipPath
             )
         }
 
         companion object {
             fun create(
+                fillColor: Color = Color.TRANSPARENT,
                 strokeColor: Color = Color.TRANSPARENT,
                 strokeWidth: Double = 1.0,
+                lineDashPattern: List<Double> = emptyList(),
                 lineDashOffset: Double = 0.0,
                 miterLimit: Double = 10.0,
                 lineCap: LineCap = LineCap.BUTT,
                 lineJoin: LineJoin = LineJoin.MITER,
-                fillColor: Color = Color.TRANSPARENT,
                 font: Font = Font(),
+                fontTextAlign: TextAlign = TextAlign.START,
+                fontBaseline: TextBaseline = TextBaseline.ALPHABETIC,
+                globalAlpha: Double = 1.0,
                 transform: AffineTransform = AffineTransform.IDENTITY,
-                lineDashPattern: List<Double>? = null
+                clipPath: Path2d? = null
             ): StateEntry {
                 return StateEntry(
                     strokeColor = strokeColor,
@@ -79,7 +108,11 @@ class ContextState {
                     lineJoin = lineJoin,
                     fillColor = fillColor,
                     font = font,
-                    transform = transform
+                    fontTextAlign = fontTextAlign,
+                    fontBaseline = fontBaseline,
+                    globalAlpha = globalAlpha,
+                    transform = transform,
+                    clipPath = clipPath
                 )
             }
         }
@@ -132,22 +165,30 @@ class ContextState {
             currentState = states.removeAt(states.size - 1)
         }
         log { "\t  to: [${currentState.transform.repr()}]" }
+        log { "\t clipPath: ${currentState.clipPath}" }
     }
 
     fun beginPath() {
-        currentPath = Path()
+        currentPath = Path2d()
     }
 
     fun closePath() {
         currentPath.closePath()
     }
 
+    fun clip() {
+        log { "clip() - ${currentPath.getCommands()}" }
+        currentState.clipPath = currentPath.copy()
+    }
+
     fun moveTo(x: Double, y: Double) {
-        currentPath.moveTo(x, y, currentState.transform)
+        val (tx, ty) = currentState.transform.transform(x, y)
+        currentPath.moveTo(tx, ty)
     }
 
     fun lineTo(x: Double, y: Double) {
-        currentPath.lineTo(x, y, currentState.transform)
+        val (tx, ty) = currentState.transform.transform(x, y)
+        currentPath.lineTo(tx, ty)
     }
 
     fun arc(
@@ -158,7 +199,17 @@ class ContextState {
         endAngle: Double,
         anticlockwise: Boolean = false
     ) {
-        currentPath.arc(x, y, radius, toDegrees(startAngle), toDegrees(endAngle), anticlockwise, currentState.transform)
+        currentPath.arc(
+            x = x,
+            y = y,
+            radiusX = radius,
+            radiusY = radius,
+            rotation = 0.0,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = currentState.transform
+        )
     }
 
     fun ellipse(
@@ -168,16 +219,16 @@ class ContextState {
         startAngle: Double, endAngle: Double,
         anticlockwise: Boolean
     ) {
-        currentPath.ellipse(
-            x,
-            y,
-            radiusX,
-            radiusY,
-            toDegrees(rotation),
-            toDegrees(startAngle),
-            toDegrees(endAngle),
-            anticlockwise,
-            currentState.transform
+        currentPath.arc(
+            x = x,
+            y = y,
+            radiusX = radiusX,
+            radiusY = radiusY,
+            rotation = rotation,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise,
+            at = currentState.transform
         )
     }
 
@@ -190,13 +241,13 @@ class ContextState {
         y: Double
     ) {
         currentPath.bezierCurveTo(
-            cp1x,
-            cp1y,
-            cp2x,
-            cp2y,
-            x,
-            y,
-            currentState.transform
+            cp1x = cp1x,
+            cp1y = cp1y,
+            cp2x = cp2x,
+            cp2y = cp2y,
+            x = x,
+            y = y,
+            at = currentState.transform
         )
     }
 
@@ -230,7 +281,7 @@ class ContextState {
         currentState.lineJoin = lineJoin
     }
 
-    fun setLineDashPattern(lineDashPattern: List<Double>?) {
+    fun setLineDashPattern(lineDashPattern: List<Double>) {
         log { "setLineDashPattern($lineDashPattern)" }
         currentState.lineDashPattern = lineDashPattern
     }
@@ -246,7 +297,8 @@ class ContextState {
     }
 
     fun setGlobalAlpha(d: Double) {
-        TODO("Not yet implemented")
+        log { "setGlobalAlpha($d)" }
+        currentState.globalAlpha = d
     }
 
     fun scale(d: Double) {
@@ -254,10 +306,12 @@ class ContextState {
     }
 
     fun setTextBaseline(baseline: TextBaseline) {
-        TODO("Not yet implemented")
+        log { "setTextBaseline($baseline)" }
+        currentState.fontBaseline = baseline
     }
 
     fun setTextAlign(align: TextAlign) {
-        TODO("Not yet implemented")
+        log { "setTextAlign($align)" }
+        currentState.fontTextAlign = align
     }
 }

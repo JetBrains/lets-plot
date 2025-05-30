@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.BLUE
-import org.jetbrains.letsPlot.commons.values.Color.Companion.GREEN
+import org.jetbrains.letsPlot.commons.values.Color.Companion.LIME
 import org.jetbrains.letsPlot.commons.values.Color.Companion.RED
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -37,7 +37,7 @@ class ScaleConfigTest {
             Color.TRANSPARENT,
             AesOptionConversion.demoAndTest
         )
-        val expected = listOf(RED, GREEN, BLUE)
+        val expected = listOf(RED, LIME, BLUE)
         checkMappingDiscrete(expected, input, mapperProvider)
     }
 
@@ -80,7 +80,7 @@ class ScaleConfigTest {
     @Test
     fun colorIdentityMapper() {
         val inputs = listOf(
-            listOf("red", "green", "blue"),
+            listOf("red", "lime", "blue"),
             listOf("#ff0000", "#00ff00", "#0000ff"),
             listOf("rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"),
             listOf("rgba(255,0,0,1.0)", "rgba(0,255,0,1.0)", "rgba(0,0,255,1.0)"),

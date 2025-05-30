@@ -49,7 +49,7 @@ object LayerConverter {
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 SPOKE -> MapLayerKind.PATH to dataPointsConverter.toSpoke(layer.geom as SpokeGeom)
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
-                TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
+                TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom as PieGeom)
                 HEX -> MapLayerKind.POLYGON to dataPointsConverter.toHex()
@@ -57,7 +57,7 @@ object LayerConverter {
             }
 
             val positiveScalingLimit = when (
-                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END).any { it in layer.mappedAes }
+                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END, Aes.POINT_SIZE, Aes.SEGMENT_SIZE).any { it in layer.mappedAes }
             ) {
                 true -> aesScalingLimit
                 false -> constScalingLimit

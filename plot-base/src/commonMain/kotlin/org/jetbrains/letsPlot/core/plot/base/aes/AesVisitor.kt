@@ -35,6 +35,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
@@ -251,6 +255,18 @@ abstract class AesVisitor<T> {
         if (aes == STROKE_END) {
             return strokeEnd()
         }
+        if (aes == POINT_SIZE) {
+            return pointSize()
+        }
+        if (aes == SEGMENT_COLOR) {
+            return segmentColor()
+        }
+        if (aes == SEGMENT_SIZE) {
+            return segmentSize()
+        }
+        if (aes == SEGMENT_ALPHA) {
+            return segmentAlpha()
+        }
 
         throw IllegalArgumentException("Unexpected aes: $aes")
     }
@@ -366,4 +382,12 @@ abstract class AesVisitor<T> {
     protected abstract fun strokeStart(): T
 
     protected abstract fun strokeEnd(): T
+
+    protected abstract fun pointSize(): T
+
+    protected abstract fun segmentColor(): T
+
+    protected abstract fun segmentSize(): T
+
+    protected abstract fun segmentAlpha(): T
 }

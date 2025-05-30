@@ -233,6 +233,22 @@ abstract class DataPointAesthetics {
         return get(Aes.STROKE_END)
     }
 
+    fun pointSize(): Double? {
+        return get(Aes.POINT_SIZE)
+    }
+
+    fun segmentColor(): Color? {
+        return get(Aes.SEGMENT_COLOR)
+    }
+
+    fun segmentSize(): Double? {
+        return get(Aes.SEGMENT_SIZE)
+    }
+
+    fun segmentAlpha(): Double? {
+        return get(Aes.SEGMENT_ALPHA)
+    }
+
     fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }

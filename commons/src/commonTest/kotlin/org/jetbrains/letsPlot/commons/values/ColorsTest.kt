@@ -13,6 +13,12 @@ class ColorsTest {
     fun namedColors() {
         assertTrue(Colors.isColorName("pink"))
         assertTrue(Colors.isColorName("pInk"))
+        assertTrue(Colors.isColorName("dark_orange"))
+        assertTrue(Colors.isColorName("light-blue"))
+        assertTrue(Colors.isColorName("darkgrey"))
+        assertTrue(Colors.isColorName("darkgray"))
+        assertTrue(Colors.isColorName("DARK-GREY"))
+        assertTrue(Colors.isColorName("gray81"))
         assertFalse(Colors.isColorName("unknown"))
 
         assertNotNull(Colors.forName("red"))
@@ -62,7 +68,7 @@ class ColorsTest {
         assertEquals(Color.BLACK, Colors.rgbFromHsv(360.0, 0.0, 0.0))
         assertEquals(Color.WHITE, Colors.rgbFromHsv(0.0, 0.0, 1.0))
         assertEquals(Color.RED, Colors.rgbFromHsv(0.0, 1.0, 1.0))
-        assertEquals(Color.GREEN, Colors.rgbFromHsv(120.0, 1.0, 1.0))
+        assertEquals(Color.LIME, Colors.rgbFromHsv(120.0, 1.0, 1.0))
         assertEquals(Color.BLUE, Colors.rgbFromHsv(240.0, 1.0, 1.0))
         assertEquals(Color.YELLOW, Colors.rgbFromHsv(60.0, 1.0, 1.0), "YELLOW")
         assertEquals(Color.CYAN, Colors.rgbFromHsv(180.0, 1.0, 1.0), "CYAN")

@@ -5,15 +5,11 @@
 
 package org.jetbrains.letsPlot.core.commons.time.interval
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.formatterDateUTC
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 
 abstract class TimeInterval protected constructor(val count: Int) {
 
     abstract val tickFormatPattern: String
-
-    open val tickFormatter: (Number) -> String
-        get() = formatterDateUTC(tickFormatPattern)
 
     /**
      * @param start instant
@@ -53,10 +49,6 @@ abstract class TimeInterval protected constructor(val count: Int) {
 
         private fun quarter(count: Int): TimeInterval {
             return QuarterInterval(count)
-        }
-
-        private fun semester(count: Int): TimeInterval {
-            return SemesterInterval(count)
         }
 
         fun years(count: Int): TimeInterval {

@@ -11,6 +11,7 @@ plugins {
 val mockkVersion = project.extra["mockk_version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val hamcrestVersion = project.extra["hamcrest_version"] as String
 val mockitoVersion = project.extra["mockito_version"] as String
 val assertjVersion = project.extra["assertj_version"] as String
@@ -25,12 +26,14 @@ kotlin {
         commonMain {
             dependencies {
                 compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
             }
         }
 
         nativeMain {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
 
@@ -38,6 +41,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
 
@@ -60,6 +64,9 @@ kotlin {
         named("jsMain") {
             dependencies {
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+
+                // Add timezone support for js (in kotlinx-datetime)
+                implementation(npm("@js-joda/timezone", "2.3.0"))
             }
         }
 

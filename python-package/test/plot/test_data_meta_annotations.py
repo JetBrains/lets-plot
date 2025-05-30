@@ -1,16 +1,25 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from datetime import datetime
+from datetime import datetime, timezone, date, time
+from datetime import timedelta
 
 import numpy as np
 from pandas import DataFrame, Categorical
+# Python 3.9+ is required for ZoneInfo.
+from zoneinfo import ZoneInfo
 
 from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
 
 data_dict = {
     'python_datetime': [(datetime(2020, 1, 1))],
+    'python_datetime_tz_utc': [(datetime(2020, 1, 1, tzinfo=timezone.utc))],
+    'python_datetime_tz_utc-6': [(datetime(2020, 1, 1, tzinfo=timezone(-timedelta(hours=6))))],  # CST = UTC-6
+    'python_datetime_tz_chicago': [(datetime(2020, 1, 1, tzinfo=timezone.utc).astimezone(ZoneInfo('America/Chicago')))],
+    'python_date': [(date(2020, 1, 1))],
+    'python_time': [(time(12, 30, 45))],
+    'np_datetime64': [np.datetime64('2020-01-01')],
     'python_float': [0.0],
     'python_int': [0],
     'python_str': ['foo'],
@@ -21,6 +30,12 @@ data_dict = {
 }
 expected_series_annotations = [
     {'column': 'python_datetime', 'type': 'datetime'},
+    {'column': 'python_datetime_tz_utc', 'type': 'datetime', 'time_zone': 'UTC'},
+    {'column': 'python_datetime_tz_utc-6', 'type': 'datetime', 'time_zone': 'UTC-06:00'},
+    {'column': 'python_datetime_tz_chicago', 'type': 'datetime', 'time_zone': 'America/Chicago'},
+    {'column': 'python_date', 'type': 'date'},
+    {'column': 'python_time', 'type': 'time'},
+    {'column': 'np_datetime64', 'type': 'datetime'},
     {'column': 'python_float', 'type': 'float'},
     {'column': 'python_int', 'type': 'int'},
     {'column': 'python_str', 'type': 'str'},
@@ -173,20 +188,43 @@ def test_values_list_in_aes_doest_not_produce_series_annotations():
 
 def test_as_annotated_data_dict():
     p = ggplot(data_dict) + geom_point()
-    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [{'column': 'unknown', 'type': "unknown(python:<class 'type'>)"}]
+    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [
+        {'column': 'unknown', 'type': "unknown(python:<class 'type'>)"}]
 
 
 def test_as_annotated_data_dataframe():
     df = DataFrame(data_dict)
     p = ggplot(df) + geom_point()
-    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [{'column': 'unknown', 'type': 'unknown(pandas:mixed)'}]
+    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [
+        {'column': 'unknown', 'type': 'unknown(pandas:mixed)'}]
 
 
 def test_as_annotated_data_polars_dataframe():
     from polars import DataFrame as plDataFrame
-    df = plDataFrame(data_dict)
+
+    # Polars does not support Numpy datetime64 objects.
+    modified_data_dict = {key: value for key, value in data_dict.items() if key != 'np_datetime64'}
+
+    # Uodate expectations accordingly. 
+    modified_expected_series_annotations = []
+    for item in expected_series_annotations:
+        if item['column'] == 'np_datetime64':
+            # Skip this item
+            continue
+        elif item['column'] == 'python_datetime_tz_utc-6':
+            # Polars does not seem to support fixed offset time zones.
+            modified_expected_series_annotations.append(
+                {'column': 'python_datetime_tz_utc-6', 'type': 'datetime', 'time_zone': 'UTC'})
+        else:
+            modified_expected_series_annotations.append(item.copy())
+
+    # Test
+
+    df = plDataFrame(modified_data_dict)
     p = ggplot(df) + geom_point()
-    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [{'column': 'unknown', 'type': 'unknown(polars:Object)'}]
+
+    assert p.as_dict()['data_meta']['series_annotations'] == modified_expected_series_annotations + [
+        {'column': 'unknown', 'type': 'unknown(polars:Object)'}]
 
 
 def test_as_annotated_data_list():

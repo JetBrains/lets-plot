@@ -338,7 +338,7 @@ class TooltipBox(
 
             // title component
             val titleComponent = title?.let(::initTitleComponent)
-            val rawTitleBBox = getBBox(titleComponent) ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            val rawTitleBBox = getBBox(titleComponent) ?: DoubleRectangle.ZERO
 
             // detect min tooltip width
             val minWidthWithTitle = listOfNotNull(tooltipMinWidth, rawTitleBBox.width).maxOrNull()
@@ -662,7 +662,7 @@ class TooltipBox(
             fun drawLineSeparator(path: SvgPathElement, toSvgElem: SvgSvgElement) {
                 path.strokeWidth().set(LINE_SEPARATOR_WIDTH)
                 path.strokeOpacity().set(1.0)
-                path.strokeColor().set(Color.VERY_LIGHT_GRAY)
+                path.strokeColor().set(Color.gray(80))
 
                 toSvgElem.children().add(path)
             }

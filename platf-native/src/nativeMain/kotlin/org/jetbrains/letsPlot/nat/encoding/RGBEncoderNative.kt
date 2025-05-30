@@ -38,10 +38,7 @@ class RGBEncoderNative : RGBEncoder {
             png.writeRow(iLine)
         }
         png.end()
-        return toPngDataUri(Base64.encode(outputStream.byteArray))
+        return "data:image/png;base64,${Base64.encode(outputStream.byteArray)}"
     }
 
-    private fun toPngDataUri(base64EncodedPngImage: String): String {
-        return "data:image/png;base64,$base64EncodedPngImage"
-    }
 }

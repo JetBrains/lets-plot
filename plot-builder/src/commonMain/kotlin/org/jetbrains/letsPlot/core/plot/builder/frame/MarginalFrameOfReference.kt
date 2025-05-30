@@ -50,7 +50,8 @@ internal class MarginalFrameOfReference(
             coord,
             flippedAxis = false,
             targetCollector,
-            plotBackground
+            plotBackground,
+            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO),
         )
 
         layerComponent.moveTo(geomBounds.origin)

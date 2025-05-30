@@ -19,8 +19,6 @@ import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
 import java.awt.event.MouseEvent as AwtMouseEvent
 
-private const val ENABLE_DEBUG_LOG = false
-
 class AwtMouseEventMapper(
     eventSource: Component,
     private val bounds: Rectangle? = null
@@ -164,5 +162,9 @@ class AwtMouseEventMapper(
         eventHandler: EventHandler<org.jetbrains.letsPlot.commons.event.MouseEvent>
     ): Registration {
         return mouseEventPeer.addEventHandler(eventSpec, eventHandler)
+    }
+
+    companion object {
+        private const val ENABLE_DEBUG_LOG = false
     }
 }

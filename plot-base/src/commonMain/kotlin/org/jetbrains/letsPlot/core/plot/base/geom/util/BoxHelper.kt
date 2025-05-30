@@ -61,11 +61,11 @@ object BoxHelper {
             root.add(line)
         }
     }
-    fun legendFactory(whiskers: Boolean): LegendKeyElementFactory =
-        BoxLegendKeyElementFactory(whiskers)
+    fun legendFactory(whiskers: Boolean, showMidline: Boolean): LegendKeyElementFactory =
+        BoxLegendKeyElementFactory(whiskers, showMidline)
 }
 
-private class BoxLegendKeyElementFactory(val whiskers: Boolean) :
+private class BoxLegendKeyElementFactory(val whiskers: Boolean, val showMidline: Boolean) :
     LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
@@ -101,7 +101,9 @@ private class BoxLegendKeyElementFactory(val whiskers: Boolean) :
 
         val g = SvgGElement()
         g.children().add(rect)
-        g.children().add(middle)
+        if (showMidline) {
+            g.children().add(middle)
+        }
 
         if (whiskers) {
             val middleX = x + width * .5

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.core.ecs
 
-import org.jetbrains.letsPlot.livemap.core.SystemTime
+import org.jetbrains.letsPlot.commons.SystemTime
 
 interface EcsClock {
     val systemTime: SystemTime

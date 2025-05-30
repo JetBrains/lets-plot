@@ -5,12 +5,16 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
+import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.shape.Element
 import org.jetbrains.letsPlot.raster.shape.Group
+import org.jetbrains.letsPlot.raster.shape.Image
 import org.jetbrains.letsPlot.raster.shape.Text
 
 internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFactory<SvgNode, Element> {
@@ -18,20 +22,37 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
         private val LOG = PortableLogging.logger(SvgNodeMapperFactory::class)
     }
 
+    private val rgbEncoder: RGBEncoder = object : RGBEncoder {
+        override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
+            val bytes = ByteArray(argbValues.size * 4)
+            for (i in argbValues.indices) {
+                val argb = argbValues[i]
+                bytes[i * 4] = (argb shr 0 and 0xff).toByte()   // Blue
+                bytes[i * 4 + 1] = (argb shr 8 and 0xff).toByte() // Green
+                bytes[i * 4 + 2] = (argb shr 16 and 0xff).toByte() // Red
+                bytes[i * 4 + 3] = (argb shr 24 and 0xff).toByte() // Alpha
+            }
+
+            return peer.canvasProvider.immediateSnapshot(bytes, Vector(width, height)).toDataUrl()
+        }
+    }
+
+
     override fun createMapper(source: SvgNode): Mapper<out SvgNode, out Element> {
         var src = source
         val target = SvgUtils.newElement(src, peer)
 
-//        if (src is SvgImageElementEx) {
-//            src = src.asImageElement(SkiaRGBEncoder)
-//        }
+        if (src is SvgImageElementEx) {
+            //src = src.asImageElement(SkiaRGBEncoder)
+            src = src.asImageElement(rgbEncoder)
+        }
 
         return when (src) {
             is SvgStyleElement -> SvgStyleElementMapper(src, target as Group, peer)
             is SvgGElement -> SvgGElementMapper(src, target as Group, peer)
             is SvgSvgElement -> SvgSvgElementMapper(src, peer)
             is SvgTextElement -> SvgTextElementMapper(src, target as Text, peer)
-            //is SvgImageElement -> SvgImageElementMapper(src, target as Image, peer)
+            is SvgImageElement -> SvgImageElementMapper(src, target as Image, peer)
             is SvgElement -> SvgElementMapper(src, target, peer)
             else -> throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName)
         }

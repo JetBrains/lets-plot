@@ -14,6 +14,7 @@ kotlin {
     }
 
     val ktorVersion = project.extra["ktor_version"] as String
+    val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
     val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
     sourceSets {
@@ -55,6 +56,8 @@ kotlin {
                 implementation(project(":plot-base"))
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
 

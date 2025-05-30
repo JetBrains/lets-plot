@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.debug
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
-import org.jetbrains.letsPlot.livemap.core.SystemTime
 import org.jetbrains.letsPlot.livemap.core.multitasking.DebugMicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DebugDataComponent.Companion.PARSING_TIME

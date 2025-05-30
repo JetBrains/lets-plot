@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
@@ -46,7 +47,6 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
-import kotlin.collections.contains
 
 class LayerConfig constructor(
     layerOptions: Map<String, Any>,
@@ -62,6 +62,10 @@ class LayerConfig constructor(
     layerOptions,
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
+
+    // TODO: provide a time zonr (or null)
+    public val tz: TimeZone? = null
+
 
     val dtypes: Map<String, DataType>// = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
@@ -232,8 +236,8 @@ class LayerConfig constructor(
         val discreteVarsDTypes = if (clientSide) {
             combinedDiscreteMappings
                 .entries.associate { (aes, varName) ->
-                DataMetaUtil.asDiscreteName(aes, varName) to baseDTypes.getOrElse(varName) { DataType.UNKNOWN }
-            }
+                    DataMetaUtil.asDiscreteName(aes, varName) to baseDTypes.getOrElse(varName) { DataType.UNKNOWN }
+                }
         } else {
             emptyMap()
         }
@@ -328,14 +332,17 @@ class LayerConfig constructor(
                 combinedDiscreteMappings
             )
         }
+
         fun isYOrientedByAes(verticalAesthetics: Set<Aes<*>>): Boolean {
             val combinedMappings = plotMappings + layerMappings
-            val hasVerticalAesthetics = verticalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            val hasVerticalAesthetics =
+                verticalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
             if (hasVerticalAesthetics) {
                 return false
             }
             val horizontalAesthetics = verticalAesthetics.map { YOrientationBaseUtil.flipAes(it) }
-            val hasHorizontalAesthetics = horizontalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
+            val hasHorizontalAesthetics =
+                horizontalAesthetics.any { aes -> toOption(aes) in combinedMappings || aes in explicitConstantAes }
             if (hasHorizontalAesthetics) {
                 return true
             }
@@ -353,17 +360,21 @@ class LayerConfig constructor(
             ) -> {
                 !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
             }
+
             geomProto.geomKind in listOf(
                 GeomKind.BAR,
                 GeomKind.VIOLIN,
+                GeomKind.SINA,
                 GeomKind.LOLLIPOP,
                 GeomKind.Y_DOT_PLOT
             ) -> {
                 !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
             }
+
             geomProto.geomKind == GeomKind.BOX_PLOT -> {
                 isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
             }
+
             geomProto.geomKind in listOf(
                 GeomKind.CROSS_BAR,
                 GeomKind.ERROR_BAR,
@@ -373,6 +384,7 @@ class LayerConfig constructor(
             ) -> {
                 isYOrientedByAes(setOf(Aes.YMIN, Aes.YMAX))
             }
+
             else -> false
         }
         if (isYOriented) {
@@ -407,7 +419,7 @@ class LayerConfig constructor(
     }
 
     fun replaceOwnData(dataFrame: DataFrame?) {
-        check(!clientSide)   // This class is immutable on client-side
+        check(!clientSide)   // This class is immutable on the client-side
         require(dataFrame != null)
         update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame

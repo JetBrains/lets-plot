@@ -18,6 +18,18 @@ object Text {
         TOP, BOTTOM, CENTER
     }
 
+    fun HorizontalAnchor.toDouble() = when (this) {
+        HorizontalAnchor.LEFT -> 0.0
+        HorizontalAnchor.MIDDLE -> 0.5
+        HorizontalAnchor.RIGHT -> 1.0
+    }
+
+    fun VerticalAnchor.toDouble() = when (this) {
+        VerticalAnchor.TOP -> 0.0
+        VerticalAnchor.CENTER -> 0.5
+        VerticalAnchor.BOTTOM -> 1.0
+    }
+
     internal fun toTextAnchor(anchor: HorizontalAnchor): String? {
         return when (anchor) {
             HorizontalAnchor.LEFT -> null // default - "start";

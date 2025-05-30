@@ -66,7 +66,7 @@ internal class HorizontalMultilineLabelsLayout(
         }
 
         var bounds = if (boundsByShelfIndex.isEmpty()) {
-            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            DoubleRectangle.ZERO
         } else {
             boundsByShelfIndex[0]
         }

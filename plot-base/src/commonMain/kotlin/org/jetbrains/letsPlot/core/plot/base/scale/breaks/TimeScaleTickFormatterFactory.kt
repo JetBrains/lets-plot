@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.formatterDateUTC
 import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
@@ -13,10 +12,6 @@ import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
 internal class TimeScaleTickFormatterFactory(
     private val minInterval: TimeInterval?
 ) {
-
-    fun getFormatter(step: Double): (Number) -> String {
-        return formatterDateUTC(formatPattern(step))
-    }
 
     internal fun formatPattern(step: Double): String {
         if (step < 1000) {        // milliseconds

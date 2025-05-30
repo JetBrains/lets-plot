@@ -29,7 +29,12 @@ class TimeScaleX {
     }
 
     companion object {
-        fun plot(title: String, entries: Iterable<Int>, period: Duration, timeAxis: String = "x"): MutableMap<String, Any> {
+        fun plot(
+            title: String,
+            entries: Iterable<Int>,
+            period: Duration,
+            timeAxis: String = "x"
+        ): MutableMap<String, Any> {
             val rnd = Random(0)
             val time = entries.map { it * period.duration }
             val values = time.indices.map { rnd.nextDouble(0.0, 20.0) }

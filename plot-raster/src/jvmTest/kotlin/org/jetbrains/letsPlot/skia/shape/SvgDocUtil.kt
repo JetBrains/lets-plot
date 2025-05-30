@@ -44,7 +44,7 @@ internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
     )
 
     val canvasPeer = SvgCanvasPeer(
-        textMeasurer = TextMeasurer.create(canvasControl)
+        textMeasurer = TextMeasurer.create(canvasControl), canvasControl
     )
 
     //val rootMapper = SvgSvgElementMapper(svgDocument, SvgSkiaPeer(fontManager))

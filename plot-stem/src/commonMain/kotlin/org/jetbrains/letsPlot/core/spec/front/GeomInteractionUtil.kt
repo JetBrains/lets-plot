@@ -234,6 +234,8 @@ object GeomInteractionUtil {
 
             GeomKind.TEXT,
             GeomKind.LABEL,
+            GeomKind.TEXT_REPEL,
+            GeomKind.LABEL_REPEL,
             GeomKind.POINT,
             GeomKind.JITTER,
             GeomKind.Q_Q,
@@ -242,6 +244,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN,
+            GeomKind.SINA,
             GeomKind.LOLLIPOP,
             GeomKind.SPOKE,
             GeomKind.CURVE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
@@ -283,6 +286,7 @@ object GeomInteractionUtil {
             GeomKind.AREA -> listOf(Aes.QUANTILE)
             GeomKind.DENSITY -> listOf(Aes.QUANTILE)
             GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
+            GeomKind.SINA -> listOf(Aes.VIOLINWIDTH, Aes.QUANTILE)
             GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
             GeomKind.CROSS_BAR -> listOf(Aes.Y)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
@@ -291,7 +295,7 @@ object GeomInteractionUtil {
             GeomKind.SPOKE -> listOf(Aes.X, Aes.Y, Aes.ANGLE, Aes.RADIUS)
 
             GeomKind.Q_Q, GeomKind.Q_Q_LINE -> listOf(Aes.SAMPLE)
-            GeomKind.TEXT, GeomKind.LABEL -> {
+            GeomKind.TEXT, GeomKind.LABEL, GeomKind.TEXT_REPEL, GeomKind.LABEL_REPEL -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
                 if (layerConfig.tooltips.tooltipLinePatterns.isNullOrEmpty()) {
@@ -410,6 +414,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,
+            GeomKind.SINA,
             GeomKind.Q_Q,
             GeomKind.Q_Q_2,
             GeomKind.LINE,

@@ -12,11 +12,11 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.QuantilesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.stat.YDensityStat
+import org.jetbrains.letsPlot.core.plot.base.stat.BaseYDensityStat
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class ViolinGeom : GeomBase() {
-    var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
+    var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var quantileLines: Boolean = DEF_QUANTILE_LINES
     var showHalf: Double = DEF_SHOW_HALF
     private val negativeSign: Double
@@ -67,8 +67,12 @@ class ViolinGeom : GeomBase() {
             root.appendNodes(helper.createLines(points, leftBoundTransform))
             root.appendNodes(helper.createLines(points, rightBoundTransform))
 
-            buildHints(points, ctx, helper, leftBoundTransform)
-            buildHints(points, ctx, helper, rightBoundTransform)
+            if (showHalf <= 0.0) {
+                buildHints(points, ctx, helper, leftBoundTransform)
+            }
+            if (showHalf >= 0.0) {
+                buildHints(points, ctx, helper, rightBoundTransform)
+            }
         }
 
         if (quantileLines) {

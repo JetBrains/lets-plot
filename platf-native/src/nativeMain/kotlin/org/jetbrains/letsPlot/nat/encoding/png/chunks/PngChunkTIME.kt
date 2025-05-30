@@ -13,6 +13,7 @@
  */
 
 @file:Suppress("unused")
+
 package org.jetbrains.letsPlot.nat.encoding.png.chunks
 
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
@@ -40,7 +41,7 @@ class PngChunkTIME(info: ImageInfo?) : PngChunkSingle(ID, info) {
     override fun createRawChunk(): ChunkRaw {
         val c: ChunkRaw = createEmptyChunk(7, true)
         PngHelperInternal.writeInt2tobytes(dateTime?.year ?: 0, c.data, 0)
-        c.data!![2] = ((dateTime?.month?.ordinal() ?: 0) + 1).toByte()
+        c.data!![2] = (dateTime?.month?.number ?: 1).toByte()
         c.data!![3] = dateTime?.day?.toByte() ?: 0.toByte()
         c.data!![4] = dateTime?.hours?.toByte() ?: 0.toByte()
         c.data!![5] = dateTime?.minutes?.toByte() ?: 0.toByte()
@@ -69,7 +70,8 @@ class PngChunkTIME(info: ImageInfo?) : PngChunkSingle(ID, info) {
     }
 
     val yMDHMS: IntArray
-        get() = dateTime?.let { intArrayOf(it.year, it.month.ordinal() + 1, it.day, it.hours, it.minutes, it.seconds) } ?: IntArray(6)
+        get() = dateTime?.let { intArrayOf(it.year, it.month.number, it.day, it.hours, it.minutes, it.seconds) }
+            ?: IntArray(6)
 
     /** format YYYY/MM/DD HH:mm:SS  */
     val asString: String

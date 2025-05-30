@@ -14,28 +14,32 @@ internal class MonthInterval(count: Int) : MeasuredInDays(count) {
     override val tickFormatPattern: String
         get() = "%b"
 
-    override fun getFirstDayContaining(instant: DateTime): Date {
-        var firstDay = instant.date
-        firstDay = Date.firstDayOf(firstDay.year, firstDay.month)
-        return firstDay
+    override fun getFirstDayContaining(dateTime: DateTime): Date {
+        return firstDay(dateTime.year, dateTime.month)
     }
 
-    override fun addInterval(toInstant: DateTime): DateTime {
-        var result = toInstant
+    override fun addInterval(dateTime: DateTime): DateTime {
+        var result = dateTime
         for (i in 0 until count) {
             result = addMonth(result)
         }
         return result
     }
 
-    private fun addMonth(toInstant: DateTime): DateTime {
-        var year = toInstant.year
-        val month = toInstant.month
+    private fun addMonth(dateTime: DateTime): DateTime {
+        var year = dateTime.year
+        val month = dateTime.month
         var next = month.next()
         if (next == null) {
             next = Month.JANUARY
             year++
         }
-        return DateTime(Date.firstDayOf(year, next))
+        return DateTime(firstDay(year, next))
+    }
+
+    companion object {
+        private fun firstDay(year: Int, month: Month): Date {
+            return Date(1, month, year)
+        }
     }
 }

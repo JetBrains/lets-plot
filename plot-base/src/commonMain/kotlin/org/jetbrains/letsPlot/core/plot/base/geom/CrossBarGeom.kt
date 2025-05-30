@@ -24,7 +24,7 @@ class CrossBarGeom : GeomBase(), WithWidth {
     var widthUnit: DimensionUnit = DEF_WIDTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = LEGEND_FACTORY
+        get() = BoxHelper.legendFactory(whiskers = false, showMidline = fattenMidline != 0.0)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -97,7 +97,6 @@ class CrossBarGeom : GeomBase(), WithWidth {
 
     companion object {
         const val HANDLES_GROUPS = false
-        private val LEGEND_FACTORY = BoxHelper.legendFactory(false)
         private val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
     }
 }

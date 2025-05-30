@@ -31,6 +31,10 @@ class AestheticsDefaults private constructor(
             put(Aes.SIZE, geomTheme.size())
             put(Aes.LINEWIDTH, geomTheme.lineWidth())
             put(Aes.STROKE, geomTheme.lineWidth())
+            put(Aes.POINT_SIZE, geomTheme.pointSize())
+            put(Aes.SEGMENT_COLOR, geomTheme.segmentColor())
+            put(Aes.SEGMENT_SIZE, geomTheme.segmentSize())
+            put(Aes.SEGMENT_ALPHA, geomTheme.segmentAlpha())
         },
         defaultsInLegend = TypedKeyHashMap().apply {
             put(Aes.ALPHA, DEFAULT_ALPHA)
@@ -109,6 +113,15 @@ class AestheticsDefaults private constructor(
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
+        private fun textRepel(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
+                .updateInLegend(Aes.FILL, Color.TRANSPARENT)
+                .updateInLegend(Aes.POINT_SIZE, 5.0)
+                .updateInLegend(Aes.SEGMENT_COLOR, geomTheme.segmentColor())
+                .updateInLegend(Aes.SEGMENT_SIZE, geomTheme.segmentSize())
+                .updateInLegend(Aes.SEGMENT_ALPHA, geomTheme.segmentAlpha())
+        }
+
         private fun pie(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 1.0)
@@ -129,6 +142,7 @@ class AestheticsDefaults private constructor(
             return when (geomKind) {
                 GeomKind.POINT,
                 GeomKind.JITTER,
+                GeomKind.SINA,
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> point(geomTheme)
 
@@ -147,6 +161,8 @@ class AestheticsDefaults private constructor(
 
                 GeomKind.TEXT,
                 GeomKind.LABEL -> text(geomTheme)
+                GeomKind.TEXT_REPEL,
+                GeomKind.LABEL_REPEL -> textRepel(geomTheme)
 
                 GeomKind.PIE -> pie(geomTheme)
 

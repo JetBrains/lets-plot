@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* `python >= 3.8` (with dev headers)
+* `python >= 3.9` (with dev headers)
 * `setuptools` (`pip install setuptools`)
 * `build` (`pip install build`)
 
@@ -13,7 +13,7 @@ Edit `local.properties` in the project root:
 
 * `architecture` - set to `arm64` or `x86_64` depending on your Python architecture.
 * `enable_python_package` - set to `true` for working with Python package.
-* `python.include_path` - path to Python include directory where Python.h located. 
+* `python.include_path` - path to Python `include` directory where Python.h located. 
 To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
 * `python.bin_path` - path to your Python bin directory. 
 To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['scripts'])"`.
@@ -50,7 +50,7 @@ python -m build -w
 ## Installing locally
 
 * change dir to `lets-plot/python-package`
-* create / activate Python environment (if needed)
+* create / activate a Python environment (if needed)
 * run shell command: 
 
 `pip install --no-index --find-links=dist/ lets-plot --no-deps --force-reinstall`

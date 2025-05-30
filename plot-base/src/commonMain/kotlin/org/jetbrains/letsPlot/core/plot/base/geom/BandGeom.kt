@@ -35,7 +35,6 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         ctx: GeomContext
     ) {
         val svgHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
-            .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
 
         val viewPort = overallAesBounds(ctx).flipIf(!isVertical)

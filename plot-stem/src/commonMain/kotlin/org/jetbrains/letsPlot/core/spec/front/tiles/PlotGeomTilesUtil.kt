@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
@@ -113,17 +114,28 @@ internal object PlotGeomTilesUtil {
         }
     }
 
-    private fun createDefaultFormatters(layerConfig: LayerConfig, exponentFormat: ExponentFormat): Map<Any, (Any) -> String> {
+    private fun createDefaultFormatters(
+        layerConfig: LayerConfig,
+        exponentFormat: ExponentFormat,
+        tz: TimeZone?
+    ): Map<Any, (Any) -> String> {
         val expFormat = extractExponentFormat(exponentFormat)
-        val dataFormatters = layerConfig.dtypes.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat) }
-        val statFormatters = Stats.VARS.mapValues { FormatterUtil.byDataType(DataType.FLOATING, expFormat) }
+        val dataFormatters =
+            layerConfig.dtypes.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat, tz) }
+        val statFormatters = Stats.VARS.mapValues { FormatterUtil.byDataType(DataType.FLOATING, expFormat, tz) }
         val varFormatters = dataFormatters + statFormatters
 
         val aesFormatters = layerConfig.varBindings
-            .associate { it.aes to (varFormatters[it.variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat)) }
+            .associate {
+                it.aes to (varFormatters[it.variable.name] ?: FormatterUtil.byDataType(
+                    DataType.UNKNOWN,
+                    expFormat,
+                    tz
+                ))
+            }
 
         val labelFormat = layerConfig.labelFormat?.let {
-            val fmt: (Any) -> String = StringFormat.forOneArg(it)::format
+            val fmt: (Any) -> String = StringFormat.forOneArg(it, tz = tz)::format
             mapOf(Aes.LABEL to fmt)
         }
 
@@ -199,7 +211,7 @@ internal object PlotGeomTilesUtil {
         )
 
         layerBuilder.defaultFormatters(
-            createDefaultFormatters(layerConfig, theme.exponentFormat)
+            createDefaultFormatters(layerConfig, theme.exponentFormat, tz = layerConfig.tz)
         )
 
         return layerBuilder

@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
+import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
@@ -135,4 +136,18 @@ enum class FontWeight {
 
 enum class FontStyle {
     NORMAL, ITALIC
+}
+
+fun Context2d.applyPath(commands: List<PathCommand>) {
+    for (command in commands) {
+        when (command) {
+            is ClosePath -> closePath()
+            is MoveTo -> moveTo(command.x, command.y)
+            is LineTo -> lineTo(command.x, command.y)
+            is CubicCurveTo -> {
+                command.controlPoints.windowed(size = 3, step = 3)
+                    .forEach { (cp1, cp2, cp3) -> bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y) }
+            }
+        }
+    }
 }

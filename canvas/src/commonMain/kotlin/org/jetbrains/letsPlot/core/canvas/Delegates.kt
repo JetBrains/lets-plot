@@ -92,17 +92,31 @@ class CanvasDelegate(
 }
 
 object NullSnapshot : Canvas.Snapshot {
+    override val size: Vector = Vector(1, 1)
+
     override fun copy(): Canvas.Snapshot = this
+    override fun toDataUrl(): String {
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8//8/AwAI/wH+9QAAAABJRU5ErkJggg=="
+    }
 }
 
 open class CanvasControlDelegate(
     width: Int,
     height: Int,
+    override val pixelDensity: Double = 1.0,
 ) : CanvasControl {
     override val size: Vector = Vector(width, height)
     override fun addChild(canvas: Canvas) {}
     override fun addChild(index: Int, canvas: Canvas) {}
     override fun removeChild(canvas: Canvas) {}
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
+    }
+
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : AnimationTimer {
             override fun start() {}
@@ -112,8 +126,12 @@ open class CanvasControlDelegate(
 
     override fun createCanvas(size: Vector): Canvas = CanvasDelegate(size.x, size.y)
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         return Asyncs.constant(NullSnapshot)
+    }
+
+    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
+        return NullSnapshot
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
