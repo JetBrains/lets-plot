@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
+import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.shape.Element
 import org.jetbrains.letsPlot.raster.shape.Group
+import org.jetbrains.letsPlot.raster.shape.Image
 import org.jetbrains.letsPlot.raster.shape.Text
 
 internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFactory<SvgNode, Element> {
@@ -22,16 +24,17 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
         var src = source
         val target = SvgUtils.newElement(src, peer)
 
-//        if (src is SvgImageElementEx) {
-//            src = src.asImageElement(SkiaRGBEncoder)
-//        }
+        if (src is SvgImageElementEx) {
+            //src = src.asImageElement(SkiaRGBEncoder)
+            src = src.asImageElement(UnsupportedRGBEncoder)
+        }
 
         return when (src) {
             is SvgStyleElement -> SvgStyleElementMapper(src, target as Group, peer)
             is SvgGElement -> SvgGElementMapper(src, target as Group, peer)
             is SvgSvgElement -> SvgSvgElementMapper(src, peer)
             is SvgTextElement -> SvgTextElementMapper(src, target as Text, peer)
-            //is SvgImageElement -> SvgImageElementMapper(src, target as Image, peer)
+            is SvgImageElement -> SvgImageElementMapper(src, target as Image, peer)
             is SvgElement -> SvgElementMapper(src, target, peer)
             else -> throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName)
         }

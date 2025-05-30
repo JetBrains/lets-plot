@@ -7838,6 +7838,9 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
     - point_size : A value representing the visual size of the point associated with the label.
+    - segment_color : Color of the line segment connecting the label to the point.
+    - segment_size : Width of the line segment connecting the label to the point.
+    - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
 
     See also:
     - `geom_text()` for placing text without repulsion.
@@ -8036,6 +8039,9 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
     - point_size : A value representing the visual size of the point associated with the label.
+    - segment_color : Color of the line segment connecting the label to the point.
+    - segment_size : Width of the line segment connecting the label to the point.
+    - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
 
     See also:
     - `geom_text_repel()` for labels without background boxes.

@@ -4,7 +4,7 @@
 #
 # Script parameters required:
 # - OS architecture ('x86_64' or 'arm64')
-# - CPython version ('cp3XX': cp38, cp310)
+# - CPython version ('cp3XX': cp39, cp310)
 
 
 set -e

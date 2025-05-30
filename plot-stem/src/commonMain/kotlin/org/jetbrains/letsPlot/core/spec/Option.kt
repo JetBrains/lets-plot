@@ -68,20 +68,13 @@ object Option {
             const val TYPE = "type"
             const val FACTOR_LEVELS = "factor_levels" // annotation for discrete variables
             const val ORDER = "order"
+            const val TIME_ZONE = "time_zone" // a time zone ID (e.g. "UTC", "Europe/Moscow").
 
-            // Values of the "TYPE" property
-            @Deprecated(
-                "Use Types.DATE_TIME instead",
-                replaceWith = ReplaceWith("Types.DATE_TIME"),
-                level = DeprecationLevel.ERROR
-            )
-            object DateTime {
-                const val DATE_TIME = Types.DATE_TIME // TODO: remove. replaced Types.DATE_TIME
-                const val TIME_ZONE = "time_zone" // TODO: remove or move to Types
-            }
-
+            // See: constants in series_meta.py
             object Types {
                 const val DATE_TIME = "datetime"
+                const val DATE = "date"  // Local date
+                const val TIME = "time"  // Local time
                 const val INTEGER = "int"
                 const val FLOATING = "float"
                 const val STRING = "str"

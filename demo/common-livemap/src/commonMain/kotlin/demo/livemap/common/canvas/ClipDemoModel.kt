@@ -7,7 +7,6 @@ package demo.livemap.common.canvas
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.LineCap
 import org.jetbrains.letsPlot.core.canvas.LineJoin
 
@@ -16,7 +15,12 @@ class ClipDemoModel(canvas: Canvas) {
         val ctx = canvas.context2d
         ctx.save()
         ctx.scale(.1, .1)
-        ctx.setRhombus()
+        ctx.beginPath()
+        ctx.moveTo(200.0, 300.0)
+        ctx.lineTo(400.0, 100.0)
+        ctx.lineTo(600.0, 300.0)
+        ctx.lineTo(400.0, 500.0)
+        ctx.closePath()
         ctx.setLineWidth(10.0)
         ctx.stroke()
         ctx.clip()
@@ -26,7 +30,12 @@ class ClipDemoModel(canvas: Canvas) {
         ctx.save()
 
         ctx.translate(200.0, 200.0)
-        ctx.setRhombus(-200.0, -200.0)
+        ctx.beginPath()
+        ctx.moveTo(0.0, 100.0)
+        ctx.lineTo(200.0, -100.0)
+        ctx.lineTo(400.0, 100.0)
+        ctx.lineTo(200.0, 300.0)
+        ctx.closePath()
         ctx.clip()
 
         ctx.setFillStyle(Color.Companion.BLUE)
@@ -42,12 +51,4 @@ class ClipDemoModel(canvas: Canvas) {
         ctx.strokeRect(0.0, 0.0, 600.0, 600.0)
     }
 
-    private fun Context2d.setRhombus(dx: Double = 0.0, dy: Double = 0.0) {
-        beginPath()
-        moveTo(200.0 + dx, 300.0 + dy)
-        lineTo(400.0 + dx, 100.0 + dy)
-        lineTo(600.0 + dx, 300.0 + dy)
-        lineTo(400.0 + dx, 500.0 + dy)
-        closePath()
-    }
 }

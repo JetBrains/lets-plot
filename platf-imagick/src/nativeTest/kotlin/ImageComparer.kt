@@ -1,4 +1,9 @@
+import demoAndTestShared.*
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import platform.posix.*
 import kotlin.math.abs
 
@@ -11,6 +16,21 @@ class ImageComparer(
     private val expectedDir: String,
     private val outDir: String,
 ) {
+
+    fun assertImageEquals(expectedFileName: String, spec: String) {
+        val plotSpec = parsePlotSpec(spec)
+
+        val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(plotSpec, SizingPolicy.keepFigureDefaultSize(), { _ -> })
+        val plotSpecWidth = plotFigure.preferredWidth ?: error("Plot figure has no preferred width")
+        val plotSpecHeight = plotFigure.preferredHeight ?: error("Plot figure has no preferred height")
+
+        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0)
+        plotFigure.mapToCanvas(canvasControl)
+        val plotCanvas = canvasControl.children.single() as MagickCanvas
+
+        assertImageEquals(expectedFileName, plotCanvas.img!!)
+    }
+
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
         val testName = expectedFileName.removeSuffix(".bmp")
         val expectedPath = expectedDir + expectedFileName
