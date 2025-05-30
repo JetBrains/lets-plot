@@ -24,7 +24,8 @@ class ScaleFormatLocalDateTest {
     @Test
     fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
         val instants = List(5) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ_UTC)
+            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
@@ -45,7 +46,8 @@ class ScaleFormatLocalDateTest {
     @Test
     fun `data when discrete scale chooses a better formatter than the continuous scale`() {
         val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ_UTC)
+            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }

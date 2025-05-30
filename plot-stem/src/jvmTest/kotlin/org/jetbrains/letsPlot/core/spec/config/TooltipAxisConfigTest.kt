@@ -258,7 +258,7 @@ class TooltipAxisConfigTest {
     fun dateTime() {
         val instants = List(3) {
             DateTime(Date(1, Month.JANUARY, 2021)).add(
-                Duration.WEEK.mul(it.toLong()),
+                Duration.WEEK.mul(it),
                 TZ
             )
         }.map {

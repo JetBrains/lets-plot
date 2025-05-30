@@ -27,8 +27,8 @@ class Duration(val totalMillis: Long) : Comparable<Duration> {
     val isPositive: Boolean
         get() = totalMillis > 0
 
-    fun mul(times: Long): Duration {
-        return Duration(totalMillis * times)
+    fun mul(times: Number): Duration {
+        return Duration(totalMillis * times.toLong())
     }
 
     fun add(duration: Duration): Duration {

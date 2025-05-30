@@ -23,7 +23,7 @@ class ScaleFormatLocalTimeTest {
     fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
         val instants = List(5) {
             val duration = Duration.HOUR.mul(11)
-                .add(Duration.MINUTE.mul(30 * it.toLong()))
+                .add(Duration.MINUTE.mul(30 * it))
             val time = Time(
                 hours = duration.hour.toInt(),
                 minutes = duration.minute.toInt(),
@@ -57,7 +57,7 @@ class ScaleFormatLocalTimeTest {
     fun `data when discrete scale chooses a better formatter than the continuous scale`() {
         val instants = List(5) {
             val duration = Duration.HOUR.mul(11)
-                .add(Duration.MINUTE.mul(30 * it.toLong()))
+                .add(Duration.MINUTE.mul(30 * it))
             val time = Time(
                 hours = duration.hour.toInt(),
                 minutes = duration.minute.toInt(),
