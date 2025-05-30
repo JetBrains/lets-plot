@@ -7841,6 +7841,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     See also:
     - `geom_text()` for placing text without repulsion.
@@ -8042,6 +8043,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     See also:
     - `geom_text_repel()` for labels without background boxes.

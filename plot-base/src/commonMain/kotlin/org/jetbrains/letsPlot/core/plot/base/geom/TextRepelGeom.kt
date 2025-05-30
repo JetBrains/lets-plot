@@ -13,6 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling.POINT_UNIT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.geom.legend.CompositeLegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.geom.legend.TextRepelSegmentLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleCircle
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle
@@ -22,7 +24,9 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.DataPointAestheticsDelega
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDouble
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -40,6 +44,12 @@ open class TextRepelGeom: TextGeom() {
     var arrowSpec: ArrowSpec? = null
     var flat: Boolean = false
     var spacer: Double = 0.0 // additional space to shorten a segment by moving the start/end
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = CompositeLegendKeyElementFactory(
+            TextLegendKeyElementFactory(),
+            TextRepelSegmentLegendKeyElementFactory()
+        )
 
     override fun buildIntern(
         root: SvgRoot,
@@ -123,7 +133,7 @@ open class TextRepelGeom: TextGeom() {
             val pointLocation = coord.toClient(point) ?: continue
             val size = dp.finiteOrNull(Aes.POINT_SIZE) ?: continue
 
-            val tc = buildTextComponent(dp, result.position, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            val tc = buildTextComponent(toLabelAes(dp), result.position, text, sizeUnitRatio, ctx, aesBoundsCenter)
             root.add(tc)
 
             val segmentLocation = getSegmentLocation(pointLocation, size, result.box)
@@ -178,6 +188,21 @@ open class TextRepelGeom: TextGeom() {
     }
 
     companion object {
+        internal fun toLabelAes(p: DataPointAesthetics): DataPointAesthetics {
+            return object : DataPointAestheticsDelegate(p) {
+
+                override operator fun <T> get(aes: Aes<T>): T? {
+                    val value: Any? = when (aes) {
+                        Aes.LINETYPE -> NamedLineType.SOLID
+                        else -> super.get(aes)
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    return value as T?
+                }
+            }
+        }
+
+
         internal fun toSegmentAes(p: DataPointAesthetics): DataPointAesthetics {
             return object : DataPointAestheticsDelegate(p) {
 
