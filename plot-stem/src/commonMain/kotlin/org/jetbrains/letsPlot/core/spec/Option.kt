@@ -393,8 +393,8 @@ object Option {
             const val POINT_PADDING = "point_padding"
             const val BOX_PADDING = "box_padding"
             const val MAX_OVERLAPS = "max_overlaps"
-
             const val MIN_SEGMENT_LENGTH = "min_segment_length"
+            const val ARROW = "arrow"
         }
 
         object Pie {

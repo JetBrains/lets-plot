@@ -512,9 +512,12 @@ internal object GeomProviderFactory {
         layerConfig.getInteger(Option.Geom.Repel.MAX_OVERLAPS)?.let {
             geom.maxOverlaps = it
         }
-
         layerConfig.getDouble(Option.Geom.Repel.MIN_SEGMENT_LENGTH)?.let {
             geom.minSegmentLength = it
+        }
+        if (layerConfig.has(Option.Geom.Segment.ARROW)) {
+            val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
+            geom.arrowSpec = arrowConfig.createArrowSpec()
         }
     }
 
