@@ -11,6 +11,10 @@ class InputPngStream(
     private val data: ByteArray
 ) {
     private var i = 0
+        private set(value) {
+            println("InputPngStream: i = $value, available = $available")
+            field = value
+        }
     private val available get() = data.size - i
 
     fun read(): Int {
