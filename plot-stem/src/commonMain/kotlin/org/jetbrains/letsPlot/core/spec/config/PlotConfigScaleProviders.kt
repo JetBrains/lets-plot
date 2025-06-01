@@ -96,9 +96,11 @@ internal object PlotConfigScaleProviders {
             return dTypes.distinct().singleOrNull() ?: DataType.UNKNOWN
         }
 
+        val tz = layerConfigs.firstOrNull()?.tz
         return scaleProviderBuilders.mapValues { (aes, builder) ->
             builder
                 .dataType(getDType(aes))
+                .timeZone(tz)
                 .exponentFormat(expFormat)
                 .build()
         }

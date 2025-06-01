@@ -32,21 +32,19 @@ class ScaleFormatDateTimeTZTest {
         }
 
         // For a discrete scale, a formatter is applied as for a continuous scale
-        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
-//        val expectedLabels = listOf(
-//            "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5"
-//        )
         val expectedLabels = listOf(
-            "Jan 1", "Jan 2", "Jan 3", "Jan 4"
+            "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5"
         )
+        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
+        // Expected: see above.
         val expectedLabels2 = listOf(
-            "Dec 31", "Jan 1", "Jan 2", "Jan 3", "Jan 4"
+            "Jan 1", "Jan 2", "Jan 3", "Jan 4"
         )
 
         checkScales(
             instants,
-            expectedLabels2,
             expectedLabels,
+            expectedLabels2,
             DATE_TIME_ANNOTATION_PART
         )
     }
@@ -70,13 +68,8 @@ class ScaleFormatDateTimeTZTest {
         // For discrete scale: if to get the DateTimeBreaksHelper's formatter (which the continuous scale uses),
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied
-
-        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
-//        val formattedForDiscrete = listOf(
-//            "2021-01-01", "2021-01-02", "2021-01-03"
-//        )
         val formattedForDiscrete = listOf(
-            "2020-12-31", "2021-01-01", "2021-01-02"
+            "2021-01-01", "2021-01-02", "2021-01-03"
         )
 
         checkScales(

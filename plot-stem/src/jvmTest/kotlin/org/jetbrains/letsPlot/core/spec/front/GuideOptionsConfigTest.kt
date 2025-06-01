@@ -7,15 +7,10 @@ package org.jetbrains.letsPlot.core.spec.front
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarOptions
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideTitleOption
-import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.*
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
-import java.lang.IllegalArgumentException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -109,11 +104,12 @@ class GuideOptionsConfigTest {
     private fun createGuideOptions(
         scaleOptions: Map<String, Any>,
         guideOptionsMap: Map<String, Any>,
-    ) : GuideOptionsList {
+    ): GuideOptionsList {
         val scaleConfig = ScaleConfig(
             aes = Aes.COLOR,
             options = scaleOptions,
-            AesOptionConversion.demoAndTest
+            AesOptionConversion.demoAndTest,
+            tz = null,
         )
         val guideOptions = PlotConfigFrontendUtil.createGuideOptions(
             listOf(scaleConfig),

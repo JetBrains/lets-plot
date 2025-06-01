@@ -37,7 +37,7 @@ object DataMetaUtil {
     }
 
     /**
-    @returns Set<aes> of discrete aes
+     * @returns Set<aes> of discrete aes
      */
     fun getAsDiscreteAesSet(options: Map<*, *>): Set<String> {
         return options
@@ -70,11 +70,11 @@ object DataMetaUtil {
     }
 
     fun getOrderOptions(
-        options: Map<*, *>,
+        plotOrLayerOptions: Map<*, *>,
         commonMappings: Map<*, *>,
         isClientSide: Boolean
     ): List<OrderOptionUtil.OrderOption> {
-        return getMappingAnnotationsSpec(options, AS_DISCRETE)
+        return getMappingAnnotationsSpec(plotOrLayerOptions, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             .mapNotNull { (aesName, parameters) ->
                 check(aesName in commonMappings) {
@@ -93,8 +93,8 @@ object DataMetaUtil {
 
     // Series Annotations
 
-    fun getDateTimeColumns(options: Map<*, *>): Set<String> {
-        return options
+    fun getDateTimeColumns(dataMeta: Map<*, *>): Set<String> {
+        return dataMeta
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
             ?.filterValues {
@@ -126,6 +126,35 @@ object DataMetaUtil {
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to toDType(it.getString(SeriesAnnotation.TYPE)) }
             ?: emptyMap()
+    }
+
+    fun determineTimeZoneID(plotOptions: Map<String, Any>): String? {
+        var allDataMeta = mutableListOf<Any?>(
+            plotOptions.getMap(Option.Meta.DATA_META)
+        )
+        plotOptions.getMaps(Option.Plot.LAYERS)?.forEach { layerOptions ->
+            allDataMeta.add(layerOptions.getMap(Option.Meta.DATA_META))
+        }
+
+        val timeZoneIDs = allDataMeta
+            .filterNotNull()
+            .map {
+                @Suppress("UNCHECKED_CAST")
+                it as Map<String, Any>
+            }
+            .flatMap { it.getMaps(SeriesAnnotation.TAG) ?: emptyList() }
+            .mapNotNull { it.getString(SeriesAnnotation.TIME_ZONE) }
+            .distinct()
+
+        return when {
+            timeZoneIDs.isEmpty() -> null
+            timeZoneIDs.size == 1 -> timeZoneIDs.first()
+            else -> {
+                // TODO: report via a plot computation message.
+//                println("Warning: Different time zones found in layers. Using null time zone as fallback.")
+                null
+            }
+        }
     }
 
     fun getCategoricalVariables(dataMeta: Map<*, *>): Set<String> {

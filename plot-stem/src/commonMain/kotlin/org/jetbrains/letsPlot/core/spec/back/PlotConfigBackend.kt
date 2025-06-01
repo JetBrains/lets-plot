@@ -73,9 +73,6 @@ open class PlotConfigBackend(
             val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
                 val distinctValues = layerConfig.combinedData.distinctValues(binding.variable)
 
-                // TODO: provide a time zone (or null).
-                val tz = null
-
                 selectDateTimeFormat(distinctValues, tz)?.let { format ->
                     mapOf(
                         Option.Scale.AES to binding.aes.name,

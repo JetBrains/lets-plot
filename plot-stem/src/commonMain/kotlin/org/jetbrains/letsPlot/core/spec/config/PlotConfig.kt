@@ -60,8 +60,7 @@ abstract class PlotConfig(
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
-    // TODO: provide a time zonr (or null)
-    public val tz: TimeZone? = null
+    public val tz: TimeZone? = DataMetaUtil.determineTimeZoneID(opts)?.let { TimeZone(it) }
 
     init {
         val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -88,7 +87,8 @@ abstract class PlotConfig(
         val excludeStatVariables = !isClientSide
         scaleConfigs = PlotConfigUtil.createScaleConfigs(
             scaleOptionsList = DataMetaUtil.createScaleSpecs(opts) + getList(SCALES),
-            aopConversion = aopConversion
+            aopConversion = aopConversion,
+            tz = tz,
         )
 
         mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
@@ -171,13 +171,14 @@ abstract class PlotConfig(
             geomProto,
             aopConversion = aopConversion,
             clientSide = isClientSide,
-            isMapPlot
+            isMapPlot,
+            tz,
         )
     }
 
 
     protected fun replaceSharedData(plotData: DataFrame) {
-        check(!isClientSide)   // This class is immutable on client-side
+        check(!isClientSide)   // This class is immutable on the client-side
         sharedData = plotData
         update(DATA, DataFrameUtil.toMap(plotData))
     }
