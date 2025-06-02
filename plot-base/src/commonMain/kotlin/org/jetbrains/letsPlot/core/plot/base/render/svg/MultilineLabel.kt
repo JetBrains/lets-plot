@@ -137,7 +137,7 @@ class MultilineLabel(
         myLines.forEach(rootGroup.children()::remove)
         // The font is used here to estimate the width of the text
         val font = Font(
-            family = FontFamily( myFontFamily ?: "sans-serif", false),
+            family = FontFamily(myFontFamily ?: "sans-serif", false),
             size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
