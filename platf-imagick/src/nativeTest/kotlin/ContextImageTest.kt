@@ -1,6 +1,4 @@
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
 import kotlin.test.Test
@@ -12,8 +10,7 @@ import kotlin.test.Test
 
 
 class ContextImageTest {
-    private val outDir: String = getCurrentDir() + "/build/image-test/"
-    private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
+    private val imageComparer = ImageComparer()
     private val w = 100.0
     private val h = 100.0
 
@@ -21,15 +18,6 @@ class ContextImageTest {
     private val fillColor = "#000000"
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
-
-    init {
-        mkDir(outDir)
-    }
-
-    val imageComparer = ImageComparer(
-        expectedDir = expectedDir,
-        outDir = outDir
-    )
 
     fun createCanvas(width: Number = w, height: Number = h, pixelDensity: Double = 1.0): Pair<MagickCanvas, MagickContext2d> {
         val canvas = MagickCanvas.create(width = width, height = height, pixelDensity = pixelDensity)
