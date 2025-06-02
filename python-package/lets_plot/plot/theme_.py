@@ -187,7 +187,7 @@ def theme(*,
         Margin around each legend.
         The margin may be specified using a number or a list of numbers:
 
-        - a number or list of one number - the same margin it applied to all four sides;
+        - a number or list of one number - the same margin is applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
@@ -246,15 +246,15 @@ def theme(*,
         `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
         which in turn inherits from `line`.
     panel_inset : number or list of numbers
-        Inset for a panel. The inset behaves like a padding for `coord_polar(transofrm_bkgr=False)` otherwise it behaves like a margin around the panel.
+        Inset for a panel. The inset behaves like a padding for `coord_polar(transform_bkgr=False)` otherwise it behaves like a margin around the panel.
         The inset may be specified using a number or a list of numbers:
 
-        - a number or list of one number - the same inset it applied to all four sides;
+        - a number or list of one number - the same inset is applied to all four sides;
         - a list of two numbers - the first inset applies to the top and bottom, the second - to the left and right;
         - a list of three numbers - the first inset applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the insets are applied to the top, right, bottom and left in that order.
 
-        It is acceptable to use None for any side; in this case, the default value for the plot inset side will be used.
+        It is acceptable to use None for any side; in this case, the default value for the panel inset side will be used.
     panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y : bool, default=False
         Option to place major grid lines and minor grid lines over the data layers.
     plot_background : str or dict
@@ -281,7 +281,7 @@ def theme(*,
         Margin around entire plot.
         The margin may be specified using a number or a list of numbers:
 
-        - a number or list of one number - the same margin it applied to all four sides;
+        - a number or list of one number - the same margin is applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
@@ -291,7 +291,7 @@ def theme(*,
         Inset for a plotting area, including the axes with their labels, but without titles.
         The inset may be specified using a number or a list of numbers:
 
-        - a number or list of one number - the same inset it applied to all four sides;
+        - a number or list of one number - the same inset is applied to all four sides;
         - a list of two numbers - the first inset applies to the top and bottom, the second - to the left and right;
         - a list of three numbers - the first inset applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the insets are applied to the top, right, bottom and left in that order.
@@ -573,7 +573,7 @@ def element_text(
 ) -> dict:
     """
     Specify how non-data components of the plot are drawn.
-    This theme element draws texts.
+    This theme element draws text.
 
     Parameters
     ----------
@@ -592,18 +592,18 @@ def element_text(
         0 - left-justified;
         1 - right-justified;
         0.5 - center-justified.
-        Can be used with values out of range, but behaviour is not specified.
+        Values outside the [0, 1] range are allowed but may produce unpredictable results.
     vjust : float
         Vertical justification (in [0, 1]).
         0 - bottom-justified;
         1 - top-justified;
         0.5 - middle-justified.
-        Can be used with values out of range, but behaviour is not specified.
+        Values outside the [0, 1] range are allowed but may produce unpredictable results.
     margin : number or list of numbers
         Margins around the text.
         The margin may be specified using a number or a list of numbers:
 
-        - a number or list of one number - the same margin it applied to all four sides;
+        - a number or list of one number - the same margin is applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
@@ -649,7 +649,7 @@ def element_markdown(
 ) -> dict:
     """
     Specify how non-data components of the plot are drawn.
-    This theme element draws texts with Markdown support.
+    This theme element draws text with Markdown support.
 
     Parameters
     ----------
@@ -679,7 +679,7 @@ def element_markdown(
         Margins around the text.
         The margin may be specified using a number or a list of numbers:
 
-        - a number or list of one number - the same margin it applied to all four sides;
+        - a number or list of one number - the same margin is applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers -  the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
@@ -735,7 +735,7 @@ def element_geom(
         # ToDo: fatten
 ) -> dict:
     """
-    Specify new values for the named colors.
+    Specify custom values for named geom colors used in plot elements.
 
     Parameters
     ----------
