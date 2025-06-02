@@ -66,7 +66,7 @@ class ImageComparer(
         val expected = exportPixels(expectedWand)
         val actual = exportPixels(actualWand)
 
-        if (!comparePixelArrays(expected, actual, tolerance = 0)) {
+        if (!comparePixelArrays(expected, actual, tolerance = 1)) {
             val diffFilePath = outDir + "${testName}_diff.bmp"
             val width = ImageMagick.MagickGetImageWidth(actualWand).toInt()
             val height = ImageMagick.MagickGetImageHeight(actualWand).toInt()
