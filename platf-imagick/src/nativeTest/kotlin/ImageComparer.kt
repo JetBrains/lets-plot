@@ -16,8 +16,12 @@ import kotlin.math.abs
  */
 
 class ImageComparer(
-    private val expectedDir: String,
-    private val outDir: String,
+    // Reuse existing directories when possible.
+    // `mkdirs` has different signatures: one parameter on Windows, two on Linux.
+    // To avoid compilation errors, we’d need a Windows-specific source set.
+    private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/",
+    private val outDir: String = getCurrentDir() + "/build/reports/",
+    private val tol: Int = 1
 ) {
 
     fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
@@ -117,7 +121,7 @@ class ImageComparer(
         return abs(p1.toInt() - p2.toInt()) <= tolerance
     }
 
-    fun comparePixelArrays(expected: UByteArray, actual: UByteArray, tolerance: Int = 0): Boolean {
+    fun comparePixelArrays(expected: UByteArray, actual: UByteArray, tolerance: Int = tol): Boolean {
         if (expected.size != actual.size) return false
         return expected.indices.all { pixelsEqual(expected[it], actual[it], tolerance) }
     }
@@ -316,24 +320,11 @@ class ImageComparer(
     }
 }
 
-fun mkDir(dir: String): Boolean {
-    val access = S_IRWXU.convert<mode_t>() or S_IRWXG.convert() or S_IRWXO.convert()
-    if (access(dir, F_OK) == 0) {
-        return true
-    }
-
-    if (mkdir(dir, access) != 0 && errno != EEXIST) {
-        return false
-    }
-
-    return true
-}
-
 fun getCurrentDir(): String {
     return memScoped {
         val bufferSize = 4096 * 8
         val buffer = allocArray<ByteVar>(bufferSize)
-        if (getcwd(buffer, bufferSize.toULong()) != null) {
+        if (getcwd(buffer, bufferSize.convert()) != null) {
             buffer.toKString()
         } else {
             "." // Default to current directory on error

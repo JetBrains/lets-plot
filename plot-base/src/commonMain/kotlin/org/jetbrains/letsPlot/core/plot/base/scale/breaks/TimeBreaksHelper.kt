@@ -13,11 +13,6 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.WEEK
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.hour
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.millis
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.minute
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.second
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.totalDays
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -64,7 +59,7 @@ internal class TimeBreaksHelper(
         return when {
             targetStep < 1000 -> ticks.map(formatter)
             else -> {
-                val hideSeconds = ticks.all { it >= DAY.duration || Duration(it.toLong()).second == 0L }
+                val hideSeconds = ticks.all { it >= DAY.totalMillis || Duration(it.toLong()).second == 0L }
                 ticks.map { formatString(it.toLong(), hideSeconds = hideSeconds) }
             }
         }
@@ -93,7 +88,7 @@ internal class TimeBreaksHelper(
             }
 
             if (duration.millis > 0) {
-                if (span > SECOND.duration && timeParts.isEmpty()) {
+                if (span > SECOND.totalMillis && timeParts.isEmpty()) {
                     // show seconds even on axis start - otherwise it looks strange
                     timeParts.append(formatHms(duration))
                 }
@@ -117,15 +112,15 @@ internal class TimeBreaksHelper(
 
     private fun computeNiceTicks(): List<Double> {
         val niceTickInterval = listOf(
-            1 * SECOND.duration, 5 * SECOND.duration, 15 * SECOND.duration, 30 * SECOND.duration,
-            1 * MINUTE.duration, 5 * MINUTE.duration, 15 * MINUTE.duration, 30 * MINUTE.duration,
-            1 * HOUR.duration, 3 * HOUR.duration, 6 * HOUR.duration, 12 * HOUR.duration,
-            1 * DAY.duration, 2 * DAY.duration,
-            1 * WEEK.duration,
-            4 * WEEK.duration, // ~1 month
-            12 * WEEK.duration, // ~3 months
-            48 * WEEK.duration, // ~1 year
-        ).minByOrNull { abs(it - targetStep.toLong()) } ?: SECOND.duration
+            1 * SECOND.totalMillis, 5 * SECOND.totalMillis, 15 * SECOND.totalMillis, 30 * SECOND.totalMillis,
+            1 * MINUTE.totalMillis, 5 * MINUTE.totalMillis, 15 * MINUTE.totalMillis, 30 * MINUTE.totalMillis,
+            1 * HOUR.totalMillis, 3 * HOUR.totalMillis, 6 * HOUR.totalMillis, 12 * HOUR.totalMillis,
+            1 * DAY.totalMillis, 2 * DAY.totalMillis,
+            1 * WEEK.totalMillis,
+            4 * WEEK.totalMillis, // ~1 month
+            12 * WEEK.totalMillis, // ~3 months
+            48 * WEEK.totalMillis, // ~1 year
+        ).minByOrNull { abs(it - targetStep.toLong()) } ?: SECOND.totalMillis
 
         var tick = ceil(normalStart / niceTickInterval) * niceTickInterval
         val result = ArrayList<Double>()

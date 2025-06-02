@@ -10,17 +10,7 @@ import kotlin.test.Test
 
 @Ignore
 class SvgTest {
-    private val outDir: String = getCurrentDir() + "/build/image-test/"
-    private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/"
-
-    init {
-        mkDir(outDir)
-    }
-
-    private val imageComparer = ImageComparer(
-        expectedDir = expectedDir,
-        outDir = outDir
-    )
+    private val imageComparer = ImageComparer()
 
     @Test
     fun referenceTest() {

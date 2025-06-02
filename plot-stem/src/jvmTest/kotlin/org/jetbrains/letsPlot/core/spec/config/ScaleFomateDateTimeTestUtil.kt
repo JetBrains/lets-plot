@@ -6,64 +6,29 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
-import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.spec.Option
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class ScaleFormatWhenDiscreteDateTimeTest {
+internal object ScaleFomateDateTimeTestUtil {
+    val TZ_UTC = TimeZone.UTC
+    val TZ_UTC_8 = TimeZone("UTC+8")
 
-    @Test
-    fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
-        val instants = List(5) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ)
-        }.map {
-            it.toEpochMilliseconds(TZ).toDouble()
-        }
-
-        // For a discrete scale, a formatter is applied as for a continuous scale
-        val expectedLabels = listOf(
-            "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5"
-        )
-
-        checkScales(instants, expectedLabels, expectedLabels)
-    }
-
-    @Test
-    fun `data when discrete scale chooses a better formatter than the continuous scale`() {
-        val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ)
-        }.map {
-            it.toEpochMilliseconds(TZ).toDouble()
-        }
-
-        val formattedForContinuous = listOf(
-            "00:00", "12:00", "00:00", "12:00", "00:00"
-        )
-        // For discrete scale: if to get the DateTimeBreaksHelper's formatter (which the continuous scale uses),
-        // the labels will be formatted as follows: [00:00, 00:00, 00:00]
-        // => better formatter will be applied
-        val formattedForDiscrete = listOf(
-            "2021-01-01", "2021-01-02", "2021-01-03"
-        )
-
-        checkScales(instants, formattedForDiscrete, formattedForContinuous)
-    }
-
-    private fun checkScaleLabels(
+    fun checkScaleLabels(
         dataValues: List<Double>,
         discreteScales: List<Aes<*>>,
         asDiscreteAes: List<Aes<*>>,
         expectedLabelsForDiscrete: List<String>,
-        expectedLabelForContinuous: List<String>
+        expectedLabelForContinuous: List<String>,
+        datetimeAnnotationPart: Map<String, String>,
     ) {
         val geomLayer = TestingGeomLayersBuilder.getSingleGeomLayer(
-            plotSpec(dataValues, discreteScales, asDiscreteAes)
+            plotSpec(dataValues, discreteScales, asDiscreteAes, datetimeAnnotationPart)
         )
 
         fun checkFormatting(aes: Aes<*>, isDiscreteScale: Boolean) {
@@ -89,38 +54,43 @@ class ScaleFormatWhenDiscreteDateTimeTest {
         checkFormatting(Aes.COLOR, isDiscreteScale(Aes.COLOR))
     }
 
-    private fun checkScales(
+    fun checkScales(
         dataValues: List<Double>,
         expectedLabelsForDiscrete: List<String>,
-        expectedLabelForContinuous: List<String>
+        expectedLabelForContinuous: List<String>,
+        datetimeAnnotationPart: Map<String, String>,
     ) {
         checkScaleLabels(
             dataValues,
             discreteScales = emptyList(),
             asDiscreteAes = emptyList(),
             expectedLabelsForDiscrete,
-            expectedLabelForContinuous
+            expectedLabelForContinuous,
+            datetimeAnnotationPart
         )
         checkScaleLabels(
             dataValues,
             discreteScales = emptyList(),
             asDiscreteAes = listOf(Aes.COLOR),
             expectedLabelsForDiscrete,
-            expectedLabelForContinuous
+            expectedLabelForContinuous,
+            datetimeAnnotationPart
         )
         checkScaleLabels(
             dataValues,
             discreteScales = listOf(Aes.COLOR),
             asDiscreteAes = emptyList(),
             expectedLabelsForDiscrete,
-            expectedLabelForContinuous
+            expectedLabelForContinuous,
+            datetimeAnnotationPart
         )
         checkScaleLabels(
             dataValues,
             discreteScales = emptyList(),
             asDiscreteAes = listOf(Aes.X, Aes.COLOR),
             expectedLabelsForDiscrete,
-            expectedLabelForContinuous
+            expectedLabelForContinuous,
+            datetimeAnnotationPart
         )
 
         checkScaleLabels(
@@ -129,7 +99,8 @@ class ScaleFormatWhenDiscreteDateTimeTest {
             // Positional aes must be annotated 'as_discrete'
             asDiscreteAes = listOf(Aes.X),
             expectedLabelsForDiscrete,
-            expectedLabelForContinuous
+            expectedLabelForContinuous,
+            datetimeAnnotationPart
         )
 
         // If positional aes is not annotated 'as_discrete'
@@ -139,7 +110,8 @@ class ScaleFormatWhenDiscreteDateTimeTest {
             discreteScales = listOf(Aes.X),
             asDiscreteAes = emptyList(),
             expectedLabelsForDiscrete = emptyList(),
-            expectedLabelForContinuous
+            expectedLabelForContinuous,
+            datetimeAnnotationPart
         )
     }
 
@@ -147,6 +119,7 @@ class ScaleFormatWhenDiscreteDateTimeTest {
         instants: List<Double>,
         discreteScales: List<Aes<*>>,
         asDiscreteAes: List<Aes<*>>,
+        datetimeAnnotationPart: Map<String, String>,
     ): MutableMap<String, Any> {
         fun discreteScale(aes: Aes<*>) = mapOf(
             Option.Scale.AES to aes.name,
@@ -167,7 +140,7 @@ class ScaleFormatWhenDiscreteDateTimeTest {
                 mapOf(
                     Option.Meta.SeriesAnnotation.COLUMN to columnName,
                     Option.Meta.SeriesAnnotation.TYPE to Option.Meta.SeriesAnnotation.Types.DATE_TIME
-                )
+                ) + datetimeAnnotationPart
             )
         )
 
@@ -184,9 +157,5 @@ class ScaleFormatWhenDiscreteDateTimeTest {
             Option.Plot.SCALES to discreteScales.map(::discreteScale),
             Option.Meta.DATA_META to dateTimeAnnotation("v") + mappingAnnotation(asDiscreteAes)
         )
-    }
-
-    companion object {
-        private val TZ = TimeZone.UTC
     }
 }

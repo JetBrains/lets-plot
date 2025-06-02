@@ -266,7 +266,7 @@ class ScaleConfigLabelsTest {
     @Test
     fun `DateTime format should be applied to the breaks`() {
         val instants = List(3) {
-            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it.toLong()), TZ)
+            DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it), TZ)
         }.map {
             it.toEpochMilliseconds(TZ).toDouble()
         }
