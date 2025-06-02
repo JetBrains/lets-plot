@@ -105,7 +105,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
 
     private fun resetText(init: Boolean = false) {
         if (!init) {
-            rootGroup.children().removeLastOrNull()
+            rootGroup.children().remove(myText)
         }
         // The font is used here to estimate the width of the text
         val font = Font(

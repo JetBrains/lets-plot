@@ -133,8 +133,8 @@ class MultilineLabel(
     }
 
     private fun resetLines() {
-        // If there are any, remove the current text elements from the rootGroup
-        repeat(linesCount()) { rootGroup.children().removeLastOrNull() }
+        // Remove the current text elements from the rootGroup
+        myLines.forEach(rootGroup.children()::remove)
         // The font is used here to estimate the width of the text
         val font = Font(
             family = FontFamily( myFontFamily ?: "sans-serif", false),
