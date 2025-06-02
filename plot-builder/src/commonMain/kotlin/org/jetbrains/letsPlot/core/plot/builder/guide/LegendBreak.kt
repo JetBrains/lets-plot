@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import kotlin.math.max
 
 class LegendBreak(val label: String) {
     private val myLayers = ArrayList<LegendBreakLayer>()
@@ -19,6 +20,16 @@ class LegendBreak(val label: String) {
             for (layer in myLayers) {
                 val layerMinKeySize = layer.keyElementFactory.minimumKeySize(layer.dataPoint)
                 minSize = minSize.max(layerMinKeySize)
+            }
+            return minSize
+        }
+
+    val minimumTextSize: Double
+        get() {
+            var minSize = 0.0
+            for (layer in myLayers) {
+                val layerFontSize = layer.dataPoint.size()!!
+                minSize = max(minSize, layerFontSize)
             }
             return minSize
         }

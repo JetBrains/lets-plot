@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling.TEXT_UNIT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
@@ -69,7 +70,9 @@ class LegendComponent(
         label.setLineHeight(lineHeight)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.moveTo(labelBox.origin)
+        label.setFontSize(br.minimumTextSize * TEXT_UNIT_SIZE)
+        val magicalShiftCoefficient = 0.7 // TODO: Explore why this is needed.
+        label.moveTo(labelBox.origin.add(DoubleVector(0.0, magicalShiftCoefficient * br.minimumTextSize)))
         breakComponent.add(label)
         breakComponent.moveTo(keyLabelBox.origin.add(DoubleVector(0.0, 0.5 * (keyLabelBox.height - keySize.y))))
         return breakComponent.rootGroup
