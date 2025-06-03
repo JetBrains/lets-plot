@@ -33,7 +33,7 @@ internal object Hyperlink {
             return widthCalculator(text, font)
         }
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             return listOf(
                 SvgAElement().apply {
                     href().set(href)

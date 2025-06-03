@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 object RichText {
@@ -234,9 +235,17 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement>
+            abstract fun toSvg(context: RenderState, previousNodes: List<Span>): List<SvgElement>
 
-            fun render(): List<SvgElement> = render(RenderState(), emptyList())
+            fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
+                return toSvg(context, previousNodes).map { svgElement ->
+                    svgElement.apply {
+                        x?.let { setAttribute(SvgTextContent.X, x.toString()) }
+                    }
+                }
+            }
+
+            fun render(): List<SvgElement> = toSvg(RenderState(), emptyList())
         }
 
         class Text(
@@ -248,7 +257,7 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
+            override fun toSvg(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
                 val tSpan = SvgTSpanElement(text)
                 context.apply(tSpan)
                 return listOf(tSpan)

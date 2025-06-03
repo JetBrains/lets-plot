@@ -119,7 +119,7 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
         }
-        val indexTSpanElements = content.render(ctx, previousNodes).mapIndexed { i, element ->
+        val indexTSpanElements = content.toSvg(ctx, previousNodes).mapIndexed { i, element ->
             element.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
@@ -263,8 +263,8 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             node.estimateWidth(font, widthCalculator)
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
-            return node.render(context, previousNodes)
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+            return node.toSvg(context, previousNodes)
         }
     }
 
@@ -274,7 +274,7 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             return listOf(context.apply(SvgTSpanElement(content)))
         }
     }
@@ -285,11 +285,11 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             val svgElements = mutableListOf<SvgElement>()
             val previousLatexNodes = mutableListOf<RichTextNode.Span>()
             for (child in children) {
-                svgElements.addAll(child.render(context, previousNodes + previousLatexNodes.toList()))
+                svgElements.addAll(child.toSvg(context, previousNodes + previousLatexNodes.toList()))
                 previousLatexNodes.add(child)
             }
             return svgElements
@@ -301,7 +301,7 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, previousNodes = previousNodes)
         }
     }
@@ -311,7 +311,7 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, previousNodes = previousNodes)
         }
     }
@@ -325,13 +325,13 @@ internal class Latex(
             return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
         }
 
-        override fun render(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
             val prefixWidth = previousNodes.sumOf { it.estimateWidth(font, widthCalculator) }
             val fractionWidth = estimateWidth(font, widthCalculator)
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL).estimateWidth(font, widthCalculator)
             val fractionBarLength = (fractionWidth / fractionBarWidth).roundToInt()
-            val numeratorTSpanElements = numerator.render(context, previousNodes).mapIndexed { i, element ->
+            val numeratorTSpanElements = numerator.toSvg(context, previousNodes).mapIndexed { i, element ->
                 element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
@@ -340,7 +340,7 @@ internal class Latex(
                     }
                 }
             }
-            val denominatorTSpanElements = denominator.render(context, previousNodes).mapIndexed { i, element ->
+            val denominatorTSpanElements = denominator.toSvg(context, previousNodes).mapIndexed { i, element ->
                 element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
