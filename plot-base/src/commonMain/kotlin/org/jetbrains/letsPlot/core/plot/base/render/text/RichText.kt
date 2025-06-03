@@ -244,8 +244,6 @@ object RichText {
                     }
                 }
             }
-
-            fun render(): List<SvgElement> = toSvg(RenderState(), emptyList())
         }
 
         class Text(
