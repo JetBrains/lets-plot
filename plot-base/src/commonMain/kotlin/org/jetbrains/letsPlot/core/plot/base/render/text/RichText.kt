@@ -7,12 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 object RichText {
+    val DEF_HORIZONTAL_ANCHOR = Text.HorizontalAnchor.LEFT
     const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
 
     fun toSvg(
@@ -22,9 +24,10 @@ object RichText {
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
+        anchor: Text.HorizontalAnchor
     ): List<SvgTextElement> {
         val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
-        val svgLines = render(lines)
+        val svgLines = render(lines, font, widthCalculator, anchorCoefficient = anchorCoefficient(lines, anchor))
         return svgLines
     }
 
@@ -192,11 +195,38 @@ object RichText {
         return wrappedLines
     }
 
-    private fun render(lines: List<List<RichTextNode>>): List<SvgTextElement> {
+    private fun anchorCoefficient(
+        lines: List<List<RichTextNode>>,
+        anchor: Text.HorizontalAnchor
+    ): Double {
+        val containsLatexFractionNode = lines.any { line ->
+            line.any { term ->
+                term is Latex.LatexElement && term.node.flatListOfAllChildren().any { child ->
+                    child is Latex.FractionNode
+                }
+            }
+        }
+        if (!containsLatexFractionNode) {
+            return 0.0
+        }
+        return when (anchor) {
+            Text.HorizontalAnchor.LEFT -> 0.0
+            Text.HorizontalAnchor.MIDDLE -> 0.5
+            Text.HorizontalAnchor.RIGHT -> 1.0
+        }
+    }
+
+    private fun render(
+        lines: List<List<RichTextNode>>,
+        font: Font,
+        widthCalculator: (String, Font) -> Double,
+        anchorCoefficient: Double
+    ): List<SvgTextElement> {
         val stack = mutableListOf(RenderState())
         val svgLines = lines.map { line ->
             val svg = mutableListOf<SvgElement>()
             val previousNodes = mutableListOf<RichTextNode.Span>()
+            val lineWidth = line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth(font, widthCalculator) ?: 0.0 }
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -207,7 +237,12 @@ object RichText {
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
                     is RichTextNode.Span -> {
-                        svg += term.render(stack.last(), previousNodes.toList())
+                        val x = if (anchorCoefficient == 0.0) {
+                            null
+                        } else {
+                            -anchorCoefficient * lineWidth
+                        }
+                        svg += term.render(stack.last(), previousNodes.toList(), x)
                         previousNodes.add(term)
                     }
                 }
@@ -238,10 +273,14 @@ object RichText {
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
             abstract fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement>
 
-            fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
-                return toSvg(context, previousNodes).map { richElement ->
+            fun render(context: RenderState, previousNodes: List<Span>, x: Double?): List<SvgElement> {
+                return toSvg(context, previousNodes).mapIndexed { i, richElement ->
+                    val newX = when {
+                        richElement.x == null -> if (i == 0) x else null
+                        else -> richElement.x + (x ?: 0.0)
+                    }
                     richElement.element.apply {
-                        richElement.x?.let { setAttribute(SvgTextContent.X, richElement.x.toString()) }
+                        newX?.let { setAttribute(SvgTextContent.X, newX.toString()) }
                     }
                 }
             }

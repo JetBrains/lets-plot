@@ -32,6 +32,7 @@ class MultilineLabel(
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
     private var myLineHeight = 0.0
+    private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var yStart = 0.0
 
@@ -60,6 +61,12 @@ class MultilineLabel(
     }
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
+        myHorizontalAnchor = anchor
+        updateStyleAttribute()
+        updateAnchor(anchor)
+    }
+
+    private fun updateAnchor(anchor: HorizontalAnchor) {
         myLines.forEach {
             it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
         }
@@ -142,7 +149,14 @@ class MultilineLabel(
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )
-        myLines = RichText.toSvg(text, font, TextWidthEstimator::widthCalculator, wrapWidth, markdown = markdown)
+        myLines = RichText.toSvg(
+            text,
+            font,
+            TextWidthEstimator::widthCalculator,
+            wrapWidth,
+            markdown = markdown,
+            anchor = myHorizontalAnchor
+        )
         myLines.forEach(rootGroup.children()::add)
     }
 

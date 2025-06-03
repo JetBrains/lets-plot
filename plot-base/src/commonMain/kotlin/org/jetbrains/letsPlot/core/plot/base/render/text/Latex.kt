@@ -47,12 +47,12 @@ internal class Latex(
         return formulas
     }
 
-    private fun parse(tokens: Sequence<Token>): RichTextNode.Span {
+    private fun parse(tokens: Sequence<Token>): LatexNode {
         return parseGroup(tokens.iterator(), level = 0, emptyList())
     }
 
-    private fun parseGroup(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<RichTextNode.Span>): GroupNode {
-        val nodes = mutableListOf<RichTextNode.Span>()
+    private fun parseGroup(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<LatexNode>): GroupNode {
+        val nodes = mutableListOf<LatexNode>()
         while (iterator.hasNext()) {
             when (val token = iterator.next()) {
                 is Token.Command -> nodes.add(parseCommand(token, iterator, level, previousLatexNodes + nodes.toList()))
@@ -68,7 +68,7 @@ internal class Latex(
         return GroupNode(nodes)
     }
 
-    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<RichTextNode.Span>): RichTextNode.Span {
+    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<LatexNode>): LatexNode {
         return when (val nextToken = iterator.next()) {
             is Token.OpenBrace -> parseGroup(iterator, level, previousLatexNodes)
             is Token.Text -> TextNode(nextToken.content)
@@ -77,9 +77,9 @@ internal class Latex(
         }
     }
 
-    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousLatexNodes: List<RichTextNode.Span>): RichTextNode.Span {
-        fun parseNArgs(n: Int): List<RichTextNode.Span> {
-            val args = mutableListOf<RichTextNode.Span>()
+    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousLatexNodes: List<LatexNode>): LatexNode {
+        fun parseNArgs(n: Int): List<LatexNode> {
+            val args = mutableListOf<LatexNode>()
             repeat(n) {
                 require(iterator.next() is Token.OpenBrace) { "The formula cannot be parsed because the opening bracket '{' after the '${token.name}' command is missing" }
                 if (!iterator.hasNext()) {
@@ -101,7 +101,7 @@ internal class Latex(
         }
     }
 
-    private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
+    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -141,7 +141,7 @@ internal class Latex(
         return listOf(indentTSpan, setBaselineTSpan) + indexTSpanElements + restoreBaselineTSpan
     }
 
-    private fun estimateWidthForIndexNode(content: RichTextNode.Span, level: Int): Double {
+    private fun estimateWidthForIndexNode(content: LatexNode, level: Int): Double {
         val indexFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
         val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
         return content.estimateWidth(indexFont, widthCalculator)
@@ -257,7 +257,16 @@ internal class Latex(
         }
     }
 
-    private inner class LatexElement(private val node: RichTextNode.Span) : RichTextNode.Span() {
+    internal abstract inner class LatexNode(val children: List<LatexNode>) : RichTextNode.Span() {
+        fun flatListOfAllChildren(): List<LatexNode> {
+            fun getChildrenRecursively(nodes: List<LatexNode>): List<LatexNode> {
+                return nodes.flatMap { listOf(it) + getChildrenRecursively(it.children) }
+            }
+            return listOf(this) + getChildrenRecursively(children)
+        }
+    }
+
+    internal inner class LatexElement(val node: LatexNode) : RichTextNode.Span() {
         override val visualCharCount: Int = node.visualCharCount
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
@@ -268,7 +277,7 @@ internal class Latex(
         }
     }
 
-    private inner class TextNode(val content: String) : RichTextNode.Span() {
+    private inner class TextNode(val content: String) : LatexNode(emptyList()) {
         override val visualCharCount: Int = content.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(content, font)
@@ -279,7 +288,7 @@ internal class Latex(
         }
     }
 
-    private inner class GroupNode(val children: List<RichTextNode.Span>) : RichTextNode.Span() {
+    private inner class GroupNode(children: List<LatexNode>) : LatexNode(children) {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
@@ -287,7 +296,7 @@ internal class Latex(
 
         override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
             val richElements = mutableListOf<RichSvgElement>()
-            val previousLatexNodes = mutableListOf<RichTextNode.Span>()
+            val previousLatexNodes = mutableListOf<LatexNode>()
             for (child in children) {
                 richElements.addAll(child.toSvg(context, previousNodes + previousLatexNodes.toList()))
                 previousLatexNodes.add(child)
@@ -296,7 +305,7 @@ internal class Latex(
         }
     }
 
-    private inner class SuperscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span() {
+    private inner class SuperscriptNode(val content: LatexNode, val level: Int) : LatexNode(listOf(content)) {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
@@ -306,7 +315,7 @@ internal class Latex(
         }
     }
 
-    private inner class SubscriptNode(val content: RichTextNode.Span, val level: Int) : RichTextNode.Span() {
+    private inner class SubscriptNode(val content: LatexNode, val level: Int) : LatexNode(listOf(content)) {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
@@ -316,10 +325,10 @@ internal class Latex(
         }
     }
 
-    private inner class FractionNode(
-        val numerator: RichTextNode.Span,
-        val denominator: RichTextNode.Span
-    ) : RichTextNode.Span() {
+    internal inner class FractionNode(
+        private val numerator: LatexNode,
+        private val denominator: LatexNode
+    ) : LatexNode(listOf(numerator, denominator)) {
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))

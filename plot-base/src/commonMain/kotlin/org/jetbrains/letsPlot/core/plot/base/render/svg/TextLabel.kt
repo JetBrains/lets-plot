@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
@@ -26,6 +27,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
+    private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
 
     init {
         resetText(init = true)
@@ -64,7 +66,9 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         return myText.y()
     }
 
-    fun setHorizontalAnchor(anchor: Text.HorizontalAnchor) {
+    fun setHorizontalAnchor(anchor: HorizontalAnchor) {
+        myHorizontalAnchor = anchor
+        updateStyleAttribute()
         myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
     }
 
@@ -116,7 +120,13 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         )
         // TextLabel is a single-line text element
         val singleLineText = text.replace("\n", " ")
-        myText = RichText.toSvg(singleLineText, font, TextWidthEstimator::widthCalculator, markdown = markdown).firstOrNull() ?: SvgTextElement()
+        myText = RichText.toSvg(
+            singleLineText,
+            font,
+            TextWidthEstimator::widthCalculator,
+            markdown = markdown,
+            anchor = myHorizontalAnchor
+        ).firstOrNull() ?: SvgTextElement()
         rootGroup.children().add(myText)
     }
 
