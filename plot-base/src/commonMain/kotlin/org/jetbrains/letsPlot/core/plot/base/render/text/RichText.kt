@@ -230,17 +230,18 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
+        data class RichSvgElement(val element: SvgElement, val x: Double? = null) : RichTextNode
+
         abstract class Span : RichTextNode {
-            protected var x: Double? = null
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun toSvg(context: RenderState, previousNodes: List<Span>): List<SvgElement>
+            abstract fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement>
 
             fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
-                return toSvg(context, previousNodes).map { svgElement ->
-                    svgElement.apply {
-                        x?.let { setAttribute(SvgTextContent.X, x.toString()) }
+                return toSvg(context, previousNodes).map { richElement ->
+                    richElement.element.apply {
+                        richElement.x?.let { setAttribute(SvgTextContent.X, richElement.x.toString()) }
                     }
                 }
             }
@@ -255,10 +256,10 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun toSvg(context: RenderState, previousNodes: List<Span>): List<SvgElement> {
+            override fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement> {
                 val tSpan = SvgTSpanElement(text)
                 context.apply(tSpan)
-                return listOf(tSpan)
+                return listOf(RichSvgElement(tSpan))
             }
 
             override fun toString() = "Text(text='$text')"

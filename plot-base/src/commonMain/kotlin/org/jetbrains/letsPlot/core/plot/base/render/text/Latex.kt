@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import kotlin.math.max
@@ -101,30 +101,30 @@ internal class Latex(
         }
     }
 
-    private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+    private fun getSvgForIndexNode(content: RichTextNode.Span, level: Int, isSuperior: Boolean, ctx: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
             "" to "-"
         }
 
-        val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
+        val indentTSpan = RichSvgElement(ctx.apply(SvgTSpanElement(INDENT_SYMBOL).apply {
             setAttribute(SvgTextContent.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-        }
+        }))
         val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
         // It is an analog of restoreBaselineTSpan, but for the initial shifting
         // This is necessary for more complex formulas in which the index starts from another shift
-        val setBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+        val setBaselineTSpan = RichSvgElement(ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
             // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
-        }
-        val indexTSpanElements = content.toSvg(ctx, previousNodes).mapIndexed { i, element ->
-            element.apply {
+        }))
+        val indexTSpanElements = content.toSvg(ctx, previousNodes).mapIndexed { i, richElement ->
+            richElement.element.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
                 }
-            }
+            }.let { RichSvgElement(it, richElement.x) }
         }
         // The following 'tspan' element is used to restore the baseline after the index
         // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
@@ -132,13 +132,13 @@ internal class Latex(
         // Attribute 'baseline-shift' is better suited for such use case -
         // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
         // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-        val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+        val restoreBaselineTSpan = RichSvgElement(ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
             // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
-        }
+        }))
 
-        return listOf(ctx.apply(indentTSpan), ctx.apply(setBaselineTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)
+        return listOf(indentTSpan, setBaselineTSpan) + indexTSpanElements + restoreBaselineTSpan
     }
 
     private fun estimateWidthForIndexNode(content: RichTextNode.Span, level: Int): Double {
@@ -263,7 +263,7 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             node.estimateWidth(font, widthCalculator)
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
             return node.toSvg(context, previousNodes)
         }
     }
@@ -274,8 +274,8 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
-            return listOf(context.apply(SvgTSpanElement(content)))
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
+            return listOf(RichSvgElement(context.apply(SvgTSpanElement(content))))
         }
     }
 
@@ -285,14 +285,14 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
-            val svgElements = mutableListOf<SvgElement>()
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
+            val richElements = mutableListOf<RichSvgElement>()
             val previousLatexNodes = mutableListOf<RichTextNode.Span>()
             for (child in children) {
-                svgElements.addAll(child.toSvg(context, previousNodes + previousLatexNodes.toList()))
+                richElements.addAll(child.toSvg(context, previousNodes + previousLatexNodes.toList()))
                 previousLatexNodes.add(child)
             }
-            return svgElements
+            return richElements
         }
     }
 
@@ -301,7 +301,7 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, previousNodes = previousNodes)
         }
     }
@@ -311,7 +311,7 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             estimateWidthForIndexNode(content, level)
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, previousNodes = previousNodes)
         }
     }
@@ -325,40 +325,36 @@ internal class Latex(
             return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
         }
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<SvgElement> {
+        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
             val prefixWidth = previousNodes.sumOf { it.estimateWidth(font, widthCalculator) }
             val fractionWidth = estimateWidth(font, widthCalculator)
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL).estimateWidth(font, widthCalculator)
             val fractionBarLength = (fractionWidth / fractionBarWidth).roundToInt()
-            val numeratorTSpanElements = numerator.toSvg(context, previousNodes).mapIndexed { i, element ->
-                element.apply {
+            val numeratorTSpanElements = numerator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
+                richElement.element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
-                        setAttribute(SvgTextContent.X, fractionCenter.toString())
                         setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                     }
-                }
+                }.let { RichSvgElement(it, x = if (i == 0) { fractionCenter } else { richElement.x }) }
             }
-            val denominatorTSpanElements = denominator.toSvg(context, previousNodes).mapIndexed { i, element ->
-                element.apply {
+            val denominatorTSpanElements = denominator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
+                richElement.element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
-                        setAttribute(SvgTextContent.X, fractionCenter.toString())
                         setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
                     }
-                }
+                }.let { RichSvgElement(it, x = if (i == 0) { fractionCenter } else { richElement.x }) }
             }
-            val fractionBarTSpanElement = SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
-                setAttribute(SvgTextContent.X, fractionCenter.toString())
+            val fractionBarTSpanElement = RichSvgElement(context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
                 setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                 setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
-            }
-            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                setAttribute(SvgTextContent.X, (prefixWidth + fractionWidth).toString())
+            }), x = fractionCenter)
+            val restoreBaselineTSpan = RichSvgElement(context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 setAttribute(SvgTextContent.TEXT_ANCHOR, "start")
-            }
-            return numeratorTSpanElements + denominatorTSpanElements + listOf(context.apply(fractionBarTSpanElement), context.apply(restoreBaselineTSpan))
+            }), x = prefixWidth + fractionWidth)
+            return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }
     }
 
