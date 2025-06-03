@@ -27,7 +27,7 @@ class MagickCanvas(
 ) : Canvas {
 
     // TODO: replace usage in tests with Snapshot
-    val img: CPointer<ImageMagick.MagickWand>?
+    val img: CPointer<ImageMagick.MagickWand>
         get() {
             val wand = (context2d as MagickContext2d).wand
             if (false) {
