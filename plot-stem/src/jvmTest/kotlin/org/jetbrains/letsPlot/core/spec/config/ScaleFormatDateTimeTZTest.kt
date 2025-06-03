@@ -16,9 +16,6 @@ import kotlin.test.Test
 
 /**
  * This test verifies that the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
- *
- * @TODO: Currently the anntation `Option.Meta.SeriesAnnotation.TIME_ZONE` is not handled
- * @TODO: so the expected values are not what they should be.
  */
 class ScaleFormatDateTimeTZTest {
 
@@ -35,16 +32,11 @@ class ScaleFormatDateTimeTZTest {
         val expectedLabels = listOf(
             "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5"
         )
-        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
-        // Expected: see above.
-        val expectedLabels2 = listOf(
-            "Jan 1", "Jan 2", "Jan 3", "Jan 4"
-        )
 
         checkScales(
             instants,
             expectedLabels,
-            expectedLabels2,
+            expectedLabels,
             DATE_TIME_ANNOTATION_PART
         )
     }
@@ -58,13 +50,10 @@ class ScaleFormatDateTimeTZTest {
             it.toEpochMilliseconds(TZ_UTC_8).toDouble()
         }
 
-        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
-//        val formattedForContinuous = listOf(
-//            "00:00", "12:00", "00:00", "12:00", "00:00"
-//        )
         val formattedForContinuous = listOf(
-            "00:00", "12:00", "00:00", "12:00"
+            "00:00", "12:00", "00:00", "12:00", "00:00"
         )
+
         // For discrete scale: if to get the DateTimeBreaksHelper's formatter (which the continuous scale uses),
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied

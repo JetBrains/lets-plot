@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.commons.intern.datetime
 
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.daysUntil
+import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.LocalDate as KotlinxLocalDate
 
@@ -42,6 +43,24 @@ class Date : Comparable<Date> {
             kotlinxLocalDate.plus(
                 duration.totalDays,
                 DateTimeUnit.DAY
+            )
+        )
+    }
+
+    fun subtract(duration: Duration): Date {
+        return Date(
+            kotlinxLocalDate.minus(
+                duration.totalDays,
+                DateTimeUnit.DAY
+            )
+        )
+    }
+
+    fun addMonths(count: Int): Date {
+        return Date(
+            kotlinxLocalDate.plus(
+                count,
+                DateTimeUnit.MONTH
             )
         )
     }

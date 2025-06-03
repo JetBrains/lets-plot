@@ -5,28 +5,32 @@
 
 package org.jetbrains.letsPlot.core.commons.time.interval
 
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-internal class MonthInterval(count: Int) : TimeZoneAwareInterval(count) {
+internal class WeekInterval(
+    count: Int,
+) : TimeZoneAwareInterval(count) {
 
     override val tickFormatPattern: String
-        get() = "%b"
+        get() = "%b %e"
 
     override fun atOrBefore(dateTime: DateTime): DateTime {
-        return DateTime(
-            Date(
-                1,
-                dateTime.month,
-                dateTime.year
-            )
+        // ISO 8601: week starts on Monday.
+        val daysFromWeekStart = dateTime.weekDay.ordinal
+        val monday = dateTime.date.subtract(
+            Duration.DAY.mul(daysFromWeekStart),
         )
+
+        return DateTime(monday)
     }
 
     override fun addInterval(dateTime: DateTime, tz: TimeZone): DateTime {
         return DateTime(
-            dateTime.date.addMonths(count),
+            dateTime.date.add(
+                Duration.WEEK.mul(count)
+            )
         )
     }
 }

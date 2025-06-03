@@ -411,7 +411,8 @@ open class PlotConfigBackend(
                         range.lowerEnd,
                         range.upperEnd,
                         distinctValues.size,
-                        providedFormatter = null
+                        providedFormatter = null,
+                        tz = tz
                     ).pattern
                 }
 

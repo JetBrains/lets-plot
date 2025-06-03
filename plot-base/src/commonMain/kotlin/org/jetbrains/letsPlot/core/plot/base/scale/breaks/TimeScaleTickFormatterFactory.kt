@@ -23,9 +23,9 @@ internal class TimeScaleTickFormatterFactory(
             val stepCount = 100
             val start = 0.0
             val end = step * stepCount
-            val intervalCount = minInterval.range(start, end).size
+            val intervalCount = minInterval.range(start, end, tz = null).size
             if (stepCount >= intervalCount) {
-                // step is smaller than min interval -> stay with min interval
+                // step is smaller than the min interval-> stay with the min interval
                 return minInterval.tickFormatPattern
             }
         }

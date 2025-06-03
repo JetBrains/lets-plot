@@ -218,7 +218,7 @@ class ScaleConfig<T> constructor(
                 val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
-            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
+            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter, tz))
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {

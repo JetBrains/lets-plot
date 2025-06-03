@@ -5,19 +5,22 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
 class DateTimeBreaksGen(
-    private val providedFormatter: ((Any) -> String)? = null
+    private val providedFormatter: ((Any) -> String)? = null,
+    private val tz: TimeZone?
 ) : BreaksGenerator {
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = DateTimeBreaksHelper(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
-            providedFormatter
+            providedFormatter,
+            tz = tz
         )
 
         return ScaleBreaks.ContinuousFlex.noTransform(
@@ -31,7 +34,8 @@ class DateTimeBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
-            providedFormatter = null
+            providedFormatter = null,
+            tz = tz
         ).formatter
     }
 }
