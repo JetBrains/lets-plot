@@ -7,6 +7,7 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 
 
@@ -16,15 +17,21 @@ internal class Image : Element() {
     var y: Float by visualProp(0.0f)
     var width: Float by visualProp(0.0f)
     var height: Float by visualProp(0.0f)
-    var img: Canvas.Snapshot? by visualProp(null)
+    var img: Bitmap? by visualProp(null)
+
+    private val snapshot: Canvas.Snapshot? by computedProp(Image::img, Node::peer) {
+        val peer = peer ?: return@computedProp null
+        val image = img ?: return@computedProp null
+
+        peer.canvasProvider.snapshot(image)
+    }
 
     override fun render(canvas: Canvas) {
-        img?.let {
-            if (preserveRatio) {
-                canvas.context2d.drawImage(it, x.toDouble(), y.toDouble())
-            } else {
-                canvas.context2d.drawImage(it, x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
-            }
+        val snapshot = snapshot ?: return
+        if (preserveRatio) {
+            canvas.context2d.drawImage(snapshot, x.toDouble(), y.toDouble())
+        } else {
+            canvas.context2d.drawImage(snapshot, x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
         }
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.convert
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.encoding.Base64
@@ -13,6 +14,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.nat.encoding.png.ImageInfo
@@ -47,7 +49,7 @@ class MagickCanvas(
     }
 
     override fun immidiateSnapshot(): Canvas.Snapshot {
-        return MagickSnapshot(_img)
+        return MagickSnapshot(img)
     }
 
     fun saveBmp(filename: String) {
@@ -134,23 +136,77 @@ class MagickCanvas(
         }
 
         companion object {
+            fun fromBitmap(bitmap: Bitmap): MagickSnapshot {
+                println("MagickCanvas: Creating snapshot from Bitmap, size: ${bitmap.width}x${bitmap.height}, pixels.size: ${bitmap.argbInts.size}")
+                require(bitmap.width > 0 && bitmap.height > 0) { "MagickCanvas: Size must be greater than zero" }
+                require(bitmap.argbInts.size == bitmap.width * bitmap.height) {
+                    "MagickCanvas: Bitmap pixel array size does not match the specified size"
+                }
+
+                val backgroundPixel = ImageMagick.NewPixelWand()
+                ImageMagick.PixelSetColor(backgroundPixel, "transparent")
+
+                val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
+                ImageMagick.MagickNewImage(img, bitmap.width.convert(), bitmap.height.convert(), backgroundPixel)
+
+                println("MagickCanvas: Importing image pixels, size: ${bitmap.width}x${bitmap.height}, pixels.size: ${bitmap.argbInts.size}")
+                val res = ImageMagick.MagickImportImagePixels(
+                    img,
+                    0,
+                    0,
+                    bitmap.width.convert(),
+                    bitmap.height.convert(),
+                    "ARGB",
+                    ImageMagick.StorageType.LongPixel,
+                    bitmap.argbInts.refTo(0)
+                )
+
+                if (res == ImageMagick.MagickFalse) {
+                    val err = ImageMagick.MagickGetException(img, null)
+                    println("MagickCanvas: Failed to import image pixels: $err")
+                    error("MagickCanvas: Failed to import image pixels: $err")
+                } else {
+                    println("MagickCanvas: Successfully imported image pixels")
+                }
+
+                return MagickSnapshot(img)
+            }
+
             fun fromPixels(rgba: ByteArray, size: Vector): MagickSnapshot {
+                println("MagickCanvas: Creating snapshot from pixels, size: $size, rgba.size: ${rgba.size}")
                 require(size.x > 0 && size.y > 0) { "MagickCanvas: Size must be greater than zero" }
                 require(rgba.size == size.x * size.y * 4) { // 4 bytes per pixel (RGBA)
                     "MagickCanvas: Byte array size does not match the specified size"
                 }
 
+                val baclgroundPixel = ImageMagick.NewPixelWand()
+                ImageMagick.PixelSetColor(baclgroundPixel, "transparent")
+
                 val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
-                ImageMagick.MagickImportImagePixels(
+                ImageMagick.MagickNewImage(img, size.x.convert(), size.y.convert(), baclgroundPixel)
+
+                println("MagickCanvas: Importing image pixels, size: $size, rgba.size: ${rgba.size}")
+                println(rgba.joinToString { it.toUByte().toString(16) })
+
+                val res = ImageMagick.MagickImportImagePixels(
                     img,
                     0,
                     0,
-                    size.x.toULong(),
-                    size.y.toULong(),
+                    size.x.convert(),
+                    size.y.convert(),
                     "RGBA",
                     ImageMagick.StorageType.CharPixel,
-                    rgba.asUByteArray().refTo(0)
+                    rgba.refTo(0) // Convert ByteArray to CPointer<UByte>
                 )
+
+                if (res == ImageMagick.MagickFalse) {
+                    val err = ImageMagick.MagickGetException(img, null)
+                    println("MagickCanvas: Failed to import image pixels: $err")
+                    error("MagickCanvas: Failed to import image pixels: $err")
+                } else {
+                    println("MagickCanvas: Successfully imported image pixels")
+                }
+
                 return MagickCanvas.MagickSnapshot(img)
             }
         }

@@ -10,7 +10,7 @@ import java.awt.Rectangle
 import javax.swing.JComponent
 
 internal class CanvasComponent(
-    private val canvas: AwtCanvas
+    internal val canvas: AwtCanvas
 ) : JComponent() {
     init {
         bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.encoding.Base64
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
@@ -17,7 +18,6 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.nat.encoding.micropng.decodePng
 
 class MagickCanvasControl(
     val w: Int,
@@ -67,27 +67,36 @@ class MagickCanvasControl(
     }
 
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
-        println("MagickCanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
-        if (!dataUrl.startsWith("data:image/png;base64,")) {
-            throw IllegalArgumentException("Unsupported data URL format: $dataUrl")
-        }
-        val data = dataUrl.removePrefix("data:image/png;base64,")
-        val pngData = Base64.decode(data)
-
-        val img = loadImageFromPngBytes(pngData)
-
-        return Asyncs.constant(MagickCanvas.MagickSnapshot(img))
+        return Asyncs.constant(immediateSnapshot(dataUrl))
     }
 
     override fun createSnapshot(
         rgba: ByteArray,
         size: Vector
     ): Async<Canvas.Snapshot> {
-        TODO("Not yet implemented")
+        return Asyncs.constant(immediateSnapshot(rgba, size))
     }
 
     override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
         return MagickCanvas.MagickSnapshot.fromPixels(rgba = rgba, size = size)
+    }
+
+    override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
+        println("MagickCanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
+        if (false) {
+            if (!dataUrl.startsWith("data:image/png;base64,")) {
+                throw IllegalArgumentException("Unsupported data URL format: $dataUrl")
+            }
+            val data = dataUrl.removePrefix("data:image/png;base64,")
+            val pngData = Base64.decode(data)
+
+            val img = loadImageFromPngBytes(pngData)
+
+            return MagickCanvas.MagickSnapshot(img)
+        } else {
+            val img = DataImage.decode(dataUrl)
+            return MagickCanvas.MagickSnapshot.fromPixels(img.rgbaBytes(), size = Vector(img.width, img.height))
+        }
     }
 
     override fun addEventHandler(
@@ -104,57 +113,21 @@ class MagickCanvasControl(
 
     fun loadImageFromPngBytes(bytes: ByteArray): CPointer<ImageMagick.MagickWand> {
         println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${bytes.size}")
-        if (false) {
-            return memScoped {
-                val wand = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
+        return memScoped {
+            val wand = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
 
-                val blobSize = bytes.size.toULong()
-                val blob = allocArray<ByteVar>(bytes.size)
-                bytes.forEachIndexed { index, byte -> blob[index] = byte }
+            val blobSize = bytes.size.toULong()
+            val blob = allocArray<ByteVar>(bytes.size)
+            bytes.forEachIndexed { index, byte -> blob[index] = byte }
 
-                val status = ImageMagick.MagickReadImageBlob(wand, blob, blobSize)
-                if (status == ImageMagick.MagickFalse) {
-                    val err = ImageMagick.MagickGetException(wand, null)
-                    ImageMagick.DestroyMagickWand(wand)
-                    throw RuntimeException("Failed to load image from blob: $err")
-                }
-
-                wand
-            }
-        } else {
-            val png = decodePng(bytes)
-            val w = png.width
-            val h = png.height
-            val rgba = png.rgba
-            val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
-            val backgroundPixel = ImageMagick.NewPixelWand()
-            ImageMagick.PixelSetColor(backgroundPixel, "transparent")
-
-            memScoped {
-                val status = ImageMagick.MagickNewImage(
-                    img,
-                    w.toULong(),
-                    h.toULong(),
-                    backgroundPixel
-                )
-                if (status == ImageMagick.MagickFalse) {
-                    val err = ImageMagick.MagickGetException(img, null)
-                    ImageMagick.DestroyMagickWand(img)
-                    throw RuntimeException("Failed to create new image: $err")
-                }
-
-                // Set pixels
-                val ok = ImageMagick.MagickImportImagePixels(
-                    img, 0, 0, w.convert(), h.convert(),
-                    "RGBA",
-                    ImageMagick.StorageType.CharPixel,
-                    rgba.refTo(0)
-                )
-                ImageMagick.DestroyPixelWand(backgroundPixel)
+            val status = ImageMagick.MagickReadImageBlob(wand, blob, blobSize)
+            if (status == ImageMagick.MagickFalse) {
+                val err = ImageMagick.MagickGetException(wand, null)
+                ImageMagick.DestroyMagickWand(wand)
+                throw RuntimeException("Failed to load image from blob: $err")
             }
 
-            return img
+            wand
         }
-
     }
 }

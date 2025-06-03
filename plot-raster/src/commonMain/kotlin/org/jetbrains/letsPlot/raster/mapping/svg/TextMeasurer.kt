@@ -38,5 +38,9 @@ class TextMeasurer private constructor(
         fun create(canvasProvider: CanvasProvider): TextMeasurer {
             return TextMeasurer(canvasProvider.createCanvas(Vector(0, 0)))
         }
+
+        fun create(canvas: Canvas): TextMeasurer {
+            return TextMeasurer(canvas)
+        }
     }
 }

@@ -134,6 +134,10 @@ open class CanvasControlDelegate(
         return NullSnapshot
     }
 
+    override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
+        return NullSnapshot
+    }
+
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
         return Registration.EMPTY
     }

@@ -68,6 +68,10 @@ class DomCanvasControl(
         TODO("Not yet implemented") // New impl required w/o Image.onload causing async behavior.
     }
 
+    override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
+        TODO("Not yet implemented") // New impl required w/o Image.onload causing async behavior.
+    }
+
     private fun createSnapshotAsync(dataUrl: String, size: Vector? = null): Async<Canvas.Snapshot> {
         return SimpleAsync<Canvas.Snapshot>().apply {
             with(Image()) {

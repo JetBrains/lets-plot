@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -20,9 +21,6 @@ import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.JComponent
 
@@ -88,37 +86,33 @@ class AwtCanvasControl(
     }
 
     private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-        val mediaType = "data:image/png;base64,"
-        val imageString = dataUrl.replace(mediaType, "")
+        val img = DataImage.decode(dataUrl)
 
-        val bytes = imageString.toByteArray(StandardCharsets.UTF_8)
-        val byteArrayInputStream = ByteArrayInputStream(bytes)
-
-        try {
-            return Base64.getDecoder().wrap(byteArrayInputStream).let(ImageIO::read)
-        } catch (e: IOException) {
-            throw IllegalStateException(e)
-        }
+        val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
+        bufImg.setRGB(0, 0, img.width, img.height, img.argbInts, 0, img.width)
+        return bufImg
     }
 
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
-        return Asyncs.constant(
-            AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
-        )
-    }
-
-    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Asyncs.constant(immediateSnapshot(rgba, size))
-    }
-
-    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
-        val src = ImageIO.read(ByteArrayInputStream(bytes))
+    override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
+        val src = ImageIO.read(ByteArrayInputStream(rgba))
         val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
         val graphics2D = dst.createGraphics() as Graphics2D
         graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
         graphics2D.dispose()
 
         return AwtCanvas.AwtSnapshot(dst)
+    }
+
+    override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
+        return AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
+    }
+
+    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
+        return Asyncs.constant(immediateSnapshot(dataUrl))
+    }
+
+    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return Asyncs.constant(immediateSnapshot(rgba, size))
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

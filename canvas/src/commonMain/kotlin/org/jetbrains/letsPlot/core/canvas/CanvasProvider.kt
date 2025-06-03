@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
 interface CanvasProvider {
@@ -14,4 +15,8 @@ interface CanvasProvider {
     fun createSnapshot(dataUrl: String): Async<Snapshot>
     fun createSnapshot(rgba: ByteArray, size: Vector): Async<Snapshot>
     fun immediateSnapshot(rgba: ByteArray, size: Vector): Snapshot
+    fun immediateSnapshot(dataUrl: String): Snapshot
+    fun snapshot(bitmap: Bitmap): Snapshot {
+        return immediateSnapshot(bitmap.rgbaBytes(), Vector(bitmap.width, bitmap.height))
+    }
 }

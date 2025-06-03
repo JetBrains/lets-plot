@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.encoding.Base64
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
@@ -26,7 +27,7 @@ private constructor(
 ) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelDensity) {
 
     companion object {
-        fun create(size: Vector, pixelDensity: Double): Canvas {
+        fun create(size: Vector, pixelDensity: Double): AwtCanvas {
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
@@ -55,13 +56,19 @@ private constructor(
         }
 
         override fun toDataUrl(): String {
-            return try {
-                val byteArrayOutputStream = java.io.ByteArrayOutputStream()
-                ImageIO.write(image, "png", byteArrayOutputStream)
-                val bytes = byteArrayOutputStream.toByteArray()
-                "data:image/png;base64," + Base64.encode(bytes)
-            } catch (e: IOException) {
-                throw RuntimeException("Failed to convert image to data URL", e)
+            if (false) {
+                val argb: IntArray = image.getRGB(0, 0, image.width, image.height, null, 0, image.width)!!
+                val imageDataUrl = DataImage.encode(image.width, image.height, argb)
+                return imageDataUrl
+            } else {
+                return try {
+                    val byteArrayOutputStream = java.io.ByteArrayOutputStream()
+                    ImageIO.write(image, "png", byteArrayOutputStream)
+                    val bytes = byteArrayOutputStream.toByteArray()
+                    "data:image/png;base64," + Base64.encode(bytes)
+                } catch (e: IOException) {
+                    throw RuntimeException("Failed to convert image to data URL", e)
+                }
             }
         }
     }

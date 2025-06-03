@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -24,9 +25,6 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
@@ -133,23 +131,31 @@ class CanvasPane(
         }
 
         private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-            val mediaType = "data:image/png;base64,"
-            val imageString = dataUrl.replace(mediaType, "")
+            val img = DataImage.decode(dataUrl)
+            val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
+            bufImg.setRGB(0, 0, img.width, img.height, img.argbInts, 0, img.width)
+            return bufImg
 
-            val bytes = imageString.toByteArray(StandardCharsets.UTF_8)
-            val byteArrayInputStream = ByteArrayInputStream(bytes)
-
-            try {
-                return Base64.getDecoder().wrap(byteArrayInputStream).let(ImageIO::read)
-            } catch (e: IOException) {
-                throw IllegalStateException(e)
-            }
+//            val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
+//            val g2d = bufImg.createGraphics() as Graphics2D
+//            g2d.drawImage(img.rgba, 0, 0, null)
+//
+//            val mediaType = "data:image/png;base64,"
+//            val imageString = dataUrl.replace(mediaType, "")
+//
+//            val bytes = imageString.toByteArray(StandardCharsets.UTF_8)
+//            val byteArrayInputStream = ByteArrayInputStream(bytes)
+//
+//            try {
+//                return Base64.getDecoder().wrap(byteArrayInputStream).let(ImageIO::read)
+//            } catch (e: IOException) {
+//                throw IllegalStateException(e)
+//            }
         }
 
         override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
-            return Asyncs.constant(
-                AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
-            )
+            println("CanvasPane.CanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
+            return Asyncs.constant(immediateSnapshot(dataUrl))
         }
 
         override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
@@ -164,6 +170,10 @@ class CanvasPane(
             graphics2D.dispose()
 
             return AwtCanvas.AwtSnapshot(dst)
+        }
+
+        override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
+            return AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
         }
 
         override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

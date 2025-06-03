@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.encoding
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import kotlin.math.min
 
 expect fun deflate(input: ByteArray): ByteArray
@@ -29,7 +30,8 @@ object DataImage {
         return "data:image/png;base64,$base64"
     }
 
-    fun decode(dataUrl: String): DecodedPng {
+    // Returns Triple(width, height, ByteArray of RGBA values)
+    fun decode(dataUrl: String): Bitmap {
         val base64 = dataUrl.substringAfter("base64,")
         val pngData = Base64.decode(base64)
         return decodePng(pngData)
@@ -132,7 +134,7 @@ object DataImage {
 
     }
 
-    private fun decodePng(input: ByteArray): DecodedPng {
+    private fun decodePng(input: ByteArray): Bitmap {
         val stream = InputPngStream(input)
 
         // 1. Verify PNG signature
@@ -177,33 +179,14 @@ object DataImage {
         println("PNG dimensions: $width x $height, Color type: $colorType, Bit depth: $bitDepth")
 
         // 3. Decompress IDAT data
-        if (false) {
-            val compressed = idatChunks.toByteArray()
-            val scanlineLength = width * 4 + 1
-            val decompressed = inflate(compressed, scanlineLength * height)
+        val compressed = idatChunks.toByteArray()
+        val scanlineLength = width * 4 + 1
+        val decompressed = inflate(compressed, scanlineLength * height)
+        val unfiltered = unfilterScanlines(width, height, 4, decompressed)
 
-            require(decompressed.size == scanlineLength * height) { "Decompressed data size does not match expected size" }
+        println("Decoded PNG: $width x $height, RGBA size: ${unfiltered.size}")
 
-            // 4. Remove scanline filters (only filter type 0)
-            val rgba = mutableListOf<Byte>()
-            decompressed.asSequence().windowed(scanlineLength, scanlineLength).forEach { window ->
-                require(window[0] == 0.toByte()) { "Only filter type 0 is supported" } // filter type 0
-                rgba += window.drop(1)
-            }
-
-            println("Decoded PNG: $width x $height, RGBA size: ${rgba.size}")
-
-            return DecodedPng(width, height, rgba.toByteArray())
-        } else {
-            val compressed = idatChunks.toByteArray()
-            val scanlineLength = width * 4 + 1
-            val decompressed = inflate(compressed, scanlineLength * height)
-            val unfiltered = unfilterScanlines(width, height, 4, decompressed)
-
-            println("Decoded PNG: $width x $height, RGBA size: ${unfiltered.size}")
-
-            return DecodedPng(width, height, unfiltered)
-        }
+        return Bitmap.fromRGBABytes(width, height, unfiltered)
     }
 
     private fun readInt(stream: InputPngStream): Int {

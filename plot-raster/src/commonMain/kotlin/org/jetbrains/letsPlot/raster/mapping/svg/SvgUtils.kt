@@ -86,6 +86,8 @@ internal object SvgUtils {
 //            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> Image()
             else -> Group() //throw IllegalArgumentException("Unsupported source svg element: ${source::class.simpleName}")
+        }.also {
+            it.peer = peer
         }
     }
 

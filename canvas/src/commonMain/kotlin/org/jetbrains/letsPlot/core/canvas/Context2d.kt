@@ -101,6 +101,7 @@ interface Context2d {
         }
         lineTo(points.last().x, points.last().y)
     }
+
 }
 
 fun Context2d.affineTransform(matrix: AffineTransform) = transform(
