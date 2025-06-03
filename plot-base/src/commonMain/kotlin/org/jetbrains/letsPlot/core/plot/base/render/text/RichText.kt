@@ -229,17 +229,19 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        interface Span : RichTextNode {
-            val visualCharCount: Int // in chars, used for line wrapping
+        abstract class Span : RichTextNode {
+            protected var x: Double? = null
+            abstract val visualCharCount: Int // in chars, used for line wrapping
 
-            fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement>
+            abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+            abstract fun render(context: RenderState, previousNodes: List<Span>): List<SvgElement>
+
             fun render(): List<SvgElement> = render(RenderState(), emptyList())
         }
 
         class Text(
             val text: String
-        ) : Span {
+        ) : Span() {
             override val visualCharCount: Int = text.length
 
             override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
