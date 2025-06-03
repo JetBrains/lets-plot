@@ -7706,6 +7706,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
               box_padding=None,
               max_overlaps=None,
               min_segment_length=None,
+              arrow=None,
               **other_args):
     """
     Add text labels that repel away from each other and from data points.
@@ -7802,6 +7803,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     min_segment_length : float
         Minimum length of the line segment connecting the label to the point.
         Shorter segments will be omitted.
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7841,6 +7844,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     See also:
     - `geom_text()` for placing text without repulsion.
@@ -7873,6 +7877,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                  box_padding = box_padding,
                  max_overlaps = max_overlaps,
                  min_segment_length = min_segment_length,
+                 arrow=arrow,
                  **other_args)
 
 def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
@@ -7896,6 +7901,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                box_padding=None,
                max_overlaps=None,
                min_segment_length=None,
+               arrow=None,
                **other_args):
 
     """
@@ -8002,6 +8008,8 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Max number of overlapping labels to allow.
     min_segment_length : float
         Minimum length of the connecting line segment. Shorter ones are omitted.
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8042,6 +8050,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     See also:
     - `geom_text_repel()` for labels without background boxes.
@@ -8078,6 +8087,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                  box_padding = box_padding,
                  max_overlaps = max_overlaps,
                  min_segment_length = min_segment_length,
+                 arrow=arrow,
                  **other_args)
 
 

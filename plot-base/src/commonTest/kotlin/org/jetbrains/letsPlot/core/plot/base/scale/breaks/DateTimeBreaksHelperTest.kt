@@ -65,7 +65,8 @@ class DateTimeBreaksHelperTest {
 
     @Test
     fun hours2() {
-        val expected = intArrayOf(9, 12, 15)
+//        val expected =6 intArrayOf(9, 12, 15)
+        val expected = intArrayOf(10, 13, 16)
         assertHours(expected, 10, 3)
     }
 
@@ -83,13 +84,18 @@ class DateTimeBreaksHelperTest {
 
     @Test
     fun weeks1() {
-        val expected = intArrayOf(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+//        val expected = intArrayOf(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+        // New expectation: all Mondays.
+        val expected = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         assertWeeks(expected, 10, 10)
     }
 
     @Test
     fun weeks2() {
-        val expected = intArrayOf(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+        // Note: we don't have a 2-week step in the current implementation: see NiceTimeInterval.kt
+//        val expected = intArrayOf(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+        // New expectation: all Mondays.
+        val expected = intArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         assertWeeks(expected, 10, 5)
     }
 
@@ -178,23 +184,23 @@ class DateTimeBreaksHelperTest {
     }
 
     companion object {
-        private val TZ = TimeZone.UTC
+        private val TZ_UTC = TimeZone.UTC
 
         private val BASE_DATE = Date(1, Month.JANUARY, 2013)
         private val BASE_TIME = Time(7, 7, 7, 7)             // 07:07:07.007
         private val BASE_INSTANT: Instant = DateTime(
             BASE_DATE,
             BASE_TIME
-        ).toInstant(TZ)
+        ).toInstant(TZ_UTC)
 
-        private val MILLISECONDS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).milliseconds }
-        private val SECONDS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).seconds }
-        private val MINUTES = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).minutes }
-        private val HOURS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).hours }
-        private val DAYS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).day }
-        private val WEEKDAYS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).weekDay.ordinal }
-        private val MONTHS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).month.ordinal }
-        private val YEARS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ).year }
+        private val MILLISECONDS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).milliseconds }
+        private val SECONDS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).seconds }
+        private val MINUTES = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).minutes }
+        private val HOURS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).hours }
+        private val DAYS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).day }
+        private val WEEKDAYS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).weekDay.ordinal }
+        private val MONTHS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).month.ordinal }
+        private val YEARS = { instant: Double -> DateTime.ofEpochMilliseconds(instant, TZ_UTC).year }
 
         private fun assertMilliseconds(expected: IntArray, msCount: Long, targetBreakCount: Int) {
             val instant2 = BASE_INSTANT.add(Duration.MS.mul(msCount))
@@ -314,8 +320,8 @@ class DateTimeBreaksHelperTest {
                 BASE_TIME
             )
 
-            val instant1 = dateTime1.toEpochMilliseconds(TZ)
-            val instant2 = dateTime2.toEpochMilliseconds(TZ)
+            val instant1 = dateTime1.toEpochMilliseconds(TZ_UTC)
+            val instant2 = dateTime2.toEpochMilliseconds(TZ_UTC)
 
             val breaks = computeBreaks(
                 instant1,
@@ -346,8 +352,8 @@ class DateTimeBreaksHelperTest {
                 BASE_TIME
             )
 
-            val instant1 = dateTime1.toEpochMilliseconds(TZ)
-            val instant2 = dateTime2.toEpochMilliseconds(TZ)
+            val instant1 = dateTime1.toEpochMilliseconds(TZ_UTC)
+            val instant2 = dateTime2.toEpochMilliseconds(TZ_UTC)
 
             val breaks = computeBreaks(
                 instant1,
@@ -380,21 +386,22 @@ class DateTimeBreaksHelperTest {
                 toInstant.toDouble(),
                 targetBreakCount,
                 providedFormatter = null,
-                minInterval
+                minInterval,
+                tz = TZ_UTC
             )
             return helper.breaks.toTypedArray()
         }
 
         private fun assertTimesEqual(dateTimeArr: Array<Double>, time: Time) {
             for ((i, dt) in dateTimeArr.withIndex()) {
-                val dateTime = DateTime.ofEpochMilliseconds(dt, TZ)
+                val dateTime = DateTime.ofEpochMilliseconds(dt, TZ_UTC)
                 assertEquals(time, dateTime.time, "Index $i")
             }
         }
 
         private fun assertDaysOfYearEqual(instants: Array<Double>, dayOfTheYear: Int) {
             for ((i, dt) in instants.withIndex()) {
-                val dateTime = DateTime.ofEpochMilliseconds(dt, TZ)
+                val dateTime = DateTime.ofEpochMilliseconds(dt, TZ_UTC)
                 val daysFromYearStart = dateTime.date.daysFromYearStart()
                 assertEquals(dayOfTheYear, daysFromYearStart, "Index $i")
             }

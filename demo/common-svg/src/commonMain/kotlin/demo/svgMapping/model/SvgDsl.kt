@@ -8,6 +8,7 @@ package demo.svgMapping.model
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
@@ -324,5 +325,51 @@ internal fun SvgSlimGroup.slimPath(
     strokeWidth?.let { el.setStrokeWidth(it.toDouble()) }
     el.apply(config)
     el.appendTo(this)
+    return el
+}
+
+internal fun SvgNode.image(
+    href: String? = null,
+    x: Number? = null,
+    y: Number? = null,
+    width: Number? = null,
+    height: Number? = null,
+    id: String? = null,
+    config: SvgImageElement.() -> Unit = {},
+): SvgImageElement {
+    val el = SvgImageElement()
+    href?.let { el.href().set(SvgUtils.pngDataURI(it)) }
+    id?.let { el.id().set(it) }
+    x?.let { el.x().set(it.toDouble()) }
+    y?.let { el.y().set(it.toDouble()) }
+    width?.let { el.width().set(it.toDouble()) }
+    height?.let { el.height().set(it.toDouble()) }
+
+
+    el.apply(config)
+    children().add(el)
+    return el
+}
+
+internal fun SvgNode.bitmap(
+    bitmap: Bitmap,
+    x: Number,
+    y: Number,
+    width: Number,
+    height: Number,
+    id: String? = null,
+    config: SvgImageElementEx.() -> Unit = {},
+) : SvgImageElementEx {
+    val el = SvgImageElementEx(
+        x = x.toDouble(),
+        y = y.toDouble(),
+        width = width.toDouble(),
+        height = height.toDouble(),
+        myBitmap = bitmap
+    )
+
+    id?.let { el.id().set(it) }
+    el.apply(config)
+    children().add(el)
     return el
 }

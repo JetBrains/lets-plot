@@ -92,7 +92,12 @@ class CanvasDelegate(
 }
 
 object NullSnapshot : Canvas.Snapshot {
+    override val size: Vector = Vector(1, 1)
+
     override fun copy(): Canvas.Snapshot = this
+    override fun toDataUrl(): String {
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8//8/AwAI/wH+9QAAAABJRU5ErkJggg=="
+    }
 }
 
 open class CanvasControlDelegate(
@@ -121,8 +126,12 @@ open class CanvasControlDelegate(
 
     override fun createCanvas(size: Vector): Canvas = CanvasDelegate(size.x, size.y)
     override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         return Asyncs.constant(NullSnapshot)
+    }
+
+    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
+        return NullSnapshot
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

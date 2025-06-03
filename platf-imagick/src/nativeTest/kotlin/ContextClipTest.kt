@@ -11,14 +11,9 @@ import kotlin.test.Test
  */
 
 class ContextClipTest {
-    private val expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/"
-    private val outDir: String = getCurrentDir() + "/build/image-test/"
+    private val imageComparer = ImageComparer()
     private val w = 100.0
     private val h = 100.0
-
-    init {
-        mkDir(outDir)
-    }
 
     private fun nwRect(ctx: Context2d) {
         ctx.moveTo(0, 0)
@@ -46,16 +41,10 @@ class ContextClipTest {
         ctx.lineTo(50, 100)
     }
 
-    private val imageComparer = ImageComparer(
-        expectedDir = expectedDir,
-        outDir = outDir
-    )
-
     private fun createCanvas(): Pair<MagickCanvas, Context2d> {
         val canvas = MagickCanvas.create(width = w, height = h, pixelDensity = 1.0)
         return canvas to canvas.context2d
     }
-
 
     @Test
     fun clip_and_fill() {

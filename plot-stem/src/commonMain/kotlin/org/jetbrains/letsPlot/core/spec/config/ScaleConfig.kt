@@ -68,7 +68,8 @@ import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMapper
 class ScaleConfig<T> constructor(
     val aes: Aes<T>,
     options: Map<String, Any>,
-    private val aopConversion: AesOptionConversion
+    private val aopConversion: AesOptionConversion,
+    private val tz: TimeZone?,
 ) : OptionsAccessor(options) {
 
     private fun enforceDiscreteDomain(): Boolean {
@@ -213,14 +214,11 @@ class ScaleConfig<T> constructor(
         b.discreteDomainReverse(reverse)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
-            // TODO: provide time zone
-            val tz: TimeZone? = null
-
             val dateTimeFormatter = getString(FORMAT)?.let { pattern ->
                 val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
-            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
+            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter, tz))
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {

@@ -58,10 +58,14 @@ class DomCanvasControl(
         return createSnapshotAsync(dataUrl, null)
     }
 
-    override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Blob(arrayOf(bytes), BlobPropertyBag("image/png"))
+    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return Blob(arrayOf(rgba), BlobPropertyBag("image/png"))
             .let(URL.Companion::createObjectURL)
             .let { createSnapshotAsync(it, size) }
+    }
+
+    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
+        TODO("Not yet implemented") // New impl required w/o Image.onload causing async behavior.
     }
 
     private fun createSnapshotAsync(dataUrl: String, size: Vector? = null): Async<Canvas.Snapshot> {

@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
@@ -33,13 +34,19 @@ internal class DomCanvas private constructor(
 
     internal class DomSnapshot(
         val canvasElement: HTMLCanvasElement,
-        private val size: Vector,
+        size: Vector,
         private val pixelRatio: Double
     ) : Canvas.Snapshot {
+        override val size: Vector = Vector((size.x * pixelRatio).roundToInt(), (size.y * pixelRatio).roundToInt())
+
         override fun copy(): Canvas.Snapshot {
             val canvasCopy = createNativeCanvas(size, pixelRatio)
             canvasCopy.context2d.drawImage(canvasElement, 0.0, 0.0)
             return DomSnapshot(canvasCopy, size, pixelRatio)
+        }
+
+        override fun toDataUrl(): String {
+            return canvasElement.toDataURL("png")
         }
     }
 

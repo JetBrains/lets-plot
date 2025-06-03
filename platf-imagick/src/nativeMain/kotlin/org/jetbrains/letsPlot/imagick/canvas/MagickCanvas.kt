@@ -6,14 +6,19 @@
 package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.refTo
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.nat.encoding.png.ImageInfo
+import org.jetbrains.letsPlot.nat.encoding.png.ImageLineByte
+import org.jetbrains.letsPlot.nat.encoding.png.OutputPngStream
+import org.jetbrains.letsPlot.nat.encoding.png.PngWriter
 
 class MagickCanvas(
     private val _img: CPointer<ImageMagick.MagickWand>,
@@ -22,16 +27,17 @@ class MagickCanvas(
 ) : Canvas {
 
     // TODO: replace usage in tests with Snapshot
-    val img: CPointer<ImageMagick.MagickWand>? get ()  {
-        val wand = (context2d as MagickContext2d).wand
-        if (false) {
-            val v = ImageMagick.DrawGetVectorGraphics(wand)
-            println(v!!.toKString())
-        }
+    val img: CPointer<ImageMagick.MagickWand>?
+        get() {
+            val wand = (context2d as MagickContext2d).wand
+            if (false) {
+                val v = ImageMagick.DrawGetVectorGraphics(wand)
+                println(v!!.toKString())
+            }
 
-        ImageMagick.MagickDrawImage(_img, wand)
-        return _img
-    }
+            ImageMagick.MagickDrawImage(_img, wand)
+            return _img
+        }
 
     override val context2d: Context2d = MagickContext2d(_img, pixelDensity)
 
@@ -67,12 +73,11 @@ class MagickCanvas(
     class MagickSnapshot(
         img: CPointer<ImageMagick.MagickWand>
     ) : Disposable, Canvas.Snapshot {
-        val img: CPointer<ImageMagick.MagickWand>
-
-        init {
-            //ImageMagick.DrawImage(img)
-            this.img = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
-        }
+        val img: CPointer<ImageMagick.MagickWand> = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
+        override val size: Vector = Vector(
+            ImageMagick.MagickGetImageWidth(img).toInt(),
+            ImageMagick.MagickGetImageHeight(img).toInt()
+        )
 
         override fun dispose() {
             ImageMagick.DestroyMagickWand(img)
@@ -81,6 +86,73 @@ class MagickCanvas(
         override fun copy(): Canvas.Snapshot {
             val copiedImg = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
             return MagickSnapshot(copiedImg)
+        }
+
+        override fun toDataUrl(): String {
+            val (pixels, size) = exportPixels(img)
+
+            if (pixels.isEmpty()) {
+                return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8//8/AwAI/wH+9QAAAABJRU5ErkJggg=="
+            }
+
+            val outputStream = OutputPngStream()
+            val png = PngWriter(outputStream, ImageInfo(size.x, size.y, bitdepth = 8, alpha = true))
+            val iLine = ImageLineByte(png.imgInfo)
+
+            pixels.asSequence()
+                .windowed(size.x * 4, size.x * 4)
+                .forEachIndexed { _, byteArray ->
+                    byteArray.forEachIndexed { col, byte ->
+                        iLine.scanline[col] = byte.toByte()
+                    }
+                    png.writeRow(iLine)
+                }
+
+            png.end()
+            return "data:image/png;base64,${Base64.encode(outputStream.byteArray)}"
+        }
+
+        private fun exportPixels(wand: CPointer<ImageMagick.MagickWand>): Pair<UByteArray, Vector> {
+            val width = ImageMagick.MagickGetImageWidth(wand).toInt()
+            val height = ImageMagick.MagickGetImageHeight(wand).toInt()
+            println("MagickCanvas: Exporting pixels, size: $width x $height")
+
+            if (width <= 0 || height <= 0) {
+                return UByteArray(0) to Vector.ZERO
+            }
+
+
+            val pixels = UByteArray(width * height * 4) // RGBA
+            val success = ImageMagick.MagickExportImagePixels(
+                wand, 0, 0, width.toULong(), height.toULong(),
+                "RGBA",
+                ImageMagick.StorageType.CharPixel,
+                pixels.refTo(0)
+            )
+            if (success == ImageMagick.MagickFalse) error("Failed to export pixels")
+            return pixels to Vector(width, height)
+        }
+
+        companion object {
+            fun fromPixels(rgba: ByteArray, size: Vector): MagickSnapshot {
+                require(size.x > 0 && size.y > 0) { "MagickCanvas: Size must be greater than zero" }
+                require(rgba.size == size.x * size.y * 4) { // 4 bytes per pixel (RGBA)
+                    "MagickCanvas: Byte array size does not match the specified size"
+                }
+
+                val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
+                ImageMagick.MagickImportImagePixels(
+                    img,
+                    0,
+                    0,
+                    size.x.toULong(),
+                    size.y.toULong(),
+                    "RGBA",
+                    ImageMagick.StorageType.CharPixel,
+                    rgba.asUByteArray().refTo(0)
+                )
+                return MagickCanvas.MagickSnapshot(img)
+            }
         }
 
     }

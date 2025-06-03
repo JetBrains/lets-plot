@@ -48,6 +48,61 @@ class MagickContext2d(
         }
     }
 
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
+        val snap = snapshot as MagickCanvas.MagickSnapshot
+        val srcWand = snap.img
+
+        val success = ImageMagick.MagickCompositeImage(
+            img,
+            srcWand,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            x.toULong().convert(),
+            y.toULong().convert()
+        )
+
+        if (success == ImageMagick.MagickFalse) {
+            val err = ImageMagick.MagickGetException(img, null)
+            throw RuntimeException("MagickCompositeImage failed: $err")
+        }
+    }
+
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, w: Double, h: Double) {
+        val snap = snapshot as MagickCanvas.MagickSnapshot
+        val srcWand = snap.img
+
+        // Resize the source wand to desired width and height
+        val successResize = ImageMagick.MagickResizeImage(
+            srcWand,
+            w.toULong(),
+            h.toULong(),
+            ImageMagick.FilterType.LanczosFilter
+        )
+
+        if (successResize == ImageMagick.MagickFalse) {
+            ImageMagick.DestroyMagickWand(srcWand)
+            val err = ImageMagick.MagickGetException(img, null)
+            throw RuntimeException("MagickResizeImage failed: $err")
+        }
+
+        // Composite the resized image onto the base image
+        val success = ImageMagick.MagickCompositeImage(
+            img,
+            srcWand,
+            ImageMagick.CompositeOperator.OverCompositeOp,
+            ImageMagick.MagickTrue,
+            x.toULong().convert(),
+            y.toULong().convert()
+        )
+
+        ImageMagick.DestroyMagickWand(srcWand)
+
+        if (success == ImageMagick.MagickFalse) {
+            val err = ImageMagick.MagickGetException(img, null)
+            throw RuntimeException("MagickCompositeImage failed: $err")
+        }
+    }
+
     override fun save() {
         stateDelegate.save()
         ImageMagick.PushDrawingWand(wand)

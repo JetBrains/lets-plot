@@ -56,7 +56,7 @@ open class PlotConfigBackend(
     }
 
     /**
-     * WARN! Side effects - performs modifications deep in specs tree
+     * WARN! Side effects - performs modifications deep in the spec tree.
      */
     internal fun updatePlotSpec() {
 
@@ -65,16 +65,13 @@ open class PlotConfigBackend(
         layerConfigs.map { layerConfig ->
             val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
 
-            // Detect date/time variables with mapping to discrete scale
+            // Detect date/time variables with mapping to a discrete scale
             val dateTimeDiscreteBindings = layerConfig.varBindings
                 .filter { it.variable.name in dateTimeColumns }
                 .filter { scaleProviderByAes[it.aes]?.discreteDomain == true }
 
             val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
                 val distinctValues = layerConfig.combinedData.distinctValues(binding.variable)
-
-                // TODO: provide a time zone (or null).
-                val tz = null
 
                 selectDateTimeFormat(distinctValues, tz)?.let { format ->
                     mapOf(
@@ -414,7 +411,8 @@ open class PlotConfigBackend(
                         range.lowerEnd,
                         range.upperEnd,
                         distinctValues.size,
-                        providedFormatter = null
+                        providedFormatter = null,
+                        tz = tz
                     ).pattern
                 }
 

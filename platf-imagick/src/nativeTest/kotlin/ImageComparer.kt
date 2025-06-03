@@ -1,9 +1,12 @@
-import demoAndTestShared.*
+
+import demoAndTestShared.parsePlotSpec
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import platform.posix.*
 import kotlin.math.abs
 
@@ -13,9 +16,23 @@ import kotlin.math.abs
  */
 
 class ImageComparer(
-    private val expectedDir: String,
-    private val outDir: String,
+    // Reuse existing directories when possible.
+    // `mkdirs` has different signatures: one parameter on Windows, two on Linux.
+    // To avoid compilation errors, we’d need a Windows-specific source set.
+    private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/",
+    private val outDir: String = getCurrentDir() + "/build/reports/",
+    private val tol: Int = 1
 ) {
+
+    fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
+        val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
+        val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0)
+        SvgCanvasFigure(svg).mapToCanvas(canvasControl)
+
+        val canvas = canvasControl.children.single() as MagickCanvas
+        assertImageEquals(expectedFileName, canvas.img!!)
+    }
 
     fun assertImageEquals(expectedFileName: String, spec: String) {
         val plotSpec = parsePlotSpec(spec)
@@ -26,9 +43,9 @@ class ImageComparer(
 
         val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0)
         plotFigure.mapToCanvas(canvasControl)
-        val plotCanvas = canvasControl.children.single() as MagickCanvas
 
-        assertImageEquals(expectedFileName, plotCanvas.img!!)
+        val canvas = canvasControl.children.single() as MagickCanvas
+        assertImageEquals(expectedFileName, canvas.img!!)
     }
 
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
@@ -38,9 +55,11 @@ class ImageComparer(
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
         if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
+            println("expectedWand failure - $expectedPath")
             println(getMagickError(expectedWand))
             // Write the  actual image to a file for debugging
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
+                println("actualWand failure - $actualFilePath")
                 println(getMagickError(actualWand))
             } else {
                 println("Failed to read expected image. Actual image saved to $actualFilePath")
@@ -102,7 +121,7 @@ class ImageComparer(
         return abs(p1.toInt() - p2.toInt()) <= tolerance
     }
 
-    fun comparePixelArrays(expected: UByteArray, actual: UByteArray, tolerance: Int = 0): Boolean {
+    fun comparePixelArrays(expected: UByteArray, actual: UByteArray, tolerance: Int = tol): Boolean {
         if (expected.size != actual.size) return false
         return expected.indices.all { pixelsEqual(expected[it], actual[it], tolerance) }
     }
@@ -301,24 +320,11 @@ class ImageComparer(
     }
 }
 
-fun mkDir(dir: String): Boolean {
-    val access = S_IRWXU.convert<mode_t>() or S_IRWXG.convert() or S_IRWXO.convert()
-    if (access(dir, F_OK) == 0) {
-        return true
-    }
-
-    if (mkdir(dir, access) != 0 && errno != EEXIST) {
-        return false
-    }
-
-    return true
-}
-
 fun getCurrentDir(): String {
     return memScoped {
         val bufferSize = 4096 * 8
         val buffer = allocArray<ByteVar>(bufferSize)
-        if (getcwd(buffer, bufferSize.toULong()) != null) {
+        if (getcwd(buffer, bufferSize.convert()) != null) {
             buffer.toKString()
         } else {
             "." // Default to current directory on error

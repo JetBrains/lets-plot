@@ -23,7 +23,7 @@ object ThemeOption {
     const val PLOT_MARGIN = "plot_margin"
     const val PLOT_INSET = "plot_inset"
 
-    const val PLOT_TITLE_POSITION = "plot_title_position" // also apples to 'subtitle'
+    const val PLOT_TITLE_POSITION = "plot_title_position" // also applied to 'subtitle'
     const val PLOT_CAPTION_POSITION = "plot_caption_position"
 
     // ToDo: "text_width_scale" is used Violin demo - update.

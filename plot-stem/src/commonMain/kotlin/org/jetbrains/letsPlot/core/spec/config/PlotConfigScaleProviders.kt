@@ -41,7 +41,7 @@ internal object PlotConfigScaleProviders {
             .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
             .map { (varBinding, _) -> varBinding.aes }
 
-        // Axis that don't have an explicit mapping but have a corresponding positional mapping to a datetime variable
+        // Axis that doesn't have an explicit mapping but have a corresponding positional mapping to a datetime variable
         val dateTimeAxisAesByPositionalVarBinding = listOfNotNull(
             if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalX)) Aes.X else null,
             if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalY)) Aes.Y else null,
@@ -51,7 +51,10 @@ internal object PlotConfigScaleProviders {
             .distinct()
             .filter { aes -> aes !in scaleProviderBuilderByAes }
             .forEach { aes ->
-                scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(aes)
+                scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(
+                    aes,
+                    layerConfigs.firstOrNull()?.tz
+                )
             }
 
         // All aes used in bindings and x/y aes.
@@ -96,9 +99,11 @@ internal object PlotConfigScaleProviders {
             return dTypes.distinct().singleOrNull() ?: DataType.UNKNOWN
         }
 
+        val tz = layerConfigs.firstOrNull()?.tz
         return scaleProviderBuilders.mapValues { (aes, builder) ->
             builder
                 .dataType(getDType(aes))
+                .timeZone(tz)
                 .exponentFormat(expFormat)
                 .build()
         }

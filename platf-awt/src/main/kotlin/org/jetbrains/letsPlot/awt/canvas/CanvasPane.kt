@@ -152,16 +152,18 @@ class CanvasPane(
             )
         }
 
-        override fun createSnapshot(bytes: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-            val src = ImageIO.read(ByteArrayInputStream(bytes))
+        override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+            return Asyncs.constant(immediateSnapshot(rgba, size))
+        }
+
+        override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
+            val src = ImageIO.read(ByteArrayInputStream(rgba))
             val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
             val graphics2D = dst.createGraphics() as Graphics2D
             graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
             graphics2D.dispose()
 
-            return Asyncs.constant(
-                AwtCanvas.AwtSnapshot(dst)
-            )
+            return AwtCanvas.AwtSnapshot(dst)
         }
 
         override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

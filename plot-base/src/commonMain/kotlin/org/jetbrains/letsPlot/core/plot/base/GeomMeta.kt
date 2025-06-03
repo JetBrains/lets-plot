@@ -432,7 +432,8 @@ object GeomMeta {
                 Aes.POINT_SIZE,
                 Aes.SEGMENT_COLOR,
                 Aes.SEGMENT_SIZE,
-                Aes.SEGMENT_ALPHA
+                Aes.SEGMENT_ALPHA,
+                Aes.LINETYPE
             )
 
             GeomKind.LABEL_REPEL -> listOf(
@@ -451,7 +452,8 @@ object GeomMeta {
                 Aes.POINT_SIZE,
                 Aes.SEGMENT_COLOR,
                 Aes.SEGMENT_SIZE,
-                Aes.SEGMENT_ALPHA
+                Aes.SEGMENT_ALPHA,
+                Aes.LINETYPE
             )
 
             GeomKind.LIVE_MAP -> listOf(

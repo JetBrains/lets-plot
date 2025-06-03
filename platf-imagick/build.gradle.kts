@@ -12,7 +12,7 @@ plugins {
 val imagickDir = rootProject.file("platf-imagick/ImageMagick")
 
 if (!imagickDir.exists() || !imagickDir.isDirectory) {
-    logger.warn("⚠️ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n./gradlew :initImageMagick")
+    logger.warn("ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n./gradlew :initImageMagick")
 }
 
 val os: OperatingSystem = OperatingSystem.current()
@@ -63,6 +63,7 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":canvas"))
+                implementation(project(":platf-native"))
                 implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
             }
         }
@@ -70,6 +71,7 @@ kotlin {
         nativeTest {
             dependencies {
                 implementation(project(":demo-and-test-shared"))
+                implementation(project(":demo-common-svg"))
 
                 implementation(project(":datamodel"))
                 implementation(project(":plot-base"))

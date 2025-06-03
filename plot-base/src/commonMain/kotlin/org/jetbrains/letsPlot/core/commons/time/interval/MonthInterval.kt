@@ -7,39 +7,26 @@ package org.jetbrains.letsPlot.core.commons.time.interval
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-internal class MonthInterval(count: Int) : MeasuredInDays(count) {
+internal class MonthInterval(count: Int) : TimeZoneAwareInterval(count) {
 
     override val tickFormatPattern: String
         get() = "%b"
 
-    override fun getFirstDayContaining(dateTime: DateTime): Date {
-        return firstDay(dateTime.year, dateTime.month)
+    override fun atOrBefore(dateTime: DateTime): DateTime {
+        return DateTime(
+            Date(
+                1,
+                dateTime.month,
+                dateTime.year
+            )
+        )
     }
 
-    override fun addInterval(dateTime: DateTime): DateTime {
-        var result = dateTime
-        for (i in 0 until count) {
-            result = addMonth(result)
-        }
-        return result
-    }
-
-    private fun addMonth(dateTime: DateTime): DateTime {
-        var year = dateTime.year
-        val month = dateTime.month
-        var next = month.next()
-        if (next == null) {
-            next = Month.JANUARY
-            year++
-        }
-        return DateTime(firstDay(year, next))
-    }
-
-    companion object {
-        private fun firstDay(year: Int, month: Month): Date {
-            return Date(1, month, year)
-        }
+    override fun addInterval(dateTime: DateTime, tz: TimeZone): DateTime {
+        return DateTime(
+            dateTime.date.addMonths(count),
+        )
     }
 }

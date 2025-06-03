@@ -57,17 +57,14 @@ class LayerConfig constructor(
     val geomProto: GeomProto,
     val aopConversion: AesOptionConversion,
     private val clientSide: Boolean,
-    isMapPlot: Boolean
+    isMapPlot: Boolean,
+    public val tz: TimeZone?,
 ) : OptionsAccessor(
     layerOptions,
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    // TODO: provide a time zonr (or null)
-    public val tz: TimeZone? = null
-
-
-    val dtypes: Map<String, DataType>// = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
+    val dtypes: Map<String, DataType>
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
     val labelFormat: String? = getString(Option.Geom.Text.LABEL_FORMAT)
@@ -232,7 +229,9 @@ class LayerConfig constructor(
             isMapPlot = isMapPlot
         )
 
-        val baseDTypes = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
+        val baseDTypes = DataMetaUtil.getDataTypes(plotDataMeta) +
+                DataMetaUtil.getDataTypes(getMap(DATA_META))
+
         val discreteVarsDTypes = if (clientSide) {
             combinedDiscreteMappings
                 .entries.associate { (aes, varName) ->
