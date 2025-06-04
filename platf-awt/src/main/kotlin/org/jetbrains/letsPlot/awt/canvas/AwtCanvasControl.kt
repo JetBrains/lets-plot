@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -83,6 +84,12 @@ class AwtCanvasControl(
 
     override fun createCanvas(size: Vector): Canvas {
         return AwtCanvas.create(size, pixelDensity)
+    }
+
+    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+        val bufferedImage = BufferedImage(bitmap.width, bitmap.height, BufferedImage.TYPE_INT_ARGB)
+        bufferedImage.setRGB(0, 0, bitmap.width, bitmap.height, bitmap.argbInts, 0, bitmap.width)
+        return AwtCanvas.AwtSnapshot(bufferedImage)
     }
 
     private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {

@@ -9,16 +9,11 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.refTo
 import kotlinx.cinterop.toKString
-import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.nat.encoding.png.ImageInfo
-import org.jetbrains.letsPlot.nat.encoding.png.ImageLineByte
-import org.jetbrains.letsPlot.nat.encoding.png.OutputPngStream
-import org.jetbrains.letsPlot.nat.encoding.png.PngWriter
 
 class MagickCanvas(
     private val _img: CPointer<ImageMagick.MagickWand>,
@@ -82,30 +77,6 @@ class MagickCanvas(
         override fun copy(): Canvas.Snapshot {
             val copiedImg = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
             return MagickSnapshot(copiedImg)
-        }
-
-        override fun toDataUrl(): String {
-            val (pixels, size) = exportPixels(img)
-
-            if (pixels.isEmpty()) {
-                return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8//8/AwAI/wH+9QAAAABJRU5ErkJggg=="
-            }
-
-            val outputStream = OutputPngStream()
-            val png = PngWriter(outputStream, ImageInfo(size.x, size.y, bitdepth = 8, alpha = true))
-            val iLine = ImageLineByte(png.imgInfo)
-
-            pixels.asSequence()
-                .windowed(size.x * 4, size.x * 4)
-                .forEachIndexed { _, byteArray ->
-                    byteArray.forEachIndexed { col, byte ->
-                        iLine.scanline[col] = byte.toByte()
-                    }
-                    png.writeRow(iLine)
-                }
-
-            png.end()
-            return "data:image/png;base64,${Base64.encode(outputStream.byteArray)}"
         }
 
         private fun exportPixels(wand: CPointer<ImageMagick.MagickWand>): Pair<UByteArray, Vector> {

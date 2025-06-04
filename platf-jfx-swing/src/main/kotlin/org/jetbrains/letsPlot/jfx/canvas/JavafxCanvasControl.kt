@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
@@ -47,6 +48,13 @@ class JavafxCanvasControl(
 
     override fun createCanvas(size: Vector): Canvas {
         return JavafxCanvas.create(size, pixelDensity)
+    }
+
+    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+        TODO("JavafxCanvasControl.createSnapshot() - NOT IMPLEMENTED")
+        //val img = WritableImage(bitmap.width, bitmap.height)
+        //img.pixelWriter.setPixels(...)
+        //return JavafxCanvas.JavafxSnapshot(img)
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {

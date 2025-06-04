@@ -41,10 +41,6 @@ internal class DomCanvas private constructor(
             canvasCopy.context2d.drawImage(canvasElement, 0.0, 0.0)
             return DomSnapshot(canvasCopy, size, pixelRatio)
         }
-
-        override fun toDataUrl(): String {
-            return canvasElement.toDataURL("png")
-        }
     }
 
     companion object {

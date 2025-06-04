@@ -5,16 +5,12 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.commons.encoding.Base64
-import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
-import java.io.IOException
-import javax.imageio.ImageIO
 
 
 internal class AwtCanvas
@@ -47,23 +43,6 @@ private constructor(
             g.drawImage(image, 0, 0, null)
             g.dispose()
             return AwtSnapshot(b)
-        }
-
-        override fun toDataUrl(): String {
-            if (false) {
-                val argb: IntArray = image.getRGB(0, 0, image.width, image.height, null, 0, image.width)!!
-                val imageDataUrl = DataImage.encode(image.width, image.height, argb)
-                return imageDataUrl
-            } else {
-                return try {
-                    val byteArrayOutputStream = java.io.ByteArrayOutputStream()
-                    ImageIO.write(image, "png", byteArrayOutputStream)
-                    val bytes = byteArrayOutputStream.toByteArray()
-                    "data:image/png;base64," + Base64.encode(bytes)
-                } catch (e: IOException) {
-                    throw RuntimeException("Failed to convert image to data URL", e)
-                }
-            }
         }
     }
 }

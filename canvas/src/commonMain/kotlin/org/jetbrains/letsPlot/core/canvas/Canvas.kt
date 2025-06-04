@@ -17,6 +17,5 @@ interface Canvas {
     interface Snapshot {
         val size: Vector
         fun copy(): Snapshot
-        fun toDataUrl(): String
     }
 }

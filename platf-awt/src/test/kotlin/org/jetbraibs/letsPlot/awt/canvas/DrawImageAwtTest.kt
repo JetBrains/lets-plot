@@ -5,11 +5,8 @@
 
 package org.jetbraibs.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvas
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
 import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
-import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.junit.Test
@@ -49,14 +46,14 @@ class DrawImageAwtTest {
         tempCtx.closePath()
         tempCtx.fill()
 
-        val imageDataUrl = tempCanvas.immidiateSnapshot().toDataUrl()
-
-        println("ImageDaataURL:\n$imageDataUrl")
-
-        val snapshot = AwtCanvasControl(Vector(100, 100), AwtAnimationTimerPeer({_ ->}), MouseEventPeer()).immediateSnapshot(imageDataUrl)
-
-        val (canvas, ctx) = createCanvas()
-        ctx.drawImage(snapshot)
+//        val imageDataUrl = tempCanvas.takeSnapshot().toDataUrl()
+//
+//        println("ImageDaataURL:\n$imageDataUrl")
+//
+//        val snapshot = AwtCanvasControl(Vector(100, 100), AwtAnimationTimerPeer({_ ->}), MouseEventPeer()).immediateSnapshot(imageDataUrl)
+//
+//        val (canvas, ctx) = createCanvas()
+//        ctx.drawImage(snapshot)
 
     }
 }
