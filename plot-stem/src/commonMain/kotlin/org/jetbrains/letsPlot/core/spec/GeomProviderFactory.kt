@@ -515,8 +515,8 @@ internal object GeomProviderFactory {
         layerConfig.getDouble(Option.Geom.Repel.MIN_SEGMENT_LENGTH)?.let {
             geom.minSegmentLength = it
         }
-        if (layerConfig.has(Option.Geom.Segment.ARROW)) {
-            val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
+        if (layerConfig.has(Option.Geom.Repel.ARROW)) {
+            val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Repel.ARROW]!!)
             geom.arrowSpec = arrowConfig.createArrowSpec()
         }
     }
