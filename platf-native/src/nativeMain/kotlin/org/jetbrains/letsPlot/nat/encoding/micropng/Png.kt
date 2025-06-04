@@ -184,16 +184,16 @@ fun compressPngData(input: ByteArray): ByteArray {
     memScoped {
         val inputSize = input.size
         val inputPtr = input.refTo(0).getPointer(this)
-        val maxOutputSize = compressBound(inputSize.toULong()).toInt()
+        val maxOutputSize = compressBound(inputSize.convert()).toInt()
         val output = ByteArray(maxOutputSize)
         val outputPtr = output.refTo(0).getPointer(this)
         val outputSize = alloc<platform.posix.size_tVar>()
 
         val result = compress2(
             dest = outputPtr.reinterpret(),
-            destLen = outputSize.ptr,
+            destLen = outputSize.ptr.reinterpret(),
             source = inputPtr.reinterpret(),
-            sourceLen = inputSize.toULong(),
+            sourceLen = inputSize.convert(),
             level = Z_BEST_COMPRESSION
         )
 
@@ -212,9 +212,9 @@ fun decompressPngData(input: ByteArray, expectedSize: Int): ByteArray {
 
         val result = uncompress(
             dest = outputPtr.reinterpret(),
-            destLen = outputSize.ptr,
+            destLen = outputSize.ptr.reinterpret(),
             source = inputPtr.reinterpret(),
-            sourceLen = input.size.toULong()
+            sourceLen = input.size.convert()
         )
 
         check(result == Z_OK) { "Zlib decompression failed: $result" }
