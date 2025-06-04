@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
@@ -22,7 +21,8 @@ internal object PlotConfigScaleProviders {
         scaleConfigs: List<ScaleConfig<Any>>,
         excludeStatVariables: Boolean,
         zeroPositionalExpands: Boolean,
-        expFormat: ExponentFormat
+        expFormat: ExponentFormat,
+        dataType: (aes: Aes<*>) -> DataType,
     ): Map<Aes<*>, ScaleProvider> {
 
         val scaleProviderBuilderByAes = HashMap<Aes<*>, ScaleProviderBuilder<*>>()
@@ -47,13 +47,16 @@ internal object PlotConfigScaleProviders {
             if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalY)) Aes.Y else null,
         )
 
+        // Date-time scale providers for all date-time aes.
         (dateTimeAesByVarBinding + dateTimeAxisAesByPositionalVarBinding)
             .distinct()
             .filter { aes -> aes !in scaleProviderBuilderByAes }
             .forEach { aes ->
+                val dataType = dataByVarBinding
                 scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(
                     aes,
-                    layerConfigs.firstOrNull()?.tz
+                    dataType = dataType(aes),
+                    tz = layerConfigs.firstOrNull()?.tz
                 )
             }
 
@@ -85,27 +88,14 @@ internal object PlotConfigScaleProviders {
                 }
         }
 
-        fun getDType(aes: Aes<*>): DataType {
-            val aesBindingByLayer = layerConfigs
-                .associateWith(LayerConfig::varBindings)
-                .mapValues { (_, bindings) -> bindings.singleOrNull { binding -> aes == binding.aes }?.variable?.name }
-                .filterNotNullValues()
-
-            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypes[varName] }
-
-            // Multiple layers with different data types for the same aes.
-            // Don't use any (e.g., INTEGER) - may crash if another layer uses a different incompatible data type.
-            // Return UNKNOWN (effectively, Any.toString()) to avoid crashes.
-            return dTypes.distinct().singleOrNull() ?: DataType.UNKNOWN
-        }
-
         val tz = layerConfigs.firstOrNull()?.tz
         return scaleProviderBuilders.mapValues { (aes, builder) ->
             builder
-                .dataType(getDType(aes))
+                .dataType(dataType(aes))
                 .timeZone(tz)
                 .exponentFormat(expFormat)
                 .build()
         }
     }
+
 }

@@ -19,8 +19,8 @@ class DateTimeBreaksHelper constructor(
     rangeEnd: Double,
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
-    minInterval: NiceTimeInterval? = null,
-    maxInterval: NiceTimeInterval? = null,
+    minInterval: NiceTimeInterval?,
+    maxInterval: NiceTimeInterval?,
     private val tz: TimeZone?,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 

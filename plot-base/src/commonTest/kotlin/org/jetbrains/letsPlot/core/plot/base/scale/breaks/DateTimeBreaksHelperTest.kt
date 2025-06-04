@@ -386,7 +386,8 @@ class DateTimeBreaksHelperTest {
                 toInstant.toDouble(),
                 targetBreakCount,
                 providedFormatter = null,
-                minInterval,
+                minInterval = minInterval,
+                maxInterval = null,
                 tz = TZ_UTC
             )
             return helper.breaks.toTypedArray()

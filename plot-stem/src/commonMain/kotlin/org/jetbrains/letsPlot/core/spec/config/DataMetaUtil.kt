@@ -108,16 +108,11 @@ object DataMetaUtil {
         }
     }
 
-    fun getDateTimeColumns(dataMeta: Map<*, *>): Map<String, DataType> {
-        return dataMeta
-            .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(COLUMN)!! to it.getString(SeriesAnnotation.TYPE) }
-            ?.mapValues { (_, annotationOption) -> toDType(annotationOption) }
-            ?.filterValues { it.isTemporal() }
-            ?: emptyMap()
+    fun getTemporalDTypesByVarName(dataMeta: Map<*, *>): Map<String, DataType> {
+        return getDTypesByVarName(dataMeta).filterValues { it.isTemporal() }
     }
 
-    fun getDataTypes(dataMeta: Map<*, *>): Map<String, DataType> {
+    fun getDTypesByVarName(dataMeta: Map<*, *>): Map<String, DataType> {
         return dataMeta
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.getString(SeriesAnnotation.TYPE) }

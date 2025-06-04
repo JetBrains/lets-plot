@@ -103,7 +103,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
 
     fun hasDataMetaDateTime(variable: String): SingleLayerAssert {
         val layerDataMeta = myLayer.getMap(DATA_META)
-        val dateTimeVariables = DataMetaUtil.getDateTimeColumns(layerDataMeta)
+        val dateTimeVariables = DataMetaUtil.getTemporalDTypesByVarName(layerDataMeta)
         assertTrue(dateTimeVariables.contains(variable), "'$variable' - 'date-time' annotation not found.")
         return this
     }

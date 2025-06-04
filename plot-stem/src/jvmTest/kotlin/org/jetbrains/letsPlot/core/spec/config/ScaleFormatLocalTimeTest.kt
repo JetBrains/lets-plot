@@ -74,7 +74,7 @@ class ScaleFormatLocalTimeTest {
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied
 
-        // UPD: no longer an issue: the formatter is the same for both continuous and discrete scales.
+        // UPD: no longer an issue for 'local time': the formatter is the same for both continuous and discrete scales.
         val formattedForDiscrete = listOf(
             "11:00", "11:30", "12:00", "12:30", "13:00"
         )

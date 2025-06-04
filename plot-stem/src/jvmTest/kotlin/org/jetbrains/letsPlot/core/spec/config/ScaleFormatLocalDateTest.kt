@@ -29,7 +29,7 @@ class ScaleFormatLocalDateTest {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
 
-        // For a discrete scale, a formatter is applied as for a continuous scale
+        // The same formatter is applied for both continuous and discrete scales.
         val expectedLabels = listOf(
             "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5"
         )
@@ -51,13 +51,14 @@ class ScaleFormatLocalDateTest {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
 
-        // TODO: actually expected: ["Jan 1", "Jan 2", "Jan 3"]
         val formattedForContinuous = listOf(
-            "00:00", "12:00", "00:00", "12:00", "00:00"
+            "Jan 1", "Jan 2", "Jan 3"
         )
         // For discrete scale: if to get the DateTimeBreaksHelper's formatter (which the continuous scale uses),
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied
+
+        // UPD: no longer an issue for 'local date': the formatter is the same for both continuous and discrete scales.
         val formattedForDiscrete = listOf(
             "Jan 1", "Jan 2", "Jan 3"
         )

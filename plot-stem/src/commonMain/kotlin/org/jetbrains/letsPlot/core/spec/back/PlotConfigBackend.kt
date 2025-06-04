@@ -63,9 +63,9 @@ open class PlotConfigBackend(
     internal fun updatePlotSpec() {
 
         // Correct scales
-        val plotDateTimeColumns = DataMetaUtil.getDateTimeColumns(getMap(DATA_META))
+        val plotDateTimeColumns = DataMetaUtil.getTemporalDTypesByVarName(getMap(DATA_META))
         layerConfigs.map { layerConfig ->
-            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
+            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getTemporalDTypesByVarName(layerConfig.getMap(DATA_META))
 
             // Detect date/time variables with mapping to a discrete scale
             val dateTimeDiscreteBindings = layerConfig.varBindings
