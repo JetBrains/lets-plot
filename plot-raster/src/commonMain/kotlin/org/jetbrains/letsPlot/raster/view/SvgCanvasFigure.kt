@@ -146,4 +146,8 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
     private fun needRedraw() {
     }
+
+    fun render(canvas: Canvas) {
+
+    }
 }

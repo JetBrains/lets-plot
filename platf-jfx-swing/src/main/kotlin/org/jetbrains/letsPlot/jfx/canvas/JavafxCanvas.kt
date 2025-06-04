@@ -56,9 +56,5 @@ private constructor(
                     image.height.roundToInt()
                 )
             )
-
-        override fun toDataUrl(): String {
-            TODO("JavafxCanvas.toDataUrl() - Not yet implemented")
-        }
     }
 }

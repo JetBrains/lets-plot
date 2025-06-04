@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
@@ -22,7 +23,8 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
 
     private val rgbEncoder: RGBEncoder = object : RGBEncoder {
         override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
-            TODO("Implement DataImage URL encoding for plot-raster")
+            val dataImage = DataImage.encode(width, height, argbValues)
+            return dataImage
         }
     }
 

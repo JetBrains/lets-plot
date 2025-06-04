@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -52,6 +53,40 @@ class DomCanvasControl(
         val domCanvas = DomCanvas.create(size, pixelDensity)
         domCanvas.canvasElement.style.setPosition(CssPosition.ABSOLUTE)
         return domCanvas
+    }
+
+    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+        val domCanvas = DomCanvas.create(Vector(bitmap.width, bitmap.height), pixelDensity)
+        val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                val color = bitmap.argbInts[y * bitmap.width + x]
+                // Extract ARGB components
+                val alpha = (color shr 24) and 0xFF
+                val red = (color shr 16) and 0xFF
+                val green = (color shr 8) and 0xFF
+                val blue = color and 0xFF
+
+                // Set the pixel color
+                ctx.fillStyle = "rgba($red, $green, $blue, ${alpha / 255.0})"
+                // Draw a rectangle for the pixel
+                ctx.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
+            }
+        }
+
+        // Draw the bitmap onto the canvas
+        //ctx.drawImage(
+        //    Image().apply {
+        //        src = URL.createObjectURL(Blob(arrayOf(bitmap.argbInts), BlobPropertyBag("image/png")))
+        //    },
+        //    0.0,
+        //    0.0,
+        //    bitmap.width.toDouble(),
+        //    bitmap.height.toDouble()
+        //)
+
+        return domCanvas.takeSnapshot()
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -13,6 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -20,9 +22,6 @@ import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.nio.charset.StandardCharsets
-import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.JComponent
 
@@ -87,18 +86,18 @@ class AwtCanvasControl(
         return AwtCanvas.create(size, pixelDensity)
     }
 
+    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+        val bufferedImage = BufferedImage(bitmap.width, bitmap.height, BufferedImage.TYPE_INT_ARGB)
+        bufferedImage.setRGB(0, 0, bitmap.width, bitmap.height, bitmap.argbInts, 0, bitmap.width)
+        return AwtCanvas.AwtSnapshot(bufferedImage)
+    }
+
     private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-        val mediaType = "data:image/png;base64,"
-        val imageString = dataUrl.replace(mediaType, "")
+        val img = DataImage.decode(dataUrl)
 
-        val bytes = imageString.toByteArray(StandardCharsets.UTF_8)
-        val byteArrayInputStream = ByteArrayInputStream(bytes)
-
-        try {
-            return Base64.getDecoder().wrap(byteArrayInputStream).let(ImageIO::read)
-        } catch (e: IOException) {
-            throw IllegalStateException(e)
-        }
+        val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
+        bufImg.setRGB(0, 0, img.width, img.height, img.argbInts, 0, img.width)
+        return bufImg
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
@@ -106,7 +105,6 @@ class AwtCanvasControl(
             AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
         )
     }
-
     override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         val src = ImageIO.read(ByteArrayInputStream(png))
         val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)

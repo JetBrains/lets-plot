@@ -72,17 +72,16 @@ class MagickContext2d(
         val srcWand = snap.img
 
         // Resize the source wand to desired width and height
-        val successResize = ImageMagick.MagickResizeImage(
+        val successScale = ImageMagick.MagickScaleImage(
             srcWand,
             w.toULong(),
-            h.toULong(),
-            ImageMagick.FilterType.LanczosFilter
+            h.toULong()
         )
 
-        if (successResize == ImageMagick.MagickFalse) {
+        if (successScale == ImageMagick.MagickFalse) {
             ImageMagick.DestroyMagickWand(srcWand)
             val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickResizeImage failed: $err")
+            throw RuntimeException("MagickScaleImage failed: $err")
         }
 
         // Composite the resized image onto the base image

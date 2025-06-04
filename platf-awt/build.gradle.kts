@@ -12,5 +12,8 @@ dependencies {
     compileOnly(project(":plot-builder"))
     compileOnly(project(":plot-stem"))
     testImplementation(project(":demo-and-test-shared"))
+    testImplementation(project(":demo-common-svg"))
     testImplementation(kotlin("test-junit"))
+    testImplementation(project(":canvas"))
+    testImplementation(project(":plot-raster"))
 }
