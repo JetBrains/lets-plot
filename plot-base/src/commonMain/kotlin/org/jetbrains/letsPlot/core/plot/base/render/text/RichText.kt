@@ -8,10 +8,12 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 
 object RichText {
     val DEF_HORIZONTAL_ANCHOR = Text.HorizontalAnchor.LEFT
@@ -277,12 +279,33 @@ object RichText {
 
             fun render(context: RenderState, previousNodes: List<Span>, x: Double?, isFirstSpanInLine: Boolean): List<SvgElement> {
                 return toSvg(context, previousNodes).mapIndexed { i, richElement ->
+                    // TODO: Refactor whole block, especially the second `when`
                     val newX = when {
                         richElement.x == null -> if (isFirstSpanInLine && i == 0) x else null
                         else -> richElement.x + (x ?: 0.0)
                     }
-                    richElement.element.apply {
-                        newX?.let { setAttribute(SvgTextContent.X, newX.toString()) }
+                    val svgElement = richElement.element
+                    when (svgElement) {
+                        is SvgTSpanElement -> {
+                            svgElement.apply {
+                                newX?.let { setAttribute(SvgTextContent.X, newX.toString()) }
+                            }
+                        }
+                        is SvgAElement -> {
+                            val href = svgElement.href().get()
+                            val text = (svgElement.children().firstOrNull()?.children()?.firstOrNull() as? SvgTextNode)?.textContent()?.get()!!
+                            SvgAElement().apply {
+                                href().set(href)
+                                xlinkHref().set(href)
+                                children().add(
+                                    SvgTSpanElement(text).apply {
+                                        addClass(HYPERLINK_ELEMENT_CLASS)
+                                        newX?.let { setAttribute(SvgTextContent.X, newX.toString()) }
+                                    }
+                                )
+                            }
+                        }
+                        else -> svgElement
                     }
                 }
             }
