@@ -87,8 +87,7 @@ class CanvasDelegate(
 ) : Canvas {
     override val context2d: Context2d = Context2dDelegate()
     override val size: Vector = Vector(width, height)
-    override fun takeSnapshot(): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun immidiateSnapshot(): Canvas.Snapshot = NullSnapshot
+    override fun takeSnapshot(): Canvas.Snapshot = NullSnapshot
 }
 
 object NullSnapshot : Canvas.Snapshot {
@@ -125,17 +124,9 @@ open class CanvasControlDelegate(
     }
 
     override fun createCanvas(size: Vector): Canvas = CanvasDelegate(size.x, size.y)
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
+    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         return Asyncs.constant(NullSnapshot)
-    }
-
-    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
-        return NullSnapshot
-    }
-
-    override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
-        return NullSnapshot
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

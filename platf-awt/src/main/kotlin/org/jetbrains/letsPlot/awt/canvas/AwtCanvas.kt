@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.awt.canvas
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
@@ -36,11 +34,7 @@ private constructor(
         }
     }
 
-    override fun takeSnapshot(): Async<Canvas.Snapshot> {
-        return Asyncs.constant(AwtSnapshot(image))
-    }
-
-    override fun immidiateSnapshot(): Canvas.Snapshot {
+    override fun takeSnapshot(): Canvas.Snapshot {
         return AwtSnapshot(image)
     }
 

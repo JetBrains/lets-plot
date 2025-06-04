@@ -28,7 +28,7 @@ class BaseCanvasDemoJfx(val demoModel: (canvas: Canvas, createSnapshot: (String)
         )
 
         val canvas = javafxCanvasControl.createCanvas(dim)
-        demoModel(canvas, javafxCanvasControl::createSnapshot)
+        demoModel(canvas, javafxCanvasControl::decodeDataImageUrl)
         javafxCanvasControl.addChild(canvas)
 
         theStage.title = "Javafx Simple Demo"

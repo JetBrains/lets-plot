@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.jfx.canvas
 
 import javafx.scene.Group
+import javafx.scene.image.Image
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
@@ -18,7 +19,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasUtil.imagePngBase64ToImage
-import org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasUtil.imagePngByteArrayToImage
+import java.io.ByteArrayInputStream
 
 class JavafxCanvasControl(
     private val myRoot: Group,
@@ -48,26 +49,17 @@ class JavafxCanvasControl(
         return JavafxCanvas.create(size, pixelDensity)
     }
 
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
-        return Asyncs.constant(immediateSnapshot(dataUrl))
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
+        val image = imagePngBase64ToImage(dataUrl)
+        val snapshot = JavafxCanvas.JavafxSnapshot(image)
+        return Asyncs.constant(snapshot)
     }
 
-    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Asyncs.constant(immediateSnapshot(rgba, size))
-    }
-
-    override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
-        return JavafxCanvas.JavafxSnapshot(
-            imagePngByteArrayToImage(rgba, size * pixelDensity.toInt())
-        )
-    }
-
-    override fun immediateSnapshot(dataUrl: String): Canvas.Snapshot {
-        return JavafxCanvas.JavafxSnapshot(
-            imagePngBase64ToImage(
-                dataUrl
-            )
-        )
+    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        val size1 = size * pixelDensity.toInt()
+        val image = Image(ByteArrayInputStream(png), size1.x.toDouble(), size1.y.toDouble(), false, false)
+        val snapshot = JavafxCanvas.JavafxSnapshot(image)
+        return Asyncs.constant(snapshot)
     }
 
     override fun addChild(canvas: Canvas) {

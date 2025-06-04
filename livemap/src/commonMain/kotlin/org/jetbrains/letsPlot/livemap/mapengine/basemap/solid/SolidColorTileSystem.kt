@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.solid
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -24,7 +23,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 import kotlin.random.Random
 
 class SolidColorTileSystem(
-    private val tileFactory: (CellKey, CanvasProvider) -> Async<Canvas.Snapshot>,
+    private val tileFactory: (CellKey, CanvasProvider) -> Canvas.Snapshot,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -32,23 +31,21 @@ class SolidColorTileSystem(
         getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->
             onEachEntity<BasemapCellComponent>() { entity, cellComponent ->
                 if (cellComponent.cellKey == cellKey) {
-                    tileFactory(cellKey, context.mapRenderContext.canvasProvider)
-                        .onSuccess { snapshot ->
-                            runLaterBySystem(entity) {
-                                it.get<BasemapTileComponent>().apply {
-                                    tile = Tile.SnapshotTile(snapshot)
-                                    nonCacheable = false
-                                }
-                                ParentLayerComponent.tagDirtyParentLayer(it)
-                            }
+                    val snapshot = tileFactory(cellKey, context.mapRenderContext.canvasProvider)
+                    runLaterBySystem(entity) {
+                        it.get<BasemapTileComponent>().apply {
+                            tile = Tile.SnapshotTile(snapshot)
+                            nonCacheable = false
                         }
+                        ParentLayerComponent.tagDirtyParentLayer(it)
+                    }
                 }
             }
         }
     }
 }
 
-private fun drawSolidColorTile(color: Color, canvasProvider: CanvasProvider): Async<Canvas.Snapshot> {
+private fun drawSolidColorTile(color: Color, canvasProvider: CanvasProvider): Canvas.Snapshot {
     val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
     tileCanvas.context2d.apply {
         setFillStyle(color)
@@ -58,18 +55,18 @@ private fun drawSolidColorTile(color: Color, canvasProvider: CanvasProvider): As
     return tileCanvas.takeSnapshot()
 }
 
-fun fixed(color: Color): (CellKey, CanvasProvider) -> Async<Canvas.Snapshot> {
-    var tile: Async<Canvas.Snapshot>? = null
+fun fixed(color: Color): (CellKey, CanvasProvider) -> Canvas.Snapshot {
+    var tile: Canvas.Snapshot? = null
     return { _: CellKey, canvasProvider: CanvasProvider ->
         tile = tile ?: drawSolidColorTile(color, canvasProvider)
         tile!!
     }
 }
 
-fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Async<Canvas.Snapshot> {
-    var tile: Async<Canvas.Snapshot>? = null
+fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Canvas.Snapshot {
+    var tile: Canvas.Snapshot? = null
 
-    fun drawChessQuad(canvasProvider: CanvasProvider): Async<Canvas.Snapshot> {
+    fun drawChessQuad(canvasProvider: CanvasProvider): Canvas.Snapshot {
 
         val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
         val centerX = TILE_PIXEL_SIZE / 2
@@ -93,7 +90,7 @@ fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Async<C
     }
 }
 
-fun random(): (CellKey, CanvasProvider) -> Async<Canvas.Snapshot> {
+fun random(): (CellKey, CanvasProvider) -> Canvas.Snapshot {
     return { _: CellKey, canvasProvider: CanvasProvider ->
         val color = Color(Random.nextInt(0, 256), Random.nextInt(0, 256), Random.nextInt(0, 256))
         drawSolidColorTile(color, canvasProvider)

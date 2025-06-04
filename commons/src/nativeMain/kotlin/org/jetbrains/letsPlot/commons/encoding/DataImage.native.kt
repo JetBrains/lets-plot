@@ -20,7 +20,7 @@ actual fun deflate(input: ByteArray): ByteArray {
 
         // Calculate maximum possible output size.
         // compressBound is the correct function for this.
-        val maxOutputSize = compressBound(inputSize).toLong() // Convert to Long for ByteArray size
+        val maxOutputSize = compressBound(inputSize.convert()).toLong() // Convert to Long for ByteArray size
         val output = ByteArray(maxOutputSize.toInt()) // Allocate the buffer
         val outputPtr = output.refTo(0).getPointer(this)
 
@@ -28,7 +28,7 @@ actual fun deflate(input: ByteArray): ByteArray {
         // On input, it's the size of the output buffer.
         // On output, it's the actual compressed size.
         val destLen = alloc<uLongfVar>() // zlib uses uLongf for lengths
-        destLen.value = maxOutputSize.toULong() // Initialize with the TOTAL size of the output buffer
+        destLen.value = maxOutputSize.convert() // Initialize with the TOTAL size of the output buffer
 
         // Choose a valid compression level.
         // Z_DEFAULT_COMPRESSION is a good general choice.
@@ -40,7 +40,7 @@ actual fun deflate(input: ByteArray): ByteArray {
             dest = outputPtr.reinterpret(),     // Pointer to the output buffer
             destLen = destLen.ptr,              // Pointer to the variable holding output buffer size/compressed size
             source = inputPtr.reinterpret(),    // Pointer to the input buffer
-            sourceLen = inputSize,              // Length of the input data
+            sourceLen = inputSize.convert(),    // Length of the input data
             level = compressionLevel            // Compression level
         )
 
@@ -61,9 +61,9 @@ actual fun inflate(input: ByteArray, expectedSize: Int): ByteArray {
 
         val result = uncompress(
             dest = outputPtr.reinterpret(),
-            destLen = outputSize.ptr,
+            destLen = outputSize.ptr.reinterpret(),
             source = inputPtr.reinterpret(),
-            sourceLen = input.size.toULong()
+            sourceLen = input.size.convert()
         )
 
         check(result == Z_OK) { "Zlib decompression failed: $result" }
