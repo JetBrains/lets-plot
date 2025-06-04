@@ -93,7 +93,7 @@ class DomCanvasControl(
             domCanvas.canvasElement.height.toDouble()
         )
 
-        domCanvas.takeSnapshot().onSuccess(consumer)
+        consumer(domCanvas.takeSnapshot())
     }
 
     override fun addChild(canvas: Canvas) {

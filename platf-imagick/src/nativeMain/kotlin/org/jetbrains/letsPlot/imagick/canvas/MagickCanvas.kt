@@ -10,8 +10,6 @@ import kotlinx.cinterop.refTo
 import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -42,11 +40,7 @@ class MagickCanvas(
     override val context2d: Context2d = MagickContext2d(_img, pixelDensity)
 
 
-    override fun takeSnapshot(): Async<Canvas.Snapshot> {
-        return Asyncs.constant(immidiateSnapshot())
-    }
-
-    override fun immidiateSnapshot(): Canvas.Snapshot {
+    override fun takeSnapshot(): Canvas.Snapshot {
         return MagickSnapshot(_img)
     }
 

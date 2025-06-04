@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -63,7 +64,7 @@ internal class TileDataRendererImpl(
             }
         }
 
-        return MicroTaskUtil.create(tasks).map { canvas.takeSnapshot() }
+        return MicroTaskUtil.create(tasks).map { Asyncs.constant(canvas.takeSnapshot()) }
     }
 
     private fun tileFeaturesDrawTasks(

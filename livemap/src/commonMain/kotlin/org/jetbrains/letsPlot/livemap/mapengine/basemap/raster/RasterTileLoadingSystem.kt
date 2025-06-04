@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.raster
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
@@ -78,7 +79,7 @@ class RasterTileLoadingSystem(
                                 }
                             tileCtx.setFont(Font())
                             tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
-                            tileCanvas.takeSnapshot()
+                            Asyncs.constant(tileCanvas.takeSnapshot())
                         } else {
                             context.mapRenderContext.canvasProvider.createSnapshot(imageData, TILE_PIXEL_DIMENSION)
                         }

@@ -20,12 +20,9 @@ internal class MessageContent(private val message: String) : CanvasContent {
         with(canvasControl.createCanvas()) {
             drawText(context2d, DoubleVector(size.x.toDouble(), size.y.toDouble()))
 
-            takeSnapshot()
-                .onSuccess { snapshot ->
-                    drawLater(parentControl) {
-                        canvasControl.context.drawImage(snapshot)
-                    }
-                }
+            drawLater(parentControl) {
+                canvasControl.context.drawImage(takeSnapshot())
+            }
         }
     }
 

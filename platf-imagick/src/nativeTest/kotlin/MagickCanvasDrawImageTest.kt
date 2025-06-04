@@ -44,7 +44,7 @@ class MagickCanvasDrawImageTest {
 
         tempCanvas.img
 
-        val snapshot = tempCanvas.immidiateSnapshot()
+        val snapshot = tempCanvas.takeSnapshot()
 
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot)
@@ -71,7 +71,7 @@ class MagickCanvasDrawImageTest {
 //        tempCtx.closePath()
 //        tempCtx.fill()
 //
-//        val imageDataUrl = tempCanvas.immidiateSnapshot().toDataUrl()
+//        val imageDataUrl = tempCanvas.takeSnapshot().toDataUrl()
 //
 //        println("ImageDataURL:\n$imageDataUrl")
 //

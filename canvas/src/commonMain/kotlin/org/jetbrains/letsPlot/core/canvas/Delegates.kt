@@ -87,8 +87,7 @@ class CanvasDelegate(
 ) : Canvas {
     override val context2d: Context2d = Context2dDelegate()
     override val size: Vector = Vector(width, height)
-    override fun takeSnapshot(): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun immidiateSnapshot(): Canvas.Snapshot = NullSnapshot
+    override fun takeSnapshot(): Canvas.Snapshot = NullSnapshot
 }
 
 object NullSnapshot : Canvas.Snapshot {

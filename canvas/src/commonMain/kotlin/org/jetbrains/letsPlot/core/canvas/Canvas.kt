@@ -6,14 +6,12 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
 
 interface Canvas {
     val context2d: Context2d
     val size: Vector
 
-    fun takeSnapshot(): Async<Snapshot>
-    fun immidiateSnapshot(): Snapshot
+    fun takeSnapshot(): Snapshot
 
     interface Snapshot {
         val size: Vector

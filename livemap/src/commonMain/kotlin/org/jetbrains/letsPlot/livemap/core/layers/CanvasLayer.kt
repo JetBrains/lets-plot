@@ -39,7 +39,7 @@ class CanvasLayer(
         myRenderTaskList.clear()
     }
 
-    fun snapshot(): Canvas.Snapshot = canvas.immidiateSnapshot()
+    fun snapshot(): Canvas.Snapshot = canvas.takeSnapshot()
 
     fun clear() {
         canvas.context2d.clearRect(myRect)
