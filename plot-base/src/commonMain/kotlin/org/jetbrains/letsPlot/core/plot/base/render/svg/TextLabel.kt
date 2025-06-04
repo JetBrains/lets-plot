@@ -17,6 +17,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
@@ -69,7 +71,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
         updateStyleAttribute()
-        myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
+        updateAnchor()
     }
 
     fun setVerticalAnchor(anchor: Text.VerticalAnchor) {
@@ -127,6 +129,9 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             markdown = markdown,
             anchor = myHorizontalAnchor
         ).firstOrNull() ?: SvgTextElement()
+        // Should be after RichText.toSvg() to check if first tspan has defined attribute 'x'
+        // and before adding to rootGroup because resetAnchor() updates myText
+        resetAnchor()
         rootGroup.children().add(myText)
     }
 
@@ -140,5 +145,17 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             myFontStyle
         )
         myText.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
+    }
+
+    private fun resetAnchor() {
+        val firstChild = myText.children().firstOrNull() as? SvgElement
+        val x = firstChild?.getAttribute(SvgTextContent.X)?.get()
+        if (x != null) {
+            myHorizontalAnchor = HorizontalAnchor.LEFT
+        }
+    }
+
+    private fun updateAnchor() {
+        myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(myHorizontalAnchor))
     }
 }

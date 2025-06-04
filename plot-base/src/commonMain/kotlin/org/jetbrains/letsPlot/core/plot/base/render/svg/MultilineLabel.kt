@@ -16,6 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
@@ -63,13 +65,7 @@ class MultilineLabel(
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
         updateStyleAttribute()
-        updateAnchor(anchor)
-    }
-
-    private fun updateAnchor(anchor: HorizontalAnchor) {
-        myLines.forEach {
-            it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
-        }
+        updateAnchor()
     }
 
     fun setVerticalAnchor(anchor: VerticalAnchor) {
@@ -157,6 +153,9 @@ class MultilineLabel(
             markdown = markdown,
             anchor = myHorizontalAnchor
         )
+        // Should be after RichText.toSvg() to check if first tspan has defined attribute 'x'
+        // and before adding to rootGroup because resetAnchor() updates myLines
+        resetAnchor()
         myLines.forEach(rootGroup.children()::add)
     }
 
@@ -172,6 +171,23 @@ class MultilineLabel(
 
         myLines.forEachIndexed { index, elem ->
             elem.y().set(adjustedYStart + myLineHeight * index)
+        }
+    }
+
+    private fun resetAnchor() {
+        val firstNodeHasDefinedX = myLines.any { line ->
+            val firstChild = line.children().firstOrNull() as? SvgElement
+            val x = firstChild?.getAttribute(SvgTextContent.X)?.get()
+            x != null
+        }
+        if (firstNodeHasDefinedX) {
+            myHorizontalAnchor = HorizontalAnchor.LEFT
+        }
+    }
+
+    private fun updateAnchor() {
+        myLines.forEach {
+            it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(myHorizontalAnchor))
         }
     }
 
