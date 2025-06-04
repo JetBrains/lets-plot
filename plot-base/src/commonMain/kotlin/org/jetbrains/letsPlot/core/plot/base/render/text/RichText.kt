@@ -24,7 +24,7 @@ object RichText {
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-        anchor: Text.HorizontalAnchor
+        anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR
     ): List<SvgTextElement> {
         val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
         val svgLines = render(lines, font, widthCalculator, anchorCoefficient = anchorCoefficient(lines, anchor))
