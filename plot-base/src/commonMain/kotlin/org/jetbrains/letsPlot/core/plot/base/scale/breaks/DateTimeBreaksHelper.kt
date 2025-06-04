@@ -33,10 +33,14 @@ class DateTimeBreaksHelper constructor(
         val step = targetStep
 
         pattern = if (step < 1000) {        // milliseconds
-            val formatterFactory = TimeScaleTickFormatterFactory(minInterval, maxInterval)
-            // compute a step so that it is multiple of automatic time steps
+            // regular nice breaks
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
-            formatterFactory.formatPattern(step)
+            // milliseconds formatter
+            if (minInterval != null) {
+                minInterval.tickFormatPattern
+            } else {
+                TimeInterval.milliseconds(1).tickFormatPattern
+            }
 
         } else {
 
@@ -45,7 +49,7 @@ class DateTimeBreaksHelper constructor(
 
             var ticks: MutableList<Double>? = null
             if (minInterval != null) {
-                ticks = (minInterval as TimeInterval).range(start, end, tz).toMutableList()
+                ticks = minInterval.range(start, end, tz).toMutableList()
             }
 
             val pattern = if (ticks != null && ticks.size <= count) {
