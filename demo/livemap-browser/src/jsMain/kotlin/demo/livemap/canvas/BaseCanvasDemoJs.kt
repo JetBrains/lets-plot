@@ -25,7 +25,7 @@ fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async
     )
 
     val canvas = canvasControl.createCanvas(size)
-    demoModel(canvas, canvasControl::createSnapshot)
+    demoModel(canvas, canvasControl::decodeDataImageUrl)
     canvasControl.addChild(canvas)
 
     document.getElementById(DemoBaseJs.parentNodeId)

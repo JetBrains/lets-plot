@@ -19,7 +19,7 @@ internal class SvgImageElementMapper(
     override fun setTargetAttribute(name: String, value: Any?) {
         when (name) {
             SvgImageElement.HREF.name -> {
-                peer.canvasProvider.createSnapshot(value as String).onSuccess { target.img = it }
+                peer.canvasProvider.decodeDataImageUrl(value as String).onSuccess { target.img = it }
             }
             else -> SvgImageAttrMapping.setAttribute(target, name, value)
         }

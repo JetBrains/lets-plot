@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.jfx.canvas
 
 import javafx.application.Platform
 import javafx.scene.image.Image
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets
@@ -35,13 +34,5 @@ internal object JavafxCanvasUtil {
         } catch (e: IOException) {
             throw IllegalStateException(e)
         }
-    }
-
-    fun imagePngByteArrayToImage(bytes: ByteArray): Image {
-        return Image(ByteArrayInputStream(bytes))
-    }
-
-    fun imagePngByteArrayToImage(bytes: ByteArray, size: Vector): Image {
-        return Image(ByteArrayInputStream(bytes), size.x.toDouble(), size.y.toDouble(), false, false)
     }
 }

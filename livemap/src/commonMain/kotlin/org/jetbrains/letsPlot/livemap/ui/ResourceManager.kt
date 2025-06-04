@@ -26,7 +26,7 @@ class ResourceManager(private val canvasProvider: CanvasProvider) {
     }
 
     private fun add(key: String, dataUrl: String): ResourceManager {
-        canvasProvider.createSnapshot(dataUrl).onResult(
+        canvasProvider.decodeDataImageUrl(dataUrl).onResult(
             { snapshot -> snapshotMap[key] = snapshot },
             { message -> error(message) })
         return this

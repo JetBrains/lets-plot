@@ -81,7 +81,7 @@ class RasterTileLoadingSystem(
                             tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
                             Asyncs.constant(tileCanvas.takeSnapshot())
                         } else {
-                            context.mapRenderContext.canvasProvider.createSnapshot(imageData, TILE_PIXEL_DIMENSION)
+                            context.mapRenderContext.canvasProvider.decodePng(imageData, TILE_PIXEL_DIMENSION)
                         }
                             .onSuccess { snapshot ->
                                 runLaterBySystem(httpTileEntity) { theEntity ->

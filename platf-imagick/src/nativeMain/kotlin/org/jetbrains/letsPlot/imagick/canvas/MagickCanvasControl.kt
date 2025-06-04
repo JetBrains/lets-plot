@@ -66,7 +66,7 @@ class MagickCanvasControl(
         return MagickCanvas.create(size, pixelDensity)
     }
 
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
         println("MagickCanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
         if (!dataUrl.startsWith("data:image/png;base64,")) {
             throw IllegalArgumentException("Unsupported data URL format: $dataUrl")
@@ -79,15 +79,11 @@ class MagickCanvasControl(
         return Asyncs.constant(MagickCanvas.MagickSnapshot(img))
     }
 
-    override fun createSnapshot(
-        rgba: ByteArray,
+    override fun decodePng(
+        png: ByteArray,
         size: Vector
     ): Async<Canvas.Snapshot> {
         TODO("Not yet implemented")
-    }
-
-    override fun immediateSnapshot(rgba: ByteArray, size: Vector): Canvas.Snapshot {
-        return MagickCanvas.MagickSnapshot.fromPixels(rgba = rgba, size = size)
     }
 
     override fun addEventHandler(

@@ -124,13 +124,9 @@ open class CanvasControlDelegate(
     }
 
     override fun createCanvas(size: Vector): Canvas = CanvasDelegate(size.x, size.y)
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
+    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         return Asyncs.constant(NullSnapshot)
-    }
-
-    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
-        return NullSnapshot
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

@@ -101,24 +101,20 @@ class AwtCanvasControl(
         }
     }
 
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> {
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
         return Asyncs.constant(
             AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
         )
     }
 
-    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Asyncs.constant(immediateSnapshot(rgba, size))
-    }
-
-    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
-        val src = ImageIO.read(ByteArrayInputStream(bytes))
+    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        val src = ImageIO.read(ByteArrayInputStream(png))
         val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
         val graphics2D = dst.createGraphics() as Graphics2D
         graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
         graphics2D.dispose()
-
-        return AwtCanvas.AwtSnapshot(dst)
+        val snapshot = AwtCanvas.AwtSnapshot(dst)
+        return Asyncs.constant(snapshot)
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
