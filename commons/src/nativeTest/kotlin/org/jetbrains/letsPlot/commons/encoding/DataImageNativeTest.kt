@@ -28,23 +28,22 @@ class DataImageNativeTest {
             0xFFFF0000.toInt(), // Red
         ))
 
-        val raster = DataImage.decode(img)
+        val bitmap = DataImage.decode(img)
 
-        assertEquals(6, raster.width)
-        assertEquals(2, raster.height)
-        assertEquals(0xFFFF0000.toInt(), raster.argbIntArray[0])
-        assertEquals(0xFF00FF00.toInt(), raster.argbIntArray[1])
-        assertEquals(0xFF0000FF.toInt(), raster.argbIntArray[2])
-        assertEquals(0x80FF0000.toInt(), raster.argbIntArray[3])
-        assertEquals(0x8000FF00.toInt(), raster.argbIntArray[4])
-        assertEquals(0x800000FF.toInt(), raster.argbIntArray[5])
+        assertEquals(6, bitmap.width)
+        assertEquals(2, bitmap.height)
+        assertEquals(0xFFFF0000.toInt(), bitmap.argbInts[0])
+        assertEquals(0xFF00FF00.toInt(), bitmap.argbInts[1])
+        assertEquals(0xFF0000FF.toInt(), bitmap.argbInts[2])
+        assertEquals(0x80FF0000.toInt(), bitmap.argbInts[3])
+        assertEquals(0x8000FF00.toInt(), bitmap.argbInts[4])
+        assertEquals(0x800000FF.toInt(), bitmap.argbInts[5])
 
-        assertEquals(0x800000FF.toInt(), raster.argbIntArray[6])
-        assertEquals(0x8000FF00.toInt(), raster.argbIntArray[7])
-        assertEquals(0x80FF0000.toInt(), raster.argbIntArray[8])
-        assertEquals(0xFF0000FF.toInt(), raster.argbIntArray[9])
-        assertEquals(0xFF00FF00.toInt(), raster.argbIntArray[10])
-        assertEquals(0xFFFF0000.toInt(), raster.argbIntArray[11])
+        assertEquals(0x800000FF.toInt(), bitmap.argbInts[6])
+        assertEquals(0x8000FF00.toInt(), bitmap.argbInts[7])
+        assertEquals(0x80FF0000.toInt(), bitmap.argbInts[8])
+        assertEquals(0xFF0000FF.toInt(), bitmap.argbInts[9])
+        assertEquals(0xFF00FF00.toInt(), bitmap.argbInts[10])
+        assertEquals(0xFFFF0000.toInt(), bitmap.argbInts[11])
     }
-
 }

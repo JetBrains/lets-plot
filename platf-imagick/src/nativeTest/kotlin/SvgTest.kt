@@ -1,6 +1,5 @@
 
 import demo.svgMapping.model.ReferenceSvgModel
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -8,7 +7,7 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
+//@Ignore
 class SvgTest {
     private val imageComparer = ImageComparer()
 

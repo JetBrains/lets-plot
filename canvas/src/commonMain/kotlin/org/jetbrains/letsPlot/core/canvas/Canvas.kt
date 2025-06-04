@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
 
+// TODO: CANVAS_REFACTOR: implement CanvasProvider
 interface Canvas {
     val context2d: Context2d
     val size: Vector
@@ -16,6 +17,5 @@ interface Canvas {
     interface Snapshot {
         val size: Vector
         fun copy(): Snapshot
-        fun toDataUrl(): String
     }
 }
