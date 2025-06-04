@@ -16,10 +16,10 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
  */
 internal class HourInterval(
     count: Int
-) : TimeZoneAwareInterval(count) {
+) : TimeZoneAwareInterval() {
 
-    override val tickFormatPattern: String
-        get() = "%H:%M"
+    private val duration: Duration = Duration.HOUR.mul(count)
+    override val tickFormatPattern: String = TICK_FORMAT
 
     override fun atOrBefore(dateTime: DateTime): DateTime {
         return DateTime(
@@ -32,6 +32,10 @@ internal class HourInterval(
     }
 
     override fun addInterval(dateTime: DateTime, tz: TimeZone): DateTime {
-        return dateTime.add(Duration.HOUR.mul(count), tz)
+        return dateTime.add(duration, tz)
+    }
+
+    companion object {
+        const val TICK_FORMAT = "%H:%M"
     }
 }

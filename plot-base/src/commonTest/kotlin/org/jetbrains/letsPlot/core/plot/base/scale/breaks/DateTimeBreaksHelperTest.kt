@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import demoAndTestShared.assertArrayEquals
 import org.jetbrains.letsPlot.commons.intern.datetime.*
-import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -144,7 +144,7 @@ class DateTimeBreaksHelperTest {
             expected,
             5,
             3,
-            TimeInterval.days(1)
+            minInterval = NiceTimeInterval.ONE_DAY
         )
     }
 
@@ -156,7 +156,7 @@ class DateTimeBreaksHelperTest {
             expected,
             5,
             10,
-            TimeInterval.days(1)
+            minInterval = NiceTimeInterval.ONE_DAY
         )
     }
 
@@ -167,7 +167,7 @@ class DateTimeBreaksHelperTest {
             expected,
             6,
             2,
-            TimeInterval.months(1)
+            minInterval = NiceTimeInterval.ONE_MONTH
         )
     }
 
@@ -179,7 +179,7 @@ class DateTimeBreaksHelperTest {
             expected,
             5,
             10,
-            TimeInterval.months(1)
+            minInterval = NiceTimeInterval.ONE_MONTH
         )
     }
 
@@ -262,7 +262,7 @@ class DateTimeBreaksHelperTest {
             expected: IntArray,
             dCount: Long,
             targetBreakCount: Int,
-            minInterval: TimeInterval? = null
+            minInterval: NiceTimeInterval? = null
         ) {
             val instant2 = BASE_INSTANT.add(Duration.DAY.mul(dCount))
             val breaks = computeBreaks(
@@ -304,7 +304,7 @@ class DateTimeBreaksHelperTest {
             expected: IntArray,
             mCount: Int,
             targetBreakCount: Int,
-            minInterval: TimeInterval? = null
+            minInterval: NiceTimeInterval? = null
         ) {
             val date = Date(1, Month.APRIL, 2013)
             val month1 = date.month.ordinal
@@ -379,7 +379,7 @@ class DateTimeBreaksHelperTest {
         private fun computeBreaks(
             fromInstant: Long, toInstant: Long,
             targetBreakCount: Int,
-            minInterval: TimeInterval? = null
+            minInterval: NiceTimeInterval? = null
         ): Array<Double> {
             val helper = DateTimeBreaksHelper(
                 fromInstant.toDouble(),

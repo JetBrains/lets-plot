@@ -10,31 +10,42 @@ import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
 
 internal class TimeScaleTickFormatterFactory(
-    private val minInterval: TimeInterval?
+    private val minInterval: NiceTimeInterval?,
+    private val maxInterval: NiceTimeInterval?,
 ) {
-
     internal fun formatPattern(step: Double): String {
-        if (step < 1000) {        // milliseconds
-            return TimeInterval.milliseconds(1).tickFormatPattern
-        }
-
-        if (minInterval != null) {
-            // check if we have to hold on minimal interval formatter
-            val stepCount = 100
-            val start = 0.0
-            val end = step * stepCount
-            val intervalCount = minInterval.range(start, end, tz = null).size
-            if (stepCount >= intervalCount) {
-                // step is smaller than the min interval-> stay with the min interval
-                return minInterval.tickFormatPattern
+        // milliseconds
+        if (step < 1000) {
+            return if (minInterval != null) {
+                (minInterval as TimeInterval).tickFormatPattern
+            } else {
+                TimeInterval.milliseconds(1).tickFormatPattern
             }
         }
 
-        if (step > YearInterval.MS) {        // years
-            return YearInterval.TICK_FORMAT
+        // years
+        if (step > YearInterval.MS) {
+            return if (maxInterval != null) {
+                (maxInterval as TimeInterval).tickFormatPattern
+            } else {
+                YearInterval.TICK_FORMAT
+            }
         }
 
-        val interval = NiceTimeInterval.forMillis(step)
+//        if (minInterval != null) {
+//            // check if we have to hold on minimal interval formatter
+//            val stepCount = 100
+//            val start = 0.0
+//            val end = step * stepCount
+//            val intervalCount = minInterval.range(start, end, tz = null).size
+//            if (stepCount >= intervalCount) {
+//                // step is smaller than the min interval-> stay with the min interval
+//                return minInterval.tickFormatPattern
+//            }
+//        }
+
+
+        val interval = NiceTimeInterval.forMillis(step, minInterval, maxInterval)
         return interval.tickFormatPattern
     }
 }

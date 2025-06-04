@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.ScaleFomateDateTimeTestUtil.TZ_UTC
@@ -24,7 +23,7 @@ class ScaleFormatLocalDateTest {
     @Test
     fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
         val instants = List(5) {
-            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            val date = Date(1, Month.JANUARY, 2021).addDays(it)
             DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
@@ -46,12 +45,13 @@ class ScaleFormatLocalDateTest {
     @Test
     fun `data when discrete scale chooses a better formatter than the continuous scale`() {
         val instants = List(3) {
-            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            val date = Date(1, Month.JANUARY, 2021).addDays(it)
             DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
 
+        // TODO: actually expected: ["Jan 1", "Jan 2", "Jan 3"]
         val formattedForContinuous = listOf(
             "00:00", "12:00", "00:00", "12:00", "00:00"
         )
@@ -59,7 +59,7 @@ class ScaleFormatLocalDateTest {
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied
         val formattedForDiscrete = listOf(
-            "2021-01-01", "2021-01-02", "2021-01-03"
+            "Jan 1", "Jan 2", "Jan 3"
         )
 
         checkScales(

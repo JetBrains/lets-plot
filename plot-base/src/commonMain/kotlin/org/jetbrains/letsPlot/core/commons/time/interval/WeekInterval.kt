@@ -6,31 +6,25 @@
 package org.jetbrains.letsPlot.core.commons.time.interval
 
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 internal class WeekInterval(
-    count: Int,
-) : TimeZoneAwareInterval(count) {
+    private val count: Int,
+) : TimeZoneAwareInterval() {
 
-    override val tickFormatPattern: String
-        get() = "%b %e"
+    override val tickFormatPattern: String = DayInterval.TICK_FORMAT
 
     override fun atOrBefore(dateTime: DateTime): DateTime {
         // ISO 8601: week starts on Monday.
         val daysFromWeekStart = dateTime.weekDay.ordinal
-        val monday = dateTime.date.subtract(
-            Duration.DAY.mul(daysFromWeekStart),
-        )
+        val monday = dateTime.date.subtractDays(daysFromWeekStart)
 
         return DateTime(monday)
     }
 
     override fun addInterval(dateTime: DateTime, tz: TimeZone): DateTime {
         return DateTime(
-            dateTime.date.add(
-                Duration.WEEK.mul(count)
-            )
+            dateTime.date.addDays(count * 7)
         )
     }
 }

@@ -5,16 +5,16 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.Time
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.ScaleFomateDateTimeTestUtil.TZ_UTC
 import org.jetbrains.letsPlot.core.spec.config.ScaleFomateDateTimeTestUtil.checkScales
 import kotlin.test.Test
 
 /**
- * TODO: Handle local time correctly
- * Currently local time is handled the same way as date-time with no time zone specified (or UTC time zone).
- *
  * This test verifies that the annotation type `Option.Meta.SeriesAnnotation.Types.TIME` is handled correctly.
  */
 class ScaleFormatLocalTimeTest {
@@ -36,18 +36,14 @@ class ScaleFormatLocalTimeTest {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
 
-        // For a discrete scale, a formatter is applied as for a continuous scale
-        // TODO: actually we expect: ["11:00", "11:30", "12:00", "12:30", "13:00"]
+        // The same formatter is applied for both continuous and discrete scales.
         val expectedLabels = listOf(
-            "00", "30", "00", "30", "00"
-        )
-        val expectedLabels2 = listOf(
-            "1970-01-01 11:00", "1970-01-01 11:30", "1970-01-01 12:00", "1970-01-01 12:30", "1970-01-01 13:00"
+            "11:00", "11:30", "12:00", "12:30", "13:00"
         )
 
         checkScales(
             instants,
-            expectedLabels2,
+            expectedLabels,
             expectedLabels,
             DATE_TIME_ANNOTATION_PART
         )
@@ -70,17 +66,17 @@ class ScaleFormatLocalTimeTest {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
 
-        // TODO: actually we expect: ["11:00", "11:30", "12:00", "12:30", "13:00"]
         val formattedForContinuous = listOf(
-            "00", "30", "00", "30", "00"
+            "11:00", "11:30", "12:00", "12:30", "13:00"
         )
 
         // For discrete scale: if to get the DateTimeBreaksHelper's formatter (which the continuous scale uses),
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied
-        // TODO: actually we expect: ["11:00", "11:30", "12:00", "12:30", "13:00"]
+
+        // UPD: no longer an issue: the formatter is the same for both continuous and discrete scales.
         val formattedForDiscrete = listOf(
-            "1970-01-01 11:00", "1970-01-01 11:30", "1970-01-01 12:00", "1970-01-01 12:30", "1970-01-01 13:00"
+            "11:00", "11:30", "12:00", "12:30", "13:00"
         )
 
         checkScales(

@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
-class DateTimeBreaksGen(
+class DateTimeBreaksGen constructor(
     private val providedFormatter: ((Any) -> String)? = null,
     private val tz: TimeZone?
 ) : BreaksGenerator {

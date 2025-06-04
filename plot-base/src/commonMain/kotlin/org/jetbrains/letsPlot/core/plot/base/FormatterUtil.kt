@@ -20,9 +20,9 @@ object FormatterUtil {
         return when (dataType) {
             FLOATING, INTEGER -> numberFormatter()::format
             STRING, BOOLEAN -> stringFormatter()::format
-            EPOCH_MILLIS -> StringFormat.forOneArg("%Y-%m-%dT%H:%M:%S", tz = tz)::format
-            DATE_MILLIS_UTC -> StringFormat.forOneArg("%Y-%m-%d", tz = TimeZone.UTC)::format
-            MIDNIGHT_MILLIS -> StringFormat.forOneArg("%H:%M:%S", tz = TimeZone.UTC)::format
+            DATETIME_MILLIS -> StringFormat.forOneArg("%Y-%m-%dT%H:%M:%S", tz = tz)::format
+            DATE_MILLIS -> StringFormat.forOneArg("%Y-%m-%d", tz = tz)::format
+            TIME_MILLIS -> StringFormat.forOneArg("%H:%M:%S", tz = TimeZone.UTC)::format
             UNKNOWN -> {
                 // Outside the unknownFormatter to avoid creating of the same formatters multiple times
                 val numberFormatter = numberFormatter()

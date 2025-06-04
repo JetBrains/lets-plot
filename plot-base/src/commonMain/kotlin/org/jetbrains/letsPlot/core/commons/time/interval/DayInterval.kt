@@ -6,15 +6,13 @@
 package org.jetbrains.letsPlot.core.commons.time.interval
 
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-internal class DayInterval(
-    count: Int,
-) : TimeZoneAwareInterval(count) {
+class DayInterval(
+    private val count: Int,
+) : TimeZoneAwareInterval() {
 
-    override val tickFormatPattern: String
-        get() = "%b %e"
+    override val tickFormatPattern: String = TICK_FORMAT
 
     override fun atOrBefore(dateTime: DateTime): DateTime {
         return DateTime(dateTime.date)
@@ -22,9 +20,11 @@ internal class DayInterval(
 
     override fun addInterval(dateTime: DateTime, tz: TimeZone): DateTime {
         return DateTime(
-            dateTime.date.add(
-                Duration.DAY.mul(count)
-            )
+            dateTime.date.addDays(count)
         )
+    }
+
+    companion object {
+        const val TICK_FORMAT = "%b %e"
     }
 }

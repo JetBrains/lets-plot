@@ -38,19 +38,19 @@ class Date : Comparable<Date> {
     fun nextDate(): Date = Date(kotlinxLocalDate.plus(1, DateTimeUnit.DAY))
     fun prevDate(): Date = Date(kotlinxLocalDate.plus(-1, DateTimeUnit.DAY))
 
-    fun add(duration: Duration): Date {
+    fun addDays(count: Int): Date {
         return Date(
             kotlinxLocalDate.plus(
-                duration.totalDays,
+                count,
                 DateTimeUnit.DAY
             )
         )
     }
 
-    fun subtract(duration: Duration): Date {
+    fun subtractDays(count: Int): Date {
         return Date(
             kotlinxLocalDate.minus(
-                duration.totalDays,
+                count,
                 DateTimeUnit.DAY
             )
         )

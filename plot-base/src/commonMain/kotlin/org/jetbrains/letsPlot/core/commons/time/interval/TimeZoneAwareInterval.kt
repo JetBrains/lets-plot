@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.core.commons.time.interval
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-abstract class TimeZoneAwareInterval protected constructor(
-    count: Int,
-) : TimeInterval(count) {
+abstract class TimeZoneAwareInterval : TimeInterval {
 
     protected abstract fun atOrBefore(dateTime: DateTime): DateTime
 

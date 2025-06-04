@@ -93,38 +93,35 @@ object DataMetaUtil {
 
     // Series Annotations
 
-    fun getDateTimeColumns(dataMeta: Map<*, *>): Set<String> {
+    private fun toDType(annotationOption: String?): DataType {
+        return when (annotationOption) {
+            null -> DataType.UNKNOWN
+            SeriesAnnotation.Types.INTEGER -> DataType.INTEGER
+            SeriesAnnotation.Types.FLOATING -> DataType.FLOATING
+            SeriesAnnotation.Types.STRING -> DataType.STRING
+            SeriesAnnotation.Types.BOOLEAN -> DataType.BOOLEAN
+            SeriesAnnotation.Types.DATE_TIME -> DataType.DATETIME_MILLIS
+            SeriesAnnotation.Types.DATE -> DataType.DATE_MILLIS
+            SeriesAnnotation.Types.TIME -> DataType.TIME_MILLIS
+            SeriesAnnotation.Types.UNKNOWN -> DataType.UNKNOWN
+            else -> DataType.UNKNOWN
+        }
+    }
+
+    fun getDateTimeColumns(dataMeta: Map<*, *>): Map<String, DataType> {
         return dataMeta
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
-            ?.filterValues {
-                it == SeriesAnnotation.Types.DATE_TIME ||
-                        it == SeriesAnnotation.Types.DATE ||
-                        it == SeriesAnnotation.Types.TIME
-            }
-            ?.keys
-            ?: emptySet()
+            ?.associate { it.getString(COLUMN)!! to it.getString(SeriesAnnotation.TYPE) }
+            ?.mapValues { (_, annotationOption) -> toDType(annotationOption) }
+            ?.filterValues { it.isTemporal() }
+            ?: emptyMap()
     }
 
     fun getDataTypes(dataMeta: Map<*, *>): Map<String, DataType> {
-        fun toDType(dataType: String?): DataType {
-            return when (dataType) {
-                null -> DataType.UNKNOWN
-                SeriesAnnotation.Types.INTEGER -> DataType.INTEGER
-                SeriesAnnotation.Types.FLOATING -> DataType.FLOATING
-                SeriesAnnotation.Types.STRING -> DataType.STRING
-                SeriesAnnotation.Types.BOOLEAN -> DataType.BOOLEAN
-                SeriesAnnotation.Types.DATE_TIME -> DataType.EPOCH_MILLIS
-                SeriesAnnotation.Types.DATE -> DataType.DATE_MILLIS_UTC
-                SeriesAnnotation.Types.TIME -> DataType.MIDNIGHT_MILLIS
-                SeriesAnnotation.Types.UNKNOWN -> DataType.UNKNOWN
-                else -> DataType.UNKNOWN
-            }
-        }
-
         return dataMeta
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(COLUMN)!! to toDType(it.getString(SeriesAnnotation.TYPE)) }
+            ?.associate { it.getString(COLUMN)!! to it.getString(SeriesAnnotation.TYPE) }
+            ?.mapValues { (_, annotationOption) -> toDType(annotationOption) }
             ?: emptyMap()
     }
 

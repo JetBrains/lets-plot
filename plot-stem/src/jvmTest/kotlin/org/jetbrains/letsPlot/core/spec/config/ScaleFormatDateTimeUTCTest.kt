@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.ScaleFomateDateTimeTestUtil.TZ_UTC
@@ -19,7 +18,7 @@ class ScaleFormatDateTimeUTCTest {
     @Test
     fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
         val instants = List(5) {
-            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            val date = Date(1, Month.JANUARY, 2021).addDays(it)
             DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
@@ -41,7 +40,7 @@ class ScaleFormatDateTimeUTCTest {
     @Test
     fun `data when discrete scale chooses a better formatter than the continuous scale`() {
         val instants = List(3) {
-            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            val date = Date(1, Month.JANUARY, 2021).addDays(it)
             DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC).toDouble()
