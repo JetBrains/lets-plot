@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
+import org.jetbrains.letsPlot.commons.encoding.DataImage
 import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
@@ -23,23 +23,8 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
 
     private val rgbEncoder: RGBEncoder = object : RGBEncoder {
         override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
-            val bytes = ByteArray(argbValues.size * 4)
-            for (i in argbValues.indices) {
-                val argb = argbValues[i]
-                if (false) {
-                    bytes[i * 4] = (argb shr 0 and 0xff).toByte()   // Blue
-                    bytes[i * 4 + 1] = (argb shr 8 and 0xff).toByte() // Green
-                    bytes[i * 4 + 2] = (argb shr 16 and 0xff).toByte() // Red
-                    bytes[i * 4 + 3] = (argb shr 24 and 0xff).toByte() // Alpha
-                } else {
-                    bytes[i * 4] = (argb shr 24 and 0xff).toByte() // Alpha
-                    bytes[i * 4 + 1] = (argb shr 16 and 0xff).toByte() // Red
-                    bytes[i * 4 + 2] = (argb shr 8 and 0xff).toByte() // Green
-                    bytes[i * 4 + 3] = (argb shr 0 and 0xff).toByte()   // Blue
-                }
-            }
-
-            return peer.canvasProvider.immediateSnapshot(bytes, Vector(width, height)).toDataUrl()
+            val dataImage = DataImage.encode(width, height, argbValues)
+            return dataImage
         }
     }
 
