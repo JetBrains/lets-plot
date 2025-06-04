@@ -227,6 +227,7 @@ object RichText {
             val svg = mutableListOf<SvgElement>()
             val previousNodes = mutableListOf<RichTextNode.Span>()
             val lineWidth = line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth(font, widthCalculator) ?: 0.0 }
+            var isFirstSpanInLine = true
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -242,8 +243,9 @@ object RichText {
                         } else {
                             -anchorCoefficient * lineWidth
                         }
-                        svg += term.render(stack.last(), previousNodes.toList(), x)
+                        svg += term.render(stack.last(), previousNodes.toList(), x, isFirstSpanInLine)
                         previousNodes.add(term)
+                        isFirstSpanInLine = false
                     }
                 }
             }
@@ -273,10 +275,10 @@ object RichText {
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
             abstract fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement>
 
-            fun render(context: RenderState, previousNodes: List<Span>, x: Double?): List<SvgElement> {
+            fun render(context: RenderState, previousNodes: List<Span>, x: Double?, isFirstSpanInLine: Boolean): List<SvgElement> {
                 return toSvg(context, previousNodes).mapIndexed { i, richElement ->
                     val newX = when {
-                        richElement.x == null -> if (i == 0) x else null
+                        richElement.x == null -> if (isFirstSpanInLine && i == 0) x else null
                         else -> richElement.x + (x ?: 0.0)
                     }
                     richElement.element.apply {
