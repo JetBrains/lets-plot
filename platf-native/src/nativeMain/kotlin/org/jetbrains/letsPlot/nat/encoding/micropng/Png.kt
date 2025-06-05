@@ -91,7 +91,7 @@ fun decodePng(input: ByteArray): DecodedPng {
         val data = ByteArray(length).also { stream.read(it) }
         stream.skip(4) // skip CRC
 
-        println("Chunk: $type, Length: $length")
+        //println("Chunk: $type, Length: $length")
         when (type) {
             "IHDR" -> {
                 val buffer = ByteBuffer(data)
