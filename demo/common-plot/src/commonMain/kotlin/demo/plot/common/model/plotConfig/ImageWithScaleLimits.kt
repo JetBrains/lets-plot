@@ -12,6 +12,7 @@ import demoAndTestShared.parsePlotSpec
 class ImageWithScaleLimits {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            simple(),
             image_3x3("Default"),
             image_3x3("xlim [-1, 3]", "'scales': [{'aesthetic': 'x', 'limits': [-1, 3]}]"),
             image_3x3("xlim [1, 3]", "'scales': [{'aesthetic': 'x', 'limits': [1, 3]}]"),
@@ -20,6 +21,34 @@ class ImageWithScaleLimits {
                 "'scales': [{'aesthetic': 'x', 'limits': [0, 2]},{'aesthetic': 'y', 'limits': [0.5, 1.5]}]"
             ),
         )
+    }
+
+    private fun simple(): MutableMap<String, Any> {
+        val spec = """
+            |{
+            |  "mapping": {},
+            |  "data_meta": {},
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "image",
+            |      "mapping": {},
+            |      "show_legend": true,
+            |      "inherit_aes": false,
+            |      "data_meta": {},
+            |      "href": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVR4nGP4z8DwHwwZ/oOZvkDCF8jyBQCLFgnfUCS+/AAAAABJRU5ErkJggg==",
+            |      "xmin": -0.5,
+            |      "ymin": -0.5,
+            |      "xmax": 2.5,
+            |      "ymax": 1.5
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
     }
 
     @Suppress("FunctionName")

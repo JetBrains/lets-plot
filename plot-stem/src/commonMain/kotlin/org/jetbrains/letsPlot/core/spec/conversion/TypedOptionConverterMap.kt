@@ -33,6 +33,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
@@ -142,6 +145,9 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
         this.put(STROKE_END, DOUBLE_CVT)
 
         this.put(POINT_SIZE, DOUBLE_CVT)
+        this.put(SEGMENT_COLOR, colorCvt)
+        this.put(SEGMENT_SIZE, DOUBLE_CVT)
+        this.put(SEGMENT_ALPHA, DOUBLE_CVT)
     }
 
     internal fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {

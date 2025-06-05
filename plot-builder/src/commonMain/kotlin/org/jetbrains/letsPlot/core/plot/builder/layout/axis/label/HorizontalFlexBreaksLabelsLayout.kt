@@ -21,7 +21,9 @@ internal class HorizontalFlexBreaksLabelsLayout(
     theme
 ) {
 
-    private val myRotationAngle = if (theme.rotateLabels()) theme.labelAngle() else null
+    private val myRotationAngle = if (theme.rotateLabels()) {
+        theme.labelAngle()?.takeUnless { it.isNaN() } ?: 0.0
+    } else null
 
     init {
         require(orientation.isHorizontal) { orientation.toString() }

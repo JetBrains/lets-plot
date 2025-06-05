@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.platf.w3c.canvas
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
@@ -20,6 +18,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
@@ -28,14 +27,15 @@ internal class DomCanvas private constructor(
 ) : ScaledCanvas(DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D), size, pixelRatio) {
 
 
-    override fun takeSnapshot(): Async<Canvas.Snapshot> = Asyncs.constant(DomSnapshot(canvasElement, size, pixelRatio))
-    override fun immidiateSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size, pixelRatio)
+    override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size, pixelRatio)
 
     internal class DomSnapshot(
         val canvasElement: HTMLCanvasElement,
-        private val size: Vector,
+        size: Vector,
         private val pixelRatio: Double
     ) : Canvas.Snapshot {
+        override val size: Vector = Vector((size.x * pixelRatio).roundToInt(), (size.y * pixelRatio).roundToInt())
+
         override fun copy(): Canvas.Snapshot {
             val canvasCopy = createNativeCanvas(size, pixelRatio)
             canvasCopy.context2d.drawImage(canvasElement, 0.0, 0.0)

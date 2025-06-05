@@ -32,6 +32,9 @@ class AestheticsDefaults private constructor(
             put(Aes.LINEWIDTH, geomTheme.lineWidth())
             put(Aes.STROKE, geomTheme.lineWidth())
             put(Aes.POINT_SIZE, geomTheme.pointSize())
+            put(Aes.SEGMENT_COLOR, geomTheme.segmentColor())
+            put(Aes.SEGMENT_SIZE, geomTheme.segmentSize())
+            put(Aes.SEGMENT_ALPHA, geomTheme.segmentAlpha())
         },
         defaultsInLegend = TypedKeyHashMap().apply {
             put(Aes.ALPHA, DEFAULT_ALPHA)
@@ -114,6 +117,9 @@ class AestheticsDefaults private constructor(
             return base(geomTheme)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
                 .updateInLegend(Aes.POINT_SIZE, 5.0)
+                .updateInLegend(Aes.SEGMENT_COLOR, geomTheme.segmentColor())
+                .updateInLegend(Aes.SEGMENT_SIZE, geomTheme.segmentSize())
+                .updateInLegend(Aes.SEGMENT_ALPHA, geomTheme.segmentAlpha())
         }
 
         private fun pie(geomTheme: GeomTheme): AestheticsDefaults {

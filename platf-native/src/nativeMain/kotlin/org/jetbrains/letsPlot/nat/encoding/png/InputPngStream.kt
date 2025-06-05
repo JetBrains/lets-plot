@@ -11,6 +11,9 @@ class InputPngStream(
     private val data: ByteArray
 ) {
     private var i = 0
+        private set(value) {
+            field = value
+        }
     private val available get() = data.size - i
 
     fun read(): Int {

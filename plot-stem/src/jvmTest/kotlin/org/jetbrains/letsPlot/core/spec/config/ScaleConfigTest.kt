@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color.Companion.BLUE
 import org.jetbrains.letsPlot.commons.values.Color.Companion.LIME
 import org.jetbrains.letsPlot.commons.values.Color.Companion.RED
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -142,7 +143,13 @@ class ScaleConfigTest {
                 "aesthetic" to toOption(aes)
             )
 
-            val scaleMapper = ScaleConfig<Color>(aes, scaleSpec, AesOptionConversion.demoAndTest)
+            val scaleMapper = ScaleConfig<Color>(
+                aes,
+                scaleSpec,
+                AesOptionConversion.demoAndTest,
+                dataType = DataType.UNKNOWN,
+                tz = null
+            )
                 .createMapperProvider()
                 .createDiscreteMapper(DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
 
@@ -198,7 +205,8 @@ class ScaleConfigTest {
 
     @Test
     fun `choosing a scale name`() {
-        fun makePlotSpec(scaleParams: String? = null, asDiscreteParams: String? = null, guideParam: String? = null) = """
+        fun makePlotSpec(scaleParams: String? = null, asDiscreteParams: String? = null, guideParam: String? = null) =
+            """
             {
               "data": { "x": [0, 1], "v": [0, 1] },
               "kind": "plot",
@@ -248,11 +256,13 @@ class ScaleConfigTest {
             .assertScale(Aes.COLOR, isDiscrete = true, name = "scale guide title")
 
         // guide(title) has the highest priority
-        transformToClientPlotConfig(makePlotSpec(
-            scaleParams = scaleNameParam,
-            asDiscreteParams = asDiscreteLabelParam,
-            guideParam = guideParam
-        ))
+        transformToClientPlotConfig(
+            makePlotSpec(
+                scaleParams = scaleNameParam,
+                asDiscreteParams = asDiscreteLabelParam,
+                guideParam = guideParam
+            )
+        )
             .assertScale(Aes.COLOR, isDiscrete = true, name = "guide title")
     }
 }

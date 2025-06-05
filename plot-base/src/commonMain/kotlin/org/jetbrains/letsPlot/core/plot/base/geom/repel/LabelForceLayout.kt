@@ -30,7 +30,7 @@ class LabelForceLayout(
     circles: Map<Int, DoubleCircle>,
     hjust: Map<Int, Double>,
     vjust: Map<Int, Double>,
-    boxPadding: Double,
+    boxPaddings: Map<Int, Double>,
     val bounds: DoubleRectangle,
     val maxOverlaps: Int,
     val seed: Long?,
@@ -48,7 +48,7 @@ class LabelForceLayout(
             val label = LabelItem(
                 dpIndex,
                 box,
-                boxPadding,
+                boxPaddings[dpIndex] ?: 0.0,
                 hjust[dpIndex] ?: 0.5,
                 vjust[dpIndex] ?: 0.5,
                 circles[dpIndex]!!.center,

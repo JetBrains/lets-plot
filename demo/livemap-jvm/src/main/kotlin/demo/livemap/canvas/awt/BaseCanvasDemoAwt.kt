@@ -36,7 +36,7 @@ fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async
     val canvas = canvasControl.createCanvas(dim)
     canvasControl.addChild(canvas)
 
-    demoModel(canvas, canvasControl::createSnapshot)
+    demoModel(canvas, canvasControl::decodeDataImageUrl)
 
     canvasControl.component().repaint()
 }

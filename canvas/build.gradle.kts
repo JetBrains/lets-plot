@@ -19,7 +19,6 @@ kotlin {
         commonMain {
             dependencies {
                 compileOnly(project(":commons"))
-                compileOnly(project(":datamodel"))
 
                 compileOnly("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
@@ -28,7 +27,6 @@ kotlin {
         jvmTest {
             dependencies {
                 implementation(project(":commons"))
-                implementation(project(":datamodel"))
                 implementation(kotlin("test"))
                 implementation("org.assertj:assertj-core:$assertjVersion")
             }

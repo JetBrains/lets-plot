@@ -39,6 +39,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
@@ -72,6 +75,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 object AesInitValue {
 
     const val DEFAULT_ALPHA = 0.999887
+    val DEFAULT_SEGMENT_COLOR = Color.parseRGB("rgba(255, 255, 255, 0.999)")
 
     private val VALUE_MAP = TypedKeyHashMap()
 
@@ -133,6 +137,9 @@ object AesInitValue {
         VALUE_MAP[STROKE_START] = 0.0
         VALUE_MAP[STROKE_END] = 0.0
         VALUE_MAP[POINT_SIZE] = 0.5
+        VALUE_MAP[SEGMENT_COLOR] = DEFAULT_SEGMENT_COLOR
+        VALUE_MAP[SEGMENT_SIZE] = 0.5
+        VALUE_MAP[SEGMENT_ALPHA] = DEFAULT_ALPHA
     }
 
     /**

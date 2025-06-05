@@ -138,6 +138,9 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val STROKE_END: Aes<Double> = Aes("stroke_end")
 
         val POINT_SIZE: Aes<Double> = Aes("point_size")
+        val SEGMENT_COLOR: Aes<Color> = Aes("segment_color", false)
+        val SEGMENT_SIZE: Aes<Double> = Aes("segment_size")
+        val SEGMENT_ALPHA: Aes<Double> = Aes("segment_alpha")
 
         fun numeric(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
@@ -197,7 +200,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == FILL ||
                     aes == PAINT_A ||
                     aes == PAINT_B ||
-                    aes == PAINT_C
+                    aes == PAINT_C ||
+                    aes == SEGMENT_COLOR
         }
 
         fun affectingScaleX(aes: Aes<*>): Boolean {
@@ -247,6 +251,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == SIZE_END ||
                     aes == STROKE_START ||
                     aes == STROKE_END ||
+                    aes == POINT_SIZE ||
+                    aes == SEGMENT_SIZE ||
                     isPositional(aes)
         }
 

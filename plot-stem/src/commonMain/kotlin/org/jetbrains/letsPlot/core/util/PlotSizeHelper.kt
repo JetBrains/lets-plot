@@ -120,7 +120,7 @@ object PlotSizeHelper {
 
             FigKind.SUBPLOTS_SPEC -> {
                 val compositeFigureConfig = CompositeFigureConfig(figureSpec, containerTheme = null) {
-                    // ignore message when computing a figure size.
+                    // ignore a message when computing a figure size.
                 }
 
                 PlotSizeHelper.compositeFigureSizeDefault(compositeFigureConfig)

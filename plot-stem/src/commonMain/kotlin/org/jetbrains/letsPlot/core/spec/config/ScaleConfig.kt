@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
@@ -68,7 +70,9 @@ import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMapper
 class ScaleConfig<T> constructor(
     val aes: Aes<T>,
     options: Map<String, Any>,
-    private val aopConversion: AesOptionConversion
+    private val aopConversion: AesOptionConversion,
+    private val dataType: DataType,
+    private val tz: TimeZone?,
 ) : OptionsAccessor(options) {
 
     private fun enforceDiscreteDomain(): Boolean {
@@ -101,9 +105,9 @@ class ScaleConfig<T> constructor(
                     ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE
                 )
             }
-        } else if (aes == Aes.ALPHA && has(RANGE)) {
+        } else if ((aes == Aes.ALPHA || aes == Aes.SEGMENT_ALPHA) && has(RANGE)) {
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE) && has(
+        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE || aes == Aes.SEGMENT_SIZE) && has(
                 RANGE
             )
         ) {
@@ -213,14 +217,18 @@ class ScaleConfig<T> constructor(
         b.discreteDomainReverse(reverse)
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
-            // TODO: provide time zone
-            val tz: TimeZone? = null
-
             val dateTimeFormatter = getString(FORMAT)?.let { pattern ->
                 val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
-            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
+            b.breaksGenerator(
+                DateTimeBreaksGen(
+                    providedFormatter = dateTimeFormatter,
+                    minInterval = NiceTimeInterval.minIntervalOf(dataType),
+                    maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
+                    tz = tz
+                )
+            )
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {

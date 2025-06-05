@@ -25,6 +25,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
     private var myDataType: DataType = DataType.UNKNOWN
+    private var tz: TimeZone? = null
     private var myExpFormat: ExponentFormat = DEF_EXPONENT_FORMAT
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
@@ -76,6 +77,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     fun dataType(dataType: DataType): ScaleProviderBuilder<T> {
         myDataType = dataType
+        return this
+    }
+
+    fun timeZone(v: TimeZone?): ScaleProviderBuilder<T> {
+        tz = v
         return this
     }
 
@@ -155,6 +161,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myLabelLengthLimit: Int? = b.myLabelLengthLimit
         private val myLabelFormat: String? = b.myLabelFormat
         private val myDataType: DataType = b.myDataType
+        private val tz: TimeZone? = b.tz
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
@@ -181,9 +188,6 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
             else -> b.axisPosition  // Doesn't matter for aes other than x,y.
         }
-
-        // TODO: provade a time zone or NULL
-        private val tz: TimeZone? = null
 
         private fun scaleName(defaultName: String, guideTitle: String?): String {
             return guideTitle ?: myName ?: defaultName
@@ -246,6 +250,9 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 .exponentFormat(PlotAssembler.extractExponentFormat(myExpFormat))
 
             with.dataType(myDataType)
+            if (tz != null) {
+                with.timeZone(tz)
+            }
             if (breaks != null) {
                 with.breaks(breaks)
             }

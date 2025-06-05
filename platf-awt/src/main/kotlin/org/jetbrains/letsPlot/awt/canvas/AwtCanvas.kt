@@ -6,8 +6,6 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
@@ -23,7 +21,7 @@ private constructor(
 ) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelDensity) {
 
     companion object {
-        fun create(size: Vector, pixelDensity: Double): Canvas {
+        fun create(size: Vector, pixelDensity: Double): AwtCanvas {
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
@@ -32,17 +30,15 @@ private constructor(
         }
     }
 
-    override fun takeSnapshot(): Async<Canvas.Snapshot> {
-        return Asyncs.constant(AwtSnapshot(image))
-    }
-
-    override fun immidiateSnapshot(): Canvas.Snapshot {
+    override fun takeSnapshot(): Canvas.Snapshot {
         return AwtSnapshot(image)
     }
 
     internal data class AwtSnapshot(val image: BufferedImage) : Canvas.Snapshot {
+        override val size: Vector = Vector(image.width, image.height)
+
         override fun copy(): AwtSnapshot {
-            val b = BufferedImage(image.getWidth(), image.getHeight(), image.getType())
+            val b = BufferedImage(image.width, image.height, image.type)
             val g: Graphics2D = b.createGraphics()
             g.drawImage(image, 0, 0, null)
             g.dispose()

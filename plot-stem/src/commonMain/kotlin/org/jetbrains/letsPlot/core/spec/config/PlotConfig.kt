@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -60,8 +62,8 @@ abstract class PlotConfig(
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
-    // TODO: provide a time zonr (or null)
-    public val tz: TimeZone? = null
+    public val tz: TimeZone? = DataMetaUtil.determineTimeZoneID(opts)?.let { TimeZone(it) }
+    public val dataTypeByAes: (aes: Aes<*>) -> DataType
 
     init {
         val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -83,12 +85,15 @@ abstract class PlotConfig(
         sharedData = ConfigUtil.createDataFrame(get(DATA))
 
         layerConfigs = createLayerConfigs(sharedData, isClientSide)
+        dataTypeByAes = { aes -> getDType(aes, layerConfigs) }
 
         // build all scales
         val excludeStatVariables = !isClientSide
         scaleConfigs = PlotConfigUtil.createScaleConfigs(
             scaleOptionsList = DataMetaUtil.createScaleSpecs(opts) + getList(SCALES),
-            aopConversion = aopConversion
+            aopConversion = aopConversion,
+            dataType = dataTypeByAes,
+            tz = tz,
         )
 
         mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
@@ -104,7 +109,8 @@ abstract class PlotConfig(
             scaleConfigs,
             excludeStatVariables,
             zeroPositionalExpands,
-            expFormat = theme.exponentFormat
+            expFormat = theme.exponentFormat,
+            dataType = dataTypeByAes,
         )
 
         facets = if (has(FACET)) {
@@ -171,13 +177,14 @@ abstract class PlotConfig(
             geomProto,
             aopConversion = aopConversion,
             clientSide = isClientSide,
-            isMapPlot
+            isMapPlot,
+            tz,
         )
     }
 
 
     protected fun replaceSharedData(plotData: DataFrame) {
-        check(!isClientSide)   // This class is immutable on client-side
+        check(!isClientSide)   // This class is immutable on the client-side
         sharedData = plotData
         update(DATA, DataFrameUtil.toMap(plotData))
     }
@@ -219,6 +226,23 @@ abstract class PlotConfig(
 
         fun figSpecKind(opts: OptionsAccessor): FigKind {
             return FigKind.fromOption(opts.getStringSafe(Meta.KIND))
+        }
+
+        private fun getDType(
+            aes: Aes<*>,
+            layerConfigs: List<LayerConfig>,
+        ): DataType {
+            val aesBindingByLayer = layerConfigs
+                .associateWith(LayerConfig::varBindings)
+                .mapValues { (_, bindings) -> bindings.singleOrNull { binding -> aes == binding.aes }?.variable?.name }
+                .filterNotNullValues()
+
+            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypesByVarName[varName] }
+
+            // Multiple layers with different data types for the same aes.
+            // Don't use any (e.g., INTEGER) - may crash if another layer uses a different incompatible data type.
+            // Return UNKNOWN (effectively, Any.toString()) to avoid crashes.
+            return dTypes.distinct().singleOrNull() ?: DataType.UNKNOWN
         }
     }
 }

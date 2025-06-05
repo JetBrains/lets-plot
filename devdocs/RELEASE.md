@@ -6,7 +6,7 @@
  - Linux Ubuntu 20.04+
  - macOS 11.6+ (Apple Silicon processor)
  - JDK11
- - Python 3.8-3.13
+ - Python 3.9-3.13
  - `mingw-w64-x86_64-gcc` MSYS2 package (only for Windows)
 
 **Important!** Linux requires more special setup: [README.md](../tools/README.md)   
@@ -62,16 +62,16 @@ Put `local.properties` in the project root. See `local.properties.template` for 
 ### 2. Prepare config file with Python paths for release script
 
 File must be in the YAML format and contain paths to bin and include directories for
-each Python version: from 3.8 to 3.13.
+each Python version: from 3.9 to 3.13.
 
 **Example:**
 
 `release_pythons.yml`
 
 ```yaml
-py38-arm:
-  bin_path: /Users/letsplotter/anaconda-arm/envs/py38-arm/bin
-  include_path: /Users/letsplotter/anaconda-arm/envs/py38-arm/include/python3.8
+py39-arm:
+  bin_path: /Users/letsplotter/anaconda-arm/envs/py39-arm/bin
+  include_path: /Users/letsplotter/anaconda-arm/envs/py39-arm/include/python3.9
 py310-x64:
   bin_path: /Users/letsplotter/anaconda-x64/envs/py310/bin
   include_path: /Users/letsplotter/anaconda-x64/envs/py310/include/python3.10
@@ -98,9 +98,9 @@ python .\build_release.py ..\release_pythons.yml
 ### 4. Check Python artifacts
 
 The directory `python-package/dist` must contain Python release wheels:
- - Windows: `x64` wheels for Python versions 3.8-3.13
- - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.8-3.13
- - Mac: `x64` and `arm64` wheels for 3.8-3.13
+ - Windows: `x64` wheels for Python versions 3.9-3.13
+ - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.9-3.13
+ - Mac: `x64` and `arm64` wheels for 3.9-3.13
 
 
 ## Publish artifacts

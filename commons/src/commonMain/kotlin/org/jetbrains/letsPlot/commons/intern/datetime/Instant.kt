@@ -38,7 +38,7 @@ class Instant : Comparable<Instant> {
     }
 
     fun add(duration: Duration): Instant {
-        return Instant(kotlinxInstant.toEpochMilliseconds() + duration.duration)
+        return Instant(kotlinxInstant.toEpochMilliseconds() + duration.totalMillis)
     }
 
     override fun compareTo(other: Instant) = kotlinxInstant.compareTo(other.kotlinxInstant)

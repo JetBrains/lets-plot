@@ -28,7 +28,7 @@ class DateTimeAnnotation {
             val rnd = Random(0)
 
             val n = 30
-            val time = (0..n).map { instant + it * period.duration }
+            val time = (0..n).map { instant + it * period.totalMillis }
             val values = (0..n).map { rnd.nextDouble(0.0, 20.0) }
 
             val spec = """
@@ -84,7 +84,7 @@ class DateTimeAnnotation {
         fun yminAndYmaxMapping(): MutableMap<String, Any> {
             val instant = DateTime(Date(1, Month.FEBRUARY, 2003))
                 .toEpochMilliseconds(TZ)
-            val errDuration = 7 * Duration.DAY.duration.toDouble()
+            val errDuration = 7 * Duration.DAY.totalMillis.toDouble()
             val rnd = Random(0)
 
             val n = 7

@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.core.spec
 
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -206,12 +208,18 @@ internal object PlotConfigUtil {
 
     internal fun createScaleConfigs(
         scaleOptionsList: List<*>,
-        aopConversion: AesOptionConversion
+        aopConversion: AesOptionConversion,
+        dataType: (aes: Aes<*>) -> DataType,
+        tz: TimeZone?,
     ): List<ScaleConfig<Any>> {
         val mergedOpts = mergeScaleOptions(scaleOptionsList)
 
         return mergedOpts.map { (aes, options) ->
-            ScaleConfig(aes, options, aopConversion)
+            ScaleConfig(
+                aes, options, aopConversion,
+                dataType = dataType(aes),
+                tz = tz
+            )
         }
     }
 }

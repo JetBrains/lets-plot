@@ -17,14 +17,14 @@ import kotlin.test.assertEquals
 
 @Suppress("PrivatePropertyName")
 class DateTimeBeforeUnixEpochTest {
-    private val instant1969dec31_h00m00s00 = Instant(-Duration.DAY.duration) // -86400000
+    private val instant1969dec31_h00m00s00 = Instant(-Duration.DAY.totalMillis) // -86400000
     private val datetime1969dec31_h00m00s00 = DateTime(Date(31, Month.DECEMBER, 1969), Time(0, 0))
 
     private val instant1969dec31_h23m59s59ms999 = Instant(-1)
     private val datetime1969dec31_h23m59s59ms999 = DateTime(Date(31, Month.DECEMBER, 1969), Time(23, 59, 59, 999))
 
     private val instant1969dec23_h23m59s59ms1 =
-        Instant(-Duration.DAY.mul(8).add(Duration.MS.mul(999)).duration) // -691200999
+        Instant(-Duration.DAY.mul(8).add(Duration.MS.mul(999)).totalMillis) // -691200999
     private val datetime1969dec23_h23m59s59ms1 = DateTime(Date(23, Month.DECEMBER, 1969), Time(23, 59, 59, 1))
 
     private val instant1752sep14_h01m02s03ms456 = Instant(-6_857_218_676_544)

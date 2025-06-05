@@ -28,8 +28,8 @@ TYPE_FLOATING = 'float'
 TYPE_STRING = 'str'
 TYPE_BOOLEAN = 'bool'
 TYPE_DATE_TIME = 'datetime'
-TYPE_DATE = 'date'  # Date only (no time)
-TYPE_TIME = 'time'  # Time only (no date)
+TYPE_DATE = 'date'  # Local date (no time zone)
+TYPE_TIME = 'time'  # Local time (we ignore time zone even if it is present)
 TYPE_UNKNOWN = 'unknown'
 
 
@@ -41,7 +41,7 @@ def _infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Di
             type_info[var_name] = _infer_type_pandas_dataframe(var_name, var_content)
     elif is_polars_dataframe(data):
         for var_name, var_type in data.schema.items():
-            type_info[var_name] = _infer_type_polars_dataframe(var_name, var_type, data)
+            type_info[var_name] = _infer_type_polars_dataframe(var_name, var_type)
     elif isinstance(data, dict):
         for var_name, var_content in data.items():
             type_info[var_name] = _infer_type_dict(var_name, var_content)
@@ -93,17 +93,17 @@ def _infer_type_pandas_dataframe(var_name: str, var_content) -> str:
         else:
             lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
 
-    if lp_dtype == TYPE_DATE:
-        # Not yet supported.
-        lp_dtype == TYPE_DATE_TIME
-    elif lp_dtype == TYPE_TIME:
-        # Not yet supported.
-        lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
+    # if lp_dtype == TYPE_DATE:
+    #     # Not yet supported.
+    #     lp_dtype == TYPE_DATE_TIME
+    # elif lp_dtype == TYPE_TIME:
+    #     # Not yet supported.
+    #     lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
 
     return lp_dtype
 
 
-def _infer_type_polars_dataframe(var_name: str, var_type, data: 'polars.DataFrame') -> str:
+def _infer_type_polars_dataframe(var_name: str, var_type) -> str:
     lp_dtype = TYPE_UNKNOWN
 
     # https://docs.pola.rs/api/python/stable/reference/datatypes.html
@@ -126,12 +126,12 @@ def _infer_type_polars_dataframe(var_name: str, var_type, data: 'polars.DataFram
     else:
         lp_dtype = 'unknown(polars:' + str(var_type) + ')'
 
-    if lp_dtype == TYPE_DATE:
-        # Not yet supported.
-        lp_dtype == TYPE_DATE_TIME
-    elif lp_dtype == TYPE_TIME:
-        # Not yet supported.
-        lp_dtype = 'unknown(polars:' + str(var_type) + ')'
+    # if lp_dtype == TYPE_DATE:
+    #     # Not yet supported.
+    #     lp_dtype == TYPE_DATE_TIME
+    # elif lp_dtype == TYPE_TIME:
+    #     # Not yet supported.
+    #     lp_dtype = 'unknown(polars:' + str(var_type) + ')'
 
     return lp_dtype
 
@@ -179,7 +179,8 @@ def _infer_type_dict(var_name: str, var_content) -> str:
         lp_dtype = TYPE_DATE_TIME
     elif numpy and issubclass(type_obj, numpy.timedelta64):
         # ToDo: time delta?
-        lp_dtype = TYPE_DATE_TIME
+        # lp_dtype = TYPE_DATE_TIME
+        lp_dtype = 'unknown(python:' + str(type_obj) + ')'
 
     elif numpy and issubclass(type_obj, numpy.integer):
         lp_dtype = TYPE_INTEGER
@@ -188,12 +189,12 @@ def _infer_type_dict(var_name: str, var_content) -> str:
     else:
         lp_dtype = 'unknown(python:' + str(type_obj) + ')'
 
-    if lp_dtype == TYPE_DATE:
-        # Not yet supported.
-        lp_dtype == TYPE_DATE_TIME
-    elif lp_dtype == TYPE_TIME:
-        # Not yet supported.
-        lp_dtype = 'unknown(python:' + str(type_obj) + ')'
+    # if lp_dtype == TYPE_DATE:
+    #     # Not yet supported.
+    #     lp_dtype == TYPE_DATE_TIME
+    # elif lp_dtype == TYPE_TIME:
+    #     # Not yet supported.
+    #     lp_dtype = 'unknown(python:' + str(type_obj) + ')'
 
     return lp_dtype
 
@@ -206,7 +207,7 @@ def _detect_time_zone(var_name: str, data: Union[Dict, 'pandas.DataFrame', 'pola
                 return str(var_content.dt.tz)
     elif is_polars_dataframe(data):
         if data[var_name].dtype.time_zone is not None:
-            return data[var_name].dtype.time_zone
+            return str(data[var_name].dtype.time_zone)
     elif isinstance(data, dict):
         if var_name in data:
             var_content = data[var_name]

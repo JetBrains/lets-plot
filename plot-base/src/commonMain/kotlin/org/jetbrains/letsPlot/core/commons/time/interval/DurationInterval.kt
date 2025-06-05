@@ -6,37 +6,36 @@
 package org.jetbrains.letsPlot.core.commons.time.interval
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.math.ceil
 
 /**
  * Duration interval represents a fixed-length time span (such as "5 minutes" or "2 hours")
  * that can be used for creating regular time-based tick marks on an axis.
  */
-internal class DurationInterval(private val myDuration: Duration, count: Int) : TimeInterval(count) {
+internal class DurationInterval(
+    timeUnit: Duration,
+    count: Int
+) : TimeInterval {
 
-    override val tickFormatPattern: String
-        get() {
-            val duration = myDuration.duration
-            if (duration < Duration.SECOND.duration) {
-                return "%S"
-            } else if (duration < Duration.MINUTE.duration) {
-                return "%S"
-            } else if (duration < Duration.HOUR.duration) {
-                return "%M"
-            } else if (duration < Duration.DAY.duration) {
-                return "%H:%M"
-            } else if (duration < Duration.WEEK.duration) {
-                return "%b %e"
-            }
-            return "%b %e"
+    private val duration: Duration = timeUnit.mul(count)
+    override val tickFormatPattern: String =
+        // Note: previously we compared `timeUnit` with `Duration.SECOND`, `Duration.MINUTE`, etc.
+        when {
+//            duration < Duration.SECOND -> "%M:%S" //"%S"
+            duration < Duration.MINUTE -> "%M:%S" //"%S"
+//            duration < Duration.HOUR -> HourInterval.TICK_FORMAT //"%M"
+            duration < Duration.DAY -> HourInterval.TICK_FORMAT
+            else -> DayInterval.TICK_FORMAT
         }
 
     init {
-        check(myDuration.isPositive) { "Duration must be positive." }
+        check(duration.isPositive) { "Duration must be positive." }
     }
 
-    override fun range(start: Double, end: Double): List<Double> {
-        val step = (myDuration.duration * count).toDouble()
+    override fun range(start: Double, end: Double, tz: TimeZone?): List<Double> {
+//        val step = (duration.totalMillis * count).toDouble()
+        val step = duration.totalMillis.toDouble()
         var tick = ceil(start / step) * step
         val result = ArrayList<Double>()
         while (tick <= end) {

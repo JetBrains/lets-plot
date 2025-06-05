@@ -57,7 +57,7 @@ object LayerConverter {
             }
 
             val positiveScalingLimit = when (
-                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END, Aes.POINT_SIZE).any { it in layer.mappedAes }
+                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END, Aes.POINT_SIZE, Aes.SEGMENT_SIZE).any { it in layer.mappedAes }
             ) {
                 true -> aesScalingLimit
                 false -> constScalingLimit

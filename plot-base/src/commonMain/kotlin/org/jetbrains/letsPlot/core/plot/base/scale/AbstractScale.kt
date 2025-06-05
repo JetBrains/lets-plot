@@ -24,8 +24,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val labelLengthLimit: Int
     protected val expFormat: ExponentFormat
 
-    // TODO: provide scale with tz.
-    private val tz: TimeZone? = null
+    private val tz: TimeZone?
 
     private var createdScaleBreaks: ScaleBreaks? = null
     private var createdScaleBreaksShortened: Boolean = false
@@ -37,22 +36,29 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
     protected constructor(name: String) {
         this.name = name
-        dataType = DataType.UNKNOWN
+
         providedBreaks = null
         providedLabels = null
         providedScaleBreaks = null
-        labelLengthLimit = 0
         providedFormatter = null
+
+        dataType = DataType.UNKNOWN
+        tz = null
+
+        labelLengthLimit = 0
         expFormat = DEF_EXPONENT_FORMAT
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
         name = b.myName
+
         providedBreaks = b.providedBreaks
         providedLabels = b.providedLabels
         providedScaleBreaks = b.providedScaleBreaks
         providedFormatter = b.providedFormatter
+
         dataType = b.dataType
+        tz = b.tz
 
         labelLengthLimit = b.myLabelLengthLimit
         expFormat = b.myExpFormat
@@ -110,9 +116,12 @@ internal abstract class AbstractScale<DomainT> : Scale {
         var providedBreaks: List<DomainT>? = scale.providedBreaks
         var providedLabels: List<String>? = scale.providedLabels
         var providedScaleBreaks: ScaleBreaks? = scale.providedScaleBreaks
-        var myLabelLengthLimit: Int = scale.labelLengthLimit
         var providedFormatter: ((Any) -> String)? = scale.providedFormatter
+
         var dataType: DataType = scale.dataType
+        var tz: TimeZone? = scale.tz
+
+        var myLabelLengthLimit: Int = scale.labelLengthLimit
         var myExpFormat: ExponentFormat = scale.expFormat
 
         var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -153,6 +162,11 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         override fun dataType(v: DataType): Scale.Builder {
             dataType = v
+            return this
+        }
+
+        override fun timeZone(v: TimeZone): Scale.Builder {
+            tz = v
             return this
         }
 

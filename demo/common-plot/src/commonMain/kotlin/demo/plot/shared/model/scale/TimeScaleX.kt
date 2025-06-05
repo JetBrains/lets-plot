@@ -36,7 +36,7 @@ class TimeScaleX {
             timeAxis: String = "x"
         ): MutableMap<String, Any> {
             val rnd = Random(0)
-            val time = entries.map { it * period.duration }
+            val time = entries.map { it * period.totalMillis }
             val values = time.indices.map { rnd.nextDouble(0.0, 20.0) }
 
             val mapping = when (timeAxis) {

@@ -11,6 +11,7 @@ plugins {
 
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
 kotlin {
     val target = when {
@@ -35,8 +36,7 @@ kotlin {
                 implementation(project(":plot-base"))
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
-                implementation(project(":plot-raster"))
-                implementation("com.squareup.okio:okio:3.9.0")
+                implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
             }
         }
 

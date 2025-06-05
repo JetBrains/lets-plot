@@ -175,8 +175,8 @@ internal object DataConfigUtil {
     ): DataFrame {
 
         // 'DateTime' variables
-        val dateTimeVariables = DataMetaUtil.getDateTimeColumns(plotDataMeta) +
-                DataMetaUtil.getDateTimeColumns(ownDataMeta)
+        val dateTimeVariables = DataMetaUtil.getTemporalDTypesByVarName(plotDataMeta) +
+                DataMetaUtil.getTemporalDTypesByVarName(ownDataMeta)
         val variablesToMarkAsDateTime = rawCombinedData.variables().filter { it.name in dateTimeVariables }
 
         // 'as_discrete' variables

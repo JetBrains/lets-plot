@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 import kotlinx.datetime.LocalTime as KotlinxLocalTime
 
 /**

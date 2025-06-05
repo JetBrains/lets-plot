@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapLayerKind
@@ -17,5 +16,5 @@ internal interface TileDataRenderer {
         tileFeatures: Map<String, List<TileFeature>>,
         cellKey: CellKey,
         layerKind: BasemapLayerKind
-    ): MicroTask<Async<Canvas.Snapshot>>
+    ): MicroTask<Unit>
 }

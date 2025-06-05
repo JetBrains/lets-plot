@@ -5,12 +5,15 @@
 
 package org.jetbrains.letsPlot.core.canvas
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
 interface CanvasProvider {
     fun createCanvas(size: Vector): Canvas
-    fun createSnapshot(dataUrl: String): Async<Snapshot>
-    fun createSnapshot(bytes: ByteArray, size: Vector): Async<Snapshot>
+    fun createSnapshot(bitmap: Bitmap): Snapshot
+
+    fun decodeDataImageUrl(dataUrl: String): Async<Snapshot>
+    fun decodePng(png: ByteArray, size: Vector): Async<Snapshot>
 }

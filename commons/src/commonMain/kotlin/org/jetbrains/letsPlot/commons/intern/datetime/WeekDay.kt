@@ -5,6 +5,9 @@
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
+/**
+ * ISO 8601: week starts on Monday.
+ */
 enum class WeekDay(private val displayName: String, val isWeekend: Boolean) {
     MONDAY("MO", false),
     TUESDAY("TU", false),

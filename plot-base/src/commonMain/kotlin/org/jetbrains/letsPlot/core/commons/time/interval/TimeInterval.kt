@@ -6,17 +6,18 @@
 package org.jetbrains.letsPlot.core.commons.time.interval
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-abstract class TimeInterval protected constructor(val count: Int) {
+interface TimeInterval {
 
-    abstract val tickFormatPattern: String
+    val tickFormatPattern: String
 
     /**
      * @param start instant
      * @param end   instant
      * @return Returns every time interval after or equal to start and before end.
      */
-    abstract fun range(start: Double, end: Double): List<Double>
+    fun range(start: Double, end: Double, tz: TimeZone?): List<Double>
 
     companion object {
         fun milliseconds(count: Int): TimeInterval {
@@ -32,23 +33,19 @@ abstract class TimeInterval protected constructor(val count: Int) {
         }
 
         fun hours(count: Int): TimeInterval {
-            return DurationInterval(Duration.HOUR, count)
+            return HourInterval(count)
         }
 
         fun days(count: Int): TimeInterval {
-            return DurationInterval(Duration.DAY, count)
+            return DayInterval(count)
         }
 
         fun weeks(count: Int): TimeInterval {
-            return DurationInterval(Duration.WEEK, count)
+            return WeekInterval(count)
         }
 
         fun months(count: Int): TimeInterval {
             return MonthInterval(count)
-        }
-
-        private fun quarter(count: Int): TimeInterval {
-            return QuarterInterval(count)
         }
 
         fun years(count: Int): TimeInterval {

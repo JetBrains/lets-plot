@@ -89,6 +89,9 @@ open class LayerOptions(
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
     var pointSize: Double? by map(Aes.POINT_SIZE)
+    var segmentColor: String? by map(Aes.SEGMENT_COLOR)
+    var segmentSize: Double? by map(Aes.SEGMENT_SIZE)
+    var segmentAlpha: Double? by map(Aes.SEGMENT_ALPHA)
 
     fun const(aes: Aes<*>, value: Any?) {
         properties[toOption(aes)] = value
