@@ -356,7 +356,7 @@ object DataImage {
 
 
                         (filtered[filteredOffset + x].toInt() and 0xFF + paeth) and 0xFF
-                        //raw
+                        raw
                     }
                     else -> error("Unsupported filter type: $filterType")
                 }
