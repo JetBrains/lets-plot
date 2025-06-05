@@ -16,7 +16,6 @@ class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
-
 ) : Context2d by stateDelegate {
     private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
@@ -57,8 +56,8 @@ class MagickContext2d(
             srcWand,
             ImageMagick.CompositeOperator.OverCompositeOp,
             ImageMagick.MagickTrue,
-            x.toULong().convert(),
-            y.toULong().convert()
+            x.toLong().convert(),
+            y.toLong().convert()
         )
 
         if (success == ImageMagick.MagickFalse) {
@@ -93,8 +92,6 @@ class MagickContext2d(
             x.toULong().convert(),
             y.toULong().convert()
         )
-
-        ImageMagick.DestroyMagickWand(srcWand)
 
         if (success == ImageMagick.MagickFalse) {
             val err = ImageMagick.MagickGetException(img, null)

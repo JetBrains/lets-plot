@@ -57,8 +57,10 @@ env["GS"] = "none"  # disable Ghostscript delegate
 
 # Run configure script
 print("Configuring ImageMagick...")
-env["CFLAGS"] = "-O2 -fPIC -DNDEBUG"
-env["CXXFLAGS"] = "-O2 -fPIC -DNDEBUG"
+#env["CFLAGS"] = "-O2 -fPIC -DNDEBUG"
+#env["CXXFLAGS"] = "-O2 -fPIC -DNDEBUG"
+env["CFLAGS"] = "-O2 -fPIC -DEBUG"
+env["CXXFLAGS"] = "-O2 -fPIC -DEBUG"
 env["ac_cv_func_getentropy"] = "no"
 
 configure_cmd = [
@@ -76,7 +78,7 @@ configure_cmd = [
     "--disable-openmp",
     "--without-threads",
     "--disable-opencl",
-    "--disable-assert",
+#    "--disable-assert",
     "--disable-hdri",
     "--disable-installed",
 
