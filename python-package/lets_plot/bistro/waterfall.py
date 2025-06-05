@@ -176,7 +176,7 @@ def waterfall_plot(data, x, y, *,
             'x': categories,
             'y': np.random.normal(size=len(categories))
         }
-        rect_data = {
+        band_data = {
             'xmin': [-0.5, 2.5],
             'xmax': [2.5, 5.5],
             'name': ['Q1', 'Q2']
@@ -189,10 +189,10 @@ def waterfall_plot(data, x, y, *,
         waterfall_plot(data, 'x', 'y', label_format='.2f',
                        background_layers=[
                            geom_band(aes(xmin='xmin', xmax='xmax', fill='name', color='name'),
-                                     data=rect_data, alpha=0.2)
+                                     data=band_data, alpha=0.2)
                        ]) + \\
             geom_text(aes(x='x', y='y', label='name'), data=text_data, size=10) + \\
-            ggtitle("Waterfall with custom layers")
+            ggtitle("Waterfall with background layers")
 
     |
 
