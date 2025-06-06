@@ -185,8 +185,11 @@ def _detect_time_zone(var_name: str, data: Union[Dict, 'pandas.DataFrame', 'pola
             if hasattr(var_content, 'dt') and hasattr(var_content.dt, 'tz') and var_content.dt.tz is not None:
                 return str(var_content.dt.tz)
     elif is_polars_dataframe(data):
-        if data[var_name].dtype.time_zone is not None:
-            return str(data[var_name].dtype.time_zone)
+        if var_name in data.columns:
+            col_dtype = data[var_name].dtype
+            if hasattr(col_dtype, 'time_zone'):
+                if col_dtype.time_zone is not None:
+                    return str(col_dtype.time_zone)
     elif isinstance(data, dict):
         if var_name in data:
             var_content = data[var_name]
