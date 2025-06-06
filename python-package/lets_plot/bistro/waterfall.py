@@ -187,10 +187,10 @@ def waterfall_plot(data, x, y, *,
             'name': ['Q1', 'Q2']
         }
         waterfall_plot(data, 'x', 'y', label_format='.2f',
-                       background_layers=[
-                           geom_band(aes(xmin='xmin', xmax='xmax', fill='name', color='name'),
-                                     data=band_data, alpha=0.2)
-                       ]) + \\
+                       background_layers=geom_band(
+                           aes(xmin='xmin', xmax='xmax', fill='name', color='name'),
+                           data=band_data, alpha=0.2
+                       )) + \\
             geom_text(aes(x='x', y='y', label='name'), data=text_data, size=10) + \\
             ggtitle("Waterfall with background layers")
 
