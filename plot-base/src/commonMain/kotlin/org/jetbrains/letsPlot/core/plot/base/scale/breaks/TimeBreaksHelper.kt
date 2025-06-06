@@ -13,24 +13,26 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.WEEK
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import kotlin.math.abs
 import kotlin.math.ceil
 
+/**
+ * The timescale represents time intervals: days, hours, minutes, seconds, etc.
+ * Thus, unlike a date-time scale, it doesn't need a time zone.
+ */
 internal class TimeBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
-    tz: TimeZone?,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
     val formatter: (Any) -> String
 
-    private val dayFormat = newStringFormat("{d}d", tz)
-    private val hmsFormat = newStringFormat("{d}:{02d}:{02d}", tz)
-    private val hmFormat = newStringFormat("{d}:{02d}", tz)
+    private val dayFormat = newStringFormat("{d}d")
+    private val hmsFormat = newStringFormat("{d}:{02d}:{02d}")
+    private val hmFormat = newStringFormat("{d}:{02d}")
 
     init {
         val ticks: List<Double> = when {
@@ -117,9 +119,9 @@ internal class TimeBreaksHelper(
             1 * HOUR.totalMillis, 3 * HOUR.totalMillis, 6 * HOUR.totalMillis, 12 * HOUR.totalMillis,
             1 * DAY.totalMillis, 2 * DAY.totalMillis,
             1 * WEEK.totalMillis,
-            4 * WEEK.totalMillis, // ~1 month
+            4 * WEEK.totalMillis, // ~1 months
             12 * WEEK.totalMillis, // ~3 months
-            48 * WEEK.totalMillis, // ~1 year
+            48 * WEEK.totalMillis, // ~1 years
         ).minByOrNull { abs(it - targetStep.toLong()) } ?: SECOND.totalMillis
 
         var tick = ceil(normalStart / niceTickInterval) * niceTickInterval
@@ -140,8 +142,8 @@ internal class TimeBreaksHelper(
 //        private fun formatHms(duration: Duration) = hmsFormat.apply(duration.hour, duration.minute, duration.second)
 //        private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
 
-        private fun newStringFormat(format: String, tz: TimeZone?): StringFormat =
-            StringFormat.forNArgs(format, -1, tz = tz)
+        private fun newStringFormat(format: String): StringFormat =
+            StringFormat.forNArgs(format, -1, tz = null)
 
         private fun StringFormat.apply(vararg args: Any): String = format(args.toList())
     }

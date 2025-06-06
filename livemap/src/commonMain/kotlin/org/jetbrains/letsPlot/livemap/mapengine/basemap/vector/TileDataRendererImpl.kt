@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -15,7 +14,6 @@ import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Rule
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
-import org.jetbrains.letsPlot.livemap.core.multitasking.map
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapLayerKind
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 
@@ -46,7 +44,7 @@ internal class TileDataRendererImpl(
         tileFeatures: Map<String, List<TileFeature>>,
         cellKey: CellKey,
         layerKind: BasemapLayerKind
-    ): MicroTask<Async<Canvas.Snapshot>> {
+    ): MicroTask<Unit> {
         val ctx = canvas.context2d
         val size = canvas.size.toDoubleVector()
         val mapConfig = myMapConfigSupplier()
@@ -63,7 +61,7 @@ internal class TileDataRendererImpl(
             }
         }
 
-        return MicroTaskUtil.create(tasks).map { canvas.takeSnapshot() }
+        return MicroTaskUtil.create(tasks)
     }
 
     private fun tileFeaturesDrawTasks(

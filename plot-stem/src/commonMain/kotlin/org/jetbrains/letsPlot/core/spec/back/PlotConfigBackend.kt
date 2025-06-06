@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -61,9 +63,9 @@ open class PlotConfigBackend(
     internal fun updatePlotSpec() {
 
         // Correct scales
-        val plotDateTimeColumns = DataMetaUtil.getDateTimeColumns(getMap(DATA_META))
+        val plotDateTimeColumns = DataMetaUtil.getTemporalDTypesByVarName(getMap(DATA_META))
         layerConfigs.map { layerConfig ->
-            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
+            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getTemporalDTypesByVarName(layerConfig.getMap(DATA_META))
 
             // Detect date/time variables with mapping to a discrete scale
             val dateTimeDiscreteBindings = layerConfig.varBindings
@@ -73,13 +75,21 @@ open class PlotConfigBackend(
             val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
                 val distinctValues = layerConfig.combinedData.distinctValues(binding.variable)
 
-                selectDateTimeFormat(distinctValues, tz)?.let { format ->
-                    mapOf(
-                        Option.Scale.AES to binding.aes.name,
-                        Option.Scale.DATE_TIME to true,
-                        Option.Scale.FORMAT to format
-                    )
+                // Must be a date/time variable.
+                val dataType = plotDateTimeColumns[binding.variable.name]
+                if (dataType != null && dataType.isTemporal()) {
+                    selectDateTimeFormat(distinctValues, dataType, tz)?.let { format ->
+                        mapOf(
+                            Option.Scale.AES to binding.aes.name,
+                            Option.Scale.DATE_TIME to true,
+                            Option.Scale.FORMAT to format
+                        )
+                    }
+                } else {
+                    // Not a date/time variable, no need to update the scale.
+                    null
                 }
+
             }
             if (scaleUpdated.isNotEmpty()) {
                 val mergedOpts = PlotConfigUtil.mergeScaleOptions(scaleUpdated + getList(SCALES)).values.toList()
@@ -396,12 +406,14 @@ open class PlotConfigBackend(
             }.toMap()
         }
 
-        private const val VALUES_LIMIT_TO_SELECT_FORMAT = 1_000_000
+        private const val VALUES_LIMIT_TO_SELECT_FORMAT = 100_000
 
-        private fun selectDateTimeFormat(distinctValues: Set<Any>, tz: TimeZone?): String? {
+        private fun selectDateTimeFormat(distinctValues: Set<Any>, dataType: DataType, tz: TimeZone?): String? {
             if (distinctValues.any { it !is Number }) {
                 return null
             }
+
+            check(dataType.isTemporal()) { "A date/time expected, but was: $dataType" }
 
             // Try using the same formatter that is applied to the continuous scale.
             val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
@@ -412,18 +424,34 @@ open class PlotConfigBackend(
                         range.upperEnd,
                         distinctValues.size,
                         providedFormatter = null,
+                        minInterval = NiceTimeInterval.minIntervalOf(dataType),
+                        maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
                         tz = tz
                     ).pattern
                 }
 
-            // Other patterns to choose the best one
-            val patterns = listOf(
-                "%Y",
-                "%Y-%m",
-                "%Y-%m-%d",
-                "%Y-%m-%d %H:%M",
-                "%Y-%m-%d %H:%M:%S",
-            )
+            // Other patterns to consider.
+            val patterns = when (dataType) {
+                DataType.DATE_MILLIS -> listOf(
+                    "%Y",
+                    "%Y-%m",
+                    "%Y-%m-%d",
+                )
+
+                DataType.TIME_MILLIS -> listOf(
+                    "%H:%M",
+                    "%H:%M:%S",
+                )
+
+                else -> listOf(
+                    "%Y",
+                    "%Y-%m",
+                    "%Y-%m-%d",
+                    "%Y-%m-%d %H:%M",
+                    "%Y-%m-%d %H:%M:%S",
+                )
+            }
+
             if (distinctValues.size > VALUES_LIMIT_TO_SELECT_FORMAT) {
                 return breaksPattern ?: patterns.last()
             }

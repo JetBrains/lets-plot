@@ -38,6 +38,7 @@ class PlotConfigTest {
         val scaleConfigs = PlotConfigUtil.createScaleConfigs(
             plotConfig.getList(SCALES),
             plotConfig.aopConversion,
+            plotConfig.dataTypeByAes,
             plotConfig.tz
         )
         assertEquals(1, scaleConfigs.size.toLong())

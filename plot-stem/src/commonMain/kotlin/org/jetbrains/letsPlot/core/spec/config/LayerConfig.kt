@@ -64,7 +64,7 @@ class LayerConfig constructor(
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    val dtypes: Map<String, DataType>
+    val dtypesByVarName: Map<String, DataType>
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
     val labelFormat: String? = getString(Option.Geom.Text.LABEL_FORMAT)
@@ -229,8 +229,8 @@ class LayerConfig constructor(
             isMapPlot = isMapPlot
         )
 
-        val baseDTypes = DataMetaUtil.getDataTypes(plotDataMeta) +
-                DataMetaUtil.getDataTypes(getMap(DATA_META))
+        val baseDTypes = DataMetaUtil.getDTypesByVarName(plotDataMeta) +
+                DataMetaUtil.getDTypesByVarName(getMap(DATA_META))
 
         val discreteVarsDTypes = if (clientSide) {
             combinedDiscreteMappings
@@ -241,7 +241,7 @@ class LayerConfig constructor(
             emptyMap()
         }
 
-        dtypes = baseDTypes + discreteVarsDTypes
+        dtypesByVarName = baseDTypes + discreteVarsDTypes
 
 
         // init AES constants excluding mapped AES
@@ -579,7 +579,7 @@ class LayerConfig constructor(
                         .reduce { _, combined, element -> combined.mergeWith(element) }
                         .values.toList()
                 } else {
-                    // On server side order options are used just to keep variables after
+                    // On the server side order options are used just to keep variables after
                     it
                 }
             }

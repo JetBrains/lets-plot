@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.raster.shape
 
+import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -26,6 +27,7 @@ internal abstract class Node {
 
     var isVisible: Boolean by visualProp(true)
     var opacity: Float? by visualProp(null)
+    var peer: SvgCanvasPeer? by visualProp(null)
 
     // Set value from parent if not set explicitly
     internal fun <TValue> inheritValue(prop: KProperty<*>, value: TValue) {

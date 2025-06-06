@@ -24,10 +24,10 @@ class StringFormat private constructor(
         STRING_FORMAT
     }
 
-    private val myFormatters: List<(Any) -> String>
+    private val formatters: List<(Any) -> String>
 
     init {
-        myFormatters = when (formatType) {
+        formatters = when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, expFormat))
             STRING_FORMAT -> {
                 BRACES_REGEX.findAll(pattern)
@@ -44,7 +44,7 @@ class StringFormat private constructor(
         }
     }
 
-    val argsNumber = myFormatters.size
+    val argsNumber = formatters.size
 
     fun format(value: Any): String = format(listOf(value))
 
@@ -55,15 +55,15 @@ class StringFormat private constructor(
 
         return when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> {
-                require(myFormatters.size == 1)
-                myFormatters.single()(values.single())
+                require(formatters.size == 1)
+                formatters.single()(values.single())
             }
 
             STRING_FORMAT -> {
                 var index = 0
                 BRACES_REGEX.replace(pattern) {
                     val originalValue = values[index]
-                    val formatter = myFormatters[index++]
+                    val formatter = formatters[index++]
                     formatter(originalValue)
                 }
                     .replace("{{", "{")

@@ -30,7 +30,7 @@ internal class SpinnerContent : CanvasContent {
                 AnimationEventHandler.toHandler { millisTime: Long ->
                     context2d.drawSpinner(millisTime)
 
-                    takeSnapshot().onSuccess(canvasControl.context::drawImage)
+                    canvasControl.context.drawImage(takeSnapshot())
                     true
                 }
             )

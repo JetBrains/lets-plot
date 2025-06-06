@@ -19,7 +19,8 @@ class DateTimeBreaksHelper constructor(
     rangeEnd: Double,
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
-    minInterval: TimeInterval? = null,
+    minInterval: NiceTimeInterval?,
+    maxInterval: NiceTimeInterval?,
     private val tz: TimeZone?,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
@@ -32,10 +33,14 @@ class DateTimeBreaksHelper constructor(
         val step = targetStep
 
         pattern = if (step < 1000) {        // milliseconds
-            val formatterFactory = TimeScaleTickFormatterFactory(minInterval)
-            // compute a step so that it is multiple of automatic time steps
+            // regular nice breaks
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
-            formatterFactory.formatPattern(step)
+            // milliseconds formatter
+            if (minInterval != null) {
+                minInterval.tickFormatPattern
+            } else {
+                TimeInterval.milliseconds(1).tickFormatPattern
+            }
 
         } else {
 
@@ -49,7 +54,7 @@ class DateTimeBreaksHelper constructor(
 
             val pattern = if (ticks != null && ticks.size <= count) {
                 // same or smaller interval requested -> stay with the min interval
-                minInterval!!.tickFormatPattern
+                (minInterval as TimeInterval).tickFormatPattern
                 // otherwise - larger step requested -> compute ticks
             } else if (step > YearInterval.MS) {        // years
                 ticks = ArrayList()
@@ -70,9 +75,15 @@ class DateTimeBreaksHelper constructor(
                     val tickDate = DateTime.ofYearStart(round(tickYear).toInt())
                     ticks.add(tickDate.toEpochMilliseconds(timeZone).toDouble())
                 }
-                YearInterval.TICK_FORMAT
+
+                if (maxInterval != null) {
+                    // max interval is guaranteed to be less than a year interval.
+                    (maxInterval as TimeInterval).tickFormatPattern
+                } else {
+                    YearInterval.TICK_FORMAT
+                }
             } else {
-                val interval = NiceTimeInterval.forMillis(step)
+                val interval = NiceTimeInterval.forMillis(step, minInterval, maxInterval)
                 ticks = interval.range(start, end, tz).toMutableList()
                 interval.tickFormatPattern
             }

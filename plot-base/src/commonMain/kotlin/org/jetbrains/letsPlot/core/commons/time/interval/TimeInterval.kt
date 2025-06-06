@@ -8,16 +8,16 @@ package org.jetbrains.letsPlot.core.commons.time.interval
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-abstract class TimeInterval protected constructor(val count: Int) {
+interface TimeInterval {
 
-    abstract val tickFormatPattern: String
+    val tickFormatPattern: String
 
     /**
      * @param start instant
      * @param end   instant
      * @return Returns every time interval after or equal to start and before end.
      */
-    abstract fun range(start: Double, end: Double, tz: TimeZone?): List<Double>
+    fun range(start: Double, end: Double, tz: TimeZone?): List<Double>
 
     companion object {
         fun milliseconds(count: Int): TimeInterval {

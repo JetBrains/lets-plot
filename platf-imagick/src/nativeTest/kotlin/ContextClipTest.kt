@@ -58,7 +58,7 @@ class ContextClipTest {
         ctx.clip()
 
         ctx.fill()
-        imageComparer.assertImageEquals("clip_and_fill.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_and_fill.bmp", canvas.img)
     }
 
 
@@ -75,7 +75,7 @@ class ContextClipTest {
         ctx.beginPath()
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
-        imageComparer.assertImageEquals("clip_path.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_path.bmp", canvas.img)
     }
 
     @Test
@@ -96,7 +96,7 @@ class ContextClipTest {
         ctx.beginPath()
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
-        imageComparer.assertImageEquals("clip_with_two_polygons.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_with_two_polygons.bmp", canvas.img)
     }
 
     @Test
@@ -125,7 +125,7 @@ class ContextClipTest {
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
 
-        imageComparer.assertImageEquals("clip_restore.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_restore.bmp", canvas.img)
     }
 
     @Test
@@ -144,7 +144,7 @@ class ContextClipTest {
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
 
-        imageComparer.assertImageEquals("clip_after_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_after_transform.bmp", canvas.img)
     }
 
     @Test
@@ -164,7 +164,7 @@ class ContextClipTest {
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
 
-        imageComparer.assertImageEquals("clip_before_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_before_transform.bmp", canvas.img)
     }
 
     @Test
@@ -182,7 +182,7 @@ class ContextClipTest {
 
         ctx.fillText("Test", 0.0, 47.0)
 
-        imageComparer.assertImageEquals("clip_text.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_text.bmp", canvas.img)
     }
 
     @Test
@@ -203,7 +203,7 @@ class ContextClipTest {
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        imageComparer.assertImageEquals("clip_text_before_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_text_before_transform.bmp", canvas.img)
     }
 
 
@@ -225,7 +225,7 @@ class ContextClipTest {
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        imageComparer.assertImageEquals("clip_text_with_translates_before_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_text_with_translates_before_transform.bmp", canvas.img)
     }
 
 
@@ -247,7 +247,7 @@ class ContextClipTest {
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        imageComparer.assertImageEquals("clip_text_after_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_text_after_transform.bmp", canvas.img)
     }
 
 
@@ -269,7 +269,7 @@ class ContextClipTest {
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        imageComparer.assertImageEquals("clip_text_with_translates_after_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("clip_text_with_translates_after_transform.bmp", canvas.img)
     }
 
 

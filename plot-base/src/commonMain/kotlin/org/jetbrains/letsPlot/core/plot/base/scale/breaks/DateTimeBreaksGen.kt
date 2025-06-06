@@ -7,11 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
-class DateTimeBreaksGen(
+class DateTimeBreaksGen constructor(
     private val providedFormatter: ((Any) -> String)? = null,
+    private val minInterval: NiceTimeInterval?,
+    private val maxInterval: NiceTimeInterval?,
     private val tz: TimeZone?
 ) : BreaksGenerator {
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
@@ -20,6 +23,8 @@ class DateTimeBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter,
+            minInterval = minInterval,
+            maxInterval = maxInterval,
             tz = tz
         )
 
@@ -35,6 +40,8 @@ class DateTimeBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter = null,
+            minInterval = minInterval,
+            maxInterval = maxInterval,
             tz = tz
         ).formatter
     }

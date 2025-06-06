@@ -172,11 +172,7 @@ internal class DataPointsConverter(
         }
 
         fun rect(): List<DataPointLiveMapAesthetics> {
-            val groupedData = GeomUtil.createGroups(aesthetics.dataPoints(), sorted = true)
-            val rectangles = groupedData.map { (_, groupData) ->
-                groupData.flatMap { aes -> TO_RECTANGLE(aes).map { PathPoint(aes, it) } }
-            }
-
+            val rectangles = aesthetics.dataPoints().map { aes -> TO_RECTANGLE(aes).map { PathPoint(aes, it) } }
             return process(rectangles.mapNotNull { PathData.create(it) }, isClosed = true)
         }
 

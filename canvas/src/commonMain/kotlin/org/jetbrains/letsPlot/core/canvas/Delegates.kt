@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
@@ -87,17 +88,12 @@ class CanvasDelegate(
 ) : Canvas {
     override val context2d: Context2d = Context2dDelegate()
     override val size: Vector = Vector(width, height)
-    override fun takeSnapshot(): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun immidiateSnapshot(): Canvas.Snapshot = NullSnapshot
+    override fun takeSnapshot(): Canvas.Snapshot = NullSnapshot
 }
 
 object NullSnapshot : Canvas.Snapshot {
     override val size: Vector = Vector(1, 1)
-
     override fun copy(): Canvas.Snapshot = this
-    override fun toDataUrl(): String {
-        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mP8//8/AwAI/wH+9QAAAABJRU5ErkJggg=="
-    }
 }
 
 open class CanvasControlDelegate(
@@ -125,13 +121,11 @@ open class CanvasControlDelegate(
     }
 
     override fun createCanvas(size: Vector): Canvas = CanvasDelegate(size.x, size.y)
-    override fun createSnapshot(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun createSnapshot(rgba: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        return Asyncs.constant(NullSnapshot)
-    }
+    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot = NullSnapshot
 
-    override fun immediateSnapshot(bytes: ByteArray, size: Vector): Canvas.Snapshot {
-        return NullSnapshot
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
+    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        return Asyncs.constant(NullSnapshot)
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {

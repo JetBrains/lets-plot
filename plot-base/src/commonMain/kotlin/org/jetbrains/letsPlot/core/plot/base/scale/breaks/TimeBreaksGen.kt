@@ -21,7 +21,6 @@ class TimeBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter,
-            tz = null,
         )
         val ticks = helper.breaks
         val labels = helper.formatBreaks(ticks)
@@ -38,7 +37,6 @@ class TimeBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter = null,
-            tz = null,
         ).formatter
     }
 }

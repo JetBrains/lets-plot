@@ -106,16 +106,16 @@ def _standardize_value(v):
     if isinstance(v, datetime):
         # Datetime: to milliseconds since epoch (time zone aware)
         return v.timestamp() * 1000
-    if isinstance(v, date) and not isinstance(v, datetime):
+    if isinstance(v, date):
         # Local date: to milliseconds since epoch (midnight UTC)
         return datetime.combine(v, time.min, tzinfo=timezone.utc).timestamp() * 1000
     if isinstance(v, time):
         # Local time: to milliseconds since midnight
-        return v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000
+        return float(v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000)
     if numpy and isinstance(v, numpy.datetime64):
         try:
             # numpy.datetime64: to milliseconds since epoch (Unix time)
-            return v.astype('datetime64[ms]').astype(numpy.int64)
+            return float(v.astype('datetime64[ms]').astype(numpy.int64))
         except:
             return None
 

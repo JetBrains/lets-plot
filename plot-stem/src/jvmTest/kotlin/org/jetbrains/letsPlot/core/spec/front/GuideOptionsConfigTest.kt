@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.front
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.assemble.*
 import org.jetbrains.letsPlot.core.spec.Option
@@ -109,6 +110,7 @@ class GuideOptionsConfigTest {
             aes = Aes.COLOR,
             options = scaleOptions,
             AesOptionConversion.demoAndTest,
+            dataType = DataType.UNKNOWN,
             tz = null,
         )
         val guideOptions = PlotConfigFrontendUtil.createGuideOptions(

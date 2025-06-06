@@ -31,7 +31,7 @@ class ImageComparer(
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
-        assertImageEquals(expectedFileName, canvas.img!!)
+        assertImageEquals(expectedFileName, canvas.img)
     }
 
     fun assertImageEquals(expectedFileName: String, spec: String) {
@@ -45,7 +45,7 @@ class ImageComparer(
         plotFigure.mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
-        assertImageEquals(expectedFileName, canvas.img!!)
+        assertImageEquals(expectedFileName, canvas.img)
     }
 
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {

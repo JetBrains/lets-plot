@@ -10,7 +10,9 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-class YearInterval internal constructor(count: Int) : TimeZoneAwareInterval(count) {
+class YearInterval internal constructor(
+    private val count: Int
+) : TimeZoneAwareInterval() {
 
     override val tickFormatPattern = TICK_FORMAT
 

@@ -9,10 +9,11 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
-internal class MonthInterval(count: Int) : TimeZoneAwareInterval(count) {
+internal class MonthInterval(
+    private val count: Int
+) : TimeZoneAwareInterval() {
 
-    override val tickFormatPattern: String
-        get() = "%b"
+    override val tickFormatPattern: String = "%b"
 
     override fun atOrBefore(dateTime: DateTime): DateTime {
         return DateTime(

@@ -93,13 +93,6 @@ def _infer_type_pandas_dataframe(var_name: str, var_content) -> str:
         else:
             lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
 
-    # if lp_dtype == TYPE_DATE:
-    #     # Not yet supported.
-    #     lp_dtype == TYPE_DATE_TIME
-    # elif lp_dtype == TYPE_TIME:
-    #     # Not yet supported.
-    #     lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
-
     return lp_dtype
 
 
@@ -125,13 +118,6 @@ def _infer_type_polars_dataframe(var_name: str, var_type) -> str:
 
     else:
         lp_dtype = 'unknown(polars:' + str(var_type) + ')'
-
-    # if lp_dtype == TYPE_DATE:
-    #     # Not yet supported.
-    #     lp_dtype == TYPE_DATE_TIME
-    # elif lp_dtype == TYPE_TIME:
-    #     # Not yet supported.
-    #     lp_dtype = 'unknown(polars:' + str(var_type) + ')'
 
     return lp_dtype
 
@@ -188,13 +174,6 @@ def _infer_type_dict(var_name: str, var_content) -> str:
         lp_dtype = TYPE_FLOATING
     else:
         lp_dtype = 'unknown(python:' + str(type_obj) + ')'
-
-    # if lp_dtype == TYPE_DATE:
-    #     # Not yet supported.
-    #     lp_dtype == TYPE_DATE_TIME
-    # elif lp_dtype == TYPE_TIME:
-    #     # Not yet supported.
-    #     lp_dtype = 'unknown(python:' + str(type_obj) + ')'
 
     return lp_dtype
 
