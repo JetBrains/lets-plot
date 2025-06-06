@@ -722,7 +722,7 @@ def scale_x_discrete(name=None, *,
         LetsPlot.setup_html()
         np.random.seed(43)
         scores = {'rating': np.random.randint(3, 6, size=10)}
-        ggplot(scores, aes(x='rating')) + geom_bar() + \\
+        ggplot(scores, aes(x=as_discrete('rating'))) + geom_bar() + \\
             scale_x_discrete(name='rating', format='.1f')
 
     """
