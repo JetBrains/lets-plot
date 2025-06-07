@@ -83,7 +83,7 @@ def _standardize_value(v):
         if math.isfinite(v):
             return float(v)
         # None for special values like 'nan' etc. because
-        # some json parsers (like com.google.gson.Gson) do not handle them well.
+        # some JSON parsers (like com.google.gson.Gson) do not handle them well.
         return None
     if is_int(v):
         return float(v)
@@ -95,8 +95,14 @@ def _standardize_value(v):
         return [_standardize_value(elem) for elem in v]
     if isinstance(v, tuple):
         return tuple(_standardize_value(elem) for elem in v)
-    if (numpy and isinstance(v, numpy.ndarray)) or (pandas and isinstance(v, pandas.Series)) or (
-            jnp and isinstance(v, jnp.ndarray)):
+
+    if (numpy and isinstance(v, numpy.ndarray)):
+        # Process each array element individually.
+        # Don't use '.tolist()' because this will implicitly
+        # convert 'datetime64' values to unpredictable 'datetime' objects.
+        return [_standardize_value(x) for x in v]
+
+    if (pandas and isinstance(v, pandas.Series)) or (jnp and isinstance(v, jnp.ndarray)):
         return _standardize_value(v.tolist())
 
     # Universal NaT/NaN check
