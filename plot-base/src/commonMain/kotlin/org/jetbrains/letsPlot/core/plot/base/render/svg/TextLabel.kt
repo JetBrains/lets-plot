@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
@@ -147,9 +148,18 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         myText.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
     }
 
+    // TODO: Refactor this
+    private fun getFirstTSpanChild(svgElement: SvgElement): SvgTSpanElement? {
+        val firstChild = svgElement.children().firstOrNull()
+        return when (firstChild) {
+            is SvgTSpanElement -> firstChild
+            is SvgElement -> getFirstTSpanChild(firstChild)
+            else -> null
+        }
+    }
+
     private fun resetAnchor() {
-        val firstChild = myText.children().firstOrNull() as? SvgElement
-        val x = firstChild?.getAttribute(SvgTextContent.X)?.get()
+        val x = getFirstTSpanChild(myText)?.getAttribute(SvgTextContent.X)?.get()
         if (x != null) {
             myHorizontalAnchor = HorizontalAnchor.LEFT
         }

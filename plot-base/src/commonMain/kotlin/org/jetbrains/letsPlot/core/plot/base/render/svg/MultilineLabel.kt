@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
@@ -174,10 +175,19 @@ class MultilineLabel(
         }
     }
 
+    // TODO: Refactor this
+    private fun getFirstTSpanChild(svgElement: SvgElement): SvgTSpanElement? {
+        val firstChild = svgElement.children().firstOrNull()
+        return when (firstChild) {
+            is SvgTSpanElement -> firstChild
+            is SvgElement -> getFirstTSpanChild(firstChild)
+            else -> null
+        }
+    }
+
     private fun resetAnchor() {
         val firstNodeHasDefinedX = myLines.any { line ->
-            val firstChild = line.children().firstOrNull() as? SvgElement
-            val x = firstChild?.getAttribute(SvgTextContent.X)?.get()
+            val x = getFirstTSpanChild(line)?.getAttribute(SvgTextContent.X)?.get()
             x != null
         }
         if (firstNodeHasDefinedX) {
