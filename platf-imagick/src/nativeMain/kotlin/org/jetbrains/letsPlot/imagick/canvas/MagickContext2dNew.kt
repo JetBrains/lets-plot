@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.Path2d.*
+import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d.Companion.convert
 
 class MagickContext2dNew(
     private val img: CPointer<ImageMagick.MagickWand>?,
@@ -24,7 +24,7 @@ class MagickContext2dNew(
     init {
         stateDelegate.setStateChangeListener(::onStateChange)
         ImageMagick.PixelSetColor(none, "none")
-        transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
+        MagickContext2d.transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
     }
 
     private fun onStateChange(stateChange: ContextStateDelegate.StateChange) {
@@ -78,7 +78,8 @@ class MagickContext2dNew(
         }
 
         stateChange.transform?.let { transform ->
-            transform(wand, transform)
+            MagickContext2d.log { "Magick2Context2d.onStateChange: transform = ${transform.repr()}" }
+            MagickContext2d.transform(wand, transform)
         }
 
         stateChange.globalAlpha?.let { globalAlpha ->
@@ -89,7 +90,7 @@ class MagickContext2dNew(
         stateChange.clipPath?.let { clipPath ->
             val inverseCTMTransform = stateDelegate.getCTM().inverse()
             if (inverseCTMTransform == null) {
-                log { "Magick2Context2d.onStateChange: clipPath ignored, CTM is degenerate." }
+                MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath ignored, CTM is degenerate." }
                 return@let
             }
             val clipId = clipPath.hashCode().toUInt().toString(16)
@@ -99,7 +100,7 @@ class MagickContext2dNew(
 
             // DrawAffine transforms clipPath, but a path already has the transform applied.
             // So we need to inversely transform it to prevent double transform.
-            drawPath(wand, clipPath.getCommands(), inverseCTMTransform)
+            MagickContext2d.drawPath(wand, clipPath.getCommands(), inverseCTMTransform)
 
             ImageMagick.DrawPopClipPath(wand)
             ImageMagick.DrawPopDefs(wand)
@@ -231,7 +232,7 @@ class MagickContext2dNew(
         val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
 
         withStrokeWand { strokeWand ->
-            drawPath(strokeWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
+            MagickContext2d.drawPath(strokeWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
         }
     }
 
@@ -240,7 +241,7 @@ class MagickContext2dNew(
         val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
 
         withFillWand { fillWand ->
-            drawPath(fillWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
+            MagickContext2d.drawPath(fillWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
         }
     }
 
@@ -326,101 +327,5 @@ class MagickContext2dNew(
         ImageMagick.DrawSetStrokeColor(wand, none)
         block(wand)
         ImageMagick.DrawSetStrokeColor(wand, pixelWand)
-    }
-
-    companion object {
-        const val logEnabled = false
-        fun log(str: () -> String) {
-            if (logEnabled)
-                println(str())
-        }
-
-        private fun drawPath(
-            wand: CPointer<ImageMagick.DrawingWand>,
-            commands: List<PathCommand>,
-            transform: AffineTransform
-        ) {
-            if (commands.isEmpty()) {
-                return
-            }
-
-            var started = commands.first() is MoveTo
-
-            fun lineTo(x: Double, y: Double) {
-                if (started) {
-                    ImageMagick.DrawPathLineToAbsolute(wand, x, y)
-                } else {
-                    ImageMagick.DrawPathMoveToAbsolute(wand, x, y)
-                    started = true
-                }
-            }
-
-            ImageMagick.DrawPathStart(wand)
-
-            commands
-                .asSequence()
-                .map { cmd -> cmd.transform(transform) }
-                .forEach { cmd ->
-                    when (cmd) {
-                        is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(wand, cmd.x, cmd.y)
-                        is LineTo -> lineTo(cmd.x, cmd.y)
-                        is CubicCurveTo -> {
-                            //cmd.start?.let { (x, y) -> lineTo(x, y) }
-                            cmd.controlPoints.asSequence()
-                                .windowed(size = 3, step = 3)
-                                .forEach { (cp1, cp2, cp3) ->
-                                    ImageMagick.DrawPathCurveToAbsolute(wand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
-                                }
-                        }
-
-                        is ClosePath -> ImageMagick.DrawPathClose(wand)
-                    }
-                }
-            ImageMagick.DrawPathFinish(wand)
-        }
-
-        fun transform(wand: CPointer<ImageMagick.DrawingWand>, affine: AffineTransform) {
-            memScoped {
-                val affineMatrix = alloc<ImageMagick.AffineMatrix>()
-                affineMatrix.sx = affine.sx
-                affineMatrix.ry = affine.rx // https://github.com/ImageMagick/ImageMagick/issues/8091
-                affineMatrix.rx = affine.ry // https://github.com/ImageMagick/ImageMagick/issues/8091
-                affineMatrix.sy = affine.sy
-                affineMatrix.tx = affine.tx
-                affineMatrix.ty = affine.ty
-                ImageMagick.DrawAffine(wand, affineMatrix.ptr)
-            }
-        }
-
-        private fun LineJoin.convert(): ImageMagick.LineJoin {
-            return when (this) {
-                LineJoin.BEVEL -> ImageMagick.LineJoin.BevelJoin
-                LineJoin.MITER -> ImageMagick.LineJoin.MiterJoin
-                LineJoin.ROUND -> ImageMagick.LineJoin.RoundJoin
-            }
-        }
-
-        fun LineCap.convert(): ImageMagick.LineCap {
-            return when (this) {
-                LineCap.BUTT -> ImageMagick.LineCap.ButtCap
-                LineCap.ROUND -> ImageMagick.LineCap.RoundCap
-                LineCap.SQUARE -> ImageMagick.LineCap.SquareCap
-            }
-        }
-
-        fun FontStyle.convert(): ImageMagick.StyleType {
-            return when (this) {
-                FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
-                FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
-            }
-        }
-
-        fun FontWeight.convert(): ULong {
-            return when (this) {
-                FontWeight.NORMAL -> 400.toULong()
-                FontWeight.BOLD -> 800.toULong()
-            }
-        }
-
     }
 }

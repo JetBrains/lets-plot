@@ -22,13 +22,8 @@ class MagickContext2d(
     val wand = ImageMagick.NewDrawingWand() ?: error { "Failed to create DrawingWand" }
 
     init {
-        stateDelegate.setStateChangeListener(::onStateChange)
         ImageMagick.PixelSetColor(none, "none")
         transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
-    }
-
-    private fun onStateChange(stateChange: ContextStateDelegate.StateChange) {
-
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
@@ -315,16 +310,19 @@ class MagickContext2d(
     }
 
     companion object {
-        const val logEnabled = false
+        const val logEnabled = true
         fun log(str: () -> String) {
             if (logEnabled)
                 println(str())
         }
 
-        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
+        internal fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
             if (commands.isEmpty()) {
                 return
             }
+
+            log { "drawPath: commands=${commands.joinToString { it.toString() }}, transform=$transform" }
+
 
             var started = commands.first() is MoveTo
 
@@ -361,7 +359,7 @@ class MagickContext2d(
             ImageMagick.DrawPathFinish(wand)
         }
 
-        fun transform(wand: CPointer<ImageMagick.DrawingWand>, affine: AffineTransform) {
+        internal fun transform(wand: CPointer<ImageMagick.DrawingWand>, affine: AffineTransform) {
             memScoped {
                 val affineMatrix = alloc<ImageMagick.AffineMatrix>()
                 affineMatrix.sx = affine.sx
@@ -374,7 +372,7 @@ class MagickContext2d(
             }
         }
 
-        private fun LineJoin.convert(): ImageMagick.LineJoin {
+        fun LineJoin.convert(): ImageMagick.LineJoin {
             return when (this) {
                 LineJoin.BEVEL -> ImageMagick.LineJoin.BevelJoin
                 LineJoin.MITER -> ImageMagick.LineJoin.MiterJoin
@@ -389,5 +387,20 @@ class MagickContext2d(
                 LineCap.SQUARE -> ImageMagick.LineCap.SquareCap
             }
         }
+
+        fun FontStyle.convert(): ImageMagick.StyleType {
+            return when (this) {
+                FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
+                FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
+            }
+        }
+
+        fun FontWeight.convert(): ULong {
+            return when (this) {
+                FontWeight.NORMAL -> 400.toULong()
+                FontWeight.BOLD -> 800.toULong()
+            }
+        }
+
     }
 }

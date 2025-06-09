@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.canvas
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.values.Color
 
-private const val logEnabled = false
+private const val logEnabled = true
 private fun log(str: () -> String) {
     if (logEnabled)
         println(str())
@@ -174,7 +174,12 @@ class ContextStateDelegate(
                 font = newState.font.takeIf { it != currentState.font },
                 fontTextAlign = newState.fontTextAlign.takeIf { it != currentState.fontTextAlign },
                 fontBaseline = newState.fontBaseline.takeIf { it != currentState.fontBaseline },
-                transform = newState.transform.takeIf { it != currentState.transform },
+                transform = if (newState.transform != currentState.transform) {
+                    AffineTransform.restoreTransform(currentState.transform, newState.transform)
+                        ?: error { "Cannot restore transform [${currentState.transform.repr()}]." }
+                } else {
+                    null
+                },
                 globalAlpha = newState.globalAlpha.takeIf { it != currentState.globalAlpha },
                 clipPath = newState.clipPath.takeIf { it != currentState.clipPath },
             )
@@ -276,35 +281,35 @@ class ContextStateDelegate(
         transform(AffineTransform.makeTranslation(x, y))
     }
 
-    override fun transform(
-        sx: Double,
-        ry: Double,
-        rx: Double,
-        sy: Double,
-        tx: Double,
-        ty: Double
-    ) {
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
         log { "transform(sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty)" }
         transform(AffineTransform.makeTransform(sx = sx, ry = ry, rx = rx, sy = sy, tx = tx, ty = ty))
     }
 
     override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
         log { "setTransform(m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12)" }
-        log { "\tfrom: [${currentState.transform.repr()}]" }
         val newTransform = AffineTransform.makeMatrix(m00 = m00, m10 = m10, m01 = m01, m11 = m11, m02 = m02, m12 = m12)
         if (newTransform != currentState.transform) {
+            log { "\tfrom: [${currentState.transform.repr()}]" }
+            log { "\t  to: [${newTransform.repr()}]" }
             currentState.transform = newTransform
-            stateChangeListener(StateChange(transform = newTransform))
-        }
 
-        log { "\t  to: [${currentState.transform.repr()}]" }
+            val transform = AffineTransform.restoreTransform(currentState.transform, newTransform)
+                ?: error { "Cannot restore transform [${currentState.transform.repr()}]." }
+
+            stateChangeListener(StateChange(transform = transform))
+        }
     }
 
     private fun transform(at: AffineTransform) {
         log { "transform(${at.repr()})" }
-        log { "\tfrom: [${currentState.transform.repr()}]" }
-        currentState.transform = currentState.transform.concat(at)
-        log { "\t  to: [${currentState.transform.repr()}]" }
+        val newTransform = currentState.transform.concat(at)
+        if (newTransform != currentState.transform) {
+            log { "\tfrom: [${currentState.transform.repr()}]" }
+            log { "\t  to: [${newTransform.repr()}]" }
+            currentState.transform = newTransform
+            stateChangeListener(StateChange(transform = at))
+        }
     }
 
     class StateChange(
@@ -319,7 +324,7 @@ class ContextStateDelegate(
         val font: Font? = null,
         val fontTextAlign: TextAlign? = null,
         val fontBaseline: TextBaseline? = null,
-        val transform: AffineTransform? = null,
+        val transform: AffineTransform? = null, // delta - should be applied to the current transform
         val globalAlpha: Double? = null,
         val clipPath: Path2d? = null,
     )
