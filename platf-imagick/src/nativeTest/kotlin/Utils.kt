@@ -3,13 +3,19 @@ import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-
+fun createCanvas(width: Number = 100, height: Number = 100, pixelDensity: Double = 1.0): Pair<MagickCanvas, MagickContext2d> {
+    val canvas = MagickCanvas.create(width = width, height = height, pixelDensity = pixelDensity)
+    val context2d = canvas.context2d as MagickContext2d
+    return canvas to context2d
+}
 
 var Context2d.lineWidth: Double
     get() = error("lineWidth is write only")

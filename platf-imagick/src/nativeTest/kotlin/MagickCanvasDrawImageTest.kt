@@ -1,7 +1,6 @@
+
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickContext2d
 import kotlin.math.PI
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -21,12 +20,6 @@ class MagickCanvasDrawImageTest {
     private val fillColor = "#000000"
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
-
-    fun createCanvas(width: Number = w, height: Number = h, pixelDensity: Double = 1.0): Pair<MagickCanvas, MagickContext2d> {
-        val canvas = MagickCanvas.create(width = width, height = height, pixelDensity = pixelDensity)
-        val context2d = canvas.context2d as MagickContext2d
-        return canvas to context2d
-    }
 
     fun drawStar(canvas: Canvas) {
         val w = canvas.size.x
@@ -97,14 +90,18 @@ class MagickCanvasDrawImageTest {
     @Test
     fun drawImage_Overlay() {
         val (rect, rectCtx) = createCanvas(50, 50)
-        rectCtx.fillStyle = Color.BLACK
-        drawStar(rect)
+        rectCtx.fillStyle = Color.BLUE
+        rectCtx.fillRect(0, 0, 50, 50)
 
         val rectSnapshot = rect.takeSnapshot()
 
         val (canvas, ctx) = createCanvas()
-        ctx.strokeStyle = "green"
-        ctx.lineWidth = 5.0
+        ctx.strokeStyle = "rgba(255, 0, 0, 0.5)"
+        ctx.lineWidth = 20.0
+        ctx.save()
+
+        ctx.strokeStyle = "rgba(0, 255, 0, 0.5)" // green stroke
+        ctx.lineWidth = 15.0
         ctx.beginPath()
         ctx.moveTo(50, 0)
         ctx.lineTo(50, 100)
@@ -112,7 +109,7 @@ class MagickCanvasDrawImageTest {
 
         ctx.drawImage(rectSnapshot, 25.0, 25.0, 50.0, 50.0)
 
-        ctx.strokeStyle = "red"
+        ctx.restore() // red stroke with line width 3.0
         ctx.beginPath()
         ctx.moveTo(0, 50)
         ctx.lineTo(100, 50)

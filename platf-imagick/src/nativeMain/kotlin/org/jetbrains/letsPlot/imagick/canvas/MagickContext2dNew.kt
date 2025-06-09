@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
-class MagickContext2d(
+class MagickContext2dNew(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
@@ -28,6 +28,84 @@ class MagickContext2d(
     }
 
     private fun onStateChange(stateChange: ContextStateDelegate.StateChange) {
+        stateChange.strokeColor?.let { strokeColor ->
+            ImageMagick.PixelSetColor(pixelWand, strokeColor.toCssColor())
+            ImageMagick.DrawSetStrokeColor(wand, pixelWand)
+        }
+
+        stateChange.strokeWidth?.let { strokeWidth ->
+            ImageMagick.DrawSetStrokeWidth(wand, strokeWidth)
+        }
+
+        stateChange.lineDashPattern?.let { lineDash ->
+            if (lineDash.isNotEmpty()) {
+                memScoped {
+                    val lineDashPatternSize = lineDash.size
+                    val lineDashArray = allocArray<DoubleVar>(lineDashPatternSize) { i -> value = lineDash[i] }
+                    ImageMagick.DrawSetStrokeDashArray(wand, lineDashPatternSize.toULong(), lineDashArray)
+                }
+            } else {
+                ImageMagick.DrawSetStrokeDashArray(wand, 0u, null)
+            }
+        }
+
+        stateChange.lineDashOffset?.let { lineDashOffset ->
+            ImageMagick.DrawSetStrokeDashOffset(wand, lineDashOffset)
+        }
+
+        stateChange.miterLimit?.let { miterLimit ->
+            ImageMagick.DrawSetStrokeMiterLimit(wand, miterLimit.toLong().convert())
+        }
+
+        stateChange.lineCap?.let { lineCap ->
+            ImageMagick.DrawSetStrokeLineCap(wand, lineCap.convert())
+        }
+
+        stateChange.lineJoin?.let { lineJoin ->
+            ImageMagick.DrawSetStrokeLineJoin(wand, lineJoin.convert())
+        }
+
+        stateChange.fillColor?.let { fillColor ->
+            ImageMagick.PixelSetColor(pixelWand, fillColor.toCssColor())
+            ImageMagick.DrawSetFillColor(wand, pixelWand)
+        }
+
+        stateChange.font?.let { font ->
+            ImageMagick.DrawSetFontSize(wand, font.fontSize)
+            ImageMagick.DrawSetFontFamily(wand, font.fontFamily)
+            ImageMagick.DrawSetFontStyle(wand, font.fontStyle.convert())
+            ImageMagick.DrawSetFontWeight(wand, font.fontWeight.convert())
+        }
+
+        stateChange.transform?.let { transform ->
+            transform(wand, transform)
+        }
+
+        stateChange.globalAlpha?.let { globalAlpha ->
+            ImageMagick.DrawSetFillOpacity(wand, globalAlpha)
+            ImageMagick.DrawSetStrokeOpacity(wand, globalAlpha)
+        }
+
+        stateChange.clipPath?.let { clipPath ->
+            val inverseCTMTransform = stateDelegate.getCTM().inverse()
+            if (inverseCTMTransform == null) {
+                log { "Magick2Context2d.onStateChange: clipPath ignored, CTM is degenerate." }
+                return@let
+            }
+            val clipId = clipPath.hashCode().toUInt().toString(16)
+
+            ImageMagick.DrawPushDefs(wand)
+            ImageMagick.DrawPushClipPath(wand, clipId)
+
+            // DrawAffine transforms clipPath, but a path already has the transform applied.
+            // So we need to inversely transform it to prevent double transform.
+            drawPath(wand, clipPath.getCommands(), inverseCTMTransform)
+
+            ImageMagick.DrawPopClipPath(wand)
+            ImageMagick.DrawPopDefs(wand)
+
+            ImageMagick.DrawSetClipPath(wand, clipId)
+        }
 
     }
 
@@ -106,89 +184,46 @@ class MagickContext2d(
 
     override fun save() {
         stateDelegate.save()
-        ImageMagick.PushDrawingWand(wand)
     }
 
     override fun restore() {
         stateDelegate.restore()
-
-        ImageMagick.PopDrawingWand(wand)
     }
 
     override fun setFillStyle(color: Color?) {
         stateDelegate.setFillStyle(color)
-
-        ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
-        ImageMagick.DrawSetFillColor(wand, pixelWand)
     }
 
     override fun setStrokeStyle(color: Color?) {
         stateDelegate.setStrokeStyle(color)
-
-        ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
-        ImageMagick.DrawSetStrokeColor(wand, pixelWand)
     }
 
     override fun setLineWidth(lineWidth: Double) {
         stateDelegate.setLineWidth(lineWidth)
-
-        ImageMagick.DrawSetStrokeWidth(wand, lineWidth)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
         stateDelegate.setLineDash(lineDash)
-
-        if (lineDash.isNotEmpty()) {
-            memScoped {
-                val lineDashPatternSize = lineDash.size
-                val lineDashArray = allocArray<DoubleVar>(lineDashPatternSize) { i -> value = lineDash[i] }
-                ImageMagick.DrawSetStrokeDashArray(wand, lineDashPatternSize.toULong(), lineDashArray)
-            }
-        } else {
-            ImageMagick.DrawSetStrokeDashArray(wand, 0u, null)
-        }
     }
 
     override fun setLineCap(lineCap: LineCap) {
         stateDelegate.setLineCap(lineCap)
-        ImageMagick.DrawSetStrokeLineCap(wand, lineCap.convert())
     }
 
     override fun setLineJoin(lineJoin: LineJoin) {
         stateDelegate.setLineJoin(lineJoin)
-        ImageMagick.DrawSetStrokeLineJoin(wand, lineJoin.convert())
     }
 
     override fun setStrokeMiterLimit(miterLimit: Double) {
         stateDelegate.setStrokeMiterLimit(miterLimit)
-
-        ImageMagick.DrawSetStrokeMiterLimit(wand, miterLimit.toULong())
     }
 
     override fun setFont(f: Font) {
         stateDelegate.setFont(f)
-
-        ImageMagick.DrawSetFontSize(wand, f.fontSize)
-        ImageMagick.DrawSetFontFamily(wand, f.fontFamily)
-
-        val fontStyle = when (f.fontStyle) {
-            FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
-            FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
-        }
-        ImageMagick.DrawSetFontStyle(wand, fontStyle)
-
-        val fontWeight = when (f.fontWeight) {
-            FontWeight.NORMAL -> 400.toULong()
-            FontWeight.BOLD -> 800.toULong()
-        }
-        ImageMagick.DrawSetFontWeight(wand, fontWeight)
     }
 
     override fun setGlobalAlpha(alpha: Double) {
         stateDelegate.setGlobalAlpha(alpha)
-
-        ImageMagick.DrawSetFillOpacity(wand, alpha)
-        ImageMagick.DrawSetStrokeOpacity(wand, alpha)
     }
 
     override fun stroke() {
@@ -241,47 +276,26 @@ class MagickContext2d(
 
     override fun clip() {
         stateDelegate.clip()
-
-        val clipPath = stateDelegate.getClipPath() ?: return
-        val inverseCTMTransform = stateDelegate.getCTM().inverse() ?: return
-        val clipId = clipPath.hashCode().toUInt().toString(16)
-
-        ImageMagick.DrawPushDefs(wand)
-        ImageMagick.DrawPushClipPath(wand, clipId)
-
-        // DrawAffine transforms clipPath, but a path already has transform applied.
-        // So we need to inversely transform it to prevent double transform.
-        drawPath(wand, clipPath.getCommands(), inverseCTMTransform)
-
-        ImageMagick.DrawPopClipPath(wand)
-        ImageMagick.DrawPopDefs(wand)
-
-        ImageMagick.DrawSetClipPath(wand, clipId)
     }
 
     override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
         stateDelegate.transform(sx, ry, rx, sy, tx, ty)
-        transform(wand, AffineTransform.makeTransform(sx = sx, ry = ry, rx = rx, sy = sy, tx = tx, ty = ty))
     }
 
     override fun scale(xy: Double) {
         stateDelegate.scale(xy)
-        transform(wand, AffineTransform.makeScale(xy, xy))
     }
 
     override fun scale(x: Double, y: Double) {
         stateDelegate.scale(x, y)
-        transform(wand, AffineTransform.makeScale(x, y))
     }
 
     override fun rotate(angle: Double) {
         stateDelegate.rotate(angle)
-        transform(wand, AffineTransform.makeRotation(angle))
     }
 
     override fun translate(x: Double, y: Double) {
         stateDelegate.translate(x, y)
-        transform(wand, AffineTransform.makeTranslation(x, y))
     }
 
     override fun measureText(str: String): TextMetrics {
@@ -321,7 +335,11 @@ class MagickContext2d(
                 println(str())
         }
 
-        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
+        private fun drawPath(
+            wand: CPointer<ImageMagick.DrawingWand>,
+            commands: List<PathCommand>,
+            transform: AffineTransform
+        ) {
             if (commands.isEmpty()) {
                 return
             }
@@ -389,5 +407,20 @@ class MagickContext2d(
                 LineCap.SQUARE -> ImageMagick.LineCap.SquareCap
             }
         }
+
+        fun FontStyle.convert(): ImageMagick.StyleType {
+            return when (this) {
+                FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
+                FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
+            }
+        }
+
+        fun FontWeight.convert(): ULong {
+            return when (this) {
+                FontWeight.NORMAL -> 400.toULong()
+                FontWeight.BOLD -> 800.toULong()
+            }
+        }
+
     }
 }

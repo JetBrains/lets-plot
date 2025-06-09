@@ -16,12 +16,15 @@ class Path2d() {
         this.commands += commands
     }
 
+    val isEmpty: Boolean
+        get() = commands.isEmpty()
+
     val bounds: DoubleRectangle = DoubleRectangle.ZERO
 
     private val commands = mutableListOf<PathCommand>()
 
     fun copy(): Path2d {
-        return Path2d(commands)
+        return Path2d(commands.toMutableList())
     }
 
     fun transform(affineTransform: AffineTransform): Path2d {
