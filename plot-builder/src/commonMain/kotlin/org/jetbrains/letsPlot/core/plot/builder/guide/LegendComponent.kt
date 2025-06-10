@@ -71,8 +71,7 @@ class LegendComponent(
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.setFontSize(br.minimumTextSize * TEXT_UNIT_SIZE)
-        val magicalShiftCoefficient = 0.7 // TODO: Explore why this is needed.
-        label.moveTo(labelBox.origin.add(DoubleVector(0.0, magicalShiftCoefficient * br.minimumTextSize)))
+        label.moveTo(labelBox.origin)
         breakComponent.add(label)
         breakComponent.moveTo(keyLabelBox.origin.add(DoubleVector(0.0, 0.5 * (keyLabelBox.height - keySize.y))))
         return breakComponent.rootGroup
