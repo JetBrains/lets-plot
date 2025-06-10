@@ -227,6 +227,7 @@ internal class PlotTile constructor(
         )
         lab.setHorizontalAnchor(hAnchor)
         lab.setLineHeight(lineHeight)
+        lab.setFontSize(textSize.y)
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }
 
