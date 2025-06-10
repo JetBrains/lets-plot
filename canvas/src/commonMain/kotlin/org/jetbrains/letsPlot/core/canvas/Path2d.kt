@@ -129,22 +129,22 @@ class Path2d() {
             return this
         }
 
-        val x1 = x1.toDouble()
-        val y1 = y1.toDouble()
-        val x2 = x2.toDouble()
-        val y2 = y2.toDouble()
-        val angle = toRadians(angle.toDouble())
+        val startX = x1.toDouble()
+        val startY = y1.toDouble()
+        val endX = x2.toDouble()
+        val endY = y2.toDouble()
+        val angleRad = toRadians(angle.toDouble())
 
         // Ensure radii are positive
         var rx = abs(rxIn.toDouble())
         var ry = abs(ryIn.toDouble())
 
         // Step 1: Transform start/end points into ellipse space
-        val dx2 = (x1 - x2) / 2.0
-        val dy2 = (y1 - y2) / 2.0
+        val dx2 = (startX - endX) / 2.0
+        val dy2 = (startY - endY) / 2.0
 
-        val x1p = cos(angle) * dx2 + sin(angle) * dy2
-        val y1p = -sin(angle) * dx2 + cos(angle) * dy2
+        val x1p = cos(angleRad) * dx2 + sin(angleRad) * dy2
+        val y1p = -sin(angleRad) * dx2 + cos(angleRad) * dy2
 
         // Correct radii if they are too small
         val lambda = x1p * x1p / (rx * rx) + y1p * y1p / (ry * ry)
@@ -168,8 +168,8 @@ class Path2d() {
         val cyp = factor * (-ry * x1p / rx)
 
         // Step 3: Transform center back to the original coordinate system
-        val cx = cos(angle) * cxp - sin(angle) * cyp + (x1 + x2) / 2.0
-        val cy = sin(angle) * cxp + cos(angle) * cyp + (y1 + y2) / 2.0
+        val cx = cos(angleRad) * cxp - sin(angleRad) * cyp + (startX + endX) / 2.0
+        val cy = sin(angleRad) * cxp + cos(angleRad) * cyp + (startY + endY) / 2.0
 
         // Step 4: Compute start angle and end angle
         val v1x = (x1p - cxp) / rx
@@ -198,7 +198,7 @@ class Path2d() {
             y = cy,
             radiusX = rx,
             radiusY = ry,
-            rotation = angle,
+            rotation = angleRad,
             startAngle = startAngle,
             endAngle = endAngle,
             anticlockwise = anticlockwise,
@@ -421,9 +421,9 @@ class Path2d() {
     class CubicCurveTo(
         val controlPoints: List<DoubleVector>
     ) : PathCommand() {
-        override fun transform(affineTransform: AffineTransform): PathCommand {
+        override fun transform(at: AffineTransform): PathCommand {
             return CubicCurveTo(
-                controlPoints = affineTransform.transform(controlPoints)
+                controlPoints = at.transform(controlPoints)
             )
         }
 

@@ -150,15 +150,15 @@ class MagickContext2dNew(
         }
     }
 
-    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, w: Double, h: Double) {
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         val snap = snapshot as MagickCanvas.MagickSnapshot
         val srcWand = snap.img
 
         // Resize the source wand to desired width and height
         val successScale = ImageMagick.MagickScaleImage(
             srcWand,
-            w.toULong(),
-            h.toULong()
+            dw.toULong(),
+            dh.toULong()
         )
 
         if (successScale == ImageMagick.MagickFalse) {

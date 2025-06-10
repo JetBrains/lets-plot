@@ -417,7 +417,9 @@ class VisvalingamWhyattSimplificationTest {
         )
 
         val simplifier = PolylineSimplifier.visvalingamWhyatt(points)
-        val simplified = simplifier.setCountLimit(10).indices
+        val indices = simplifier.setCountLimit(10).indices
+        assertThat(indices.single())
+            .containsExactly(0, 7, 13, 20, 25, 36, 43, 49, 61, 71)
     }
 
     @Test

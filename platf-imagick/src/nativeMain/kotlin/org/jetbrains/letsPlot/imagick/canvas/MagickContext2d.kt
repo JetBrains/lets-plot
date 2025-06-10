@@ -66,15 +66,15 @@ class MagickContext2d(
         }
     }
 
-    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, w: Double, h: Double) {
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         val snap = snapshot as MagickCanvas.MagickSnapshot
         val srcWand = snap.img
 
         // Resize the source wand to desired width and height
         val successScale = ImageMagick.MagickScaleImage(
             srcWand,
-            w.toULong(),
-            h.toULong()
+            dw.toULong(),
+            dh.toULong()
         )
 
         if (successScale == ImageMagick.MagickFalse) {
@@ -237,7 +237,12 @@ class MagickContext2d(
     override fun clip() {
         stateDelegate.clip()
 
-        val clipPath = stateDelegate.getClipPath() ?: return
+        val clipPath = stateDelegate.getClipPath()
+        if (clipPath.isEmpty) {
+            // No clip path defined, nothing to do.
+            return
+        }
+
         val inverseCTMTransform = stateDelegate.getCTM().inverse() ?: return
         val clipId = clipPath.hashCode().toUInt().toString(16)
 

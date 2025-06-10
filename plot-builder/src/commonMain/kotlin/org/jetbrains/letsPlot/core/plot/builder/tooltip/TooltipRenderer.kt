@@ -200,7 +200,7 @@ internal class TooltipRenderer(
         }
     }
 
-    private fun onMouseDoubleClicked(mouseEvent: MouseEvent) {
+    private fun onMouseDoubleClicked(@Suppress("UNUSED_PARAMETER") mouseEvent: MouseEvent) {
         // Double-clicking on the plot resets zoom and pan or zooms the livemap
         // so we should unpin the tooltip to remove the fade effect
         if (pinned) {
@@ -210,14 +210,14 @@ internal class TooltipRenderer(
         hideTooltips()
     }
 
-    private fun onMouseLeft(mouseEvent: MouseEvent) {
+    private fun onMouseLeft(@Suppress("UNUSED_PARAMETER") mouseEvent: MouseEvent) {
         // Not yet happened. Subj to change if needed.
         if (!pinned) {
             hideTooltips()
         }
     }
 
-    private fun onMouseDragged(mouseEvent: MouseEvent) {
+    private fun onMouseDragged(@Suppress("UNUSED_PARAMETER") mouseEvent: MouseEvent) {
         // Dragging the plot should unpin the tooltip to remove the fade effect and make the plot interactive again
         // This is also needed for the livemap for the same reason
         if (pinned) {
