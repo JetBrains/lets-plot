@@ -140,6 +140,7 @@ abstract class LegendBox : SvgComponent() {
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setLineHeight(lineHeight)
+        label.setFontSize(titleSize.y)
         label.moveTo(pos)
         return label
     }
