@@ -24,16 +24,6 @@ class LegendBreak(val label: String) {
             return minSize
         }
 
-    val minimumTextSize: Double
-        get() {
-            var minSize = 0.0
-            for (layer in myLayers) {
-                val layerFontSize = layer.dataPoint.size()!!
-                minSize = max(minSize, layerFontSize)
-            }
-            return minSize
-        }
-
     val isEmpty: Boolean
         get() = myLayers.isEmpty()
 
