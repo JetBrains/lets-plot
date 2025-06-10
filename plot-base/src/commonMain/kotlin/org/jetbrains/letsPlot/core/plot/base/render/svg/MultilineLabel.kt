@@ -28,8 +28,10 @@ class MultilineLabel(
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false
 ) : SvgComponent() {
-    private var myLines: List<SvgTextElement> = emptyList()
+    private var myLinesSize: Int = 0
+    private var myClassName: String? = null
     private var myTextColor: Color? = null
+    private var myTextOpacity: Double? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
@@ -37,6 +39,7 @@ class MultilineLabel(
     private var myLineHeight = 0.0
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
+    private var xStart: Double? = null
     private var yStart = 0.0
 
     init {
@@ -47,39 +50,33 @@ class MultilineLabel(
     }
 
     override fun addClassName(className: String) {
-        myLines.forEach { it.addClass(className) }
+        myClassName = className
+        resetLines()
     }
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
-                // set attribute for svg->canvas mapping to work
-                myLines.forEach(SvgTextElement::fillColor)
-
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
-                updateStyleAttribute()
+                resetLines()
             }
         }
     }
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
-        updateStyleAttribute()
-        updateAnchor()
+        resetLines()
     }
 
     fun setVerticalAnchor(anchor: VerticalAnchor) {
         myVerticalAnchor = anchor
-        myLines.forEach {
-            it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
-        }
-        repositionLines()
+        resetLines()
     }
 
     fun setFontSize(px: Double) {
         myFontSize = px
-        updateStyleAttribute()
+        resetLines()
     }
 
     /**
@@ -87,7 +84,7 @@ class MultilineLabel(
      */
     fun setFontWeight(cssName: String?) {
         myFontWeight = cssName
-        updateStyleAttribute()
+        resetLines()
     }
 
     /**
@@ -95,7 +92,7 @@ class MultilineLabel(
      */
     fun setFontStyle(cssName: String?) {
         myFontStyle = cssName
-        updateStyleAttribute()
+        resetLines()
     }
 
     /**
@@ -103,15 +100,41 @@ class MultilineLabel(
      */
     fun setFontFamily(fontFamily: String?) {
         myFontFamily = fontFamily
-        updateStyleAttribute()
+        resetLines()
     }
 
     fun setTextOpacity(value: Double?) {
-        myLines.forEach { it.fillOpacity().set(value) }
+        myTextOpacity = value
+        resetLines()
     }
 
-    private fun updateStyleAttribute() {
+    fun setX(x: Double) {
+        xStart = x
         resetLines()
+    }
+
+    fun setY(y: Double) {
+        yStart = y
+        resetLines()
+    }
+
+    fun setLineHeight(v: Double) {
+        myLineHeight = v
+        resetLines()
+    }
+
+    private fun resetLines() {
+        rootGroup.children().clear()
+        constructLines().forEach(rootGroup.children()::add)
+    }
+
+    private fun constructLines(): List<SvgTextElement> {
+        val font = Font(
+            family = FontFamily(myFontFamily ?: "sans-serif", false),
+            size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
+            isBold = myFontWeight == "bold",
+            isItalic = myFontStyle == "italic"
+        )
         val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
@@ -119,35 +142,7 @@ class MultilineLabel(
             myFontFamily,
             myFontStyle
         )
-        myLines.forEach { it.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr) }
-    }
-
-    fun setX(x: Double) {
-        myLines.forEach { it.x().set(x) }
-    }
-
-    fun setY(y: Double) {
-        yStart = y
-        repositionLines()
-    }
-
-    fun setLineHeight(v: Double) {
-        myLineHeight = v
-        repositionLines()
-    }
-
-    private fun resetLines() {
-        val rootGroupLines = rootGroup.children().filter { it in myLines }.map { it as SvgTextElement }
-        // Remove the current text elements from the rootGroup
-        myLines.forEach(rootGroup.children()::remove)
-        // The font is used here to estimate the width of the text
-        val font = Font(
-            family = FontFamily(myFontFamily ?: "sans-serif", false),
-            size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
-            isBold = myFontWeight == "bold",
-            isItalic = myFontStyle == "italic"
-        )
-        myLines = RichText.toSvg(
+        val lines = RichText.toSvg(
             text,
             font,
             TextWidthEstimator::widthCalculator,
@@ -155,20 +150,42 @@ class MultilineLabel(
             markdown = markdown,
             anchor = myHorizontalAnchor
         )
-        // Translate the attributes from the rootGroup lines
-        if (rootGroupLines.any()) {
-            rootGroupLines.first().classAttribute().get()?.let { className ->
-                addClassName(className)
-            }
-        }
-        // Should be after RichText.toSvg() to check if first tspan has defined attribute 'x'
-        // and before adding to rootGroup because resetAnchor() updates myLines
-        resetAnchor()
-        myLines.forEach(rootGroup.children()::add)
+        myLinesSize = lines.size
+        resetHorizontalAnchor(lines)
+        return lines.map(updateLinesAttributes(styleAttr))
+            .map(::updateAnchors)
+            .mapIndexed(::repositionLines)
     }
 
-    private fun repositionLines() {
-        val totalHeightShift = myLineHeight * (myLines.size - 1)
+    private fun resetHorizontalAnchor(lines: List<SvgTextElement>) {
+        val firstNodeHasDefinedX = lines.any { line ->
+            val x = getFirstTSpanChild(line)?.getAttribute(SvgTextContent.X)?.get()
+            x != null
+        }
+        if (firstNodeHasDefinedX) {
+            myHorizontalAnchor = HorizontalAnchor.LEFT
+        }
+    }
+
+    private fun updateLinesAttributes(styleAttr: String): (SvgTextElement) -> SvgTextElement {
+        return { line ->
+            line.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
+            myClassName?.let { line.addClass(it) }
+            myTextColor?.let { line.fillColor() } // set attribute for svg->canvas mapping to work
+            myTextOpacity?.let { line.fillOpacity().set(it) }
+            xStart?.let { line.x().set(it) }
+            line
+        }
+    }
+
+    private fun updateAnchors(line: SvgTextElement): SvgTextElement {
+        line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(myHorizontalAnchor))
+        myVerticalAnchor?.let { line.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
+        return line
+    }
+
+    private fun repositionLines(index: Int, line: SvgTextElement): SvgTextElement {
+        val totalHeightShift = myLineHeight * (linesCount() - 1)
 
         val adjustedYStart = yStart - when (myVerticalAnchor) {
             VerticalAnchor.TOP -> 0.0
@@ -177,9 +194,8 @@ class MultilineLabel(
             else -> 0.0
         }
 
-        myLines.forEachIndexed { index, elem ->
-            elem.y().set(adjustedYStart + myLineHeight * index)
-        }
+        line.y().set(adjustedYStart + myLineHeight * index)
+        return line
     }
 
     // TODO: Refactor this
@@ -192,23 +208,7 @@ class MultilineLabel(
         }
     }
 
-    private fun resetAnchor() {
-        val firstNodeHasDefinedX = myLines.any { line ->
-            val x = getFirstTSpanChild(line)?.getAttribute(SvgTextContent.X)?.get()
-            x != null
-        }
-        if (firstNodeHasDefinedX) {
-            myHorizontalAnchor = HorizontalAnchor.LEFT
-        }
-    }
-
-    private fun updateAnchor() {
-        myLines.forEach {
-            it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(myHorizontalAnchor))
-        }
-    }
-
-    fun linesCount() = myLines.size
+    fun linesCount() = myLinesSize
 
     companion object {
         fun splitLines(text: String) = text.split('\n').map(String::trim)
