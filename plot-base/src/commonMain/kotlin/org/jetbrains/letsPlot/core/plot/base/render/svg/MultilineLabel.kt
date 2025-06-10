@@ -137,6 +137,7 @@ class MultilineLabel(
     }
 
     private fun resetLines() {
+        val rootGroupLines = rootGroup.children().filter { it in myLines }.map { it as SvgTextElement }
         // Remove the current text elements from the rootGroup
         myLines.forEach(rootGroup.children()::remove)
         // The font is used here to estimate the width of the text
@@ -154,6 +155,12 @@ class MultilineLabel(
             markdown = markdown,
             anchor = myHorizontalAnchor
         )
+        // Translate the attributes from the rootGroup lines
+        if (rootGroupLines.any()) {
+            rootGroupLines.first().classAttribute().get()?.let { className ->
+                addClassName(className)
+            }
+        }
         // Should be after RichText.toSvg() to check if first tspan has defined attribute 'x'
         // and before adding to rootGroup because resetAnchor() updates myLines
         resetAnchor()

@@ -111,6 +111,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
     }
 
     private fun resetText(init: Boolean = false) {
+        val rootGroupText = rootGroup.children().filter { it == myText }.firstOrNull() as? SvgTextElement
         if (!init) {
             rootGroup.children().remove(myText)
         }
@@ -130,6 +131,12 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             markdown = markdown,
             anchor = myHorizontalAnchor
         ).firstOrNull() ?: SvgTextElement()
+        // Translate the attributes from the rootGroup text
+        if (rootGroupText != null) {
+            rootGroupText.classAttribute().get()?.let { className ->
+                addClassName(className)
+            }
+        }
         // Should be after RichText.toSvg() to check if first tspan has defined attribute 'x'
         // and before adding to rootGroup because resetAnchor() updates myText
         resetAnchor()
