@@ -326,7 +326,7 @@ class MagickContext2d(
                 return
             }
 
-            log { "drawPath: commands=${commands.joinToString { it.toString() }}, transform=$transform" }
+            log { "drawPath: commands=${commands.joinToString { it.toString() }}, transform=${transform.repr()}" }
 
 
             var started = commands.first() is MoveTo

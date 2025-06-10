@@ -28,12 +28,28 @@ class MagickContext2dNew(
     }
 
     private fun onStateChange(stateChange: ContextStateDelegate.StateChange) {
+        println("Magick2Context2d.onStateChange: $stateChange")
+
+        val clipPath = stateChange.clipPath
+        if (clipPath?.isEmpty == true) {
+            // The only way to unset clip-path is to re-create the wand.
+            MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath is empty, re-creating wand." }
+            ImageMagick.ClearDrawingWand(wand)
+            val fullStateChange = stateDelegate.restartStateChange()
+            applyStateChange(fullStateChange)
+        } else {
+            applyStateChange(stateChange)
+        }
+    }
+
+    private fun applyStateChange(stateChange: ContextStateDelegate.StateChange) {
         stateChange.strokeColor?.let { strokeColor ->
             ImageMagick.PixelSetColor(pixelWand, strokeColor.toCssColor())
             ImageMagick.DrawSetStrokeColor(wand, pixelWand)
         }
 
         stateChange.strokeWidth?.let { strokeWidth ->
+            println("Magick2Context2d.onStateChange: strokeWidth = $strokeWidth")
             ImageMagick.DrawSetStrokeWidth(wand, strokeWidth)
         }
 
@@ -88,26 +104,32 @@ class MagickContext2dNew(
         }
 
         stateChange.clipPath?.let { clipPath ->
-            val inverseCTMTransform = stateDelegate.getCTM().inverse()
-            if (inverseCTMTransform == null) {
-                MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath ignored, CTM is degenerate." }
-                return@let
+            if (!clipPath.isEmpty) {
+                val inverseCTMTransform = stateDelegate.getCTM().inverse()
+                if (inverseCTMTransform == null) {
+                    MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath ignored, CTM is degenerate." }
+                    return@let
+                }
+                val clipId = clipPath.hashCode().toUInt().toString(16)
+
+                ImageMagick.DrawPushDefs(wand)
+                ImageMagick.DrawPushClipPath(wand, clipId)
+
+                // DrawAffine transforms clipPath, but a path already has the transform applied.
+                // So we need to inversely transform it to prevent double transform.
+                MagickContext2d.drawPath(wand, clipPath.getCommands(), inverseCTMTransform)
+
+                ImageMagick.DrawPopClipPath(wand)
+                ImageMagick.DrawPopDefs(wand)
+
+                ImageMagick.DrawSetClipPath(wand, clipId)
+
+                MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath set with id = $clipId" }
+            } else {
+                // Unset clip-path by re-creating the wand.
+                // Should be handled in onStateChange.
             }
-            val clipId = clipPath.hashCode().toUInt().toString(16)
-
-            ImageMagick.DrawPushDefs(wand)
-            ImageMagick.DrawPushClipPath(wand, clipId)
-
-            // DrawAffine transforms clipPath, but a path already has the transform applied.
-            // So we need to inversely transform it to prevent double transform.
-            MagickContext2d.drawPath(wand, clipPath.getCommands(), inverseCTMTransform)
-
-            ImageMagick.DrawPopClipPath(wand)
-            ImageMagick.DrawPopDefs(wand)
-
-            ImageMagick.DrawSetClipPath(wand, clipId)
         }
-
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {

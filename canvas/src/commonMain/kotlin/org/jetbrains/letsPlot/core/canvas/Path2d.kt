@@ -432,4 +432,8 @@ class Path2d() {
             return "C $controlPointsStr"
         }
     }
+
+    override fun toString(): String {
+        return commands.joinToString(" ", transform = PathCommand::toString)
+    }
 }
