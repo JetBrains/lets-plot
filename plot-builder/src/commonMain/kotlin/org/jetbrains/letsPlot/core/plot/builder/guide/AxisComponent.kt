@@ -145,6 +145,7 @@ class AxisComponent(
             tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
             val lineHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
             tickLabel.setLineHeight(lineHeight)
+            tickLabel.setFontSize(lineHeight)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)
         }
