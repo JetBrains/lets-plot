@@ -4,6 +4,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import platform.posix.*
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -197,5 +198,13 @@ fun drawAffine(
         m.tx = tx.toDouble()
         m.ty = ty.toDouble()
         ImageMagick.DrawAffine(wand, m.ptr)
+    }
+}
+
+fun getOSName(): String {
+    memScoped {
+        val utsname = alloc<utsname>()
+        uname(utsname.ptr)
+        return utsname.sysname.toKString()
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.canvas
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.values.Color
 
-private const val logEnabled = true
+private const val logEnabled = false
 private fun log(str: () -> String) {
     if (logEnabled)
         println(str())

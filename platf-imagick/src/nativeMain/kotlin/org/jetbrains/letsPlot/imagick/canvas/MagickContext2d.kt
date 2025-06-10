@@ -27,76 +27,82 @@ class MagickContext2d(
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
-        val snap = snapshot as MagickCanvas.MagickSnapshot
-        val srcWand = snap.img
-
-        val success = ImageMagick.MagickCompositeImage(
-            img,
-            srcWand,
-            ImageMagick.CompositeOperator.OverCompositeOp,
-            ImageMagick.MagickTrue,
-            0,
-            0
-        )
-
-        ImageMagick.DestroyMagickWand(srcWand)
-
-        if (success == ImageMagick.MagickFalse) {
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickCompositeImage failed: $err")
-        }
+        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, 0.0, 0.0, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
+        //val snap = snapshot as MagickCanvas.MagickSnapshot
+        //val srcWand = snap.img
+//
+        //val success = ImageMagick.MagickCompositeImage(
+        //    img,
+        //    srcWand,
+        //    ImageMagick.CompositeOperator.OverCompositeOp,
+        //    ImageMagick.MagickTrue,
+        //    0,
+        //    0
+        //)
+//
+        //ImageMagick.DestroyMagickWand(srcWand)
+//
+        //if (success == ImageMagick.MagickFalse) {
+        //    val err = ImageMagick.MagickGetException(img, null)
+        //    throw RuntimeException("MagickCompositeImage failed: $err")
+        //}
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
-        val snap = snapshot as MagickCanvas.MagickSnapshot
-        val srcWand = snap.img
-
-        val success = ImageMagick.MagickCompositeImage(
-            img,
-            srcWand,
-            ImageMagick.CompositeOperator.OverCompositeOp,
-            ImageMagick.MagickTrue,
-            x.toLong().convert(),
-            y.toLong().convert()
-        )
-
-        if (success == ImageMagick.MagickFalse) {
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickCompositeImage failed: $err")
-        }
+        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
+        //val snap = snapshot as MagickCanvas.MagickSnapshot
+        //val srcWand = snap.img
+//
+        //val success = ImageMagick.MagickCompositeImage(
+        //    img,
+        //    srcWand,
+        //    ImageMagick.CompositeOperator.OverCompositeOp,
+        //    ImageMagick.MagickTrue,
+        //    x.toLong().convert(),
+        //    y.toLong().convert()
+        //)
+//
+        //if (success == ImageMagick.MagickFalse) {
+        //    val err = ImageMagick.MagickGetException(img, null)
+        //    throw RuntimeException("MagickCompositeImage failed: $err")
+        //}
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
-        val snap = snapshot as MagickCanvas.MagickSnapshot
-        val srcWand = snap.img
-
-        // Resize the source wand to desired width and height
-        val successScale = ImageMagick.MagickScaleImage(
-            srcWand,
-            dw.toULong(),
-            dh.toULong()
-        )
-
-        if (successScale == ImageMagick.MagickFalse) {
-            ImageMagick.DestroyMagickWand(srcWand)
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickScaleImage failed: $err")
-        }
-
-        // Composite the resized image onto the base image
-        val success = ImageMagick.MagickCompositeImage(
-            img,
-            srcWand,
-            ImageMagick.CompositeOperator.OverCompositeOp,
-            ImageMagick.MagickTrue,
-            x.toULong().convert(),
-            y.toULong().convert()
-        )
-
-        if (success == ImageMagick.MagickFalse) {
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickCompositeImage failed: $err")
-        }
+        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
+//        val snap = snapshot as MagickCanvas.MagickSnapshot
+//        val srcWand = snap.img
+//
+//        // Resize the source wand to desired width and height
+//        val successScale = ImageMagick.MagickScaleImage(
+//            srcWand,
+//            dw.toULong(),
+//            dh.toULong()
+//        )
+//
+//        if (successScale == ImageMagick.MagickFalse) {
+//            ImageMagick.DestroyMagickWand(srcWand)
+//            val err = ImageMagick.MagickGetException(img, null)
+//            throw RuntimeException("MagickScaleImage failed: $err")
+//        }
+//
+//        // Composite the resized image onto the base image
+//        val success = ImageMagick.MagickCompositeImage(
+//            img,
+//            srcWand,
+//            ImageMagick.CompositeOperator.OverCompositeOp,
+//            ImageMagick.MagickTrue,
+//            x.toULong().convert(),
+//            y.toULong().convert()
+//        )
+//
+//        if (success == ImageMagick.MagickFalse) {
+//            val err = ImageMagick.MagickGetException(img, null)
+//            throw RuntimeException("MagickCompositeImage failed: $err")
+//        }
     }
 
     override fun save() {
@@ -315,7 +321,7 @@ class MagickContext2d(
     }
 
     companion object {
-        const val logEnabled = true
+        const val logEnabled = false
         fun log(str: () -> String) {
             if (logEnabled)
                 println(str())

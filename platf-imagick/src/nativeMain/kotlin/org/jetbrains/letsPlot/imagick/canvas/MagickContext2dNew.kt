@@ -44,12 +44,14 @@ class MagickContext2dNew(
 
     private fun applyStateChange(stateChange: ContextStateDelegate.StateChange) {
         stateChange.strokeColor?.let { strokeColor ->
+            println("Magick2Context2d.applyStateChange: strokeColor = $strokeColor (${strokeColor.toCssColor()})")
+
             ImageMagick.PixelSetColor(pixelWand, strokeColor.toCssColor())
             ImageMagick.DrawSetStrokeColor(wand, pixelWand)
         }
 
         stateChange.strokeWidth?.let { strokeWidth ->
-            println("Magick2Context2d.onStateChange: strokeWidth = $strokeWidth")
+            println("Magick2Context2d.applyStateChange: strokeWidth = $strokeWidth")
             ImageMagick.DrawSetStrokeWidth(wand, strokeWidth)
         }
 
@@ -82,6 +84,7 @@ class MagickContext2dNew(
         }
 
         stateChange.fillColor?.let { fillColor ->
+            println("Magick2Context2d.applyStateChange: fillColor = $fillColor (${fillColor.toCssColor()})")
             ImageMagick.PixelSetColor(pixelWand, fillColor.toCssColor())
             ImageMagick.DrawSetFillColor(wand, pixelWand)
         }
@@ -94,7 +97,7 @@ class MagickContext2dNew(
         }
 
         stateChange.transform?.let { transform ->
-            MagickContext2d.log { "Magick2Context2d.onStateChange: transform = ${transform.repr()}" }
+            MagickContext2d.log { "Magick2Context2d.applyStateChange: transform = ${transform.repr()}" }
             MagickContext2d.transform(wand, transform)
         }
 
@@ -107,7 +110,7 @@ class MagickContext2dNew(
             if (!clipPath.isEmpty) {
                 val inverseCTMTransform = stateDelegate.getCTM().inverse()
                 if (inverseCTMTransform == null) {
-                    MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath ignored, CTM is degenerate." }
+                    MagickContext2d.log { "Magick2Context2d.applyStateChange: clipPath ignored, CTM is degenerate." }
                     return@let
                 }
                 val clipId = clipPath.hashCode().toUInt().toString(16)
@@ -124,7 +127,7 @@ class MagickContext2dNew(
 
                 ImageMagick.DrawSetClipPath(wand, clipId)
 
-                MagickContext2d.log { "Magick2Context2d.onStateChange: clipPath set with id = $clipId" }
+                MagickContext2d.log { "Magick2Context2d.applyStateChange: clipPath set with id = $clipId" }
             } else {
                 // Unset clip-path by re-creating the wand.
                 // Should be handled in onStateChange.

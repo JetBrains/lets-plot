@@ -22,7 +22,6 @@ class MagickCanvas(
     override val size: Vector,
     pixelDensity: Double,
 ) : Canvas {
-
     // TODO: replace usage in tests with Snapshot
     val img: CPointer<ImageMagick.MagickWand>
         get() {
@@ -57,8 +56,9 @@ class MagickCanvas(
 
         fun create(size: Vector, pixelDensity: Number): MagickCanvas {
             val wand = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
+            ImageMagick.MagickSetImageAlphaChannel(wand, ImageMagick.AlphaChannelOption.OnAlphaChannel)
             val background = ImageMagick.NewPixelWand()
-            ImageMagick.PixelSetColor(background, "white")
+            ImageMagick.PixelSetColor(background, "transparent")
             ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
             return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble())
         }
