@@ -35,7 +35,7 @@ internal object DebugOptions {
             canvas.context2d.fillRect(el.screenBounds.left, el.screenBounds.top, el.screenBounds.width, el.screenBounds.height)
 
             val strokeColor = color.changeAlpha((255*0.7).roundToInt())
-            val strokeWidth = if(el is Container) 3f else 1f
+            //val strokeWidth = if(el is Container) 3f else 1f
             //strokeColor.pathEffect = if (el is Container) PathEffect.makeDash(floatArrayOf(3f, 8f), 0f) else null
             canvas.context2d.setStrokeStyle(strokeColor)
             canvas.context2d.strokeRect(el.screenBounds.left, el.screenBounds.top, el.screenBounds.width, el.screenBounds.height)

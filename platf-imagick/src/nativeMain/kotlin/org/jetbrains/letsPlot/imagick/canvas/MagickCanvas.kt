@@ -15,16 +15,18 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
+val newCtx = false
+
 class MagickCanvas(
     private val _img: CPointer<ImageMagick.MagickWand>,
     override val size: Vector,
     pixelDensity: Double,
 ) : Canvas {
-
     // TODO: replace usage in tests with Snapshot
     val img: CPointer<ImageMagick.MagickWand>
         get() {
-            val wand = (context2d as MagickContext2d).wand
+            val wand = if (newCtx) (context2d as MagickContext2dNew).wand else (context2d as MagickContext2d).wand
+
             if (false) {
                 val v = ImageMagick.DrawGetVectorGraphics(wand)
                 println(v!!.toKString())
@@ -34,7 +36,7 @@ class MagickCanvas(
             return _img
         }
 
-    override val context2d: Context2d = MagickContext2d(_img, pixelDensity)
+    override val context2d: Context2d = if (newCtx) MagickContext2dNew(_img, pixelDensity) else MagickContext2d(_img, pixelDensity)
 
 
     override fun takeSnapshot(): Canvas.Snapshot {
@@ -54,8 +56,9 @@ class MagickCanvas(
 
         fun create(size: Vector, pixelDensity: Number): MagickCanvas {
             val wand = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
+            ImageMagick.MagickSetImageAlphaChannel(wand, ImageMagick.AlphaChannelOption.OnAlphaChannel)
             val background = ImageMagick.NewPixelWand()
-            ImageMagick.PixelSetColor(background, "white")
+            ImageMagick.PixelSetColor(background, "transparent")
             ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
             return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble())
         }
@@ -82,7 +85,6 @@ class MagickCanvas(
         private fun exportPixels(wand: CPointer<ImageMagick.MagickWand>): Pair<UByteArray, Vector> {
             val width = ImageMagick.MagickGetImageWidth(wand).toInt()
             val height = ImageMagick.MagickGetImageHeight(wand).toInt()
-            println("MagickCanvas: Exporting pixels, size: $width x $height")
 
             if (width <= 0 || height <= 0) {
                 return UByteArray(0) to Vector.ZERO
@@ -102,7 +104,6 @@ class MagickCanvas(
 
         companion object {
             fun fromBitmap(bitmap: Bitmap): MagickSnapshot {
-                println("MagickCanvas: Creating snapshot from Bitmap, size: ${bitmap.width}x${bitmap.height}, pixels.size: ${bitmap.argbInts.size}")
                 require(bitmap.width > 0 && bitmap.height > 0) { "MagickCanvas: Size must be greater than zero" }
                 require(bitmap.argbInts.size == bitmap.width * bitmap.height) {
                     "MagickCanvas: Bitmap pixel array size does not match the specified size"
@@ -114,7 +115,6 @@ class MagickCanvas(
                 val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
                 ImageMagick.MagickNewImage(img, bitmap.width.convert(), bitmap.height.convert(), backgroundPixel)
 
-                println("MagickCanvas: Importing image pixels, size: ${bitmap.width}x${bitmap.height}, pixels.size: ${bitmap.argbInts.size}")
                 val res = ImageMagick.MagickImportImagePixels(
                     img,
                     0,
@@ -138,7 +138,6 @@ class MagickCanvas(
             }
 
             fun fromPixels(rgba: ByteArray, size: Vector): MagickSnapshot {
-                println("MagickCanvas: Creating snapshot from pixels, size: $size, rgba.size: ${rgba.size}")
                 require(size.x > 0 && size.y > 0) { "MagickCanvas: Size must be greater than zero" }
                 require(rgba.size == size.x * size.y * 4) { // 4 bytes per pixel (RGBA)
                     "MagickCanvas: Byte array size does not match the specified size"
@@ -149,9 +148,6 @@ class MagickCanvas(
 
                 val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
                 ImageMagick.MagickNewImage(img, size.x.convert(), size.y.convert(), baclgroundPixel)
-
-                println("MagickCanvas: Importing image pixels, size: $size, rgba.size: ${rgba.size}")
-                println(rgba.joinToString { it.toUByte().toString(16) })
 
                 val res = ImageMagick.MagickImportImagePixels(
                     img,

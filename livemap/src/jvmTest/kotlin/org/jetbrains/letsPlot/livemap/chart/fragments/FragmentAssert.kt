@@ -92,17 +92,19 @@ internal class FragmentAssert(fragmentSpec: FragmentSpec?, private val myTestBas
         }
     val isEmpty: FragmentAssert
         get() {
+            val actualFragmentKey = actual!!.key()
             Assertions.assertThat(
                 myTestBase.getSingletonComponent<EmptyFragmentsComponent>()
-                    .contains(actual!!.key().regionId, actual!!.key().quadKey)
+                    .contains(actualFragmentKey.regionId, actualFragmentKey.quadKey)
             ).isTrue()
             return this
         }
     val isNotEmpty: FragmentAssert
         get() {
+            val actualFragmentKey = actual!!.key()
             Assertions.assertThat(
                 myTestBase.getSingletonComponent<EmptyFragmentsComponent>()
-                    .contains(actual!!.key().regionId, actual!!.key().quadKey)
+                    .contains(actualFragmentKey.regionId, actualFragmentKey.quadKey)
             ).isFalse()
             return this
         }

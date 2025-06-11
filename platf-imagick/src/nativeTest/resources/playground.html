@@ -2,8 +2,9 @@
 <html>
 <body>
 
-<canvas id="myCanvas" width="200" height="100" style="border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="100" height="100" style="border:1px solid #d3d3d3;">
     Your browser does not support the HTML canvas tag.</canvas>
+<canvas id="imgCanvas" width="50" height="50" style="display:none;"></canvas>
 
 <script>
     function nwRect(ctx) {
@@ -25,16 +26,33 @@
         ctx.restore()
     }
 
+
+    const imgCanvas = document.getElementById("imgCanvas");
+    const imgCtx = imgCanvas.getContext("2d");
+    imgCtx.fillStyle = "blue";
+    imgCtx.fillRect(0, 0, 50, 50);
+
     const PI = Math.PI;
     const c = document.getElementById("myCanvas");
     const ctx = c.getContext("2d");
 
-    ctx.lineWidth = 2.0
-    ctx.strokeStyle = "black"
-    ctx.fillStyle = "grey"
+    ctx.strokeStyle = "rgba(255, 0, 0, 0.5)"
+    ctx.lineWidth = 20.0
+    ctx.save()
 
-    ctx.beginPath();
-    ctx.ellipse(50, 20, 20, 20, 0, 0, -PI, false);
+    ctx.strokeStyle = "rgba(0, 255, 0, 0.5)"
+    ctx.lineWidth = 15.0
+    ctx.beginPath()
+    ctx.moveTo(50, 0)
+    ctx.lineTo(50, 100)
+    ctx.stroke()
+
+    ctx.drawImage(imgCanvas, 25.0, 25.0, 50.0, 50.0)
+
+    ctx.restore() // red stroke with line width 3.0
+    ctx.beginPath()
+    ctx.moveTo(0, 50)
+    ctx.lineTo(100, 50)
     ctx.stroke()
 
 </script>

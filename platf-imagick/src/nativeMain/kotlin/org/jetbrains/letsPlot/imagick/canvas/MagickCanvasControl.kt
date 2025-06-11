@@ -136,7 +136,7 @@ class MagickCanvasControl(
             }
 
             // Set pixels
-            val ok = ImageMagick.MagickImportImagePixels(
+            ImageMagick.MagickImportImagePixels(
                 img, 0, 0, w.convert(), h.convert(),
                 "RGBA",
                 ImageMagick.StorageType.CharPixel,

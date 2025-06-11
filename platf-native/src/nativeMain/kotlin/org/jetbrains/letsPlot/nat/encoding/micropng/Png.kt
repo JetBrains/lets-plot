@@ -79,8 +79,6 @@ fun decodePng(input: ByteArray): DecodedPng {
 
     var width = 0
     var height = 0
-    var colorType = -1
-    var bitDepth = -1
     val idatChunks = mutableListOf<Byte>()
 
     // 2. Read chunks
@@ -97,8 +95,8 @@ fun decodePng(input: ByteArray): DecodedPng {
                 val buffer = ByteBuffer(data)
                 width = buffer.getInt()
                 height = buffer.getInt()
-                bitDepth = buffer.get().toInt()
-                colorType = buffer.get().toInt()
+                val bitDepth = buffer.get().toInt()
+                val colorType = buffer.get().toInt()
                 require(bitDepth == 8 && colorType == 6) { "Only 8-bit RGBA PNG supported" }
             }
 

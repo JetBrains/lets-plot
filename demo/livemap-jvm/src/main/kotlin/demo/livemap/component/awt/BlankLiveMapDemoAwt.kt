@@ -7,6 +7,6 @@ package demo.livemap.component.awt
 
 import demo.livemap.common.component.EmptyLiveMapDemoModel
 
-fun main(args: Array<String>) {
+fun main() {
     LiveMapComponentDemoAwt(::EmptyLiveMapDemoModel).start()
 }

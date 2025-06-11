@@ -45,11 +45,10 @@ object ResponseJsonParser {
     fun parse(json: Obj): GeoResponse {
         val responseJson = FluentObject(json)
 
-        return when (val status: ResponseStatus = responseJson.getEnum(STATUS, ResponseStatus.values())) {
+        return when (responseJson.getEnum(STATUS, ResponseStatus.values())) {
             ResponseStatus.SUCCESS -> success(responseJson)
             ResponseStatus.AMBIGUOUS -> ambiguous(responseJson)
             ResponseStatus.ERROR -> error(responseJson)
-//            else -> throw IllegalStateException("Unknown response status: $status")
         }
     }
 

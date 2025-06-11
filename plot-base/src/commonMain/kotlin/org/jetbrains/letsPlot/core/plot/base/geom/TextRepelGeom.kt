@@ -19,11 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleCircle
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle.Companion.savedNormalize
-import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
-import org.jetbrains.letsPlot.core.plot.base.geom.util.DataPointAestheticsDelegate
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
@@ -57,7 +53,7 @@ open class TextRepelGeom: TextGeom() {
         ctx: GeomContext
     ) {
 
-        fun toClient(point: DoubleVector, dp: DataPointAesthetics): DoubleVector? {
+        fun toClient(point: DoubleVector, @Suppress("UNUSED_PARAMETER") dp: DataPointAesthetics): DoubleVector? {
             return coord.toClient(point)
         }
 

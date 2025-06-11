@@ -8,7 +8,7 @@ package demo.plot.export.browser.image
 import demo.plot.common.model.plotConfig.Density2df
 import org.jetbrains.letsPlot.core.plot.export.PlotImageExport.Format.*
 
-fun main(args: Array<String>) {
+fun main() {
     with(Density2df()) {
         @Suppress("UNCHECKED_CAST")
         (PlotImageDemoUtil.show(

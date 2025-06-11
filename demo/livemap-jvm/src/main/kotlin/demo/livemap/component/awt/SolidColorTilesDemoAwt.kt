@@ -7,6 +7,6 @@ package demo.livemap.component.awt
 
 import demo.livemap.common.component.SolidColorTilesDemoModel
 
-fun main(args: Array<String>) {
+fun main() {
     LiveMapComponentDemoAwt(::SolidColorTilesDemoModel).start()
 }

@@ -1,7 +1,7 @@
 #  Copyright (c) 2025. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from datetime import datetime, date, time, timezone
+from datetime import datetime, date, time, timezone, timedelta
 
 import jax.numpy as jnp
 import numpy as np
@@ -75,15 +75,16 @@ def test_datetime_and_datetime64_consistent_epoch_millis():
         assert np_dt_ms == expected_ms
         assert dt_ms == np_dt_ms
 
+
 def test_date_to_epoch_millis():
     # Test cases with dates and expected millisecond values
     test_cases = [
         # (Year, Month, Day, expected ms since epoch)
-        (2023, 1, 1, 1672531200000),    # 2023-01-01 00:00:00 UTC
-        (2000, 2, 29, 951782400000),    # 2000-02-29 00:00:00 UTC (leap year)
-        (1970, 1, 1, 0),                # 1970-01-01 00:00:00 UTC (epoch)
+        (2023, 1, 1, 1672531200000),  # 2023-01-01 00:00:00 UTC
+        (2000, 2, 29, 951782400000),  # 2000-02-29 00:00:00 UTC (leap year)
+        (1970, 1, 1, 0),  # 1970-01-01 00:00:00 UTC (epoch)
         (2023, 12, 31, 1703980800000),  # 2023-12-31 00:00:00 UTC
-        (1969, 12, 31, -86400000)       # 1969-12-31 00:00:00 UTC (before epoch)
+        (1969, 12, 31, -86400000)  # 1969-12-31 00:00:00 UTC (before epoch)
     ]
 
     for year, month, day, expected_ms in test_cases:
@@ -102,15 +103,16 @@ def test_date_to_epoch_millis():
 
         assert date_ms == dt_ms
 
+
 def test_time_to_millis_since_midnight():
     # Test cases with time objects and expected millisecond values
     test_cases = [
         # (hour, minute, second, microsecond, expected ms since midnight)
-        (0, 0, 0, 0, 0),                     # 00:00:00.000 - Midnight
-        (12, 0, 0, 0, 43200000),             # 12:00:00.000 - Noon
-        (23, 59, 59, 999000, 86399999),      # 23:59:59.999 - Just before midnight
-        (1, 30, 45, 500000, 5445500),        # 01:30:45.500 - Random time
-        (6, 15, 30, 750000, 22530750)        # 06:15:30.750 - Another random time
+        (0, 0, 0, 0, 0),  # 00:00:00.000 - Midnight
+        (12, 0, 0, 0, 43200000),  # 12:00:00.000 - Noon
+        (23, 59, 59, 999000, 86399999),  # 23:59:59.999 - Just before midnight
+        (1, 30, 45, 500000, 5445500),  # 01:30:45.500 - Random time
+        (6, 15, 30, 750000, 22530750)  # 06:15:30.750 - Another random time
     ]
 
     for hour, minute, second, microsecond, expected_ms in test_cases:
@@ -126,3 +128,45 @@ def test_time_to_millis_since_midnight():
         # Verify conversion matches manual calculation
         manual_ms = hour * 3600_000 + minute * 60_000 + second * 1000 + microsecond // 1000
         assert time_ms == float(manual_ms)
+
+
+def test_standardize_value_datetime_consistency():
+    # Test that a collection of 'datetime' values is standardized consistently regardless of the collection type.
+
+    start_time = datetime(2025, 3, 29, 12, 0)  # Noon on March 29
+    standardized_start_time = _standardize_value(start_time)
+
+    N = 3
+
+    # Python list
+    py_list = [start_time + timedelta(minutes=i * 90) for i in range(N)]
+    standardized_list = _standardize_value(py_list)
+    assert standardized_start_time == standardized_list[0]
+
+    # numpy array
+    np_array = np.array([start_time + timedelta(minutes=i * 90) for i in range(N)])
+    standardized_array = _standardize_value(np_array)
+    assert standardized_start_time == standardized_array[0]
+
+    assert standardized_list == standardized_array
+
+
+def test_standardize_value_numpy_datetime64_consistency():
+    # Test that a collection of numpy 'datetime64' values is standardized consistently regardless of the collection type.
+
+    start_time = np.datetime64('2025-03-29T12:00')  # Noon on March 29
+    standardized_start_time = _standardize_value(start_time)
+
+    N = 3
+
+    # Python list
+    py_list = [start_time + np.timedelta64(i * 90, 'm') for i in range(N)]
+    standardized_list = _standardize_value(py_list)
+    assert standardized_start_time == standardized_list[0]
+
+    # numpy array
+    np_array = np.array([start_time + np.timedelta64(i * 90, 'm') for i in range(N)])
+    standardized_array = _standardize_value(np_array)
+    assert standardized_start_time == standardized_array[0]
+
+    assert standardized_list == standardized_array

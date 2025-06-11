@@ -297,13 +297,13 @@ class TooltipAxisConfigTest {
             // Likely this issue:
             // "The tooltip format with {} in the pattern ignores the default formatting"
             // https://github.com/JetBrains/lets-plot/issues/484
-            val geomLayer = dtLayer(scaleFormat = "scale = {}", tooltipFormat = "tooltip = {}")
+            @Suppress("UNUSED_VARIABLE") val geomLayer = dtLayer(scaleFormat = "scale = {}", tooltipFormat = "tooltip = {}")
             //todo assertGeneralTooltip(geomLayer, "tooltip = 00:00")
             //todo assertYAxisTooltip(geomLayer, "tooltip = 00:00")
             //todo assertEquals("scale = Jan 7", getYTick(geomLayer, closedRange))
         }
         run {
-            val geomLayer = dtLayer(scaleFormat = "scale = {%b %Y}", tooltipFormat = "tooltip = {%b %Y}")
+            @Suppress("UNUSED_VARIABLE") val geomLayer = dtLayer(scaleFormat = "scale = {%b %Y}", tooltipFormat = "tooltip = {%b %Y}")
             //todo assertGeneralTooltip(geomLayer, "tooltip = Jan 2021")
             //todo assertYAxisTooltip(geomLayer, "tooltip = Jan 2021")
             //todo assertEquals("scale = Jan 2021", getYTick(geomLayer, closedRange))

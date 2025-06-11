@@ -1,8 +1,6 @@
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -22,11 +20,6 @@ class ContextPath2dTest {
     private val fillColor = "#000000"
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
-
-    fun createCanvas(): Pair<MagickCanvas, Context2d> {
-        val canvas = MagickCanvas.create(width = w, height = h, pixelDensity = 1.0)
-        return canvas to canvas.context2d
-    }
 
     @Test
     fun shearedEllipse() {
