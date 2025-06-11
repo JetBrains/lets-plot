@@ -151,19 +151,20 @@ class MultilineLabel(
             anchor = myHorizontalAnchor
         )
         myLinesSize = lines.size
-        resetHorizontalAnchor(lines)
+        val actualHorizontalAnchor = getActualHorizontalAnchor(lines)
         return lines.map(updateLinesAttributes(styleAttr))
-            .map(::updateAnchors)
+            .map(updateAnchors(actualHorizontalAnchor))
             .mapIndexed(::repositionLines)
     }
 
-    private fun resetHorizontalAnchor(lines: List<SvgTextElement>) {
+    private fun getActualHorizontalAnchor(lines: List<SvgTextElement>): HorizontalAnchor {
         val firstNodeHasDefinedX = lines.any { line ->
             val x = getFirstTSpanChild(line)?.getAttribute(SvgTextContent.X)?.get()
             x != null
         }
-        if (firstNodeHasDefinedX) {
-            myHorizontalAnchor = HorizontalAnchor.LEFT
+        return when (firstNodeHasDefinedX) {
+            true -> HorizontalAnchor.LEFT
+            false -> myHorizontalAnchor
         }
     }
 
@@ -178,10 +179,12 @@ class MultilineLabel(
         }
     }
 
-    private fun updateAnchors(line: SvgTextElement): SvgTextElement {
-        line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(myHorizontalAnchor))
-        myVerticalAnchor?.let { line.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
-        return line
+    private fun updateAnchors(horizontalAnchor: HorizontalAnchor): (SvgTextElement) -> SvgTextElement {
+        return { line ->
+            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(horizontalAnchor))
+            myVerticalAnchor?.let { line.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
+            line
+        }
     }
 
     private fun repositionLines(index: Int, line: SvgTextElement): SvgTextElement {
