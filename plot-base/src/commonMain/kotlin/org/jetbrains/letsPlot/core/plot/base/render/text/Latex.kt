@@ -119,7 +119,7 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
         }))
-        val indexTSpanElements = content.toSvg(ctx, previousNodes).mapIndexed { i, richElement ->
+        val indexTSpanElements = content.toSvg(ctx, previousNodes).map { richElement ->
             richElement.element.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
