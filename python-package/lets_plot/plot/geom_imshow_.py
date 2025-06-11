@@ -237,6 +237,25 @@ def geom_imshow(image_data, cmap=None, *,
         nchannels = 1
 
         has_nan = numpy.isnan(image_data.max())
+
+        palette = None
+        if cmap:
+            # colormap via palettable
+            if not palettable:
+                raise ValueError(
+                    "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your "
+                    "Python environment. "
+                )
+            if not has_nan:
+                alpha_ch_val = None if alpha is None else 255 * alpha
+                cmap_256 = palettable.get_map(cmap + "_256")
+                palette = [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in cmap_256.hex_colors]
+            else:
+                alpha_ch_val = 255 if alpha is None else 255 * alpha
+                cmap_255 = palettable.get_map(cmap + "_255")
+                # transparent color at index 0
+                palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] + [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in
+                                                                            cmap_255.hex_colors]
         if has_nan and not cmap:
             # add alpha-channel (LA)
             alpha_ch_scaler = 1 if alpha is None else alpha
@@ -245,17 +264,29 @@ def geom_imshow(image_data, cmap=None, *,
             alpha_ch = numpy.zeros(im_shape, dtype=image_data.dtype)
             alpha_ch[is_nan == False] = 255 * alpha_ch_scaler
             image_data[is_nan] = 0
-            image_data = numpy.dstack((image_data, alpha_ch))
-            nchannels = 2
-        elif has_nan and cmap:
-            # replace all NaN-s with 0 (index 0 for transparent color)
-            numpy.nan_to_num(image_data, copy=False, nan=0)
+            image_data = numpy.repeat(image_data[:, :, numpy.newaxis], 3, axis=2)  # convert to RGB
+            image_data = numpy.dstack((image_data, alpha_ch)) # convert to RGBA
+            nchannels = 4
+        elif cmap:
+            if has_nan:
+                # replace all NaN-s with 0 (index 0 for transparent color)
+                numpy.nan_to_num(image_data, copy=False, nan=0)
+            image_data = numpy.take(palette, numpy.round(image_data).astype(numpy.int32), axis=0)
+            nchannels = 4
         elif not cmap and alpha is not None:
             # add alpha-channel (LA)
+            image_data = numpy.repeat(image_data[:, :, numpy.newaxis], 3, axis=2)
             im_shape = numpy.shape(image_data)
-            alpha_ch = numpy.full(im_shape, 255 * alpha, dtype=image_data.dtype)
+            alpha_ch = numpy.full((height, width, 1), 255 * alpha, dtype=image_data.dtype)
             image_data = numpy.dstack((image_data, alpha_ch))
-            nchannels = 2
+            nchannels = 4
+        else:
+            # convert to RGBA
+            image_data = numpy.repeat(image_data[:, :, numpy.newaxis], 3, axis=2)
+            alpha_ch_scaler = 1 if alpha is None else alpha
+            alpha_ch = numpy.full((height, width, 1), 255 * alpha_ch_scaler, dtype=image_data.dtype)
+            image_data = numpy.dstack((image_data, alpha_ch))
+            nchannels = 4
 
     else:
         # Color RGB/RGBA image
@@ -268,15 +299,15 @@ def geom_imshow(image_data, cmap=None, *,
 
         height, width, nchannels = image_data.shape
 
-        if alpha is not None:
-            if nchannels == 3:
-                # RGB image: add alpha channel (RGBA)
-                alpha_ch = numpy.full((height, width, 1), 255 * alpha, dtype=image_data.dtype)
-                image_data = numpy.dstack((image_data, alpha_ch))
-                nchannels = 4
-            elif nchannels == 4:
-                # RGBA image: apply alpha scaling
-                image_data[:, :, 3] *= alpha
+        if nchannels == 3:
+            alpha_ch_scaler = 1 if alpha is None else alpha
+            # RGB image: add alpha channel (RGBA)
+            alpha_ch = numpy.full((height, width, 1), 255 * alpha_ch_scaler, dtype=image_data.dtype)
+            image_data = numpy.dstack((image_data, alpha_ch))
+            nchannels = 4
+        elif nchannels == 4 and alpha is not None:
+            # RGBA image: apply alpha scaling
+            image_data[:, :, 3] *= alpha
 
     # Make sure all values are ints in range 0-255.
     image_data.clip(0, 255, out=image_data)
@@ -341,10 +372,9 @@ def geom_imshow(image_data, cmap=None, *,
     png.Writer(
         width=width,
         height=height,
-        greyscale=greyscale and not cmap,
-        alpha=(nchannels == 4 or nchannels == 2),  # RGBA or LA
+        greyscale=False,
+        alpha=True,
         bitdepth=8,
-        palette=palette,
         compression=compression
     ).write(png_bytes, image_2d)
 
