@@ -17,8 +17,10 @@ private fun log(str: () -> String) {
 class ContextStateDelegate(
     logEnabled: Boolean = true,
     failIfNotImplemented: Boolean = true
-) : Context2d by Context2dDelegate(logEnabled = logEnabled, failIfNotImplemented = failIfNotImplemented) {
-    private var stateChangeListener: (stateChange: StateChange) -> Unit = { _ -> }
+) : Context2d by Context2dDelegate(
+    logEnabled = logEnabled,
+    failIfNotImplemented = failIfNotImplemented
+) {
     private val states = ArrayList<StateEntry>()
     private var currentPath: Path2d = Path2d()
     private var currentState = StateEntry(
@@ -37,32 +39,6 @@ class ContextStateDelegate(
         transform = AffineTransform.IDENTITY,
         clipPath = Path2d()
     )
-
-    // Generate StateChange that will transform the initial state to the current state.
-    fun restartStateChange() : StateChange {
-        val diff = StateChange(
-            strokeColor = currentState.strokeColor,
-            strokeWidth = currentState.strokeWidth,
-            lineDashPattern = currentState.lineDashPattern,
-            lineDashOffset = currentState.lineDashOffset,
-            miterLimit = currentState.miterLimit,
-            lineCap = currentState.lineCap,
-            lineJoin = currentState.lineJoin,
-            fillColor = currentState.fillColor,
-            font = currentState.font,
-            fontTextAlign = currentState.fontTextAlign,
-            fontBaseline = currentState.fontBaseline,
-            transform = AffineTransform.restoreTransform(AffineTransform.IDENTITY, currentState.transform),
-            globalAlpha = currentState.globalAlpha,
-            clipPath = currentState.clipPath
-        )
-
-        return diff
-    }
-
-    fun setStateChangeListener(handler: (StateChange) -> Unit) {
-        stateChangeListener = handler
-    }
 
     fun getCTM(): AffineTransform {
         return currentState.transform
@@ -167,11 +143,7 @@ class ContextStateDelegate(
 
     override fun clip() {
         log { "clip() - ${currentPath.getCommands()}" }
-        val newClipPath = currentPath.copy()
-        if (newClipPath != currentState.clipPath) {
-            currentState.clipPath = newClipPath
-            stateChangeListener(StateChange(clipPath = newClipPath))
-        }
+        currentState.clipPath = currentPath.copy()
     }
 
     override fun save() {
@@ -184,29 +156,7 @@ class ContextStateDelegate(
         log { "\tfrom: [${currentState.transform.repr()}]" }
         if (states.isNotEmpty()) {
             val newState = states.removeAt(states.size - 1)
-            val diff = StateChange(
-                strokeColor = newState.strokeColor.takeIf { it != currentState.strokeColor },
-                strokeWidth = newState.strokeWidth.takeIf { it != currentState.strokeWidth },
-                lineDashPattern = newState.lineDashPattern.takeIf { it != currentState.lineDashPattern },
-                lineDashOffset = newState.lineDashOffset.takeIf { it != currentState.lineDashOffset },
-                miterLimit = newState.miterLimit.takeIf { it != currentState.miterLimit },
-                lineCap = newState.lineCap.takeIf { it != currentState.lineCap },
-                lineJoin = newState.lineJoin.takeIf { it != currentState.lineJoin },
-                fillColor = newState.fillColor.takeIf { it != currentState.fillColor },
-                font = newState.font.takeIf { it != currentState.font },
-                fontTextAlign = newState.fontTextAlign.takeIf { it != currentState.fontTextAlign },
-                fontBaseline = newState.fontBaseline.takeIf { it != currentState.fontBaseline },
-                transform = if (newState.transform != currentState.transform) {
-                    AffineTransform.restoreTransform(currentState.transform, newState.transform)
-                        ?: error { "Cannot restore transform [${currentState.transform.repr()}]." }
-                } else {
-                    null
-                },
-                globalAlpha = newState.globalAlpha.takeIf { it != currentState.globalAlpha },
-                clipPath = newState.clipPath.takeIf { it != currentState.clipPath },
-            )
             currentState = newState
-            stateChangeListener(diff)
         }
         log { "\t  to: [${currentState.transform.repr()}]" }
         log { "\t clipPath: ${currentState.clipPath}" }
@@ -214,20 +164,12 @@ class ContextStateDelegate(
 
     override fun setFillStyle(color: Color?) {
         log { "setFillStyle($color)" }
-        val newFillStyle = color ?: Color.TRANSPARENT
-        if (newFillStyle != currentState.fillColor) {
-            currentState.fillColor = newFillStyle
-            stateChangeListener(StateChange(fillColor = newFillStyle))
-        }
+        currentState.fillColor = color ?: Color.TRANSPARENT
     }
 
     override fun setStrokeStyle(color: Color?) {
         log { "setStrokeStyle($color)" }
-        val newStrokeStyle = color ?: Color.TRANSPARENT
-        if (newStrokeStyle != currentState.strokeColor) {
-            currentState.strokeColor = newStrokeStyle
-            stateChangeListener(StateChange(strokeColor = newStrokeStyle))
-        }
+        currentState.strokeColor = color ?: Color.TRANSPARENT
     }
 
     override fun setGlobalAlpha(alpha: Double) {
@@ -237,75 +179,48 @@ class ContextStateDelegate(
 
     override fun setFont(f: Font) {
         log { "setFont($f)" }
-        if (f != currentState.font) {
-            currentState.font = f
-            stateChangeListener(StateChange(font = f))
-        }
+        currentState.font = f
     }
 
     override fun setLineWidth(lineWidth: Double) {
         log { "setLineWidth($lineWidth)" }
-        if (lineWidth != currentState.strokeWidth) {
-            currentState.strokeWidth = lineWidth
-            stateChangeListener(StateChange(strokeWidth = lineWidth))
-        }
+        currentState.strokeWidth = lineWidth
     }
 
     override fun setLineJoin(lineJoin: LineJoin) {
         log { "setLineJoin($lineJoin)" }
-        if (lineJoin != currentState.lineJoin) {
-            currentState.lineJoin = lineJoin
-            stateChangeListener(StateChange(lineJoin = lineJoin))
-        }
+        currentState.lineJoin = lineJoin
     }
 
     override fun setLineCap(lineCap: LineCap) {
         log { "setLineCap($lineCap)" }
-        if (lineCap != currentState.lineCap) {
-            currentState.lineCap = lineCap
-            stateChangeListener(StateChange(lineCap = lineCap))
-        }
+        currentState.lineCap = lineCap
     }
 
     override fun setStrokeMiterLimit(miterLimit: Double) {
         log { "setStrokeMiterLimit($miterLimit)" }
-        if (miterLimit != currentState.miterLimit) {
-            currentState.miterLimit = miterLimit
-            stateChangeListener(StateChange(miterLimit = miterLimit))
-        }
+        currentState.miterLimit = miterLimit
     }
 
     override fun setTextBaseline(baseline: TextBaseline) {
         log { "setTextBaseline($baseline)" }
-        if (baseline != currentState.fontBaseline) {
-            currentState.fontBaseline = baseline
-            stateChangeListener(StateChange(fontBaseline = baseline))
-        }
+        currentState.fontBaseline = baseline
     }
 
     override fun setTextAlign(align: TextAlign) {
         log { "setTextAlign($align)" }
-        if (align != currentState.fontTextAlign) {
-            currentState.fontTextAlign = align
-            stateChangeListener(StateChange(fontTextAlign = align))
-        }
+        currentState.fontTextAlign = align
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
         val lineDashPattern = lineDash.toList()
         log { "setLineDashPattern(${lineDashPattern})" }
-        if (lineDashPattern != currentState.lineDashPattern) {
-            currentState.lineDashPattern = lineDashPattern
-            stateChangeListener(StateChange(lineDashPattern = lineDashPattern))
-        }
+        currentState.lineDashPattern = lineDashPattern
     }
 
     override fun setLineDashOffset(lineDashOffset: Double) {
         log { "setLineDashOffset($lineDashOffset)" }
-        if (lineDashOffset != currentState.lineDashOffset) {
-            currentState.lineDashOffset = lineDashOffset
-            stateChangeListener(StateChange(lineDashOffset = lineDashOffset))
-        }
+        currentState.lineDashOffset = lineDashOffset
     }
 
     override fun scale(x: Double, y: Double) {
@@ -335,66 +250,17 @@ class ContextStateDelegate(
     override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
         log { "setTransform(m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12)" }
         val newTransform = AffineTransform.makeMatrix(m00 = m00, m10 = m10, m01 = m01, m11 = m11, m02 = m02, m12 = m12)
-        if (newTransform != currentState.transform) {
-            log { "\tfrom: [${currentState.transform.repr()}]" }
-            log { "\t  to: [${newTransform.repr()}]" }
-            currentState.transform = newTransform
-
-            val transform = AffineTransform.restoreTransform(currentState.transform, newTransform)
-                ?: error { "Cannot restore transform [${currentState.transform.repr()}]." }
-
-            stateChangeListener(StateChange(transform = transform))
-        }
+        log { "\tfrom: [${currentState.transform.repr()}]" }
+        log { "\t  to: [${newTransform.repr()}]" }
+        currentState.transform = newTransform
     }
 
     private fun transform(at: AffineTransform) {
         log { "transform(${at.repr()})" }
         val newTransform = currentState.transform.concat(at)
-        if (newTransform != currentState.transform) {
-            log { "\tfrom: [${currentState.transform.repr()}]" }
-            log { "\t  to: [${newTransform.repr()}]" }
-            currentState.transform = newTransform
-            stateChangeListener(StateChange(transform = at))
-        }
-    }
-
-    class StateChange(
-        val strokeColor: Color? = null,
-        val strokeWidth: Double? = null,
-        val lineDashPattern: List<Double>? = null,
-        val lineDashOffset: Double? = null,
-        val miterLimit: Double? = null,
-        val lineCap: LineCap? = null,
-        val lineJoin: LineJoin? = null,
-        val fillColor: Color? = null,
-        val font: Font? = null,
-        val fontTextAlign: TextAlign? = null,
-        val fontBaseline: TextBaseline? = null,
-        val transform: AffineTransform? = null, // delta - should be applied to the current transform
-        val globalAlpha: Double? = null,
-        val clipPath: Path2d? = null,
-    ) {
-        override fun toString(): String {
-            val str = StringBuilder()
-            if (strokeColor != null) str.append("strokeColor=$strokeColor, ")
-            if (strokeWidth != null) str.append("strokeWidth=$strokeWidth, ")
-            if (lineDashPattern != null) str.append("lineDashPattern=$lineDashPattern, ")
-            if (lineDashOffset != null) str.append("lineDashOffset=$lineDashOffset, ")
-            if (miterLimit != null) str.append("miterLimit=$miterLimit, ")
-            if (lineCap != null) str.append("lineCap=$lineCap, ")
-            if (lineJoin != null) str.append("lineJoin=$lineJoin, ")
-            if (fillColor != null) str.append("fillColor=$fillColor, ")
-            if (font != null) str.append("font=$font, ")
-            if (fontTextAlign != null) str.append("fontTextAlign=$fontTextAlign, ")
-            if (fontBaseline != null) str.append("fontBaseline=$fontBaseline, ")
-            if (transform != null) str.append("transform=${transform.repr()}, ")
-            if (globalAlpha != null) str.append("globalAlpha=$globalAlpha, ")
-            if (clipPath != null) str.append("clipPath=$clipPath, ")
-            if (str.isNotEmpty()) {
-                str.setLength(str.length - 2) // remove last ", "
-            }
-            return "StateChange($str)"
-        }
+        log { "\tfrom: [${currentState.transform.repr()}]" }
+        log { "\t  to: [${newTransform.repr()}]" }
+        currentState.transform = newTransform
     }
 
     private data class StateEntry(
