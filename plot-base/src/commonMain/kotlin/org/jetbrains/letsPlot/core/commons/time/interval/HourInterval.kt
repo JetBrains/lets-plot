@@ -16,9 +16,9 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
  */
 internal class HourInterval(
     count: Int
-) : TimeZoneAwareInterval() {
+) : TimeZoneAwareInterval(), WithFixedDuration {
 
-    private val duration: Duration = Duration.HOUR.mul(count)
+    override val duration: Duration = Duration.HOUR.mul(count)
     override val tickFormatPattern: String = TICK_FORMAT
 
     override fun atOrBefore(dateTime: DateTime): DateTime {
@@ -32,6 +32,10 @@ internal class HourInterval(
     }
 
     override fun addInterval(dateTime: DateTime, tz: TimeZone): DateTime {
+        // Note:
+        // Use cautiously: may not work with an hour-interval correctly
+        // because if the time zone has a (fall) DST transition, then time is shifted back
+        // and hours may be the same for two different timestamps.
         return dateTime.add(duration, tz)
     }
 

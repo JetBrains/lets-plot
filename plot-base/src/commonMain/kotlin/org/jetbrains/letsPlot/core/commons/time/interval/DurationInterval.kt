@@ -34,7 +34,6 @@ internal class DurationInterval(
     }
 
     override fun range(start: Double, end: Double, tz: TimeZone?): List<Double> {
-//        val step = (duration.totalMillis * count).toDouble()
         val step = duration.totalMillis.toDouble()
         var tick = ceil(start / step) * step
         val result = ArrayList<Double>()

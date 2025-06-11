@@ -65,7 +65,8 @@ open class PlotConfigBackend(
         // Correct scales
         val plotDateTimeColumns = DataMetaUtil.getTemporalDTypesByVarName(getMap(DATA_META))
         layerConfigs.map { layerConfig ->
-            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getTemporalDTypesByVarName(layerConfig.getMap(DATA_META))
+            val dateTimeColumns =
+                plotDateTimeColumns + DataMetaUtil.getTemporalDTypesByVarName(layerConfig.getMap(DATA_META))
 
             // Detect date/time variables with mapping to a discrete scale
             val dateTimeDiscreteBindings = layerConfig.varBindings
@@ -447,8 +448,9 @@ open class PlotConfigBackend(
                     "%Y",
                     "%Y-%m",
                     "%Y-%m-%d",
-                    "%Y-%m-%d %H:%M",
-                    "%Y-%m-%d %H:%M:%S",
+// The last two hardly make sense.
+//                    "%Y-%m-%d %H:%M",
+//                    "%Y-%m-%d %H:%M:%S",
                 )
             }
 
@@ -471,7 +473,12 @@ open class PlotConfigBackend(
                     return pattern
                 }
             }
-            return patterns.last()
+
+            // Choose 'breaksPattern' because it is possible that labels are duplicated
+            // because the time zone has a (fall) DST transition when time is shifted back
+            // and the hours and/or minutes are the same for two different timestamps.
+//            return patterns.last()
+            return breaksPattern
         }
     }
 }
