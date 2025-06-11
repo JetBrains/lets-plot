@@ -85,7 +85,6 @@ class MagickCanvas(
         private fun exportPixels(wand: CPointer<ImageMagick.MagickWand>): Pair<UByteArray, Vector> {
             val width = ImageMagick.MagickGetImageWidth(wand).toInt()
             val height = ImageMagick.MagickGetImageHeight(wand).toInt()
-            println("MagickCanvas: Exporting pixels, size: $width x $height")
 
             if (width <= 0 || height <= 0) {
                 return UByteArray(0) to Vector.ZERO
@@ -105,7 +104,6 @@ class MagickCanvas(
 
         companion object {
             fun fromBitmap(bitmap: Bitmap): MagickSnapshot {
-                println("MagickCanvas: Creating snapshot from Bitmap, size: ${bitmap.width}x${bitmap.height}, pixels.size: ${bitmap.argbInts.size}")
                 require(bitmap.width > 0 && bitmap.height > 0) { "MagickCanvas: Size must be greater than zero" }
                 require(bitmap.argbInts.size == bitmap.width * bitmap.height) {
                     "MagickCanvas: Bitmap pixel array size does not match the specified size"
@@ -117,7 +115,6 @@ class MagickCanvas(
                 val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
                 ImageMagick.MagickNewImage(img, bitmap.width.convert(), bitmap.height.convert(), backgroundPixel)
 
-                println("MagickCanvas: Importing image pixels, size: ${bitmap.width}x${bitmap.height}, pixels.size: ${bitmap.argbInts.size}")
                 val res = ImageMagick.MagickImportImagePixels(
                     img,
                     0,
@@ -141,7 +138,6 @@ class MagickCanvas(
             }
 
             fun fromPixels(rgba: ByteArray, size: Vector): MagickSnapshot {
-                println("MagickCanvas: Creating snapshot from pixels, size: $size, rgba.size: ${rgba.size}")
                 require(size.x > 0 && size.y > 0) { "MagickCanvas: Size must be greater than zero" }
                 require(rgba.size == size.x * size.y * 4) { // 4 bytes per pixel (RGBA)
                     "MagickCanvas: Byte array size does not match the specified size"
@@ -152,9 +148,6 @@ class MagickCanvas(
 
                 val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
                 ImageMagick.MagickNewImage(img, size.x.convert(), size.y.convert(), baclgroundPixel)
-
-                println("MagickCanvas: Importing image pixels, size: $size, rgba.size: ${rgba.size}")
-                println(rgba.joinToString { it.toUByte().toString(16) })
 
                 val res = ImageMagick.MagickImportImagePixels(
                     img,
