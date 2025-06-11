@@ -1,6 +1,5 @@
 
 import demo.svgMapping.model.ReferenceSvgModel
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -10,11 +9,11 @@ import kotlin.test.Test
 
 //@Ignore
 class SvgTest {
-    private val imageComparer = ImageComparer()
+    private val imageComparer = ImageComparer(suffix = getOSName())
 
     @Test
     fun referenceTest() {
-        val svg = ReferenceSvgModel.createModel(fontFamily = "/home/ikupriyanov/Projects/lets-plot/platf-imagick/src/nativeTest/resources/NotoSerif-Regular.ttf")
+        val svg = ReferenceSvgModel.createModel()
 
         imageComparer.assertImageEquals("svg_reference_test.bmp", svg)
     }
