@@ -38,7 +38,15 @@ class MagickContext2d(
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
-        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
+        if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
+            // Resize the image if the dimensions do not match
+            val scaledImage = ImageMagick.CloneMagickWand(snapshot.img)
+            ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
+            ImageMagick.DestroyMagickWand(scaledImage)
+        } else {
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
+        }
     }
 
     override fun save() {
