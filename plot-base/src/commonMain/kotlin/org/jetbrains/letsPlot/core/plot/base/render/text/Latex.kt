@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.R
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
-import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -346,7 +345,7 @@ internal class Latex(
             val fractionWidth = estimateWidth(font, widthCalculator)
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font, widthCalculator)
-            val fractionBarLength = max(1, ceil(fractionWidth / fractionBarWidth).toInt())
+            val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
             val numeratorTSpanElements = numerator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
                 richElement.element.apply {
                     setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
