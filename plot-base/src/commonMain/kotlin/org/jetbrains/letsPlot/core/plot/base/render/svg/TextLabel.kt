@@ -25,15 +25,17 @@ import kotlin.math.roundToInt
 
 class TextLabel(private val text: String, private val markdown: Boolean = false) : SvgComponent() {
     private var myText: SvgTextElement = SvgTextElement()
+    private var myClassName: String? = null
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
+    private var myVerticalAnchor: Text.VerticalAnchor? = null
 
     init {
-        resetText(init = true)
+        resetText()
     }
 
     override fun buildComponent() {
@@ -41,18 +43,16 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
     }
 
     override fun addClassName(className: String) {
-        myText.addClass(className)
+        myClassName = className
+        resetText()
     }
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
-                // set attribute for svg->canvas mapping to work
-                myText.fillColor()
-
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
-                updateStyleAttribute()
+                resetText()
             }
         }
     }
@@ -71,19 +71,17 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
-        updateStyleAttribute()
-        updateAnchor()
+        resetText()
     }
 
     fun setVerticalAnchor(anchor: Text.VerticalAnchor) {
-        // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
-        //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
-        myText.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+        myVerticalAnchor = anchor
+        resetText()
     }
 
     fun setFontSize(px: Double) {
         myFontSize = px
-        updateStyleAttribute()
+        resetText()
     }
 
     /**
@@ -91,7 +89,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
      */
     fun setFontWeight(cssName: String?) {
         myFontWeight = cssName
-        updateStyleAttribute()
+        resetText()
     }
 
     /**
@@ -99,7 +97,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
      */
     fun setFontStyle(cssName: String?) {
         myFontStyle = cssName
-        updateStyleAttribute()
+        resetText()
     }
 
     /**
@@ -107,44 +105,22 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
      */
     fun setFontFamily(fontFamily: String?) {
         myFontFamily = fontFamily
-        updateStyleAttribute()
+        resetText()
     }
 
-    private fun resetText(init: Boolean = false) {
-        val rootGroupText = rootGroup.children().filter { it == myText }.firstOrNull() as? SvgTextElement
-        if (!init) {
-            rootGroup.children().remove(myText)
-        }
-        // The font is used here to estimate the width of the text
+    private fun resetText() {
+        rootGroup.children().clear()
+        updateText()
+        rootGroup.children().add(myText)
+    }
+
+    private fun updateText() {
         val font = Font(
             family = FontFamily(myFontFamily ?: "sans-serif", false),
             size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )
-        // TextLabel is a single-line text element
-        val singleLineText = text.replace("\n", " ")
-        myText = RichText.toSvg(
-            singleLineText,
-            font,
-            TextWidthEstimator::widthCalculator,
-            markdown = markdown,
-            anchor = myHorizontalAnchor
-        ).firstOrNull() ?: SvgTextElement()
-        // Translate the attributes from the rootGroup text
-        if (rootGroupText != null) {
-            rootGroupText.classAttribute().get()?.let { className ->
-                addClassName(className)
-            }
-        }
-        // Should be after RichText.toSvg() to check if first tspan has defined attribute 'x'
-        // and before adding to rootGroup because resetAnchor() updates myText
-        resetAnchor()
-        rootGroup.children().add(myText)
-    }
-
-    private fun updateStyleAttribute() {
-        resetText()
         val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
@@ -152,7 +128,44 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             myFontFamily,
             myFontStyle
         )
-        myText.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
+        val textElement = RichText.toSvg(
+            text.replace("\n", " "), // TextLabel is a single-line text element
+            font,
+            TextWidthEstimator::widthCalculator,
+            markdown = markdown,
+            anchor = myHorizontalAnchor
+        ).firstOrNull() ?: SvgTextElement()
+        val actualHorizontalAnchor = getActualHorizontalAnchor(textElement)
+        myText = textElement
+            .let { updateTextAttributes(styleAttr)(it) }
+            .let { updateAnchors(actualHorizontalAnchor)(it) }
+    }
+
+    private fun getActualHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
+        val x = getFirstTSpanChild(textElement)?.getAttribute(SvgTextContent.X)?.get()
+        return when (x) {
+            null -> myHorizontalAnchor
+            else -> HorizontalAnchor.LEFT
+        }
+    }
+
+    private fun updateTextAttributes(styleAttr: String): (SvgTextElement) -> SvgTextElement {
+        return { textElement ->
+            textElement.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
+            myClassName?.let { textElement.addClass(it) }
+            myTextColor?.let { textElement.fillColor() } // set attribute for svg->canvas mapping to work
+            textElement
+        }
+    }
+
+    private fun updateAnchors(horizontalAnchor: HorizontalAnchor): (SvgTextElement) -> SvgTextElement {
+        return { textElement ->
+            textElement.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(horizontalAnchor))
+            // replace "dominant-baseline" with "dy" because "dominant-baseline" is not supported by Batik
+            //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
+            myVerticalAnchor?.let { textElement.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
+            textElement
+        }
     }
 
     // TODO: Refactor this
@@ -163,16 +176,5 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             is SvgElement -> getFirstTSpanChild(firstChild)
             else -> null
         }
-    }
-
-    private fun resetAnchor() {
-        val x = getFirstTSpanChild(myText)?.getAttribute(SvgTextContent.X)?.get()
-        if (x != null) {
-            myHorizontalAnchor = HorizontalAnchor.LEFT
-        }
-    }
-
-    private fun updateAnchor() {
-        myText.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(myHorizontalAnchor))
     }
 }
