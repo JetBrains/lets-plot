@@ -247,7 +247,7 @@ def geom_imshow(image_data, cmap=None, *,
                     "Python environment. "
                 )
             if not has_nan:
-                alpha_ch_val = None if alpha is None else 255 * alpha
+                alpha_ch_val = 255 if alpha is None else 255 * alpha
                 cmap_256 = palettable.get_map(cmap + "_256")
                 palette = [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in cmap_256.hex_colors]
             else:

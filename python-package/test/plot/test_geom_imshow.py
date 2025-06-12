@@ -9,9 +9,14 @@ import pytest
 from lets_plot.plot.geom_imshow_ import geom_imshow
 from test_geom_imshow_util import _image_spec, _image_bbox
 
+try:
+    from palettable.matplotlib import matplotlib as palettable
+except ImportError:
+    palettable = None
 
-def _append_test_params(params_list: list, image_data, expected_spec: dict):
-    params_list.append(([image_data], {}, expected_spec))
+
+def _append_test_params(params_list: list, image_data, expected_spec: dict, **kwargs):
+    params_list.append(([image_data], kwargs, expected_spec))
 
 
 class Test:
@@ -36,6 +41,22 @@ class Test:
                             [1., 1., 1.]
                         ]),
                         _image_spec(expected_gray_2_x_3_href, _image_bbox(width=3, height=2), data_min=0, data_max=1))
+
+    # 2 x 3 array of ints, with 'cmap'
+    _append_test_params(test_params_list,
+                        np.array([
+                            [150, 75, 0],
+                            [200, 150, 75]
+                        ]),
+                        _image_spec(
+                            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAHUlEQVR4nGP43Z74v1mt8T8DA8t/hj9/9/+HCQAAubEO0e5fj4cAAAAASUVORK5CYII=",
+                            _image_bbox(width=3, height=2),
+                            data_min=0.0,
+                            data_max=200.0,
+                            colors=palettable.get_map("magma_32").hex_colors
+                        ),
+                        cmap = 'magma'
+                        )
 
     # -- rgb --
 
