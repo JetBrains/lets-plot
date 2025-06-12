@@ -33,16 +33,16 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(13.9, 0.0, 586.0, 586.0))
+            .isEqualTo(DoubleRectangle.XYWH(10, 0.0, 590.0, 590.0))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(13.98, 293.0, 293.0, 293.0))
+            .isEqualTo(DoubleRectangle.XYWH(10, 295.0, 295.0, 295.0))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-13.98, 0.0, 13.98, 286.19))
+            .isEqualTo(DoubleRectangle.XYWH(-10, 0.0, 10.0, 288.1))
     }
 
     @Test
@@ -52,16 +52,16 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577, 577))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 57.2, 515.6, 515.6))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 57.7, 519.3, 519.3))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-27.0, 0.0, 27.0, 509.9))
+            .isEqualTo(DoubleRectangle.XYWH(-23.0, 0.0, 23.0, 513.4))
     }
 
     @Test
@@ -72,16 +72,16 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(13.98, 0.0, 501, 501))
+            .isEqualTo(DoubleRectangle.XYWH(10.0, 0.0, 505, 505))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(13.98, 250.5, 250.5, 250.5))
+            .isEqualTo(DoubleRectangle.XYWH(10.0, 252.5, 252.5, 252.5))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-13.98, 0.0, 13.98, 245.61))
+            .isEqualTo(DoubleRectangle.XYWH(-10.0, 0.0, 10.0, 247.5))
     }
 
     @Test
@@ -91,16 +91,16 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577.0, 577.0))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 576.9, 576.9))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-27.0, 0.0, 27.0, 565.8))
+            .isEqualTo(DoubleRectangle.XYWH(-23.0, 0.0, 23.0, 569.7))
     }
 
     @Test
@@ -110,19 +110,19 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577.0, 577.0))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577.0, 577.0))
 
         assertThat(li.geomContentBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(47.0, 20.0, 532.9, 532.9))
+            .isEqualTo(DoubleRectangle.XYWH(43.0, 20.0, 537.0, 537.0))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-27.0, 0.0, 27.0, 527.7))
+            .isEqualTo(DoubleRectangle.XYWH(-23.0, 0.0, 23.0, 531.5))
     }
 
     private fun doLayout(
