@@ -40,6 +40,7 @@ object ThemeOption {
 
     const val AXIS_TITLE = "axis_title"
     const val AXIS_TEXT = "axis_text"
+    const val AXIS_TEXT_SPACING = "axis_text_spacing"
     const val AXIS_TICKS = "axis_ticks"
     const val AXIS_TICKS_LENGTH = "axis_ticks_length"
     const val AXIS_LINE = "axis_line"
@@ -50,6 +51,8 @@ object ThemeOption {
     const val AXIS_TITLE_Y = "axis_title_y"
     const val AXIS_TEXT_X = "axis_text_x"
     const val AXIS_TEXT_Y = "axis_text_y"
+    const val AXIS_TEXT_SPACING_X = "axis_text_spacing_x"
+    const val AXIS_TEXT_SPACING_Y = "axis_text_spacing_y"
     const val AXIS_TICKS_X = "axis_ticks_x"
     const val AXIS_TICKS_Y = "axis_ticks_y"
     const val AXIS_TICKS_LENGTH_X = "axis_ticks_length_x"

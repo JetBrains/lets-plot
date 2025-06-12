@@ -849,6 +849,10 @@ object Option {
         const val AXIS_TEXT_X = ThemeOption.AXIS_TEXT_X
         const val AXIS_TEXT_Y = ThemeOption.AXIS_TEXT_Y
 
+        const val AXIS_TEXT_SPACING = ThemeOption.AXIS_TEXT_SPACING
+        const val AXIS_TEXT_SPACING_X = ThemeOption.AXIS_TEXT_SPACING_X
+        const val AXIS_TEXT_SPACING_Y = ThemeOption.AXIS_TEXT_SPACING_Y
+
         const val AXIS_TICKS = ThemeOption.AXIS_TICKS
         const val AXIS_TICKS_X = ThemeOption.AXIS_TICKS_X
         const val AXIS_TICKS_Y = ThemeOption.AXIS_TICKS_Y

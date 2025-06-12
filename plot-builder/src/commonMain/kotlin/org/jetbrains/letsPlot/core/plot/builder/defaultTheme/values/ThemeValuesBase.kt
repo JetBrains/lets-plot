@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_X
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
@@ -123,6 +124,8 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 // Currently 'angle' is supported for AXIS_TEXT only: NaN means no rotation.
                 Elem.ANGLE to Double.NaN
             ),
+
+            AXIS_TEXT_SPACING to 2.0,
 
             AXIS_TEXT_X to mapOf(
                 Elem.HJUST to Double.NaN,
