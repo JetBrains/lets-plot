@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import kotlin.test.Test
@@ -21,9 +21,10 @@ class RichTextLatexTest {
         val svg = RichText.toSvg(text, DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(1)
-        assertTSpan(
+        assertFormulaTSpan(
             svg.tspans().single(),
-            text
+            text,
+            level = TestUtil.FormulaLevel()
         )
     }
 
@@ -39,9 +40,10 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(\quad\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(1)
-        assertTSpan(
+        assertFormulaTSpan(
             svg.tspans().single(),
-            " "
+            " ",
+            level = TestUtil.FormulaLevel()
         )
     }
 
@@ -50,9 +52,10 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(\infty\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(1)
-        assertTSpan(
+        assertFormulaTSpan(
             svg.tspans().single(),
-            "∞"
+            "∞",
+            level = TestUtil.FormulaLevel()
         )
     }
 
@@ -61,9 +64,10 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(\Omega\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(1)
-        assertTSpan(
+        assertFormulaTSpan(
             svg.tspans().single(),
-            "Ω"
+            "Ω",
+            level = TestUtil.FormulaLevel()
         )
     }
 
@@ -73,11 +77,12 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
-        assertTSpan(base, "a", sub = false, sup = false)
-        assertTSpan(space, " ", sub = false, sup = false)
-        assertTSpan(shiftSup, "\u200B", sub = null, sup = true)
-        assertTSpan(pow, "b", sub = false, sup = false)
-        assertTSpan(restoreShift, "\u200B", sub = true, sup = null)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(pow, "b", level = level.pass())
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
     @Test
@@ -86,11 +91,12 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
-        assertTSpan(base, "a", sub = false, sup = false)
-        assertTSpan(space, " ", sub = false, sup = false)
-        assertTSpan(shiftSup, "\u200B", sub = null, sup = true)
-        assertTSpan(pow, "bc", sub = false, sup = false)
-        assertTSpan(restoreShift, "\u200B", sub = true, sup = null)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(pow, "bc", level = level.pass())
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
     @Test
@@ -99,11 +105,12 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
-        assertTSpan(base, "a", sub = false, sup = false)
-        assertTSpan(space, " ", sub = false, sup = false)
-        assertTSpan(shiftSub, "\u200B", sub = true, sup = null)
-        assertTSpan(index, "b", sub = false, sup = false)
-        assertTSpan(restoreShift, "\u200B", sub = null, sup = true)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(index, "b", level = level.pass())
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
     @Test
@@ -112,20 +119,95 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
-        assertTSpan(base, "a", sub = false, sup = false)
-        assertTSpan(space, " ", sub = false, sup = false)
-        assertTSpan(shiftSub, "\u200B", sub = true, sup = null)
-        assertTSpan(index, "bc", sub = false, sup = false)
-        assertTSpan(restoreShift, "\u200B", sub = null, sup = true)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(index, "bc", level = level.pass())
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
+    }
+
+    @Test
+    fun formulaWithMultipleSuperscript() {
+        val svg = RichText.toSvg("""\(a^{b^c}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(9)
+        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPower, secondLevelSpace) = svg.tspans()
+        val (secondLevelShiftSup, secondLevelPower, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(firstLevelPower, "b", level = level.pass())
+        assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(secondLevelShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(secondLevelPower, "c", level = level.pass())
+        assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
+    }
+
+    @Test
+    fun formulaWithMultipleSubscript() {
+        val svg = RichText.toSvg("""\(a_{i_1}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(9)
+        val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
+        val (secondLevelShiftSub, secondLevelIndex, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(firstLevelShiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(firstLevelIndex, "i", level = level.pass())
+        assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(secondLevelIndex, "1", level = level.pass())
+        assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
+    }
+
+    @Test
+    fun formulaWithMixedSupSub() {
+        val svg = RichText.toSvg("""\(a^{b_i}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(9)
+        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPower, secondLevelSpace) = svg.tspans()
+        val (secondLevelShiftSub, secondLevelIndex, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(firstLevelPower, "b", level = level.pass())
+        assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(secondLevelIndex, "i", level = level.pass())
+        assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
+    }
+
+    @Test
+    fun formulaWithMixedSubSup() {
+        val svg = RichText.toSvg("""\(a_{I^n}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(9)
+        val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
+        val (secondLevelShiftSup, secondLevelPower, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(firstLevelShiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(firstLevelIndex, "I", level = level.pass())
+        assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(secondLevelShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(secondLevelPower, "n", level = level.pass())
+        assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
     }
 
     @Test
     fun simpleFormulaFraction() {
-        TODO()
-    }
+        val svg = RichText.toSvg("""\(\frac{a}{b}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
-    @Test
-    fun formulaWithMultipleLevels() {
+        assertThat(svg.tspans()).hasSize(4)
         TODO()
     }
 

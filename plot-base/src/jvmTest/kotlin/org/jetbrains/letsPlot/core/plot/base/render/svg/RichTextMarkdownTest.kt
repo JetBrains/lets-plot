@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
@@ -119,15 +120,16 @@ class RichTextMarkdownTest {
 
         val (foo, space, bar, pow, upper) = richTextSvg.tspans()
         val (square, lower, baz) = richTextSvg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
 
-        assertTSpan(foo, "foo", bold = true)
-        assertTSpan(space, " ")
-        assertTSpan(bar, "bar", bold = true, italic = true, color = "red")
-        assertTSpan(pow, " ", bold = true, italic = true, color = "red")
-        assertTSpan(upper, "\u200B", bold = true, italic = true, color = "red", sup = true) // upper baseline
-        assertTSpan(square, "2", bold = true, italic = true, color = "red")
-        assertTSpan(lower, "\u200B", bold = true, italic = true, color = "red", sub = true) // lower baseline
-        assertTSpan(baz, " baz", sup = false)
+        assertFormulaTSpan(foo, "foo", level = level.pass(), bold = true)
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(bar, "bar", level = level.pass(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(pow, " ", level = level.pass(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(upper, "\u200B", level = level.sup(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(square, "2", level = level.pass(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(lower, "\u200B", level = level.revert(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(baz, " baz", level = level.pass())
     }
 
     @Test
