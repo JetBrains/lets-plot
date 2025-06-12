@@ -128,8 +128,6 @@ class MagickCanvas(
                     val err = ImageMagick.MagickGetException(img, null)
                     println("MagickCanvas: Failed to import image pixels: $err")
                     error("MagickCanvas: Failed to import image pixels: $err")
-                } else {
-                    println("MagickCanvas: Successfully imported image pixels")
                 }
 
                 return MagickSnapshot(img)
@@ -162,8 +160,6 @@ class MagickCanvas(
                     val err = ImageMagick.MagickGetException(img, null)
                     println("MagickCanvas: Failed to import image pixels: $err")
                     error("MagickCanvas: Failed to import image pixels: $err")
-                } else {
-                    println("MagickCanvas: Successfully imported image pixels")
                 }
 
                 return MagickCanvas.MagickSnapshot(img)
