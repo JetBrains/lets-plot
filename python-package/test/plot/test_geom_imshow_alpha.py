@@ -5,14 +5,10 @@
 
 import numpy as np
 import pytest
+from palettable.matplotlib import matplotlib as palettable
 
 from lets_plot.plot.geom_imshow_ import geom_imshow
 from test_geom_imshow_util import _image_spec, _image_bbox
-
-try:
-    from palettable.matplotlib import matplotlib as palettable
-except ImportError:
-    palettable = None
 
 
 # See notebook:

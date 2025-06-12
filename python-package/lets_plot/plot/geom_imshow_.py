@@ -326,9 +326,6 @@ def geom_imshow(image_data, cmap=None, *,
         image_data = image_data.astype(numpy.int8)
 
     # Reshape to 2d-array:
-    # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..] for RGB(A)
-    # or from [[[L, A], [L, A]], ...] to [[L, A, L, A],..] for greyscale–alpha (LA)
-    # or pypng will fail
     image_2d = image_data.reshape(-1, width * 4)  # always 4 channels (RGBA)
 
     # PNG writer
