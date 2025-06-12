@@ -5,94 +5,72 @@
 
 package org.jetbrains.letsPlot.livemap.chart.path
 
-import org.jetbrains.letsPlot.commons.intern.math.distance2
+import org.jetbrains.letsPlot.commons.intern.math.isOnSegment
+import org.jetbrains.letsPlot.commons.intern.math.projection
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.World
-import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.Locator
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
-import kotlin.math.pow
 
 object PathLocator : Locator {
     override fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
         if (!target.contains(WorldGeometryComponent::class)) {
             return null
         }
-
-        if (isCoordinateInPath(
-                renderHelper.posToWorld(coord),
-                renderHelper.dimToWorld(target.get<ChartElementComponent>().strokeWidth / 2),
-                target.get<WorldGeometryComponent>().geometry.multiLineString
-            )
-        ) {
+        val cursorCoord = renderHelper.posToWorld(coord)
+        val pointChecker = ClosestPointChecker(cursorCoord.x, cursorCoord.y)
+        val candidate = tooltipPosition(
+            cursorCoord,
+            target.get<WorldGeometryComponent>().geometry.multiLineString,
+            pointChecker
+        )
+        if (candidate != null) {
             return HoverObject(
                 layerIndex = target.get<IndexComponent>().layerIndex,
                 index = target.get<IndexComponent>().index,
-                distance = 0.0,
-                this
+                distance = renderHelper.dimToClient(pointChecker.distance).value,
+                this,
+                targetPosition = renderHelper.worldToPos(candidate).toDoubleVector(),
             )
         }
         return null
     }
 
     // Special logic is not yet determined.
-    override fun reduce(hoverObjects: Collection<HoverObject>): HoverObject? = hoverObjects.firstOrNull()
+    override fun reduce(hoverObjects: Collection<HoverObject>): HoverObject? = hoverObjects.minByOrNull(HoverObject::distance)
 
-    private fun isCoordinateInPath(
+    private fun tooltipPosition(
         coord: Vec<World>,
-        strokeRadius: Scalar<World>,
-        multiLineString: MultiLineString<World>
-    ): Boolean {
+        multiLineString: MultiLineString<World>,
+        pointChecker: ClosestPointChecker
+    ): Vec<World>? {
+        var candidate: Vec<World>? = null
         for (lineString in multiLineString) {
-            val bbox = lineString.bbox ?: continue
+            lineString.toList().asSequence().windowed(2).forEach() {
+                val p1 = it[0]
+                val p2 = it[1]
 
-            if (!bbox.inflate(strokeRadius).contains(coord)) {
-                continue
-            }
-            if (pathContainsCoordinate(coord, lineString, strokeRadius.value)) {
-                return true
+                if (isOnSegment(coord, p1, p2)) {
+                    val targetPointCoord = projection(coord.x, coord.y, p1.x, p1.y, p2.x, p2.y)
+                    if (pointChecker.check(targetPointCoord)) {
+                        candidate = targetPointCoord.toVec()
+                    }
+                } else if (pointChecker.check(p1.toDoubleVector())) {
+                    candidate = p1
+                }
             }
         }
-        return false
+
+        return candidate
     }
 
-    private fun <TypeT> pathContainsCoordinate(
-        coord: Vec<TypeT>,
-        path: List<Vec<TypeT>>,
-        strokeWidth: Double
-    ): Boolean {
-        for (i in 0 until path.size - 1) {
-            if (calculateSquareDistanceToPathSegment(coord, path, i) <= strokeWidth.pow(2.0)) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun <TypeT> calculateSquareDistanceToPathSegment(
-        coord: Vec<TypeT>,
-        path: List<Vec<TypeT>>,
-        segmentNum: Int
-    ): Double {
-        val next = segmentNum + 1
-        val segmentEnd = path[next]
-        val segmentStart = path[segmentNum]
-        val dx: Double = segmentEnd.x - segmentStart.x
-        val dy: Double = segmentEnd.y - segmentStart.y
-
-        val scalar: Double = dx * (coord.x - segmentStart.x) + dy * (coord.y - segmentStart.y)
-        if (scalar <= 0) {
-            return distance2(coord.x, coord.y, segmentStart.x, segmentStart.y)
-        }
-        val segmentSquareLength = dx * dx + dy * dy
-        val baseSquareLength = scalar * scalar / segmentSquareLength
-        return if (baseSquareLength >= segmentSquareLength) {
-            distance2(coord.x, coord.y, segmentEnd.x, segmentEnd.y)
-        } else distance2(coord.x, coord.y, segmentStart.x, segmentStart.y) - baseSquareLength
+    private fun <TypeT> isOnSegment(p: Vec<TypeT>, l1: Vec<TypeT>, l2: Vec<TypeT>): Boolean {
+        return isOnSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
     }
 }

@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker.COMPARISON_RESULT
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker.COMPARISON_RESULT.*
+import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker
+import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker.COMPARISON_RESULT
+import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker.COMPARISON_RESULT.*
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.coord
 import kotlin.test.BeforeTest
 import kotlin.test.Test

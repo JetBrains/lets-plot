@@ -8,12 +8,11 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.isOnSegment
 import org.jetbrains.letsPlot.commons.intern.math.projection
+import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker.COMPARISON_RESULT
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.PathTargetProjection.PathPoint
 
 internal class TargetDetector(
@@ -187,7 +186,7 @@ internal class TargetDetector(
                     } else {
                         DoubleVector(cursor.x, range.lowerEnd + range.length / 2)
                     }
-                    closestPointChecker.compare(coord) != COMPARISON_RESULT.NEW_FARTHER
+                    closestPointChecker.compare(coord) != ClosestPointChecker.COMPARISON_RESULT.NEW_FARTHER
                 } else {
                     false
                 }

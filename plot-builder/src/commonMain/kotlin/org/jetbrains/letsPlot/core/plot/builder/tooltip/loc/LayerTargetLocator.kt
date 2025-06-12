@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
@@ -17,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStr
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetLocator.Collector.CollectingStrategy
 import kotlin.math.max
 

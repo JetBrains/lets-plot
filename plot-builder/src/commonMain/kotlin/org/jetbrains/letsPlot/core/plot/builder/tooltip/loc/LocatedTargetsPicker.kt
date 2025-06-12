@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil
 import kotlin.math.abs
 
 class LocatedTargetsPicker(
@@ -135,7 +135,7 @@ class LocatedTargetsPicker(
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     locatedTargetList.targets
                         .filter { it.tipLayoutHint.coord != null }
-                        .minOfOrNull { target -> MathUtil.distance(coord, target.tipLayoutHint.coord!!) }
+                        .minOfOrNull { target -> distance(coord, target.tipLayoutHint.coord!!) }
                         ?: FAKE_DISTANCE
                 }
             } else {
@@ -169,7 +169,7 @@ class LocatedTargetsPicker(
                 || geomTargets.size > EXPECTED_TARGETS_MAX_COUNT // perf: when LP is used by vis tools with raw data
             ) {
                 val closestTarget = geomTargets.minBy { target ->
-                    MathUtil.distance(coord, target.tipLayoutHint.coord!!)
+                    distance(coord, target.tipLayoutHint.coord!!)
                 }
                 return lookupResult.withTargets(listOf(closestTarget))
             }

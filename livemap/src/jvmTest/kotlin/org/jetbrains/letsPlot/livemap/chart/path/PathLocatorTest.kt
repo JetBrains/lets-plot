@@ -5,21 +5,22 @@
 
 package org.jetbrains.letsPlot.livemap.chart.path
 
+import org.assertj.core.api.Assertions
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.livemap.ClientPoint
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
-import org.jetbrains.letsPlot.livemap.chart.path.PathLocator
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.Viewport
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportHelper
-import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class PathLocatorTest {
@@ -57,15 +58,40 @@ class PathLocatorTest {
             }
         }
 
-    @Test
-    fun coordinateInPath() {
-        Assertions.assertThat(PathLocator.search(Vec(128, 128), entity, renderHelper))
-            .isNotNull
+    private fun cursorPosition(x: Int, y: Int): Vec<Client> {
+        return renderHelper.worldToPos(Vec(x, y))
+    }
+
+    private fun expectedTargetPosition(x: Int, y: Int): DoubleVector {
+        return renderHelper.worldToPos(Vec(x, y)).toDoubleVector()
     }
 
     @Test
-    fun coordinateOutOfPath() {
-        Assertions.assertThat(PathLocator.search(Vec(30, 20), entity, renderHelper))
-            .isNull()
+    fun coordinateOnPath() {
+        val cursor = cursorPosition(128, 128)
+        val hoverObject = PathLocator.search(cursor, entity, renderHelper)
+
+        Assertions.assertThat(hoverObject).isNotNull()
+        Assertions.assertThat(hoverObject!!.targetPosition).isEqualTo(expectedTargetPosition(128, 128))
+        Assertions.assertThat(hoverObject.distance).isEqualTo(0.0)
+
+    }
+
+    @Test
+    fun coordinateNotOnPath_nearestPointIsVertex() {
+        val cursor = cursorPosition(30, 30)
+
+        val hoverObject = PathLocator.search(cursor, entity, renderHelper)
+        Assertions.assertThat(hoverObject).isNotNull()
+        Assertions.assertThat(hoverObject!!.targetPosition).isEqualTo(expectedTargetPosition(110, 110))
+    }
+
+    @Test
+    fun coordinateNotOnPath_nearestPointIsProjectionOnPath() {
+        val cursor = cursorPosition(120, 110)
+
+        val hoverObject = PathLocator.search(cursor, entity, renderHelper)
+        Assertions.assertThat(hoverObject).isNotNull()
+        Assertions.assertThat(hoverObject!!.targetPosition).isEqualTo(expectedTargetPosition(115, 115))
     }
 }

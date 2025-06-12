@@ -163,6 +163,8 @@ object LayerConverter {
                     line {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
+                        layerIndex = layerIdx
+                        index = it.index
                         point = it.point
                         lineDash = it.lineDash
                         lineDashOffset = it.lineDashOffset
@@ -177,6 +179,8 @@ object LayerConverter {
                     line {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
+                        layerIndex = layerIdx
+                        index = it.index
                         point = it.point
                         lineDash = it.lineDash
                         lineDashOffset = it.lineDashOffset
