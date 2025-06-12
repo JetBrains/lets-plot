@@ -67,13 +67,13 @@ object TestUtil {
 
     fun assertFormulaTSpan(
         tspan: SvgTSpanElement,
-        text: String,
+        text: String?,
         level: FormulaLevel,
         bold: Boolean = false,
         italic: Boolean = false,
         color: String? = null
     ) {
-        assertTSpan(tspan, text, bold, italic, color)
+        assertTSpan(tspan, text ?: tspan.wholeText(), bold, italic, color)
 
         val expectedDy = level.dy()
         if (expectedDy != null) {
@@ -104,6 +104,21 @@ object TestUtil {
             return this
         }
 
+        fun num(): FormulaLevel {
+            shifts.add(Shift.NUMERATOR)
+            return this
+        }
+
+        fun denom(): FormulaLevel {
+            shifts.add(Shift.DENOMINATOR)
+            return this
+        }
+
+        fun fractionBar(): FormulaLevel {
+            shifts.add(Shift.FRACTION_BAR)
+            return this
+        }
+
         fun revert(): FormulaLevel {
             shifts.add(Shift.REVERT)
             return this
@@ -111,6 +126,13 @@ object TestUtil {
 
         fun size(): String? {
             val shiftsStack = ArrayDeque<Shift>()
+            val sizeByLevel = { level: Int ->
+                if (level > 0) {
+                    0.7.pow(level)
+                } else {
+                    null
+                }
+            }
             var level = 0
             var size: Double? = null
             shifts.forEach { shift ->
@@ -118,17 +140,28 @@ object TestUtil {
                     Shift.PASS -> {
                         size = null
                     }
-                    Shift.SUPERSCRIPT,
+                    Shift.NUMERATOR,
+                    Shift.DENOMINATOR,
+                    Shift.FRACTION_BAR -> {
+                        shiftsStack.addLast(Shift.FRACTION_BAR)
+                        size = sizeByLevel(level)
+                    }
+                    Shift.SUPERSCRIPT -> {
+                        shiftsStack.addLast(Shift.SUPERSCRIPT)
+                        level += 1
+                        size = sizeByLevel(level)
+                    }
                     Shift.SUBSCRIPT -> {
                         shiftsStack.addLast(Shift.SUBSCRIPT)
                         level += 1
-                        size = 0.7.pow(level)
+                        size = sizeByLevel(level)
                     }
                     Shift.REVERT -> {
-                        size = 0.7.pow(level)
+                        size = sizeByLevel(level)
                         level += when (shiftsStack.removeLast()) {
                             Shift.SUBSCRIPT,
                             Shift.SUPERSCRIPT -> -1
+                            Shift.FRACTION_BAR -> 0
                             else -> error("Unexpected shift type")
                         }
                     }
@@ -153,10 +186,21 @@ object TestUtil {
                         shiftsStack.addLast(Shift.SUBSCRIPT)
                         dy = 0.4
                     }
+                    Shift.NUMERATOR -> {
+                        dy = -0.5
+                    }
+                    Shift.DENOMINATOR -> {
+                        dy = 1.0
+                    }
+                    Shift.FRACTION_BAR -> {
+                        shiftsStack.addLast(Shift.FRACTION_BAR)
+                        dy = -0.5
+                    }
                     Shift.REVERT -> {
                         dy = when (shiftsStack.removeLast()) {
                             Shift.SUBSCRIPT -> -0.4
                             Shift.SUPERSCRIPT -> 0.4
+                            Shift.FRACTION_BAR -> null
                             else -> error("Unexpected shift type")
                         }
                     }
@@ -166,7 +210,7 @@ object TestUtil {
         }
 
         enum class Shift {
-            PASS, SUPERSCRIPT, SUBSCRIPT, REVERT;
+            PASS, SUPERSCRIPT, SUBSCRIPT, NUMERATOR, DENOMINATOR, FRACTION_BAR, REVERT;
         }
     }
 }

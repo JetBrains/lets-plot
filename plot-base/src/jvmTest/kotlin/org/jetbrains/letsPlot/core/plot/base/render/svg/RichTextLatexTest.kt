@@ -36,15 +36,26 @@ class RichTextLatexTest {
     }
 
     @Test
-    fun simpleFormulaSpace() {
-        val svg = RichText.toSvg("""\(\quad\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+    fun simpleFormulaWithSpace() {
+        val svg = RichText.toSvg("""\(A B\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
-        assertThat(svg.tspans()).hasSize(1)
-        assertFormulaTSpan(
-            svg.tspans().single(),
-            " ",
-            level = TestUtil.FormulaLevel()
-        )
+        assertThat(svg.tspans()).hasSize(2)
+        val (first, second) = svg.tspans()
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(first, "A", level = level.pass())
+        assertFormulaTSpan(second, "B", level = level.pass())
+    }
+
+    @Test
+    fun simpleFormulaWithExplicitSpace() {
+        val svg = RichText.toSvg("""\(A \quad B\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(3)
+        val (first, space, second) = svg.tspans()
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(first, "A", level = level.pass())
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(second, "B", level = level.pass())
     }
 
     @Test
@@ -76,12 +87,12 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(a^b\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(5)
-        val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
+        val (base, space, shiftSup, power, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
         assertFormulaTSpan(base, "a", level = level.pass())
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(pow, "b", level = level.pass())
+        assertFormulaTSpan(power, "b", level = level.pass())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -90,12 +101,12 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(a^{bc}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(5)
-        val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
+        val (base, space, shiftSup, power, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
         assertFormulaTSpan(base, "a", level = level.pass())
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(pow, "bc", level = level.pass())
+        assertFormulaTSpan(power, "bc", level = level.pass())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -208,17 +219,54 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(\frac{a}{b}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(4)
-        TODO()
+        val (num, denom, bar, restoreShift) = svg.tspans()
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(num, "a", level = level.num())
+        assertFormulaTSpan(denom, "b", level = level.denom())
+        assertFormulaTSpan(bar, null, level = level.fractionBar())
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
     @Test
     fun sumOfFractions() {
-        TODO()
+        val svg = RichText.toSvg("""\(\frac{a}{b} + \frac{c}{d}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(9)
+        val (firstNum, firstDenom, firstBar, restoreFirstShift, sumSign) = svg.tspans()
+        val (secondNum, secondDenom, secondBar, restoreSecondShift) = svg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(firstNum, "a", level = level.num())
+        assertFormulaTSpan(firstDenom, "b", level = level.denom())
+        assertFormulaTSpan(firstBar, null, level = level.fractionBar())
+        assertFormulaTSpan(restoreFirstShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(sumSign, "+", level = level.pass())
+        assertFormulaTSpan(secondNum, "c", level = level.num())
+        assertFormulaTSpan(secondDenom, "d", level = level.denom())
+        assertFormulaTSpan(secondBar, null, level = level.fractionBar())
+        assertFormulaTSpan(restoreSecondShift, "\u200B", level = level.revert())
     }
 
     @Test
     fun superscriptInFraction() {
-        TODO()
+        val svg = RichText.toSvg("""\(\frac{a^3}{b^2}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(12)
+        val (numBase, numSpace, numShiftSup, numPow, numRestoreShift) = svg.tspans()
+        val (denomBase, denomSpace, denomShiftSup, denomPow, denomRestoreShift) = svg.tspans().drop(5)
+        val (bar, fracRestoreShift) = svg.tspans().drop(10)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(numBase, "a", level = level.num())
+        assertFormulaTSpan(numSpace, " ", level = level.pass())
+        assertFormulaTSpan(numShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(numPow, "3", level = level.pass())
+        assertFormulaTSpan(numRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(denomBase, "b", level = level.denom())
+        assertFormulaTSpan(denomSpace, " ", level = level.pass())
+        assertFormulaTSpan(denomShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(denomPow, "2", level = level.pass())
+        assertFormulaTSpan(denomRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(bar, null, level = level.fractionBar())
+        assertFormulaTSpan(fracRestoreShift, "\u200B", level = level.revert())
     }
 
     @Test
