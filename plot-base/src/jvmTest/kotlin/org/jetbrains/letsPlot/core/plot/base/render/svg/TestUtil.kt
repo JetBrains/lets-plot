@@ -89,6 +89,13 @@ object TestUtil {
     class FormulaLevel {
         private val shifts: MutableList<Shift> = mutableListOf()
 
+        // The level remains unchanged
+        fun current(): FormulaLevel {
+            shifts.add(Shift.CURRENT)
+            return this
+        }
+
+        // No checks
         fun pass(): FormulaLevel {
             shifts.add(Shift.PASS)
             return this
@@ -114,7 +121,7 @@ object TestUtil {
             return this
         }
 
-        fun fractionBar(): FormulaLevel {
+        fun bar(): FormulaLevel {
             shifts.add(Shift.FRACTION_BAR)
             return this
         }
@@ -140,8 +147,11 @@ object TestUtil {
                     Shift.PASS -> {
                         size = null
                     }
+                    Shift.CURRENT,
                     Shift.NUMERATOR,
-                    Shift.DENOMINATOR,
+                    Shift.DENOMINATOR -> {
+                        size = sizeByLevel(level)
+                    }
                     Shift.FRACTION_BAR -> {
                         shiftsStack.addLast(Shift.FRACTION_BAR)
                         size = sizeByLevel(level)
@@ -175,6 +185,7 @@ object TestUtil {
             var dy: Double? = null
             shifts.forEach { shift ->
                 when (shift) {
+                    Shift.CURRENT,
                     Shift.PASS -> {
                         dy = null
                     }
@@ -210,7 +221,7 @@ object TestUtil {
         }
 
         enum class Shift {
-            PASS, SUPERSCRIPT, SUBSCRIPT, NUMERATOR, DENOMINATOR, FRACTION_BAR, REVERT;
+            CURRENT, PASS, SUPERSCRIPT, SUBSCRIPT, NUMERATOR, DENOMINATOR, FRACTION_BAR, REVERT;
         }
     }
 }

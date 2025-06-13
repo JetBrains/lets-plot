@@ -42,8 +42,8 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(2)
         val (first, second) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(first, "A", level = level.pass())
-        assertFormulaTSpan(second, "B", level = level.pass())
+        assertFormulaTSpan(first, "A", level = level.current())
+        assertFormulaTSpan(second, "B", level = level.current())
     }
 
     @Test
@@ -53,9 +53,9 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(3)
         val (first, space, second) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(first, "A", level = level.pass())
-        assertFormulaTSpan(space, " ", level = level.pass())
-        assertFormulaTSpan(second, "B", level = level.pass())
+        assertFormulaTSpan(first, "A", level = level.current())
+        assertFormulaTSpan(space, " ", level = level.current())
+        assertFormulaTSpan(second, "B", level = level.current())
     }
 
     @Test
@@ -87,12 +87,12 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(a^b\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(5)
-        val (base, space, shiftSup, power, restoreShift) = svg.tspans()
+        val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(power, "b", level = level.pass())
+        assertFormulaTSpan(pow, "b", level = level.current())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -101,12 +101,12 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(a^{bc}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(5)
-        val (base, space, shiftSup, power, restoreShift) = svg.tspans()
+        val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(power, "bc", level = level.pass())
+        assertFormulaTSpan(pow, "bc", level = level.current())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -117,10 +117,10 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
-        assertFormulaTSpan(index, "b", level = level.pass())
+        assertFormulaTSpan(index, "b", level = level.current())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -131,10 +131,10 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
-        assertFormulaTSpan(index, "bc", level = level.pass())
+        assertFormulaTSpan(index, "bc", level = level.current())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -143,16 +143,16 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(a^{b^c}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(9)
-        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPower, secondLevelSpace) = svg.tspans()
-        val (secondLevelShiftSup, secondLevelPower, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
+        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
+        val (secondLevelShiftSup, secondLevelPow, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(firstLevelPower, "b", level = level.pass())
+        assertFormulaTSpan(firstLevelPow, "b", level = level.current())
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(secondLevelPower, "c", level = level.pass())
+        assertFormulaTSpan(secondLevelPow, "c", level = level.current())
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
     }
@@ -165,13 +165,13 @@ class RichTextLatexTest {
         val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
         val (secondLevelShiftSub, secondLevelIndex, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSub, "\u200B", level = level.sub())
-        assertFormulaTSpan(firstLevelIndex, "i", level = level.pass())
+        assertFormulaTSpan(firstLevelIndex, "i", level = level.current())
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
-        assertFormulaTSpan(secondLevelIndex, "1", level = level.pass())
+        assertFormulaTSpan(secondLevelIndex, "1", level = level.current())
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
     }
@@ -181,16 +181,16 @@ class RichTextLatexTest {
         val svg = RichText.toSvg("""\(a^{b_i}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
 
         assertThat(svg.tspans()).hasSize(9)
-        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPower, secondLevelSpace) = svg.tspans()
+        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
         val (secondLevelShiftSub, secondLevelIndex, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(firstLevelPower, "b", level = level.pass())
+        assertFormulaTSpan(firstLevelPow, "b", level = level.current())
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
-        assertFormulaTSpan(secondLevelIndex, "i", level = level.pass())
+        assertFormulaTSpan(secondLevelIndex, "i", level = level.current())
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
     }
@@ -201,15 +201,15 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
-        val (secondLevelShiftSup, secondLevelPower, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
+        val (secondLevelShiftSup, secondLevelPow, secondLevelRestoreShift, firstLevelRestoreShift) = svg.tspans().drop(5)
         val level = TestUtil.FormulaLevel()
-        assertFormulaTSpan(base, "a", level = level.pass())
+        assertFormulaTSpan(base, "a", level = level.current())
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSub, "\u200B", level = level.sub())
-        assertFormulaTSpan(firstLevelIndex, "I", level = level.pass())
+        assertFormulaTSpan(firstLevelIndex, "I", level = level.current())
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(secondLevelPower, "n", level = level.pass())
+        assertFormulaTSpan(secondLevelPow, "n", level = level.current())
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
     }
@@ -223,7 +223,7 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         assertFormulaTSpan(num, "a", level = level.num())
         assertFormulaTSpan(denom, "b", level = level.denom())
-        assertFormulaTSpan(bar, null, level = level.fractionBar())
+        assertFormulaTSpan(bar, null, level = level.bar())
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
     }
 
@@ -237,12 +237,12 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         assertFormulaTSpan(firstNum, "a", level = level.num())
         assertFormulaTSpan(firstDenom, "b", level = level.denom())
-        assertFormulaTSpan(firstBar, null, level = level.fractionBar())
+        assertFormulaTSpan(firstBar, null, level = level.bar())
         assertFormulaTSpan(restoreFirstShift, "\u200B", level = level.revert())
-        assertFormulaTSpan(sumSign, "+", level = level.pass())
+        assertFormulaTSpan(sumSign, "+", level = level.current())
         assertFormulaTSpan(secondNum, "c", level = level.num())
         assertFormulaTSpan(secondDenom, "d", level = level.denom())
-        assertFormulaTSpan(secondBar, null, level = level.fractionBar())
+        assertFormulaTSpan(secondBar, null, level = level.bar())
         assertFormulaTSpan(restoreSecondShift, "\u200B", level = level.revert())
     }
 
@@ -258,25 +258,56 @@ class RichTextLatexTest {
         assertFormulaTSpan(numBase, "a", level = level.num())
         assertFormulaTSpan(numSpace, " ", level = level.pass())
         assertFormulaTSpan(numShiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(numPow, "3", level = level.pass())
+        assertFormulaTSpan(numPow, "3", level = level.current())
         assertFormulaTSpan(numRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(denomBase, "b", level = level.denom())
         assertFormulaTSpan(denomSpace, " ", level = level.pass())
         assertFormulaTSpan(denomShiftSup, "\u200B", level = level.sup())
-        assertFormulaTSpan(denomPow, "2", level = level.pass())
+        assertFormulaTSpan(denomPow, "2", level = level.current())
         assertFormulaTSpan(denomRestoreShift, "\u200B", level = level.revert())
-        assertFormulaTSpan(bar, null, level = level.fractionBar())
+        assertFormulaTSpan(bar, null, level = level.bar())
         assertFormulaTSpan(fracRestoreShift, "\u200B", level = level.revert())
     }
 
     @Test
     fun fractionInSuperscript() {
-        TODO()
+        val svg = RichText.toSvg("""\(a^{\frac{b}{c}}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(8)
+        val (base, space, shiftSup, num, denom) = svg.tspans()
+        val (bar, restoreFracShift, restorePowShift) = svg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.current())
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(num, "b", level = level.num())
+        assertFormulaTSpan(denom, "c", level = level.denom())
+        assertFormulaTSpan(bar, null, level = level.bar())
+        assertFormulaTSpan(restoreFracShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(restorePowShift, "\u200B", level = level.revert())
     }
 
     @Test
     fun fractionOnSecondLevel() {
-        TODO()
+        val svg = RichText.toSvg("""\(a^{b_{\frac{c}{d}}}\)""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = false).single()
+
+        assertThat(svg.tspans()).hasSize(12)
+        val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
+        val (secondLevelShiftSub, num, denom, bar, restoreFracShift) = svg.tspans().drop(5)
+        val (restoreSecondLevelShift, restoreFirstLevelShift) = svg.tspans().drop(10)
+        val level = TestUtil.FormulaLevel()
+        assertFormulaTSpan(base, "a", level = level.current())
+        assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(firstLevelPow, "b", level = level.current())
+        assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
+        assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(num, "c", level = level.num())
+        assertFormulaTSpan(denom, "d", level = level.denom())
+        assertFormulaTSpan(bar, null, level = level.bar())
+        assertFormulaTSpan(restoreFracShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(restoreSecondLevelShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(restoreFirstLevelShift, "\u200B", level = level.revert())
     }
 
     @Test

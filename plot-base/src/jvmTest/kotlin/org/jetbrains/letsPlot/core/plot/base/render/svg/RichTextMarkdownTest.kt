@@ -122,14 +122,14 @@ class RichTextMarkdownTest {
         val (square, lower, baz) = richTextSvg.tspans().drop(5)
         val level = TestUtil.FormulaLevel()
 
-        assertFormulaTSpan(foo, "foo", level = level.pass(), bold = true)
+        assertFormulaTSpan(foo, "foo", level = level.current(), bold = true)
         assertFormulaTSpan(space, " ", level = level.pass())
-        assertFormulaTSpan(bar, "bar", level = level.pass(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(bar, "bar", level = level.current(), bold = true, italic = true, color = "red")
         assertFormulaTSpan(pow, " ", level = level.pass(), bold = true, italic = true, color = "red")
         assertFormulaTSpan(upper, "\u200B", level = level.sup(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(square, "2", level = level.pass(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(square, "2", level = level.current(), bold = true, italic = true, color = "red")
         assertFormulaTSpan(lower, "\u200B", level = level.revert(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(baz, " baz", level = level.pass())
+        assertFormulaTSpan(baz, " baz", level = level.current())
     }
 
     @Test
