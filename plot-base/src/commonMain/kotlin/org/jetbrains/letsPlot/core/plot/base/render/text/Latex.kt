@@ -348,26 +348,26 @@ internal class Latex(
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
             val numeratorTSpanElements = numerator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
                 richElement.element.apply {
-                    setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
+                        setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
                         setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                     }
                 }.let { RichSvgElement(it, x = if (i == 0) { fractionCenter } else { richElement.x }) }
             }
             val denominatorTSpanElements = denominator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
                 richElement.element.apply {
-                    setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
                     if (i == 0) {
+                        setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
                         setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
                     }
                 }.let { RichSvgElement(it, x = if (i == 0) { fractionCenter } else { richElement.x }) }
             }
             val fractionBarTSpanElement = RichSvgElement(context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
                 setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
-                setAttribute(SvgTextContent.TEXT_ANCHOR, "middle")
+                setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
             }), x = fractionCenter)
             val restoreBaselineTSpan = RichSvgElement(context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                setAttribute(SvgTextContent.TEXT_ANCHOR, "start")
+                setAttribute(SvgTextContent.TEXT_ANCHOR, "start") // TODO: Use constants
             }), x = prefixWidth + fractionWidth)
             return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }

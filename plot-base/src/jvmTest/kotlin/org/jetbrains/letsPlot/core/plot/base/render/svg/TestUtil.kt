@@ -69,6 +69,8 @@ object TestUtil {
         tspan: SvgTSpanElement,
         text: String?,
         level: FormulaLevel,
+        expectedX: Double? = null,
+        expectedAnchor: String? = null,
         bold: Boolean = false,
         italic: Boolean = false,
         color: String? = null
@@ -76,18 +78,40 @@ object TestUtil {
         assertTSpan(tspan, text ?: tspan.wholeText(), bold, italic, color)
 
         val expectedDy = level.dy()
-        if (expectedDy != null) {
-            assertThat(tspan.textDy().get()).isEqualTo(expectedDy)
+        when {
+            expectedDy != null -> assertThat(tspan.textDy().get()).isEqualTo(expectedDy)
+            !level.toPass() -> assertThat(tspan.textDy().get()).isNull()
         }
 
         val expectedSize = level.size()
-        if (expectedSize != null) {
-            assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo(expectedSize)
+        when {
+            expectedSize != null -> assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo(expectedSize)
+            !level.toPass() -> assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isNull()
+        }
+
+        val x: String? = tspan.getAttribute(SvgTextContent.X).get()
+        if (expectedX != null) {
+            assertThat(x).isEqualTo(expectedX.toString())
+        } else {
+            assertThat(x).isNull()
+        }
+
+        val anchor: String? = tspan.textAnchor().get()
+        if (expectedAnchor != null) {
+            assertThat(anchor).isEqualTo(expectedAnchor)
+        } else {
+            assertThat(anchor).isNull()
         }
     }
 
     class FormulaLevel {
         private val shifts: MutableList<Shift> = mutableListOf()
+
+        fun copy(): FormulaLevel {
+            val level = FormulaLevel()
+            shifts.forEach { shift -> level.shifts.add(shift) }
+            return level
+        }
 
         // The level remains unchanged
         fun current(): FormulaLevel {
@@ -129,6 +153,10 @@ object TestUtil {
         fun revert(): FormulaLevel {
             shifts.add(Shift.REVERT)
             return this
+        }
+
+        fun toPass(): Boolean {
+            return shifts.isEmpty() || shifts.last() == Shift.PASS
         }
 
         fun sizeValue(): Double? {
