@@ -1,7 +1,5 @@
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import kotlin.math.PI
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -10,37 +8,9 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-//@Ignore
+@Ignore
 class MagickCanvasDrawImageTest {
     private val imageComparer = ImageComparer()
-    private val w = 100.0
-    private val h = 100.0
-
-    private val strokeColor = "#000000"
-    private val fillColor = "#000000"
-    private val filledStrokeColor = "#000080"
-    private val strokedFillColor = "#FFC000"
-
-    fun drawStar(canvas: Canvas) {
-        val w = canvas.size.x
-        val h = canvas.size.y
-
-        val ctx = canvas.context2d
-        ctx.fillStyle = fillColor
-        ctx.beginPath()
-        ctx.moveTo(w / 2, h / 10)
-        ctx.lineTo(w * 0.618, h * 0.382)
-        ctx.lineTo(w, h * 0.382)
-        ctx.lineTo(w * 0.691, h * 0.618)
-        ctx.lineTo(w * 0.809, h * 0.809)
-        ctx.lineTo(w / 2, h * 0.65)
-        ctx.lineTo(w * 0.191, h * 0.809)
-        ctx.lineTo(w * 0.309, h * 0.618)
-        ctx.lineTo(0.0, h * 0.382)
-        ctx.lineTo(w * 0.382, h * 0.382)
-        ctx.closePath()
-        ctx.fill()
-    }
 
     @Test
     fun scaledCanvas() {
