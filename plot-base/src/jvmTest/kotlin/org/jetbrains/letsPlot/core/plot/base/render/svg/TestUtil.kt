@@ -40,11 +40,19 @@ object TestUtil {
     fun assertTSpan(
         tspan: SvgTSpanElement,
         text: String,
+        expectedX: Double? = null,
         bold: Boolean = false,
         italic: Boolean = false,
         color: String? = null
     ) {
         assertThat(tspan.wholeText()).isEqualTo(text)
+
+        val x: String? = tspan.getAttribute(SvgTextContent.X).get()
+        if (expectedX != null) {
+            assertThat(x).isEqualTo(expectedX.toString())
+        } else {
+            assertThat(x).isNull()
+        }
 
         if (bold) {
             assertThat(tspan.fontWeight().get()).isEqualTo("bold")
@@ -75,7 +83,7 @@ object TestUtil {
         italic: Boolean = false,
         color: String? = null
     ) {
-        assertTSpan(tspan, text ?: tspan.wholeText(), bold, italic, color)
+        assertTSpan(tspan, text ?: tspan.wholeText(), expectedX, bold, italic, color)
 
         val expectedDy = level.dy()
         when {
@@ -87,13 +95,6 @@ object TestUtil {
         when {
             expectedSize != null -> assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo(expectedSize)
             !level.toPass() -> assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isNull()
-        }
-
-        val x: String? = tspan.getAttribute(SvgTextContent.X).get()
-        if (expectedX != null) {
-            assertThat(x).isEqualTo(expectedX.toString())
-        } else {
-            assertThat(x).isNull()
         }
 
         val anchor: String? = tspan.textAnchor().get()
