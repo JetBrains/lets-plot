@@ -131,7 +131,7 @@ object TestUtil {
             return this
         }
 
-        fun size(): String? {
+        fun sizeValue(): Double? {
             val shiftsStack = ArrayDeque<Shift>()
             val sizeByLevel = { level: Int ->
                 if (level > 0) {
@@ -177,7 +177,11 @@ object TestUtil {
                     }
                 }
             }
-            return size?.let { "${it}em" }
+            return size
+        }
+
+        fun size(): String? {
+            return sizeValue()?.let { "${it}em" }
         }
 
         fun dy(): String? {
