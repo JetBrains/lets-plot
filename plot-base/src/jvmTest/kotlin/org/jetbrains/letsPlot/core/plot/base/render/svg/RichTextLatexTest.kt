@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import kotlin.math.roundToInt
@@ -431,46 +432,90 @@ class RichTextLatexTest {
 
     @Test
     fun twoLines() {
+        val formula = "\\(\\frac{a}{b}\\)\n\\(c_i\\)"
+        val (firstSvg, secondSvg) = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+
+        assertThat(firstSvg.tspans()).hasSize(4)
+        val (num, denom, bar, restoreFracShift) = firstSvg.tspans()
+        val firstLevel = TestUtil.FormulaLevel()
+
+        val fracPosition = toTestWidth(1, firstLevel) / 2.0
+        assertFormulaTSpan(num, "a", level = firstLevel.num(), expectedX = fracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(denom, "b", level = firstLevel.denom(), expectedX = fracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(bar, null, level = firstLevel.bar(), expectedX = fracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(restoreFracShift, "\u200B", level = firstLevel.revert(), expectedX = toTestWidth(1, firstLevel), expectedAnchor = "start")
+        assertThat(width).isGreaterThan(toTestWidth(1, firstLevel))
+
+        assertThat(secondSvg.tspans()).hasSize(5)
+        val (base, space, shiftSub, index, restoreIndexShift) = secondSvg.tspans()
+        val level = TestUtil.FormulaLevel()
+        var expectedWidth = 0.0
+
+        assertFormulaTSpan(base, "c", level = level.current())
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
+        assertFormulaTSpan(index, "i", level = level.current())
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(restoreIndexShift, "\u200B", level = level.revert())
+        assertThat(width).isEqualTo(expectedWidth)
+    }
+
+    @Test
+    fun textBeforeFormulaWithFraction() {
+        val formula = """a+\(\frac{b}{c}\)"""
+        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+
+        assertThat(svg.tspans()).hasSize(5)
+        val (text, num, denom, bar, restoreShift) = svg.tspans()
+        val level = TestUtil.FormulaLevel()
+        var expectedWidth = 0.0
+
+        assertTSpan(text, "a+")
+        expectedWidth += toTestWidth(2, level)
+        val fracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
+        assertThat(width).isEqualTo(expectedWidth)
+    }
+
+    @Test
+    fun textBetweenTwoFormulasWithFractions() {
         TODO()
     }
 
     @Test
-    fun textBeforeFormula() {
+    fun textAfterFormulaWithFraction() {
         TODO()
     }
 
     @Test
-    fun textBetweenTwoFormulas() {
+    fun linkBeforeFormulaWithFraction() {
         TODO()
     }
 
     @Test
-    fun textAfterFormula() {
+    fun formulaWithFractionInLink() {
         TODO()
     }
 
     @Test
-    fun linkBeforeFormula() {
+    fun linkInFormulaWithFraction() {
         TODO()
     }
 
     @Test
-    fun formulaInLink() {
+    fun markdownBeforeFormulaWithFraction() {
         TODO()
     }
 
     @Test
-    fun linkInFormula() {
-        TODO()
-    }
-
-    @Test
-    fun markdownBeforeFormula() {
-        TODO()
-    }
-
-    @Test
-    fun mixMarkdownWithFormula() {
+    fun mixMarkdownAndFormulaWithFraction() {
         TODO()
     }
 
