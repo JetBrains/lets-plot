@@ -621,6 +621,120 @@ class RichTextLatexTest {
         assertThat(width).isEqualTo(expectedWidth)
     }
 
+    @Test
+    fun complexFormulaRegression1() {
+        val formula = """\(a^{b+\frac{c}{d}}+\frac{e}{f}\)"""
+        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+
+        assertThat(svg.tspans()).hasSize(14)
+        val (a, space, shiftSup, b, c) = svg.tspans()
+        val (d, cdBar, cdRestoreShift, restoreShiftSup, plus) = svg.tspans().drop(5)
+        val (e, f, efBar, efRestoreShift) = svg.tspans().drop(10)
+        val level = TestUtil.FormulaLevel()
+        var expectedWidth = 0.0
+
+        assertFormulaTSpan(a, "a", level = level.current())
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(b, "b+", level = level.current())
+        expectedWidth += toTestWidth(2, level)
+        val cdFracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        assertFormulaTSpan(c, "c", level = level.num(), expectedX = cdFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(d, "d", level = level.denom(), expectedX = cdFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(cdBar, null, level = level.bar(), expectedX = cdFracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(cdRestoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
+        assertFormulaTSpan(restoreShiftSup, "\u200B", level = level.revert())
+        assertFormulaTSpan(plus, "+", level = level.current())
+        expectedWidth += toTestWidth(1, level)
+        val bigBCFracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        assertFormulaTSpan(e, "e", level = level.num(), expectedX = bigBCFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(f, "f", level = level.denom(), expectedX = bigBCFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(efBar, null, level = level.bar(), expectedX = bigBCFracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(efRestoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
+        assertThat(width).isEqualTo(expectedWidth)
+    }
+
+    @Test
+    fun complexFormulaRegression2() {
+        val formula = """\(a^\frac{c+d}{e}+b_{\frac{f}{g+h}}\)"""
+        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+
+        assertThat(svg.tspans()).hasSize(16)
+        val (a, aSpace, aShiftSup, cd, e) = svg.tspans()
+        val (cdeBar, cdeRestoreFrac, restoreAShift, plusB, bSpace) = svg.tspans().drop(5)
+        val (bShiftSub, f, gh, fghBar, fghRestoreFrac) = svg.tspans().drop(10)
+        val restoreBShift = svg.tspans().drop(15).single()
+        val level = TestUtil.FormulaLevel()
+        var expectedWidth = 0.0
+
+        assertFormulaTSpan(a, "a", level = level.current())
+        expectedWidth += toTestWidth(1, level)
+        assertFormulaTSpan(aSpace, " ", level = level.pass())
+        assertFormulaTSpan(aShiftSup, "\u200B", level = level.sup())
+        val cdeFracPosition = expectedWidth + toTestWidth(3, level) / 2.0
+        assertFormulaTSpan(cd, "c+d", level = level.num(), expectedX = cdeFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(e, "e", level = level.denom(), expectedX = cdeFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(cdeBar, null, level = level.bar(), expectedX = cdeFracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(3, level)
+        assertFormulaTSpan(cdeRestoreFrac, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
+        assertFormulaTSpan(restoreAShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(plusB, "+b", level = level.current())
+        expectedWidth += toTestWidth(2, level)
+        assertFormulaTSpan(bSpace, " ", level = level.pass())
+        assertFormulaTSpan(bShiftSub, "\u200B", level = level.sub())
+        val fghFracPosition = expectedWidth + toTestWidth(3, level) / 2.0
+        assertFormulaTSpan(f, "f", level = level.num(), expectedX = fghFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(gh, "g+h", level = level.denom(), expectedX = fghFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(fghBar, null, level = level.bar(), expectedX = fghFracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(3, level)
+        assertFormulaTSpan(fghRestoreFrac, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
+        assertFormulaTSpan(restoreBShift, "\u200B", level = level.revert())
+        assertThat(width).isEqualTo(expectedWidth)
+    }
+
+    @Test
+    fun complexFormulaRegression3() {
+        val formula = """\(a1^{b1^{\frac{c1}{c2}+c3}+b2}+a2\)"""
+        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+
+        assertThat(svg.tspans()).hasSize(15)
+        val (a1, aSpace, aShiftSup, b1, bSpace) = svg.tspans()
+        val (bShiftSup, c1, c2, cBar, cRestoreFrac) = svg.tspans().drop(5)
+        val (c3, bRestoreShift, b2, aRestoreShift, a2) = svg.tspans().drop(10)
+        val level = TestUtil.FormulaLevel()
+        var expectedWidth = 0.0
+
+        assertFormulaTSpan(a1, "a1", level = level.current())
+        expectedWidth += toTestWidth(2, level)
+        assertFormulaTSpan(aSpace, " ", level = level.pass())
+        assertFormulaTSpan(aShiftSup, "\u200B", level = level.sup())
+        assertFormulaTSpan(b1, "b1", level = level.current())
+        expectedWidth += toTestWidth(2, level)
+        assertFormulaTSpan(bSpace, " ", level = level.pass())
+        assertFormulaTSpan(bShiftSup, "\u200B", level = level.sup())
+        val cFracPosition = expectedWidth + toTestWidth(2, level) / 2.0
+        assertFormulaTSpan(c1, "c1", level = level.num(), expectedX = cFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(c2, "c2", level = level.denom(), expectedX = cFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(cBar, null, level = level.bar(), expectedX = cFracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(2, level)
+        assertFormulaTSpan(cRestoreFrac, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
+        assertFormulaTSpan(c3, "+c3", level = level.current())
+        expectedWidth += toTestWidth(3, level)
+        assertFormulaTSpan(bRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(b2, "+b2", level = level.current())
+        expectedWidth += toTestWidth(3, level)
+        assertFormulaTSpan(aRestoreShift, "\u200B", level = level.revert())
+        assertFormulaTSpan(a2, "+a2", level = level.current())
+        expectedWidth += toTestWidth(3, level)
+        assertThat(width).isEqualTo(expectedWidth)
+    }
+
     companion object {
         private const val DEF_FONT_SIZE = 12
         private val DEF_FONT = Font(family = FontFamily("sans-serif", false), size = DEF_FONT_SIZE, isBold = false, isItalic = false)
