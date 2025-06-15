@@ -33,7 +33,7 @@ interface TimeInterval {
         }
 
         fun hours(count: Int): TimeInterval {
-            return HourInterval(count)
+            return DurationInterval(Duration.HOUR, count)
         }
 
         fun days(count: Int): TimeInterval {

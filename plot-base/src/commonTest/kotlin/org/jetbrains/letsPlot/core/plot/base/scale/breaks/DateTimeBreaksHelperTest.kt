@@ -65,8 +65,7 @@ class DateTimeBreaksHelperTest {
 
     @Test
     fun hours2() {
-//        val expected =6 intArrayOf(9, 12, 15)
-        val expected = intArrayOf(10, 13, 16)
+        val expected = intArrayOf(8, 11, 14, 17)
         assertHours(expected, 10, 3)
     }
 
