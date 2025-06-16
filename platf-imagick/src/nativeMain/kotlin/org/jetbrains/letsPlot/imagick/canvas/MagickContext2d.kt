@@ -29,80 +29,24 @@ class MagickContext2d(
     override fun drawImage(snapshot: Canvas.Snapshot) {
         require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, 0.0, 0.0, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
-        //val snap = snapshot as MagickCanvas.MagickSnapshot
-        //val srcWand = snap.img
-//
-        //val success = ImageMagick.MagickCompositeImage(
-        //    img,
-        //    srcWand,
-        //    ImageMagick.CompositeOperator.OverCompositeOp,
-        //    ImageMagick.MagickTrue,
-        //    0,
-        //    0
-        //)
-//
-        //ImageMagick.DestroyMagickWand(srcWand)
-//
-        //if (success == ImageMagick.MagickFalse) {
-        //    val err = ImageMagick.MagickGetException(img, null)
-        //    throw RuntimeException("MagickCompositeImage failed: $err")
-        //}
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
         require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
-        //val snap = snapshot as MagickCanvas.MagickSnapshot
-        //val srcWand = snap.img
-//
-        //val success = ImageMagick.MagickCompositeImage(
-        //    img,
-        //    srcWand,
-        //    ImageMagick.CompositeOperator.OverCompositeOp,
-        //    ImageMagick.MagickTrue,
-        //    x.toLong().convert(),
-        //    y.toLong().convert()
-        //)
-//
-        //if (success == ImageMagick.MagickFalse) {
-        //    val err = ImageMagick.MagickGetException(img, null)
-        //    throw RuntimeException("MagickCompositeImage failed: $err")
-        //}
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
-        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
-//        val snap = snapshot as MagickCanvas.MagickSnapshot
-//        val srcWand = snap.img
-//
-//        // Resize the source wand to desired width and height
-//        val successScale = ImageMagick.MagickScaleImage(
-//            srcWand,
-//            dw.toULong(),
-//            dh.toULong()
-//        )
-//
-//        if (successScale == ImageMagick.MagickFalse) {
-//            ImageMagick.DestroyMagickWand(srcWand)
-//            val err = ImageMagick.MagickGetException(img, null)
-//            throw RuntimeException("MagickScaleImage failed: $err")
-//        }
-//
-//        // Composite the resized image onto the base image
-//        val success = ImageMagick.MagickCompositeImage(
-//            img,
-//            srcWand,
-//            ImageMagick.CompositeOperator.OverCompositeOp,
-//            ImageMagick.MagickTrue,
-//            x.toULong().convert(),
-//            y.toULong().convert()
-//        )
-//
-//        if (success == ImageMagick.MagickFalse) {
-//            val err = ImageMagick.MagickGetException(img, null)
-//            throw RuntimeException("MagickCompositeImage failed: $err")
-//        }
+        if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
+            // Resize the image if the dimensions do not match
+            val scaledImage = ImageMagick.CloneMagickWand(snapshot.img)
+            ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
+            ImageMagick.DestroyMagickWand(scaledImage)
+        } else {
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
+        }
     }
 
     override fun save() {

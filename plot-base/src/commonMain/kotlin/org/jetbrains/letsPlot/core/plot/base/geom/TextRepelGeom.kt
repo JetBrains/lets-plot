@@ -75,15 +75,18 @@ open class TextRepelGeom: TextGeom() {
         for (dp in aesthetics.dataPoints()) {
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val loc = helper.toClient(point, dp) ?: continue
-            val pointLocation = coord.toClient(point) ?: continue
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, POINT_UNIT_SIZE)
-            val size = pointSize(dp, sizeUnitRatio) ?: continue
 
+            val pointLocation = coord.toClient(point) ?: continue
             if (!bounds.contains(pointLocation)) continue
 
-            circles[dp.index()] = DoubleCircle(pointLocation, size + pointPadding(sizeUnitRatio))
             val text = toString(dp.label(), ctx)
             if (text.isEmpty()) continue
+
+            val pointDp = toPointAes(dp)
+            val shape = pointDp.shape()!!
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, POINT_UNIT_SIZE)
+            val pointRadius = (shape.size(pointDp, sizeUnitRatio) + shape.strokeWidth(pointDp)) / 2
+            circles[dp.index()] = DoubleCircle(pointLocation, pointRadius + pointPadding(sizeUnitRatio))
 
             val hjust = TextUtil.hAnchor(dp, loc, aesBoundsCenter).toDouble()
             val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter).toDouble()
@@ -120,16 +123,19 @@ open class TextRepelGeom: TextGeom() {
             }
 
             val dp = aesthetics.dataPointAt(result.dpIndex)
-            val text = toString(dp.label(), ctx)
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, POINT_UNIT_SIZE)
             val pointLocation = coord.toClient(point) ?: continue
-            val size = pointSize(dp, sizeUnitRatio) ?: continue
+            val text = toString(dp.label(), ctx)
 
             val tc = buildTextComponent(toLabelAes(dp), result.position, text, 1.0, ctx, aesBoundsCenter)
             root.add(tc)
 
-            val segmentLocation = getSegmentLocation(pointLocation, size, result.box, sizeUnitRatio)
+            val pointDp = toPointAes(dp)
+            val shape = pointDp.shape()!!
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, POINT_UNIT_SIZE)
+            val pointRadius = (shape.size(pointDp, sizeUnitRatio) + shape.strokeWidth(pointDp)) / 2
+
+            val segmentLocation = getSegmentLocation(pointLocation, pointRadius, result.box, sizeUnitRatio)
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
@@ -162,10 +168,10 @@ open class TextRepelGeom: TextGeom() {
         return g
     }
 
-    private fun getSegmentLocation(pointLocation: DoubleVector, size: Double, rect: TransformedRectangle, scale: Double): DoubleSegment? {
+    private fun getSegmentLocation(pointLocation: DoubleVector, pointRadius: Double, rect: TransformedRectangle, scale: Double): DoubleSegment? {
         val locEnd = rect.shortestSegmentToRectangleEdgeCenter(pointLocation)?.end ?: return null
 
-        val locStart = pointLocation.add((locEnd.subtract(pointLocation).savedNormalize().mul(size / 2)))
+        val locStart = pointLocation.add((locEnd.subtract(pointLocation).savedNormalize().mul(pointRadius)))
 
         if (locStart.subtract(locEnd).length() < minSegmentLength(scale)) return null
 
@@ -192,13 +198,23 @@ open class TextRepelGeom: TextGeom() {
         return (minSegmentLength ?: 0.0) * POINT_UNIT_SIZE * scale
     }
 
-    private fun pointSize(p: DataPointAesthetics, scale: Double): Double? {
-        return p.pointSize()?.let {
-            it * POINT_UNIT_SIZE * scale
-        }
-    }
-
     companion object {
+        internal fun toPointAes(p: DataPointAesthetics): DataPointAesthetics {
+            return object : DataPointAestheticsDelegate(p) {
+
+                override operator fun <T> get(aes: Aes<T>): T? {
+                    val value: Any? = when (aes) {
+                        Aes.SIZE -> super.get(Aes.POINT_SIZE)
+                        Aes.STROKE -> super.get(Aes.POINT_STROKE)
+                        else -> super.get(aes)
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    return value as T?
+                }
+            }
+        }
+
+
         internal fun toLabelAes(p: DataPointAesthetics): DataPointAesthetics {
             return object : DataPointAestheticsDelegate(p) {
 
@@ -219,9 +235,9 @@ open class TextRepelGeom: TextGeom() {
 
                 override operator fun <T> get(aes: Aes<T>): T? {
                     val value: Any? = when (aes) {
-                        Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get<T>(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
+                        Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
                         Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
-                        Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get<T>(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
+                        Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
                         else -> super.get(aes)
                     }
                     @Suppress("UNCHECKED_CAST")

@@ -242,14 +242,15 @@ object LiveMapProviderUtil {
                             require(layerIndex == hoverObject.layerIndex)
                             GeomTarget(
                                 hitIndex = hoverObject.index,
-                                tipLayoutHint = TipLayoutHint.cursorTooltip(
-                                    coord,
+                                tipLayoutHint = TipLayoutHint.horizontalTooltip(
+                                    hoverObject.targetPosition ?: coord,
+                                    0.0,
                                     markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
                                 ),
                                 aesTipLayoutHints = emptyMap()
                             )
                         },
-                        distance = 0.0, // livemap shows tooltip only on hover
+                        distance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
                         contextualMapping = layer.contextualMapping,
                         isCrosshairEnabled = false // no crosshair on livemap

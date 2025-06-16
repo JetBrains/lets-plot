@@ -29,6 +29,10 @@ class RenderHelper(
         return viewport.getMapCoord(p)
     }
 
+    fun worldToPos(p: Vec<World>): Vec<Client> {
+        return viewport.getViewCoord(p)
+    }
+
     fun dimToWorld(clientDimension: Double): Scalar<World> {
         return Scalar(dimWorldToClientTransform.invert(clientDimension))
     }

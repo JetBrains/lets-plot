@@ -33,6 +33,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
@@ -134,6 +135,7 @@ object DefaultNaValue {
         VALUE_MAP.put(STROKE_START, 0.0)
         VALUE_MAP.put(STROKE_END, 0.0)
         VALUE_MAP.put(POINT_SIZE, AesScaling.sizeFromCircleDiameter(1.0))
+        VALUE_MAP.put(POINT_STROKE, 0.0)
         VALUE_MAP.put(SEGMENT_COLOR, Color.GRAY)
         VALUE_MAP.put(SEGMENT_SIZE, AesScaling.sizeFromCircleDiameter(1.0))
         VALUE_MAP.put(SEGMENT_ALPHA, 0.0)

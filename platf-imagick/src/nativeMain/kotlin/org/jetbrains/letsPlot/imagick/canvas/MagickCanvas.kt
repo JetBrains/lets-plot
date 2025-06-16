@@ -15,8 +15,6 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
-val newCtx = false
-
 class MagickCanvas(
     private val _img: CPointer<ImageMagick.MagickWand>,
     override val size: Vector,
@@ -25,7 +23,7 @@ class MagickCanvas(
     // TODO: replace usage in tests with Snapshot
     val img: CPointer<ImageMagick.MagickWand>
         get() {
-            val wand = if (newCtx) (context2d as MagickContext2dNew).wand else (context2d as MagickContext2d).wand
+            val wand = (context2d as MagickContext2d).wand
 
             if (false) {
                 val v = ImageMagick.DrawGetVectorGraphics(wand)
@@ -36,7 +34,7 @@ class MagickCanvas(
             return _img
         }
 
-    override val context2d: Context2d = if (newCtx) MagickContext2dNew(_img, pixelDensity) else MagickContext2d(_img, pixelDensity)
+    override val context2d: Context2d = MagickContext2d(_img, pixelDensity)
 
 
     override fun takeSnapshot(): Canvas.Snapshot {
@@ -130,8 +128,6 @@ class MagickCanvas(
                     val err = ImageMagick.MagickGetException(img, null)
                     println("MagickCanvas: Failed to import image pixels: $err")
                     error("MagickCanvas: Failed to import image pixels: $err")
-                } else {
-                    println("MagickCanvas: Successfully imported image pixels")
                 }
 
                 return MagickSnapshot(img)
@@ -164,8 +160,6 @@ class MagickCanvas(
                     val err = ImageMagick.MagickGetException(img, null)
                     println("MagickCanvas: Failed to import image pixels: $err")
                     error("MagickCanvas: Failed to import image pixels: $err")
-                } else {
-                    println("MagickCanvas: Successfully imported image pixels")
                 }
 
                 return MagickCanvas.MagickSnapshot(img)
