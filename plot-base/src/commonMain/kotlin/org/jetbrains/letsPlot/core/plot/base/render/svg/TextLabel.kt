@@ -17,8 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
@@ -108,12 +106,14 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         resetText()
     }
 
+    // Similar to MultilineLabel#resetLines()
     private fun resetText() {
         rootGroup.children().clear()
         updateText()
         rootGroup.children().add(myText)
     }
 
+    // Similar to MultilineLabel#constructLines()
     private fun updateText() {
         val font = Font(
             family = FontFamily(myFontFamily ?: "sans-serif", false),
@@ -141,14 +141,16 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             .let { updateAnchors(actualHorizontalAnchor)(it) }
     }
 
+    // Similar to MultilineLabel#getActualHorizontalAnchor()
     private fun getActualHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
-        val x = getFirstTSpanChild(textElement)?.getAttribute(SvgTextContent.X)?.get()
+        val x = MultilineLabel.getFirstTSpanChild(textElement)?.getAttribute(SvgTextContent.X)?.get()
         return when (x) {
             null -> myHorizontalAnchor
             else -> HorizontalAnchor.LEFT
         }
     }
 
+    // Similar to MultilineLabel#updateLinesAttributes()
     private fun updateTextAttributes(styleAttr: String): (SvgTextElement) -> SvgTextElement {
         return { textElement ->
             textElement.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
@@ -158,6 +160,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         }
     }
 
+    // Similar to MultilineLabel#updateAnchors()
     private fun updateAnchors(horizontalAnchor: HorizontalAnchor): (SvgTextElement) -> SvgTextElement {
         return { textElement ->
             textElement.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(horizontalAnchor))
@@ -165,16 +168,6 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
             myVerticalAnchor?.let { textElement.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
             textElement
-        }
-    }
-
-    // TODO: Refactor this
-    private fun getFirstTSpanChild(svgElement: SvgElement): SvgTSpanElement? {
-        val firstChild = svgElement.children().firstOrNull()
-        return when (firstChild) {
-            is SvgTSpanElement -> firstChild
-            is SvgElement -> getFirstTSpanChild(firstChild)
-            else -> null
         }
     }
 }

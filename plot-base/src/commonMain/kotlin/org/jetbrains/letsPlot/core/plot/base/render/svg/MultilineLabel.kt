@@ -15,8 +15,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
@@ -201,19 +201,18 @@ class MultilineLabel(
         return line
     }
 
-    // TODO: Refactor this
-    private fun getFirstTSpanChild(svgElement: SvgElement): SvgTSpanElement? {
-        val firstChild = svgElement.children().firstOrNull()
-        return when (firstChild) {
-            is SvgTSpanElement -> firstChild
-            is SvgElement -> getFirstTSpanChild(firstChild)
-            else -> null
-        }
-    }
-
     fun linesCount() = myLinesSize
 
     companion object {
         fun splitLines(text: String) = text.split('\n').map(String::trim)
+
+        internal fun getFirstTSpanChild(svgTextElement: SvgTextElement): SvgTSpanElement? {
+            val firstChild = svgTextElement.children().firstOrNull()
+            return when (firstChild) {
+                is SvgTSpanElement -> firstChild
+                is SvgAElement -> firstChild.children().firstOrNull() as? SvgTSpanElement? // First child can be a link element with a tspan inside
+                else -> null
+            }
+        }
     }
 }
