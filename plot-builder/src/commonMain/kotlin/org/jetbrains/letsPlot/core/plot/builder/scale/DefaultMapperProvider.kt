@@ -31,6 +31,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
@@ -178,6 +179,7 @@ object DefaultMapperProvider {
             this.put(STROKE_END, StrokeMapperProvider.DEFAULT)
 
             this.put(POINT_SIZE, SizeMapperProvider.DEFAULT)
+            this.put(POINT_STROKE, StrokeMapperProvider.DEFAULT)
             this.put(SEGMENT_COLOR, createColorMapperProvider())
             this.put(SEGMENT_SIZE, SizeMapperProvider.DEFAULT)
             this.put(SEGMENT_ALPHA, AlphaMapperProvider.DEFAULT)
