@@ -10,7 +10,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 
 internal object Hyperlink {
     fun parse(text: String): List<RichTextNode> {
@@ -34,7 +36,7 @@ internal object Hyperlink {
             return widthCalculator(text, font)
         }
 
-        override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
+        override fun toRichSvgElements(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
             return listOf(
                 SvgAElement().apply {
                     href().set(href)
@@ -46,7 +48,12 @@ internal object Hyperlink {
                     )
                 }.enrich()
             )
+        }
 
+        override fun setXAttributeToSvgElement(aElement: SvgElement, x: Double?): SvgElement {
+            val tSpan = aElement.children().first() as SvgTSpanElement
+            x?.let { tSpan.setAttribute(SvgTextContent.X, x.toString()) }
+            return aElement
         }
     }
 }

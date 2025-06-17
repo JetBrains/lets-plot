@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
@@ -269,43 +268,27 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        data class RichSvgElement(val svg: SvgElement, val x: Double? = null) : RichTextNode {
-            fun updateX(x: Double?): RichSvgElement {
-                return RichSvgElement(svg, x)
-            }
-
-            fun render(): SvgElement {
-                return when (svg) {
-                    is SvgTSpanElement -> {
-                        x?.let { svg.setAttribute(SvgTextContent.X, x.toString()) }
-                        svg
-                    }
-                    is SvgAElement -> {
-                        val tSpan = svg.children().single()
-                        require(tSpan is SvgTSpanElement) {
-                            "Expected a single child of type SvgTSpanElement, but found ${tSpan::class.simpleName}"
-                        }
-                        x?.let { tSpan.setAttribute(SvgTextContent.X, x.toString()) }
-                        svg
-                    }
-                    else -> throw IllegalStateException("Unsupported SVG element type: ${svg::class.simpleName}")
-                }
-            }
-        }
+        data class RichSvgElement(val svg: SvgElement, val x: Double? = null) : RichTextNode
 
         abstract class Span : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement>
+            abstract fun toRichSvgElements(context: RenderState, previousNodes: List<Span>): List<RichSvgElement>
+
+            open fun setXAttributeToSvgElement(tSpan: SvgElement, x: Double?): SvgElement {
+                require(tSpan is SvgTSpanElement)
+                x?.let { tSpan.setAttribute(SvgTextContent.X, x.toString()) }
+                return tSpan
+            }
 
             fun render(context: RenderState, previousNodes: List<Span>, x: Double?, isFirstSpanInLine: Boolean): List<SvgElement> {
-                return toSvg(context, previousNodes).mapIndexed { i, richElement ->
-                    val newX = when {
+                return toRichSvgElements(context, previousNodes).mapIndexed { i, richElement ->
+                    val xValue = when {
                         richElement.x == null -> if (isFirstSpanInLine && i == 0) x else null
                         else -> richElement.x + (x ?: 0.0)
                     }
-                    richElement.updateX(newX).render()
+                    setXAttributeToSvgElement(richElement.svg, x = xValue)
                 }
             }
         }
@@ -319,7 +302,7 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement> {
+            override fun toRichSvgElements(context: RenderState, previousNodes: List<Span>): List<RichSvgElement> {
                 return SvgTSpanElement(text)
                     .apply(context::apply)
                     .enrich()
