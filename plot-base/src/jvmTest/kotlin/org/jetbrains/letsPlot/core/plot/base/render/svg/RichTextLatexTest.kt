@@ -737,7 +737,7 @@ class RichTextLatexTest {
 
     companion object {
         private const val DEF_FONT_SIZE = 12
-        private val DEF_FONT = Font(family = FontFamily("sans-serif", false), size = DEF_FONT_SIZE, isBold = false, isItalic = false)
+        private val DEF_FONT = Font(family = FontFamily(FontFamily.DEF_FAMILY_NAME, false), size = DEF_FONT_SIZE, isBold = false, isItalic = false)
 
         private fun testWidthCalculator(text: String, font: Font): Double {
             return text.length * font.size.toDouble()

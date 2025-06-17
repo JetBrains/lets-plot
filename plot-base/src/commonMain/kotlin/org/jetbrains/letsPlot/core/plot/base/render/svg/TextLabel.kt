@@ -115,9 +115,10 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
 
     // Similar to MultilineLabel#constructLines()
     private fun updateText() {
+        val fontFamily = myFontFamily ?: FontFamily.DEF_FAMILY_NAME
         val font = Font(
-            family = FontFamily(myFontFamily ?: "sans-serif", false),
-            size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
+            family = FontFamily(fontFamily, fontFamily == "monospace"),
+            size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )

@@ -214,6 +214,6 @@ class RichTextMarkdownTest {
     }
 
     companion object {
-        private val DEF_FONT = Font(family = FontFamily("sans-serif", false), size = 16, isBold = false, isItalic = false)
+        private val DEF_FONT = Font(family = FontFamily(FontFamily.DEF_FAMILY_NAME, false), size = 16, isBold = false, isItalic = false)
     }
 }

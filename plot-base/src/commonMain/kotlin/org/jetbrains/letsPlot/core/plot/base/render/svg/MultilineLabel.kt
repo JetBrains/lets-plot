@@ -129,9 +129,12 @@ class MultilineLabel(
     }
 
     private fun constructLines(): List<SvgTextElement> {
+        // TODO: DefaultFontFamilyRegistry().get(myFontFamily) should be used, but to do it DefaultFontFamilyRegistry should be moved to the plot-base module
+        // Note that `font` needed only to estimate text width for lines with LaTeX formulas, that contains fractions
+        val fontFamily = myFontFamily ?: FontFamily.DEF_FAMILY_NAME
         val font = Font(
-            family = FontFamily(myFontFamily ?: "sans-serif", false),
-            size = myFontSize.roundToInt().let { if (it > 0) it else 1 },
+            family = FontFamily(fontFamily, fontFamily == "monospace"),
+            size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )

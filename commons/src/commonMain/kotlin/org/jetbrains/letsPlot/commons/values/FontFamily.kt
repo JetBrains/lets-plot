@@ -20,6 +20,8 @@ class FontFamily constructor(
     }
 
     companion object {
+        const val DEF_FAMILY_NAME = "sans-serif"
+
         val SERIF = FontFamily("serif", monospaced = false)
         val HELVETICA = FontFamily("Helvetica", monospaced = false)
     }
