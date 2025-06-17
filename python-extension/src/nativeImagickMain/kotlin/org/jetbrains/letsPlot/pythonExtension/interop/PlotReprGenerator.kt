@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
@@ -162,7 +163,8 @@ object PlotReprGenerator {
             val canvasControl = MagickCanvasControl(
                 w = svgCanvasFigure.width,
                 h = svgCanvasFigure.height,
-                pixelDensity = 1.0
+                pixelDensity = 1.0,
+                fontManager = MagickFontManager.DEFAULT,
             )
 
             canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
