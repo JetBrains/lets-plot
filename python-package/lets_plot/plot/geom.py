@@ -7840,7 +7840,9 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - vjust : vertical text alignment relative to the y-coordinate. Possible values: 0 or 'bottom' - bottom-aligned (bottom of text at y), 0.5 or 'center' (default) - middle of text at y, 1 or 'top' - top-aligned (top of text at y). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
     - point_size : A value representing the visual size of the point associated with the label.
+    - point_stroke : Width of the point border.
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
@@ -8046,7 +8048,9 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - vjust : vertical text alignment relative to the y-coordinate. Possible values: 0 or 'bottom' - bottom-aligned (bottom of text at y), 0.5 or 'center' (default) - middle of text at y, 1 or 'top' - top-aligned (top of text at y). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
     - point_size : A value representing the visual size of the point associated with the label.
+    - point_stroke : Width of the point border.
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.

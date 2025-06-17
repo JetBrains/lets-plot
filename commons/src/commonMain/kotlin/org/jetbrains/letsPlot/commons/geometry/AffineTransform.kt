@@ -135,7 +135,7 @@ class AffineTransform(
         if (m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0) {
             return "IDENTITY"
         }
-        return """m00=$m00, m10=$m10, m01=$m01, m11=$m11, m02=$m02, m12=$m12"""
+        return """sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty"""
     }
 
 
@@ -213,6 +213,11 @@ class AffineTransform(
 
         fun makeTranslate(dx: Number, dy: Number): AffineTransform {
             return makeTranslation(tx = dx, ty = dy)
+        }
+
+        fun restoreTransform(current: AffineTransform, next: AffineTransform): AffineTransform? {
+            val inv = current.inverse() ?: return null
+            return next.concat(inv)
         }
     }
 }

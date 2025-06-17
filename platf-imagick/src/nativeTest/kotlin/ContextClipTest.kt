@@ -1,7 +1,6 @@
 
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
 import kotlin.test.Test
 
@@ -12,8 +11,6 @@ import kotlin.test.Test
 
 class ContextClipTest {
     private val imageComparer = ImageComparer()
-    private val w = 100.0
-    private val h = 100.0
 
     private fun nwRect(ctx: Context2d) {
         ctx.moveTo(0, 0)
@@ -39,11 +36,6 @@ class ContextClipTest {
         ctx.lineTo(100, 50)
         ctx.lineTo(100, 100)
         ctx.lineTo(50, 100)
-    }
-
-    private fun createCanvas(): Pair<MagickCanvas, Context2d> {
-        val canvas = MagickCanvas.create(width = w, height = h, pixelDensity = 1.0)
-        return canvas to canvas.context2d
     }
 
     @Test

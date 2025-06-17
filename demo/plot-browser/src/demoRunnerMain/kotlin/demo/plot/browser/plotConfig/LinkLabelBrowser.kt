@@ -7,7 +7,7 @@ package demo.plot.browser.plotConfig
 
 import demo.plot.common.model.plotConfig.LinkLabel
 
-fun main(args: Array<String>) {
+fun main() {
     with(LinkLabel()) {
         PlotConfigBrowserDemoUtil.show(
             "Link Label",

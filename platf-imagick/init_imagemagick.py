@@ -57,8 +57,10 @@ env["GS"] = "none"  # disable Ghostscript delegate
 
 # Run configure script
 print("Configuring ImageMagick...")
-env["CFLAGS"] = "-O2 -fPIC -DNDEBUG"
-env["CXXFLAGS"] = "-O2 -fPIC -DNDEBUG"
+#env["CFLAGS"] = "-O2 -fPIC -DNDEBUG"
+#env["CXXFLAGS"] = "-O2 -fPIC -DNDEBUG"
+env["CFLAGS"] = "-O2 -fPIC -DDEBUG -DMAGICKCORE_ZERO_CONFIGURATION_SUPPORT"
+env["CXXFLAGS"] = "-O2 -fPIC -DDEBUG -DMAGICKCORE_ZERO_CONFIGURATION_SUPPORT"
 env["ac_cv_func_getentropy"] = "no"
 
 configure_cmd = [
@@ -71,12 +73,19 @@ configure_cmd = [
     "--with-quantum-depth=8",
     "--with-fontconfig",
     "--with-freetype",
+    "--without-apple-font-dir",
+    "--without-dejavu-font-dir",
+    "--without-gs-font-dir",
+    "--without-urw-base35-font-dir",
+    "--without-urw-base35-type1-font-dir",
+    "--without-windows-font-dir",
 
     "--without-modules",
+    "--disable-silent-rules",
     "--disable-openmp",
     "--without-threads",
     "--disable-opencl",
-    "--disable-assert",
+#    "--disable-assert",
     "--disable-hdri",
     "--disable-installed",
 

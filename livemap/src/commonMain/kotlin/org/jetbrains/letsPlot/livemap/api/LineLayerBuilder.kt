@@ -12,6 +12,9 @@ import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
+import org.jetbrains.letsPlot.livemap.chart.IndexComponent
+import org.jetbrains.letsPlot.livemap.chart.LocatorComponent
+import org.jetbrains.letsPlot.livemap.chart.path.PathLocator
 import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
@@ -64,6 +67,8 @@ class LineEntityBuilder(
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
+    var layerIndex: Int? = null
+    var index: Int? = null
     var point: Vec<LonLat>? = null
     var lineDash: List<Double> = emptyList()
     var lineDashOffset: Double = 0.0
@@ -79,6 +84,10 @@ class LineEntityBuilder(
 
         factory.incrementLayerPointsTotalCount(line.size)
 
+        if (layerIndex != null && index != null) {
+            +IndexComponent(layerIndex!!, index!!)
+        }
+
         +RenderableComponent().apply {
             renderer = PathRenderer()
         }
@@ -93,6 +102,7 @@ class LineEntityBuilder(
         +WorldOriginComponent(bbox.origin)
         +WorldGeometryComponent().apply { geometry = Geometry.of(line) }
         +WorldDimensionComponent(bbox.dimension)
+        +LocatorComponent(PathLocator)
     }
         .remove<NeedLocationComponent>()
         .remove<NeedCalculateLocationComponent>()

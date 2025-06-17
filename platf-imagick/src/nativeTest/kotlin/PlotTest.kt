@@ -11,12 +11,13 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
+//@Ignore
 class PlotTest {
-    private val imageComparer = ImageComparer()
+    private val imageComparer = ImageComparer(suffix = getOSName()) // fonts are different on different OSes
 
     @Test
     fun barPlot() {
+        println("OS: " + getOSName())
         val spec = """
             |{
             |  "kind": "plot",

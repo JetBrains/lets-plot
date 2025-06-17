@@ -7,7 +7,7 @@ package demo.plot.browser.plotConfig
 
 import demo.plot.common.model.plotConfig.BarOverlaidPlot
 
-fun main(args: Array<String>) {
+fun main() {
     with(BarOverlaidPlot()) {
         @Suppress("UNCHECKED_CAST")
         (PlotConfigBrowserDemoUtil.show(

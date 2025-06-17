@@ -46,33 +46,6 @@ enum class NiceTimeInterval(
             YearInterval.MS                                  // 1-year.
         )
 
-//        private val AUTO_INTERVALS = arrayOf(
-//            TimeInterval.seconds(1),
-//            TimeInterval.seconds(5),
-//            TimeInterval.seconds(15),
-//            TimeInterval.seconds(30),
-//
-//            TimeInterval.minutes(1),
-//            TimeInterval.minutes(5),
-//            TimeInterval.minutes(15),
-//            TimeInterval.minutes(30),
-//
-//            TimeInterval.hours(1),
-//            TimeInterval.hours(3),
-//            TimeInterval.hours(6),
-//            TimeInterval.hours(12),
-//
-//            TimeInterval.days(1),
-//            TimeInterval.days(2),
-//
-//            TimeInterval.weeks(1),
-//
-//            TimeInterval.months(1),
-//            TimeInterval.months(3),
-//
-//            TimeInterval.years(1)
-//        )
-
         fun minIntervalOf(dataType: DataType): NiceTimeInterval? {
             return when (dataType) {
                 DataType.DATE_MILLIS -> ONE_DAY

@@ -32,10 +32,12 @@ internal object PlotConfigMapperProviders {
         configuredProviders[Aes.SIZE]?.let { sizeMapper ->
             configuredProviders.getOrPut(Aes.SIZE_START) { sizeMapper }
             configuredProviders.getOrPut(Aes.SIZE_END) { sizeMapper }
+            configuredProviders.getOrPut(Aes.POINT_SIZE) { sizeMapper }
         }
         configuredProviders[Aes.STROKE]?.let { strokeMapper ->
             configuredProviders.getOrPut(Aes.STROKE_START) { strokeMapper }
             configuredProviders.getOrPut(Aes.STROKE_END) { strokeMapper }
+            configuredProviders.getOrPut(Aes.POINT_STROKE) { strokeMapper }
         }
 
         return defaultProviders + configuredProviders

@@ -97,12 +97,15 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
                 ?: emptyList()
 
         fun splitStyle(style: String?): List<Pair<String, String>> {
-            val style = style ?: return emptyList()
-                return style
-                    .split(";")
-                    .flatMap { it.split(":") }
-                    .windowed(2, 2)
-                    .map { (attr, value) -> attr to value }
+            if (style.isNullOrBlank()) {
+                return emptyList()
+            }
+
+            return style
+                .split(";")
+                .flatMap { it.split(":") }
+                .windowed(2, 2)
+                .map { (attr, value) -> attr to value }
         }
 
         internal fun asBoolean(value: Any?): Boolean {

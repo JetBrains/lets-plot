@@ -8,7 +8,7 @@ package demo.livemap.plot.awt
 import demo.common.utils.batik.PlotSpecsDemoWindowBatik
 import demo.livemap.common.plot.LiveMap
 
-fun main(args: Array<String>) {
+fun main() {
     with(LiveMap()) {
         PlotSpecsDemoWindowBatik(
             "LiveMap (Batik)",

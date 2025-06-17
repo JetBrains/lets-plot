@@ -8,6 +8,6 @@ package demo.livemap.component.awt
 import demo.livemap.common.component.FeaturesDemoModel
 
 
-fun main(args: Array<String>) {
+fun main() {
     LiveMapComponentDemoAwt(::FeaturesDemoModel).start()
 }

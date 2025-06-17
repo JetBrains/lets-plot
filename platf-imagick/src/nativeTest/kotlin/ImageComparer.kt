@@ -21,7 +21,8 @@ class ImageComparer(
     // To avoid compilation errors, we’d need a Windows-specific source set.
     private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/",
     private val outDir: String = getCurrentDir() + "/build/reports/",
-    private val tol: Int = 1
+    private val tol: Int = 1,
+    private val suffix: String = ""
 ) {
 
     fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
@@ -49,13 +50,13 @@ class ImageComparer(
     }
 
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
-        val testName = expectedFileName.removeSuffix(".bmp")
-        val expectedPath = expectedDir + expectedFileName
-        val actualFilePath = outDir + "${testName}.bmp"
+        val testName = expectedFileName.removeSuffix(".bmp") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
+        val expectedFilePath = expectedDir + testName + ".bmp"
+        val actualFilePath = outDir + testName + ".bmp"
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
-        if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
-            println("expectedWand failure - $expectedPath")
+        if (ImageMagick.MagickReadImage(expectedWand, expectedFilePath) == ImageMagick.MagickFalse) {
+            println("expectedWand failure - $expectedFilePath")
             println(getMagickError(expectedWand))
             // Write the  actual image to a file for debugging
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
@@ -88,10 +89,10 @@ class ImageComparer(
             error("""Image mismatch.
                 |    Diff: $diffFilePath
                 |    Actual: $actualFilePath
-                |    Expected: $expectedPath""".trimMargin()
+                |    Expected: $expectedFilePath""".trimMargin()
             )
         } else {
-            println("Image comparison passed: $expectedPath")
+            println("Image comparison passed: $expectedFilePath")
         }
     }
 

@@ -26,7 +26,7 @@ class Test:
     # -- gray --
 
     # 2 x 3 array of ints
-    expected_gray_2_x_3_href = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAEElEQVR4nGP4f2YmQ5oxAwAQXgL+el5zTgAAAABJRU5ErkJggg=='\
+    expected_gray_2_x_3_href = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAIUlEQVR4nA3BAQEAAAjCMDrRiU50otN1E28bbVESbCOJA+piDvI2Ub+LAAAAAElFTkSuQmCC'\
 
     test_params_list.append((
         np.array([
@@ -59,7 +59,7 @@ class Test:
 
     # 1 x 2 x 3 array of ints
     expected_RGB_1_x_2 = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAEklEQVR4nGOYNo2BgWEaCAEJABgUAu/euM7fAAAAAElFTkSuQmCC',
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGElEQVR4nGOYNo3hPwPDNBBm+D+NgeE/AD4uBusHg9tPAAAAAElFTkSuQmCC',
         bbox
     )
     test_params_list.append((

@@ -46,7 +46,7 @@ internal abstract class Node {
         computedPropInstance.invalidate()
     }
 
-    private fun handlePropertyChange(property: KProperty<*>, oldValue: Any?, newValue: Any?) {
+    private fun handlePropertyChange(property: KProperty<*>, oldValue: Any?, @Suppress("UNUSED_PARAMETER") newValue: Any?) {
         if (property in propFinalizers && oldValue is Managed) {
             oldValue.close()
         }

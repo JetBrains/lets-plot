@@ -145,8 +145,6 @@ object DataImage {
 
         var width = 0
         var height = 0
-        var colorType = -1
-        var bitDepth = -1
         val idatChunks = mutableListOf<Byte>()
 
         // 2. Read chunks
@@ -157,14 +155,14 @@ object DataImage {
             val data = ByteArray(length).also { stream.read(it) }
             stream.skip(4) // skip CRC
 
-            println("Chunk: $type, Length: $length")
+            //println("Chunk: $type, Length: $length")
             when (type) {
                 "IHDR" -> {
                     val buffer = ByteBuffer(data)
                     width = buffer.getInt()
                     height = buffer.getInt()
-                    bitDepth = buffer.get().toInt()
-                    colorType = buffer.get().toInt()
+                    val bitDepth = buffer.get().toInt()
+                    val colorType = buffer.get().toInt()
                     require(bitDepth == 8 && colorType == 6) { "Only 8-bit RGBA PNG supported. Bit depth: $bitDepth, Color type: $colorType" }
                 }
 
@@ -176,7 +174,7 @@ object DataImage {
             }
         }
 
-        println("PNG dimensions: $width x $height, Color type: $colorType, Bit depth: $bitDepth")
+        //println("PNG dimensions: $width x $height, Color type: $colorType, Bit depth: $bitDepth")
 
         // 3. Decompress IDAT data
         val compressed = idatChunks.toByteArray()
@@ -184,7 +182,7 @@ object DataImage {
         val decompressed = inflate(compressed, scanlineLength * height)
         val unfiltered = unfilterScanlines(width, height, 4, decompressed)
 
-        println("Decoded PNG: $width x $height, RGBA size: ${unfiltered.size}")
+        //println("Decoded PNG: $width x $height, RGBA size: ${unfiltered.size}")
 
         return Bitmap.fromRGBABytes(width, height, unfiltered)
     }
@@ -322,6 +320,7 @@ object DataImage {
 
         for (y in 0 until height) {
             val filterType = filtered[y * (stride + 1)].toInt() and 0xFF
+            //println("Unfiltering line $y, filter type: $filterType")
             val prevLineOffset = (y - 1) * stride
             val lineOffset = y * stride
             val filteredOffset = y * (stride + 1) + 1
@@ -351,7 +350,7 @@ object DataImage {
                         val paeth = paethPredictor(left, above, upperLeft)
                         val raw = (f + paeth) and 0xFF
 
-                        println("[$y:$x] filter=$f left=$left above=$above upperLeft=$upperLeft paeth=$paeth => raw=$raw")
+                        //println("[$y:$x] filter=$f left=$left above=$above upperLeft=$upperLeft paeth=$paeth => raw=$raw")
 
 
                         (filtered[filteredOffset + x].toInt() and 0xFF + paeth) and 0xFF

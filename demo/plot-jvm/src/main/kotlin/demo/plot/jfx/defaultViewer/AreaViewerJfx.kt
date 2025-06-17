@@ -8,7 +8,7 @@ package demo.plot.jfx.defaultViewer
 import demo.plot.common.model.plotConfig.Area
 import org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx
 
-fun main(args: Array<String>) {
+fun main() {
     with(Area()) {
         PlotViewerWindowJfx(
             "Area plot",

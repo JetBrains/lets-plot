@@ -22,7 +22,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
 ) {
 
     private val myRotationAngle = if (theme.rotateLabels()) {
-        theme.labelAngle()?.takeUnless { it.isNaN() } ?: 0.0
+        theme.labelAngle().takeUnless { it.isNaN() } ?: 0.0
     } else null
 
     init {

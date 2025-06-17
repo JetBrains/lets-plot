@@ -83,7 +83,7 @@ def _standardize_value(v):
         if math.isfinite(v):
             return float(v)
         # None for special values like 'nan' etc. because
-        # some json parsers (like com.google.gson.Gson) do not handle them well.
+        # some JSON parsers (like com.google.gson.Gson) do not handle them well.
         return None
     if is_int(v):
         return float(v)
@@ -95,8 +95,14 @@ def _standardize_value(v):
         return [_standardize_value(elem) for elem in v]
     if isinstance(v, tuple):
         return tuple(_standardize_value(elem) for elem in v)
-    if (numpy and isinstance(v, numpy.ndarray)) or (pandas and isinstance(v, pandas.Series)) or (
-            jnp and isinstance(v, jnp.ndarray)):
+
+    if (numpy and isinstance(v, numpy.ndarray)):
+        # Process each array element individually.
+        # Don't use '.tolist()' because this will implicitly
+        # convert 'datetime64' values to unpredictable 'datetime' objects.
+        return [_standardize_value(x) for x in v]
+
+    if (pandas and isinstance(v, pandas.Series)) or (jnp and isinstance(v, jnp.ndarray)):
         return _standardize_value(v.tolist())
 
     # Universal NaT/NaN check
@@ -106,16 +112,16 @@ def _standardize_value(v):
     if isinstance(v, datetime):
         # Datetime: to milliseconds since epoch (time zone aware)
         return v.timestamp() * 1000
-    if isinstance(v, date) and not isinstance(v, datetime):
+    if isinstance(v, date):
         # Local date: to milliseconds since epoch (midnight UTC)
         return datetime.combine(v, time.min, tzinfo=timezone.utc).timestamp() * 1000
     if isinstance(v, time):
         # Local time: to milliseconds since midnight
-        return v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000
+        return float(v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000)
     if numpy and isinstance(v, numpy.datetime64):
         try:
             # numpy.datetime64: to milliseconds since epoch (Unix time)
-            return v.astype('datetime64[ms]').astype(numpy.int64)
+            return float(v.astype('datetime64[ms]').astype(numpy.int64))
         except:
             return None
 
