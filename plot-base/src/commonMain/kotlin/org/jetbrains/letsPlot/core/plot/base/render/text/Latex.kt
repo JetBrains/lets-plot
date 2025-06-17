@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_START
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import kotlin.math.max
@@ -351,7 +353,7 @@ internal class Latex(
             val numeratorTSpanElements = numerator.toRichSvgElements(context, previousNodes).mapIndexed { i, richElement ->
                 richElement.svg.apply {
                     if (i == 0) {
-                        setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
+                        setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
                         setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                     }
                 }.enrich(if (i == 0) { fractionCenter } else { richElement.x })
@@ -359,17 +361,17 @@ internal class Latex(
             val denominatorTSpanElements = denominator.toRichSvgElements(context, previousNodes).mapIndexed { i, richElement ->
                 richElement.svg.apply {
                     if (i == 0) {
-                        setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
+                        setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
                         setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
                     }
                 }.enrich(if (i == 0) { fractionCenter } else { richElement.x })
             }
             val fractionBarTSpanElement = context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
                 setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
-                setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
+                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
             }).enrich(fractionCenter)
             val restoreBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                setAttribute(SvgTextContent.TEXT_ANCHOR, "start") // TODO: Use constants
+                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
             }).enrich(prefixWidth + fractionWidth)
             return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }
