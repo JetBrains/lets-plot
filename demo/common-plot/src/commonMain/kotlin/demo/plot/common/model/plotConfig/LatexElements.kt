@@ -62,7 +62,7 @@ class LatexElements {
               },
               "layers": [
                 {
-                  "geom": "text",
+                  "geom": "label",
                   "x": 0.0,
                   "size": 10
                 }
