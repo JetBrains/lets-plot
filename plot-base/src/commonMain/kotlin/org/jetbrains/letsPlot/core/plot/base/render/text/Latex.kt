@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import kotlin.math.max
@@ -108,23 +109,24 @@ internal class Latex(
             "" to "-"
         }
 
-        val indentTSpan = RichSvgElement(ctx.apply(SvgTSpanElement(INDENT_SYMBOL).apply {
+        val indentTSpan = ctx.apply(SvgTSpanElement(INDENT_SYMBOL).apply {
             setAttribute(SvgTextContent.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-        }))
+        }).enrich()
         val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
         // It is an analog of restoreBaselineTSpan, but for the initial shifting
         // This is necessary for more complex formulas in which the index starts from another shift
-        val setBaselineTSpan = RichSvgElement(ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+        val setBaselineTSpan = ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
             // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
-        }))
+        }).enrich()
         val indexTSpanElements = content.toSvg(ctx, previousNodes).map { richElement ->
-            richElement.element.apply {
+            richElement.svg.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
                 }
-            }.let { RichSvgElement(it, richElement.x) }
+            }
+            richElement
         }
         // The following 'tspan' element is used to restore the baseline after the index
         // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
@@ -132,11 +134,11 @@ internal class Latex(
         // Attribute 'baseline-shift' is better suited for such use case -
         // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
         // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-        val restoreBaselineTSpan = RichSvgElement(ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+        val restoreBaselineTSpan = ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
             // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
-        }))
+        }).enrich()
 
         return listOf(indentTSpan, setBaselineTSpan) + indexTSpanElements + restoreBaselineTSpan
     }
@@ -287,7 +289,7 @@ internal class Latex(
         }
 
         override fun toSvg(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
-            return listOf(RichSvgElement(context.apply(SvgTSpanElement(content))))
+            return listOf(context.apply(SvgTSpanElement(content)).enrich())
         }
     }
 
@@ -347,28 +349,30 @@ internal class Latex(
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font, widthCalculator)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
             val numeratorTSpanElements = numerator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
-                richElement.element.apply {
+                richElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
                         setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                     }
-                }.let { RichSvgElement(it, x = if (i == 0) { fractionCenter } else { richElement.x }) }
+                }
+                richElement.updateX(if (i == 0) { fractionCenter } else { richElement.x })
             }
             val denominatorTSpanElements = denominator.toSvg(context, previousNodes).mapIndexed { i, richElement ->
-                richElement.element.apply {
+                richElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
                         setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
                     }
-                }.let { RichSvgElement(it, x = if (i == 0) { fractionCenter } else { richElement.x }) }
+                }
+                richElement.updateX(if (i == 0) { fractionCenter } else { richElement.x })
             }
-            val fractionBarTSpanElement = RichSvgElement(context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
+            val fractionBarTSpanElement = context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
                 setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                 setAttribute(SvgTextContent.TEXT_ANCHOR, "middle") // TODO: Use constants
-            }), x = fractionCenter)
-            val restoreBaselineTSpan = RichSvgElement(context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+            }).enrich(fractionCenter)
+            val restoreBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 setAttribute(SvgTextContent.TEXT_ANCHOR, "start") // TODO: Use constants
-            }), x = prefixWidth + fractionWidth)
+            }).enrich(prefixWidth + fractionWidth)
             return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }
     }

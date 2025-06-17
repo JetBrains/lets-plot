@@ -8,12 +8,12 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 
 object RichText {
     val DEF_HORIZONTAL_ANCHOR = Text.HorizontalAnchor.LEFT
@@ -269,7 +269,29 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        data class RichSvgElement(val element: SvgElement, val x: Double? = null) : RichTextNode
+        data class RichSvgElement(val svg: SvgElement, val x: Double? = null) : RichTextNode {
+            fun updateX(x: Double?): RichSvgElement {
+                return RichSvgElement(svg, x)
+            }
+
+            fun render(): SvgElement {
+                return when (svg) {
+                    is SvgTSpanElement -> {
+                        x?.let { svg.setAttribute(SvgTextContent.X, x.toString()) }
+                        svg
+                    }
+                    is SvgAElement -> {
+                        val tSpan = svg.children().single()
+                        require(tSpan is SvgTSpanElement) {
+                            "Expected a single child of type SvgTSpanElement, but found ${tSpan::class.simpleName}"
+                        }
+                        x?.let { tSpan.setAttribute(SvgTextContent.X, x.toString()) }
+                        svg
+                    }
+                    else -> throw IllegalStateException("Unsupported SVG element type: ${svg::class.simpleName}")
+                }
+            }
+        }
 
         abstract class Span : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
@@ -279,34 +301,11 @@ object RichText {
 
             fun render(context: RenderState, previousNodes: List<Span>, x: Double?, isFirstSpanInLine: Boolean): List<SvgElement> {
                 return toSvg(context, previousNodes).mapIndexed { i, richElement ->
-                    // TODO: Refactor whole block, especially the second `when`
                     val newX = when {
                         richElement.x == null -> if (isFirstSpanInLine && i == 0) x else null
                         else -> richElement.x + (x ?: 0.0)
                     }
-                    val svgElement = richElement.element
-                    when (svgElement) {
-                        is SvgTSpanElement -> {
-                            svgElement.apply {
-                                newX?.let { setAttribute(SvgTextContent.X, newX.toString()) }
-                            }
-                        }
-                        is SvgAElement -> {
-                            val href = svgElement.href().get()
-                            val text = (svgElement.children().firstOrNull()?.children()?.firstOrNull() as? SvgTextNode)?.textContent()?.get()!!
-                            SvgAElement().apply {
-                                href().set(href)
-                                xlinkHref().set(href)
-                                children().add(
-                                    SvgTSpanElement(text).apply {
-                                        addClass(HYPERLINK_ELEMENT_CLASS)
-                                        newX?.let { setAttribute(SvgTextContent.X, newX.toString()) }
-                                    }
-                                )
-                            }
-                        }
-                        else -> svgElement
-                    }
+                    richElement.updateX(newX).render()
                 }
             }
         }
@@ -321,12 +320,17 @@ object RichText {
             }
 
             override fun toSvg(context: RenderState, previousNodes: List<Span>): List<RichSvgElement> {
-                val tSpan = SvgTSpanElement(text)
-                context.apply(tSpan)
-                return listOf(RichSvgElement(tSpan))
+                return SvgTSpanElement(text)
+                    .apply(context::apply)
+                    .enrich()
+                    .let(::listOf)
             }
 
             override fun toString() = "Text(text='$text')"
         }
+    }
+
+    fun SvgElement.enrich(x: Double? = null): RichSvgElement {
+        return RichSvgElement(this, x)
     }
 }
