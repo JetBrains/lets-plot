@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSvgElement
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
@@ -30,13 +30,13 @@ internal object Hyperlink {
     class HyperlinkElement(
         private val text: String,
         private val href: String,
-    ) : RichTextNode.Span() {
+    ) : RichTextNode.RichSpansCollection() {
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)
         }
 
-        override fun toRichSvgElements(context: RenderState, previousNodes: List<RichTextNode.Span>): List<RichSvgElement> {
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
             return listOf(
                 SvgAElement().apply {
                     href().set(href)
