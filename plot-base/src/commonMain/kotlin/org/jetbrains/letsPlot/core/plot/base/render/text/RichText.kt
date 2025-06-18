@@ -31,7 +31,7 @@ object RichText {
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR
     ): List<SvgTextElement> {
         val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
-        val svgLines = render(lines, font, widthCalculator, anchorCoefficient = anchorCoefficient(lines, anchor))
+        val svgLines = render(lines, font, widthCalculator, anchorCoefficients = anchorCoefficients(lines, anchor))
         return svgLines
     }
 
@@ -199,24 +199,24 @@ object RichText {
         return wrappedLines
     }
 
-    private fun anchorCoefficient(
+    private fun anchorCoefficients(
         lines: List<List<RichTextNode>>,
         anchor: Text.HorizontalAnchor
-    ): Double {
-        val containsLatexFractionNode = lines.any { line ->
-            line.any { term ->
+    ): List<Double> {
+        return lines.map { line ->
+            val containsLatexFractionNode = line.any { term ->
                 term is Latex.LatexElement && term.node.flatListOfAllDescendants().any { latexNode ->
                     latexNode is Latex.FractionNode
                 }
             }
-        }
-        if (!containsLatexFractionNode) {
-            return 0.0
-        }
-        return when (anchor) {
-            Text.HorizontalAnchor.LEFT -> 0.0
-            Text.HorizontalAnchor.MIDDLE -> 0.5
-            Text.HorizontalAnchor.RIGHT -> 1.0
+            // The coefficient is dependent on the anchor but only if there is a fraction node in the line
+            when {
+                !containsLatexFractionNode -> 0.0
+                anchor == Text.HorizontalAnchor.LEFT -> 0.0
+                anchor == Text.HorizontalAnchor.MIDDLE -> 0.5
+                anchor == Text.HorizontalAnchor.RIGHT -> 1.0
+                else -> throw IllegalStateException("Unsupported horizontal anchor: $anchor")
+            }
         }
     }
 
@@ -224,10 +224,10 @@ object RichText {
         lines: List<List<RichTextNode>>,
         font: Font,
         widthCalculator: (String, Font) -> Double,
-        anchorCoefficient: Double
+        anchorCoefficients: List<Double>
     ): List<SvgTextElement> {
         val stack = mutableListOf(RenderState())
-        val svgLines = lines.map { line ->
+        val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
             val svg = mutableListOf<SvgElement>()
             val previousSpans = mutableListOf<RichTextNode.RichSpansCollection>()
             val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpansCollection)?.estimateWidth(font, widthCalculator) ?: 0.0 }

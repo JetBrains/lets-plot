@@ -135,14 +135,14 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             markdown = markdown,
             anchor = myHorizontalAnchor
         ).firstOrNull() ?: SvgTextElement()
-        val actualHorizontalAnchor = getActualHorizontalAnchor(textElement)
+        val horizontalAnchor = determineHorizontalAnchor(textElement)
         myText = textElement
             .let { updateTextAttributes(styleAttr)(it) }
-            .let { updateAnchors(actualHorizontalAnchor)(it) }
+            .let { updateAnchors(horizontalAnchor)(it) }
     }
 
     // Similar to MultilineLabel#getActualHorizontalAnchor()
-    private fun getActualHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
+    private fun determineHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
         val x = MultilineLabel.getFirstTSpanChild(textElement)?.x()?.get()
         return when (x) {
             null -> myHorizontalAnchor
