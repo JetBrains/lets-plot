@@ -202,7 +202,7 @@ object RichText {
     private fun anchorCoefficients(
         lines: List<List<RichTextNode>>,
         anchor: Text.HorizontalAnchor
-    ): List<Double> {
+    ): List<Double?> {
         return lines.map { line ->
             val containsLatexFractionNode = line.any { term ->
                 term is Latex.LatexElement && term.node.flatListOfAllDescendants().any { latexNode ->
@@ -211,8 +211,8 @@ object RichText {
             }
             // The coefficient is dependent on the anchor but only if there is a fraction node in the line
             when {
-                !containsLatexFractionNode -> 0.0
-                anchor == Text.HorizontalAnchor.LEFT -> 0.0
+                !containsLatexFractionNode -> null
+                anchor == Text.HorizontalAnchor.LEFT -> null
                 anchor == Text.HorizontalAnchor.MIDDLE -> 0.5
                 anchor == Text.HorizontalAnchor.RIGHT -> 1.0
                 else -> throw IllegalStateException("Unsupported horizontal anchor: $anchor")
@@ -224,14 +224,14 @@ object RichText {
         lines: List<List<RichTextNode>>,
         font: Font,
         widthCalculator: (String, Font) -> Double,
-        anchorCoefficients: List<Double>
+        anchorCoefficients: List<Double?>
     ): List<SvgTextElement> {
         val stack = mutableListOf(RenderState())
         val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
             val svg = mutableListOf<SvgElement>()
             val previousSpans = mutableListOf<RichTextNode.RichSpansCollection>()
             val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpansCollection)?.estimateWidth(font, widthCalculator) ?: 0.0 }
-            var isFirstSpanInLine = true
+            var isFirstRichSpansCollectionInLine = true
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -242,14 +242,14 @@ object RichText {
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
                     is RichTextNode.RichSpansCollection -> {
-                        val x = if (anchorCoefficient == 0.0) {
-                            null
-                        } else {
-                            -anchorCoefficient * lineWidth
-                        }
-                        svg += term.render(stack.last(), previousSpans.toList(), x, isFirstSpanInLine)
+                        // Based on the whole line the `anchorCoefficient` was calculated
+                        // and if it is not null, it means that the line contains [at least] a fraction node,
+                        // and then we need to add x attribute to the first tspan in the line with shift,
+                        // that corresponds to the anchorCoefficient.
+                        val x = anchorCoefficient?.let { -it * lineWidth }
+                        svg += term.render(stack.last(), previousSpans.toList(), x, isFirstRichSpansCollectionInLine)
                         previousSpans.add(term)
-                        isFirstSpanInLine = false
+                        isFirstRichSpansCollectionInLine = false
                     }
                 }
             }
@@ -277,10 +277,12 @@ object RichText {
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
             abstract fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan<SvgElement>>
 
-            fun render(context: RenderState, previousSpans: List<RichSpansCollection>, x: Double?, isFirstSpanInLine: Boolean): List<SvgElement> {
+            fun render(context: RenderState, previousSpans: List<RichSpansCollection>, x: Double?, isFirstRichSpansCollectionInLine: Boolean): List<SvgElement> {
                 return toRichSpans(context, previousSpans).mapIndexed { i, richSpan ->
                     richSpan.x = when {
-                        richSpan.x == null -> if (isFirstSpanInLine && i == 0) x else null
+                        // If richSpan.x == null than x should be defined only for the first span in the line
+                        richSpan.x == null -> if (isFirstRichSpansCollectionInLine && i == 0) x else null
+                        // If richSpan.x != null, it means that it should be shifted
                         else -> richSpan.x!! + (x ?: 0.0)
                     }
                     richSpan.updateSvgXAttribute().svg
