@@ -50,8 +50,8 @@ internal object Hyperlink {
             )
         }
 
-        override fun setXAttributeToSvgElement(aElement: SvgElement, x: Double?): SvgElement {
-            val tSpan = aElement.children().first() as SvgTSpanElement
+        override fun setX(aElement: SvgElement, x: Double?): SvgElement {
+            val tSpan = aElement.children().single() as SvgTSpanElement
             x?.let { tSpan.setAttribute(SvgTextContent.X, x) }
             return aElement
         }

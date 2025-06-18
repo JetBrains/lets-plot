@@ -276,7 +276,7 @@ object RichText {
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
             abstract fun toRichSvgElements(context: RenderState, previousNodes: List<Span>): List<RichSvgElement>
 
-            open fun setXAttributeToSvgElement(tSpan: SvgElement, x: Double?): SvgElement {
+            open fun setX(tSpan: SvgElement, x: Double?): SvgElement {
                 require(tSpan is SvgTSpanElement)
                 x?.let { tSpan.setAttribute(SvgTextContent.X, x) }
                 return tSpan
@@ -288,7 +288,7 @@ object RichText {
                         richElement.x == null -> if (isFirstSpanInLine && i == 0) x else null
                         else -> richElement.x + (x ?: 0.0)
                     }
-                    setXAttributeToSvgElement(richElement.svg, x = xValue)
+                    setX(richElement.svg, x = xValue)
                 }
             }
         }
