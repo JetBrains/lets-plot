@@ -208,11 +208,13 @@ class MultilineLabel(
         fun splitLines(text: String) = text.split('\n').map(String::trim)
 
         internal fun getFirstTSpanChild(svgTextElement: SvgTextElement): SvgTSpanElement? {
-            val firstChild = svgTextElement.children().firstOrNull()
+            val firstChild = svgTextElement.children().firstOrNull() ?: return null
             return when (firstChild) {
                 is SvgTSpanElement -> firstChild
-                is SvgAElement -> firstChild.children().firstOrNull() as? SvgTSpanElement? // First child can be a link element with a tspan inside
-                else -> null
+                is SvgAElement -> firstChild.children().single() as SvgTSpanElement // First child can be a link element with a tspan inside
+                else -> throw IllegalStateException(
+                    "Expected SvgTSpanElement or SvgAElement, but got: ${firstChild::class.simpleName}."
+                )
             }
         }
     }
