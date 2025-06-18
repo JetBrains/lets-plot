@@ -205,8 +205,8 @@ object RichText {
     ): Double {
         val containsLatexFractionNode = lines.any { line ->
             line.any { term ->
-                term is Latex.LatexElement && term.node.flatListOfAllChildren().any { child ->
-                    child is Latex.FractionNode
+                term is Latex.LatexElement && term.node.flatListOfAllDescendants().any { latexNode ->
+                    latexNode is Latex.FractionNode
                 }
             }
         }

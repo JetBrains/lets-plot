@@ -259,11 +259,11 @@ internal class Latex(
     internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) : RichTextNode.RichSpansCollection() {
         protected abstract fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
 
-        fun flatListOfAllChildren(): List<LatexNode> {
-            fun getChildrenRecursively(nodes: List<LatexNode>): List<LatexNode> {
-                return nodes.flatMap { listOf(it) + getChildrenRecursively(it.children) }
+        fun flatListOfAllDescendants(): List<LatexNode> {
+            fun childrenWithGrandchildren(nodes: List<LatexNode>): List<LatexNode> {
+                return nodes.flatMap { listOf(it) + childrenWithGrandchildren(it.children) }
             }
-            return listOf(this) + getChildrenRecursively(children)
+            return childrenWithGrandchildren(listOf(this))
         }
 
         final override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
