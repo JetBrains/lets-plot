@@ -23,7 +23,7 @@ internal class Latex(
     private val font: Font,
     private val widthCalculator: (String, Font) -> Double
 ) {
-    fun parse(text: String): List<RichTextNode> {
+    internal fun parse(text: String): List<RichTextNode> {
         val formulas = extractFormulas(text).map { (formula, range) ->
             val prettyFormula = formula.replace("-", "−") // Use minus sign instead of hyphen
             LatexElement(parse(Token.tokenize(prettyFormula))) to range

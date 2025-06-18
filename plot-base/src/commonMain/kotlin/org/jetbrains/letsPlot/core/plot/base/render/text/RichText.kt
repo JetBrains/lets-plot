@@ -259,7 +259,7 @@ object RichText {
         return svgLines.map { SvgTextElement().apply { children().addAll(it) } }
     }
 
-    interface RichTextNode {
+    internal interface RichTextNode {
         object EmphasisStart : RichTextNode
         object EmphasisEnd : RichTextNode
         object StrongStart : RichTextNode
@@ -332,17 +332,17 @@ object RichText {
         }
     }
 
-    fun SvgTSpanElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
+    internal fun SvgTSpanElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
         @Suppress("UNCHECKED_CAST")
         return RichTSpanElement(this, x) as RichSpanElement<SvgElement>
     }
 
-    fun SvgAElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
+    internal fun SvgAElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
         @Suppress("UNCHECKED_CAST")
         return RichASpanElement(this, x) as RichSpanElement<SvgElement>
     }
 
-    fun SvgElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
+    internal fun SvgElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
         return when (this) {
             is SvgTSpanElement -> enrich(x)
             is SvgAElement -> enrich(x)
