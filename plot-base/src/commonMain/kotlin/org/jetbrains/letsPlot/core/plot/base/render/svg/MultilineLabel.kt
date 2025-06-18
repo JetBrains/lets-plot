@@ -162,8 +162,7 @@ class MultilineLabel(
 
     private fun getActualHorizontalAnchor(lines: List<SvgTextElement>): HorizontalAnchor {
         val firstNodeHasDefinedX = lines.any { line ->
-            val x = getFirstTSpanChild(line)?.getAttribute(SvgTextContent.X)?.get()
-            x != null
+            getFirstTSpanChild(line)?.x()?.get() != null
         }
         return when (firstNodeHasDefinedX) {
             true -> HorizontalAnchor.LEFT

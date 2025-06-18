@@ -278,7 +278,7 @@ object RichText {
 
             open fun setXAttributeToSvgElement(tSpan: SvgElement, x: Double?): SvgElement {
                 require(tSpan is SvgTSpanElement)
-                x?.let { tSpan.setAttribute(SvgTextContent.X, x.toString()) }
+                x?.let { tSpan.setAttribute(SvgTextContent.X, x) }
                 return tSpan
             }
 

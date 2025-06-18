@@ -40,18 +40,17 @@ object TestUtil {
     fun assertTSpan(
         tspan: SvgTSpanElement,
         text: String,
-        expectedX: Double? = null,
+        x: Double? = null,
         bold: Boolean = false,
         italic: Boolean = false,
         color: String? = null
     ) {
         assertThat(tspan.wholeText()).isEqualTo(text)
 
-        val x: String? = tspan.getAttribute(SvgTextContent.X).get()
-        if (expectedX != null) {
-            assertThat(x).isEqualTo(expectedX.toString())
+        if (x != null) {
+            assertThat(tspan.x().get()).isEqualTo(x)
         } else {
-            assertThat(x).isNull()
+            assertThat(tspan.x().get()).isNull()
         }
 
         if (bold) {

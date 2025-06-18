@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 interface SvgTextContent {
 
     companion object {
-        val X: SvgAttributeSpec<String> =
+        val X: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("x")
         val FILL: SvgAttributeSpec<SvgColor> =
             SvgAttributeSpec.createSpec("fill")

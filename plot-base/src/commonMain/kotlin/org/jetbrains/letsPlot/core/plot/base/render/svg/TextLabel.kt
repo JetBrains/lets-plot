@@ -144,7 +144,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
 
     // Similar to MultilineLabel#getActualHorizontalAnchor()
     private fun getActualHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
-        val x = MultilineLabel.getFirstTSpanChild(textElement)?.getAttribute(SvgTextContent.X)?.get()
+        val x = MultilineLabel.getFirstTSpanChild(textElement)?.x()?.get()
         return when (x) {
             null -> myHorizontalAnchor
             else -> HorizontalAnchor.LEFT

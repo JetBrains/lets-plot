@@ -52,7 +52,7 @@ internal object Hyperlink {
 
         override fun setXAttributeToSvgElement(aElement: SvgElement, x: Double?): SvgElement {
             val tSpan = aElement.children().first() as SvgTSpanElement
-            x?.let { tSpan.setAttribute(SvgTextContent.X, x.toString()) }
+            x?.let { tSpan.setAttribute(SvgTextContent.X, x) }
             return aElement
         }
     }

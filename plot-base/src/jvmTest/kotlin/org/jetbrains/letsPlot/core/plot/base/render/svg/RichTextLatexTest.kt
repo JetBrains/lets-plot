@@ -592,7 +592,7 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         val expectedWidth = toTestWidth(3, level)
 
-        assertTSpan(text, "a+", expectedX = -expectedWidth / 2.0)
+        assertTSpan(text, "a+", x = -expectedWidth / 2.0)
         val fracPosition = 2.5 * toTestWidth(1, level) - expectedWidth / 2.0
         assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
@@ -612,7 +612,7 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         val expectedWidth = toTestWidth(3, level)
 
-        assertTSpan(text, "a+", expectedX = -expectedWidth)
+        assertTSpan(text, "a+", x = -expectedWidth)
         val fracPosition = 2.5 * toTestWidth(1, level) - expectedWidth
         assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
