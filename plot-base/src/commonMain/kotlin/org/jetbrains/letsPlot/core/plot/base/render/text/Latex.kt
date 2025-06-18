@@ -7,11 +7,12 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichSpan
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_START
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import kotlin.math.max
@@ -104,7 +105,7 @@ internal class Latex(
         }
     }
 
-    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
+    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -279,7 +280,7 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             node.estimateWidth(font, widthCalculator)
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
             return node.toRichSpans(context, previousSpans)
         }
     }
@@ -290,7 +291,7 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).enrich())
         }
     }
@@ -301,8 +302,8 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
-            val richSpans = mutableListOf<RichSpan>()
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
+            val richSpans = mutableListOf<RichSpan<SvgElement>>()
             val previousLatexNodes = mutableListOf<LatexNode>()
             for (child in children) {
                 richSpans.addAll(child.toRichSpans(context, previousSpans + previousLatexNodes.toList()))
@@ -318,7 +319,7 @@ internal class Latex(
             return content.estimateWidth(font, widthCalculator)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, previousSpans = previousSpans)
         }
     }
@@ -329,7 +330,7 @@ internal class Latex(
             return content.estimateWidth(font, widthCalculator)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, previousSpans = previousSpans)
         }
     }
@@ -344,7 +345,7 @@ internal class Latex(
             return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan> {
+        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
             val prefixWidth = previousSpans.sumOf { it.estimateWidth(font, widthCalculator) }
             val fractionWidth = estimateWidth(font, widthCalculator)
             val fractionCenter = prefixWidth + fractionWidth / 2.0

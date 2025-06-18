@@ -8,7 +8,10 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichSpan
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichASpan
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichTSpan
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
@@ -268,27 +271,38 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        data class RichSpan(val svg: SvgElement, val x: Double? = null)
-
         abstract class RichSpansCollection : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan>
-
-            open fun setX(tSpan: SvgElement, x: Double?): SvgElement {
-                require(tSpan is SvgTSpanElement)
-                x?.let { tSpan.setAttribute(SvgTextContent.X, x) }
-                return tSpan
-            }
+            abstract fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan<SvgElement>>
 
             fun render(context: RenderState, previousSpans: List<RichSpansCollection>, x: Double?, isFirstSpanInLine: Boolean): List<SvgElement> {
                 return toRichSpans(context, previousSpans).mapIndexed { i, richSpan ->
-                    val xValue = when {
+                    richSpan.x = when {
                         richSpan.x == null -> if (isFirstSpanInLine && i == 0) x else null
-                        else -> richSpan.x + (x ?: 0.0)
+                        else -> richSpan.x!! + (x ?: 0.0)
                     }
-                    setX(richSpan.svg, x = xValue)
+                    richSpan.updateSvgXAttribute().svg
+                }
+            }
+
+            abstract class RichSpan<T : SvgElement>(val svg: T, var x: Double? = null) {
+                abstract fun updateSvgXAttribute(): RichSpan<T>
+            }
+
+            class RichTSpan(svg: SvgTSpanElement, x: Double? = null) : RichSpan<SvgTSpanElement>(svg, x) {
+                override fun updateSvgXAttribute(): RichSpan<SvgTSpanElement> {
+                    x?.let { svg.setAttribute(SvgTextContent.X, it) }
+                    return this
+                }
+            }
+
+            class RichASpan(svg: SvgAElement, x: Double? = null) : RichSpan<SvgAElement>(svg, x) {
+                override fun updateSvgXAttribute(): RichSpan<SvgAElement> {
+                    val tSpan = svg.children().single() as SvgTSpanElement
+                    x?.let { tSpan.setAttribute(SvgTextContent.X, it) }
+                    return this
                 }
             }
         }
@@ -302,7 +316,7 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan> {
+            override fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan<SvgElement>> {
                 return SvgTSpanElement(text)
                     .apply(context::apply)
                     .enrich()
@@ -313,7 +327,21 @@ object RichText {
         }
     }
 
-    fun SvgElement.enrich(x: Double? = null): RichSpan {
-        return RichSpan(this, x)
+    fun SvgTSpanElement.enrich(x: Double? = null): RichSpan<SvgElement> {
+        @Suppress("UNCHECKED_CAST")
+        return RichTSpan(this, x) as RichSpan<SvgElement>
+    }
+
+    fun SvgAElement.enrich(x: Double? = null): RichSpan<SvgElement> {
+        @Suppress("UNCHECKED_CAST")
+        return RichASpan(this, x) as RichSpan<SvgElement>
+    }
+
+    fun SvgElement.enrich(x: Double? = null): RichSpan<SvgElement> {
+        return when (this) {
+            is SvgTSpanElement -> enrich(x)
+            is SvgAElement -> enrich(x)
+            else -> throw IllegalArgumentException("Unsupported SVG element type: ${this::class.simpleName}")
+        }
     }
 }
