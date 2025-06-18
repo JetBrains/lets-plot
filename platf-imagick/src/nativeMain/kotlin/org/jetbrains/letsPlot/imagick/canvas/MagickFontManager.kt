@@ -3,12 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalNativeApi::class)
+
 package org.jetbrains.letsPlot.imagick.canvas
 
-import ImageMagick.ExceptionInfo
 import kotlinx.cinterop.*
 import platform.posix.size_t
 import platform.posix.size_tVar
+import kotlin.experimental.ExperimentalNativeApi
 
 class MagickFontManager {
     class ResolvedFont(
@@ -28,47 +30,43 @@ class MagickFontManager {
     }
 
     companion object {
-        private val preferredMonospaceFonts = listOf(
-            "DejaVu Sans Mono", // Linux default monospace
-            "Courier New",      // Windows default monospace
-            "Courier",          // macOS default monospace
-            "Consolas",         // Windows code editor font
-            "Menlo",            // macOS default Terminal font
-            "Monaco",           // macOS legacy monospace
-            "Roboto Mono",      // Chrome/Android web-safe
-            "Noto Mono",        // Noto variant
-            "Liberation Mono",  // Metric-compatible with Courier
-            "Ubuntu Mono",      // Ubuntu Terminal default
-            "Nimbus Mono",      // Ghostscript fallback
-            "FreeMono"          // Full Unicode mono
-        )
 
-        private val preferredSerifFonts = listOf(
-            "Times New Roman",  // Windows default serif
-            "Times",            // macOS classic serif
-            "Georgia",          // Widely used web font
-            "Roboto Slab",      // Google’s web-safe serif
-            "Noto Serif",       // Google’s multilingual serif
-            "DejaVu Serif",     // Common Linux serif
-            "Liberation Serif", // Metric-compatible with Times
-            "Nimbus Roman",     // Ghostscript fallback
-            "FreeSerif"         // Full Unicode serif
-        )
+        private val winMonospaceFonts = listOf("Consolas", "Courier New", "Lucida Console", "Courier")
+        private val winSerifFonts = listOf("Times New Roman", "Georgia", "Cambria", "Serif")
+        private val winSansFonts = listOf("Segoe UI", "Arial", "Tahoma", "Verdana", "Sans")
 
-        private val preferredSansFonts = listOf(
-            "Helvetica",        // macOS default sans-serif
-            "Arial",            // Windows default sans-serif
-            "Segoe UI",         // Windows UI font
-            "Roboto",           // Android, Chrome OS, and Chrome browser
-            "Noto Sans",        // Google’s fallback for web fonts
-            "DejaVu Sans",      // Common on Linux, fallback for sans
-            "Liberation Sans",  // Metric-compatible with Arial
-            "Cantarell",        // GNOME default sans
-            "Ubuntu",           // Ubuntu system font
-            "Verdana",          // Windows screen-optimized
-            "Tahoma",           // Windows XP–7 UI font
-            "Nimbus Sans"       // Ghostscript/FreeType fallback
-        )
+        private val macMonospaceFonts = listOf("Menlo", "Monaco", "Courier", "Courier New")
+        private val macSerifFontsOS = listOf("Times", "Georgia", "Palatino", "Serif")
+        private val macSansFonts = listOf("Helvetica", "Arial", "San Francisco", "Sans")
+
+        private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "Liberation Mono", "Noto Mono", "FreeMono", "Courier")
+        private val linuxSerifFonts = listOf("DejaVu Serif", "Liberation Serif", "Noto Serif", "FreeSerif", "Times")
+        private val linuxSansFonts = listOf("DejaVu Sans", "Liberation Sans", "Noto Sans", "FreeSans", "Ubuntu", "Cantarell", "Sans")
+
+        private val isLinux = Platform.osFamily == OsFamily.LINUX
+        private val isWindows = Platform.osFamily == OsFamily.WINDOWS
+        private val isMac = Platform.osFamily == OsFamily.MACOSX
+        
+        private val preferredMonospaceFonts = when (Platform.osFamily) {
+            OsFamily.WINDOWS -> winMonospaceFonts
+            OsFamily.MACOSX -> macMonospaceFonts
+            OsFamily.LINUX -> linuxMonospaceFonts
+            else -> linuxMonospaceFonts + macMonospaceFonts + winMonospaceFonts
+        }
+        
+        private val preferredSerifFonts = when (Platform.osFamily) {
+            OsFamily.WINDOWS -> winSerifFonts
+            OsFamily.MACOSX -> macSerifFontsOS
+            OsFamily.LINUX -> linuxSerifFonts
+            else -> linuxSerifFonts + macSerifFontsOS + winSerifFonts
+        }
+        
+        private val preferredSansFonts = when (Platform.osFamily) {
+            OsFamily.WINDOWS -> winSansFonts
+            OsFamily.MACOSX -> macSansFonts
+            OsFamily.LINUX -> linuxSansFonts
+            else -> linuxSansFonts + macSansFonts + winSansFonts
+        }
 
         private const val logEnabled = false
         private fun log(msg: () -> String) {
@@ -91,29 +89,32 @@ class MagickFontManager {
     private val fallbackFont: ResolvedFont = sansFont
 
     init {
-        println("Monospace font: ${monospaceFont.fontFamily}")
-        println("Serif font: ${serifFont.fontFamily}")
-        println("Sans font: ${sansFont.fontFamily}")
-        println("------------------------\n\n")
+        log { "Monospace font: ${monospaceFont.fontFamily}" }
+        log { "Serif font: ${serifFont.fontFamily}" }
+        log { "Sans font: ${sansFont.fontFamily}" }
+        log { "------------------------\n\n" }
 
-        allFamilies()
+        if (logEnabled) {
+            val families = allFamilies()
+            log { "Found ${families.size} families" }
+            families.forEach { (family, fonts) ->
+                log { "Family: $family${fonts.joinToString(prefix = "\n\t")}" }
+            }
+        }
     }
 
     fun resolveFont(fontFamily: String): ResolvedFont {
         return resolveFont(listOf(fontFamily))
     }
 
-    fun allFamilies() {
+    fun allFamilies(): Map<String, List<String>> {
         val types = getTypeInfoList("*")
         val families = types
             .filter { it.stealth == 0u }
             .groupBy { it.family!!.toKString() }
             .mapValues { (_, fonts) -> fonts.map { it.name?.toKStringFromUtf8() ?: "unknown" } }
 
-        log { "Found ${families.size} families" }
-        families.forEach { (family, fonts) ->
-            log { "Family: $family${fonts.joinToString(prefix = "\n\t")}" }
-        }
+        return families
     }
 
     private fun resolveFont(fontFamilies: List<String>): ResolvedFont {
