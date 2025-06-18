@@ -28,13 +28,13 @@ internal object Hyperlink {
     class HyperlinkElement(
         private val text: String,
         private val href: String,
-    ) : RichTextNode.RichSpansCollection() {
+    ) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
             return listOf(
                 SvgAElement().apply {
                     href().set(href)

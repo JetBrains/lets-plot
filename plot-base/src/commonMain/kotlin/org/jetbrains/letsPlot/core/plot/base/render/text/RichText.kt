@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichSpan
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichASpan
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichSpanElement
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichASpanElement
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -45,7 +45,7 @@ object RichText {
     ): Double {
         val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
         val widths = lines.map { line ->
-            line.sumOf { term -> (term as? RichTextNode.RichSpansCollection)?.estimateWidth(font, widthCalculator) ?: 0.0 }
+            line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font, widthCalculator) ?: 0.0 }
         }
 
         return widths.maxOrNull() ?: 0.0
@@ -148,8 +148,8 @@ object RichText {
 
     internal fun fillTextTermGaps(
         text: String,
-        specialTerms: List<Pair<RichTextNode.RichSpansCollection, IntRange>>
-    ): List<RichTextNode.RichSpansCollection> {
+        specialTerms: List<Pair<RichTextNode.RichSpan, IntRange>>
+    ): List<RichTextNode.RichSpan> {
         fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
             if (toSubtract.isEmpty()) {
                 return listOf(range)
@@ -180,10 +180,10 @@ object RichText {
         val wrappedLines = mutableListOf(mutableListOf<RichTextNode>())
         line.forEach { term ->
             val availableSpace =
-                wrapLength - wrappedLines.last().sumOf { (it as? RichTextNode.RichSpansCollection)?.visualCharCount ?: 0 }
+                wrapLength - wrappedLines.last().sumOf { (it as? RichTextNode.RichSpan)?.visualCharCount ?: 0 }
             when {
-                term is RichTextNode.RichSpansCollection && term.visualCharCount <= availableSpace -> wrappedLines.last().add(term)
-                term is RichTextNode.RichSpansCollection && term.visualCharCount <= wrapLength -> wrappedLines.add(mutableListOf(term)) // no need to split
+                term is RichTextNode.RichSpan && term.visualCharCount <= availableSpace -> wrappedLines.last().add(term)
+                term is RichTextNode.RichSpan && term.visualCharCount <= wrapLength -> wrappedLines.add(mutableListOf(term)) // no need to split
                 term !is RichTextNode.Text -> wrappedLines.add(mutableListOf(term)) // can't fit in one line, but can't split power or link
                 else -> { // split text
                     wrappedLines.last().takeIf { availableSpace > 0 }
@@ -229,9 +229,9 @@ object RichText {
         val stack = mutableListOf(RenderState())
         val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
             val svg = mutableListOf<SvgElement>()
-            val previousSpans = mutableListOf<RichTextNode.RichSpansCollection>()
-            val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpansCollection)?.estimateWidth(font, widthCalculator) ?: 0.0 }
-            var isFirstRichSpansCollectionInLine = true
+            val prefix = mutableListOf<RichTextNode.RichSpan>()
+            val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font, widthCalculator) ?: 0.0 }
+            var isFirstRichSpanInLine = true
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -241,15 +241,15 @@ object RichText {
                     is RichTextNode.EmphasisEnd,
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
-                    is RichTextNode.RichSpansCollection -> {
+                    is RichTextNode.RichSpan -> {
                         // Based on the whole line the `anchorCoefficient` was calculated
                         // and if it is not null, it means that the line contains [at least] a fraction node,
                         // and then we need to add x attribute to the first tspan in the line with shift,
                         // that corresponds to the anchorCoefficient.
                         val x = anchorCoefficient?.let { -it * lineWidth }
-                        svg += term.render(stack.last(), previousSpans.toList(), x, isFirstRichSpansCollectionInLine)
-                        previousSpans.add(term)
-                        isFirstRichSpansCollectionInLine = false
+                        svg += term.render(stack.last(), prefix.toList(), x, isFirstRichSpanInLine)
+                        prefix.add(term)
+                        isFirstRichSpanInLine = false
                     }
                 }
             }
@@ -271,37 +271,40 @@ object RichText {
             override fun toString() = "ColorStart(color=$color)"
         }
 
-        abstract class RichSpansCollection : RichTextNode {
+        abstract class RichSpan : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan<SvgElement>>
+            abstract fun render(context: RenderState, prefix: List<RichSpan>): List<RichSpanElement<SvgElement>>
 
-            fun render(context: RenderState, previousSpans: List<RichSpansCollection>, x: Double?, isFirstRichSpansCollectionInLine: Boolean): List<SvgElement> {
-                return toRichSpans(context, previousSpans).mapIndexed { i, richSpan ->
-                    richSpan.x = when {
-                        // If richSpan.x == null than x should be defined only for the first span in the line
-                        richSpan.x == null -> if (isFirstRichSpansCollectionInLine && i == 0) x else null
-                        // If richSpan.x != null, it means that it should be shifted
-                        else -> richSpan.x!! + (x ?: 0.0)
+            // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
+            // and then each of them is rendered to SVG element, taking into account the additional x parameter;
+            // each resulting SVG element is a span-like element (SvgTSpanElement or SvgAElement with SvgTSpanElement as a child)
+            fun render(context: RenderState, prefix: List<RichSpan>, x: Double?, isFirstRichSpanInLine: Boolean): List<SvgElement> {
+                return render(context, prefix).mapIndexed { i, richSpanElement ->
+                    richSpanElement.x = when {
+                        // If richSpanElement.x == null than x should be defined only for the first span in the line
+                        richSpanElement.x == null -> if (isFirstRichSpanInLine && i == 0) x else null
+                        // If richSpanElement.x != null, it means that it should be shifted
+                        else -> richSpanElement.x!! + (x ?: 0.0)
                     }
-                    richSpan.updateSvgXAttribute().svg
+                    richSpanElement.updateSvgXAttribute().svg
                 }
             }
 
-            abstract class RichSpan<T : SvgElement>(val svg: T, var x: Double? = null) {
-                abstract fun updateSvgXAttribute(): RichSpan<T>
+            abstract class RichSpanElement<T : SvgElement>(val svg: T, var x: Double? = null) {
+                abstract fun updateSvgXAttribute(): RichSpanElement<T>
             }
 
-            class RichTSpan(svg: SvgTSpanElement, x: Double? = null) : RichSpan<SvgTSpanElement>(svg, x) {
-                override fun updateSvgXAttribute(): RichSpan<SvgTSpanElement> {
+            class RichTSpanElement(svg: SvgTSpanElement, x: Double? = null) : RichSpanElement<SvgTSpanElement>(svg, x) {
+                override fun updateSvgXAttribute(): RichSpanElement<SvgTSpanElement> {
                     x?.let { svg.setAttribute(SvgTextContent.X, it) }
                     return this
                 }
             }
 
-            class RichASpan(svg: SvgAElement, x: Double? = null) : RichSpan<SvgAElement>(svg, x) {
-                override fun updateSvgXAttribute(): RichSpan<SvgAElement> {
+            class RichASpanElement(svg: SvgAElement, x: Double? = null) : RichSpanElement<SvgAElement>(svg, x) {
+                override fun updateSvgXAttribute(): RichSpanElement<SvgAElement> {
                     val tSpan = svg.children().single() as SvgTSpanElement
                     x?.let { tSpan.setAttribute(SvgTextContent.X, it) }
                     return this
@@ -311,14 +314,14 @@ object RichText {
 
         class Text(
             val text: String
-        ) : RichSpansCollection() {
+        ) : RichSpan() {
             override val visualCharCount: Int = text.length
 
             override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
                 return widthCalculator(text, font)
             }
 
-            override fun toRichSpans(context: RenderState, previousSpans: List<RichSpansCollection>): List<RichSpan<SvgElement>> {
+            override fun render(context: RenderState, prefix: List<RichSpan>): List<RichSpanElement<SvgElement>> {
                 return SvgTSpanElement(text)
                     .apply(context::apply)
                     .enrich()
@@ -329,17 +332,17 @@ object RichText {
         }
     }
 
-    fun SvgTSpanElement.enrich(x: Double? = null): RichSpan<SvgElement> {
+    fun SvgTSpanElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
         @Suppress("UNCHECKED_CAST")
-        return RichTSpan(this, x) as RichSpan<SvgElement>
+        return RichTSpanElement(this, x) as RichSpanElement<SvgElement>
     }
 
-    fun SvgAElement.enrich(x: Double? = null): RichSpan<SvgElement> {
+    fun SvgAElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
         @Suppress("UNCHECKED_CAST")
-        return RichASpan(this, x) as RichSpan<SvgElement>
+        return RichASpanElement(this, x) as RichSpanElement<SvgElement>
     }
 
-    fun SvgElement.enrich(x: Double? = null): RichSpan<SvgElement> {
+    fun SvgElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
         return when (this) {
             is SvgTSpanElement -> enrich(x)
             is SvgAElement -> enrich(x)

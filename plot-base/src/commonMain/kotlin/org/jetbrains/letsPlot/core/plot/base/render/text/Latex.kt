@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpansCollection.RichSpan
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichSpanElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
@@ -105,7 +105,7 @@ internal class Latex(
         }
     }
 
-    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
+    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -123,13 +123,13 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
         }).enrich()
-        val indexTSpanElements = content.toRichSpans(ctx, previousSpans).map { richSpan ->
-            richSpan.svg.apply {
+        val indexTSpanElements = content.render(ctx, prefix).map { richSpanElement ->
+            richSpanElement.svg.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
                 }
             }
-            richSpan
+            richSpanElement
         }
         // The following 'tspan' element is used to restore the baseline after the index
         // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
@@ -256,7 +256,7 @@ internal class Latex(
         }
     }
 
-    internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) : RichTextNode.RichSpansCollection() {
+    internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) : RichTextNode.RichSpan() {
         protected abstract fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
 
         fun flatListOfAllDescendants(): List<LatexNode> {
@@ -274,14 +274,14 @@ internal class Latex(
         }
     }
 
-    internal inner class LatexElement(val node: LatexNode) : RichTextNode.RichSpansCollection() {
+    internal inner class LatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = node.visualCharCount
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             node.estimateWidth(font, widthCalculator)
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
-            return node.toRichSpans(context, previousSpans)
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
+            return node.render(context, prefix)
         }
     }
 
@@ -291,7 +291,7 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).enrich())
         }
     }
@@ -302,14 +302,14 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
-            val richSpans = mutableListOf<RichSpan<SvgElement>>()
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
+            val richSpanElements = mutableListOf<RichSpanElement<SvgElement>>()
             val previousLatexNodes = mutableListOf<LatexNode>()
             for (child in children) {
-                richSpans.addAll(child.toRichSpans(context, previousSpans + previousLatexNodes.toList()))
+                richSpanElements.addAll(child.render(context, prefix + previousLatexNodes.toList()))
                 previousLatexNodes.add(child)
             }
-            return richSpans
+            return richSpanElements
         }
     }
 
@@ -319,8 +319,8 @@ internal class Latex(
             return content.estimateWidth(font, widthCalculator)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, previousSpans = previousSpans)
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
+            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefix = prefix)
         }
     }
 
@@ -330,8 +330,8 @@ internal class Latex(
             return content.estimateWidth(font, widthCalculator)
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, previousSpans = previousSpans)
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
+            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefix = prefix)
         }
     }
 
@@ -345,27 +345,27 @@ internal class Latex(
             return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
         }
 
-        override fun toRichSpans(context: RenderState, previousSpans: List<RichTextNode.RichSpansCollection>): List<RichSpan<SvgElement>> {
-            val prefixWidth = previousSpans.sumOf { it.estimateWidth(font, widthCalculator) }
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
+            val prefixWidth = prefix.sumOf { it.estimateWidth(font, widthCalculator) }
             val fractionWidth = estimateWidth(font, widthCalculator)
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font, widthCalculator)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
-            val numeratorTSpanElements = numerator.toRichSpans(context, previousSpans).mapIndexed { i, richSpan ->
-                richSpan.svg.apply {
+            val numeratorTSpanElements = numerator.render(context, prefix).mapIndexed { i, richSpanElement ->
+                richSpanElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
                         setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
                     }
-                }.enrich(if (i == 0) { fractionCenter } else { richSpan.x })
+                }.enrich(if (i == 0) { fractionCenter } else { richSpanElement.x })
             }
-            val denominatorTSpanElements = denominator.toRichSpans(context, previousSpans).mapIndexed { i, richSpan ->
-                richSpan.svg.apply {
+            val denominatorTSpanElements = denominator.render(context, prefix).mapIndexed { i, richSpanElement ->
+                richSpanElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
                         setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
                     }
-                }.enrich(if (i == 0) { fractionCenter } else { richSpan.x })
+                }.enrich(if (i == 0) { fractionCenter } else { richSpanElement.x })
             }
             val fractionBarTSpanElement = context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
                 setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
