@@ -34,7 +34,6 @@ object TestUtil {
     }
 
     fun Iterable<SvgTextElement>.lineParts(): List<List<String>> = map { it.stringParts() }
-    fun Iterable<SvgTextElement>.tspans(): List<List<SvgTSpanElement>> = map { it.tspans() }
 
 
     fun assertTSpan(

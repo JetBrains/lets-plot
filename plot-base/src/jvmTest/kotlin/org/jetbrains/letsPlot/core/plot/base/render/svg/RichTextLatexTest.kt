@@ -544,7 +544,9 @@ class RichTextLatexTest {
 
         assertThat(svg.children()).hasSize(5)
         val linkText = svg.children().first().children().single() as SvgTSpanElement
-        val (num, denom, bar, restoreShift) = svg.children().drop(1) as List<SvgTSpanElement>
+        @Suppress("UNCHECKED_CAST")
+        val tspans = svg.children().drop(1) as List<SvgTSpanElement>
+        val (num, denom, bar, restoreShift) = tspans
         val level = TestUtil.FormulaLevel()
         var expectedWidth = 0.0
 
