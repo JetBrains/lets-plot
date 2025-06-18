@@ -103,6 +103,8 @@ object TestUtil {
         }
     }
 
+    // Represents a level of formula rendering (superscript, subscript, fraction, etc.)
+    // Helps to calculate the size and dy (vertical shift) for the text elements in test cases
     class FormulaLevel {
         private val shifts: MutableList<Shift> = mutableListOf()
 

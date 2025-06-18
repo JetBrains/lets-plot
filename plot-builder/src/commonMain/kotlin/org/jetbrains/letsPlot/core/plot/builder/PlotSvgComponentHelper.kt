@@ -160,7 +160,7 @@ internal object PlotSvgComponentHelper {
             justification,
             rotation
         )
-        textLabel.setFontSize(labelSpec.font.size.toDouble())
+        textLabel.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
         textLabel.setLineHeight(lineHeight)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)

@@ -140,7 +140,7 @@ abstract class LegendBox : SvgComponent() {
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setLineHeight(lineHeight)
-        label.setFontSize(titleSize.y)
+        label.setFontSize(titleSize.y) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.moveTo(pos)
         return label
     }
