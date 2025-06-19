@@ -17,6 +17,7 @@ val artifactBaseName = "lets-plot-idea-plugin"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
+val mavenPublishUrl = rootProject.project.extra["mavenPublishUrl"]
 
 val packagePrefix = "lpip"
 
@@ -250,6 +251,9 @@ publishing {
     repositories {
         mavenLocal {
             url = uri("$mavenLocalPath")
+        }
+        maven {
+            url = uri("$mavenPublishUrl")
         }
     }
 }

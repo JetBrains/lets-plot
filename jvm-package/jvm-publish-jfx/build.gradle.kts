@@ -17,6 +17,7 @@ val artifactBaseName = "lets-plot-jfx"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
+val mavenPublishUrl = rootProject.project.extra["mavenPublishUrl"]
 
 val jvmJarJfx by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
@@ -86,6 +87,9 @@ publishing {
     repositories {
         mavenLocal {
             url = uri("$mavenLocalPath")
+        }
+        maven {
+            url = uri("$mavenPublishUrl")
         }
     }
 }
