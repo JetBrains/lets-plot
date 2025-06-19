@@ -40,7 +40,7 @@ python_extension_debug_build=false
 # -------------------------------------------------------------------
 # Sonatype settings
 #
-# User with deployment permission to Sonatype Nexus repository.
+# User with deployment permission to Sonatype Central Repository.
 #
 # In addition, each publication must be signed using a PGP key.
 # Create file "~/.gradle/gradle.properties":
@@ -50,4 +50,4 @@ python_extension_debug_build=false
 # -------------------------------------------------------------------
 #sonatype.username=
 #sonatype.password=
-#sonatype.profileID=
+
