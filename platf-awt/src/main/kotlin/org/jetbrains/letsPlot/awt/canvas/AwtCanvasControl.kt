@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.commons.encoding.DataImage
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -93,7 +93,7 @@ class AwtCanvasControl(
     }
 
     private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-        val img = DataImage.decode(dataUrl)
+        val img = Png.decodeDataImage(dataUrl)
 
         val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
         bufImg.setRGB(0, 0, img.width, img.height, img.argbInts, 0, img.width)

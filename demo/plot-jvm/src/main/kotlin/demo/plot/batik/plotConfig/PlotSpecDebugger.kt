@@ -106,8 +106,9 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             .let(::fetchVegaLiteData)
 
         plotPanel.components.forEach(plotPanel::remove)
+        val processedSpec = MonolithicCommon.processRawSpecs(spec)
         plotPanel.add(DefaultPlotPanelBatik(
-            processedSpec = MonolithicCommon.processRawSpecs(spec),
+            processedSpec = processedSpec,
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,

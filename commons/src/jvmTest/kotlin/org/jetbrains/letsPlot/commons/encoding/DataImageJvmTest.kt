@@ -14,7 +14,7 @@ class DataImageJvmTest {
 
     @Test
     fun selfGeneratedArgb6x2() {
-        val img = DataImage.encode(width = 6, height = 2, rgba = intArrayOf(
+        val img = Png.encodeDataImage(width = 6, height = 2, rgba = intArrayOf(
             0xFFFF0000.toInt(), // Red
             0xFF00FF00.toInt(), // Green
             0xFF0000FF.toInt(), // Blue
@@ -30,7 +30,7 @@ class DataImageJvmTest {
             0xFFFF0000.toInt(), // Red
         ))
 
-        val bitmap = DataImage.decode(img)
+        val bitmap = Png.decodeDataImage(img)
 
         assertEquals(6, bitmap.width)
         assertEquals(2, bitmap.height)
@@ -51,7 +51,7 @@ class DataImageJvmTest {
 
     @Test
     fun testImageDataUrl() {
-        val bitmap = DataImage.decode("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGklEQVQI1y3BoQEAAAjAIIKPe/ksgkiiBusddmUGgIjqhKcAAAAASUVORK5CYII=")
+        val bitmap = Png.decodeDataImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAGklEQVQI1y3BoQEAAAjAIIKPe/ksgkiiBusddmUGgIjqhKcAAAAASUVORK5CYII=")
         assertEquals(3, bitmap.width)
         assertEquals(2, bitmap.height)
 
@@ -66,7 +66,7 @@ class DataImageJvmTest {
     @Ignore // re-check pixels and update expected values
     @Test
     fun testZeroCompression() {
-        val bitmap = DataImage.decode("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAJUlEQVQIHQEaAOX/AP8AAP8A/wD/AAD//wQAAACBAAAAAAAAAAB2ZQaAGFqUUAAAAABJRU5ErkJggg==")
+        val bitmap = Png.decodeDataImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAJUlEQVQIHQEaAOX/AP8AAP8A/wD/AAD//wQAAACBAAAAAAAAAAB2ZQaAGFqUUAAAAABJRU5ErkJggg==")
         assertEquals(3, bitmap.width)
         assertEquals(2, bitmap.height)
         assertTrue(0xFFFF0000 == bitmap.argbInts[0].toLong(), "Expected first pixel to be red, but was ${bitmap.argbInts[0].toUInt().toString(16)}")
@@ -77,7 +77,7 @@ class DataImageJvmTest {
     @Ignore // re-check pixels and update expected values
     @Test
     fun rgba6x2(){
-        val bitmap = DataImage.decode("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAACCAYAAAB7Xa1eAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAJElEQVQI1zXGsQ0AMAjAsETq34jL0wlPNsgAI9z7kxYkRJr7B2bADIfWTpmCAAAAAElFTkSuQmCC")
+        val bitmap = Png.decodeDataImage("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAACCAYAAAB7Xa1eAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAJElEQVQI1zXGsQ0AMAjAsETq34jL0wlPNsgAI9z7kxYkRJr7B2bADIfWTpmCAAAAAElFTkSuQmCC")
         assertEquals(6, bitmap.width)
         assertEquals(2, bitmap.height)
 
