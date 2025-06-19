@@ -16,7 +16,7 @@ enable_magick_canvas=false
 enable_python_package=false
 
 # Build only debug version of python-extension module. This improves build time significantly.
-python_extension_debug_build=true
+python_extension_debug_build=false
 
 
 # -------------------------------------------------------------------
