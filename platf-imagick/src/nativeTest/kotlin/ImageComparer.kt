@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import platform.posix.*
@@ -28,7 +29,7 @@ class ImageComparer(
     fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
         val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
-        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0)
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = MagickFontManager.DEFAULT)
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
@@ -42,7 +43,7 @@ class ImageComparer(
         val plotSpecWidth = plotFigure.preferredWidth ?: error("Plot figure has no preferred width")
         val plotSpecHeight = plotFigure.preferredHeight ?: error("Plot figure has no preferred height")
 
-        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0)
+        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0, fontManager = MagickFontManager.DEFAULT)
         plotFigure.mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas

@@ -28,6 +28,7 @@ class MagickCanvasControl(
     val w: Int,
     val h: Int,
     override val pixelDensity: Double,
+    private val fontManager: MagickFontManager,
 ) : CanvasControl {
     val children = mutableListOf<Canvas>()
 
@@ -68,7 +69,7 @@ class MagickCanvasControl(
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return MagickCanvas.create(size, pixelDensity)
+        return MagickCanvas.create(size, pixelDensity, fontManager)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
