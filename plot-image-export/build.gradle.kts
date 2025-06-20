@@ -21,6 +21,7 @@ val batikVersion = project.extra["batik_version"]
 val hamcrestVersion = project.extra["hamcrest_version"]
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"]
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
+val mavenPublishUrl = rootProject.project.extra["mavenPublishUrl"]
 val mockitoVersion = project.extra["mockito_version"]
 val tiffioGroupId = "com.twelvemonkeys.imageio"
 val tiffioArtifact = "imageio-tiff"
@@ -165,6 +166,9 @@ publishing {
     repositories {
         mavenLocal {
             url = uri("$mavenLocalPath")
+        }
+        maven {
+            url = uri("$mavenPublishUrl")
         }
     }
 }
