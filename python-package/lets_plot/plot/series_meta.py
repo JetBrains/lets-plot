@@ -136,14 +136,13 @@ def _infer_type_dict(var_name: str, var_content) -> str:
     if len(type_set) == 0:
         return TYPE_UNKNOWN
 
-    lp_dtype = TYPE_UNKNOWN
-
     if len(type_set) > 1:
         if all(issubclass(type_obj, int) or issubclass(type_obj, float) for type_obj in type_set):
-            lp_dtype = TYPE_FLOATING
+            return TYPE_FLOATING
         else:
             return 'unknown(mixed types)'
 
+    lp_dtype = TYPE_UNKNOWN
     type_obj = list(type_set)[0]
     if type_obj == bool:
         lp_dtype = TYPE_BOOLEAN
