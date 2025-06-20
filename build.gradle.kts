@@ -146,11 +146,13 @@ if (project.hasProperty("build_release")) {
 val localMavenRepository by extra { "$rootDir/.maven-publish-dev-repo" }
 // define the Maven Repository URL. Currently set to a local path for uploading
 // artifacts to the Sonatype Central Repository.
-val mavenPublishUrl by extra { layout.buildDirectory.dir("maven/artifacts").get().toString() }
+val mavenReleasePublishUrl by extra { layout.buildDirectory.dir("maven/artifacts").get().toString() }
+// define Maven Snapshot repository URL.
+val mavenSnapshotPublishUrl by extra { "https://central.sonatype.com/repository/maven-snapshots/" }
 
 // define Sonatype Central Repository settings:
-val sonatypeUsername = extra.getOrNull("sonatype.username") ?: ""
-val sonatypePassword = extra.getOrNull("sonatype.password") ?: ""
+val sonatypeUsername by extra { extra.getOrNull("sonatype.username") ?: "" }
+val sonatypePassword by extra { extra.getOrNull("sonatype.password") ?: "" }
 
 // Publish some sub-projects as Kotlin Multi-project libraries.
 val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
@@ -167,7 +169,7 @@ val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
 val packageMavenArtifacts by tasks.registering(Zip::class) {
     group = letsPlotTaskGroup
 
-    from(mavenPublishUrl)
+    from(mavenReleasePublishUrl)
     archiveFileName.set("${project.name}-artifacts.zip")
     destinationDirectory.set(layout.buildDirectory)
 }
@@ -402,7 +404,16 @@ subprojects {
                     url = uri(localMavenRepository)
                 }
                 maven {
-                    url = uri(mavenPublishUrl)
+                    if (version.toString().endsWith("-SNAPSHOT")) {
+                        url = uri(mavenSnapshotPublishUrl)
+
+                        credentials {
+                            username = sonatypeUsername.toString()
+                            password = sonatypePassword.toString()
+                        }
+                    } else {
+                        url = uri(mavenReleasePublishUrl)
+                    }
                 }
             }
         }

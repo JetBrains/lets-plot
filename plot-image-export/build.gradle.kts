@@ -21,7 +21,6 @@ val batikVersion = project.extra["batik_version"]
 val hamcrestVersion = project.extra["hamcrest_version"]
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"]
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
-val mavenPublishUrl = rootProject.project.extra["mavenPublishUrl"]
 val mockitoVersion = project.extra["mockito_version"]
 val tiffioGroupId = "com.twelvemonkeys.imageio"
 val tiffioArtifact = "imageio-tiff"
@@ -168,7 +167,17 @@ publishing {
             url = uri("$mavenLocalPath")
         }
         maven {
-            url = uri("$mavenPublishUrl")
+            // For SNAPSHOT publication use separate URL and credentials:
+            if (version.toString().endsWith("-SNAPSHOT")) {
+                url = uri(rootProject.project.extra["mavenSnapshotPublishUrl"].toString())
+
+                credentials {
+                    username = rootProject.project.extra["sonatypeUsername"].toString()
+                    password = rootProject.project.extra["sonatypePassword"].toString()
+                }
+            } else {
+                url = uri(rootProject.project.extra["mavenReleasePublishUrl"].toString())
+            }
         }
     }
 }

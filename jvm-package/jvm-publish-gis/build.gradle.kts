@@ -18,7 +18,6 @@ val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val ktorVersion = project.extra["ktor_version"] as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
-val mavenPublishUrl = rootProject.project.extra["mavenPublishUrl"]
 
 val jvmJarGis by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
@@ -92,7 +91,17 @@ publishing {
             url = uri("$mavenLocalPath")
         }
         maven {
-            url = uri("$mavenPublishUrl")
+            // For SNAPSHOT publication use separate URL and credentials:
+            if (version.toString().endsWith("-SNAPSHOT")) {
+                url = uri(rootProject.project.extra["mavenSnapshotPublishUrl"].toString())
+
+                credentials {
+                    username = rootProject.project.extra["sonatypeUsername"].toString()
+                    password = rootProject.project.extra["sonatypePassword"].toString()
+                }
+            } else {
+                url = uri(rootProject.project.extra["mavenReleasePublishUrl"].toString())
+            }
         }
     }
 }

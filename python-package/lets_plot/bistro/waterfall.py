@@ -32,7 +32,8 @@ def waterfall_plot(data, x, y, *,
         Name of a numeric variable.
     measure : str
         Kind of a calculation.
-        Values in 'measure' column could be:
+        It takes the name of a data column.
+        The values in the column could be:
 
         'absolute' - the value is shown as is;
         'relative' - the value is shown as a difference from the previous value;
@@ -44,10 +45,14 @@ def waterfall_plot(data, x, y, *,
         Color of the box boundary lines.
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color lines by the direction of the flow.
+        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
+        You could use these names to change the default colors with the `scale_color_manual()` function.
     fill : str
         Fill color of the boxes.
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color boxes by the direction of the flow.
+        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
+        You could use these names to change the default colors with the `scale_fill_manual()` function.
     size : float, default=0.0
         Line width of the box boundary lines.
     alpha : float
@@ -104,6 +109,8 @@ def waterfall_plot(data, x, y, *,
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_text()` to specify parameters.
         Use 'flow_type' for `color` parameter of the `element_text()` to color labels by the direction of the flow.
+        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
+        You could use these names to change the default colors with the `scale_color_manual()` function.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -154,49 +161,38 @@ def waterfall_plot(data, x, y, *,
         waterfall_plot(data, 'x', 'y')
 
     |
+
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 21-25
 
         import numpy as np
         from lets_plot import *
         from lets_plot.bistro.waterfall import *
-
         LetsPlot.setup_html()
-
         categories = list("ABCDEF")
-
         np.random.seed(42)
         data = {
             'x': categories,
             'y': np.random.normal(size=len(categories))
         }
-
-        rect_data = {
+        band_data = {
             'xmin': [-0.5, 2.5],
-            'ymin': [0, 0],
             'xmax': [2.5, 5.5],
-            'ymax': [2.55, 2.55],
-            'name': ['foo', 'bar']
+            'name': ['Q1', 'Q2']
         }
-
         text_data = {
             'x': [0, 3],
             'y': [2.7, 2.7],
-            'name': ['Foo', 'Bar']
+            'name': ['Q1', 'Q2']
         }
-
-        waterfall_plot(data, 'x', 'y',
-                       background_layers=[
-                           geom_rect(
-                               aes(xmin='xmin', ymin='ymin', xmax='xmax', ymax='ymax', fill='name', color='name'),
-                               data=rect_data,
-                               alpha=0.2
-                           )
-                       ]) + \\
+        waterfall_plot(data, 'x', 'y', label_format='.2f',
+                       background_layers=geom_band(
+                           aes(xmin='xmin', xmax='xmax', fill='name', color='name'),
+                           data=band_data, alpha=0.2
+                       )) + \\
             geom_text(aes(x='x', y='y', label='name'), data=text_data, size=10) + \\
-            ggsize(750, 450) + \\
-            ggtitle("Waterfall with custom layers")
+            ggtitle("Waterfall with background layers")
 
     |
 
@@ -254,7 +250,7 @@ def waterfall_plot(data, x, y, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 17-18
 
         from lets_plot import *
         from lets_plot.bistro.waterfall import *
@@ -262,11 +258,19 @@ def waterfall_plot(data, x, y, *,
         data = {
             'company': ["Badgersoft"] * 7 + ["AIlien Co."] * 7,
             'accounts': ["initial", "revenue", "costs", "Q1", "revenue", "costs", "Q2"] * 2,
-            'values': [200, 200, -100, None, 250, -100, None, \\
+            'values': [200, 200, -100, None, 250, -100, None,
                        150, 50, -100, None, 100, -100, None],
             'measure': ['absolute', 'relative', 'relative', 'total', 'relative', 'relative', 'total'] * 2,
         }
-        waterfall_plot(data, 'accounts', 'values', measure='measure', group='company') + \\
+        colors = {
+            "Absolute": "darkseagreen",
+            "Increase": "palegoldenrod",
+            "Decrease": "paleturquoise",
+            "Total": "palegreen",
+        }
+        waterfall_plot(data, 'accounts', 'values', measure='measure', group='company',
+                       size=.75, label=element_text(color="black")) + \\
+            scale_fill_manual(values=colors) + \\
             facet_wrap(facets='company', scales='free_x')
 
     """

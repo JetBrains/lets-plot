@@ -63,7 +63,7 @@ class BoxplotOutlierStat(
                 return mutableMapOf()
             }
 
-            val binnedData: MutableMap<Double, MutableList<Double>> = HashMap()
+            val binnedData: MutableMap<Double, MutableList<Double>> = LinkedHashMap()
             for ((x, y) in xyPairs) {
                 binnedData.getOrPut(x) { ArrayList() }.add(y)
             }
