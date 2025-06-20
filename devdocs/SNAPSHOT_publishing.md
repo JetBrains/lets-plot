@@ -25,7 +25,6 @@ In the `local.properties` file:
 ```properties
 sonatype.username=<your Sonatype username>
 sonatype.password=<your Sonatype access token>
-sonatype.profileID=<your Sonatype profile ID>
 ```
 
 #### SNAPSHOT Version
@@ -48,7 +47,7 @@ Make sure the `version` in the root `build.gradle.kts` file is a SNAPSHOT versio
 
 Check uploaded artifacts here:
 
-https://oss.sonatype.org/content/repositories/snapshots/org/jetbrains/lets-plot/
+https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/org/jetbrains/lets-plot/
                 
 #### Using SNAPSHOT artifacts
 
@@ -58,7 +57,7 @@ Add snapshots repository to the `repositories` section of the `build.gradle.kts`
 repositories {
     mavenCentral()
     // SNAPSHOTS
-    maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+    maven(url = "https://central.sonatype.com/repository/maven-snapshots/")
 }
 ```
 
