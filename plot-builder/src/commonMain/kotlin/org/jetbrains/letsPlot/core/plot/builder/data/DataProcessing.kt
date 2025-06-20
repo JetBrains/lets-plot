@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupMapperHelper.SINGLE_GROUP
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupMapperHelper.createGroupMapperByGroupSizes
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupUtil.indicesByGroup
+import kotlin.math.roundToInt
 
 object DataProcessing {
 
@@ -327,7 +328,19 @@ object DataProcessing {
             }.associateWith {
                 val aes = aesByStatVar.getValue(it)
                 val transform = transformForAes(aes)
-                val statSerie = statData.getNumeric(it)
+                val statSerie = statData.getNumeric(it).let { serie ->
+                    if (transform is DiscreteTransform) {
+                        // Stats like 'bin' are generally not applicable to discrete series.
+                        // However, we can make them work by rounding stat values to integers,
+                        // which allows the inverse transform to be applied.
+                        serie.map {
+                            it?.toDouble()?.let { if (it.isFinite()) it.roundToInt().toDouble() else it }
+                        }
+                    } else {
+                        serie
+                    }
+                }
+
                 transform.applyInverse(statSerie)
             }
 
