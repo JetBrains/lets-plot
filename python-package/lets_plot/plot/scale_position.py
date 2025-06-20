@@ -722,7 +722,7 @@ def scale_x_discrete(name=None, *,
         LetsPlot.setup_html()
         np.random.seed(43)
         scores = {'rating': np.random.randint(3, 6, size=10)}
-        ggplot(scores, aes(x='rating')) + geom_bar() + \\
+        ggplot(scores, aes(x=as_discrete('rating'))) + geom_bar() + \\
             scale_x_discrete(name='rating', format='.1f')
 
     """
@@ -1012,7 +1012,10 @@ def scale_x_datetime(name=None, *,
                      position=None
                      ):
     """
-    Position scale x for date/time data.
+    Position scale for the x-axis with date/time data.
+    The input is expected to be either a series of integers representing milliseconds since the Unix epoch, or Python datetime objects.
+    Assumes UTC timezone if no timezone information is present in the data (naive datetime).
+    For timezone-aware datetime objects, the timezone information from the data is preserved.
 
     Parameters
     ----------
@@ -1099,7 +1102,10 @@ def scale_y_datetime(name=None, *,
                      position=None
                      ):
     """
-    Position scale y for date/time data.
+    Position scale for the y-axis with date/time data.
+    The input is expected to be either a series of integers representing milliseconds since the Unix epoch, or Python datetime objects.
+    Assumes UTC timezone if no timezone information is present in the data (naive datetime).
+    For timezone-aware datetime objects, the timezone information from the data is preserved.
 
     Parameters
     ----------
