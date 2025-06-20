@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.BarAnnotation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class BarGeom : GeomBase() {
 
@@ -30,10 +31,15 @@ open class BarGeom : GeomBase() {
         val targetCollectorHelper = TargetCollectorHelper(GeomKind.BAR, ctx)
         val polygons = linesHelper.createRectPolygon(dataPoints, polygonByDataPoint(ctx))
 
+        val rectangles = mutableListOf<SvgNode>()
         polygons.forEach { (svg, polygonData) ->
             targetCollectorHelper.addPolygons(polygonData)
-            root.add(svg)
+
+            rectangles.add(svg)
         }
+
+        rectangles.reverse() // TODO: why reverse?
+        rectangles.forEach(root::add)
 
         ctx.annotation?.let {
             BarAnnotation.build(
@@ -63,8 +69,16 @@ open class BarGeom : GeomBase() {
 
             val w = width * ctx.getResolution(Aes.X)
 
-            val origin = DoubleVector(x - w / 2, 0.0)
-            val dimension = DoubleVector(w, y)
+            val origin: DoubleVector
+            val dimension: DoubleVector
+
+            if (y >= 0) {
+                origin = DoubleVector(x - w / 2, 0.0)
+                dimension = DoubleVector(w, y)
+            } else {
+                origin = DoubleVector(x - w / 2, y)
+                dimension = DoubleVector(w, -y)
+            }
 
             return DoubleRectangle(origin, dimension)
         }
