@@ -227,7 +227,7 @@ internal class PlotTile constructor(
         )
         lab.setHorizontalAnchor(hAnchor)
         lab.setLineHeight(lineHeight)
-        lab.setFontSize(textSize.y) // Needed only for calculating correct x-shift for some LaTeX formulas
+        lab.setFontSize(lineHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }
 
