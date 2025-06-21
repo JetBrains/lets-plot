@@ -3,15 +3,18 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import kotlin.test.Ignore
+package org.jetbrains.letsPlot.pythonExtension.interop
 import kotlin.test.Test
+import demoAndTestShared.parsePlotSpec
+import kotlinx.cinterop.*
+import platform.posix.*
+
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-//@Ignore
 class PlotTest {
     private val imageComparer = ImageComparer(suffix = getOSName()) // fonts are different on different OSes
 
@@ -36,7 +39,8 @@ class PlotTest {
             |  ]
             |}""".trimMargin()
 
-        imageComparer.assertImageEquals("plot_bar_test.bmp", spec)
+        val plotSpec = parsePlotSpec(spec)
+        imageComparer.assertPlot("plot_bar_test.bmp", plotSpec)
     }
 
     @Test
@@ -72,6 +76,7 @@ class PlotTest {
                 |}               
         """.trimMargin()
 
-        imageComparer.assertImageEquals("plot_polar_test.bmp", spec)
+        val plotSpec = parsePlotSpec(spec)
+        imageComparer.assertPlot("plot_polar_test.bmp", plotSpec)
     }
 }
