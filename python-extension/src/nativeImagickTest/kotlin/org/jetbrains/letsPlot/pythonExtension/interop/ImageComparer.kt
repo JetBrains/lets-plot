@@ -1,10 +1,19 @@
+/*
+ * Copyright (c) 2025. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
 
+@file:OptIn(ExperimentalForeignApi::class)
+
+package org.jetbrains.letsPlot.pythonExtension.interop
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import platform.posix.*
 import kotlin.math.abs
 
@@ -12,6 +21,7 @@ import kotlin.math.abs
  * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
 
 class ImageComparer(
     // Reuse existing directories when possible.
@@ -22,6 +32,35 @@ class ImageComparer(
     private val tol: Int = 1,
     private val suffix: String = ""
 ) {
+
+    fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
+        val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
+        val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = MagickFontManager.DEFAULT)
+        SvgCanvasFigure(svg).mapToCanvas(canvasControl)
+
+        val canvas = canvasControl.children.single() as MagickCanvas
+        assertImageEquals(expectedFileName, canvas.img)
+    }
+
+    fun assertPlot(
+        expectedFileName: String,
+        plotSpec: MutableMap<String, Any>,
+        width: Int? = null,
+        height: Int? = null,
+        pixelDensity: Double = 1.0
+    ) {
+
+        val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(plotSpec, SizingPolicy.keepFigureDefaultSize(), { _ -> })
+        val plotSpecWidth = plotFigure.preferredWidth ?: error("Plot figure has no preferred width")
+        val plotSpecHeight = plotFigure.preferredHeight ?: error("Plot figure has no preferred height")
+
+        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0, fontManager = MagickFontManager.DEFAULT)
+        plotFigure.mapToCanvas(canvasControl)
+
+        val canvas = canvasControl.children.single() as MagickCanvas
+        assertImageEquals(expectedFileName, canvas.img)
+    }
 
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
         val testName = expectedFileName.removeSuffix(".bmp") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""

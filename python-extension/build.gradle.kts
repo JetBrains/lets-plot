@@ -43,6 +43,22 @@ kotlin {
             }
         }
 
+        if (imagick) {
+            target.binaries.forEach {
+                it.linkerOpts += listOf(
+                    "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
+                    "-L/usr/lib/x86_64-linux-gnu/",
+                    "-L/opt/homebrew/opt/fontconfig/lib",
+                    "-L/opt/homebrew/opt/freetype/lib",
+                    "-lfreetype",
+                    "-lfontconfig",
+                    "-lMagickWand-7.Q8",
+                    "-lMagickCore-7.Q8",
+                    "-lz"
+                )
+            }
+        }
+
         target.compilations.getByName("main") {
             val python by cinterops.creating {
                 compilerOpts("-I${rootProject.project.extra["python.include_path"]}")
@@ -54,8 +70,12 @@ kotlin {
     }
 
     sourceSets {
-        val nativeMain by creating {
+        all {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+
+
+        val nativeMain by creating {
             kotlin.setSrcDirs(
                 listOf(if (imagick) "src/nativeImagickMain" else "src/nativeMain")
             )
@@ -74,8 +94,17 @@ kotlin {
                     implementation(project(":plot-raster"))
                 }
             }
-            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
 
         }
+
+            val nativeTest by creating {
+                kotlin.setSrcDirs(
+                    listOf("src/nativeTest") + listOfNotNull("src/nativeImagickTest".takeIf { imagick })
+                )
+                dependencies {
+                    implementation(project(":demo-and-test-shared"))
+                    implementation(project(":demo-common-svg"))
+                }
+            }
     }
 }
