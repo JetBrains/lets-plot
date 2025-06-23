@@ -14,27 +14,33 @@ import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
 import kotlin.math.round
 
-class DateTimeBreaksHelper(
+class DateTimeBreaksHelper constructor(
     rangeStart: Double,
     rangeEnd: Double,
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
-    minInterval: TimeInterval? = null,
-    tz: TimeZone = TimeZone.UTC,
+    minInterval: NiceTimeInterval?,
+    maxInterval: NiceTimeInterval?,
+    private val tz: TimeZone?,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
     val formatter: (Any) -> String
     val pattern: String
+    private val timeZone: TimeZone get() = tz ?: TimeZone.UTC
 
     init {
         val step = targetStep
 
         pattern = if (step < 1000) {        // milliseconds
-            val formatterFactory = TimeScaleTickFormatterFactory(minInterval)
-            // compute a step so that it is multiple of automatic time steps
+            // regular nice breaks
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
-            formatterFactory.formatPattern(step)
+            // milliseconds formatter
+            if (minInterval != null) {
+                minInterval.tickFormatPattern
+            } else {
+                TimeInterval.milliseconds(1).tickFormatPattern
+            }
 
         } else {
 
@@ -43,21 +49,21 @@ class DateTimeBreaksHelper(
 
             var ticks: MutableList<Double>? = null
             if (minInterval != null) {
-                ticks = minInterval.range(start, end).toMutableList()
+                ticks = minInterval.range(start, end, tz).toMutableList()
             }
 
             val pattern = if (ticks != null && ticks.size <= count) {
                 // same or smaller interval requested -> stay with the min interval
-                minInterval!!.tickFormatPattern
+                (minInterval as TimeInterval).tickFormatPattern
                 // otherwise - larger step requested -> compute ticks
             } else if (step > YearInterval.MS) {        // years
                 ticks = ArrayList()
-                val startDateTime = DateTime.ofEpochMilliseconds(start, tz)
+                val startDateTime = DateTime.ofEpochMilliseconds(start, timeZone)
                 var startYear = startDateTime.year
                 if (startDateTime > DateTime.ofYearStart(startYear)) {
                     startYear++
                 }
-                val endYear = DateTime.ofEpochMilliseconds(end, tz).year
+                val endYear = DateTime.ofEpochMilliseconds(end, timeZone).year
                 val helper = LinearBreaksHelper(
                     startYear.toDouble(),
                     endYear.toDouble(),
@@ -67,13 +73,18 @@ class DateTimeBreaksHelper(
                 )
                 for (tickYear in helper.breaks) {
                     val tickDate = DateTime.ofYearStart(round(tickYear).toInt())
-                    val tickInstant = tickDate.toInstant(tz)
-                    ticks.add(tickInstant.toEpochMilliseconds().toDouble())
+                    ticks.add(tickDate.toEpochMilliseconds(timeZone).toDouble())
                 }
-                YearInterval.TICK_FORMAT
+
+                if (maxInterval != null) {
+                    // max interval is guaranteed to be less than a year interval.
+                    (maxInterval as TimeInterval).tickFormatPattern
+                } else {
+                    YearInterval.TICK_FORMAT
+                }
             } else {
-                val interval = NiceTimeInterval.forMillis(step)
-                ticks = interval.range(start, end).toMutableList()
+                val interval = NiceTimeInterval.forMillis(step, minInterval, maxInterval)
+                ticks = interval.range(start, end, tz).toMutableList()
                 interval.tickFormatPattern
             }
 
@@ -85,6 +96,6 @@ class DateTimeBreaksHelper(
             pattern
         }
 
-        formatter = providedFormatter ?: createInstantFormatter(pattern, tz)
+        formatter = providedFormatter ?: createInstantFormatter(pattern, timeZone)
     }
 }

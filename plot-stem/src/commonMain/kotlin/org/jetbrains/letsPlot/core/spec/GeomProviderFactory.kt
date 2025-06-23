@@ -132,7 +132,7 @@ internal object GeomProviderFactory {
                 }
             }
 
-            GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
+            GeomKind.ERROR_BAR -> GeomProvider.errorBar {
                 ErrorBarGeom().apply {
                     if (layerConfig.hasOwn(Option.Geom.ErrorBar.WIDTH_UNIT)) {
                         this.widthUnit = dimensionUnit(layerConfig, Option.Geom.ErrorBar.WIDTH_UNIT)!!
@@ -158,7 +158,7 @@ internal object GeomProviderFactory {
                 geom
             }
 
-            GeomKind.POINT_RANGE -> GeomProvider.pointRange { ctx ->
+            GeomKind.POINT_RANGE -> GeomProvider.pointRange {
                 val geom = PointRangeGeom()
                 if (layerConfig.hasOwn(Option.Geom.PointRange.FATTEN)) {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
@@ -170,7 +170,7 @@ internal object GeomProviderFactory {
                 BandGeom(isVertical(ctx, geomKind.name))
             }
 
-            GeomKind.BOX_PLOT -> GeomProvider.boxplot { ctx ->
+            GeomKind.BOX_PLOT -> GeomProvider.boxplot {
                 val geom = BoxplotGeom()
                 if (layerConfig.hasOwn(Option.Geom.Boxplot.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.Boxplot.FATTEN)!!
@@ -515,8 +515,8 @@ internal object GeomProviderFactory {
         layerConfig.getDouble(Option.Geom.Repel.MIN_SEGMENT_LENGTH)?.let {
             geom.minSegmentLength = it
         }
-        if (layerConfig.has(Option.Geom.Segment.ARROW)) {
-            val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
+        if (layerConfig.has(Option.Geom.Repel.ARROW)) {
+            val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Repel.ARROW]!!)
             geom.arrowSpec = arrowConfig.createArrowSpec()
         }
     }

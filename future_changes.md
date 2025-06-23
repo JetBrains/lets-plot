@@ -18,7 +18,13 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
 - `waterfall_plot` - extra layers support [[#1344](https://github.com/JetBrains/lets-plot/issues/1344)].  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_layers.ipynb).
-    
+                                
+- Time Series Plotting [[#278](https://github.com/JetBrains/lets-plot-kotlin/issues/278)], 
+[[discussion](https://github.com/JetBrains/lets-plot-kotlin/discussions/92#discussioncomment-12976040)],
+[[#678](https://github.com/JetBrains/lets-plot/issues/678)],
+[[LPK-129](https://github.com/JetBrains/lets-plot-kotlin/issues/129)]:
+  - Support for Python `time` and `date` objects.
+  - Support for timezone-aware `datetime` objects and Pandas/Polars `Series`.
 
 ### Changed
 
@@ -30,6 +36,7 @@
 - `waterfall_plot`: the appearance of the legend has been improved.
 - `geom_pointrange`: the midpoint will not be drawn if the y aesthetic is set to `None`.
 - `geom_band`: the `alpha` aesthetic only affects the inner part of the geometry, as in `geom_rect()`.
+- `geom_band`: show tooltip over the whole band, not just at the edges.
 
 ### Fixed
 
@@ -37,3 +44,4 @@
 - Can't add layer which uses continuous data to a plot where other layers use discrete input [[#1323](https://github.com/JetBrains/lets-plot/issues/1323)].
 - Multiline legend labels are not vertically centered with their keys [[#1331](https://github.com/JetBrains/lets-plot/issues/1331)]   
 - Poor alignment in legend between columns [[#1332](https://github.com/JetBrains/lets-plot/issues/1332)]
+- Ordered data gets re-ordered by geomBoxplot [[#1342](https://github.com/JetBrains/lets-plot/issues/1342)]

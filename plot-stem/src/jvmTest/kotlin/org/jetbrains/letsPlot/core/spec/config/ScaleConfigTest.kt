@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color.Companion.BLUE
 import org.jetbrains.letsPlot.commons.values.Color.Companion.LIME
 import org.jetbrains.letsPlot.commons.values.Color.Companion.RED
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -146,6 +147,7 @@ class ScaleConfigTest {
                 aes,
                 scaleSpec,
                 AesOptionConversion.demoAndTest,
+                dataType = DataType.UNKNOWN,
                 tz = null
             )
                 .createMapperProvider()

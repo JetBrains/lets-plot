@@ -30,8 +30,6 @@ class StateTest {
 
         context.restore()
 
-        assertThat(context.getClipPath())
-            .usingRecursiveComparison()
-            .isEqualTo(null)
+        assertThat(context.getClipPath().isEmpty).isTrue()
     }
 }

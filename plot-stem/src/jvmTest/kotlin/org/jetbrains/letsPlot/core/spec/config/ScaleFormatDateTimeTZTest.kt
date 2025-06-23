@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.ScaleFomateDateTimeTestUtil.TZ_UTC_8
@@ -16,16 +15,13 @@ import kotlin.test.Test
 
 /**
  * This test verifies that the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
- *
- * @TODO: Currently the anntation `Option.Meta.SeriesAnnotation.TIME_ZONE` is not handled
- * @TODO: so the expected values are not what they should be.
  */
 class ScaleFormatDateTimeTZTest {
 
     @Test
     fun `both - continuous and discrete scale labels - should be formatted as date-time`() {
         val instants = List(5) {
-            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            val date = Date(1, Month.JANUARY, 2021).addDays(it)
             DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC_8).toDouble()
@@ -35,16 +31,11 @@ class ScaleFormatDateTimeTZTest {
         val expectedLabels = listOf(
             "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5"
         )
-        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
-        // Expected: see above.
-        val expectedLabels2 = listOf(
-            "Jan 1", "Jan 2", "Jan 3", "Jan 4"
-        )
 
         checkScales(
             instants,
             expectedLabels,
-            expectedLabels2,
+            expectedLabels,
             DATE_TIME_ANNOTATION_PART
         )
     }
@@ -52,19 +43,16 @@ class ScaleFormatDateTimeTZTest {
     @Test
     fun `data when discrete scale chooses a better formatter than the continuous scale`() {
         val instants = List(3) {
-            val date = Date(1, Month.JANUARY, 2021).add(Duration.DAY.mul(it))
+            val date = Date(1, Month.JANUARY, 2021).addDays(it)
             DateTime(date)
         }.map {
             it.toEpochMilliseconds(TZ_UTC_8).toDouble()
         }
 
-        // TODO: Update when the annotation `Option.Meta.SeriesAnnotation.TIME_ZONE` is handled correctly.
-//        val formattedForContinuous = listOf(
-//            "00:00", "12:00", "00:00", "12:00", "00:00"
-//        )
         val formattedForContinuous = listOf(
-            "00:00", "12:00", "00:00", "12:00"
+            "00:00", "12:00", "00:00", "12:00", "00:00"
         )
+
         // For discrete scale: if to get the DateTimeBreaksHelper's formatter (which the continuous scale uses),
         // the labels will be formatted as follows: [00:00, 00:00, 00:00]
         // => better formatter will be applied

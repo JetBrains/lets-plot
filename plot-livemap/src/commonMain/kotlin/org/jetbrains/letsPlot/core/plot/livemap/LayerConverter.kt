@@ -57,7 +57,7 @@ object LayerConverter {
             }
 
             val positiveScalingLimit = when (
-                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END, Aes.POINT_SIZE, Aes.SEGMENT_SIZE).any { it in layer.mappedAes }
+                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END, Aes.POINT_SIZE, Aes.POINT_STROKE, Aes.SEGMENT_SIZE).any { it in layer.mappedAes }
             ) {
                 true -> aesScalingLimit
                 false -> constScalingLimit
@@ -163,6 +163,8 @@ object LayerConverter {
                     line {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
+                        layerIndex = layerIdx
+                        index = it.index
                         point = it.point
                         lineDash = it.lineDash
                         lineDashOffset = it.lineDashOffset
@@ -177,6 +179,8 @@ object LayerConverter {
                     line {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
+                        layerIndex = layerIdx
+                        index = it.index
                         point = it.point
                         lineDash = it.lineDash
                         lineDashOffset = it.lineDashOffset

@@ -121,7 +121,7 @@ internal object PlotGeomTilesUtil {
     ): Map<Any, (Any) -> String> {
         val expFormat = extractExponentFormat(exponentFormat)
         val dataFormatters =
-            layerConfig.dtypes.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat, tz) }
+            layerConfig.dtypesByVarName.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat, tz) }
         val statFormatters = Stats.VARS.mapValues { FormatterUtil.byDataType(DataType.FLOATING, expFormat, tz) }
         val varFormatters = dataFormatters + statFormatters
 

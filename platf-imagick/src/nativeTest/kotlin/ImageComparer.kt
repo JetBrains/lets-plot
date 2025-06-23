@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import platform.posix.*
@@ -21,17 +22,18 @@ class ImageComparer(
     // To avoid compilation errors, we’d need a Windows-specific source set.
     private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/",
     private val outDir: String = getCurrentDir() + "/build/reports/",
-    private val tol: Int = 1
+    private val tol: Int = 1,
+    private val suffix: String = ""
 ) {
 
     fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
         val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
-        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0)
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = MagickFontManager.DEFAULT)
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
-        assertImageEquals(expectedFileName, canvas.img!!)
+        assertImageEquals(expectedFileName, canvas.img)
     }
 
     fun assertImageEquals(expectedFileName: String, spec: String) {
@@ -41,21 +43,21 @@ class ImageComparer(
         val plotSpecWidth = plotFigure.preferredWidth ?: error("Plot figure has no preferred width")
         val plotSpecHeight = plotFigure.preferredHeight ?: error("Plot figure has no preferred height")
 
-        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0)
+        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0, fontManager = MagickFontManager.DEFAULT)
         plotFigure.mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
-        assertImageEquals(expectedFileName, canvas.img!!)
+        assertImageEquals(expectedFileName, canvas.img)
     }
 
     fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
-        val testName = expectedFileName.removeSuffix(".bmp")
-        val expectedPath = expectedDir + expectedFileName
-        val actualFilePath = outDir + "${testName}.bmp"
+        val testName = expectedFileName.removeSuffix(".bmp") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
+        val expectedFilePath = expectedDir + testName + ".bmp"
+        val actualFilePath = outDir + testName + ".bmp"
 
         val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
-        if (ImageMagick.MagickReadImage(expectedWand, expectedPath) == ImageMagick.MagickFalse) {
-            println("expectedWand failure - $expectedPath")
+        if (ImageMagick.MagickReadImage(expectedWand, expectedFilePath) == ImageMagick.MagickFalse) {
+            println("expectedWand failure - $expectedFilePath")
             println(getMagickError(expectedWand))
             // Write the  actual image to a file for debugging
             if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
@@ -88,10 +90,10 @@ class ImageComparer(
             error("""Image mismatch.
                 |    Diff: $diffFilePath
                 |    Actual: $actualFilePath
-                |    Expected: $expectedPath""".trimMargin()
+                |    Expected: $expectedFilePath""".trimMargin()
             )
         } else {
-            println("Image comparison passed: $expectedPath")
+            println("Image comparison passed: $expectedFilePath")
         }
     }
 

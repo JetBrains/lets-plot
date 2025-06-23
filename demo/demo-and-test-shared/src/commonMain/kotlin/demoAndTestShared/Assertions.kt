@@ -19,7 +19,8 @@ fun assertEquals(expected: Double?, actual: Double?, precision: Double, message:
 }
 
 fun <T> assertArrayEquals(expecteds: Array<T>, actuals: Array<T>, message: String? = null) {
-    assertTrue(actuals contentEquals expecteds, message)
+//    assertTrue(actuals contentEquals expecteds, message)
+    assertEquals(expecteds.toList(), actuals.toList(), message)
 }
 
 fun assertArrayEquals(expecteds: Array<Double>, actuals: Array<Double>, precision: Double, message: String? = null) {

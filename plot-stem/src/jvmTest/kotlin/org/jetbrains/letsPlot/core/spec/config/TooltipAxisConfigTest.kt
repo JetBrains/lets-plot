@@ -259,10 +259,10 @@ class TooltipAxisConfigTest {
         val instants = List(3) {
             DateTime(Date(1, Month.JANUARY, 2021)).add(
                 Duration.WEEK.mul(it),
-                TZ
+                TZ_UTC
             )
         }.map {
-            it.toEpochMilliseconds(TZ).toDouble()
+            it.toEpochMilliseconds(TZ_UTC).toDouble()
         }
         val dtData = mapOf("date" to instants, "v" to listOf(0, 1, 2))
         val dtMapping = mapOf(
@@ -283,7 +283,9 @@ class TooltipAxisConfigTest {
             val geomLayer = dtLayer(scaleFormat = null, tooltipFormat = null)
             assertGeneralTooltip(geomLayer, "00:00")
             assertYAxisTooltip(geomLayer, "00:00")
-            assertEquals("Jan 7", getYTick(geomLayer, closedRange))
+            // January 4, 2021 (Monday) looks more appropriate than January 7, 2021
+//            assertEquals("Jan 7", getYTick(geomLayer, closedRange))
+            assertEquals("Jan 4", getYTick(geomLayer, closedRange))
         }
         run {
             val geomLayer = dtLayer(scaleFormat = "%b %Y", tooltipFormat = "%b %Y")
@@ -295,13 +297,13 @@ class TooltipAxisConfigTest {
             // Likely this issue:
             // "The tooltip format with {} in the pattern ignores the default formatting"
             // https://github.com/JetBrains/lets-plot/issues/484
-            val geomLayer = dtLayer(scaleFormat = "scale = {}", tooltipFormat = "tooltip = {}")
+            @Suppress("UNUSED_VARIABLE") val geomLayer = dtLayer(scaleFormat = "scale = {}", tooltipFormat = "tooltip = {}")
             //todo assertGeneralTooltip(geomLayer, "tooltip = 00:00")
             //todo assertYAxisTooltip(geomLayer, "tooltip = 00:00")
             //todo assertEquals("scale = Jan 7", getYTick(geomLayer, closedRange))
         }
         run {
-            val geomLayer = dtLayer(scaleFormat = "scale = {%b %Y}", tooltipFormat = "tooltip = {%b %Y}")
+            @Suppress("UNUSED_VARIABLE") val geomLayer = dtLayer(scaleFormat = "scale = {%b %Y}", tooltipFormat = "tooltip = {%b %Y}")
             //todo assertGeneralTooltip(geomLayer, "tooltip = Jan 2021")
             //todo assertYAxisTooltip(geomLayer, "tooltip = Jan 2021")
             //todo assertEquals("scale = Jan 2021", getYTick(geomLayer, closedRange))
@@ -309,7 +311,7 @@ class TooltipAxisConfigTest {
     }
 
     companion object {
-        private val TZ = TimeZone.UTC
+        private val TZ_UTC = TimeZone.UTC
 
         private fun areEqual(expected: String?, actual: String?, name: String, method: (String) -> Unit) {
             if (expected != actual) {

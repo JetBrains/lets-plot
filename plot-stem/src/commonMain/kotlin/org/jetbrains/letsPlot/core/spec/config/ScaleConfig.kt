@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
@@ -69,6 +71,7 @@ class ScaleConfig<T> constructor(
     val aes: Aes<T>,
     options: Map<String, Any>,
     private val aopConversion: AesOptionConversion,
+    private val dataType: DataType,
     private val tz: TimeZone?,
 ) : OptionsAccessor(options) {
 
@@ -104,7 +107,7 @@ class ScaleConfig<T> constructor(
             }
         } else if ((aes == Aes.ALPHA || aes == Aes.SEGMENT_ALPHA) && has(RANGE)) {
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE || aes == Aes.SEGMENT_SIZE) && has(
+        } else if ((aes == Aes.SIZE || aes == Aes.SIZE_START || aes == Aes.SIZE_END || aes == Aes.POINT_SIZE || aes == Aes.POINT_STROKE || aes == Aes.SEGMENT_SIZE) && has(
                 RANGE
             )
         ) {
@@ -218,7 +221,14 @@ class ScaleConfig<T> constructor(
                 val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
-            b.breaksGenerator(DateTimeBreaksGen(dateTimeFormatter))
+            b.breaksGenerator(
+                DateTimeBreaksGen(
+                    providedFormatter = dateTimeFormatter,
+                    minInterval = NiceTimeInterval.minIntervalOf(dataType),
+                    maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
+                    tz = tz
+                )
+            )
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {

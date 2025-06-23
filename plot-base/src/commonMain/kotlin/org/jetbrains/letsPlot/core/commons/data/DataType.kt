@@ -11,7 +11,11 @@ enum class DataType {
     FLOATING,
     STRING,
     BOOLEAN,
-    EPOCH_MILLIS,
-    DATE_MILLIS_UTC, // Local date.
-    MIDNIGHT_MILLIS, // Local time.
+    DATETIME_MILLIS,
+    DATE_MILLIS, // Local date.
+    TIME_MILLIS; // Local time.
+
+    fun isTemporal(): Boolean {
+        return this == DATETIME_MILLIS || this == DATE_MILLIS || this == TIME_MILLIS
+    }
 }

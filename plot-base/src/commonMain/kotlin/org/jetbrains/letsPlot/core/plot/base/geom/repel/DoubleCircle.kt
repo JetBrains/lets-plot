@@ -12,6 +12,10 @@ import kotlin.math.sqrt
 
 class DoubleCircle(val center: DoubleVector, val radius: Double) {
     fun intersects(line: DoubleSegment): Boolean {
+        if (line.start.subtract(center).length() <= radius || line.end.subtract(center).length() <= radius) {
+            return true
+        }
+
         val d = line.end.subtract(line.start)
         val f = line.start.subtract(center)
 
@@ -20,10 +24,6 @@ class DoubleCircle(val center: DoubleVector, val radius: Double) {
         val c = f.dot(f) - radius * radius
 
         val discriminant = b * b - 4 * a * c
-
-        if (discriminant < 0) {
-            return false
-        }
 
         val sqrtDiscriminant = sqrt(discriminant)
         val t1 = (-b - sqrtDiscriminant) / (2 * a)

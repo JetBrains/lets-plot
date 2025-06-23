@@ -12,11 +12,21 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.FileNotFoundException
 import java.util.*
+// okhttp3 added for publishing to the Sonatype Central Repository:
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
+
+buildscript {
+    dependencies {
+        classpath("com.squareup.okhttp3:okhttp:4.12.0")
+    }
+}
 
 plugins {
     kotlin("multiplatform") apply false
     kotlin("js") apply false
-    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
     id("org.openjfx.javafxplugin") version "0.1.0" apply false
 }
 
@@ -134,22 +144,15 @@ if (project.hasProperty("build_release")) {
 // Maven publication settings:
 // define local Maven Repository path:
 val localMavenRepository by extra { "$rootDir/.maven-publish-dev-repo" }
-// define Sonatype nexus repository manager settings:
-val sonatypeUsername = extra.getOrNull("sonatype.username") ?: ""
-val sonatypePassword = extra.getOrNull("sonatype.password") ?: ""
-val sonatypeProfileID = extra.getOrNull("sonatype.profileID") ?: ""
+// define the Maven Repository URL. Currently set to a local path for uploading
+// artifacts to the Sonatype Central Repository.
+val mavenReleasePublishUrl by extra { layout.buildDirectory.dir("maven/artifacts").get().toString() }
+// define Maven Snapshot repository URL.
+val mavenSnapshotPublishUrl by extra { "https://central.sonatype.com/repository/maven-snapshots/" }
 
-nexusPublishing {
-    repositories {
-        register("maven") {
-            username.set(sonatypeUsername as String)
-            password.set(sonatypePassword as String)
-            stagingProfileId.set(sonatypeProfileID as String)
-            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
-        }
-    }
-}
+// define Sonatype Central Repository settings:
+val sonatypeUsername by extra { extra.getOrNull("sonatype.username") ?: "" }
+val sonatypePassword by extra { extra.getOrNull("sonatype.password") ?: "" }
 
 // Publish some sub-projects as Kotlin Multi-project libraries.
 val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
@@ -159,6 +162,57 @@ val publishLetsPlotCoreModulesToMavenLocalRepository by tasks.registering {
 val publishLetsPlotCoreModulesToMavenRepository by tasks.registering {
     group = letsPlotTaskGroup
 }
+
+// Configure a workaround tasks for publishing to the Sonatype Central Repository,
+// as there is currently no official Gradle plugin support.
+// Refer to documentation: https://central.sonatype.org/publish/publish-portal-gradle/
+val packageMavenArtifacts by tasks.registering(Zip::class) {
+    group = letsPlotTaskGroup
+
+    from(mavenReleasePublishUrl)
+    archiveFileName.set("${project.name}-artifacts.zip")
+    destinationDirectory.set(layout.buildDirectory)
+}
+val uploadMavenArtifacts by tasks.registering {
+    group = letsPlotTaskGroup
+    dependsOn(packageMavenArtifacts)
+
+    doLast {
+        val uriBase = "https://central.sonatype.com/api/v1/publisher/upload"
+        val publishingType = "USER_MANAGED"
+        val deploymentName = "${project.name}-$version"
+        val uri = "$uriBase?name=$deploymentName&publishingType=$publishingType"
+
+        val userName = sonatypeUsername as String
+        val password = sonatypePassword as String
+        val base64Auth = Base64.getEncoder().encode("$userName:$password".toByteArray()).toString(Charsets.UTF_8)
+        val bundleFile = packageMavenArtifacts.get().archiveFile.get().asFile
+
+        println("Sending request to $uri...")
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(uri)
+            .header("Authorization", "Bearer $base64Auth")
+            .post(
+                MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("bundle", bundleFile.name, bundleFile.asRequestBody())
+                    .build()
+            )
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            val statusCode = response.code
+            println("Upload status code: $statusCode")
+            println("Upload result: ${response.body!!.string()}")
+            if (statusCode != 201) {
+                error("Upload error to Central repository. Status code $statusCode.")
+            }
+        }
+    }
+}
+
 
 if ((extra.getOrNull("enable_magick_canvas") as? String ?: "false").toBoolean()) {
     val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/imagick_deps"
@@ -338,6 +392,18 @@ subprojects {
             repositories {
                 mavenLocal {
                     url = uri(localMavenRepository)
+                }
+                maven {
+                    if (version.toString().endsWith("-SNAPSHOT")) {
+                        url = uri(mavenSnapshotPublishUrl)
+
+                        credentials {
+                            username = sonatypeUsername.toString()
+                            password = sonatypePassword.toString()
+                        }
+                    } else {
+                        url = uri(mavenReleasePublishUrl)
+                    }
                 }
             }
         }

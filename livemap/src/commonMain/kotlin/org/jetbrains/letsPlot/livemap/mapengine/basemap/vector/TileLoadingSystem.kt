@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.math.round
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
 import org.jetbrains.letsPlot.gis.tileprotocol.TileService
-import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
@@ -90,24 +89,24 @@ class TileLoadingSystem(
                     val microThreads = ArrayList<MicroTask<Unit>>()
                     tileEntities.forEach { tileLayerEntity ->
                         tileLayerEntity.add(BusyStateComponent())
-                        microThreads.add(
-                            myTileDataRenderer
-                                .render(myCanvasSupplier(), tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
-                                .map { snapshotAsync ->
-                                    snapshotAsync.onSuccess { snapshot ->
-                                        runLaterBySystem(tileLayerEntity) { theEntity ->
-                                            theEntity.get<BasemapTileComponent>().tile = SnapshotTile(snapshot)
-                                            theEntity.remove<BusyStateComponent>()
-                                            ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                                        }
+                            val canvas = myCanvasSupplier()
+                            val tileLoadingTask = myTileDataRenderer
+                                .render(canvas, tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
+                                .map {
+                                    runLaterBySystem(tileLayerEntity) { theEntity ->
+                                        val snapshot = canvas.takeSnapshot()
+                                        theEntity.get<BasemapTileComponent>().tile = SnapshotTile(snapshot)
+                                        theEntity.remove<BusyStateComponent>()
+                                        ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                     }
                                     return@map
                                 }
-                        )
+
+                            microThreads.add(tileLoadingTask)
                     }
                     MicroTaskUtil.join(microThreads)
                 }
-                )
+            )
         }
 
         downloadedEntities.forEach { it.remove<TileResponseComponent>() }

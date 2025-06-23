@@ -1,8 +1,6 @@
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import kotlin.math.PI
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -22,11 +20,6 @@ class ContextPath2dTest {
     private val fillColor = "#000000"
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
-
-    fun createCanvas(): Pair<MagickCanvas, Context2d> {
-        val canvas = MagickCanvas.create(width = w, height = h, pixelDensity = 1.0)
-        return canvas to canvas.context2d
-    }
 
     @Test
     fun shearedEllipse() {
@@ -50,7 +43,7 @@ class ContextPath2dTest {
         ctx.closePath()
         ctx.stroke()
 
-        imageComparer.assertImageEquals("sheared_ellipse.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("sheared_ellipse.bmp", canvas.img)
     }
 
     @Test
@@ -77,7 +70,7 @@ class ContextPath2dTest {
         ctx.closePath()
         ctx.stroke()
 
-        imageComparer.assertImageEquals("sheared_circular_arc.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("sheared_circular_arc.bmp", canvas.img)
     }
 
     @Test
@@ -104,7 +97,7 @@ class ContextPath2dTest {
 
         ctx.restore()
 
-        imageComparer.assertImageEquals("nested_translates.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("nested_translates.bmp", canvas.img)
     }
 
     @Test
@@ -133,7 +126,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "multi_path_fill.bmp",
-            actualWand = canvas.img!!,
+            actualWand = canvas.img,
         )
     }
 
@@ -159,7 +152,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "multi_path_stroke.bmp",
-            actualWand = canvas.img!!,
+            actualWand = canvas.img,
         )
     }
 
@@ -186,7 +179,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "zigzag_stroke.bmp",
-            actualWand = canvas.img!!,
+            actualWand = canvas.img,
         )
     }
 
@@ -215,7 +208,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "zigzag_fill.bmp",
-            actualWand = canvas.img!!,
+            actualWand = canvas.img,
         )
     }
 
@@ -231,7 +224,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "circle_stroke.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -249,7 +242,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "circle_fill.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -269,7 +262,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "circle_fill_stroke.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -295,7 +288,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "ellipse.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -320,7 +313,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "rotated_ellipse.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -343,7 +336,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "path_transform_on_build.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -363,7 +356,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "arc_transform_after_restore.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -389,7 +382,7 @@ class ContextPath2dTest {
 
         ctx.fillText("Test", w * 0.5, h * 0.5)
 
-        imageComparer.assertImageEquals("text_skew_transform.bmp", canvas.img!!)
+        imageComparer.assertImageEquals("text_skew_transform.bmp", canvas.img)
     }
 
 
@@ -407,7 +400,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "simple_bezier_curve.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -427,7 +420,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "bezier_curve_inside_path.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -457,7 +450,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "ellipse_inside_path.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -486,7 +479,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "rounded_rect_with_curves.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 
@@ -518,7 +511,7 @@ class ContextPath2dTest {
 
         imageComparer.assertImageEquals(
             expectedFileName = "perf_5_000_points.bmp",
-            actualWand = canvas.img!!
+            actualWand = canvas.img
         )
     }
 

@@ -15,8 +15,8 @@ import org.jetbrains.letsPlot.core.canvas.Path2d.*
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
+    private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
-
 ) : Context2d by stateDelegate {
     private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
@@ -28,78 +28,25 @@ class MagickContext2d(
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
-        val snap = snapshot as MagickCanvas.MagickSnapshot
-        val srcWand = snap.img
-
-        val success = ImageMagick.MagickCompositeImage(
-            img,
-            srcWand,
-            ImageMagick.CompositeOperator.OverCompositeOp,
-            ImageMagick.MagickTrue,
-            0,
-            0
-        )
-
-        ImageMagick.DestroyMagickWand(srcWand)
-
-        if (success == ImageMagick.MagickFalse) {
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickCompositeImage failed: $err")
-        }
+        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, 0.0, 0.0, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
-        val snap = snapshot as MagickCanvas.MagickSnapshot
-        val srcWand = snap.img
-
-        val success = ImageMagick.MagickCompositeImage(
-            img,
-            srcWand,
-            ImageMagick.CompositeOperator.OverCompositeOp,
-            ImageMagick.MagickTrue,
-            x.toULong().convert(),
-            y.toULong().convert()
-        )
-
-        if (success == ImageMagick.MagickFalse) {
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickCompositeImage failed: $err")
-        }
+        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
     }
 
-    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, w: Double, h: Double) {
-        val snap = snapshot as MagickCanvas.MagickSnapshot
-        val srcWand = snap.img
-
-        // Resize the source wand to desired width and height
-        val successResize = ImageMagick.MagickResizeImage(
-            srcWand,
-            w.toULong(),
-            h.toULong(),
-            ImageMagick.FilterType.LanczosFilter
-        )
-
-        if (successResize == ImageMagick.MagickFalse) {
-            ImageMagick.DestroyMagickWand(srcWand)
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickResizeImage failed: $err")
-        }
-
-        // Composite the resized image onto the base image
-        val success = ImageMagick.MagickCompositeImage(
-            img,
-            srcWand,
-            ImageMagick.CompositeOperator.OverCompositeOp,
-            ImageMagick.MagickTrue,
-            x.toULong().convert(),
-            y.toULong().convert()
-        )
-
-        ImageMagick.DestroyMagickWand(srcWand)
-
-        if (success == ImageMagick.MagickFalse) {
-            val err = ImageMagick.MagickGetException(img, null)
-            throw RuntimeException("MagickCompositeImage failed: $err")
+    override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
+            // Resize the image if the dimensions do not match
+            val scaledImage = ImageMagick.CloneMagickWand(snapshot.img)
+            ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
+            ImageMagick.DestroyMagickWand(scaledImage)
+        } else {
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
         }
     }
 
@@ -110,24 +57,33 @@ class MagickContext2d(
 
     override fun restore() {
         stateDelegate.restore()
+
         ImageMagick.PopDrawingWand(wand)
     }
 
     override fun setFillStyle(color: Color?) {
+        stateDelegate.setFillStyle(color)
+
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
         ImageMagick.DrawSetFillColor(wand, pixelWand)
     }
 
     override fun setStrokeStyle(color: Color?) {
+        stateDelegate.setStrokeStyle(color)
+
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
         ImageMagick.DrawSetStrokeColor(wand, pixelWand)
     }
 
     override fun setLineWidth(lineWidth: Double) {
+        stateDelegate.setLineWidth(lineWidth)
+
         ImageMagick.DrawSetStrokeWidth(wand, lineWidth)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
+        stateDelegate.setLineDash(lineDash)
+
         if (lineDash.isNotEmpty()) {
             memScoped {
                 val lineDashPatternSize = lineDash.size
@@ -140,45 +96,41 @@ class MagickContext2d(
     }
 
     override fun setLineCap(lineCap: LineCap) {
-        val lineCap = when (lineCap) {
-            LineCap.BUTT -> ImageMagick.LineCap.ButtCap
-            LineCap.ROUND -> ImageMagick.LineCap.RoundCap
-            LineCap.SQUARE -> ImageMagick.LineCap.SquareCap
-        }
-        ImageMagick.DrawSetStrokeLineCap(wand, lineCap)
+        stateDelegate.setLineCap(lineCap)
+        ImageMagick.DrawSetStrokeLineCap(wand, lineCap.convert())
     }
 
     override fun setLineJoin(lineJoin: LineJoin) {
-        val lineJoin = when (lineJoin) {
-            LineJoin.BEVEL -> ImageMagick.LineJoin.BevelJoin
-            LineJoin.MITER -> ImageMagick.LineJoin.MiterJoin
-            LineJoin.ROUND -> ImageMagick.LineJoin.RoundJoin
-        }
-        ImageMagick.DrawSetStrokeLineJoin(wand, lineJoin)
+        stateDelegate.setLineJoin(lineJoin)
+        ImageMagick.DrawSetStrokeLineJoin(wand, lineJoin.convert())
     }
 
     override fun setStrokeMiterLimit(miterLimit: Double) {
+        stateDelegate.setStrokeMiterLimit(miterLimit)
+
         ImageMagick.DrawSetStrokeMiterLimit(wand, miterLimit.toULong())
     }
 
     override fun setFont(f: Font) {
+        stateDelegate.setFont(f)
+
+        val resolved = fontManager.resolveFont(f.fontFamily)
+        if (resolved.fontFamily != null) {
+            ImageMagick.DrawSetFontFamily(wand, resolved.fontFamily)
+        } else if (resolved.fontFilePath != null) {
+            ImageMagick.DrawSetFont(wand, resolved.fontFilePath)
+        } else {
+            error("Font family '${f.fontFamily}' could not be resolved.")
+        }
+
         ImageMagick.DrawSetFontSize(wand, f.fontSize)
-        ImageMagick.DrawSetFontFamily(wand, f.fontFamily)
-
-        val fontStyle = when (f.fontStyle) {
-            FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
-            FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
-        }
-        ImageMagick.DrawSetFontStyle(wand, fontStyle)
-
-        val fontWeight = when (f.fontWeight) {
-            FontWeight.NORMAL -> 400.toULong()
-            FontWeight.BOLD -> 800.toULong()
-        }
-        ImageMagick.DrawSetFontWeight(wand, fontWeight)
+        ImageMagick.DrawSetFontStyle(wand, f.fontStyle.convert())
+        ImageMagick.DrawSetFontWeight(wand, f.fontWeight.convert())
     }
 
     override fun setGlobalAlpha(alpha: Double) {
+        stateDelegate.setGlobalAlpha(alpha)
+
         ImageMagick.DrawSetFillOpacity(wand, alpha)
         ImageMagick.DrawSetStrokeOpacity(wand, alpha)
     }
@@ -234,7 +186,12 @@ class MagickContext2d(
     override fun clip() {
         stateDelegate.clip()
 
-        val clipPath = stateDelegate.getClipPath() ?: return
+        val clipPath = stateDelegate.getClipPath()
+        if (clipPath.isEmpty) {
+            // No clip path defined, nothing to do.
+            return
+        }
+
         val inverseCTMTransform = stateDelegate.getCTM().inverse() ?: return
         val clipId = clipPath.hashCode().toUInt().toString(16)
 
@@ -313,10 +270,13 @@ class MagickContext2d(
                 println(str())
         }
 
-        private fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
+        internal fun drawPath(wand: CPointer<ImageMagick.DrawingWand>, commands: List<PathCommand>, transform: AffineTransform) {
             if (commands.isEmpty()) {
                 return
             }
+
+            log { "drawPath: commands=${commands.joinToString { it.toString() }}, transform=${transform.repr()}" }
+
 
             var started = commands.first() is MoveTo
 
@@ -353,7 +313,7 @@ class MagickContext2d(
             ImageMagick.DrawPathFinish(wand)
         }
 
-        fun transform(wand: CPointer<ImageMagick.DrawingWand>, affine: AffineTransform) {
+        internal fun transform(wand: CPointer<ImageMagick.DrawingWand>, affine: AffineTransform) {
             memScoped {
                 val affineMatrix = alloc<ImageMagick.AffineMatrix>()
                 affineMatrix.sx = affine.sx
@@ -365,5 +325,36 @@ class MagickContext2d(
                 ImageMagick.DrawAffine(wand, affineMatrix.ptr)
             }
         }
+
+        fun LineJoin.convert(): ImageMagick.LineJoin {
+            return when (this) {
+                LineJoin.BEVEL -> ImageMagick.LineJoin.BevelJoin
+                LineJoin.MITER -> ImageMagick.LineJoin.MiterJoin
+                LineJoin.ROUND -> ImageMagick.LineJoin.RoundJoin
+            }
+        }
+
+        fun LineCap.convert(): ImageMagick.LineCap {
+            return when (this) {
+                LineCap.BUTT -> ImageMagick.LineCap.ButtCap
+                LineCap.ROUND -> ImageMagick.LineCap.RoundCap
+                LineCap.SQUARE -> ImageMagick.LineCap.SquareCap
+            }
+        }
+
+        fun FontStyle.convert(): ImageMagick.StyleType {
+            return when (this) {
+                FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
+                FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
+            }
+        }
+
+        fun FontWeight.convert(): ULong {
+            return when (this) {
+                FontWeight.NORMAL -> 400.toULong()
+                FontWeight.BOLD -> 800.toULong()
+            }
+        }
+
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
@@ -233,6 +234,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun pointSize(v: (Int) -> Double?): AestheticsBuilder {
         return aes(POINT_SIZE, v)
+    }
+
+    fun pointStroke(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(POINT_STROKE, v)
     }
 
     fun segmentColor(v: (Int) -> Color?): AestheticsBuilder {

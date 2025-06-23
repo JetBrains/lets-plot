@@ -7297,8 +7297,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - label : text to add to plot.
     - family : font family. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
     - fontface : font style and weight. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
-    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
-    - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - hjust : horizontal text alignment relative to the x-coordinate. Possible values: 0 or 'left' - left-aligned (text starts at x), 0.5 or 'middle' (default) - text is centered on x, 1 or 'right' - right-aligned (text ends at x). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical text alignment relative to the y-coordinate. Possible values: 0 or 'bottom' - bottom-aligned (bottom of text at y), 0.5 or 'center' (default) - middle of text at y, 1 or 'top' - top-aligned (top of text at y). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
@@ -7554,8 +7554,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - label : text to add to plot.
     - family : font family. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
     - fontface : font style and weight. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
-    - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
-    - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
+    - hjust : horizontal text alignment relative to the x-coordinate. Possible values: 0 or 'left' - left-aligned (text starts at x), 0.5 or 'middle' (default) - text is centered on x, 1 or 'right' - right-aligned (text ends at x). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical text alignment relative to the y-coordinate. Possible values: 0 or 'bottom' - bottom-aligned (bottom of text at y), 0.5 or 'center' (default) - middle of text at y, 1 or 'top' - top-aligned (top of text at y). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
@@ -7836,11 +7836,13 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - label : text to add to plot.
     - family : font family. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
     - fontface : font style and weight. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
-    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
-    - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - hjust : horizontal text alignment relative to the x-coordinate. Possible values: 0 or 'left' - left-aligned (text starts at x), 0.5 or 'middle' (default) - text is centered on x, 1 or 'right' - right-aligned (text ends at x). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical text alignment relative to the y-coordinate. Possible values: 0 or 'bottom' - bottom-aligned (bottom of text at y), 0.5 or 'center' (default) - middle of text at y, 1 or 'top' - top-aligned (top of text at y). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
     - point_size : A value representing the visual size of the point associated with the label.
+    - point_stroke : Width of the point border.
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
@@ -8042,11 +8044,13 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - label : text to add to plot.
     - family : font family. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
     - fontface : font style and weight. For more info see `Text <https://lets-plot.org/python/pages/aesthetics.html#text>`__.
-    - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
-    - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
+    - hjust : horizontal text alignment relative to the x-coordinate. Possible values: 0 or 'left' - left-aligned (text starts at x), 0.5 or 'middle' (default) - text is centered on x, 1 or 'right' - right-aligned (text ends at x). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical text alignment relative to the y-coordinate. Possible values: 0 or 'bottom' - bottom-aligned (bottom of text at y), 0.5 or 'center' (default) - middle of text at y, 1 or 'top' - top-aligned (top of text at y). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
     - point_size : A value representing the visual size of the point associated with the label.
+    - point_stroke : Width of the point border.
     - segment_color : Color of the line segment connecting the label to the point.
     - segment_size : Width of the line segment connecting the label to the point.
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.

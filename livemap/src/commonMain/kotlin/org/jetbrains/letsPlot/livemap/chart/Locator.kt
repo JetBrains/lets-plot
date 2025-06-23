@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.chart
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
@@ -14,7 +15,8 @@ data class HoverObject(
     val layerIndex: Int,
     val index: Int,
     val distance: Double,
-    val locator: Locator // TODO: move it out from HoverObject
+    val locator: Locator, // TODO: move it out from HoverObject
+    val targetPosition: DoubleVector? = null
 )
 
 interface Locator {

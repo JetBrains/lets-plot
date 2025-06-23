@@ -15,12 +15,10 @@ class RasterTilesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
         return basicLiveMap {
             tileSystemProvider = Tilesets.raster(
                 listOf(
-                    "https://a.tile.stamen.com/toner/{z}/{x}/{y}@2x.png",
-                    "https://b.tile.stamen.com/toner/{z}/{x}/{y}@2x.png",
-                    "https://c.tile.stamen.com/toner/{z}/{x}/{y}@2x.png"
+                    "https://tile.opentopomap.org/{z}/{x}/{y}.png"
                 )
             )
-            attribution = "© stamen.com"
+            attribution = "map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>, <a href=\"http://viewfinderpanoramas.org/\">SRTM</a> | map style: <a href=\"https://opentopomap.org/\">© OpenTopoMap</a> (<a href=\"https://creativecommons.org/licenses/by-sa/3.0/\">CC-BY-SA</a>) "
         }
     }
 }

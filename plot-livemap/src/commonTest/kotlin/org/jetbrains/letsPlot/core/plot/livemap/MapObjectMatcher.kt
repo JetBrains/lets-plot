@@ -10,8 +10,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.livemap.MapLayerKind.*
 import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import org.jetbrains.letsPlot.core.plot.livemap.DataPointLiveMapAesthetics
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -132,7 +130,7 @@ internal class MapObjectMatcher {
         radius.assertExpectation(text.size)
 
 
-        text.point?.let { point.assertExpectation(it) }
+        point.assertExpectation(text.point)
         label.assertExpectation(text.label)
         family.assertExpectation(text.family)
         fontface.assertExpectation(text.fontface)

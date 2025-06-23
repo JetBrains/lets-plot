@@ -67,7 +67,7 @@ internal class MouseDragInteraction(
         onStarted: ((MouseDragInteraction) -> Unit),
         onDragged: ((MouseDragInteraction) -> Unit),
         onCompleted: ((MouseDragInteraction) -> Unit),
-        onAborted: ((MouseDragInteraction) -> Unit)
+        @Suppress("UNUSED_PARAMETER") onAborted: ((MouseDragInteraction) -> Unit)
     ) {
         check(!disposed) { "Disposed." }
         check(!started) { "Mouse drag has already started." }

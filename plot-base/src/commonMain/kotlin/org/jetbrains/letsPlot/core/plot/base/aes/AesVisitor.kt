@@ -36,6 +36,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
@@ -258,6 +259,9 @@ abstract class AesVisitor<T> {
         if (aes == POINT_SIZE) {
             return pointSize()
         }
+        if (aes == POINT_STROKE)    {
+            return pointStroke()
+        }
         if (aes == SEGMENT_COLOR) {
             return segmentColor()
         }
@@ -384,6 +388,8 @@ abstract class AesVisitor<T> {
     protected abstract fun strokeEnd(): T
 
     protected abstract fun pointSize(): T
+
+    protected abstract fun pointStroke(): T
 
     protected abstract fun segmentColor(): T
 

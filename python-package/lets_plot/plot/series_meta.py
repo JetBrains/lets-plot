@@ -93,13 +93,6 @@ def _infer_type_pandas_dataframe(var_name: str, var_content) -> str:
         else:
             lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
 
-    # if lp_dtype == TYPE_DATE:
-    #     # Not yet supported.
-    #     lp_dtype == TYPE_DATE_TIME
-    # elif lp_dtype == TYPE_TIME:
-    #     # Not yet supported.
-    #     lp_dtype = 'unknown(pandas:' + pandas_dtype + ')'
-
     return lp_dtype
 
 
@@ -126,13 +119,6 @@ def _infer_type_polars_dataframe(var_name: str, var_type) -> str:
     else:
         lp_dtype = 'unknown(polars:' + str(var_type) + ')'
 
-    # if lp_dtype == TYPE_DATE:
-    #     # Not yet supported.
-    #     lp_dtype == TYPE_DATE_TIME
-    # elif lp_dtype == TYPE_TIME:
-    #     # Not yet supported.
-    #     lp_dtype = 'unknown(polars:' + str(var_type) + ')'
-
     return lp_dtype
 
 
@@ -150,14 +136,13 @@ def _infer_type_dict(var_name: str, var_content) -> str:
     if len(type_set) == 0:
         return TYPE_UNKNOWN
 
-    lp_dtype = TYPE_UNKNOWN
-
     if len(type_set) > 1:
         if all(issubclass(type_obj, int) or issubclass(type_obj, float) for type_obj in type_set):
-            lp_dtype = TYPE_FLOATING
+            return TYPE_FLOATING
         else:
             return 'unknown(mixed types)'
 
+    lp_dtype = TYPE_UNKNOWN
     type_obj = list(type_set)[0]
     if type_obj == bool:
         lp_dtype = TYPE_BOOLEAN
@@ -189,13 +174,6 @@ def _infer_type_dict(var_name: str, var_content) -> str:
     else:
         lp_dtype = 'unknown(python:' + str(type_obj) + ')'
 
-    # if lp_dtype == TYPE_DATE:
-    #     # Not yet supported.
-    #     lp_dtype == TYPE_DATE_TIME
-    # elif lp_dtype == TYPE_TIME:
-    #     # Not yet supported.
-    #     lp_dtype = 'unknown(python:' + str(type_obj) + ')'
-
     return lp_dtype
 
 
@@ -206,8 +184,11 @@ def _detect_time_zone(var_name: str, data: Union[Dict, 'pandas.DataFrame', 'pola
             if hasattr(var_content, 'dt') and hasattr(var_content.dt, 'tz') and var_content.dt.tz is not None:
                 return str(var_content.dt.tz)
     elif is_polars_dataframe(data):
-        if data[var_name].dtype.time_zone is not None:
-            return str(data[var_name].dtype.time_zone)
+        if var_name in data.columns:
+            col_dtype = data[var_name].dtype
+            if hasattr(col_dtype, 'time_zone'):
+                if col_dtype.time_zone is not None:
+                    return str(col_dtype.time_zone)
     elif isinstance(data, dict):
         if var_name in data:
             var_content = data[var_name]

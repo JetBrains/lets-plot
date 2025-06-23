@@ -87,12 +87,12 @@ class SizingPolicy(
         @Suppress("NAME_SHADOWING")
         val containerSize = containerSize ?: figureSizeDefault
 
-        // width, height if provided by the policy override the container size.
+        // width, height if provided by the policy overrides the container size.
         val policyWidth = width ?: containerSize.x
         val policyHeight = height ?: containerSize.y
 
         return if (widthMode == SCALED && heightMode == SCALED) {
-            // Fit in container and preserve figure aspect ratio.
+            // Fit in the container and preserve the figure aspect ratio.
             return DoubleRectangle(DoubleVector.ZERO, DoubleVector(policyWidth, policyHeight))
                 .shrinkToAspectRatio(figureSizeDefault)
                 .dimension
@@ -122,7 +122,7 @@ class SizingPolicy(
                 val width = heightFixed / normalize(figureSizeDefault.y) * figureSizeDefault.x
                 DoubleVector(width, heightFixed)
             } else {
-                // Never occures.
+                // Never occurs.
                 throw IllegalArgumentException("Unable to determine size with sizing policy: $this")
             }
         }
