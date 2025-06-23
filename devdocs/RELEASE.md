@@ -119,7 +119,7 @@ Fill `pypi` and `sonatype` sections with credentials in the `local.properties` f
  
 ### 2. JVM artifacts (Sonatype Central Repository)
 
-Build release JVM artifacts from one of build machines:
+Publish release JVM artifacts from one of build machines:
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
@@ -131,9 +131,9 @@ Build release JVM artifacts from one of build machines:
           publishLetsPlotIdeaPluginPublicationToMavenRepository
 ```
 
-Package and upload artifacts to the Sonatype Central Repository:
+Close staging Sonatype Central Repository:
 
-`./gradlew uploadMavenArtifacts`
+`./gradlew findMavenStagingRepository closeMavenStagingRepository`
 
 Go to the Sonatype Central Repository deployments page:
 

@@ -251,19 +251,6 @@ publishing {
         mavenLocal {
             url = uri("$mavenLocalPath")
         }
-        maven {
-            // For SNAPSHOT publication use separate URL and credentials:
-            if (version.toString().endsWith("-SNAPSHOT")) {
-                url = uri(rootProject.project.extra["mavenSnapshotPublishUrl"].toString())
-
-                credentials {
-                    username = rootProject.project.extra["sonatypeUsername"].toString()
-                    password = rootProject.project.extra["sonatypePassword"].toString()
-                }
-            } else {
-                url = uri(rootProject.project.extra["mavenReleasePublishUrl"].toString())
-            }
-        }
     }
 }
 
