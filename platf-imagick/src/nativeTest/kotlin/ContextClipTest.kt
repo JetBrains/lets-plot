@@ -11,8 +11,6 @@ import kotlin.test.Test
 
 class ContextClipTest {
     private val imageComparer = ImageComparer()
-    private val w = 100.0
-    private val h = 100.0
 
     private fun nwRect(ctx: Context2d) {
         ctx.moveTo(0, 0)

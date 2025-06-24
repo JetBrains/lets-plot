@@ -10,7 +10,7 @@ import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.refTo
 import org.jetbrains.letsPlot.commons.encoding.Base64
-import org.jetbrains.letsPlot.commons.encoding.DataImage
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
@@ -22,12 +22,12 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.nat.encoding.micropng.decodePng
 
 class MagickCanvasControl(
     val w: Int,
     val h: Int,
     override val pixelDensity: Double,
+    private val fontManager: MagickFontManager,
 ) : CanvasControl {
     val children = mutableListOf<Canvas>()
 
@@ -68,7 +68,7 @@ class MagickCanvasControl(
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return MagickCanvas.create(size, pixelDensity)
+        return MagickCanvas.create(size, pixelDensity, fontManager)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
@@ -88,7 +88,7 @@ class MagickCanvasControl(
 
             return Asyncs.constant(MagickCanvas.MagickSnapshot(img))
         } else {
-            val img = DataImage.decode(dataUrl)
+            val img = Png.decodeDataImage(dataUrl)
             return Asyncs.constant(MagickCanvas.MagickSnapshot.fromPixels(img.rgbaBytes(), size = Vector(img.width, img.height)))
         }
     }
@@ -114,10 +114,10 @@ class MagickCanvasControl(
 
     fun loadImageFromPngBytes(bytes: ByteArray): CPointer<ImageMagick.MagickWand> {
         println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${bytes.size}")
-        val png = decodePng(bytes)
+        val png = Png.decode(bytes)
         val w = png.width
         val h = png.height
-        val rgba = png.rgba
+        val rgba = png.rgbaBytes()
         val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
         val backgroundPixel = ImageMagick.NewPixelWand()
         ImageMagick.PixelSetColor(backgroundPixel, "transparent")

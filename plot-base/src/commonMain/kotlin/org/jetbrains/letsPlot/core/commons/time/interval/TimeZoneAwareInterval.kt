@@ -35,15 +35,8 @@ abstract class TimeZoneAwareInterval : TimeInterval {
         while (nextTick <= end) {
             result.add(nextTick)
 
-            if (this is WithFixedDuration) {
-                // 'addInterval()' may not work with an hour-interval correctly
-                // because if the time zone has a (fall) DST transition than time is shifted back
-                // and hours may be the same for two different timestamps.
-                nextTick = nextTick + duration.totalMillis.toDouble()
-            } else {
-                nextDateTime = addInterval(nextDateTime, tz)
-                nextTick = nextDateTime.toEpochMilliseconds(tz).toDouble()
-            }
+            nextDateTime = addInterval(nextDateTime, tz)
+            nextTick = nextDateTime.toEpochMilliseconds(tz).toDouble()
         }
 
         return result

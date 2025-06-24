@@ -9,7 +9,9 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 
 import Python.PyObject
 import Python.Py_BuildValue
-import kotlinx.cinterop.*
+import kotlinx.cinterop.ByteVar
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
@@ -17,10 +19,12 @@ import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import kotlin.math.roundToInt
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
@@ -32,23 +36,6 @@ object PlotReprGenerator {
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
             Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}");
-        }
-    }
-
-    fun getMagickError(wand: CPointer<ImageMagick.MagickWand>?): String {
-        require(wand != null) { "MagickWand is null" }
-
-        return memScoped {
-            val severity = alloc<ImageMagick.ExceptionTypeVar>()
-            val messagePtr = ImageMagick.MagickGetException(wand, severity.ptr)
-
-            if (messagePtr != null) {
-                val errorMessage = messagePtr.toKString()
-                ImageMagick.MagickRelinquishMemory(messagePtr)
-                "ImageMagick Error: $errorMessage"
-            } else {
-                "Unknown ImageMagick error"
-            }
         }
     }
 
@@ -151,18 +138,27 @@ object PlotReprGenerator {
                 frontendOnly = false
             )
 
+            val sizingPolicy = when {
+                width != 0 && height != 0 -> SizingPolicy.fixed(
+                    width = width.toDouble(),
+                    height = height.toDouble()
+                )
+                else -> SizingPolicy.keepFigureDefaultSize()
+            }
+
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
                 plotSpec = processedSpec,
-                sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
+                sizingPolicy = sizingPolicy,
                 computationMessagesHandler = { println(it.joinToString("\n")) }
             )
 
             val svgCanvasFigure = SvgCanvasFigure(vm.svg)
 
             val canvasControl = MagickCanvasControl(
-                w = svgCanvasFigure.width,
-                h = svgCanvasFigure.height,
-                pixelDensity = 1.0
+                w = (svgCanvasFigure.width * scale).roundToInt(),
+                h = (svgCanvasFigure.height * scale).roundToInt(),
+                pixelDensity = scale.toDouble(),
+                fontManager = MagickFontManager.DEFAULT,
             )
 
             canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)

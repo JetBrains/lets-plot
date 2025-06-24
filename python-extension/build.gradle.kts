@@ -14,10 +14,13 @@ val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
 val imagick = (rootProject.project.extra.properties.getOrDefault("imagemagick_lib_path", "") as String).isNotBlank()
 
+// To improve the building time of the Python extension in development mode.
+val pythonExtensionDebugBuild = project.findProperty("python_extension_debug_build") == "true"
+
 kotlin {
     //applyDefaultHierarchyTemplate()
 
-    val target = if(enablePythonPackage) {
+    val target = if (enablePythonPackage) {
         val target = when {
             os.isMacOsX && arch == "arm64" -> macosArm64()
             os.isMacOsX && arch == "x86_64" -> macosX64()
@@ -28,8 +31,15 @@ kotlin {
         }
 
         target.binaries {
-            staticLib {
+            staticLib(buildTypes = if (pythonExtensionDebugBuild) listOf(DEBUG) else listOf(RELEASE)) {
                 baseName = "lets-plot-${project.name}"
+                if (pythonExtensionDebugBuild) {
+                    // Output to the `releaseStatic` instead of the default `debugStatic` directory
+                    // to not pass extra parameter to the setup.py in python-package.
+                    val releaseStaticPath = outputDirectory.toPath().resolveSibling("releaseStatic").toFile()
+                    releaseStaticPath.mkdirs()
+                    outputDirectory = releaseStaticPath
+                }
             }
         }
 

@@ -15,6 +15,10 @@ enable_magick_canvas=false
 # Set 'true' or 'false' here:
 enable_python_package=false
 
+# Build only debug version of python-extension module. This improves build time significantly.
+python_extension_debug_build=false
+
+
 # -------------------------------------------------------------------
 # Python settings
 # ---------
@@ -36,7 +40,7 @@ enable_python_package=false
 # -------------------------------------------------------------------
 # Sonatype settings
 #
-# User with deployment permission to Sonatype Nexus repository.
+# User with deployment permission to Sonatype Central Repository.
 #
 # In addition, each publication must be signed using a PGP key.
 # Create file "~/.gradle/gradle.properties":
@@ -46,4 +50,4 @@ enable_python_package=false
 # -------------------------------------------------------------------
 #sonatype.username=
 #sonatype.password=
-#sonatype.profileID=
+

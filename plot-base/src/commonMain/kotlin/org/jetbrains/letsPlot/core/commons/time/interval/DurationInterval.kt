@@ -14,18 +14,17 @@ import kotlin.math.ceil
  * that can be used for creating regular time-based tick marks on an axis.
  */
 internal class DurationInterval(
-    timeUnit: Duration,
+    private val timeUnit: Duration,
     count: Int
 ) : TimeInterval {
 
     private val duration: Duration = timeUnit.mul(count)
     override val tickFormatPattern: String =
-        // Note: previously we compared `timeUnit` with `Duration.SECOND`, `Duration.MINUTE`, etc.
         when {
 //            duration < Duration.SECOND -> "%M:%S" //"%S"
             duration < Duration.MINUTE -> "%M:%S" //"%S"
 //            duration < Duration.HOUR -> HourInterval.TICK_FORMAT //"%M"
-            duration < Duration.DAY -> HourInterval.TICK_FORMAT
+            duration < Duration.DAY -> "%H:%M"
             else -> DayInterval.TICK_FORMAT
         }
 
@@ -35,7 +34,13 @@ internal class DurationInterval(
 
     override fun range(start: Double, end: Double, tz: TimeZone?): List<Double> {
         val step = duration.totalMillis.toDouble()
-        var tick = ceil(start / step) * step
+        // 1-st tick at or just after the start
+        val atomicStep = if (timeUnit < Duration.HOUR) {
+            step
+        } else {
+            timeUnit.totalMillis.toDouble() // 1 hour
+        }
+        var tick = ceil(start / atomicStep) * atomicStep
         val result = ArrayList<Double>()
         while (tick <= end) {
             result.add(tick)

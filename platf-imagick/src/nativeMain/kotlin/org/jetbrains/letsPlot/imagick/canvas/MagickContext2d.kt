@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.canvas.Path2d.*
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
+    private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate {
     private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
@@ -113,20 +114,18 @@ class MagickContext2d(
     override fun setFont(f: Font) {
         stateDelegate.setFont(f)
 
+        val resolved = fontManager.resolveFont(f.fontFamily)
+        if (resolved.fontFamily != null) {
+            ImageMagick.DrawSetFontFamily(wand, resolved.fontFamily)
+        } else if (resolved.fontFilePath != null) {
+            ImageMagick.DrawSetFont(wand, resolved.fontFilePath)
+        } else {
+            error("Font family '${f.fontFamily}' could not be resolved.")
+        }
+
         ImageMagick.DrawSetFontSize(wand, f.fontSize)
-        ImageMagick.DrawSetFontFamily(wand, f.fontFamily)
-
-        val fontStyle = when (f.fontStyle) {
-            FontStyle.NORMAL -> ImageMagick.StyleType.NormalStyle
-            FontStyle.ITALIC -> ImageMagick.StyleType.ItalicStyle
-        }
-        ImageMagick.DrawSetFontStyle(wand, fontStyle)
-
-        val fontWeight = when (f.fontWeight) {
-            FontWeight.NORMAL -> 400.toULong()
-            FontWeight.BOLD -> 800.toULong()
-        }
-        ImageMagick.DrawSetFontWeight(wand, fontWeight)
+        ImageMagick.DrawSetFontStyle(wand, f.fontStyle.convert())
+        ImageMagick.DrawSetFontWeight(wand, f.fontWeight.convert())
     }
 
     override fun setGlobalAlpha(alpha: Double) {

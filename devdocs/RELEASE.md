@@ -117,9 +117,9 @@ Fill `pypi` and `sonatype` sections with credentials in the `local.properties` f
  
  `./gradlew python-package-build:publishProdPythonPackage`
  
-### 2. JVM artifacts (Sonatype Nexus Repository)
+### 2. JVM artifacts (Sonatype Central Repository)
 
-Publish JVM artifacts from one of build machines:
+Build release JVM artifacts from one of build machines:
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
@@ -131,13 +131,15 @@ Publish JVM artifacts from one of build machines:
           publishLetsPlotIdeaPluginPublicationToMavenRepository
 ```
 
-Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories
+Package and upload artifacts to the Sonatype Central Repository:
 
-Close and release repository to the Maven Central:
+`./gradlew uploadMavenArtifacts`
 
-`./gradlew findMavenStagingRepository closeAndReleaseMavenStagingRepository`
+Go to the Sonatype Central Repository deployments page:
 
-This operation can take up to 5 minutes.
+https://central.sonatype.com/publishing/deployments
+
+Check all artifacts were uploaded and verified, then push the "Publish" button.
 
  
 ## Add the GitHub release:

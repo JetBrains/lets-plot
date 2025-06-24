@@ -6,7 +6,7 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
-import org.jetbrains.letsPlot.commons.encoding.DataImage
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgImageAttrMapping
 import org.jetbrains.letsPlot.raster.shape.Image
@@ -21,7 +21,7 @@ internal class SvgImageElementMapper(
         when (name) {
             SvgImageElement.HREF.name -> {
                 val str = value as? String ?: return
-                target.img = DataImage.decode(str)
+                target.img = Png.decodeDataImage(str)
             }
             else -> SvgImageAttrMapping.setAttribute(target, name, value)
         }

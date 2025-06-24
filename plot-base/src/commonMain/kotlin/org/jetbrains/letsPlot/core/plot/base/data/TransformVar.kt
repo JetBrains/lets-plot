@@ -68,6 +68,7 @@ object TransformVar {
     val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
     val STROKE_END = DataFrame.Variable("transform.STROKE_END", TRANSFORM)
     val POINT_SIZE = DataFrame.Variable("transform.POINT_SIZE", TRANSFORM)
+    val POINT_STROKE = DataFrame.Variable("transform.POINT_STROKE", TRANSFORM)
     val SEGMENT_COLOR = DataFrame.Variable("transform.SEGMENT_COLOR", TRANSFORM)
     val SEGMENT_SIZE = DataFrame.Variable("transform.SEGMENT_SIZE", TRANSFORM)
     val SEGMENT_ALPHA = DataFrame.Variable("transform.SEGMENT_ALPHA", TRANSFORM)
@@ -332,6 +333,10 @@ object TransformVar {
 
         override fun pointSize(): DataFrame.Variable {
             return POINT_SIZE
+        }
+
+        override fun pointStroke(): DataFrame.Variable {
+            return POINT_STROKE
         }
 
         override fun segmentColor(): DataFrame.Variable {
