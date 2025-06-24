@@ -463,6 +463,7 @@ class TooltipBox(
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
             titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+            titleComponent.setFontSize(styleSheet.getTextStyle(TOOLTIP_TITLE).size)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
@@ -540,6 +541,9 @@ class TooltipBox(
                 val (labelComponent, valueComponent) = component
                 labelComponent?.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
                 valueComponent.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
+                // set font size
+                labelComponent?.setFontSize(styleSheet.getTextStyle(TOOLTIP_LABEL).size)
+                valueComponent.setFontSize(styleSheet.getTextStyle(textClassName).size)
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }

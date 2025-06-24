@@ -28,10 +28,11 @@ object RichText {
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-        anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR
+        anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
+        initialX: Double = 0.0
     ): List<SvgTextElement> {
         val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
-        val svgLines = render(lines, font, widthCalculator, anchorCoefficients = anchorCoefficients(lines, anchor))
+        val svgLines = render(lines, font, widthCalculator, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
         return svgLines
     }
 
@@ -224,7 +225,8 @@ object RichText {
         lines: List<List<RichTextNode>>,
         font: Font,
         widthCalculator: (String, Font) -> Double,
-        anchorCoefficients: List<Double?>
+        anchorCoefficients: List<Double?>,
+        initialX: Double
     ): List<SvgTextElement> {
         val stack = mutableListOf(RenderState())
         val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
@@ -246,7 +248,7 @@ object RichText {
                         // and if it is not null, it means that the line contains [at least] a fraction node,
                         // and then we need to add x attribute to the first tspan in the line with shift,
                         // that corresponds to the anchorCoefficient.
-                        val x = anchorCoefficient?.let { -it * lineWidth }
+                        val x = anchorCoefficient?.let { initialX - it * lineWidth }
                         svg += term.render(stack.last(), prefix.toList(), x, isFirstRichSpanInLine)
                         prefix.add(term)
                         isFirstRichSpanInLine = false

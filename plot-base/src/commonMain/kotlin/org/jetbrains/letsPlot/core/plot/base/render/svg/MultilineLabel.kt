@@ -151,7 +151,8 @@ class MultilineLabel(
             TextWidthEstimator::widthCalculator,
             wrapWidth,
             markdown = markdown,
-            anchor = myHorizontalAnchor
+            anchor = myHorizontalAnchor,
+            initialX = xStart ?: 0.0
         )
         myLinesSize = lines.size
         val horizontalAnchors = horizontalAnchorByLine(lines)
