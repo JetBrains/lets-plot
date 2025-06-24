@@ -6,16 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.DimensionUnit
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 object BoxHelper {
     fun buildBoxes(
@@ -50,17 +48,34 @@ object BoxHelper {
 
             val width = w * geomHelper.getUnitResolution(widthUnit, xAes)
 
-            val (line) = elementHelper.createLine(
+            val (line, _) = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),
                 DoubleVector(x + width / 2, middle),
                 p
             ) { AesScaling.strokeWidth(it) * fatten } ?: continue
 
-            require(line is SvgShape)
-
             root.add(line)
         }
     }
+
+    fun buildMidlines(
+        aesthetics: Aesthetics,
+        fatten: Double,
+        geomHelper: GeomHelper,
+        lineFactory: (DataPointAesthetics) -> DoubleSegment?,
+        handler: (DataPointAesthetics, SvgNode, DoubleSegment) -> Unit
+    ) {
+        val elementHelper = geomHelper.createSvgElementHelper()
+        aesthetics.dataPoints().forEach { p ->
+            lineFactory(p)?.let { segment ->
+                val (svgNode, line) = elementHelper.createLine(segment, p) { AesScaling.strokeWidth(it) * fatten }
+                    ?: return@let
+
+                handler(p, svgNode, DoubleSegment(line[0], line[1]))
+            }
+        }
+    }
+
     fun legendFactory(whiskers: Boolean, showMidline: Boolean): LegendKeyElementFactory =
         BoxLegendKeyElementFactory(whiskers, showMidline)
 }
