@@ -27,7 +27,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDouble
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class TextRepelGeom: TextGeom() {
     var seed: Long? = null
@@ -140,7 +139,7 @@ open class TextRepelGeom: TextGeom() {
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
-                root.add(svgHelper.createLine(segment, dp)!!.first)
+                root.add(buildSegmentComponent(toSegmentAes(dp), segment, svgHelper))
             }
 
             targetCollector.addPoint(
@@ -153,6 +152,20 @@ open class TextRepelGeom: TextGeom() {
                 TipLayoutHint.Kind.CURSOR_TOOLTIP
             )
         }
+    }
+
+    private fun buildSegmentComponent(
+        dp: DataPointAesthetics,
+        segment: DoubleSegment,
+        svgHelper: GeomHelper.SvgElementHelper
+    ): SvgGElement {
+        val g = SvgGElement()
+
+        val (svg, _) = svgHelper.createLine(segment, dp)!!
+
+        g.children().add(svg)
+
+        return g
     }
 
     private fun getSegmentLocation(pointLocation: DoubleVector, pointRadius: Double, rect: TransformedRectangle, scale: Double): DoubleSegment? {
