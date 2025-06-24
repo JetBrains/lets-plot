@@ -211,10 +211,10 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             PLOT_MARGIN to mapOf(
-                Elem.Margin.TOP to 0.0,
-                Elem.Margin.RIGHT to 0.0,
-                Elem.Margin.BOTTOM to 0.0,
-                Elem.Margin.LEFT to 0.0
+                Elem.Margin.TOP to 3.0,
+                Elem.Margin.RIGHT to 3.0,
+                Elem.Margin.BOTTOM to 3.0,
+                Elem.Margin.LEFT to 3.0
             ),
             PLOT_INSET to mapOf(
                 Elem.Inset.TOP to 3.0,
