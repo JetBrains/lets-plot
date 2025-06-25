@@ -12,7 +12,7 @@
       See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
   
     - `geom_text_repel()` and `geom_label_repel()` for avoiding text overlaps in plots [[#1092](https://github.com/JetBrains/lets-plot/issues/1092)].  
-      See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/geom_text_repel.ipynb).
+      See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/ggrepel.ipynb).
 
 - Combining Discrete and Continuous Layers [[#1279](https://github.com/JetBrains/lets-plot/issues/1279)].  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
