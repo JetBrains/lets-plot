@@ -7852,20 +7852,18 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 10
 
-        import pandas as pd
         from lets_plot import *
         LetsPlot.setup_html()
-
-        df = pd.DataFrame({
+        data = {
             "x": [-0.5, 0.5],
             "y": [0, 0],
             "label": ["Lorem ipsum", "dolor sit amet"]
-        })
-        ggplot(df, aes("x", "y")) + \\
+        }
+        ggplot(data, aes("x", "y")) + \\
             geom_point(size=20) + \\
-            geom_text_repel(aes(label="label"), point_size=20, size=10) + \\
+            geom_text_repel(aes(label="label"), point_size=20, size=10, seed=42) + \\
             xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
 
     """
@@ -8076,20 +8074,18 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 10
 
-        import pandas as pd
         from lets_plot import *
         LetsPlot.setup_html()
-
-        df = pd.DataFrame({
+        data = {
             "x": [-0.5, 0.5],
             "y": [0, 0],
             "label": ["Lorem ipsum", "dolor sit amet"]
-        })
-        ggplot(df, aes("x", "y")) + \\
+        }
+        ggplot(data, aes("x", "y")) + \\
             geom_point(size=20) + \\
-            geom_label_repel(aes(label="label"), point_size=20, size=10) + \\
+            geom_label_repel(aes(label="label"), point_size=20, size=10, seed=42) + \\
             xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
 
     """
