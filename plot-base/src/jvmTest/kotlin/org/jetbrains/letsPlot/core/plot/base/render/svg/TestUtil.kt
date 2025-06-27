@@ -108,150 +108,99 @@ object TestUtil {
     class FormulaLevel {
         private val shifts: MutableList<Shift> = mutableListOf()
 
-        fun copy(): FormulaLevel {
-            val level = FormulaLevel()
-            shifts.forEach { shift -> level.shifts.add(shift) }
-            return level
-        }
+        fun copy(): FormulaLevel = FormulaLevel().apply { shifts.addAll(this@FormulaLevel.shifts) }
 
         // The level remains unchanged
-        fun current(): FormulaLevel {
-            shifts.add(Shift.CURRENT)
-            return this
-        }
+        fun current(): FormulaLevel = apply { shifts.add(Shift.CURRENT) }
 
         // No checks
-        fun pass(): FormulaLevel {
-            shifts.add(Shift.PASS)
-            return this
-        }
+        fun pass(): FormulaLevel = apply { shifts.add(Shift.PASS) }
 
-        fun sup(): FormulaLevel {
-            shifts.add(Shift.SUPERSCRIPT)
-            return this
-        }
+        fun sup(): FormulaLevel = apply { shifts.add(Shift.SUPERSCRIPT) }
 
-        fun sub(): FormulaLevel {
-            shifts.add(Shift.SUBSCRIPT)
-            return this
-        }
+        fun sub(): FormulaLevel = apply { shifts.add(Shift.SUBSCRIPT) }
 
-        fun num(): FormulaLevel {
-            shifts.add(Shift.NUMERATOR)
-            return this
-        }
+        fun num(): FormulaLevel = apply { shifts.add(Shift.NUMERATOR) }
 
-        fun denom(): FormulaLevel {
-            shifts.add(Shift.DENOMINATOR)
-            return this
-        }
+        fun denom(): FormulaLevel = apply { shifts.add(Shift.DENOMINATOR) }
 
-        fun bar(): FormulaLevel {
-            shifts.add(Shift.FRACTION_BAR)
-            return this
-        }
+        fun bar(): FormulaLevel = apply { shifts.add(Shift.FRACTION_BAR) }
 
-        fun revert(): FormulaLevel {
-            shifts.add(Shift.REVERT)
-            return this
-        }
+        fun revert(): FormulaLevel = apply { shifts.add(Shift.REVERT) }
 
-        fun toPass(): Boolean {
-            return shifts.isEmpty() || shifts.last() == Shift.PASS
-        }
+        fun toPass(): Boolean = shifts.isEmpty() || shifts.last() == Shift.PASS
 
-        fun sizeValue(): Double? {
+        fun sizeValue(): Double? = computeState().size
+
+        fun size(): String? = sizeValue()?.let { "${it}em" }
+
+        fun dy(): String? = computeState().dy?.let { "${it}em" }
+
+        private fun computeState(): FormulaRenderState {
             val shiftsStack = ArrayDeque<Shift>()
-            val sizeByLevel = { level: Int ->
-                if (level > 0) {
-                    0.7.pow(level)
-                } else {
-                    null
-                }
-            }
             var level = 0
             var size: Double? = null
+            var dy: Double? = null
             shifts.forEach { shift ->
                 when (shift) {
                     Shift.PASS -> {
                         size = null
+                        dy = null
                     }
-                    Shift.CURRENT,
-                    Shift.NUMERATOR,
-                    Shift.DENOMINATOR -> {
+                    Shift.CURRENT -> {
                         size = sizeByLevel(level)
-                    }
-                    Shift.FRACTION_BAR -> {
-                        shiftsStack.addLast(Shift.FRACTION_BAR)
-                        size = sizeByLevel(level)
-                    }
-                    Shift.SUPERSCRIPT -> {
-                        shiftsStack.addLast(Shift.SUPERSCRIPT)
-                        level += 1
-                        size = sizeByLevel(level)
-                    }
-                    Shift.SUBSCRIPT -> {
-                        shiftsStack.addLast(Shift.SUBSCRIPT)
-                        level += 1
-                        size = sizeByLevel(level)
-                    }
-                    Shift.REVERT -> {
-                        size = sizeByLevel(level)
-                        level += when (shiftsStack.removeLast()) {
-                            Shift.SUBSCRIPT,
-                            Shift.SUPERSCRIPT -> -1
-                            Shift.FRACTION_BAR -> 0
-                            else -> error("Unexpected shift type")
-                        }
-                    }
-                }
-            }
-            return size
-        }
-
-        fun size(): String? {
-            return sizeValue()?.let { "${it}em" }
-        }
-
-        fun dy(): String? {
-            val shiftsStack = ArrayDeque<Shift>()
-            var dy: Double? = null
-            shifts.forEach { shift ->
-                when (shift) {
-                    Shift.CURRENT,
-                    Shift.PASS -> {
                         dy = null
                     }
                     Shift.SUPERSCRIPT -> {
                         shiftsStack.addLast(Shift.SUPERSCRIPT)
+                        level += 1
+                        size = sizeByLevel(level)
                         dy = -0.4
                     }
                     Shift.SUBSCRIPT -> {
                         shiftsStack.addLast(Shift.SUBSCRIPT)
+                        level += 1
+                        size = sizeByLevel(level)
                         dy = 0.4
                     }
                     Shift.NUMERATOR -> {
+                        size = sizeByLevel(level)
                         dy = -0.5
                     }
                     Shift.DENOMINATOR -> {
+                        size = sizeByLevel(level)
                         dy = 1.0
                     }
                     Shift.FRACTION_BAR -> {
                         shiftsStack.addLast(Shift.FRACTION_BAR)
+                        size = sizeByLevel(level)
                         dy = -0.5
                     }
                     Shift.REVERT -> {
-                        dy = when (shiftsStack.removeLast()) {
-                            Shift.SUBSCRIPT -> -0.4
-                            Shift.SUPERSCRIPT -> 0.4
-                            Shift.FRACTION_BAR -> null
-                            else -> error("Unexpected shift type")
+                        size = sizeByLevel(level)
+                        when (shiftsStack.removeLast()) {
+                            Shift.SUPERSCRIPT -> {
+                                level += -1
+                                dy = 0.4
+                            }
+                            Shift.SUBSCRIPT -> {
+                                level += -1
+                                dy = -0.4
+                            }
+                            Shift.FRACTION_BAR -> {
+                                dy = null
+                            }
+                            else -> IllegalStateException("Unbalanced shift stack")
                         }
                     }
                 }
             }
-            return dy?.let { "${it}em" }
+            return FormulaRenderState(size, dy)
         }
+
+        private fun sizeByLevel(level: Int): Double? = 0.7.pow(level).takeIf { (level > 0) }
+
+        private data class FormulaRenderState(val size: Double?, val dy: Double?)
 
         enum class Shift {
             CURRENT, PASS, SUPERSCRIPT, SUBSCRIPT, NUMERATOR, DENOMINATOR, FRACTION_BAR, REVERT;
