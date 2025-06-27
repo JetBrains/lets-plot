@@ -71,7 +71,7 @@ class MultilineLabelTest {
     @Test
     fun widthCalculationForMonospacedFont() {
         widthCalculationForFractionWithPrefix(Font(
-            family = FontFamily("Courier", monospaced = true),
+            family = FontFamily("monospace", monospaced = true),
             size = 12,
             isBold = false,
             isItalic = false
