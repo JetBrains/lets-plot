@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.enrich
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -34,7 +34,7 @@ internal object Hyperlink {
             return widthCalculator(text, font)
         }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<RichSpanElement<SvgElement>> {
+        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return listOf(
                 SvgAElement().apply {
                     href().set(href)
@@ -44,7 +44,7 @@ internal object Hyperlink {
                             addClass(RichText.HYPERLINK_ELEMENT_CLASS)
                         }
                     )
-                }.enrich()
+                }.wrap()
             )
         }
     }

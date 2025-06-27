@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichSpanElement
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichASpanElement
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.RichTSpanElement
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedAElement
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -211,12 +211,13 @@ object RichText {
                 }
             }
             // The coefficient is dependent on the anchor but only if there is a fraction node in the line
-            when {
-                !containsLatexFractionNode -> null
-                anchor == Text.HorizontalAnchor.LEFT -> null
-                anchor == Text.HorizontalAnchor.MIDDLE -> 0.5
-                anchor == Text.HorizontalAnchor.RIGHT -> 1.0
-                else -> throw IllegalStateException("Unsupported horizontal anchor: $anchor")
+            if (!containsLatexFractionNode) {
+                return@map null
+            }
+            when (anchor) {
+                Text.HorizontalAnchor.LEFT -> null // no shift needed when text is left-aligned
+                Text.HorizontalAnchor.MIDDLE -> 0.5
+                Text.HorizontalAnchor.RIGHT -> 1.0
             }
         }
     }
@@ -253,6 +254,8 @@ object RichText {
                         prefix.add(term)
                         isFirstRichSpanInLine = false
                     }
+
+                    is RichTextNode.LineBreak -> throw IllegalStateException("Line breaks should be parsed before rendering")
                 }
             }
             svg
@@ -261,7 +264,7 @@ object RichText {
         return svgLines.map { SvgTextElement().apply { children().addAll(it) } }
     }
 
-    internal interface RichTextNode {
+    internal sealed interface RichTextNode {
         object EmphasisStart : RichTextNode
         object EmphasisEnd : RichTextNode
         object StrongStart : RichTextNode
@@ -277,36 +280,36 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-            abstract fun render(context: RenderState, prefix: List<RichSpan>): List<RichSpanElement<SvgElement>>
+            abstract fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
             // and then each of them is rendered to SVG element, taking into account the additional x parameter;
             // each resulting SVG element is a span-like element (SvgTSpanElement or SvgAElement with SvgTSpanElement as a child)
             fun render(context: RenderState, prefix: List<RichSpan>, x: Double?, isFirstRichSpanInLine: Boolean): List<SvgElement> {
-                return render(context, prefix).mapIndexed { i, richSpanElement ->
-                    richSpanElement.x = when {
-                        // If richSpanElement.x == null than x should be defined only for the first span in the line
-                        richSpanElement.x == null -> if (isFirstRichSpanInLine && i == 0) x else null
-                        // If richSpanElement.x != null, it means that it should be shifted
-                        else -> richSpanElement.x!! + (x ?: 0.0)
+                return render(context, prefix).mapIndexed { i, wrappedElement ->
+                    wrappedElement.x = when {
+                        // If wrappedElement.x == null than x should be defined only for the first span in the line
+                        wrappedElement.x == null -> if (isFirstRichSpanInLine && i == 0) x else null
+                        // If wrappedElement.x != null, it means that it should be shifted
+                        else -> wrappedElement.x!! + (x ?: 0.0)
                     }
-                    richSpanElement.updateSvgXAttribute().svg
+                    wrappedElement.updateSvgXAttribute().svg
                 }
             }
 
-            abstract class RichSpanElement<T : SvgElement>(val svg: T, var x: Double? = null) {
-                abstract fun updateSvgXAttribute(): RichSpanElement<T>
+            abstract class WrappedSvgElement<T : SvgElement>(val svg: T, var x: Double? = null) {
+                abstract fun updateSvgXAttribute(): WrappedSvgElement<T>
             }
 
-            class RichTSpanElement(svg: SvgTSpanElement, x: Double? = null) : RichSpanElement<SvgTSpanElement>(svg, x) {
-                override fun updateSvgXAttribute(): RichSpanElement<SvgTSpanElement> {
+            class WrappedTSpanElement(svg: SvgTSpanElement, x: Double? = null) : WrappedSvgElement<SvgTSpanElement>(svg, x) {
+                override fun updateSvgXAttribute(): WrappedSvgElement<SvgTSpanElement> {
                     x?.let { svg.setAttribute(SvgTextContent.X, it) }
                     return this
                 }
             }
 
-            class RichASpanElement(svg: SvgAElement, x: Double? = null) : RichSpanElement<SvgAElement>(svg, x) {
-                override fun updateSvgXAttribute(): RichSpanElement<SvgAElement> {
+            class WrappedAElement(svg: SvgAElement, x: Double? = null) : WrappedSvgElement<SvgAElement>(svg, x) {
+                override fun updateSvgXAttribute(): WrappedSvgElement<SvgAElement> {
                     val tSpan = svg.children().single() as SvgTSpanElement
                     x?.let { tSpan.setAttribute(SvgTextContent.X, it) }
                     return this
@@ -323,10 +326,10 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun render(context: RenderState, prefix: List<RichSpan>): List<RichSpanElement<SvgElement>> {
+            override fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>> {
                 return SvgTSpanElement(text)
                     .apply(context::apply)
-                    .enrich()
+                    .wrap()
                     .let(::listOf)
             }
 
@@ -334,20 +337,20 @@ object RichText {
         }
     }
 
-    internal fun SvgTSpanElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
+    internal fun SvgTSpanElement.wrap(x: Double? = null): WrappedSvgElement<SvgElement> {
         @Suppress("UNCHECKED_CAST")
-        return RichTSpanElement(this, x) as RichSpanElement<SvgElement>
+        return WrappedTSpanElement(this, x) as WrappedSvgElement<SvgElement>
     }
 
-    internal fun SvgAElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
+    internal fun SvgAElement.wrap(x: Double? = null): WrappedSvgElement<SvgElement> {
         @Suppress("UNCHECKED_CAST")
-        return RichASpanElement(this, x) as RichSpanElement<SvgElement>
+        return WrappedAElement(this, x) as WrappedSvgElement<SvgElement>
     }
 
-    internal fun SvgElement.enrich(x: Double? = null): RichSpanElement<SvgElement> {
+    internal fun SvgElement.wrap(x: Double? = null): WrappedSvgElement<SvgElement> {
         return when (this) {
-            is SvgTSpanElement -> enrich(x)
-            is SvgAElement -> enrich(x)
+            is SvgTSpanElement -> wrap(x)
+            is SvgAElement -> wrap(x)
             else -> throw IllegalArgumentException("Unsupported SVG element type: ${this::class.simpleName}")
         }
     }
