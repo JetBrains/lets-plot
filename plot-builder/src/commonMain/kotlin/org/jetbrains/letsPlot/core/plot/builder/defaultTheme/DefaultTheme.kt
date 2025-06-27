@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.LINETYPE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.SIZE
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 
 class DefaultTheme internal constructor(
     private val options: Map<String, Any>,
