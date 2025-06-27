@@ -36,20 +36,15 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
     }
 
     override fun buildComponent() {
-
     }
 
-    override fun addClassName(className: String) {
-        myClassName = className
-        resetText()
-    }
+    override fun addClassName(className: String) = updateAndReset { myClassName = className }
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
-            override fun set(value: Color?) {
+            override fun set(value: Color?) = updateAndReset {
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
-                resetText()
             }
         }
     }
@@ -66,42 +61,29 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         return myText.y()
     }
 
-    fun setHorizontalAnchor(anchor: HorizontalAnchor) {
-        myHorizontalAnchor = anchor
-        resetText()
-    }
+    fun setHorizontalAnchor(anchor: HorizontalAnchor) = updateAndReset { myHorizontalAnchor = anchor }
 
-    fun setVerticalAnchor(anchor: Text.VerticalAnchor) {
-        myVerticalAnchor = anchor
-        resetText()
-    }
+    fun setVerticalAnchor(anchor: Text.VerticalAnchor) = updateAndReset { myVerticalAnchor = anchor }
 
-    fun setFontSize(px: Double) {
-        myFontSize = px
-        resetText()
-    }
+    fun setFontSize(px: Double) = updateAndReset { myFontSize = px }
 
     /**
      * @param cssName : normal, bold, bolder, lighter
      */
-    fun setFontWeight(cssName: String?) {
-        myFontWeight = cssName
-        resetText()
-    }
+    fun setFontWeight(cssName: String?) = updateAndReset { myFontWeight = cssName }
 
     /**
      * @param cssName : normal, italic, oblique
      */
-    fun setFontStyle(cssName: String?) {
-        myFontStyle = cssName
-        resetText()
-    }
+    fun setFontStyle(cssName: String?) = updateAndReset { myFontStyle = cssName }
 
     /**
      * @param fontFamily : for example 'sans-serif' or 'Times New Roman'
      */
-    fun setFontFamily(fontFamily: String?) {
-        myFontFamily = fontFamily
+    fun setFontFamily(fontFamily: String?) = updateAndReset { myFontFamily = fontFamily }
+
+    private inline fun <T> updateAndReset(setter: () -> T) {
+        setter()
         resetText()
     }
 

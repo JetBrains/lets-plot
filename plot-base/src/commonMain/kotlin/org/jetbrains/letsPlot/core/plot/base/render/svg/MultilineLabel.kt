@@ -48,77 +48,48 @@ class MultilineLabel(
     override fun buildComponent() {
     }
 
-    override fun addClassName(className: String) {
-        myClassName = className
-        resetLines()
-    }
+    override fun addClassName(className: String) = updateAndReset { myClassName = className }
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
-            override fun set(value: Color?) {
+            override fun set(value: Color?) = updateAndReset {
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
-                resetLines()
             }
         }
     }
 
-    fun setHorizontalAnchor(anchor: HorizontalAnchor) {
-        myHorizontalAnchor = anchor
-        resetLines()
-    }
+    fun setHorizontalAnchor(anchor: HorizontalAnchor) = updateAndReset { myHorizontalAnchor = anchor }
 
-    fun setVerticalAnchor(anchor: VerticalAnchor) {
-        myVerticalAnchor = anchor
-        resetLines()
-    }
+    fun setVerticalAnchor(anchor: VerticalAnchor) = updateAndReset { myVerticalAnchor = anchor }
 
-    fun setFontSize(px: Double) {
-        myFontSize = px
-        resetLines()
-    }
+    fun setFontSize(px: Double) = updateAndReset { myFontSize = px }
 
     /**
      * @param cssName : normal, bold, bolder, lighter
      */
-    fun setFontWeight(cssName: String?) {
-        myFontWeight = cssName
-        resetLines()
-    }
+    fun setFontWeight(cssName: String?) = updateAndReset { myFontWeight = cssName }
 
     /**
      * @param cssName : normal, italic, oblique
      */
-    fun setFontStyle(cssName: String?) {
-        myFontStyle = cssName
-        resetLines()
-    }
+    fun setFontStyle(cssName: String?) = updateAndReset { myFontStyle = cssName }
 
     /**
      * @param fontFamily : for example 'sans-serif' or 'Times New Roman'
      */
-    fun setFontFamily(fontFamily: String?) {
-        myFontFamily = fontFamily
-        resetLines()
-    }
+    fun setFontFamily(fontFamily: String?) = updateAndReset { myFontFamily = fontFamily }
 
-    fun setTextOpacity(value: Double?) {
-        myTextOpacity = value
-        resetLines()
-    }
+    fun setTextOpacity(value: Double?) = updateAndReset { myTextOpacity = value }
 
-    fun setX(x: Double) {
-        xStart = x
-        resetLines()
-    }
+    fun setX(x: Double) = updateAndReset { xStart = x }
 
-    fun setY(y: Double) {
-        yStart = y
-        resetLines()
-    }
+    fun setY(y: Double) = updateAndReset { yStart = y }
 
-    fun setLineHeight(v: Double) {
-        myLineHeight = v
+    fun setLineHeight(v: Double) = updateAndReset { myLineHeight = v }
+
+    private inline fun <T> updateAndReset(setter: () -> T) {
+        setter()
         resetLines()
     }
 
