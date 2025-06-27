@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -100,11 +101,8 @@ class MultilineLabel(
     }
 
     private fun constructLines(): List<SvgTextElement> {
-        // TODO: DefaultFontFamilyRegistry().get(myFontFamily) should be used, but to do it DefaultFontFamilyRegistry should be moved to the plot-base module
-        // Note that `font` needed only to estimate text width for lines with LaTeX formulas, that contains fractions
-        val fontFamily = myFontFamily ?: FontFamily.DEF_FAMILY_NAME
         val font = Font(
-            family = FontFamily(fontFamily, fontFamily == "monospace"),
+            family = DefaultFontFamilyRegistry().get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
             size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"

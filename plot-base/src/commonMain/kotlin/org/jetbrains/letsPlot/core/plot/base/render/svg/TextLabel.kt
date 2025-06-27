@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
@@ -96,9 +97,8 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
 
     // Similar to MultilineLabel#constructLines()
     private fun updateText() {
-        val fontFamily = myFontFamily ?: FontFamily.DEF_FAMILY_NAME
         val font = Font(
-            family = FontFamily(fontFamily, fontFamily == "monospace"),
+            family = DefaultFontFamilyRegistry().get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
             size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
