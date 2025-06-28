@@ -12,11 +12,15 @@ import kotlin.test.Test
  */
 
 class MagickWandClippingPlayground {
-    lateinit var img: CPointer<MagickWand>
-    lateinit var wand: CPointer<DrawingWand>
-    var outFile: String? = null
-    var saveFile = false
-    val forceSaveFile = true
+    private lateinit var img: CPointer<MagickWand>
+    private lateinit var wand: CPointer<DrawingWand>
+    private var outFile: String? = null
+        set(value) {
+            field = value?.let { "build/test-results/$it" }
+        }
+
+    private var saveFile = false
+    private val forceSaveFile = true
 
     @BeforeTest
     fun setUp() {

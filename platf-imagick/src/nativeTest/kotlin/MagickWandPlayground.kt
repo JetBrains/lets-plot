@@ -13,10 +13,13 @@ import kotlin.test.Test
 
 // This test class is used to demonstrate the usage of the ImageMagick library
 class MagickWandPlayground {
-    lateinit var img: CPointer<MagickWand>
-    lateinit var wand: CPointer<DrawingWand>
-    var outFile: String? = null
-    var saveFile = false
+    private lateinit var img: CPointer<MagickWand>
+    private lateinit var wand: CPointer<DrawingWand>
+    private var outFile: String? = null
+        set(value) {
+            field = value?.let { "build/test-results/$it" }
+        }
+    private var saveFile = false
 
     @BeforeTest
     fun setUp() {
@@ -45,7 +48,6 @@ class MagickWandPlayground {
     }
 
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun simple() {
         outFile = "magickwand_simple.wand"
