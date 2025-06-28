@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
-import platform.posix.*
+import platform.posix.getcwd
 import kotlin.math.abs
 
 /*
@@ -27,7 +27,7 @@ class ImageComparer(
     // Reuse existing directories when possible.
     // `mkdirs` has different signatures: one parameter on Windows, two on Linux.
     // To avoid compilation errors, we’d need a Windows-specific source set.
-    private val expectedDir: String = getCurrentDir() + "/src/nativeTest/resources/expected/",
+    private val expectedDir: String = getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
     private val outDir: String = getCurrentDir() + "/build/reports/",
     private val tol: Int = 1,
     private val suffix: String = ""
