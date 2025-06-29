@@ -12,7 +12,9 @@ import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
@@ -121,14 +123,12 @@ object PlotReprGenerator {
         }
     }
 
-    fun saveImage(
-        plotSpecDict: CPointer<PyObject>?,
-        filePath: CPointer<ByteVar>,
-        dpi: Int,
+    private fun saveRaster(
+        plotSpec: Map<Any?, Any?>?,
         width: Int,
         height: Int,
-        scale: Float
-    ): CPointer<PyObject>? {
+        scale: Double
+    ): Bitmap? {
         @Suppress("NAME_SHADOWING")
         val scale = 1f
         println("TODO: use actual scale value")
@@ -137,7 +137,7 @@ object PlotReprGenerator {
         try {
             @Suppress("UNCHECKED_CAST")
             val processedSpec = MonolithicCommon.processRawSpecs(
-                plotSpec = pyDictToMap(plotSpecDict) as MutableMap<String, Any>,
+                plotSpec = plotSpec as MutableMap<String, Any>,
                 frontendOnly = false
             )
 
@@ -170,22 +170,36 @@ object PlotReprGenerator {
             val plotCanvas = canvasControl.children.single() as MagickCanvas
 
             // Save the image to a file
-            plotCanvas.saveBmp(filePath.toKString())
-            val outputFilePath = filePath.toKString()
-            return Py_BuildValue("s", outputFilePath)
-            //if (ImageMagick.MagickWriteImage(plotCanvas.img, outputFilePath) == ImageMagick.MagickFalse) {
-            //    println("Failed to save image $outputFilePath")
-            //    println(getMagickError(plotCanvas.img))
-            //    throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.img)}")
-            //} else {
-            //    println("Image saved to $outputFilePath")
-            //    return Py_BuildValue("s", outputFilePath)
-            //}
+            val snapshot = plotCanvas.takeSnapshot()
+            return snapshot.bitmap
         } catch (e: Throwable) {
             e.printStackTrace()
             return null
         } finally {
             canvasReg?.dispose()
         }
+    }
+
+    fun saveImage(
+        plotSpecDict: CPointer<PyObject>?,
+        filePath: CPointer<ByteVar>,
+        dpi: Int,
+        width: Int,
+        height: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        val bitmap = saveRaster(
+            plotSpec = pyDictToMap(plotSpecDict),
+            width = width,
+            height = height,
+            scale = scale.toDouble()
+        ) ?: return Py_BuildValue("s", "Failed to generate image")
+
+        val filePathStr = filePath.toKString()
+
+        val bytes = Png.encode(bitmap.width, bitmap.height, bitmap.rgbaBytes())
+        TODO("saveImage() - export png as bytes array")
+        //return Py_BuildValue("s", bytes)
+
     }
 }

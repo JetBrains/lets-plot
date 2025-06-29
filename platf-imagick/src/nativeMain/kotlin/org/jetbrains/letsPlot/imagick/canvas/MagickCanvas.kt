@@ -71,6 +71,8 @@ class MagickCanvas(
             ImageMagick.MagickGetImageWidth(img).toInt(),
             ImageMagick.MagickGetImageHeight(img).toInt()
         )
+        override val bitmap: Bitmap
+            get() = toBitmap()
 
         override fun dispose() {
             ImageMagick.DestroyMagickWand(img)
@@ -81,24 +83,24 @@ class MagickCanvas(
             return MagickSnapshot(copiedImg)
         }
 
-        private fun exportPixels(wand: CPointer<ImageMagick.MagickWand>): Pair<UByteArray, Vector> {
-            val width = ImageMagick.MagickGetImageWidth(wand).toInt()
-            val height = ImageMagick.MagickGetImageHeight(wand).toInt()
+        private fun toBitmap(): Bitmap {
+            val width = ImageMagick.MagickGetImageWidth(img).toInt()
+            val height = ImageMagick.MagickGetImageHeight(img).toInt()
 
             if (width <= 0 || height <= 0) {
-                return UByteArray(0) to Vector.ZERO
+                return Bitmap(0, 0, intArrayOf())
             }
 
 
-            val pixels = UByteArray(width * height * 4) // RGBA
+            val pixels = IntArray(width * height) // ARGB
             val success = ImageMagick.MagickExportImagePixels(
-                wand, 0, 0, width.toULong(), height.toULong(),
-                "RGBA",
-                ImageMagick.StorageType.CharPixel,
+                img, 0, 0, width.toULong(), height.toULong(),
+                "ARGB",
+                ImageMagick.StorageType.LongPixel,
                 pixels.refTo(0)
             )
             if (success == ImageMagick.MagickFalse) error("Failed to export pixels")
-            return pixels to Vector(width, height)
+            return Bitmap(width = width, height = height, argbInts = pixels)
         }
 
         companion object {
