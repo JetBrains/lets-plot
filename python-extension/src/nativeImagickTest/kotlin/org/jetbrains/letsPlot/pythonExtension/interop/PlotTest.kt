@@ -95,9 +95,9 @@ class PlotTest {
         plotSpec: MutableMap<String, Any>,
         width: Int? = null,
         height: Int? = null,
-        pixelDensity: Double = 1.0
+        scale: Double = 1.0
     ) {
-        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, pixelDensity)
+        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, scale)
         if (bitmap == null)  error("Failed to export bitmap from plot spec")
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }
