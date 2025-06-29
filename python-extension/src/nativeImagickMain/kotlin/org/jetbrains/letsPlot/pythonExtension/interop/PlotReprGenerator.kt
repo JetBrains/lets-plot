@@ -123,10 +123,10 @@ object PlotReprGenerator {
         }
     }
 
-    private fun saveRaster(
-        plotSpec: Map<Any?, Any?>?,
-        width: Int,
-        height: Int,
+    fun exportBitmap(
+        plotSpec: Map<*, *>,
+        width: Int?,
+        height: Int?,
         scale: Double
     ): Bitmap? {
         @Suppress("NAME_SHADOWING")
@@ -142,7 +142,7 @@ object PlotReprGenerator {
             )
 
             val sizingPolicy = when {
-                width != 0 && height != 0 -> SizingPolicy.fixed(
+                width != null && height != null -> SizingPolicy.fixed(
                     width = width.toDouble(),
                     height = height.toDouble()
                 )
@@ -171,7 +171,10 @@ object PlotReprGenerator {
 
             // Save the image to a file
             val snapshot = plotCanvas.takeSnapshot()
-            return snapshot.bitmap
+            println("exportBitmap() - snapshot: $snapshot")
+            val bitmap = snapshot.bitmap
+            println("exportBitmap() - bitmap: $bitmap")
+            return bitmap
         } catch (e: Throwable) {
             e.printStackTrace()
             return null
@@ -188,7 +191,7 @@ object PlotReprGenerator {
         height: Int,
         scale: Float
     ): CPointer<PyObject>? {
-        val bitmap = saveRaster(
+        val bitmap = exportBitmap(
             plotSpec = pyDictToMap(plotSpecDict),
             width = width,
             height = height,
@@ -200,6 +203,5 @@ object PlotReprGenerator {
         val bytes = Png.encode(bitmap.width, bitmap.height, bitmap.rgbaBytes())
         TODO("saveImage() - export png as bytes array")
         //return Py_BuildValue("s", bytes)
-
     }
 }

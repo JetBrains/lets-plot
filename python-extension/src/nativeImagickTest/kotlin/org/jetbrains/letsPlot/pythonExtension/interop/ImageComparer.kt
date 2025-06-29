@@ -7,11 +7,13 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import platform.posix.getcwd
@@ -22,7 +24,7 @@ import kotlin.math.abs
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-
+// TODO: rewrite diff composition logic with Canvas and Context2D and move to canvas module
 class ImageComparer(
     // Reuse existing directories when possible.
     // `mkdirs` has different signatures: one parameter on Windows, two on Linux.
@@ -33,14 +35,14 @@ class ImageComparer(
     private val suffix: String = ""
 ) {
 
-    fun assertImageEquals(expectedFileName: String, svg: SvgSvgElement) {
+    fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
         val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
         val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = MagickFontManager.DEFAULT)
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
-        assertImageEquals(expectedFileName, canvas.img)
+        assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
     }
 
     fun assertPlot(
@@ -50,54 +52,42 @@ class ImageComparer(
         height: Int? = null,
         pixelDensity: Double = 1.0
     ) {
-
-        val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(plotSpec, SizingPolicy.keepFigureDefaultSize(), { _ -> })
-        val plotSpecWidth = plotFigure.preferredWidth ?: error("Plot figure has no preferred width")
-        val plotSpecHeight = plotFigure.preferredHeight ?: error("Plot figure has no preferred height")
-
-        val canvasControl = MagickCanvasControl(plotSpecWidth, plotSpecHeight, 1.0, fontManager = MagickFontManager.DEFAULT)
-        plotFigure.mapToCanvas(canvasControl)
-
-        val canvas = canvasControl.children.single() as MagickCanvas
-        assertImageEquals(expectedFileName, canvas.img)
+        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, pixelDensity)
+        if (bitmap == null)  error("Failed to export bitmap from plot spec")
+        assertBitmapEquals(expectedFileName, bitmap)
     }
 
-    fun assertImageEquals(expectedFileName: String, actualWand: CPointer<ImageMagick.MagickWand>) {
+    private fun assertBitmapEquals(expectedFileName: String, actualBitmap: Bitmap) {
         val testName = expectedFileName.removeSuffix(".bmp") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
         val expectedFilePath = expectedDir + testName + ".bmp"
         val actualFilePath = outDir + testName + ".bmp"
 
-        val expectedWand = ImageMagick.NewMagickWand() ?: error("Failed to create expected wand")
-        if (ImageMagick.MagickReadImage(expectedWand, expectedFilePath) == ImageMagick.MagickFalse) {
+        val expectedBitmap = runCatching { readBitmapFromFile(expectedFilePath) }.getOrElse {
             println("expectedWand failure - $expectedFilePath")
-            println(getMagickError(expectedWand))
+            println(it)
             // Write the  actual image to a file for debugging
-            if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
-                println("actualWand failure - $actualFilePath")
-                println(getMagickError(actualWand))
-            } else {
-                println("Failed to read expected image. Actual image saved to $actualFilePath")
+            runCatching { writeBitmapToFile(actualBitmap, actualFilePath) }.onFailure {
+                println("actualBitmap failure - $actualFilePath")
+                println(it)
+                return
             }
+            println("Failed to read expected image. Actual image saved to $actualFilePath")
             error("Failed to read expected image. Actual image saved to '$actualFilePath'")
         }
 
-        val expected = exportPixels(expectedWand)
-        val actual = exportPixels(actualWand)
-
-        if (!comparePixelArrays(expected, actual, tolerance = 0)) {
+        if (!comparePixelArrays(expectedBitmap, actualBitmap, tolerance = 0)) {
             val diffFilePath = outDir + "${testName}_diff.bmp"
-            val width = ImageMagick.MagickGetImageWidth(actualWand).toInt()
-            val height = ImageMagick.MagickGetImageHeight(actualWand).toInt()
-            val diffWand = composeVisualDiff(expectedWand, actualWand, createDiffImage(expected, actual, width, height))
+            val diffWand = composeVisualDiff(expectedBitmap, actualBitmap, createDiffImage(expectedBitmap, actualBitmap))
             if (ImageMagick.MagickWriteImage(diffWand, diffFilePath) == ImageMagick.MagickFalse) {
                 println(getMagickError(diffWand))
                 error("Failed to write diff image")
             }
 
-            if (ImageMagick.MagickWriteImage(actualWand, actualFilePath) == ImageMagick.MagickFalse) {
-                println(getMagickError(actualWand))
-                error("Failed to write actual image")
-            }
+            runCatching { writeBitmapToFile(actualBitmap, actualFilePath) }
+                .onFailure {
+                    println(it)
+                    error("Failed to write actual image")
+                }
 
             error("""Image mismatch.
                 |    Diff: $diffFilePath
@@ -109,7 +99,7 @@ class ImageComparer(
         }
     }
 
-    fun compare(expectedImagePath: String, actualImagePath: String) {
+    private fun compare(expectedImagePath: String, actualImagePath: String) {
         val expected = ImageMagick.NewMagickWand()
         ImageMagick.MagickReadImage(expected, expectedImagePath/*"resources/expected/test_name.bmp"*/)
 
@@ -117,57 +107,49 @@ class ImageComparer(
         ImageMagick.MagickReadImage(actual, actualImagePath)
     }
 
-    fun exportPixels(wand: CPointer<ImageMagick.MagickWand>): UByteArray {
-        val width = ImageMagick.MagickGetImageWidth(wand).toInt()
-        val height = ImageMagick.MagickGetImageHeight(wand).toInt()
-        val pixels = UByteArray(width * height * 4) // RGBA
-        val success = ImageMagick.MagickExportImagePixels(
-            wand, 0, 0, width.toULong(), height.toULong(),
-            "RGBA",
-            ImageMagick.StorageType.CharPixel,
-            pixels.refTo(0)
-        )
-        if (success == ImageMagick.MagickFalse) error("Failed to export pixels")
-        return pixels
+    private fun comparePixelArrays(expected: Bitmap, actual: Bitmap, tolerance: Int = tol): Boolean {
+        if (expected.height != actual.height) return false
+        if (expected.width != actual.width) return false
+
+        val expectedPixels = expected.rgbaBytes()
+        val actualPixels = actual.rgbaBytes()
+
+        return expectedPixels.indices.all {
+            abs(expectedPixels[it].toInt() - actualPixels[it].toInt()) <= tolerance
+        }
     }
 
-    fun pixelsEqual(p1: UByte, p2: UByte, tolerance: Int): Boolean {
-        return abs(p1.toInt() - p2.toInt()) <= tolerance
-    }
+    private fun createDiffImage(
+        expected: Bitmap,
+        actual: Bitmap
+    ): Bitmap {
+        val width = expected.width
+        val height = expected.height
+        val expectedPixels = expected.rgbaBytes()
+        val actualPixels = actual.rgbaBytes()
 
-    fun comparePixelArrays(expected: UByteArray, actual: UByteArray, tolerance: Int = tol): Boolean {
-        if (expected.size != actual.size) return false
-        return expected.indices.all { pixelsEqual(expected[it], actual[it], tolerance) }
-    }
-
-    fun createDiffImage(
-        expected: UByteArray,
-        actual: UByteArray,
-        width: Int,
-        height: Int
-    ): CPointer<ImageMagick.MagickWand> {
         val diff = ImageMagick.NewMagickWand() ?: error("Failed to create diff image")
         val blackPixel = ImageMagick.NewPixelWand()
         ImageMagick.PixelSetColor(blackPixel, "black")
 
         ImageMagick.MagickNewImage(diff, width.toULong(), height.toULong(), blackPixel)
 
-        val diffPixels = UByteArray(width * height * 4)
+        val diffPixels = ByteArray(width * height * 4)
         for (i in 0 until width * height) {
             val ei = i * 4
             val ai = i * 4
             val match = (0 until 4).all { k ->
-                abs(expected[ei + k].toInt() - actual[ai + k].toInt()) <= 0
+                abs(expectedPixels[ei + k].toInt() - actualPixels[ai + k].toInt()) <= 0
             }
 
             if (!match) {
                 // red pixel
-                diffPixels[ei + 0] = 255u // R
-                diffPixels[ei + 1] = 0u   // G
-                diffPixels[ei + 2] = 0u   // B
-                diffPixels[ei + 3] = 255u // A
+                diffPixels[ei + 0] = 255.toByte() // R
+                diffPixels[ei + 1] = 0   // G
+                diffPixels[ei + 2] = 0   // B
+                diffPixels[ei + 3] = 255.toByte() // A
             } else {
-                diffPixels[ei + 3] = 0u // transparent
+                diffPixels[ei + 3] = 0 // transparent
             }
         }
 
@@ -178,16 +160,23 @@ class ImageComparer(
             diffPixels.refTo(0)
         )
         if (ok == ImageMagick.MagickFalse) error("Failed to import diff pixels")
-        return diff
+        //return diff
+        val diffBitmap = Bitmap.fromRGBABytes(w = width, h = height, rgba = diffPixels)
+        return diffBitmap
     }
 
-    fun composeVisualDiff(
-        expected: CPointer<ImageMagick.MagickWand>,
-        actual: CPointer<ImageMagick.MagickWand>,
-        diff: CPointer<ImageMagick.MagickWand>
+    private fun composeVisualDiff(
+        expectedBitmap: Bitmap,
+        actualBitmap: Bitmap,
+        diffBitmap: Bitmap
     ): CPointer<ImageMagick.MagickWand> {
-        val width = ImageMagick.MagickGetImageWidth(expected).toInt()
-        val height = ImageMagick.MagickGetImageHeight(expected).toInt()
+        val width = expectedBitmap.width
+        val height = expectedBitmap.height
+
+        val expected = MagickUtil.fromBitmap(expectedBitmap)
+        val actual = MagickUtil.fromBitmap(actualBitmap)
+        val diff = MagickUtil.fromBitmap(diffBitmap)
+
         val separatorWidth = 10
 
         val totalTopWidth = width * 2 + separatorWidth
@@ -316,7 +305,7 @@ class ImageComparer(
     }
 
     @OptIn(ExperimentalForeignApi::class)
-    fun getMagickError(wand: CPointer<ImageMagick.MagickWand>?): String {
+    private fun getMagickError(wand: CPointer<ImageMagick.MagickWand>?): String {
         require(wand != null) { "MagickWand is null" }
 
         return memScoped {
@@ -332,6 +321,31 @@ class ImageComparer(
             }
         }
     }
+
+    private fun writeBitmapToFile(bitmap: Bitmap, filePath: String) {
+        val img = MagickUtil.fromBitmap(bitmap)
+        if (ImageMagick.MagickWriteImage(img, filePath) == ImageMagick.MagickFalse) {
+            val error = getMagickError(img)
+            ImageMagick.DestroyMagickWand(img)
+            error("Failed to write image to $filePath: $error")
+        }
+
+        ImageMagick.DestroyMagickWand(img)
+    }
+
+    private fun readBitmapFromFile(filePath: String): Bitmap {
+        val img = ImageMagick.NewMagickWand() ?: error("Failed to create new MagickWand")
+        if (ImageMagick.MagickReadImage(img, filePath) == ImageMagick.MagickFalse) {
+            val error = getMagickError(img)
+            ImageMagick.DestroyMagickWand(img)
+            error("Failed to read image from $filePath: $error")
+        }
+
+        val bitmap = MagickUtil.toBitmap(img)
+        ImageMagick.DestroyMagickWand(img)
+        return bitmap
+    }
+
 }
 
 fun getCurrentDir(): String {

@@ -20,7 +20,6 @@ class PlotTest {
 
     @Test
     fun barPlot() {
-        println("OS: " + getOSName())
         val spec = """
             |{
             |  "kind": "plot",

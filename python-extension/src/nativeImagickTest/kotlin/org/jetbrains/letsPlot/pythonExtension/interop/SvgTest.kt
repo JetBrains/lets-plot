@@ -14,6 +14,6 @@ class SvgTest {
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
 
-        imageComparer.assertImageEquals("svg_reference_test.bmp", svg)
+        imageComparer.assertSvg("svg_reference_test.bmp", svg)
     }
 }
