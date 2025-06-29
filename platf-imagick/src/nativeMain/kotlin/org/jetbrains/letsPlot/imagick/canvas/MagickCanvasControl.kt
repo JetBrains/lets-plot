@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import kotlinx.cinterop.CPointer
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.event.MouseEvent
@@ -81,7 +80,9 @@ class MagickCanvasControl(
             val data = dataUrl.removePrefix("data:image/png;base64,")
             val pngData = Base64.decode(data)
 
-            val img = loadImageFromPngBytes(pngData)
+            println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${pngData.size}")
+            val png = Png.decode(pngData)
+            val img = MagickUtil.fromBitmap(png)
 
             return Asyncs.constant(MagickSnapshot(img))
         } else {
@@ -108,9 +109,4 @@ class MagickCanvasControl(
         TODO("Not yet implemented")
     }
 
-    fun loadImageFromPngBytes(bytes: ByteArray): CPointer<ImageMagick.MagickWand> {
-        println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${bytes.size}")
-        val png = Png.decode(bytes)
-        return MagickUtil.fromBitmap(png)
-    }
 }

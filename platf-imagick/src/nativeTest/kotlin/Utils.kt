@@ -1,9 +1,11 @@
 import ImageMagick.DrawingWand
+import demoAndTestShared.ImageComparer
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import platform.posix.*
 
@@ -202,10 +204,28 @@ fun drawAffine(
     }
 }
 
-fun getOSName(): String {
-    memScoped {
-        val utsname = alloc<utsname>()
-        uname(utsname.ptr)
-        return utsname.sysname.toKString()
+fun getCurrentDir(): String {
+    return memScoped {
+        val bufferSize = 4096 * 8
+        val buffer = allocArray<ByteVar>(bufferSize)
+        if (getcwd(buffer, bufferSize.convert()) != null) {
+            buffer.toKString()
+        } else {
+            "." // Default to current directory on error
+        }
     }
+}
+
+fun imageComparer(): ImageComparer {
+    return ImageComparer(
+        expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/",
+        outDir = getCurrentDir() + "/build/reports/",
+        canvasProvider = MagickCanvasProvider,
+        bitmapIO = MagickBitmapIO,
+        tol = 1
+    )
+}
+
+fun assertCanvas(expectedFileName: String, canvas: MagickCanvas) {
+    imageComparer().assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
 }

@@ -4,10 +4,13 @@
  */
 
 package org.jetbrains.letsPlot.pythonExtension.interop
+
+import demoAndTestShared.ImageComparer
 import kotlin.test.Test
 import demoAndTestShared.parsePlotSpec
-import kotlinx.cinterop.*
-import platform.posix.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
+import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.MagickBitmapIO
 
 
 /*
@@ -16,7 +19,14 @@ import platform.posix.*
  */
 
 class PlotTest {
-    private val imageComparer = ImageComparer(suffix = getOSName()) // fonts are different on different OSes
+    private val imageComparer = ImageComparer(
+        suffix = getOSName(),
+        expectedDir = getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
+        outDir = getCurrentDir() + "/build/reports/",
+        canvasProvider = MagickCanvasProvider,
+        bitmapIO = MagickBitmapIO,
+        tol = 1
+    )
 
     @Test
     fun barPlot() {
@@ -39,7 +49,7 @@ class PlotTest {
             |}""".trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        imageComparer.assertPlot("plot_bar_test.bmp", plotSpec)
+        assertPlot("plot_bar_test.bmp", plotSpec)
     }
 
     @Test
@@ -76,6 +86,19 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        imageComparer.assertPlot("plot_polar_test.bmp", plotSpec)
+        assertPlot("plot_polar_test.bmp", plotSpec)
+    }
+
+
+    fun assertPlot(
+        expectedFileName: String,
+        plotSpec: MutableMap<String, Any>,
+        width: Int? = null,
+        height: Int? = null,
+        pixelDensity: Double = 1.0
+    ) {
+        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, pixelDensity)
+        if (bitmap == null)  error("Failed to export bitmap from plot spec")
+        imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }
 }
