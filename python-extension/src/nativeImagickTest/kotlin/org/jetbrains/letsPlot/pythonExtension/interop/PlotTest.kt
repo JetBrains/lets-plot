@@ -6,11 +6,9 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.ImageComparer
-import kotlin.test.Test
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
-import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.MagickBitmapIO
+import kotlin.test.Test
 
 
 /*
@@ -89,8 +87,50 @@ class PlotTest {
         assertPlot("plot_polar_test.bmp", plotSpec)
     }
 
+    @Test
+    fun rasterPlot() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0 ],
+            |    "y": [ -1.0, -1.0, -1.0, -1.0, -1.0, -0.5, -0.5, -0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0 ],
+            |    "z": [ 0.024871417406145683, 0.057228531823873385, 0.09435389770895924, 0.11146595955293902, 0.09435389770895924, 0.057228531823873385, 0.11146595955293902, 0.15556327812622517, 0.15556327812622517, 0.11146595955293902, 0.09435389770895924, 0.15556327812622517, 0.1837762984739307, 0.15556327812622517, 0.09435389770895924, 0.11146595955293902, 0.15556327812622517, 0.15556327812622517, 0.11146595955293902, 0.057228531823873385, 0.09435389770895924, 0.11146595955293902, 0.09435389770895924, 0.057228531823873385, 0.024871417406145683 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "float", "column": "x" },
+            |      { "type": "float", "column": "y" },
+            |      { "type": "float", "column": "z" }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [
+            |    {
+            |      "aesthetic": "fill",
+            |      "low": "#54278f",
+            |      "high": "#f2f0f7",
+            |      "scale_mapper_kind": "color_gradient"
+            |    }
+            |  ],
+            |  "layers": [
+            |    {
+            |      "geom": "raster",
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y",
+            |        "fill": "z"
+            |      }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
 
-    fun assertPlot(
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_raster_test.bmp", plotSpec)
+    }
+
+
+    private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
         width: Int? = null,
@@ -98,7 +138,7 @@ class PlotTest {
         scale: Double = 1.0
     ) {
         val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, scale)
-        if (bitmap == null)  error("Failed to export bitmap from plot spec")
+            ?: error("Failed to export bitmap from plot spec")
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }
 }

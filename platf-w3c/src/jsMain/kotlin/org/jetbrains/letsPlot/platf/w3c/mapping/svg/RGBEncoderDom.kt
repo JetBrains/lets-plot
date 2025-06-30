@@ -5,6 +5,9 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
+import kotlinx.browser.document
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.setAlphaAt
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.setBlueAt
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.setGreenAt
@@ -13,28 +16,26 @@ import org.khronos.webgl.Uint8ClampedArray
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ImageData
-import kotlinx.browser.document
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 
 class RGBEncoderDom : RGBEncoder {
 
-    override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
+    override fun toDataUrl(bitmap: Bitmap): String {
         val canvas: HTMLCanvasElement? = document.createElement("canvas") as HTMLCanvasElement?
         @Suppress("FoldInitializerAndIfToElvis")
         if (canvas == null) {
             throw IllegalStateException("Canvas is not supported.")
         }
 
-        canvas.width = width
-        canvas.height = height
+        canvas.width = bitmap.width
+        canvas.height = bitmap.height
 
         val context = canvas.getContext("2d") as CanvasRenderingContext2D
-        val imageData = context.createImageData(width.toDouble(), height.toDouble())
+        val imageData = context.createImageData(bitmap.width.toDouble(), bitmap.height.toDouble())
         val dataArray = imageData.data
 
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                setRgb(x, y, argbValues[y * width + x], imageData, dataArray)
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                setRgb(x, y, bitmap.argbInts[y * bitmap.width + x], imageData, dataArray)
             }
         }
 

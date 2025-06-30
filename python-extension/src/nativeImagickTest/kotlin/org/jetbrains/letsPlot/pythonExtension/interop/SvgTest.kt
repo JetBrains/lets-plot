@@ -8,7 +8,6 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
-import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.MagickBitmapIO
 import kotlin.test.Test
 
 /*

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package kotlin.org.jetbrains.letsPlot.pythonExtension.interop
+package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.ImageComparer
 import kotlinx.cinterop.*

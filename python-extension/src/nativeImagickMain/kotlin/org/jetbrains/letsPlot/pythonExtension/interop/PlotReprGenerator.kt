@@ -171,9 +171,7 @@ object PlotReprGenerator {
 
             // Save the image to a file
             val snapshot = plotCanvas.takeSnapshot()
-            println("exportBitmap() - snapshot: $snapshot")
             val bitmap = snapshot.bitmap
-            println("exportBitmap() - bitmap: $bitmap")
             return bitmap
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -200,7 +198,7 @@ object PlotReprGenerator {
 
         val filePathStr = filePath.toKString()
 
-        val bytes = Png.encode(bitmap.width, bitmap.height, bitmap.rgbaBytes())
+        val bytes = Png.encode(bitmap)
         TODO("saveImage() - export png as bytes array")
         //return Py_BuildValue("s", bytes)
     }
