@@ -137,7 +137,7 @@ class PlotTest {
             |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
             |  "mapping": { "x": "x", "y": "y" },
             |  "layers": [ { "geom": "point" } ],
-            |  "ggsize": { "width": 400, "height": 400 }
+            |  "ggsize": { "width": 200, "height": 200 }
             |}
         """.trimMargin()
 
@@ -154,12 +154,12 @@ class PlotTest {
             |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
             |  "mapping": { "x": "x", "y": "y" },
             |  "layers": [ { "geom": "point" } ],
-            |  "ggsize": { "width": 400, "height": 400 }
+            |  "ggsize": { "width": 200, "height": 200 }
             |}
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_explicit_size_test.bmp", plotSpec, width = 200, height = 200)
+        assertPlot("plot_explicit_size_test.bmp", plotSpec, width = 300, height = 300)
     }
 
     @Test
@@ -170,13 +170,13 @@ class PlotTest {
             |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
             |  "mapping": { "x": "x", "y": "y" },
             |  "layers": [ { "geom": "point" } ],
-            |  "ggsize": { "width": 125, "height": 125 }
+            |  "ggsize": { "width": 200, "height": 200 }
             |}
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
 
-        // 125x125 is the size in pixels, scale = 2.0 means the bitmap will be 250x250 pixels
+        // 200x200 is the size in pixels, scale = 2.0 means the bitmap will be 400x400 pixels
         assertPlot("plot_implicit_size_scaled_test.bmp", plotSpec, scale = 2.0)
     }
 
@@ -188,14 +188,14 @@ class PlotTest {
             |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
             |  "mapping": { "x": "x", "y": "y" },
             |  "layers": [ { "geom": "point" } ],
-            |  "ggsize": { "width": 400, "height": 400 }
+            |  "ggsize": { "width": 200, "height": 200 }
             |}
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
 
-        // 150x150 is the size in pixels, scale = 2.0 means the bitmap will be 300x300 pixels
-        assertPlot("plot_explicit_size_scaled_test.bmp", plotSpec, width = 150, height = 150, scale = 2.0)
+        // 300x300 is the size in pixels, scale = 2.0 means the bitmap will be 600x600 pixels
+        assertPlot("plot_explicit_size_scaled_test.bmp", plotSpec, width = 300, height = 300, scale = 2.0)
     }
 
 

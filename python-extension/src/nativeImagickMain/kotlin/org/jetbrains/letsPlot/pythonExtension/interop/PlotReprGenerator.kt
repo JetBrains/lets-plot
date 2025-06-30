@@ -129,9 +129,6 @@ object PlotReprGenerator {
         height: Int?,
         scale: Double
     ): Bitmap? {
-        @Suppress("NAME_SHADOWING")
-        val scale = 1f
-        println("TODO: use actual scale value")
         var canvasReg: Registration? = null
 
         try {

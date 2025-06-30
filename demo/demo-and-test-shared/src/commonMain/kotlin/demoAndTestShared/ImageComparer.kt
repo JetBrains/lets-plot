@@ -6,12 +6,10 @@
 
 package demoAndTestShared
 
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasProvider
-import kotlin.math.abs
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -45,17 +43,16 @@ class ImageComparer(
             error("Failed to read expected image. Actual image saved to '$actualFilePath'")
         }
 
-        if (!comparePixelArrays(expectedBitmap, actualBitmap, tolerance = 0)) {
+        val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)
+        if (diffBitmap != null) {
             val diffFilePath = outDir + "${testName}_diff.bmp"
-
-            val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)
-            val visualDiffCanvas = composeVisualDiff(expectedBitmap, actualBitmap, diffBitmap)
-            val visualDiffBitmap = visualDiffCanvas.takeSnapshot().bitmap
+            val visualDiffBitmap = composeVisualDiff(expectedBitmap, actualBitmap, diffBitmap)
 
             bitmapIO.write(visualDiffBitmap, diffFilePath)
             bitmapIO.write(actualBitmap, actualFilePath)
 
-            error("""Image mismatch.
+            error(
+                """Image mismatch.
                 |    Diff: $diffFilePath
                 |    Actual: $actualFilePath
                 |    Expected: $expectedFilePath""".trimMargin()
@@ -65,70 +62,54 @@ class ImageComparer(
         }
     }
 
-    private fun comparePixelArrays(expected: Bitmap, actual: Bitmap, tolerance: Int = tol): Boolean {
-        if (expected.height != actual.height) return false
-        if (expected.width != actual.width) return false
+    private fun createDiffImage(expected: Bitmap, actual: Bitmap, tolerance: Int = tol): Bitmap? {
+        val diffWidth = maxOf(expected.width, actual.width)
+        val diffHeight = maxOf(expected.height, actual.height)
+        val diffCanvas = canvasProvider.createCanvas(diffWidth, diffHeight)
+        diffCanvas.context2d.setFillStyle(Color.TRANSPARENT)
+        diffCanvas.context2d.fillRect(0.0, 0.0, diffWidth.toDouble(), diffHeight.toDouble())
 
-        val expectedPixels = expected.rgbaBytes()
-        val actualPixels = actual.rgbaBytes()
+        diffCanvas.context2d.setFillStyle(Color.RED)
 
-        return expectedPixels.indices.all {
-            abs(expectedPixels[it].toInt() - actualPixels[it].toInt()) <= tolerance
-        }
-    }
+        var match = true
 
-    private fun createDiffImage(
-        expected: Bitmap,
-        actual: Bitmap
-    ): Bitmap {
-        require(expected.width == actual.width && expected.height == actual.height) {
-            "Expected and actual images must have the same dimensions, but got " +
-                    "expected: ${expected.width}x${expected.height}, actual: ${actual.width}x${actual.height}"
-        }
+        for (y in 0 until diffHeight) {
+            for (x in 0 until diffWidth) {
+                val expectedPixel = expected.getPixel(x, y)
+                val actualPixel = actual.getPixel(x, y)
 
-        val width = expected.width
-        val height = expected.height
-        val expectedPixels = expected.rgbaBytes()
-        val actualPixels = actual.rgbaBytes()
-
-        val diffPixels = ByteArray(width * height * 4)
-        for (i in 0 until width * height) {
-            val offset = i * 4
-            val match = (0 until 4).all { k ->
-                abs(expectedPixels[offset + k].toInt() - actualPixels[offset + k].toInt()) <= tol
-            }
-
-            if (!match) {
-                // Red pixel for difference
-                diffPixels[offset + 0] = 255.toByte() // R
-                diffPixels[offset + 1] = 0           // G
-                diffPixels[offset + 2] = 0           // B
-                diffPixels[offset + 3] = 255.toByte() // A
-            } else {
-                // Fully transparent for matching pixels
-                diffPixels[offset + 0] = 0
-                diffPixels[offset + 1] = 0
-                diffPixels[offset + 2] = 0
-                diffPixels[offset + 3] = 0
+                if ((expectedPixel?.green ?: 0) - (actualPixel?.green ?: 0) > tolerance ||
+                    (expectedPixel?.red ?: 0) - (actualPixel?.red ?: 0) > tolerance ||
+                    (expectedPixel?.blue ?: 0) - (actualPixel?.blue ?: 0) > tolerance ||
+                    (expectedPixel?.alpha ?: 0) - (actualPixel?.alpha ?: 0) > tolerance
+                ) {
+                    match = false
+                    diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
+                }
             }
         }
 
-        return Bitmap.fromRGBABytes(w = width, h = height, rgba = diffPixels)
+        if (match) {
+            return null // No differences found
+        }
+
+        return diffCanvas.takeSnapshot().bitmap
     }
 
     private fun composeVisualDiff(
         expectedBitmap: Bitmap,
         actualBitmap: Bitmap,
         diffBitmap: Bitmap
-    ): Canvas {
-        val width = expectedBitmap.width
-        val height = expectedBitmap.height
+    ): Bitmap {
         val separatorSize = 10
+
+        val width = maxOf(expectedBitmap.width, actualBitmap.width)
+        val height = maxOf(expectedBitmap.height, actualBitmap.height)
 
         val totalWidth = width * 2 + separatorSize
         val totalHeight = height * 2 + separatorSize
 
-        val canvas = canvasProvider.createCanvas(Vector(totalWidth, totalHeight))
+        val canvas = canvasProvider.createCanvas(totalWidth, totalHeight)
         val ctx = canvas.context2d
 
         ctx.setFillStyle(Color.WHITE)
@@ -160,7 +141,7 @@ class ImageComparer(
         val diffY = (height + separatorSize).toDouble()
         ctx.drawImage(diffSnapshot, diffX, diffY)
 
-        return canvas
+        return canvas.takeSnapshot().bitmap
     }
 
     private fun createZigZagPattern(width: Int, height: Int): Canvas {
