@@ -81,6 +81,11 @@ class ImageComparer(
         expected: Bitmap,
         actual: Bitmap
     ): Bitmap {
+        require(expected.width == actual.width && expected.height == actual.height) {
+            "Expected and actual images must have the same dimensions, but got " +
+                    "expected: ${expected.width}x${expected.height}, actual: ${actual.width}x${actual.height}"
+        }
+
         val width = expected.width
         val height = expected.height
         val expectedPixels = expected.rgbaBytes()
