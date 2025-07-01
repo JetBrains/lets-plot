@@ -895,7 +895,7 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w=None, h=
 
     scale = scale if scale is not None else 2.0
 
-    png_base64 = _kbridge._export_png(spec.as_dict(), width_px, height_px, scale)
+    png_base64 = _kbridge._export_png(spec.as_dict(), int(width_px), int(height_px), scale)
     png = base64.b64decode(png_base64)
 
     if isinstance(path, str):
