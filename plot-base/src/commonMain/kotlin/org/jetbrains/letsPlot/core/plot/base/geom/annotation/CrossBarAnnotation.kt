@@ -72,7 +72,7 @@ object CrossBarAnnotation {
                 val labels = MultilineLabel.splitLines(text)
 
                 // Adjust location to center the first line vertically
-                location = location.subtract(DoubleVector(0.0, annotation.textStyle.size * (labels.size - 1) / 2))
+                location = location.subtract(DoubleVector(0.0, annotation.textStyle.size * labels.size / 2))
 
                 labels.map { line ->
                     AnnotationUtil.createLabelElement(
