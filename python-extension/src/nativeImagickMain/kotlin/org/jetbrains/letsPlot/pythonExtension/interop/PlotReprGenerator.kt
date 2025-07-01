@@ -12,6 +12,7 @@ import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
@@ -125,8 +126,8 @@ object PlotReprGenerator {
 
     fun exportBitmap(
         plotSpec: Map<*, *>,
-        width: Int?,
-        height: Int?,
+        width: Int,
+        height: Int,
         scale: Double
     ): Bitmap? {
         var canvasReg: Registration? = null
@@ -139,11 +140,11 @@ object PlotReprGenerator {
             )
 
             val sizingPolicy = when {
-                width != null && height != null -> SizingPolicy.fixed(
+                width < 0 || height < 0 -> SizingPolicy.keepFigureDefaultSize()
+                else -> SizingPolicy.fixed(
                     width = width.toDouble(),
                     height = height.toDouble()
                 )
-                else -> SizingPolicy.keepFigureDefaultSize()
             }
 
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
@@ -178,10 +179,8 @@ object PlotReprGenerator {
         }
     }
 
-    fun saveImage(
+    fun exportPng(
         plotSpecDict: CPointer<PyObject>?,
-        filePath: CPointer<ByteVar>,
-        dpi: Int,
         width: Int,
         height: Int,
         scale: Float
@@ -192,11 +191,14 @@ object PlotReprGenerator {
             height = height,
             scale = scale.toDouble()
         ) ?: return Py_BuildValue("s", "Failed to generate image")
+        // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
+        // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
+        // This happens because PyBytes_FromStringAndSize has the following signature:
+        // PyObject *PyBytes_FromStringAndSize(const char *v, Py_ssize_t len);
+        // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
+        // and generate a function with a String parameter instead of ByteArray
 
-        val filePathStr = filePath.toKString()
-
-        val bytes = Png.encode(bitmap)
-        TODO("saveImage() - export png as bytes array")
-        //return Py_BuildValue("s", bytes)
+        val png: ByteArray = Png.encode(bitmap)
+        return Py_BuildValue("s", Base64.encode(png))
     }
 }

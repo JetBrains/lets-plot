@@ -216,6 +216,31 @@ fun getCurrentDir(): String {
     }
 }
 
+// TODO: never used - need to test. Should be used to store test images in PNG instead of BMP format.
+fun writeToFile(path: String, data: ByteArray) {
+    memScoped {
+        // O_WRONLY: write only, O_CREAT: create if not exists, O_TRUNC: truncate if exists
+        val fd = open(path, O_WRONLY or O_CREAT or O_TRUNC, 0b110_100_100) // 0644 in octal
+
+        if (fd == -1) {
+            perror("open")
+            throw Error("Failed to open file: $path")
+        }
+
+        val written = data.usePinned { pinned ->
+            write(fd, pinned.addressOf(0), data.size.convert())
+        }
+
+        if (written != data.size.toLong()) {
+            perror("write")
+            close(fd)
+            throw Error("Failed to write all data")
+        }
+
+        close(fd)
+    }
+}
+
 fun imageComparer(): ImageComparer {
     return ImageComparer(
         expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/",

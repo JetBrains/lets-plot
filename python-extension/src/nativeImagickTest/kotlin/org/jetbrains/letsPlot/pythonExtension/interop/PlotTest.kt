@@ -202,8 +202,8 @@ class PlotTest {
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
-        width: Int? = null,
-        height: Int? = null,
+        width: Int = -1,
+        height: Int = -1,
         scale: Double = 1.0
     ) {
         val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, scale)
