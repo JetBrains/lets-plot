@@ -19,13 +19,7 @@ class TooltipsOptions private constructor(
     var formats: List<Format>? by map(Option.LinesSpec.FORMATS)
     var lines: List<String>? by map(Option.LinesSpec.LINES)
 
-    class Format : Options() {
-        var field: String? by map(Option.LinesSpec.Format.FIELD)
-        var format: String? by map(Option.LinesSpec.Format.FORMAT)
-    }
-
     companion object {
-        fun format(block: Format.() -> Unit) = Format().apply(block)
         fun variable(name: String) = "@$name"
 
         val NONE = TooltipsOptions { "none" }

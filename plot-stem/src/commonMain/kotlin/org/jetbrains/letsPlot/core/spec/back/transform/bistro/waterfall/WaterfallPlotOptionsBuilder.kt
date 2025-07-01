@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.groupBy
@@ -18,7 +19,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
-import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import kotlin.collections.first
 
@@ -64,7 +64,7 @@ class WaterfallPlotOptionsBuilder(
                     connectorOptions(statDf),
                     boxOptions(relativeStatDf, relativeTooltipsOptions),
                     boxOptions(absoluteStatDf, absoluteTooltipsOptions),
-                    labelOptions(statDf),
+//                    labelOptions(statDf),
                     if (hLineOnTop) hLineOptions() else null
                 )
             scaleOptions = listOf(
@@ -213,8 +213,7 @@ class WaterfallPlotOptionsBuilder(
     }
 
     private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions): LayerOptions {
-        return LayerOptions().also {
-            it.geom = GeomKind.CROSS_BAR
+        return CrossbarLayer().also {
             it.data = DataFrameUtil.toMap(statDf)
             it.mapping = boxMappings()
             it.color = color.takeUnless { color == COLOR_FLOW_TYPE }
@@ -225,6 +224,14 @@ class WaterfallPlotOptionsBuilder(
             it.width = width
             it.showLegend = showLegend
             it.tooltipsOptions = tooltipsOptions
+            it.labels = annotation {
+                lines = listOf("@" + Waterfall.Var.Stat.LABEL.name)
+                size = labelOptions.size
+                formats = listOf(format {
+                    field = Waterfall.Var.Stat.LABEL.name
+                    format = labelFormat ?: "{value}"
+                })
+            }
         }
     }
 
@@ -275,36 +282,36 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun labelOptions(labelData: DataFrame): LayerOptions? {
-        if (labelOptions.blank) return null
-        return TextLayer().also {
-            it.data = DataFrameUtil.toMap(labelData)
-            it.mapping = labelMappings()
-            it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
-            it.family = labelOptions.family
-            it.fontface = labelOptions.face
-            it.size = labelOptions.size
-            it.angle = labelOptions.angle
-            it.hjust = labelOptions.hjust
-            it.vjust = labelOptions.vjust
-            // Show legend with letter only when color and fill are not mapped
-            it.showLegend = showLegend.takeIf { color != COLOR_FLOW_TYPE && fill != COLOR_FLOW_TYPE } ?: false
-            it.labelFormat = labelFormat
-        }
-    }
+//    private fun labelOptions(labelData: DataFrame): LayerOptions? {
+//        if (labelOptions.blank) return null
+//        return TextLayer().also {
+//            it.data = DataFrameUtil.toMap(labelData)
+//            it.mapping = labelMappings()
+//            it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
+//            it.family = labelOptions.family
+//            it.fontface = labelOptions.face
+//            it.size = labelOptions.size
+//            it.angle = labelOptions.angle
+//            it.hjust = labelOptions.hjust
+//            it.vjust = labelOptions.vjust
+//            // Show legend with letter only when color and fill are not mapped
+//            it.showLegend = showLegend.takeIf { color != COLOR_FLOW_TYPE && fill != COLOR_FLOW_TYPE } ?: false
+//            it.labelFormat = labelFormat
+//        }
+//    }
 
-    private fun labelMappings(): Mapping {
-        var mapping = Mapping(
-            Aes.X to Waterfall.Var.Stat.X.name,
-            Aes.Y to Waterfall.Var.Stat.YMIDDLE.name,
-            Aes.LABEL to Waterfall.Var.Stat.LABEL.name,
-        )
-        if (labelOptions.color == COLOR_FLOW_TYPE) {
-            mapping += Aes.COLOR to Waterfall.Var.Stat.FLOW_TYPE.name
-        }
-
-        return mapping
-    }
+//    private fun labelMappings(): Mapping {
+//        var mapping = Mapping(
+//            Aes.X to Waterfall.Var.Stat.X.name,
+//            Aes.Y to Waterfall.Var.Stat.YMIDDLE.name,
+//            Aes.LABEL to Waterfall.Var.Stat.LABEL.name,
+//        )
+//        if (labelOptions.color == COLOR_FLOW_TYPE) {
+//            mapping += Aes.COLOR to Waterfall.Var.Stat.FLOW_TYPE.name
+//        }
+//
+//        return mapping
+//    }
 
     enum class Measure(val value: String) {
         RELATIVE("relative"),

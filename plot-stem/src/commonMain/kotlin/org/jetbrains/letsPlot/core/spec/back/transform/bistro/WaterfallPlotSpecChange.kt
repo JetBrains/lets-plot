@@ -26,9 +26,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_ABSOLUTE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
-import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
-import org.jetbrains.letsPlot.core.spec.plotson.toJson
-import org.jetbrains.letsPlot.core.spec.plotson.tooltips
+import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
@@ -130,7 +128,34 @@ class WaterfallPlotSpecChange : SpecChange {
                 disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
                 lines = tooltipsOptions.getList(Option.LinesSpec.LINES)?.typed<String>()
                 formats = tooltipsOptions.getMaps(Option.LinesSpec.FORMATS)?.map { formatOptions ->
-                    TooltipsOptions.format {
+                    format {
+                        field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
+                        format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
+                    }
+                }
+            }
+        } ?: defaultTooltips
+    }
+
+    private fun readAnnotationOptions(
+        bistroSpec: Map<String, Any>,
+        optionName: String,
+        defaultTooltips: TooltipsOptions,
+        detailedTooltips: TooltipsOptions
+    ): TooltipsOptions {
+        when (bistroSpec.getString(optionName)) {
+            Option.Layer.NONE -> return TooltipsOptions.NONE
+            TOOLTIP_DETAILED -> return detailedTooltips
+        }
+        return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->
+            tooltips {
+                anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
+                minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+                title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
+                disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+                lines = tooltipsOptions.getList(Option.LinesSpec.LINES)?.typed<String>()
+                formats = tooltipsOptions.getMaps(Option.LinesSpec.FORMATS)?.map { formatOptions ->
+                    format {
                         field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
                         format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
                     }
