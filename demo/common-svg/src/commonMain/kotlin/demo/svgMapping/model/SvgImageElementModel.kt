@@ -5,6 +5,7 @@
 
 package demo.svgMapping.model
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
@@ -41,7 +42,7 @@ object SvgImageElementModel {
         val image = SvgImageElement(256.0, 64.0, 128.0, 64.0)
         image.href().set(SvgUtils.pngDataURI(SampleImageData.MINDUKA_PRESENT_BLUE_PACK))
 
-        val bitmap = SvgImageElementEx.Bitmap(3, 3, SampleImageData.argb3x3())
+        val bitmap = Bitmap(3, 3, SampleImageData.argb3x3())
         val imageEx = SvgImageElementEx(180.0, 110.0, 110.0, 80.0, bitmap)
 //        imageEx.preserveAspectRatio().set("true")
 

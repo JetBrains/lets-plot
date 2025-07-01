@@ -9,7 +9,7 @@ from typing import Union
 
 __all__ = ['aes', 'layer']
 
-from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
+from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED, MAGICK_EXPORT
 
 
 def aes(x=None, y=None, **kwargs):
@@ -875,8 +875,40 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
-    str, None]:
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+    if get_global_bool(MAGICK_EXPORT):
+        return _export_with_magick(spec, path, scale, export_format, w, h, unit, dpi)
+    else:
+        return _export_with_cairo(spec, path, scale, export_format, w, h, unit, dpi)
+
+
+def _export_with_magick(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+    import base64
+    from .. import _kbridge
+
+    if any(it is not None for it in [w, h, unit, dpi]):
+        if w is None or h is None or unit is None or dpi is None:
+            raise ValueError("w, h, unit, and dpi must all be specified")
+        width_px, height_px = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
+    else:
+        width_px, height_px = -1, -1
+
+    scale = scale if scale is not None else 2.0
+
+    png_base64 = _kbridge._export_png(spec.as_dict(), width_px, height_px, scale)
+    png = base64.b64decode(png_base64)
+
+    if isinstance(path, str):
+        abspath = _makedirs(path)
+        with open(abspath, 'wb') as f:
+            f.write(png)
+        return abspath
+    else:
+        path.write(png)
+        return None
+
+
+def _export_with_cairo(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
     from .. import _kbridge
 
     input = None
@@ -901,9 +933,6 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
 
         # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
         input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
-    elif export_format.lower() == 'bmp':
-        export_function = _kbridge._save_image
-        input = spec.as_dict()
     else:
         raise ValueError("Unknown export format: {}".format(export_format))
 

@@ -1,6 +1,5 @@
 
 import org.jetbrains.letsPlot.commons.values.Color
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -9,7 +8,7 @@ import kotlin.test.Test
  */
 
 class MagickCanvasDrawImageTest {
-    private val imageComparer = ImageComparer()
+    private val imageComparer = imageComparer()
 
     @Test
     fun scaledCanvas() {
@@ -17,7 +16,7 @@ class MagickCanvasDrawImageTest {
         ctx.fillStyle = Color.BLACK
         ctx.fillRect(12.5, 12.5, 25.0, 25.0)
 
-        imageComparer.assertImageEquals("scaled_canvas.bmp", canvas.img)
+        assertCanvas("scaled_canvas.bmp", canvas)
     }
 
     @Test
@@ -31,7 +30,7 @@ class MagickCanvasDrawImageTest {
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot)
 
-        imageComparer.assertImageEquals("draw_image_simple.bmp", canvas.img)
+        assertCanvas("draw_image_simple.bmp", canvas)
     }
 
     @Test
@@ -67,7 +66,7 @@ class MagickCanvasDrawImageTest {
         ctx.fillRect(0, 0, 20, 20)
         ctx.restore()
 
-        imageComparer.assertImageEquals("draw_image_transformed.bmp", canvas.img)
+        assertCanvas("draw_image_transformed.bmp", canvas)
     }
 
     @Test
@@ -101,7 +100,7 @@ class MagickCanvasDrawImageTest {
         ctx.lineTo(100, 50)
         ctx.stroke()
 
-        imageComparer.assertImageEquals("draw_image_overlay.bmp", canvas.img)
+        assertCanvas("draw_image_overlay.bmp", canvas)
     }
 
     @Test
@@ -130,7 +129,7 @@ class MagickCanvasDrawImageTest {
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot, x = 5.0, y = 20.0, dw = 90.0, dh = 60.0)
 
-        imageComparer.assertImageEquals("draw_image_pixelated.bmp", canvas.img)
+        assertCanvas("draw_image_pixelated.bmp", canvas)
     }
 
     @Test
