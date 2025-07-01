@@ -125,10 +125,9 @@ class PolarAxisComponent(
         }
 
         val tickLabel = if (axisTheme.showLabels()) {
-            val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
             val tickLabel = TextLabel(label, axisTheme.titleStyle().markdown)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
-            tickLabel.setFontSize(tickHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
+            tickLabel.setFontSize(PlotLabelSpecFactory.axisTick(axisTheme).font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
 
             when (orientation.isHorizontal) {
                 false -> {

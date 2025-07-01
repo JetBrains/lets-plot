@@ -105,7 +105,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val lineHeight = FONT_SIZE
             val lineFont = Font(FontFamily(FONT_FAMILY_NORMAL, false), FONT_SIZE.toInt())
             val textSize = DoubleVector(
-                PlotLabelSpec(lineFont).width(text),
+                PlotLabelSpec(lineFont).maxWidth(text),
                 lineHeight * label.linesCount()
             )
             val (position, hAnchor) = applyJustification(

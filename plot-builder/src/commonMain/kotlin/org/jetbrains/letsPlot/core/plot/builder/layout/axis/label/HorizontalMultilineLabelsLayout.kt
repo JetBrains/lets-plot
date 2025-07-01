@@ -70,7 +70,7 @@ internal class HorizontalMultilineLabelsLayout(
         } else {
             boundsByShelfIndex[0]
         }
-        val h = labelSpec.height() * LINE_HEIGHT
+        val h = breaks.labels.maxOf { labelSpec.heights(it).max() } * LINE_HEIGHT // TODO: Use whole list
         for ((i, shelfBounds) in boundsByShelfIndex.withIndex()) {
             bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, i * h)))
         }
@@ -117,7 +117,7 @@ internal class HorizontalMultilineLabelsLayout(
             breaks: ScaleBreaks,
             shelfIndexForTickIndex: List<Int>
         ): List<DoubleVector> {
-            val h = labelSpec.height() * LINE_HEIGHT
+            val h = breaks.labels.maxOf { labelSpec.heights(it).max() } * LINE_HEIGHT // TODO: Use whole list
             val result = ArrayList<DoubleVector>()
             for (i in 0 until breaks.size) {
                 result.add(DoubleVector(0.0, shelfIndexForTickIndex[i] * h))

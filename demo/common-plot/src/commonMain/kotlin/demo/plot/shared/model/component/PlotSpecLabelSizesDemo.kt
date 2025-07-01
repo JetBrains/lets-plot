@@ -112,16 +112,12 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         return rect
     }
 
+    // useLetterTypes not used because old text width calculation by count of letters is not supported anymore
     private fun titleDimensions(spec: LabelTextAndSpec, useLetterTypes: Boolean): DoubleVector {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
-        val width = if (useLetterTypes) {
-            spec.plotLabelSpec.width(spec.text)
-        } else {
-            spec.plotLabelSpec.width(spec.text)
-        }
-        return DoubleVector(width, spec.plotLabelSpec.height())
+        return spec.plotLabelSpec.totalDimensions(spec.text)
     }
 
     companion object {

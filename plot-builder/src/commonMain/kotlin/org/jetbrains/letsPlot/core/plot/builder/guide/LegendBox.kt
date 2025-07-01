@@ -128,7 +128,8 @@ abstract class LegendBox : SvgComponent() {
         titleSize: DoubleVector,
         justification: TextJustification
     ): MultilineLabel {
-        val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height()
+        val labelSpec = PlotLabelSpecFactory.legendTitle(theme)
+        val lineHeight = labelSpec.heights(title).max() // TODO: Use whole list
 
         val label = MultilineLabel(title)
         val (pos, hAnchor) = applyJustification(
@@ -140,7 +141,7 @@ abstract class LegendBox : SvgComponent() {
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setLineHeight(lineHeight)
-        label.setFontSize(lineHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
+        label.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.moveTo(pos)
         return label
     }

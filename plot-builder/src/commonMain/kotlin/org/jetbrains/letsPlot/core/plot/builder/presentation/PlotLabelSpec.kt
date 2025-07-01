@@ -16,26 +16,30 @@ class PlotLabelSpec(
     override val markdown: Boolean = false
 ) : LabelSpec {
 
-    override fun dimensions(labelText: String): DoubleVector {
-        return DoubleVector(width(labelText), height())
+    override fun dimensions(labelText: String): List<DoubleVector> {
+        val maxWidth = maxWidth(labelText)
+        return heights(labelText).map { height ->
+            DoubleVector(maxWidth, height)
+        }
     }
 
-    override fun multilineDimensions(labelText: String): DoubleVector {
-        return DoubleVector(width(labelText), multilineHeight(labelText))
+    override fun totalDimensions(labelText: String): DoubleVector {
+        val totalHeight = heights(labelText).sum()
+        return DoubleVector(maxWidth(labelText), totalHeight)
     }
 
-    override fun width(labelText: String): Double {
+    override fun maxWidth(labelText: String): Double {
         return RichText.estimateWidth(labelText, font, markdown = markdown, widthCalculator = TextWidthEstimator::widthCalculator)
     }
 
-    override fun height(): Double {
-        return font.size.toDouble()
+    // TODO: Use RichText.estimateHeights()
+    override fun heights(labelText: String): List<Double> {
+        val fontSize = font.size.toDouble()
+        return labelText.split('\n').map { fontSize }
     }
 
-    override fun multilineHeight(labelText: String): Double {
-        labelText.count { it == '\n' }.let { newLinesCount ->
-            return height() + font.size * newLinesCount
-        }
+    override fun regularLineHeight(): Double {
+        return heights("").single()
     }
 
     companion object {
@@ -46,23 +50,23 @@ class PlotLabelSpec(
             override val markdown: Boolean
                 get() = UNSUPPORTED("Dummy Label Spec")
 
-            override fun dimensions(labelText: String): DoubleVector {
+            override fun dimensions(labelText: String): List<DoubleVector> {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun multilineDimensions(labelText: String): DoubleVector {
+            override fun totalDimensions(labelText: String): DoubleVector {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun width(labelText: String): Double {
+            override fun maxWidth(labelText: String): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun height(): Double {
+            override fun heights(labelText: String): List<Double> {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun multilineHeight(labelText: String): Double {
+            override fun regularLineHeight(): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

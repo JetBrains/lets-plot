@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -21,18 +20,11 @@ import kotlin.math.max
 object PlotLayoutUtil {
     internal fun plotInsets(plotInset: Thickness) = Insets(plotInset.leftTop, plotInset.rightBottom)
 
-    private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
-        if (text.isEmpty()) {
-            return DoubleVector(0.0, labelSpec.height())
-        }
-        return DoubleVector(
-            labelSpec.width(text),
-            labelSpec.height()
-        )
-    }
-
     private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
-        return MultilineLabel.splitLines(text).map { line -> labelDimensions(line, labelSpec) }
+        if (text.isEmpty()) {
+            return listOf(DoubleVector(0.0, labelSpec.regularLineHeight()))
+        }
+        return labelSpec.dimensions(text)
     }
 
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {

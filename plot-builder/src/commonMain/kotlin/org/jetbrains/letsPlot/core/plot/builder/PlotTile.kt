@@ -211,7 +211,7 @@ internal class PlotTile constructor(
 
         val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val lineHeight = labelSpec.height()
+        val lineHeight = labelSpec.heights(label).max() // TODO: Use whole list
         val className = if (isColumnLabel) "x" else "y"
         val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
 
@@ -227,7 +227,7 @@ internal class PlotTile constructor(
         )
         lab.setHorizontalAnchor(hAnchor)
         lab.setLineHeight(lineHeight)
-        lab.setFontSize(lineHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
+        lab.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }
 

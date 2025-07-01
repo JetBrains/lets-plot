@@ -12,13 +12,13 @@ interface LabelSpec {
     val font: Font
     val markdown: Boolean
 
-    fun dimensions(labelText: String): DoubleVector
+    fun dimensions(labelText: String): List<DoubleVector>
 
-    fun multilineDimensions(labelText: String): DoubleVector
+    fun totalDimensions(labelText: String): DoubleVector
 
-    fun width(labelText: String): Double
+    fun maxWidth(labelText: String): Double
 
-    fun height(): Double
+    fun heights(labelText: String): List<Double>
 
-    fun multilineHeight(labelText: String): Double
+    fun regularLineHeight(): Double
 }

@@ -30,8 +30,8 @@ internal object PlotAxisLayoutUtil {
 
     private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: LabelSpec): Double {
         return if (orientation.isHorizontal)
-            tickLabelSpec.height()
+            tickLabelSpec.heights(INITIAL_TICK_LABEL_IN_CHARS).single()
         else
-            tickLabelSpec.width(INITIAL_TICK_LABEL_IN_CHARS)
+            tickLabelSpec.maxWidth(INITIAL_TICK_LABEL_IN_CHARS)
     }
 }

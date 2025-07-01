@@ -80,7 +80,7 @@ class ColorBarComponent(
             }
 
             // Label
-            val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
+            val lineHeight = PlotLabelSpecFactory.legendItem(theme).heights(brLabel).max() // TODO: Use whole list
             val label = MultilineLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)

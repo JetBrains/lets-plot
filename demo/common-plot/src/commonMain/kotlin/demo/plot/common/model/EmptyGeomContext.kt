@@ -72,6 +72,6 @@ class EmptyGeomContext : GeomContext {
                 isBold = isBold,
                 isItalic = isItalic
             ),
-        ).dimensions(text)
+        ).dimensions(text).single() // It works because text here is a single line, but it's a bad design and should be refactored
     }
 }
