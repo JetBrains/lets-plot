@@ -198,6 +198,27 @@ class PlotTest {
         assertPlot("plot_explicit_size_scaled_test.bmp", plotSpec, width = 300, height = 300, scale = 2.0)
     }
 
+    @Test
+    fun plotMarkdownFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 190.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_font_style_test.bmp", plotSpec)
+    }
 
     private fun assertPlot(
         expectedFileName: String,
