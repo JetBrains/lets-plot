@@ -21,7 +21,7 @@ class RichTextLatexTest {
     fun noLatex() {
         val text = "There are no formulas here"
         val svg = RichText.toSvg(text, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(text, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(text, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
@@ -36,7 +36,7 @@ class RichTextLatexTest {
     fun emptyFormula() {
         val formula = """\(\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(0)
         assertThat(width).isEqualTo(0.0)
@@ -46,7 +46,7 @@ class RichTextLatexTest {
     fun simpleFormulaWithSpace() {
         val formula = """\(A B\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(2)
         val (first, second) = svg.tspans()
@@ -61,7 +61,7 @@ class RichTextLatexTest {
     fun simpleFormulaWithExplicitSpace() {
         val formula = """\(A \quad B\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(3)
         val (first, space, second) = svg.tspans()
@@ -77,7 +77,7 @@ class RichTextLatexTest {
     fun simpleFormulaSpecialSymbol() {
         val formula = """\(\infty\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
@@ -92,7 +92,7 @@ class RichTextLatexTest {
     fun simpleFormulaLetter() {
         val formula = """\(\Omega\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
@@ -107,7 +107,7 @@ class RichTextLatexTest {
     fun simpleFormulaSuperscript() {
         val formula = """\(a^b\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
@@ -128,7 +128,7 @@ class RichTextLatexTest {
     fun simpleFormulaSuperscriptWithBraces() {
         val formula = """\(a^{bc}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
@@ -149,7 +149,7 @@ class RichTextLatexTest {
     fun simpleFormulaSubscript() {
         val formula = """\(a_b\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
@@ -170,7 +170,7 @@ class RichTextLatexTest {
     fun simpleFormulaSubscriptWithBraces() {
         val formula = """\(a_{bc}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
@@ -191,7 +191,7 @@ class RichTextLatexTest {
     fun formulaWithMultipleSuperscript() {
         val formula = """\(a^{b^c}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
@@ -218,7 +218,7 @@ class RichTextLatexTest {
     fun formulaWithMultipleSubscript() {
         val formula = """\(a_{i_1}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
@@ -245,7 +245,7 @@ class RichTextLatexTest {
     fun formulaWithMixedSupSub() {
         val formula = """\(a^{b_i}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
@@ -272,7 +272,7 @@ class RichTextLatexTest {
     fun formulaWithMixedSubSup() {
         val formula = """\(a_{I^n}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
@@ -299,7 +299,7 @@ class RichTextLatexTest {
     fun simpleFormulaFraction() {
         val formula = """\(\frac{a}{b}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(4)
         val (num, denom, bar, restoreShift) = svg.tspans()
@@ -317,7 +317,7 @@ class RichTextLatexTest {
     fun sumOfFractions() {
         val formula = """\(\frac{a}{b} + \frac{c}{d}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(9)
         val (firstNum, firstDenom, firstBar, restoreFirstShift, sumSign) = svg.tspans()
@@ -346,7 +346,7 @@ class RichTextLatexTest {
     fun superscriptInFraction() {
         val formula = """\(\frac{a^3}{b^2}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(12)
         val (numBase, numSpace, numShiftSup, numPow, numRestoreShift) = svg.tspans()
@@ -377,7 +377,7 @@ class RichTextLatexTest {
     fun fractionInSuperscript() {
         val formula = """\(a^{\frac{b}{c}}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(8)
         val (base, space, shiftSup, num, denom) = svg.tspans()
@@ -403,7 +403,7 @@ class RichTextLatexTest {
     fun fractionOnSecondLevel() {
         val formula = """\(a^{b_{\frac{c}{d}}}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(12)
         val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
@@ -435,7 +435,7 @@ class RichTextLatexTest {
     fun textBeforeFormulaWithFraction() {
         val formula = """a+\(\frac{b}{c}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (text, num, denom, bar, restoreShift) = svg.tspans()
@@ -457,7 +457,7 @@ class RichTextLatexTest {
     fun textBetweenTwoFormulasWithFractions() {
         val formula = """\(\frac{a}{b}\)XY\(\frac{c}{d}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(9)
         val (firstNum, firstDenom, firstBar, firstRestoreShift, text) = svg.tspans()
@@ -486,7 +486,7 @@ class RichTextLatexTest {
     fun textAfterFormulaWithFraction() {
         val formula = """\(\frac{a}{b}\)+c"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (num, denom, bar, restoreShift, text) = svg.tspans()
@@ -508,7 +508,7 @@ class RichTextLatexTest {
     fun twoLines() {
         val formula = "\\(\\frac{a}{b}\\)\n\\(c_i\\)"
         val (firstSvg, secondSvg) = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator)
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(firstSvg.tspans()).hasSize(4)
         val (num, denom, bar, restoreFracShift) = firstSvg.tspans()
@@ -540,7 +540,7 @@ class RichTextLatexTest {
     fun linkBeforeFormulaWithFraction() {
         val formula = """<a href="https://example.com">link</a>\(\frac{a}{b}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.children()).hasSize(5)
         val linkText = svg.children().first().children().single() as SvgTSpanElement
@@ -565,7 +565,7 @@ class RichTextLatexTest {
     fun markdownBeforeFormulaWithFraction() {
         val formula = """<span style="color:blue">**text**</span>\(\frac{a}{b}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator, markdown = true).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator, markdown = true)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator, markdown = true)
 
         assertThat(svg.tspans()).hasSize(5)
         val (markdown, num, denom, bar, restoreShift) = svg.tspans()
@@ -587,7 +587,7 @@ class RichTextLatexTest {
     fun formulaWithAnchorMiddle() {
         val formula = """a+\(\frac{b}{c}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator, anchor = Text.HorizontalAnchor.MIDDLE).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (text, num, denom, bar, restoreShift) = svg.tspans()
@@ -607,7 +607,7 @@ class RichTextLatexTest {
     fun formulaWithAnchorRight() {
         val formula = """a+\(\frac{b}{c}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator, anchor = Text.HorizontalAnchor.RIGHT).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(5)
         val (text, num, denom, bar, restoreShift) = svg.tspans()
@@ -627,7 +627,7 @@ class RichTextLatexTest {
     fun complexFormulaRegression1() {
         val formula = """\(a^{b+\frac{c}{d}}+\frac{e}{f}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(14)
         val (a, space, shiftSup, b, c) = svg.tspans()
@@ -664,7 +664,7 @@ class RichTextLatexTest {
     fun complexFormulaRegression2() {
         val formula = """\(a^\frac{c+d}{e}+b_{\frac{f}{g+h}}\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(16)
         val (a, aSpace, aShiftSup, cd, e) = svg.tspans()
@@ -703,7 +703,7 @@ class RichTextLatexTest {
     fun complexFormulaRegression3() {
         val formula = """\(a1^{b1^{\frac{c1}{c2}+c3}+b2}+a2\)"""
         val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val width = RichText.estimateMaxWidth(formula, DEF_FONT, ::testWidthCalculator)
 
         assertThat(svg.tspans()).hasSize(15)
         val (a1, aSpace, aShiftSup, b1, bSpace) = svg.tspans()

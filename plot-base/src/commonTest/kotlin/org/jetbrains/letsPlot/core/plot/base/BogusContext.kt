@@ -61,7 +61,7 @@ object BogusContext : GeomContext {
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): DoubleVector {
+    ): List<DoubleVector> {
         error("Not available in a bogus geom context")
     }
 }

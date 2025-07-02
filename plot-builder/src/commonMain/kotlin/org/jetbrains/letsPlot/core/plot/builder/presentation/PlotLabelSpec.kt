@@ -29,13 +29,11 @@ class PlotLabelSpec(
     }
 
     override fun maxWidth(labelText: String): Double {
-        return RichText.estimateWidth(labelText, font, markdown = markdown, widthCalculator = TextWidthEstimator::widthCalculator)
+        return RichText.estimateMaxWidth(labelText, font, markdown = markdown, widthCalculator = TextWidthEstimator::widthCalculator)
     }
 
-    // TODO: Use RichText.estimateHeights()
     override fun heights(labelText: String): List<Double> {
-        val fontSize = font.size.toDouble()
-        return labelText.split('\n').map { fontSize }
+        return RichText.estimateHeights(labelText, font, markdown = markdown)
     }
 
     override fun regularLineHeight(): Double {

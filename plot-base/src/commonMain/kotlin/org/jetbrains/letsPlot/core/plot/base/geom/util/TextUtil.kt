@@ -194,23 +194,40 @@ object TextUtil {
     }
 
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
-        val lines = MultilineLabel.splitLines(text)
         val fontSize = fontSize(p, scale)
         val lineHeight = lineheight(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
-        val estimated = lines.map { line ->
-            ctx.estimateTextSize(line, fontFamily, fontSize, fontFace.bold, fontFace.italic)
-        }.fold(DoubleVector.ZERO) { acc, sz ->
+        val estimated = ctx.estimateTextSize(
+            text,
+            fontFamily,
+            fontSize,
+            fontFace.bold,
+            fontFace.italic
+        ).fold(DoubleVector.ZERO) { acc, sz ->
             DoubleVector(
-                x = max(acc.x, sz.x),
+                x = sz.x,
                 y = acc.y + sz.y
             )
         }
         val lineInterval = lineHeight - fontSize
-        val textHeight = estimated.y + lineInterval * (lines.size - 1)
+        val textHeight = estimated.y + lineInterval * (MultilineLabel.splitLines(text).size - 1)
         return DoubleVector(estimated.x, textHeight)
+    }
+
+    fun firstLineHeight(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): Double {
+        val fontSize = fontSize(p, scale)
+        val fontFamily = fontFamily(p)
+        val fontFace = FontFace.fromString(p.fontface())
+
+        return ctx.estimateTextSize(
+            text,
+            fontFamily,
+            fontSize,
+            fontFace.bold,
+            fontFace.italic
+        ).firstOrNull()?.y ?: fontSize
     }
 
     fun rectangleForText(

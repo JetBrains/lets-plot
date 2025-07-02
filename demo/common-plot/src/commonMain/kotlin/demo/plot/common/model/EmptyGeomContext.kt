@@ -62,7 +62,7 @@ class EmptyGeomContext : GeomContext {
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): DoubleVector {
+    ): List<DoubleVector> {
         @Suppress("NAME_SHADOWING")
         val family = DefaultFontFamilyRegistry().get(family)
         return PlotLabelSpec(
@@ -72,6 +72,6 @@ class EmptyGeomContext : GeomContext {
                 isBold = isBold,
                 isItalic = isItalic
             ),
-        ).dimensions(text).single() // It works because text here is a single line, but it's a bad design and should be refactored
+        ).dimensions(text)
     }
 }

@@ -36,7 +36,7 @@ interface GeomContext {
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): DoubleVector
+    ): List<DoubleVector>
 
     // Simple formatter, based on the bound variable type (e.g. int -> "d", float -> "g", datetime -> "%d.%m.%y %H:%M:%S")
     // If type is not known, returns Any::toString

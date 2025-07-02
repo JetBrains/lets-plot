@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
+import kotlin.math.pow
 
 class LabelOptions {
     var paddingFactor: Double = 0.25    //  Amount of padding around label
@@ -59,9 +60,11 @@ class LabelOptions {
                 Text.HorizontalAnchor.RIGHT -> location.x - padding
                 Text.HorizontalAnchor.MIDDLE -> location.x
             }
+            val firstLineHeight = TextUtil.firstLineHeight(text, p, ctx, sizeUnitRatio)
+            val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
             val textPosition = DoubleVector(
                 xPosition,
-                rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
+                rectangle.origin.y + padding + magickFactor * firstLineHeight // top-align the first line
             )
             label.setHorizontalAnchor(hAnchor)
             label.moveTo(textPosition)

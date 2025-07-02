@@ -149,21 +149,21 @@ class RichTextTermTest {
     @Test
     fun estimateWidth() {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
-        val width = RichText.estimateWidth("Hello, world!", arial, widthCalculator = { text, _ -> text.length * 5.5 })
+        val width = RichText.estimateMaxWidth("Hello, world!", arial, widthCalculator = { text, _ -> text.length * 5.5 })
         assertThat(width).isEqualTo(5.5 * "Hello, world!".length)
     }
 
     @Test
     fun estimateWidthWithWrap() {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
-        val width = RichText.estimateWidth("Hello, world!", arial, widthCalculator = { text, _ -> text.length * 5.5 }, wrapLength = 6)
+        val width = RichText.estimateMaxWidth("Hello, world!", arial, widthCalculator = { text, _ -> text.length * 5.5 }, wrapLength = 6)
         assertThat(width).isEqualTo(5.5 * 6)
     }
 
     @Test
     fun estimateWithLink() {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
-        val width = RichText.estimateWidth("Hello, <a href=\"https://example.com\">world</a>!", arial, widthCalculator = { text, _ -> text.length * 5.5 })
+        val width = RichText.estimateMaxWidth("Hello, <a href=\"https://example.com\">world</a>!", arial, widthCalculator = { text, _ -> text.length * 5.5 })
         assertThat(width).isEqualTo(5.5 * "Hello, world!".length)
     }
 

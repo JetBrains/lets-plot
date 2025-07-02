@@ -36,7 +36,7 @@ object RichText {
         return svgLines
     }
 
-    fun estimateWidth(
+    fun estimateMaxWidth(
         text: String,
         font: Font,
         widthCalculator: (String, Font) -> Double,
@@ -50,6 +50,22 @@ object RichText {
         }
 
         return widths.maxOrNull() ?: 0.0
+    }
+
+    fun estimateHeights(
+        text: String,
+        font: Font,
+        wrapLength: Int = -1,
+        maxLinesCount: Int = -1,
+        markdown: Boolean = false,
+    ): List<Double> {
+        val lines = parse(text, font, { _, _ -> 0.0 }, wrapLength, maxLinesCount, markdown)
+        if (lines.isEmpty()) {
+            return listOf(RichTextNode.Text("").estimateHeight(font))
+        }
+        return lines.map { line ->
+            line.maxOf { term -> (term as? RichTextNode.RichSpan)?.estimateHeight(font) ?: 0.0 }
+        }
     }
 
     private fun parse(
@@ -280,6 +296,7 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+            abstract fun estimateHeight(font: Font): Double // TODO: Add default behavior and use it for all descendants
             abstract fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
@@ -322,9 +339,11 @@ object RichText {
         ) : RichSpan() {
             override val visualCharCount: Int = text.length
 
-            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-                return widthCalculator(text, font)
-            }
+            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+                widthCalculator(text, font)
+
+            override fun estimateHeight(font: Font): Double =
+                font.size.toDouble()
 
             override fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>> {
                 return SvgTSpanElement(text)

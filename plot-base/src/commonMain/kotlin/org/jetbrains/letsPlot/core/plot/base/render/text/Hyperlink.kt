@@ -30,9 +30,11 @@ internal object Hyperlink {
         private val href: String,
     ) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = text.length
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return widthCalculator(text, font)
-        }
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            widthCalculator(text, font)
+
+        override fun estimateHeight(font: Font): Double =
+            font.size.toDouble()
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return listOf(

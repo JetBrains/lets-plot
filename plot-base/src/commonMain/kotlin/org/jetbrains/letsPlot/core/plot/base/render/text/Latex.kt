@@ -280,6 +280,9 @@ internal class Latex(
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
             node.estimateWidth(font, widthCalculator)
 
+        override fun estimateHeight(font: Font): Double =
+            node.estimateHeight(font)
+
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return node.render(context, prefix)
         }
@@ -287,9 +290,11 @@ internal class Latex(
 
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {
         override val visualCharCount: Int = content.length
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return widthCalculator(content, font)
-        }
+        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            widthCalculator(content, font)
+
+        override fun estimateHeight(font: Font): Double =
+            font.size.toDouble()
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).wrap())
@@ -298,9 +303,11 @@ internal class Latex(
 
     private inner class GroupNode(children: List<LatexNode>, level: Int) : LatexNode(children, level) {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return children.sumOf { it.estimateWidth(font, widthCalculator) }
-        }
+        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            children.sumOf { it.estimateWidth(font, widthCalculator) }
+
+        override fun estimateHeight(font: Font): Double =
+            children.maxOf { it.estimateHeight(font) }
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             val wrappedElements = mutableListOf<WrappedSvgElement<SvgElement>>()
@@ -315,9 +322,11 @@ internal class Latex(
 
     private inner class SuperscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return content.estimateWidth(font, widthCalculator)
-        }
+        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            content.estimateWidth(font, widthCalculator)
+
+        override fun estimateHeight(font: Font): Double =
+            content.estimateHeight(font) // TODO: Could be better
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefix = prefix)
@@ -326,9 +335,11 @@ internal class Latex(
 
     private inner class SubscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return content.estimateWidth(font, widthCalculator)
-        }
+        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            content.estimateWidth(font, widthCalculator)
+
+        override fun estimateHeight(font: Font): Double =
+            content.estimateHeight(font) // TODO: Could be better
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefix = prefix)
@@ -341,9 +352,11 @@ internal class Latex(
         level: Int
     ) : LatexNode(listOf(numerator, denominator), level) {
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
-        }
+        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
+
+        override fun estimateHeight(font: Font): Double =
+            numerator.estimateHeight(font) + denominator.estimateHeight(font)
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             val prefixWidth = prefix.sumOf { it.estimateWidth(font, widthCalculator) }
