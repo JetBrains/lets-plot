@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CONNECTOR
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE_ON_TOP
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SHOW_LEGEND
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SIZE
@@ -25,6 +24,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_ABSOLUTE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_RELATIVE_TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.ElementTextOptions
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
@@ -103,8 +103,15 @@ class WaterfallPlotSpecChange : SpecChange {
             hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, DEF_H_LINE),
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: DEF_H_LINE_ON_TOP,
             connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, DEF_CONNECTOR),
-            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, DEF_LABEL),
-            labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
+            relativeLabelsOptions = readAnnotationOptions(
+                bistroSpec,
+                Waterfall.RELATIVE_LABELS
+            ),
+            absoluteLabelsOptions = readAnnotationOptions(
+                bistroSpec,
+                Waterfall.ABSOLUTE_LABELS
+            ),
+            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, ElementTextOptions())
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return waterfallPlotOptions.toJson()
@@ -139,29 +146,37 @@ class WaterfallPlotSpecChange : SpecChange {
 
     private fun readAnnotationOptions(
         bistroSpec: Map<String, Any>,
-        optionName: String,
-        defaultTooltips: TooltipsOptions,
-        detailedTooltips: TooltipsOptions
-    ): TooltipsOptions {
+        optionName: String
+    ): AnnotationOptions {
         when (bistroSpec.getString(optionName)) {
-            Option.Layer.NONE -> return TooltipsOptions.NONE
-            TOOLTIP_DETAILED -> return detailedTooltips
+            Option.Layer.NONE -> return AnnotationOptions.NONE
         }
-        return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->
-            tooltips {
-                anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
-                minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
-                title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
-                disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
-                lines = tooltipsOptions.getList(Option.LinesSpec.LINES)?.typed<String>()
-                formats = tooltipsOptions.getMaps(Option.LinesSpec.FORMATS)?.map { formatOptions ->
+
+        val labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
+        return bistroSpec.getMap(optionName)?.let { annotationOptions ->
+            annotation {
+                lines = annotationOptions.getList(Option.AnnotationSpec.LINES)?.typed<String>()
+                formats = annotationOptions.getMaps(Option.AnnotationSpec.FORMATS)?.map { formatOptions ->
                     format {
                         field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
                         format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
                     }
-                }
+                } ?: listOf(format {
+                    field = "@${Waterfall.Var.Stat.LABEL}"
+                    format = labelFormat ?: ""
+                })
+                size = annotationOptions.getDouble(Option.AnnotationSpec.ANNOTATION_SIZE)
             }
-        } ?: defaultTooltips
+        } ?: annotation {
+            lines = listOf("@${Waterfall.Var.Stat.LABEL}")
+
+            if (labelFormat != null) {
+                formats = listOf(format {
+                    field = "@${Waterfall.Var.Stat.LABEL}"
+                    format = labelFormat
+                })
+            }
+        }
     }
 
     private fun readElementLineOptions(
@@ -187,14 +202,14 @@ class WaterfallPlotSpecChange : SpecChange {
     private fun readElementTextOptions(
         bistroSpec: Map<String, Any>,
         option: String,
-        defaults: WaterfallPlotOptionsBuilder.ElementTextOptions
-    ): WaterfallPlotOptionsBuilder.ElementTextOptions {
+        defaults: ElementTextOptions
+    ): ElementTextOptions {
         if (bistroSpec.getString(option) == Option.Theme.Elem.BLANK) {
-            return WaterfallPlotOptionsBuilder.ElementTextOptions(blank = true)
+            return ElementTextOptions(blank = true)
         }
         return bistroSpec.getMap(option)?.let { elementTextSpec ->
             defaults.merge(
-                WaterfallPlotOptionsBuilder.ElementTextOptions(
+                ElementTextOptions(
                     color = elementTextSpec.getString(Option.Theme.Elem.COLOR),
                     family = elementTextSpec.getString(Option.Theme.Elem.FONT_FAMILY),
                     face = elementTextSpec.getString(Option.Theme.Elem.FONT_FACE),

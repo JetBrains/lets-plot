@@ -29,7 +29,6 @@ object CrossBarAnnotation {
         val annotation = ctx.annotation ?: return
         val viewPort = GeomBase.overallAesBounds(ctx).let(coord::toClient) ?: return
 
-        val padding = annotation.textStyle.size / 2
         val isHorizontallyOriented = ctx.flipped
 
         rectangles
@@ -39,7 +38,6 @@ object CrossBarAnnotation {
                 val textSize = AnnotationUtil
                     .textSizeGetter(annotation.textStyle, ctx)
                     .invoke(text, aes)
-                    .add(DoubleVector(2 * padding, 2 * padding))
                 val midLineStrokeWidth = AesScaling.strokeWidth(aes) * fatten
 
                 var location = findTextLocation(
