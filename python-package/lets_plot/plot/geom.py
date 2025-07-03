@@ -4111,7 +4111,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
               color_by=None, fill_by=None,
               **other_args):
     """
-    A sina plot visualizes a single variable across classes, with jitter width reflecting the data's density in each class.
+    A sina plot visualizes a single variable across classes, with jitter width reflecting the data density in each class.
 
     Parameters
     ----------
