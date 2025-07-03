@@ -752,8 +752,8 @@ class OptionsBuilderTest {
             ).let { plotOptions ->
                 val parameterIsPresented =
                     plotOptions.layerOptions!!
-                        .mapNotNull { if (it.geom == GeomKind.CROSS_BAR) (it as CrossbarLayer).labels else null }
-                        .isNotEmpty()
+                        .map { it.geom == GeomKind.CROSS_BAR && (it as CrossbarLayer).labels != AnnotationOptions.NONE }.any { it }
+
                 assert(expectedPresence == parameterIsPresented) { "Wrong presence of labels" }
             }
         }
