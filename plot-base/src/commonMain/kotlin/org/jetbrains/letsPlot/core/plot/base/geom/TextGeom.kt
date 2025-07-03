@@ -102,7 +102,7 @@ open class TextGeom : GeomBase() {
         boundsCenter: DoubleVector?
     ): SvgGElement {
         val label = MultilineLabel(text)
-        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
+        TextUtil.decorate(label, p, TextUtil.lineHeights(text, p, ctx, sizeUnitRatio), sizeUnitRatio, applyAlpha = true)
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         label.setHorizontalAnchor(hAnchor)
 

@@ -144,8 +144,7 @@ class AxisComponent(
             tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
             tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
             val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
-            val lineHeight = labelSpec.heights(label).max() // TODO: Use whole list
-            tickLabel.setLineHeight(lineHeight)
+            tickLabel.setLineHeights(labelSpec.heights(label))
             tickLabel.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)

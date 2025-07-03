@@ -36,11 +36,11 @@ class MultilineLabel(
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private var myLineHeight = 0.0
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
     private var yStart = 0.0
+    private val myLineHeights: MutableList<Double> = mutableListOf()
 
     init {
         resetLines()
@@ -87,7 +87,10 @@ class MultilineLabel(
 
     fun setY(y: Double) = updateAndReset { yStart = y }
 
-    fun setLineHeight(v: Double) = updateAndReset { myLineHeight = v }
+    fun setLineHeights(values: List<Double>) = updateAndReset {
+        myLineHeights.clear()
+        values.map(myLineHeights::add)
+    }
 
     private inline fun <T> updateAndReset(setter: () -> T) {
         setter()
@@ -163,7 +166,12 @@ class MultilineLabel(
     }
 
     private fun repositionLines(i: Int, line: SvgTextElement): SvgTextElement {
-        val totalHeightShift = myLineHeight * (linesCount() - 1)
+        if (myLineHeights.isEmpty()) {
+            line.y().set(0.0)
+            return line
+        }
+
+        val totalHeightShift = myLineHeights.dropLast(1).sum()
 
         val adjustedYStart = yStart - when (myVerticalAnchor) {
             VerticalAnchor.TOP -> 0.0
@@ -172,7 +180,19 @@ class MultilineLabel(
             else -> 0.0
         }
 
-        line.y().set(adjustedYStart + myLineHeight * i)
+        // TODO: Refactor
+        // Uses the fact that there is only two types of line heights: for plane text (smaller) and for fractions (larger)
+        val totalLineHeightsBeforeCurrent = myLineHeights.take(i).sum()
+        val planeTextLineHeight = myLineHeights.min()
+        val fractionLineHeight = myLineHeights.max()
+        val currentLineHeight = myLineHeights[i]
+        val currentShift = when {
+            i == 0 -> 0.0
+            planeTextLineHeight < myLineHeights.first() -> (currentLineHeight - fractionLineHeight) / 2.0
+            planeTextLineHeight < currentLineHeight -> (currentLineHeight - planeTextLineHeight) / 2.0
+            else -> 0.0
+        }
+        line.y().set(adjustedYStart + totalLineHeightsBeforeCurrent + currentShift)
         return line
     }
 

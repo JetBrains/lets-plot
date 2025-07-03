@@ -115,7 +115,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 justification,
                 rotation
             )
-            label.setLineHeight(lineHeight)
+            label.setLineHeights((0 until label.linesCount()).map { lineHeight }) // TODO
             label.setHorizontalAnchor(hAnchor)
             rotation?.angle?.let(label::rotate)
             label.moveTo(position)

@@ -167,7 +167,13 @@ object TextUtil {
         label.rotate(angle(p))
     }
 
-    fun decorate(label: MultilineLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
+    fun decorate(
+        label: MultilineLabel,
+        p: DataPointAesthetics,
+        lineHeights: List<Double>,
+        scale: Double = 1.0,
+        applyAlpha: Boolean = true
+    ) {
         val color = p.color()!!
         label.textColor().set(color)
         val alpha = if (applyAlpha) {
@@ -180,7 +186,7 @@ object TextUtil {
         label.setTextOpacity(alpha)
 
         label.setFontSize(fontSize(p, scale))
-        label.setLineHeight(lineheight(p, scale))
+        label.setLineHeights(lineHeights.map { it * p.lineheight()!! })
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -195,7 +201,6 @@ object TextUtil {
 
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
         val fontSize = fontSize(p, scale)
-        val lineHeight = lineheight(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
@@ -211,12 +216,13 @@ object TextUtil {
                 y = acc.y + sz.y
             )
         }
-        val lineInterval = lineHeight - fontSize
+        val lineInterval = (p.lineheight()!! - 1) * fontSize
         val textHeight = estimated.y + lineInterval * (MultilineLabel.splitLines(text).size - 1)
         return DoubleVector(estimated.x, textHeight)
     }
 
-    fun firstLineHeight(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): Double {
+    // TODO: Refactor places that use this method
+    fun lineHeights(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<Double> {
         val fontSize = fontSize(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
@@ -227,7 +233,12 @@ object TextUtil {
             fontSize,
             fontFace.bold,
             fontFace.italic
-        ).firstOrNull()?.y ?: fontSize
+        ).map(DoubleVector::y)
+    }
+
+    fun firstLineHeight(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): Double {
+        val fontSize = fontSize(p, scale)
+        return lineHeights(text, p, ctx, scale).firstOrNull() ?: fontSize
     }
 
     fun rectangleForText(

@@ -65,9 +65,8 @@ class LegendComponent(
         // add label at position as was layout
         val label = MultilineLabel(br.label)
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
-        val lineHeight = labelSpec.heights(br.label).max() // TODO: Use whole list
         label.addClassName(Style.LEGEND_ITEM)
-        label.setLineHeight(lineHeight)
+        label.setLineHeights(labelSpec.heights(br.label))
         label.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)

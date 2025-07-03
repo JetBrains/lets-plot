@@ -461,19 +461,22 @@ class TooltipBox(
             val titleComponent = MultilineLabel(titleLine)
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
-            titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
-            titleComponent.setFontSize(styleSheet.getTextStyle(TOOLTIP_TITLE).size)
+            val fontSize = styleSheet.getTextStyle(TOOLTIP_TITLE).size
+            val lineHeights = estimateLineHeights(titleLine, TOOLTIP_TITLE).map { height ->
+                (height ?: fontSize) + INTERVAL_BETWEEN_SUBSTRINGS
+            }
+            titleComponent.setLineHeights(lineHeights)
+            titleComponent.setFontSize(fontSize)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
         }
 
-        private fun estimateLineHeight(line: String?, className: String): Double? {
+        private fun estimateLineHeights(line: String, className: String): List<Double?> {
             return line
-                ?.split("\n")
-                ?.map { MultilineLabel(it).apply { addClassName(className) } }
-                ?.mapNotNull { lineTextLabel ->
+                .split("\n")
+                .map { MultilineLabel(it).apply { addClassName(className) } }
+                .map { lineTextLabel ->
                     with(myLinesContainer.children()) {
                         add(lineTextLabel.rootGroup)
                         val height = getBBox(lineTextLabel)?.height
@@ -481,7 +484,6 @@ class TooltipBox(
                         height
                     }
                 }
-                ?.maxOrNull()
         }
 
         private fun layoutTitle(
@@ -506,6 +508,8 @@ class TooltipBox(
             rotate: Boolean,
             textClassName: String
         ): DoubleVector {
+            val fontSize = styleSheet.getTextStyle(TOOLTIP_LABEL).size
+
             // bBoxes
             val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
                 .map { line ->
@@ -529,18 +533,25 @@ class TooltipBox(
             }
 
             // calculate heights of original value lines
-            val lineHeights = lines.map { line ->
-                listOfNotNull(
-                    estimateLineHeight(line.label, TOOLTIP_LABEL),
-                    estimateLineHeight(line.value, textClassName)
-                ).maxOrNull() ?: 0.0
+            val lineHeights: List<Pair<List<Double>?, List<Double>>> = lines.map { line ->
+                Pair(
+                    line.label?.let {
+                        estimateLineHeights(it, textClassName).map { height ->
+                            (height ?: fontSize) + INTERVAL_BETWEEN_SUBSTRINGS
+                        }
+                    },
+                    estimateLineHeights(line.value, textClassName).map { height ->
+                        (height ?: fontSize) + INTERVAL_BETWEEN_SUBSTRINGS
+                    }
+                )
             }
 
             // sef vertical shifts for tspan elements
-            lineHeights.zip(components).onEach { (height, component) ->
+            lineHeights.zip(components).onEach { (heights, component) ->
+                val (labelHeights, valueHeights) = heights
                 val (labelComponent, valueComponent) = component
-                labelComponent?.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
-                valueComponent.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
+                labelHeights?.let { labelComponent?.setLineHeights(it) }
+                valueComponent.setLineHeights(valueHeights)
                 // set font size
                 labelComponent?.setFontSize(styleSheet.getTextStyle(TOOLTIP_LABEL).size)
                 valueComponent.setFontSize(styleSheet.getTextStyle(textClassName).size)
@@ -550,9 +561,6 @@ class TooltipBox(
 
             // max label width - all labels will be aligned to this value
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
-
-            // max line height - will be used as default height for empty string
-            val defaultLineHeight = lineHeights.maxOrNull() ?: 0.0
 
             val labelWidths = lines.zip(components).map { (line, component) ->
                 when {
@@ -593,8 +601,8 @@ class TooltipBox(
                 val valueDimension = DoubleVector(
                     valueWidth,
                     valueBBox?.run { height + top } ?: if (labelBBox == null) {
-                        // it's the empty line - use default height
-                        defaultLineHeight
+                        // it's the empty line - use font size as default height
+                        fontSize
                     } else {
                         0.0
                     }

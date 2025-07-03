@@ -80,16 +80,16 @@ class ColorBarComponent(
             }
 
             // Label
-            val lineHeight = PlotLabelSpecFactory.legendItem(theme).heights(brLabel).max() // TODO: Use whole list
+            val lineHeights = PlotLabelSpecFactory.legendItem(theme).heights(brLabel)
             val label = MultilineLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
-            label.setLineHeight(lineHeight)
+            label.setLineHeights(lineHeights)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
             val yOffset = when (brInfo.labelVerticalAnchor) {
-                Text.VerticalAnchor.TOP -> lineHeight * 0.7
-                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeight
-                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeight * 0.85
+                Text.VerticalAnchor.TOP -> lineHeights.first() * 0.7 // TODO
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeights.first()
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeights.first() * 0.85
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
