@@ -8,148 +8,176 @@
 package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import platform.posix.size_t
 import platform.posix.size_tVar
 import kotlin.experimental.ExperimentalNativeApi
 
 class MagickFontManager {
-    class ResolvedFont(
-        val fontFamily: String?,
-        val fontFilePath: String?
-    ) {
-        init {
-            require(fontFamily != null || fontFilePath != null) {
-                "Either fontFamily or fontFilePath must be provided."
-            }
-        }
-
-        companion object {
-            internal fun withFontFamily(fontFamily: String) = ResolvedFont(fontFamily, null)
-            internal fun withFontFilePath(fontFilePath: String) = ResolvedFont(null, fontFilePath)
-        }
-    }
-
     companion object {
-
-        private val winMonospaceFonts = listOf("Consolas", "Courier New", "Lucida Console", "Courier")
-        private val winSerifFonts = listOf("Times New Roman", "Georgia", "Cambria", "Serif")
-        private val winSansFonts = listOf("Segoe UI", "Arial", "Tahoma", "Verdana", "Sans")
-
-        private val macMonospaceFonts = listOf("Menlo", "Monaco", "Courier", "Courier New")
-        private val macSerifFontsOS = listOf("Times", "Georgia", "Palatino", "Serif")
-        private val macSansFonts = listOf("Helvetica", "Arial", "San Francisco", "Sans")
-
-        private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "Liberation Mono", "Noto Mono", "FreeMono", "Courier")
-        private val linuxSerifFonts = listOf("DejaVu Serif", "Liberation Serif", "Noto Serif", "FreeSerif", "Times")
-        private val linuxSansFonts = listOf("DejaVu Sans", "Liberation Sans", "Noto Sans", "FreeSans", "Ubuntu", "Cantarell", "Sans")
-
-        private val isLinux = Platform.osFamily == OsFamily.LINUX
-        private val isWindows = Platform.osFamily == OsFamily.WINDOWS
-        private val isMac = Platform.osFamily == OsFamily.MACOSX
-        
-        private val preferredMonospaceFonts = when (Platform.osFamily) {
-            OsFamily.WINDOWS -> winMonospaceFonts
-            OsFamily.MACOSX -> macMonospaceFonts
-            OsFamily.LINUX -> linuxMonospaceFonts
-            else -> linuxMonospaceFonts + macMonospaceFonts + winMonospaceFonts
-        }
-        
-        private val preferredSerifFonts = when (Platform.osFamily) {
-            OsFamily.WINDOWS -> winSerifFonts
-            OsFamily.MACOSX -> macSerifFontsOS
-            OsFamily.LINUX -> linuxSerifFonts
-            else -> linuxSerifFonts + macSerifFontsOS + winSerifFonts
-        }
-        
-        private val preferredSansFonts = when (Platform.osFamily) {
-            OsFamily.WINDOWS -> winSansFonts
-            OsFamily.MACOSX -> macSansFonts
-            OsFamily.LINUX -> linuxSansFonts
-            else -> linuxSansFonts + macSansFonts + winSansFonts
-        }
-
-        private const val logEnabled = false
-        private fun log(msg: () -> String) {
-            if (logEnabled) {
-                println(msg())
-            }
-        }
-
         val DEFAULT = MagickFontManager()
+    }
 
-        fun create(): MagickFontManager {
-            return MagickFontManager()
+    private val fallbackFont: ResolvedFont = ResolvedFont.withFontFamily("")
+    private val winMonospaceFonts = listOf("Consolas", "Courier New", "Lucida Console", "Courier")
+    private val winSerifFonts = listOf("Times New Roman", "Georgia", "Cambria", "Serif")
+    private val winSansFonts = listOf("Segoe UI", "Arial", "Tahoma", "Verdana", "Sans")
+
+    private val macMonospaceFonts = listOf("Menlo", "Monaco", "Courier", "Courier New")
+    private val macSerifFonts = listOf("Times", "Georgia", "Palatino", "Serif")
+    private val macSansFonts = listOf("Helvetica", "Arial", "San Francisco", "Sans")
+
+    private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "Liberation Mono", "Noto Mono", "FreeMono", "Courier")
+    private val linuxSerifFonts = listOf("DejaVu Serif", "Liberation Serif", "Noto Serif", "FreeSerif", "Times")
+    private val linuxSansFonts =
+        listOf("DejaVu Sans", "Liberation Sans", "Noto Sans", "FreeSans", "Ubuntu", "Cantarell", "Sans")
+
+    private val monospaceFonts = when (Platform.osFamily) {
+        OsFamily.WINDOWS -> winMonospaceFonts
+        OsFamily.MACOSX -> macMonospaceFonts
+        OsFamily.LINUX -> linuxMonospaceFonts
+        else -> linuxMonospaceFonts + macMonospaceFonts + winMonospaceFonts
+    }
+
+    private val serifFonts = when (Platform.osFamily) {
+        OsFamily.WINDOWS -> winSerifFonts
+        OsFamily.MACOSX -> macSerifFonts
+        OsFamily.LINUX -> linuxSerifFonts
+        else -> linuxSerifFonts + macSerifFonts + winSerifFonts
+    }
+
+    private val sansFonts = when (Platform.osFamily) {
+        OsFamily.WINDOWS -> winSansFonts
+        OsFamily.MACOSX -> macSansFonts
+        OsFamily.LINUX -> linuxSansFonts
+        else -> linuxSansFonts + macSansFonts + winSansFonts
+    }
+
+    private val logEnabled = false
+    private fun log(msg: () -> String) {
+        if (logEnabled) {
+            println(msg())
         }
     }
 
-
-    private val monospaceFont: ResolvedFont = resolveFont(preferredMonospaceFonts)
-    private val serifFont: ResolvedFont = resolveFont(preferredSerifFonts)
-    private val sansFont: ResolvedFont = resolveFont(preferredSansFonts)
-    private val fallbackFont: ResolvedFont = sansFont
+    private val cache = mutableMapOf<String, ResolvedFont>()
 
     init {
-        log { "Monospace font: ${monospaceFont.fontFamily}" }
-        log { "Serif font: ${serifFont.fontFamily}" }
-        log { "Sans font: ${sansFont.fontFamily}" }
+        val monospaceFont = resolvePseudoFont(monospaceFonts)
+        cache["monospace"] = monospaceFont
+        cache["mono"] = monospaceFont
+
+        val serifFont = resolvePseudoFont(serifFonts)
+        cache["serif"] = serifFont
+
+        val sansFont = resolvePseudoFont(sansFonts)
+        cache["sans"] = sansFont
+        cache["sans-serif"] = sansFont
+
+        log { "Monospace font: '{monospaceFont.repr}" }
+        log { "Serif font: ${serifFont.repr}" }
+        log { "Sans font: ${sansFont.repr}" }
         log { "------------------------\n\n" }
 
         if (logEnabled) {
-            val families = allFamilies()
+            val fonts = findFonts("*")
+            val families = fonts
+                .groupBy { it.family }
+                .mapValues { (_, fonts) -> fonts.map { it.name } }
+
             log { "Found ${families.size} families" }
-            families.forEach { (family, fonts) ->
-                log { "Family: $family${fonts.joinToString(prefix = "\n\t")}" }
+
+            families.forEach { (familyName, fonts) ->
+                log { "Family: $familyName${fonts.joinToString(prefix = "\n\t", separator = "\n\t")}" }
             }
         }
     }
 
     fun resolveFont(fontFamily: String): ResolvedFont {
-        return resolveFont(listOf(fontFamily))
-    }
-
-    fun allFamilies(): Map<String, List<String>> {
-        val types = getTypeInfoList("*")
-        val families = types
-            .filter { it.stealth == 0u }
-            .groupBy { it.family!!.toKString() }
-            .mapValues { (_, fonts) -> fonts.map { it.name?.toKStringFromUtf8() ?: "unknown" } }
-
-        return families
-    }
-
-    private fun resolveFont(fontFamilies: List<String>): ResolvedFont {
-        for (fontFamily in fontFamilies) {
-            when (fontFamily.lowercase()) {
-                "monospace" -> return monospaceFont
-                "serif" -> return serifFont
-                "sans", "sans-serif" -> return sansFont
-            }
-
-            val types = getTypeInfoList(fontFamily)
-
-            log { "Searching for type info for font '$fontFamily': found ${types.size} types" }
-
-            for (type in types) {
-                if (type.stealth > 0u) {
-                    log { "Skipping stealth font: ${type.name?.toKStringFromUtf8() ?: "unknown"}" }
-                    continue
-                }
-
-                if (type.family?.toKStringFromUtf8()?.isNullOrBlank() == true) {
-                    log { "Skipping type with empty family name: ${type.name?.toKStringFromUtf8() ?: "unknown"}" }
-                    continue
-                }
-
-                val family = type.family!!.toKStringFromUtf8()
-                log { "Found type info for font '$family'" }
-                return ResolvedFont.withFontFamily(family)
-            }
+        cache[fontFamily]?.let {
+            log { "resolveFont('$fontFamily') -> ${it.repr} (cache)" }
+            return it
         }
+
+        val familyFonts = findFamilyFontSet(fontFamily)
+        if (familyFonts == null) {
+            log { "resolveFont('$fontFamily') -> ${fallbackFont.repr} (not found)" }
+            cache[fontFamily] = fallbackFont
+            return fallbackFont
+        }
+
+        log { "resolveFont('$fontFamily') -> ${familyFonts.repr} (resolved)" }
+        val resolvedFont = ResolvedFont.withFontFamily(familyFonts.familyName)
+
+        cache[familyFonts.familyName] = resolvedFont
+        return resolvedFont
+    }
+
+    private fun resolvePseudoFont(families: List<String>): ResolvedFont {
+        if (families.isEmpty()) {
+            log { "resolvePseudoFont() - no families provided" }
+            return fallbackFont
+        }
+
+        log { "resolvePseudoFont() - trying families: ${families.joinToString()}" }
+        val fontSets = mutableMapOf<String, FamilyFontSet>()
+        for (family in families) {
+            val familyFontSet: FamilyFontSet = findFamilyFontSet(family) ?: continue
+            fontSets[family] = familyFontSet
+        }
+
+        if (fontSets.isEmpty()) {
+            log { "resolvePseudoFont() - no fonts found for any of the provided families" }
+            return fallbackFont
+        }
+
+        // Select the first complete font set (with normal, italic, bold, and boldItalic)
+        val completeFontSet = fontSets.values.firstOrNull { it.isComplete }
+            ?: fontSets.values.firstOrNull { it.isCompleteOblique } // Monospace fonts often use oblique instead of italic
+
+        if (completeFontSet != null) {
+            log { "resolvePseudoFont() - found complete font set for family '${completeFontSet.familyName}'" }
+            return ResolvedFont.withFontFamily(completeFontSet.familyName)
+        }
+
+        // If no complete set is found, return set with the highest score
+        val matchingFontSet = fontSets.values.maxByOrNull(FamilyFontSet::score)
+        if (matchingFontSet != null) {
+            log { "resolvePseudoFont() - found best scored font set for family '${matchingFontSet.familyName}'" }
+            return ResolvedFont.withFontFamily(matchingFontSet.familyName)
+        }
+
+        log { "resolvePseudoFont() - no suitable font set found, returning fallback font" }
         return fallbackFont
     }
 
-    private fun getTypeInfoList(fontFamily: String): List<ImageMagick.TypeInfo> {
-        val pattern = fontFamily.replace(" ", "?")
+
+    private fun findFamilyFontSet(family: String): FamilyFontSet? {
+        // The * wildcard is used to match all fonts in the family,
+        // e.g., "DejaVu Sans Bold", "DejaVu Sans Italic" for "DejaVu Sans"
+        val fonts = findFonts(family.replace(" ", "?") + "*")
+            // Remove unwanted families that might match the pattern, e.g., "DejaVu Sans Mono"
+            .filter { it.family == family }
+
+        if (fonts.isEmpty()) {
+            log { "findFamilyFontSet('$family') - No fonts found" }
+            return null
+        }
+
+        log { "findFamilyFontSet('$family') - found ${fonts.size} fonts: ${fonts.joinToString { it.name }}" }
+        return FamilyFontSet(
+            familyName = family,
+            normal = fonts.firstOrNull { it.style == FontStyle.NORMAL && it.weight == FontWeight.NORMAL },
+            bold = fonts.firstOrNull { it.style == FontStyle.NORMAL && it.weight == FontWeight.BOLD },
+            italic = fonts.firstOrNull { it.isItalic && it.weight == FontWeight.NORMAL },
+            boldItalic = fonts.firstOrNull { it.isItalic && it.weight == FontWeight.BOLD },
+            oblique = fonts.firstOrNull { it.isObliqueItalic && it.weight == FontWeight.NORMAL },
+            boldOblique = fonts.firstOrNull { it.isObliqueItalic && it.weight == FontWeight.BOLD },
+        )
+    }
+
+    private fun findFonts(pattern: String): List<FontInfo> {
         val exceptionInfoPtr = ImageMagick.AcquireExceptionInfo() ?: error("Failed to acquire exception info")
         var typeInfoPtr: CPointer<CPointerVarOf<CPointer<ImageMagick.TypeInfo>>>? = null
         try {
@@ -158,14 +186,38 @@ class MagickFontManager {
                 typeInfoPtr = ImageMagick.GetTypeInfoList(pattern, typesCount.ptr, exceptionInfoPtr)
 
                 if (typeInfoPtr == null) {
-                    println("Failed to get type info list for '$pattern': ${exceptionInfoPtr.pointed.description?.toKString() ?: "Unknown error"}")
+                    log { "Failed to get type info list for '$pattern': ${exceptionInfoPtr.pointed.description?.toKString() ?: "Unknown error"}" }
                     return emptyList()
                 }
 
-                val typeInfoList = mutableListOf<ImageMagick.TypeInfo>()
+                val typeInfoList = mutableListOf<FontInfo>()
                 for (i in 0 until typesCount.value.toInt()) {
-                    val typeInfo = typeInfoPtr?.get(i) ?: continue
-                    typeInfoList.add(typeInfo.pointed)
+                    val typeInfo = typeInfoPtr?.get(i)?.pointed ?: continue
+                    if (typeInfo.family == null || typeInfo.name == null) {
+                        log { "Skipping type info with null family or name: $typeInfo" }
+                        continue
+                    }
+
+                    if (typeInfo.stealth > 0u) {
+                        log { "Skipping stealth type info: ${typeInfo.name?.toKStringFromUtf8() ?: "unknown"}" }
+                        continue
+                    }
+
+                    typeInfoList += FontInfo(
+                        family = typeInfo.family!!.toKStringFromUtf8(),
+                        name = typeInfo.name!!.toKStringFromUtf8(),
+                        style = when (typeInfo.style) {
+                            ImageMagick.StyleType.ItalicStyle, ImageMagick.StyleType.ObliqueStyle -> FontStyle.ITALIC
+                            else -> FontStyle.NORMAL
+                        },
+                        weight = when {
+                            typeInfo.style == ImageMagick.StyleType.BoldStyle -> FontWeight.BOLD
+                            typeInfo.weight >= 700u -> FontWeight.BOLD
+                            else -> FontWeight.NORMAL
+                        },
+                        oblique = typeInfo.style == ImageMagick.StyleType.ObliqueStyle,
+                        filePath = typeInfo.glyphs?.toKStringFromUtf8() ?: ""
+                    )
                 }
 
                 return typeInfoList
@@ -177,5 +229,57 @@ class MagickFontManager {
                 ImageMagick.MagickRelinquishMemory(typeInfoPtr)
             }
         }
+    }
+
+    class ResolvedFont private constructor(
+        val fontFamily: String?,
+        val fontFilePath: String?
+    ) {
+        val repr: String = if (fontFamily != null) "'$fontFamily'"
+        else if (fontFilePath != null) "'$fontFilePath'"
+        else "unknown"
+
+        companion object {
+            internal fun withFontFamily(fontFamily: String) = ResolvedFont(fontFamily, null)
+            internal fun withFontFilePath(fontFilePath: String) = ResolvedFont(null, fontFilePath)
+        }
+    }
+
+    private data class FamilyFontSet(
+        val familyName: String,
+        val normal: FontInfo?,
+        val italic: FontInfo?,
+        val bold: FontInfo?,
+        val boldItalic: FontInfo?,
+        val oblique: FontInfo?,
+        val boldOblique: FontInfo?,
+    ) {
+        val isComplete = normal != null && italic != null && bold != null && boldItalic != null
+        val isCompleteOblique = normal != null && oblique != null && bold != null && boldOblique != null
+        val score = listOfNotNull(normal, italic, bold, boldItalic, oblique, boldOblique).size
+
+        val repr: String
+            get() {
+                return "$familyName(" +
+                        (normal?.let { "n" } ?: "") +
+                        (bold?.let { "B" } ?: "") +
+                        (italic?.let { "i" } ?: "") +
+                        (boldItalic?.let { "I" } ?: "") +
+                        (oblique?.let { "o" } ?: "") +
+                        (boldOblique?.let { "O" } ?: "") +
+                        ")"
+            }
+    }
+
+    private data class FontInfo(
+        val family: String,
+        val name: String,
+        val style: FontStyle,
+        val weight: FontWeight,
+        val oblique: Boolean,
+        val filePath: String,
+    ) {
+        val isObliqueItalic = style == FontStyle.ITALIC && oblique
+        val isItalic = style == FontStyle.ITALIC && !oblique
     }
 }

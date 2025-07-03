@@ -87,15 +87,7 @@ if (localProperties.exists()) {
     localProperties.inputStream().use { properties.load(it) }
 }
 
-val enableMagickCanvas = properties.getProperty("enable_magick_canvas", "false").toBoolean()
+val enableMagickCanvas = properties.getProperty("enable_magick_canvas", "true").toBoolean()
 if (enableMagickCanvas) {
     include("platf-imagick")
-
-    // Disabled due to very slow build.
-    // Demos should be reorganized - instead of different bins should be one bin.
-    // Each demo should be registered as a task and pass demo name to the main via args.
-    // In this case executable binary will be build only once.
-
-    //include("demo-svg-native")
-    //project(":demo-svg-native").projectDir = File("./demo/svg-native")
 }

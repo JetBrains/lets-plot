@@ -7,9 +7,8 @@ package org.jetbrains.letsPlot.nat.encoding
 
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
+import org.jetbrains.letsPlot.commons.values.Bitmap
 
 class RGBEncoderNative : RGBEncoder {
-    override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
-        return Png.encodeDataImage(width, height, argbValues)
-    }
+    override fun toDataUrl(bitmap: Bitmap) = Png.encodeDataImage(bitmap)
 }

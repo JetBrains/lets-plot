@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 
 /**
  * This 'element' is not a part of SVG specification.
@@ -46,23 +47,8 @@ class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, pri
         val imageElement = SvgImageElement()
         SvgUtils.copyAttributes(this, imageElement)
 
-        val hrefValue = encoder.toDataUrl(
-                myBitmap.width,
-                myBitmap.height,
-                myBitmap.argbValues
-        )
+        val hrefValue = encoder.toDataUrl(myBitmap)
         imageElement.href().set(hrefValue)
         return imageElement
-    }
-
-    class Bitmap
-    /**
-     * @param argbValues image binary data.
-     * Each element of the array represents a pixel,
-     * where alpha, red, green, blue values are in the range [0..255] and are packed into four bytes.
-     * The array is filled by-row.
-     */
-    (val width: Int, val height: Int, argbValues: IntArray) {
-        val argbValues: IntArray = intArrayOf(*argbValues)
     }
 }

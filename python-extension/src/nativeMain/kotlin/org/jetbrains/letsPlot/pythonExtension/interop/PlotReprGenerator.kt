@@ -114,10 +114,8 @@ object PlotReprGenerator {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun saveImage(
+    fun exportPng(
         plotSpecDict: CPointer<PyObject>?,
-        filePath: CPointer<ByteVar>,
-        dpi: Int,
         width: Int,
         height: Int,
         scale: Float

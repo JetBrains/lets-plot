@@ -7,6 +7,7 @@ package demo.svgMapping.model
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.LIGHT_GREEN
 import org.jetbrains.letsPlot.commons.values.FontFace
@@ -14,7 +15,6 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.Companion.create
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 private const val compact = false
@@ -231,7 +231,7 @@ object ReferenceSvgModel {
                 }
 
                 image(SampleImageData.MINDUKA_PRESENT_BLUE_PACK, 256.0, 64.0, 128.0, 64.0)
-                bitmap(Bitmap(3, 3, SampleImageData.argb3x3()), 20.0, 230.0, 80.0, 60.0)
+                imageEx(Bitmap(3, 3, SampleImageData.argb3x3()), 20.0, 230.0, 80.0, 60.0)
             }
         }
     }

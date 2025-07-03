@@ -3,6 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+// okhttp3 added for publishing to the Sonatype Central Repository:
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -12,11 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.io.FileNotFoundException
 import java.util.*
-// okhttp3 added for publishing to the Sonatype Central Repository:
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.asRequestBody
 
 buildscript {
     dependencies {
@@ -214,7 +214,7 @@ val uploadMavenArtifacts by tasks.registering {
 }
 
 
-if ((extra.getOrNull("enable_magick_canvas") as? String ?: "false").toBoolean()) {
+if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) {
     val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/imagick_deps"
     val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
         ?: System.getenv("IMAGICK_LIB_PATH")

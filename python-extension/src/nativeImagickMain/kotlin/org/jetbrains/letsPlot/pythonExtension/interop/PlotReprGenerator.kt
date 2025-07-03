@@ -12,7 +12,10 @@ import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.commons.encoding.Base64
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
@@ -121,29 +124,27 @@ object PlotReprGenerator {
         }
     }
 
-    fun saveImage(
-        plotSpecDict: CPointer<PyObject>?,
-        filePath: CPointer<ByteVar>,
-        dpi: Int,
+    fun exportBitmap(
+        plotSpec: Map<*, *>,
         width: Int,
         height: Int,
-        scale: Float
-    ): CPointer<PyObject>? {
+        scale: Double
+    ): Bitmap? {
         var canvasReg: Registration? = null
 
         try {
             @Suppress("UNCHECKED_CAST")
             val processedSpec = MonolithicCommon.processRawSpecs(
-                plotSpec = pyDictToMap(plotSpecDict) as MutableMap<String, Any>,
+                plotSpec = plotSpec as MutableMap<String, Any>,
                 frontendOnly = false
             )
 
             val sizingPolicy = when {
-                width != 0 && height != 0 -> SizingPolicy.fixed(
+                width < 0 || height < 0 -> SizingPolicy.keepFigureDefaultSize()
+                else -> SizingPolicy.fixed(
                     width = width.toDouble(),
                     height = height.toDouble()
                 )
-                else -> SizingPolicy.keepFigureDefaultSize()
             }
 
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
@@ -167,22 +168,37 @@ object PlotReprGenerator {
             val plotCanvas = canvasControl.children.single() as MagickCanvas
 
             // Save the image to a file
-            plotCanvas.saveBmp(filePath.toKString())
-            val outputFilePath = filePath.toKString()
-            return Py_BuildValue("s", outputFilePath)
-            //if (ImageMagick.MagickWriteImage(plotCanvas.img, outputFilePath) == ImageMagick.MagickFalse) {
-            //    println("Failed to save image $outputFilePath")
-            //    println(getMagickError(plotCanvas.img))
-            //    throw RuntimeException("Failed to write image: $outputFilePath\n${getMagickError(plotCanvas.img)}")
-            //} else {
-            //    println("Image saved to $outputFilePath")
-            //    return Py_BuildValue("s", outputFilePath)
-            //}
+            val snapshot = plotCanvas.takeSnapshot()
+            val bitmap = snapshot.bitmap
+            return bitmap
         } catch (e: Throwable) {
             e.printStackTrace()
             return null
         } finally {
             canvasReg?.dispose()
         }
+    }
+
+    fun exportPng(
+        plotSpecDict: CPointer<PyObject>?,
+        width: Int,
+        height: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        val bitmap = exportBitmap(
+            plotSpec = pyDictToMap(plotSpecDict),
+            width = width,
+            height = height,
+            scale = scale.toDouble()
+        ) ?: return Py_BuildValue("s", "Failed to generate image")
+        // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
+        // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
+        // This happens because PyBytes_FromStringAndSize has the following signature:
+        // PyObject *PyBytes_FromStringAndSize(const char *v, Py_ssize_t len);
+        // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
+        // and generate a function with a String parameter instead of ByteArray
+
+        val png: ByteArray = Png.encode(bitmap)
+        return Py_BuildValue("s", Base64.encode(png))
     }
 }
