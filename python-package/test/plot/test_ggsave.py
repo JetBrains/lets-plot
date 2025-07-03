@@ -36,7 +36,6 @@ def test_ggsave_svg():
 
 
 def test_ggsave_png():
-    gg.LetsPlot.set({"magick_export": True})
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     temp_dir = tempfile.gettempdir()
     out_path = gg.ggsave(p, filename='test_ggsave_magick.png', path=temp_dir, scale=1)
@@ -45,7 +44,6 @@ def test_ggsave_png():
 
 
 def test_ggsave_png_scale3():
-    gg.LetsPlot.set({"magick_export": True})
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     temp_dir = tempfile.gettempdir()
     out_path = gg.ggsave(p, filename='test_ggsave_magick.png', path=temp_dir, scale=3)
@@ -54,7 +52,6 @@ def test_ggsave_png_scale3():
 
 
 def test_filelike_ggsave_png():
-    gg.LetsPlot.set({"magick_export": True})
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_buffer = io.BytesIO()
     p.to_png(path=out_buffer, scale = 1)
@@ -63,7 +60,6 @@ def test_filelike_ggsave_png():
 
 
 def test_ggsave_png_cairo():
-    gg.LetsPlot.set({"magick_export": False})
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     temp_dir = tempfile.gettempdir()
     out_path = gg.ggsave(p, filename='test_ggsave_cairo.png', path=temp_dir, scale=1)
@@ -72,7 +68,6 @@ def test_ggsave_png_cairo():
 
 
 def test_ggsave_pdf():
-    gg.LetsPlot.set({"magick_export": True})
     p = gg.ggplot() + gg.geom_blank()
     temp_dir = tempfile.gettempdir()
     out_path = gg.ggsave(p, filename='test_ggsave.pdf', path=temp_dir)
@@ -85,7 +80,6 @@ def test_ggsave_pdf():
 
 
 def test_ggsave_pdf_with_dpi():
-    gg.LetsPlot.set({"magick_export": False})  # Ensure we use the native export
     p = gg.ggplot() + gg.geom_blank()
     temp_dir = tempfile.gettempdir()
     out_path = gg.ggsave(p, filename='test_ggsave_with_dpi.pdf', path=temp_dir, dpi=300, w=5, h=3, unit='in', scale=1)
@@ -98,7 +92,6 @@ def test_ggsave_pdf_with_dpi():
 
 
 def test_filelike_ggsave_pdf():
-    gg.LetsPlot.set({"magick_export": True})
     p = gg.ggplot() + gg.geom_blank()
     out_buffer = io.BytesIO()
     p.to_pdf(path=out_buffer)
