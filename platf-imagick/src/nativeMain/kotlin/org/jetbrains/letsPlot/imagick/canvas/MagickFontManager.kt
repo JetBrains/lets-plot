@@ -28,10 +28,9 @@ class MagickFontManager {
     private val macSerifFonts = listOf("Times", "Georgia", "Palatino", "Serif")
     private val macSansFonts = listOf("Helvetica", "Arial", "San Francisco", "Sans")
 
-    private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "Liberation Mono", "Noto Mono", "FreeMono", "Courier")
-    private val linuxSerifFonts = listOf("DejaVu Serif", "Liberation Serif", "Noto Serif", "FreeSerif", "Times")
-    private val linuxSansFonts =
-        listOf("DejaVu Sans", "Liberation Sans", "Noto Sans", "FreeSans", "Ubuntu", "Cantarell", "Sans")
+    private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "FreeMono", "Noto Mono", "Nimbus Mono", "Liberation Mono", "Courier")
+    private val linuxSerifFonts = listOf("DejaVu Serif", "FreeSerif", "Noto Serif", "Nimbus Roman", "Liberation Serif", "Times")
+    private val linuxSansFonts =listOf("DejaVu Sans", "FreeSans", "Noto Sans", "Nimbus Sans", "Liberation Sans", "Ubuntu", "Cantarell", "Sans")
 
     private val monospaceFonts = when (Platform.osFamily) {
         OsFamily.WINDOWS -> winMonospaceFonts
@@ -75,7 +74,7 @@ class MagickFontManager {
         cache["sans"] = sansFont
         cache["sans-serif"] = sansFont
 
-        log { "Monospace font: '{monospaceFont.repr}" }
+        log { "Monospace font: '${monospaceFont.repr}" }
         log { "Serif font: ${serifFont.repr}" }
         log { "Sans font: ${sansFont.repr}" }
         log { "------------------------\n\n" }
