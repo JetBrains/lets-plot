@@ -13,6 +13,7 @@ val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_pac
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
 val imagick = (rootProject.project.extra.properties.getOrDefault("imagemagick_lib_path", "") as String).isNotBlank()
+val imageMagickLibPath = rootProject.project.extra["imagemagick_lib_path"].toString()
 
 // To improve the building time of the Python extension in development mode.
 val pythonExtensionDebugBuild = project.findProperty("python_extension_debug_build") == "true"
@@ -46,14 +47,12 @@ kotlin {
         if (imagick) {
             target.binaries.forEach {
                 it.linkerOpts += listOf(
-                    "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-                    "-L/usr/lib/x86_64-linux-gnu/",
-                    "-L/opt/homebrew/opt/fontconfig/lib",
-                    "-L/opt/homebrew/opt/freetype/lib",
-                    "-lfreetype",
+                    "-L${imageMagickLibPath}/lib",
+                    "-lMagickWand-7.Q16HDRI",
+                    "-lMagickCore-7.Q16HDRI",
                     "-lfontconfig",
-                    "-lMagickWand-7.Q8",
-                    "-lMagickCore-7.Q8",
+                    "-lfreetype",
+                    "-lexpat",
                     "-lz"
                 )
             }
