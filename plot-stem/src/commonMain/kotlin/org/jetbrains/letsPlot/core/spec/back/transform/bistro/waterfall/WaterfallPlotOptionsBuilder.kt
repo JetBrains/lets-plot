@@ -227,7 +227,7 @@ class WaterfallPlotOptionsBuilder(
             it.width = width
             it.showLegend = showLegend
             it.tooltipsOptions = tooltipsOptions
-            it.labels = if (blank) null else annotationOptions
+            it.labels = if (blank) AnnotationOptions.NONE else annotationOptions
         }
     }
 
