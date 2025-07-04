@@ -28,7 +28,7 @@ object CrossBarAnnotation {
     ) {
         val annotation = ctx.annotation ?: return
         val viewPort = GeomBase.overallAesBounds(ctx).let(coord::toClient) ?: return
-
+        val padding = annotation.textStyle.size / 2
         val isHorizontallyOriented = ctx.flipped
 
         rectangles
@@ -45,7 +45,7 @@ object CrossBarAnnotation {
                     rect,
                     midLine,
                     midLineStrokeWidth,
-                    textSize,
+                    textSize.add(DoubleVector(2 * padding, 2 * padding)),
                     isHorizontallyOriented
                 )
 
@@ -94,50 +94,13 @@ object CrossBarAnnotation {
 
     private fun findTextLocation(viewPort: DoubleRectangle, rect: DoubleRectangle, midLine: DoubleSegment?, strokeWidth: Double, textSize: DoubleVector, isHorizontallyOriented: Boolean): DoubleVector {
         return if (isHorizontallyOriented) {
-            findHorizontalLocation(viewPort, rect, midLine, strokeWidth, textSize)
+            findLocation(viewPort.flip(), rect.flip(), midLine?.flip(), strokeWidth, textSize.flip()).flip()
         } else {
-            findVerticalLocation(viewPort, rect, midLine, strokeWidth, textSize)
+            findLocation(viewPort, rect, midLine, strokeWidth, textSize)
         }
     }
 
-    private fun findHorizontalLocation(viewPort: DoubleRectangle, rect: DoubleRectangle, midLine: DoubleSegment?, strokeWidth: Double, textSize: DoubleVector): DoubleVector {
-        val leftOuterRect = DoubleRectangle(
-            DoubleVector(viewPort.origin.x, rect.origin.y),
-            DoubleVector(rect.left - viewPort.origin.x, rect.height)
-        )
-        val rightOuterRect = DoubleRectangle(
-            DoubleVector(rect.right, rect.top),
-            DoubleVector(viewPort.right - rect.right, rect.height)
-        )
-
-        if (midLine != null) {
-            val leftInnerRect = DoubleRectangle(
-                DoubleVector(midLine.start.x + strokeWidth / 2, rect.origin.y),
-                DoubleVector(rect.right - midLine.start.x - strokeWidth / 2, rect.height)
-            )
-            val rightInnerRect = DoubleRectangle(
-                rect.origin,
-                DoubleVector(midLine.start.x - strokeWidth / 2 - rect.origin.x, rect.height)
-            )
-
-            return when {
-                leftInnerRect.width > textSize.x -> leftInnerRect.center
-                rightInnerRect.width > textSize.x -> rightInnerRect.center
-                leftOuterRect.width > textSize.x -> DoubleVector(leftOuterRect.right - textSize.x / 2, rect.center.y)
-                rightOuterRect.width > textSize.x -> DoubleVector(rightOuterRect.left + textSize.x / 2, rect.center.y)
-                else -> rect.center
-            }
-        } else {
-            return when {
-                rect.width > textSize.x -> rect.center
-                leftOuterRect.width > textSize.x -> DoubleVector(leftOuterRect.right - textSize.x / 2, rect.center.y)
-                rightOuterRect.width > textSize.x -> DoubleVector(rightOuterRect.left + textSize.x / 2, rect.center.y)
-                else -> rect.center
-            }
-        }
-    }
-
-    private fun findVerticalLocation(viewPort: DoubleRectangle, rect: DoubleRectangle, midLine: DoubleSegment?, strokeWidth: Double, textSize: DoubleVector): DoubleVector {
+    private fun findLocation(viewPort: DoubleRectangle, rect: DoubleRectangle, midLine: DoubleSegment?, strokeWidth: Double, textSize: DoubleVector): DoubleVector {
         val upperOuterRect = DoubleRectangle(
             DoubleVector(rect.origin.x, viewPort.origin.y),
             DoubleVector(rect.width, rect.top - viewPort.origin.y)
@@ -153,13 +116,13 @@ object CrossBarAnnotation {
                 DoubleVector(rect.width, midLine.start.y - strokeWidth / 2 - rect.origin.y)
             )
             val lowerInnerRect = DoubleRectangle(
-                DoubleVector(rect.origin.x, midLine.start.y),
-                DoubleVector(rect.width, rect.origin.y + rect.height - midLine.start.y + strokeWidth / 2)
+                DoubleVector(rect.origin.x, midLine.start.y + strokeWidth / 2),
+                DoubleVector(rect.width, rect.origin.y + rect.height - (midLine.start.y + strokeWidth / 2))
             )
 
             return when {
-                upperInnerRect.height > textSize.y -> DoubleVector(rect.center.x, upperInnerRect.bottom - textSize.y / 2)
-                lowerInnerRect.height > textSize.y -> DoubleVector(rect.center.x, lowerInnerRect.top + textSize.y / 2)
+                upperInnerRect.height > textSize.y -> upperInnerRect.center
+                lowerInnerRect.height > textSize.y -> lowerInnerRect.center
                 upperOuterRect.height > textSize.y -> DoubleVector(rect.center.x, upperOuterRect.bottom - textSize.y / 2)
                 lowerOuterRect.height > textSize.y -> DoubleVector(rect.center.x, lowerOuterRect.top + textSize.y / 2)
                 else -> rect.center
