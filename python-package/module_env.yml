@@ -20,3 +20,4 @@ dependencies:
       - pypng
       - palettable
       - polars
+      - pillow
