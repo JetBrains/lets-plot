@@ -55,6 +55,12 @@ kotlin {
                     "-lexpat",
                     "-lz"
                 )
+                if (os.isWindows) {
+                    it.linkerOpts += listOf(
+                        "-lurlmon",
+                        "-lgdi32"
+                    )
+                }
             }
         }
 
