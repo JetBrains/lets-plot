@@ -19,12 +19,12 @@ def _generate_svg(plot_spec: Dict, use_css_pixelated_image_rendering: bool = Tru
     plot_spec = _standardize_plot_spec(plot_spec)
     return lets_plot_kotlin_bridge.export_svg(plot_spec, use_css_pixelated_image_rendering)
 
-def _export_png(bytestring: Dict, output_width: int = -1, output_height: int = -1, scale: float = 1.0) -> str:
+def _export_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
     """
     Export a plot to PNG format. Returns base64 encoded string of the PNG image.
     """
     plot_spec = _standardize_plot_spec(bytestring)
-    return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, scale)
+    return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, unit, dpi, scale)
 
 
 def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:

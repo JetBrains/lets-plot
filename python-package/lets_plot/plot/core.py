@@ -877,23 +877,23 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
 
 def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
     if get_global_bool(MAGICK_EXPORT):
-        return _export_with_magick(spec, path, scale, export_format, w, h, unit, dpi)
+        return _export_with_magick(
+            spec,
+            path,
+            scale if scale is not None else 1.0,
+            export_format,
+            w if w is not None else -1,
+            h if h is not None else -1,
+            unit if unit is not None else '',
+            dpi if dpi is not None else -1
+        )
     else:
         return _export_with_cairo(spec, path, scale, export_format, w, h, unit, dpi)
 
 
-def _export_with_magick(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit, dpi) -> Union[str, None]:
     import base64
     from .. import _kbridge
-
-    if any(it is not None for it in [w, h, unit, dpi]):
-        if w is None or h is None or unit is None or dpi is None:
-            raise ValueError("w, h, unit, and dpi must all be specified")
-        width_px, height_px = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
-    else:
-        width_px, height_px = -1, -1
-
-    scale = scale if scale is not None else 2.0
 
     if isinstance(path, str):
         file_path = _makedirs(path)
@@ -902,7 +902,7 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w=None, h=
         file_like_object = path
         file_path = None
 
-    png_base64 = _kbridge._export_png(spec.as_dict(), int(width_px), int(height_px), scale)
+    png_base64 = _kbridge._export_png(spec.as_dict(), float(w), float(h), unit, int(dpi), float(scale))
     png = base64.b64decode(png_base64)
 
     if export_format.lower() == 'png':
@@ -931,11 +931,12 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w=None, h=
                 print("Image has alpha channel, converting to RGB for PDF.")
                 img = img.convert('RGB')
 
+            dpi = dpi if dpi is not None else 96  # Default DPI if not specified
             if file_path is not None:
-                img.save(file_path, "PDF")
+                img.save(file_path, "PDF", dpi=(dpi, dpi))
                 return file_path
             else:
-                img.save(file_like_object, "PDF")
+                img.save(file_like_object, "PDF", dpi=(dpi, dpi))
                 return None
     else:
         raise ValueError("Unknown export format: {}".format(export_format))
