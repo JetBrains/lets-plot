@@ -19,7 +19,7 @@ class MagickFontManager {
         val DEFAULT = MagickFontManager()
     }
 
-    private val fallbackFont: ResolvedFont = ResolvedFont.withFontFamily("")
+    private val fallbackFont: ResolvedFont
     private val winMonospaceFonts = listOf("Consolas", "Courier New", "Lucida Console", "Courier")
     private val winSerifFonts = listOf("Times New Roman", "Georgia", "Cambria", "Serif")
     private val winSansFonts = listOf("Segoe UI", "Arial", "Tahoma", "Verdana", "Sans")
@@ -28,10 +28,9 @@ class MagickFontManager {
     private val macSerifFonts = listOf("Times", "Georgia", "Palatino", "Serif")
     private val macSansFonts = listOf("Helvetica", "Arial", "San Francisco", "Sans")
 
-    private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "Liberation Mono", "Noto Mono", "FreeMono", "Courier")
-    private val linuxSerifFonts = listOf("DejaVu Serif", "Liberation Serif", "Noto Serif", "FreeSerif", "Times")
-    private val linuxSansFonts =
-        listOf("DejaVu Sans", "Liberation Sans", "Noto Sans", "FreeSans", "Ubuntu", "Cantarell", "Sans")
+    private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "FreeMono", "Noto Mono", "Nimbus Mono", "Liberation Mono", "Courier")
+    private val linuxSerifFonts = listOf("DejaVu Serif", "FreeSerif", "Noto Serif", "Nimbus Roman", "Liberation Serif", "Times")
+    private val linuxSansFonts =listOf("DejaVu Sans", "FreeSans", "Noto Sans", "Nimbus Sans", "Liberation Sans", "Ubuntu", "Cantarell", "Sans")
 
     private val monospaceFonts = when (Platform.osFamily) {
         OsFamily.WINDOWS -> winMonospaceFonts
@@ -64,24 +63,39 @@ class MagickFontManager {
     private val cache = mutableMapOf<String, ResolvedFont>()
 
     init {
-        val monospaceFont = resolvePseudoFont(monospaceFonts)
+        val fonts = findFonts("*")
+        if (fonts.isEmpty()) {
+            error { "No fonts found." }
+        }
+
+        val sansFont = resolveBestMatchingFont(sansFonts)
+            ?: resolveBestMatchingFont(findFonts("*sans*").map(FontInfo::family))
+            ?: resolveBestMatchingFont(findFonts("*").map(FontInfo::family))!!
+
+        val monospaceFont = resolveBestMatchingFont(monospaceFonts)
+            ?: resolveBestMatchingFont(findFonts("*mono*").map(FontInfo::family))
+            ?: sansFont
+
+
+        val serifFont = resolveBestMatchingFont(serifFonts)
+            ?: resolveBestMatchingFont(findFonts("*serif*").map(FontInfo::family))
+            ?: resolveBestMatchingFont(findFonts("*roman*").map(FontInfo::family))
+            ?: sansFont
+
+        fallbackFont = sansFont
+
         cache["monospace"] = monospaceFont
         cache["mono"] = monospaceFont
-
-        val serifFont = resolvePseudoFont(serifFonts)
-        cache["serif"] = serifFont
-
-        val sansFont = resolvePseudoFont(sansFonts)
         cache["sans"] = sansFont
         cache["sans-serif"] = sansFont
+        cache["serif"] = serifFont
 
-        log { "Monospace font: '{monospaceFont.repr}" }
+        log { "Monospace font: '${monospaceFont.repr}" }
         log { "Serif font: ${serifFont.repr}" }
         log { "Sans font: ${sansFont.repr}" }
         log { "------------------------\n\n" }
 
         if (logEnabled) {
-            val fonts = findFonts("*")
             val families = fonts
                 .groupBy { it.family }
                 .mapValues { (_, fonts) -> fonts.map { it.name } }
@@ -114,42 +128,28 @@ class MagickFontManager {
         return resolvedFont
     }
 
-    private fun resolvePseudoFont(families: List<String>): ResolvedFont {
-        if (families.isEmpty()) {
-            log { "resolvePseudoFont() - no families provided" }
-            return fallbackFont
-        }
-
-        log { "resolvePseudoFont() - trying families: ${families.joinToString()}" }
+    private fun resolveBestMatchingFont(families: List<String>): ResolvedFont? {
+        log { "resolveBestMatchingFont() - trying families: ${families.joinToString()}" }
         val fontSets = mutableMapOf<String, FamilyFontSet>()
         for (family in families) {
-            val familyFontSet: FamilyFontSet = findFamilyFontSet(family) ?: continue
-            fontSets[family] = familyFontSet
-        }
-
-        if (fontSets.isEmpty()) {
-            log { "resolvePseudoFont() - no fonts found for any of the provided families" }
-            return fallbackFont
-        }
-
-        // Select the first complete font set (with normal, italic, bold, and boldItalic)
-        val completeFontSet = fontSets.values.firstOrNull { it.isComplete }
-            ?: fontSets.values.firstOrNull { it.isCompleteOblique } // Monospace fonts often use oblique instead of italic
-
-        if (completeFontSet != null) {
-            log { "resolvePseudoFont() - found complete font set for family '${completeFontSet.familyName}'" }
-            return ResolvedFont.withFontFamily(completeFontSet.familyName)
+            val fontSet = findFamilyFontSet(family) ?: continue
+            if (fontSet.isComplete || fontSet.isCompleteOblique) {
+                log { "resolveBestMatchingFont() - found complete font set for family '${fontSet.familyName}'" }
+                return ResolvedFont.withFontFamily(fontSet.familyName)
+            } else {
+                fontSets[family] = fontSet
+            }
         }
 
         // If no complete set is found, return set with the highest score
         val matchingFontSet = fontSets.values.maxByOrNull(FamilyFontSet::score)
         if (matchingFontSet != null) {
-            log { "resolvePseudoFont() - found best scored font set for family '${matchingFontSet.familyName}'" }
+            log { "resolveBestMatchingFont() - found best scored font set for family '${matchingFontSet.familyName}'" }
             return ResolvedFont.withFontFamily(matchingFontSet.familyName)
         }
 
-        log { "resolvePseudoFont() - no suitable font set found, returning fallback font" }
-        return fallbackFont
+        log { "resolveBestMatchingFont() - no suitable font set found" }
+        return null
     }
 
 

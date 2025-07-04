@@ -18,7 +18,9 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
 - `waterfall_plot` - extra layers support [[#1344](https://github.com/JetBrains/lets-plot/issues/1344)].  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_layers.ipynb).
-                                
+- `geom_crossbar()` - annotation support  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_crossbar_annotation.ipynb).
+
 - Time Series Plotting [[#278](https://github.com/JetBrains/lets-plot-kotlin/issues/278)], 
 [[discussion](https://github.com/JetBrains/lets-plot-kotlin/discussions/92#discussioncomment-12976040)],
 [[#678](https://github.com/JetBrains/lets-plot/issues/678)],

@@ -7,15 +7,14 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 
 import kotlinx.cinterop.*
 import platform.posix.getcwd
-import platform.posix.uname
-import platform.posix.utsname
+import kotlin.experimental.ExperimentalNativeApi
 
+@OptIn(ExperimentalNativeApi::class)
 fun getOSName(): String {
-    memScoped {
-        val utsname = alloc<utsname>()
-        uname(utsname.ptr)
-        return utsname.sysname.toKString()
+    if (Platform.osFamily == OsFamily.MACOSX) {
+        return "darwin" // test images are already named with 'darwin' suffix
     }
+    return Platform.osFamily.name.lowercase()
 }
 
 fun getCurrentDir(): String {

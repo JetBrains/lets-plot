@@ -2055,7 +2055,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
-                  manual_key=None, sampling=None, tooltips=None,
+                  manual_key=None, sampling=None,
+                  tooltips=None, labels=None,
                   fatten=None,
                   width_unit=None,
                   color_by=None, fill_by=None,
@@ -2203,6 +2204,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 labels=labels,
                  fatten=fatten,
                  width_unit=width_unit,
                  color_by=color_by, fill_by=fill_by,
@@ -4109,7 +4111,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
               color_by=None, fill_by=None,
               **other_args):
     """
-    A sina plot visualizes a single variable across classes, with jitter width reflecting the data's density in each class.
+    A sina plot visualizes a single variable across classes, with jitter width reflecting the data density in each class.
 
     Parameters
     ----------

@@ -895,17 +895,50 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w=None, h=
 
     scale = scale if scale is not None else 2.0
 
+    if isinstance(path, str):
+        file_path = _makedirs(path)
+        file_like_object = None
+    else:
+        file_like_object = path
+        file_path = None
+
     png_base64 = _kbridge._export_png(spec.as_dict(), int(width_px), int(height_px), scale)
     png = base64.b64decode(png_base64)
 
-    if isinstance(path, str):
-        abspath = _makedirs(path)
-        with open(abspath, 'wb') as f:
-            f.write(png)
-        return abspath
+    if export_format.lower() == 'png':
+        if file_path is not None:
+            with open(file_path, 'wb') as f:
+                f.write(png)
+            return file_path
+        else:
+            file_like_object.write(png)
+            return None
+    elif export_format.lower() == 'pdf':
+        try:
+            from PIL import Image
+        except ImportError:
+            import sys
+            print("\n"
+                  "To export Lets-Plot figure to a PDF file please install pillow library"
+                  "to your Python environment.\n"
+                  "Pillow is free and distributed under the MIT-CMU license.\n"
+                  "For more details visit: https://python-pillow.github.io/\n", file=sys.stderr)
+            return None
+
+
+        with Image.open(io.BytesIO(png)) as img:
+            if img.mode == 'RGBA':
+                print("Image has alpha channel, converting to RGB for PDF.")
+                img = img.convert('RGB')
+
+            if file_path is not None:
+                img.save(file_path, "PDF")
+                return file_path
+            else:
+                img.save(file_like_object, "PDF")
+                return None
     else:
-        path.write(png)
-        return None
+        raise ValueError("Unknown export format: {}".format(export_format))
 
 
 def _export_with_cairo(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:

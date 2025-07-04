@@ -17,6 +17,7 @@ def waterfall_plot(data, x, y, *,
                    calc_total=None, total_title=None,
                    hline=None, hline_ontop=None,
                    connector=None,
+                   relative_labels=None, absolute_labels=None,
                    label=None, label_format=None,
                    background_layers=None) -> PlotSpec:
     """
@@ -104,6 +105,12 @@ def waterfall_plot(data, x, y, *,
         Line between neighbouring boxes connecting the end of the previous box and the beginning of the next box.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_line()` to specify parameters.
+    relative_labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specify style and content of the annotations.
+    absolute_labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specify style and content of the annotations.
     label : str or dict
         Label on the box. Shows change value.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -312,6 +319,8 @@ def waterfall_plot(data, x, y, *,
         'hline': hline,
         'hline_ontop': hline_ontop,
         'connector': connector,
+        'relative_labels': relative_labels,
+        'absolute_labels': absolute_labels,
         'label': label,
         'label_format': label_format,
         'background_layers': [layer.as_dict() for layer in layers]

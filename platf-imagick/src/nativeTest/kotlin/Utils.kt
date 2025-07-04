@@ -231,7 +231,8 @@ fun writeToFile(path: String, data: ByteArray) {
             write(fd, pinned.addressOf(0), data.size.convert())
         }
 
-        if (written != data.size.toLong()) {
+        @Suppress("RemoveRedundantCallsOfConversionMethods") // On Windows `written` is Int
+        if (written.toLong() != data.size.toLong()) {
             perror("write")
             close(fd)
             throw Error("Failed to write all data")

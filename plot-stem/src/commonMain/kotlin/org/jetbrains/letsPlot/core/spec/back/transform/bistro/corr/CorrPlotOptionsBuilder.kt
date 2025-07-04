@@ -368,7 +368,7 @@ class CorrPlotOptionsBuilder private constructor(
             tooltipsOptions = tooltips {
                 lines = listOf(TooltipsOptions.variable(CorrVar.CORR))
                 formats = listOf(
-                    TooltipsOptions.format {
+                    format {
                         field = TooltipsOptions.variable(CorrVar.CORR)
                         format = VALUE_FORMAT
                     }

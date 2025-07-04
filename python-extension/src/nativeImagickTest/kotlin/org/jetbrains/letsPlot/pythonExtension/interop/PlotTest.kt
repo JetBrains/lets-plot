@@ -32,7 +32,7 @@ class PlotTest {
             |{
             |  "kind": "plot",
             |  "data": { "time": ["Lunch", "Lunch", "Dinner", "Dinner", "Dinner"] },
-            |  "theme": { "text": { "family": "fixed", "blank": false } },
+            |  "theme": { "text": {"blank": false } },
             |  "mapping": {
             |    "x": "time",
             |    "color": "time",
@@ -57,7 +57,7 @@ class PlotTest {
                 |  "data": { "foo": [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0 ] },
                 |  "coord": { "name": "polar", "theta": "x" },
                 |  "ggtitle": { "text": "position=dodge, coord_polar(theta=x)" },
-                |  "theme": { "text": { "family": "fixed", "blank": false } },
+                |  "theme": { "text": { "blank": false } },
                 |  "kind": "plot",
                 |  "scales": [
                 |    { "aesthetic": "x", "expand": [ 0.0, 0.0 ] },
