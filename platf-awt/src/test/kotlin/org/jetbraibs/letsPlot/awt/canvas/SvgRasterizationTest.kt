@@ -22,6 +22,6 @@ class SvgRasterizationTest {
         //val canvas = canvasControl.children.single() as MagickCanvas
         //assertImageEquals(expectedFileName, canvas.img!!)
         //
-        //imageComparer.assertImageEquals("svg_reference_test.bmp", svg)
+        //imageComparer.assertImageEquals("svg_reference_test.png", svg)
     }
 }

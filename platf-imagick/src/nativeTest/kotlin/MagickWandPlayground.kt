@@ -71,7 +71,7 @@ class MagickWandPlayground {
 
     @Test
     fun miterJoinWithOppositeSegments() {
-        outFile = "magickwand_bug_miter_join.bmp"
+        outFile = "magickwand_bug_miter_join.png"
 
         ImageMagick.DrawSetStrokeColor(wand, black)
         ImageMagick.DrawSetStrokeWidth(wand, 20.0)
@@ -88,7 +88,7 @@ class MagickWandPlayground {
 
     @Test
     fun affine_ry() {
-        outFile = "magickwand_bug_affine_ry.bmp"
+        outFile = "magickwand_bug_affine_ry.png"
 
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawRectangle(wand, 30.0, 30.0, 70.0, 70.0)
@@ -104,7 +104,7 @@ class MagickWandPlayground {
 
     @Test
     fun simpleBezierCurve() {
-        outFile = "magickwand_bezier.bmp"
+        outFile = "magickwand_bezier.png"
 
         ImageMagick.DrawSetFillColor(wand, none)
         ImageMagick.DrawSetStrokeColor(wand, black)
@@ -125,7 +125,7 @@ class MagickWandPlayground {
 
     @Test
     fun circleWihCurve() {
-        outFile = "magickwand_circle_with_curve.bmp"
+        outFile = "magickwand_circle_with_curve.png"
 
         val cps = listOf(
             DoubleVector(100.0, 50.0),
@@ -158,7 +158,7 @@ class MagickWandPlayground {
 
     @Test
     fun curve() {
-        outFile = "magickwand_curve.bmp"
+        outFile = "magickwand_curve.png"
 
         val cp0 = DoubleVector(50.0, 0.0)
         val cp1 = DoubleVector(-100.0, 50.0)

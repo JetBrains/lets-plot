@@ -29,7 +29,7 @@ class SvgTest {
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
 
-        assertSvg("svg_reference_test.bmp", svg)
+        assertSvg("svg_reference_test.png", svg)
     }
 
 

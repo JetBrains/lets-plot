@@ -50,7 +50,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipRestore() {
-        outFile = "magickwand_clip_restore.bmp"
+        outFile = "magickwand_clip_restore.png"
 
         val clipPathId = "clip_42"
 
@@ -90,7 +90,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipSimple() {
-        outFile = "magickwand_clip_simple.bmp"
+        outFile = "magickwand_clip_simple.png"
         val clipPathId = "clip_42"
 
         run {
@@ -114,7 +114,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipText() {
-        outFile = "magickwand_clip_text.bmp"
+        outFile = "magickwand_clip_text.png"
 
         val clipPathId = "clip_42"
 
@@ -136,7 +136,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipTextBeforeTransform() {
-        outFile = "magickwand_clip_text_before_transform.bmp"
+        outFile = "magickwand_clip_text_before_transform.png"
 
         val clipPathId = "clip_42"
 
@@ -163,7 +163,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipTextAfterTransform() {
-        outFile = "magickwand_clip_text_after_transform.bmp"
+        outFile = "magickwand_clip_text_after_transform.png"
 
         val clipPathId = "clip_42"
 
