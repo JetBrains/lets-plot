@@ -5,10 +5,10 @@
 
 package demo.svgMapping.model
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
@@ -351,7 +351,7 @@ internal fun SvgNode.image(
     return el
 }
 
-internal fun SvgNode.bitmap(
+internal fun SvgNode.imageEx(
     bitmap: Bitmap,
     x: Number,
     y: Number,

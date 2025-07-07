@@ -12,13 +12,10 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_ABSOLUTE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CONNECTOR
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
-import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
-import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
-import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
+import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -742,7 +739,7 @@ class OptionsBuilderTest {
     }
 
     @Test
-    fun `check labels`() {
+    fun `check labels parameter`() {
         listOf(
             Pair(false, ElementTextOptions(blank = true)),
             Pair(true, ElementTextOptions(blank = false))
@@ -753,8 +750,11 @@ class OptionsBuilderTest {
                 y = "Y",
                 labelOptions = elementOptions
             ).let { plotOptions ->
-                val elementIsPresented = plotOptions.layerOptions!!.map { it.geom }.contains(GeomKind.TEXT)
-                assert(expectedPresence == elementIsPresented) { "Wrong presence of labels layer" }
+                val parameterIsPresented =
+                    plotOptions.layerOptions!!
+                        .map { it.geom == GeomKind.CROSS_BAR && (it as CrossbarLayer).labels != AnnotationOptions.NONE }.any { it }
+
+                assert(expectedPresence == parameterIsPresented) { "Wrong presence of labels" }
             }
         }
     }
@@ -808,7 +808,9 @@ class OptionsBuilderTest {
         base: Double = 0.0,
         hLineOptions: ElementLineOptions = DEF_H_LINE,
         connectorOptions: ElementLineOptions = DEF_CONNECTOR,
-        labelOptions: ElementTextOptions = DEF_LABEL
+        labelOptions: ElementTextOptions = ElementTextOptions(),
+        relativeLabelOptions: AnnotationOptions = annotation { lines = listOf("@${Waterfall.Var.Stat.LABEL}") },
+        absoluteLabelsOptions: AnnotationOptions = annotation { lines = listOf("@${Waterfall.Var.Stat.LABEL}") },
     ): PlotOptions {
         return WaterfallPlotOptionsBuilder(
             data = data,
@@ -835,8 +837,9 @@ class OptionsBuilderTest {
             hLineOptions = hLineOptions,
             hLineOnTop = false,
             connectorOptions = connectorOptions,
-            labelOptions = labelOptions,
-            labelFormat = null
+            relativeLabelsOptions = relativeLabelOptions,
+            absoluteLabelsOptions = absoluteLabelsOptions,
+            labelOptions = labelOptions
         ).build()
     }
 

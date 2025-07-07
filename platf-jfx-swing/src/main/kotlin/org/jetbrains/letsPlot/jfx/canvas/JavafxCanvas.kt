@@ -8,9 +8,11 @@ package org.jetbrains.letsPlot.jfx.canvas
 import javafx.scene.SnapshotParameters
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
+import javafx.scene.image.PixelFormat
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import kotlin.math.roundToInt
 
@@ -47,6 +49,14 @@ private constructor(
             image.width.roundToInt(),
             image.height.roundToInt()
         )
+        override val bitmap: Bitmap
+            get() {
+                val width = image.width.roundToInt()
+                val height = image.height.roundToInt()
+                val argbArray = IntArray(width * height)
+                image.pixelReader.getPixels(0, 0, width, height, PixelFormat.getIntArgbInstance(), argbArray, 0, width)
+                return Bitmap(width, height, argbArray)
+            }
 
         override fun copy() =
             JavafxSnapshot(

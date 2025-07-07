@@ -8,22 +8,43 @@ package org.jetbrains.letsPlot.commons.encoding
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import kotlin.math.min
 
-
+/** * PNG encoder/decoder.
+ * Supports only 8-bit RGBA PNG format without filters.
+ *
+ * To clean up any PNG to match these requirements, use the following Python function:
+ *
+ * import png
+ * import os
+ *
+ * def cleanup_png(input_filepath, output_filepath=None):
+ *     if output_filepath is None:
+ *         base_name, ext = os.path.splitext(input_filepath)
+ *         output_filepath = f"{base_name}_minimized.png"
+ *
+ *     with open(input_filepath, 'rb') as f_input:
+ *         reader = png.Reader(file=f_input)
+ *
+ *         width, height, pixels_iter_original_format, info = reader.read()
+ *         pixels_list_original_format = [list(row) for row in pixels_iter_original_format]
+ *
+ *     writer_params = {
+ *         'width': width,
+ *         'height': height,
+ *         'greyscale': False,
+ *         'alpha': True,
+ *         'bitdepth': 8,
+ *         'compression': 9,
+ *     }
+ *
+ *     writer = png.Writer(**writer_params)
+ *
+ *     with open(output_filepath, 'wb') as f_output:
+ *         writer.write(f_output, pixels_list_original_format)
+ */
 object Png {
-    fun encodeDataImage(width: Int, height: Int, rgba: IntArray): String {
-        val byteArray = ByteArray(rgba.size * 4)
-        for (i in rgba.indices) {
-            val color = rgba[i]
-            byteArray[i * 4] = (color shr 16 and 0xFF).toByte() // R
-            byteArray[i * 4 + 1] = (color shr 8 and 0xFF).toByte() // G
-            byteArray[i * 4 + 2] = (color and 0xFF).toByte() // B
-            byteArray[i * 4 + 3] = (color shr 24 and 0xFF).toByte() // A
-        }
-        return encodeDataImage(width, height, byteArray)
-    }
 
-    fun encodeDataImage(width: Int, height: Int, rgba: ByteArray): String {
-        val pngData = encode(width, height, rgba)
+    fun encodeDataImage(bitmap: Bitmap): String {
+        val pngData = encode(bitmap)
         val base64 = Base64.encode(pngData)
         return "data:image/png;base64,$base64"
     }
@@ -34,29 +55,25 @@ object Png {
         return decode(pngData)
     }
 
-    fun encode(width: Int, height: Int, rgba: ByteArray): ByteArray {
+    fun encode(bitmap: Bitmap): ByteArray {
         val output = OutputStream()
 
         // Write PNG signature
         output.write(byteArrayOf(137.toByte(), 80, 78, 71, 13, 10, 26, 10))
 
         // IHDR chunk
-        output.writePngChunk("IHDR", buildIHDR(width, height))
+        output.writePngChunk("IHDR", buildIHDR(bitmap.width, bitmap.height))
 
         // IDAT chunk
-        val rawScanlines = if (false) {
-            val rawScanlines = ByteArray((width * 4 + 1) * height)
-            for (y in 0 until height) {
-                rawScanlines[y * (width * 4 + 1)] = 0  // filter type 0
-                arraycopy(rgba, y * width * 4, rawScanlines, y * (width * 4 + 1) + 1, width * 4)
-            }
-            rawScanlines
-        } else {
+        val rawScanlines = run {
             val rawScanlines = mutableListOf<Byte>()
-            rgba.asSequence().windowed(width * 4, width * 4).forEach {
-                rawScanlines += 0.toByte() // filter type 0
-                rawScanlines += it
-            }
+            bitmap.rgbaBytes()
+                .asSequence()
+                .windowed(bitmap.width * 4, bitmap.width * 4)
+                .forEach {
+                    rawScanlines += 0.toByte() // filter type 0
+                    rawScanlines += it
+                }
 
             rawScanlines.toByteArray()
         }
@@ -108,8 +125,6 @@ object Png {
                 "IEND" -> break
             }
         }
-
-        //println("PNG dimensions: $width x $height, Color type: $colorType, Bit depth: $bitDepth")
 
         // 3. Decompress IDAT data
         val compressed = idatChunks.toByteArray()
@@ -176,15 +191,9 @@ object Png {
             return buffer[position++]
         }
 
-        fun get(index: Int): Byte = buffer[index]
-
         fun put(value: Byte) {
             if (position >= buffer.size) throw IndexOutOfBoundsException("Buffer overflow")
             buffer[position++] = value
-        }
-
-        fun put(index: Int, value: Byte) {
-            buffer[index] = value
         }
 
         fun getInt(): Int {
@@ -213,37 +222,6 @@ object Png {
         length: Int
     ) {
         src.copyInto(dest, destPos, srcPos, srcPos + length)
-    }
-
-    private fun arraycopy(
-        src: DoubleArray,
-        srcPos: Int,
-        dest: DoubleArray,
-        destPos: Int,
-        length: Int
-    ) {
-        src.copyInto(dest, destPos, srcPos, srcPos + length)
-    }
-
-    private fun fill(
-        src: ByteArray,
-        value: Byte
-    ) {
-        src.fill(value)
-    }
-
-    private fun fill(
-        src: IntArray,
-        value: Int
-    ) {
-        src.fill(value)
-    }
-
-    private fun fill(
-        src: DoubleArray,
-        value: Double
-    ) {
-        src.fill(value)
     }
 
     private class Crc32 {
@@ -348,5 +326,4 @@ object Png {
             return buffer.joinToString { it.toUByte().toString(16) }
         }
     }
-
 }

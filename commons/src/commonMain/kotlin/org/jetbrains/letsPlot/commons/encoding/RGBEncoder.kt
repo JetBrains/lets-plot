@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.encoding
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
+
 interface RGBEncoder {
-    fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String
+    fun toDataUrl(bitmap: Bitmap): String
 }

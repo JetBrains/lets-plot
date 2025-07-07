@@ -10,6 +10,19 @@ class Bitmap(
     val height: Int,
     val argbInts: IntArray
 ) {
+    fun getPixel(x: Int, y: Int): Color? {
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            return null // Out of bounds
+        }
+
+        val pixel = argbInts[y * width + x]
+        val r = (pixel shr 16) and 0xFF
+        val g = (pixel shr 8) and 0xFF
+        val b = pixel and 0xFF
+        val a = (pixel shr 0) and 0xFF
+        return Color(r, g, b, a)
+    }
+
     fun rgbaBytes(): ByteArray {
         val rgba = ByteArray(width * height * 4)
         var i = 0

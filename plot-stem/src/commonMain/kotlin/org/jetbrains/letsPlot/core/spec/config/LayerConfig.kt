@@ -273,11 +273,11 @@ class LayerConfig constructor(
         }
 
         annotations = if (has(ANNOTATIONS)) {
-            AnnotationConfig(
-                opts = getMap(ANNOTATIONS),
+            initAnnotationSpec(
+                annotationOptions = getSafe(ANNOTATIONS),
                 varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
                 constantsMap, explicitGroupingVarName
-            ).createAnnotations()
+            )
         } else {
             AnnotationSpecification.NONE
         }
@@ -548,6 +548,32 @@ class LayerConfig constructor(
 
                 else -> {
                     error("Incorrect tooltips specification")
+                }
+            }
+        }
+
+        private fun initAnnotationSpec(
+            annotationOptions: Any,  // An options map or just string "none"
+            varBindings: List<VarBinding>,
+            constantsMap: Map<Aes<*>, Any>,
+            explicitGroupingVarName: String?
+        ): AnnotationSpecification {
+            return when (annotationOptions) {
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    AnnotationConfig(
+                        opts = annotationOptions as Map<String, Any>,
+                        varBindings = varBindings,
+                        constantsMap, explicitGroupingVarName
+                    ).createAnnotations()
+                }
+
+                NONE -> {
+                    AnnotationSpecification.NONE
+                }
+
+                else -> {
+                    error("Incorrect annotation specification")
                 }
             }
         }

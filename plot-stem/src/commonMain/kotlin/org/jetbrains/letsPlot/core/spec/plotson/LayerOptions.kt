@@ -119,6 +119,7 @@ class BoxplotLayer : LayerOptions(GeomKind.BOX_PLOT) {
 
 class CrossbarLayer : LayerOptions(GeomKind.CROSS_BAR) {
     var fatten: Double? by map(FATTEN)
+    var labels: AnnotationOptions? by map(Layer.ANNOTATIONS)
 
     companion object {
         val FATTEN = PropSpec<Double?>(Geom.CrossBar.FATTEN)
@@ -136,8 +137,6 @@ class TextLayer : LayerOptions(GeomKind.TEXT) {
         val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Text.SIZE_UNIT)
     }
 }
-
-//todo: Add TextRepelLayer?
 
 class LiveMapLayer : LayerOptions(GeomKind.LIVE_MAP) {
     var tiles: TileOptions? by map(Geom.LiveMap.TILES)

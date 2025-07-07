@@ -93,6 +93,9 @@ class CanvasDelegate(
 
 object NullSnapshot : Canvas.Snapshot {
     override val size: Vector = Vector(1, 1)
+    override val bitmap: Bitmap
+        get() = Bitmap(1, 1, intArrayOf(0xFFFFFFFF.toInt())) // White pixel
+
     override fun copy(): Canvas.Snapshot = this
 }
 

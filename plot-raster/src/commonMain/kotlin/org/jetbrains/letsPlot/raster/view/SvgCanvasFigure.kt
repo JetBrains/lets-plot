@@ -56,7 +56,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         canvasPeer = SvgCanvasPeer(textMeasurer = TextMeasurer.create(canvasControl), canvasControl)
         mapSvgSvgElement(svgSvgElement)
 
-        canvas = canvasControl.createCanvas(Vector(width, height))
+        canvas = canvasControl.createCanvas(width * canvasControl.pixelDensity, height * canvasControl.pixelDensity)
         canvasControl.addChild(canvas!!)
 
         // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
