@@ -141,6 +141,8 @@ internal object VegaOption {
             const val Y_OFFSET = "yOffset"
 
             const val ERROR_X = "errorX"
+
+            const val THETA = "theta"
         }
 
         object Types {
@@ -160,6 +162,7 @@ internal object VegaOption {
         }
 
         object Types {
+            const val ARC = "arc"
             const val BAR = "bar"
             const val LINE = "line"
             const val TRAIL = "trail"

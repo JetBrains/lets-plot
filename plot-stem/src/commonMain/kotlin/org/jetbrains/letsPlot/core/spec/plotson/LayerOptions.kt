@@ -107,6 +107,13 @@ class PointLayer : LayerOptions(GeomKind.POINT) {
     }
 }
 
+class PieLayer : LayerOptions(GeomKind.PIE) {
+    companion object {
+        val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Pie.SIZE_UNIT)
+        val DIRECTION = PropSpec<Int>(Geom.Pie.DIRECTION)
+    }
+}
+
 class BoxplotLayer : LayerOptions(GeomKind.BOX_PLOT) {
     var whiskerWidth: Double? by map(WHISKER_WIDTH)
     var fatten: Double? by map(FATTEN)

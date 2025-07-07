@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.spec.Option
 
 class ThemeOptions : Options() {
     var name: ThemeName? by map(Option.Meta.NAME)
+    var line: Element? by map(ThemeOption.LINE)
+    var axis: Element? by map(ThemeOption.AXIS)
     var axisTitle: Element? by map(ThemeOption.AXIS_TITLE)
     var axisLine: Element? by map(ThemeOption.AXIS_LINE)
     var panelGrid: Element? by map(ThemeOption.PANEL_GRID)
@@ -69,3 +71,10 @@ class ThemeOptions : Options() {
 }
 
 fun theme(block: ThemeOptions.() -> Unit) = ThemeOptions().apply(block)
+
+fun ThemeOptions.setVoid(): ThemeOptions {
+    name = ThemeOptions.ThemeName.CLASSIC
+    line = ThemeOptions.Element.BLANK
+    axis = ThemeOptions.Element.BLANK
+    return this
+}

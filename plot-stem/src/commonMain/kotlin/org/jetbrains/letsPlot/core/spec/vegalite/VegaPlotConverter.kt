@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.THETA
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
@@ -168,6 +169,19 @@ internal class VegaPlotConverter private constructor(
         }
 
         when (markType) {
+            Mark.Types.ARC -> appendLayer(
+                geom = GeomKind.PIE,
+                channelMapping = listOf(
+                    THETA to Aes.SLICE,
+                    COLOR to Aes.FILL,
+                    COLOR to Aes.COLOR
+                )
+            ) {
+                size = 0.6
+                prop[PieLayer.SIZE_UNIT] = Aes.X // TODO: replace with MINMAX when it will be supported
+                prop[PieLayer.DIRECTION] = -1
+                plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).setVoid()
+            }
             Mark.Types.BAR ->
                 if (transformResult?.stat?.kind == StatKind.BIN) {
                     appendLayer(
