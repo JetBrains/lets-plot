@@ -156,15 +156,27 @@ class WaterfallPlotSpecChange : SpecChange {
         return bistroSpec.getMap(optionName)?.let { annotationOptions ->
             annotation {
                 lines = annotationOptions.getList(Option.AnnotationSpec.LINES)?.typed<String>()
-                formats = annotationOptions.getMaps(Option.AnnotationSpec.FORMATS)?.map { formatOptions ->
-                    format {
-                        field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
-                        format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
+
+                val existingFormats = annotationOptions
+                    .getMaps(Option.AnnotationSpec.FORMATS)
+                    ?.map { formatOptions ->
+                        format {
+                            field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
+                            format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
+                        }
+                    } ?: emptyList()
+
+                val hasLabelFormat = existingFormats.any { it.field == "@${Waterfall.Var.Stat.LABEL}" }
+
+                formats = if (hasLabelFormat || labelFormat == null) {
+                    existingFormats
+                } else {
+                    existingFormats + format {
+                        field = "@${Waterfall.Var.Stat.LABEL}"
+                        format = labelFormat
                     }
-                } ?: listOf(format {
-                    field = "@${Waterfall.Var.Stat.LABEL}"
-                    format = labelFormat ?: ""
-                })
+                }
+
                 size = annotationOptions.getDouble(Option.AnnotationSpec.ANNOTATION_SIZE)
             }
         } ?: annotation {
@@ -178,6 +190,7 @@ class WaterfallPlotSpecChange : SpecChange {
             }
         }
     }
+
 
     private fun readElementLineOptions(
         bistroSpec: Map<String, Any>,
