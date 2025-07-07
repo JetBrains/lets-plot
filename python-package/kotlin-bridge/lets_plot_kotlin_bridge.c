@@ -39,12 +39,14 @@ static PyObject* export_png(PyObject* self, PyObject* args) {
     T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
 
     PyObject *rawPlotSpecDict;
-    int width;
-    int height;
+    float width;
+    float height;
+    const char* unit;
+    int dpi;
     float scale;
-    PyArg_ParseTuple(args, "Oiif", &rawPlotSpecDict, &width, &height, &scale);
+    PyArg_ParseTuple(args, "Offsif", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale);
 
-    PyObject* imageData = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportPng(reprGen, rawPlotSpecDict, width, height, scale);
+    PyObject* imageData = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportPng(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale);
     return imageData; // base64 encoded PNG
 }
 

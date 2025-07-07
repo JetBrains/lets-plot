@@ -126,8 +126,10 @@ object PlotReprGenerator {
 
     fun exportBitmap(
         plotSpec: Map<*, *>,
-        width: Int,
-        height: Int,
+        width: Float,
+        height: Float,
+        unit: String,
+        dpi: Int,
         scale: Double
     ): Bitmap? {
         var canvasReg: Registration? = null
@@ -141,10 +143,21 @@ object PlotReprGenerator {
 
             val sizingPolicy = when {
                 width < 0 || height < 0 -> SizingPolicy.keepFigureDefaultSize()
-                else -> SizingPolicy.fixed(
-                    width = width.toDouble(),
-                    height = height.toDouble()
-                )
+                else -> {
+                    // Build the plot in logical pixels (always 96 DPI) and then render it scaled.
+                    // Otherwise, the plot will be rendered incorrectly, i.e., with too many tick labels and small font sizes.
+                    val (logicalWidth, logicalHeight) = when (unit) {
+                        "cm" -> (width * 96 / 2.54) to (height * 96 / 2.54)
+                        "in" -> (width * 96) to (height * 96)
+                        "" -> width to height // "px" or any other unit
+                        else -> throw IllegalArgumentException("Unsupported unit: $unit")
+                    }
+
+                    SizingPolicy.fixed(
+                        width = logicalWidth.toDouble(),
+                        height = logicalHeight.toDouble()
+                    )
+                }
             }
 
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
@@ -155,10 +168,15 @@ object PlotReprGenerator {
 
             val svgCanvasFigure = SvgCanvasFigure(vm.svg)
 
+            val scaleFactor = when {
+                dpi > 0 -> dpi / 96.0 * scale
+                else -> scale
+            }
+
             val canvasControl = MagickCanvasControl(
-                w = (svgCanvasFigure.width * scale).roundToInt(),
-                h = (svgCanvasFigure.height * scale).roundToInt(),
-                pixelDensity = scale.toDouble(),
+                w = (svgCanvasFigure.width * scaleFactor).roundToInt(),
+                h = (svgCanvasFigure.height * scaleFactor).roundToInt(),
+                pixelDensity = scaleFactor,
                 fontManager = MagickFontManager.DEFAULT,
             )
 
@@ -181,14 +199,18 @@ object PlotReprGenerator {
 
     fun exportPng(
         plotSpecDict: CPointer<PyObject>?,
-        width: Int,
-        height: Int,
+        width: Float,
+        height: Float,
+        unit: CPointer<ByteVar>,
+        dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
         val bitmap = exportBitmap(
             plotSpec = pyDictToMap(plotSpecDict),
             width = width,
             height = height,
+            unit = unit.toKString(),
+            dpi = dpi,
             scale = scale.toDouble()
         ) ?: return Py_BuildValue("s", "Failed to generate image")
         // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
+import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.PngBitmapIO
 import kotlin.test.Test
 
 
@@ -22,7 +23,7 @@ class PlotTest {
         expectedDir = getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
         outDir = getCurrentDir() + "/build/reports/",
         canvasProvider = MagickCanvasProvider,
-        bitmapIO = MagickBitmapIO,
+        bitmapIO = PngBitmapIO,
         tol = 1
     )
 
@@ -47,7 +48,7 @@ class PlotTest {
             |}""".trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_bar_test.bmp", plotSpec)
+        assertPlot("plot_bar_test.png", plotSpec)
     }
 
     @Test
@@ -84,7 +85,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_polar_test.bmp", plotSpec)
+        assertPlot("plot_polar_test.png", plotSpec)
     }
 
     @Test
@@ -126,7 +127,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_raster_test.bmp", plotSpec)
+        assertPlot("plot_raster_test.png", plotSpec)
     }
 
     @Test
@@ -142,7 +143,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_implicit_size_test.bmp", plotSpec)
+        assertPlot("plot_implicit_size_test.png", plotSpec)
     }
 
 
@@ -159,7 +160,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_explicit_size_test.bmp", plotSpec, width = 300, height = 300)
+        assertPlot("plot_explicit_size_test.png", plotSpec, width = 300, height = 300)
     }
 
     @Test
@@ -177,7 +178,7 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         // 200x200 is the size in pixels, scale = 2.0 means the bitmap will be 400x400 pixels
-        assertPlot("plot_implicit_size_scaled_test.bmp", plotSpec, scale = 2.0)
+        assertPlot("plot_implicit_size_scaled_test.png", plotSpec, scale = 2.0)
     }
 
     @Test
@@ -195,7 +196,7 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         // 300x300 is the size in pixels, scale = 2.0 means the bitmap will be 600x600 pixels
-        assertPlot("plot_explicit_size_scaled_test.bmp", plotSpec, width = 300, height = 300, scale = 2.0)
+        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, width = 300, height = 300, scale = 2.0)
     }
 
     @Test
@@ -217,17 +218,153 @@ class PlotTest {
 
         val plotSpec = parsePlotSpec(spec)
 
-        assertPlot("plot_markdown_font_style_test.bmp", plotSpec)
+        assertPlot("plot_markdown_font_style_test.png", plotSpec)
+    }
+
+    @Test
+    fun plot5x2cm96dpi() {
+        val (w, h, dpi) = Triple(5, 2, 96)
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+    }
+
+    @Test
+    fun plot5x2cm300dpi() {
+        val (w, h, dpi) = Triple(5, 2, 300)
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+    }
+
+    @Test
+    fun plot5x2cm300dpi2Xscale() {
+        val (w, h, dpi) = Triple(5, 2, 300)
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi, scale=2)
+    }
+
+    @Test
+    fun plot12x4cm96dpi() {
+        val (w, h, dpi) = Triple(12, 4, 96)
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+    }
+
+    @Test
+    fun plot12x4cm300dpi() {
+        val (w, h, dpi) = Triple(12, 4, 300)
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+    }
+
+    @Test
+    fun plot400pxx200Dpx() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ],
+            |  "ggsize": { "width": 400, "height": 200 }
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_400pxx200px_test.png", plotSpec)
+    }
+
+    @Test
+    fun plot400pxx200Dpx150dpi() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ],
+            |  "ggsize": { "width": 400, "height": 200 }
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        // In this case 400x200 is the size in pixels with 96 DPI.
+        // Passing only DPI is useful for scaling the plot for printing but keeping plot size and layout intact.
+        // For 150 DPI, the bitmap will be scaled to 625x313 pixels (400 * 150 / 96 = 625, 200 * 150 / 96 = 313).
+        assertPlot("plot_400pxx200px150dpi_test.png", plotSpec, dpi = 150)
+    }
+
+    @Test
+    fun plot400pxx200Dpx2Xscale() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3, 4] },
+            |  "mapping": { "x": "x" },
+            |  "layers": [ { "geom": "point" } ],
+            |  "ggsize": { "width": 400, "height": 200 }
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale=2)
     }
 
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
-        width: Int = -1,
-        height: Int = -1,
-        scale: Double = 1.0
+        width: Number = -1f,
+        height: Number = -1f,
+        unit: String = "",
+        dpi: Int = -1,
+        scale: Number = 1.0
     ) {
-        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width, height, scale)
+        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width.toFloat(), height.toFloat(), unit=unit, dpi=dpi, scale=scale.toDouble())
             ?: error("Failed to export bitmap from plot spec")
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }

@@ -242,12 +242,47 @@ fun writeToFile(path: String, data: ByteArray) {
     }
 }
 
+fun readFromFile(path: String): ByteArray {
+    memScoped {
+        // O_RDONLY: read only
+        val fd = open(path, O_RDONLY)
+
+        if (fd == -1) {
+            perror("open")
+            throw Error("Failed to open file: $path")
+        }
+
+        val fileSize = lseek(fd, 0, SEEK_END)
+        if (fileSize == -1L) {
+            perror("lseek")
+            close(fd)
+            throw Error("Failed to get file size: $path")
+        }
+
+        lseek(fd, 0, SEEK_SET) // Reset file pointer to the beginning
+
+        val buffer = ByteArray(fileSize.toInt())
+        val readBytes = buffer.usePinned { pinned ->
+            read(fd, pinned.addressOf(0), fileSize.convert())
+        }
+
+        if (readBytes != fileSize) {
+            perror("read")
+            close(fd)
+            throw Error("Failed to read all data from file: $path")
+        }
+
+        close(fd)
+        return buffer
+    }
+}
+
 fun imageComparer(): ImageComparer {
     return ImageComparer(
         expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = getCurrentDir() + "/build/reports/",
         canvasProvider = MagickCanvasProvider,
-        bitmapIO = MagickBitmapIO,
+        bitmapIO = PngBitmapIO,
         tol = 1
     )
 }
