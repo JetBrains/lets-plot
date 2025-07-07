@@ -216,65 +216,78 @@ fun getCurrentDir(): String {
     }
 }
 
-// TODO: never used - need to test. Should be used to store test images in PNG instead of BMP format.
 fun writeToFile(path: String, data: ByteArray) {
-    memScoped {
-        // O_WRONLY: write only, O_CREAT: create if not exists, O_TRUNC: truncate if exists
-        val fd = open(path, O_WRONLY or O_CREAT or O_TRUNC or O_BINARY, 0b110_100_100) // 0644 in octal
-
-        if (fd == -1) {
-            perror("open")
-            throw Error("Failed to open file: $path")
+    if (data.isEmpty()) {
+        val file = fopen(path, "wb")
+        if (file == null) {
+            perror("fopen")
+            throw Error("Failed to open file for writing (empty): $path")
         }
+        fclose(file)
+        return
+    }
 
+    val file: CPointer<FILE>? = fopen(path, "wb")
+    if (file == null) {
+        perror("fopen")
+        throw Error("Failed to open file for writing: $path")
+    }
+    try {
         val written = data.usePinned { pinned ->
-            write(fd, pinned.addressOf(0), data.size.convert())
+            // fwrite(ptr, size_of_element, number_of_elements, stream)
+            // It's common to use size 1 and number of elements as the total size.
+            fwrite(pinned.addressOf(0), 1.toULong(), data.size.toULong(), file)
         }
-
-        @Suppress("RemoveRedundantCallsOfConversionMethods") // On Windows `written` is Int
+        @Suppress("RemoveRedundantCallsOfConversionMethods")
         if (written.toLong() != data.size.toLong()) {
-            perror("write")
-            close(fd)
-            throw Error("Failed to write all data")
+            val errorNum = ferror(file)
+            if (errorNum != 0) {
+                println("fwrite error: ferror returned $errorNum")
+            }
+            throw Error("Failed to write all data to file: $path. Wrote $written of ${data.size} bytes.")
         }
-
-        close(fd)
+    } finally {
+        fclose(file)
     }
 }
-
 fun readFromFile(path: String): ByteArray {
-    memScoped {
-        // O_RDONLY: read only
-        val fd = open(path, O_RDONLY or O_BINARY)
-
-        if (fd == -1) {
-            perror("open")
-            throw Error("Failed to open file: $path")
+    val file: CPointer<FILE>? = fopen(path, "rb")
+    if (file == null) {
+        perror("fopen")
+        throw Error("Failed to open file for reading: $path")
+    }
+    try {
+        fseek(file, 0, SEEK_END)
+        @Suppress("RemoveRedundantCallsOfConversionMethods")
+        val fileSize = ftell(file).toLong()
+        if (fileSize < 0L) { // ftell returns -1 on error
+            perror("ftell")
+            throw Error("Failed to determine file size: $path")
         }
-
-        val fileSize = lseek(fd, 0, SEEK_END)
-        @Suppress("RemoveRedundantCallsOfConversionMethods") // On Windows `fileSize` is Int
-        if (fileSize.toLong() == -1L) {
-            perror("lseek")
-            close(fd)
-            throw Error("Failed to get file size: $path")
+        rewind(file)
+        if (fileSize == 0L) {
+            return ByteArray(0)
         }
-
-        lseek(fd, 0, SEEK_SET) // Reset file pointer to the beginning
-
         val buffer = ByteArray(fileSize.toInt())
         val readBytes = buffer.usePinned { pinned ->
-            read(fd, pinned.addressOf(0), fileSize.convert())
+            // fread(ptr, size_of_element, number_of_elements, stream)
+            fread(pinned.addressOf(0), 1.toULong(), fileSize.toULong(), file)
         }
-
-        if (readBytes != fileSize) {
-            perror("read")
-            close(fd)
-            throw Error("Failed to read all data from file: $path, $readBytes")
+        @Suppress("RemoveRedundantCallsOfConversionMethods") // on Windows readBytes has type Int
+        if (readBytes.toLong() != fileSize) {
+            val errorNum = ferror(file)
+            if (errorNum != 0) {
+                println("fread error: ferror returned $errorNum")
+            }
+            val atEof = feof(file)
+            if (atEof != 0) {
+                println("fread error: End-of-file reached prematurely.")
+            }
+            throw Error("Failed to read all data from file: $path. Read $readBytes of $fileSize bytes.")
         }
-
-        close(fd)
         return buffer
+    } finally {
+        fclose(file)
     }
 }
 
