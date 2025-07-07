@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.LetsPlotExt
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 import kotlin.math.sqrt
 
@@ -77,12 +78,19 @@ internal class VegaPlotConverter private constructor(
             }
         }
 
-        if (vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
+        if (vegaPlotSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.REPORT_CONVERTER_SUMMARY) == true) {
             val summary = accessLogger
                 .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
                 .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
 
             plotOptions.computationMessages = summary
+        }
+
+        if (vegaPlotSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.DARK_MODE) == true) {
+            plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).apply {
+                name = null
+                flavor = ThemeOptions.Flavor.DARCULA
+            }
         }
 
         if (useLiveMap
