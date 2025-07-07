@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_X
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
@@ -90,8 +91,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.Margin.LEFT to 0.0
             ),
             PLOT_TITLE to mapOf(
-                Elem.SIZE to Defaults.FONT_LARGE,
-                Elem.Margin.TOP to 4.0,
+                Elem.SIZE to Defaults.FONT_LARGE
             ),
             PLOT_SUBTITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
@@ -99,8 +99,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
             PLOT_CAPTION to mapOf(
                 Elem.HJUST to 1.0,
-                Elem.SIZE to Defaults.FONT_SMALL,
-                Elem.Margin.BOTTOM to 4.0,
+                Elem.SIZE to Defaults.FONT_SMALL
             ),
 
             PANEL_BORDER_RECT to ELEMENT_BLANK,
@@ -118,16 +117,15 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             AXIS_TICKS_LENGTH to 4.0,
 
             AXIS_TEXT to mapOf(
-                Elem.Margin.TOP to 3.0,
-                Elem.Margin.RIGHT to 3.0,
-//                Elem.Margin.BOTTOM to 0.0,
-//                Elem.Margin.LEFT to 0.0
-// All around equal default margins because axis text can appear on either side of a plot tile. (See scale x/y "position")
-                Elem.Margin.BOTTOM to 3.0,
-                Elem.Margin.LEFT to 3.0,
+                Elem.Margin.TOP to 0.0,
+                Elem.Margin.RIGHT to 0.0,
+                Elem.Margin.BOTTOM to 0.0,
+                Elem.Margin.LEFT to 0.0,
                 // Currently 'angle' is supported for AXIS_TEXT only: NaN means no rotation.
                 Elem.ANGLE to Double.NaN
             ),
+
+            AXIS_TEXT_SPACING to 2.0,
 
             AXIS_TEXT_X to mapOf(
                 Elem.HJUST to Double.NaN,
@@ -141,11 +139,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
-                Elem.HJUST to 0.5,
-                Elem.Margin.TOP to 4.0,
-                Elem.Margin.RIGHT to 4.0,
-                Elem.Margin.BOTTOM to 4.0,
-                Elem.Margin.LEFT to 4.0
+                Elem.HJUST to 0.5
             ),
 
             PANEL_GRID_ONTOP to false,
@@ -182,7 +176,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             LEGEND_BOX to LegendArrangement.VERTICAL,
             LEGEND_BOX_JUST to LegendBoxJustification.AUTO,
-            LEGEND_BOX_SPACING to 5.0,
+            LEGEND_BOX_SPACING to 0.0,
 
             // Colorbar
             LEGEND_TICKS_LENGTH to 4.0,
@@ -217,16 +211,16 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             PLOT_MARGIN to mapOf(
-                Elem.Margin.TOP to 0.0,
-                Elem.Margin.RIGHT to 0.0,
-                Elem.Margin.BOTTOM to 0.0,
-                Elem.Margin.LEFT to 0.0
+                Elem.Margin.TOP to 3.0,
+                Elem.Margin.RIGHT to 3.0,
+                Elem.Margin.BOTTOM to 3.0,
+                Elem.Margin.LEFT to 3.0
             ),
             PLOT_INSET to mapOf(
-                Elem.Inset.TOP to 6.5,
-                Elem.Inset.RIGHT to 6.5,
-                Elem.Inset.BOTTOM to 6.5,
-                Elem.Inset.LEFT to 6.5
+                Elem.Inset.TOP to 3.0,
+                Elem.Inset.RIGHT to 3.0,
+                Elem.Inset.BOTTOM to 3.0,
+                Elem.Inset.LEFT to 3.0
             ),
 
             PLOT_TITLE_POSITION to TitlePosition.PANEL,

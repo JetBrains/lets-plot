@@ -25,6 +25,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_SPACING
 
 internal class DefaultAxisTheme(
     override val axis: String,
@@ -36,6 +37,7 @@ internal class DefaultAxisTheme(
     internal val ontopKey = listOf(AXIS_ONTOP + suffix, AXIS_ONTOP)
     internal val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
     internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, TEXT, AXIS + suffix, AXIS)
+    internal val spacingKey = listOf(AXIS_TEXT_SPACING + suffix, AXIS_TEXT_SPACING)
     internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, TITLE, TEXT, AXIS + suffix, AXIS)
     internal val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
     internal val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
@@ -105,6 +107,8 @@ internal class DefaultAxisTheme(
     override fun tickMarkLineType() = getLineType(getElemValue(tickKey))
 
     override fun tickLabelMargins() = getMargins(getElemValue(textKey))
+
+    override fun labelSpacing() = getNumber(spacingKey)
 
     override fun labelStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
