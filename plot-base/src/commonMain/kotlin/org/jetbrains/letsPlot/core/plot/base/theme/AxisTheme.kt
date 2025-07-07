@@ -57,8 +57,10 @@ interface AxisTheme {
 
     fun tickLabelMargins(): Thickness
 
+    fun labelSpacing(): Double
+
     fun tickLabelDistance(isHorizontalOrientation: Boolean): Double {
-        var result = when {
+        var result = labelSpacing() + when {
             isHorizontalOrientation -> tickLabelMargins().height
             else -> tickLabelMargins().width
         }

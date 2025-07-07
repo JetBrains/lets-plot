@@ -34,6 +34,7 @@ internal abstract class AxisLabelsLayout protected constructor(
             bounds,
             if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
             theme.tickLabelMargins(),
+            theme.labelSpacing(),
             orientation
         )
     }
@@ -43,6 +44,7 @@ internal abstract class AxisLabelsLayout protected constructor(
             bounds,
             if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
             theme.tickLabelMargins(),
+            theme.labelSpacing(),
             orientation
         )
     }

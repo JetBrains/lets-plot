@@ -41,6 +41,7 @@ internal class AxisLayouter private constructor(
             tickLabelsTextBounds = BreakLabelsLayoutUtil.textBounds(
                 labelsBounds,
                 labelsLayout.theme.tickLabelMargins(),
+                labelsLayout.theme.labelSpacing(),
                 orientation
             ),
             tickLabelBoundsList = labelsInfo.labelBoundsList
