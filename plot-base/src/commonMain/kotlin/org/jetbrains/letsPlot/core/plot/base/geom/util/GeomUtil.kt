@@ -155,6 +155,25 @@ object GeomUtil {
         }
     }
 
+    fun createPathDataFromRectangle(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointTransform: ((DataPointAesthetics) -> List<DoubleVector>?)
+    ): List<PathData> {
+        return dataPoints
+            .map { dataPoint -> dataPoint to pointTransform(dataPoint) }
+            .map { (dataPoint, pointList) ->
+                pointList?.map { point ->
+                    PathPoint(dataPoint, point)
+                } ?: emptyList()
+            }.mapNotNull { pathPoints ->
+                if (pathPoints.isEmpty()) {
+                    null
+                } else {
+                    PathData.create(pathPoints)
+                }
+            }
+    }
+
     fun createPathGroups(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?),

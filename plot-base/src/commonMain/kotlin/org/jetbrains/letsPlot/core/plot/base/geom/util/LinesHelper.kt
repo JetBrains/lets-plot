@@ -7,18 +7,16 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isRingNormalized
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.normalizeRing
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathDataFromRectangle
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -92,6 +90,19 @@ open class LinesHelper(
     ): List<Pair<SvgNode, PolygonData>> {
         val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = false).values
 
+        return createPolygon(domainPathData)
+    }
+
+    fun createRectPolygon(
+        dataPoints: Iterable<DataPointAesthetics>,
+        locationTransform: (DataPointAesthetics) -> List<DoubleVector>?,
+    ): List<Pair<SvgNode, PolygonData>> {
+        val domainPathData = createPathDataFromRectangle(dataPoints, locationTransform)
+
+        return createPolygon(domainPathData)
+    }
+
+    private fun createPolygon(domainPathData: Collection<PathData>): List<Pair<SvgNode, PolygonData>> {
         // split in domain space! after resampling coordinates may repeat and splitRings will return wrong results
         val domainPolygonData = domainPathData
             .map { splitRings(it.points, PathPoint.LOC_EQ) }
@@ -99,7 +110,7 @@ open class LinesHelper(
 
         val clientPolygonData = domainPolygonData.mapNotNull { polygon ->
             polygon.rings
-                .map { resample(it) }
+                .map { if (myResamplingEnabled) resample(it) else toClient(it) }
                 .let { PolygonData.create(it) }
         }
 
@@ -117,15 +128,13 @@ open class LinesHelper(
     }
 
     private fun resample(linestring: List<PathPoint>): List<PathPoint> {
-        val smoothed = linestring.windowed(size = 2)
-            .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, PIXEL_PRECISION) { p -> toClient(p, p1.aes) } }
-            .flatMap { (aes, coords) -> coords.map { PathPoint(aes, it) } }
+        val aes = linestring.firstOrNull()?.aes ?: return emptyList()
+        return resample(linestring.map { it.coord }, PIXEL_PRECISION) { p -> toClient(p, aes) }.map { PathPoint(aes, it) }
+    }
 
-        // smoothed path doesn't contain PathPoint for the last point - append it
-        val endPoint = linestring.last()
-        return when (val clientCoord = toClient(endPoint.coord, endPoint.aes)) {
-            null -> smoothed
-            else -> smoothed + PathPoint(endPoint.aes, clientCoord)
+    private fun toClient(linestring: List<PathPoint>): List<PathPoint> {
+        return linestring.mapNotNull { p ->
+            toClient(p.coord, p.aes)?.let { PathPoint(p.aes, it) }
         }
     }
 

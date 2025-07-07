@@ -2055,7 +2055,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
-                  manual_key=None, sampling=None, tooltips=None,
+                  manual_key=None, sampling=None,
+                  tooltips=None, labels=None,
                   fatten=None,
                   width_unit=None,
                   color_by=None, fill_by=None,
@@ -2203,6 +2204,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 labels=labels,
                  fatten=fatten,
                  width_unit=width_unit,
                  color_by=color_by, fill_by=fill_by,
@@ -4109,7 +4111,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
               color_by=None, fill_by=None,
               **other_args):
     """
-    A sina plot visualizes a single variable across classes, with jitter width reflecting the data's density in each class.
+    A sina plot visualizes a single variable across classes, with jitter width reflecting the data density in each class.
 
     Parameters
     ----------
@@ -7848,9 +7850,23 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
     - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
-    See also:
-    - `geom_text()` for placing text without repulsion.
-    - `geom_label_repel()` for repelled labels with background boxes.
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            "x": [-0.5, 0.5],
+            "y": [0, 0],
+            "label": ["Lorem ipsum", "dolor sit amet"]
+        }
+        ggplot(data, aes("x", "y")) + \\
+            geom_point(size=20) + \\
+            geom_text_repel(aes(label="label"), point_size=20, size=10, seed=42) + \\
+            xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
 
     """
     return _geom('text_repel',
@@ -8056,9 +8072,24 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
     - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
-    See also:
-    - `geom_text_repel()` for labels without background boxes.
-    - `geom_label()` for static labels with boxes.
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            "x": [-0.5, 0.5],
+            "y": [0, 0],
+            "label": ["Lorem ipsum", "dolor sit amet"]
+        }
+        ggplot(data, aes("x", "y")) + \\
+            geom_point(size=20) + \\
+            geom_label_repel(aes(label="label"), point_size=20, size=10, seed=42) + \\
+            xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
+
     """
 
     return _geom('label_repel',

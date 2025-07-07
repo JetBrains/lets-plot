@@ -252,6 +252,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     }
 
     fun evaluate() {
+        saveSpecToFile()
+
         val spec = parsePlotSpec(plotSpecTextArea.text).let(::fetchVegaLiteData)
         plotPanel.removeAll()
         val processedSpec = MonolithicCommon.processRawSpecs(spec)

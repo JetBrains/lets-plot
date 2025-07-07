@@ -28,17 +28,17 @@ class MagickContext2d(
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
-        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, 0.0, 0.0, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
-        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, snapshot.size.x.toDouble(), snapshot.size.y.toDouble(), snapshot.img)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
-        require(snapshot is MagickCanvas.MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+        require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
             // Resize the image if the dimensions do not match
             val scaledImage = ImageMagick.CloneMagickWand(snapshot.img)

@@ -36,7 +36,7 @@ object Defaults {
     const val FONT_SMALL = 13.0
 
     // Note, we don't really support fallback families names in family name (see vis.svgMapper.jfx.SvgTextElementMapper)
-    const val FONT_FAMILY_NORMAL = "Lucida Grande, sans-serif"
+    const val FONT_FAMILY_NORMAL = "sans-serif"
 
     class Common {
         object Title {

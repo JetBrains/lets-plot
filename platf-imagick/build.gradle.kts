@@ -71,13 +71,13 @@ kotlin {
         nativeTest {
             dependencies {
                 implementation(project(":demo-and-test-shared"))
-                implementation(project(":demo-common-svg"))
+                //implementation(project(":demo-common-svg"))
 
-                implementation(project(":datamodel"))
-                implementation(project(":plot-base"))
-                implementation(project(":plot-builder"))
-                implementation(project(":plot-stem"))
-                implementation(project(":plot-raster"))
+                //implementation(project(":datamodel"))
+                //implementation(project(":plot-base"))
+                //implementation(project(":plot-builder"))
+                //implementation(project(":plot-stem"))
+                //implementation(project(":plot-raster"))
             }
         }
     }

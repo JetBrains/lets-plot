@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.values.Bitmap
 
 // TODO: CANVAS_REFACTOR: implement CanvasProvider
 interface Canvas {
@@ -16,6 +17,7 @@ interface Canvas {
 
     interface Snapshot {
         val size: Vector
+        val bitmap: Bitmap
         fun copy(): Snapshot
     }
 }

@@ -12,7 +12,9 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
-import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.PathPoint
+import org.jetbrains.letsPlot.core.plot.base.geom.util.PolygonData
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
@@ -24,46 +26,47 @@ object BarAnnotation {
 
     fun build(
         root: SvgRoot,
-        rectanglesHelper: RectanglesHelper,
+        polygons: List<PolygonData>,
+        transform: (p: DataPointAesthetics, ctx: GeomContext) -> DoubleRectangle?,
+        helper: GeomHelper,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         if (coord.isLinear) {
-            linearAnnotations(root, rectanglesHelper, coord, ctx)
+            linearAnnotations(root, polygons, coord, ctx)
         } else {
-            nonLinearAnnotations(root, rectanglesHelper, ctx)
+            nonLinearAnnotations(root, polygons, transform, helper, ctx)
         }
     }
 
     private fun nonLinearAnnotations(
         root: SvgRoot,
-        rectanglesHelper: RectanglesHelper,
+        polygons: List<PolygonData>,
+        transform: (p: DataPointAesthetics, ctx: GeomContext) -> DoubleRectangle?,
+        helper: GeomHelper,
         ctx: GeomContext
     ) {
         val annotation = ctx.annotation ?: return
 
-        rectanglesHelper.iterateRectangleGeometry { p, rect ->
-            val clientBarCenter = rectanglesHelper.toClient(rect.center, p) ?: return@iterateRectangleGeometry
+        polygons.forEach { polygon ->
+            val p = polygon.rings[0][0].aes
+            val rect = transform(p, ctx) ?: return@forEach
+            val centroid = helper.toClient(rect.center, p) ?: return@forEach
+            val zero = helper.toClient(0.0, 0.0, p) ?: return@forEach
 
-            val barBorder = with(rect.flipIf(ctx.flipped)) {
-                listOf(DoubleVector(left, bottom), DoubleVector(right, bottom))
-            }.mapNotNull {
-                rectanglesHelper.toClient(it.flipIf(ctx.flipped), p)
-            }
+            val v = centroid.subtract(zero).orthogonal()
 
-            if (barBorder.size != 2) return@iterateRectangleGeometry
-
-            val v = barBorder[1].subtract(barBorder[0])
             val angle = atan2(v.y, v.x).let {
                 when (abs(it)) {
                     in PI / 2..3 * PI / 2 -> PI - it
                     else -> 2 * PI - it
                 }
             }
+
             val text = annotation.getAnnotationText(p.index(), ctx.plotContext)
             AnnotationUtil.createLabelElement(
                 text,
-                clientBarCenter,
+                centroid,
                 textParams = AnnotationUtil.TextParams(
                     style = annotation.textStyle,
                     color = annotation.getTextColor(p.fill()),
@@ -80,7 +83,7 @@ object BarAnnotation {
 
     private fun linearAnnotations(
         root: SvgRoot,
-        rectanglesHelper: RectanglesHelper,
+        polygons: List<PolygonData>,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
@@ -91,12 +94,15 @@ object BarAnnotation {
         val isHorizontallyOriented = ctx.flipped
 
         val rectangles = mutableListOf<Triple<DataPointAesthetics, DoubleRectangle, Boolean>>()
-        rectanglesHelper.iterateRectangleGeometry { p, rect ->
-            val clientRect = rectanglesHelper.toClient(rect, p)
-                ?.intersect(viewPort)   // use the visible part of bar to place annotation on it
-                ?: return@iterateRectangleGeometry
 
-            val isUpsideDown = with(rect) { dimension.y < 0 || top < 0 } // bar with base at the top
+        polygons.forEach { polygonData ->
+            val (p, rect) = recoverRectangleFromPolygonData(polygonData) ?: return@forEach
+
+            val clientRect = rect
+                .intersect(viewPort)   // use the visible part of bar to place annotation on it
+                ?: return@forEach
+
+            val isUpsideDown = with(p) { y()!! < 0 } // bar with base at the top
             rectangles.add(Triple(p, clientRect, isUpsideDown))
         }
 
@@ -291,5 +297,24 @@ object BarAnnotation {
         val originX = getCoord(DoubleVector::x, hPlacement)
         val originY = getCoord(DoubleVector::y, vPlacement)
         return DoubleRectangle(originX, originY, textSize.x, textSize.y)
+    }
+
+    private fun recoverRectangleFromPolygonData(polygonData: PolygonData): Pair<DataPointAesthetics, DoubleRectangle>? {
+        val dp = polygonData.rings[0][0].aes
+        val rect = polygonData.rings[0].let { ring ->
+            val coords = ring.map(PathPoint::coord)
+            if (coords.isEmpty() || coords.size != 5) return null
+            val minX = coords.minOf { it.x }
+            val minY = coords.minOf { it.y }
+            val maxX = coords.maxOf { it.x }
+            val maxY = coords.maxOf { it.y }
+
+            DoubleRectangle(
+                origin = DoubleVector(minX, minY),
+                dimension = DoubleVector(maxX - minX, maxY - minY)
+            )
+        }
+
+        return dp to rect
     }
 }

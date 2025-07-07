@@ -216,6 +216,7 @@ val uploadMavenArtifacts by tasks.registering {
 
 if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) {
     extra.set("imagemagick_lib_path", rootDir.path + "/platf-imagick/ImageMagick/install")
+    val pythonBinDir = extra.get("python.bin_path") as String
 
     val initImageMagick by tasks.registering {
         group = letsPlotTaskGroup
@@ -223,7 +224,7 @@ if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) 
             exec {
                 this.workingDir = File(rootDir.path + "/platf-imagick")
                 commandLine(
-                    "python",
+                    "$pythonBinDir/python",
                     "init_imagemagick.py"
                 )
             }

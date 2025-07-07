@@ -203,7 +203,6 @@ object Option {
         const val MARGINAL = "marginal"
 
         const val ANNOTATIONS = "labels"
-        const val ANNOTATION_SIZE = "annotation_size"
 
         const val COLOR_BY = "color_by"
         const val FILL_BY = "fill_by"
@@ -241,6 +240,12 @@ object Option {
             const val FIELD = "field"
             const val FORMAT = "format"
         }
+    }
+
+    object AnnotationSpec {
+        const val LINES = "lines"
+        const val FORMATS = "formats"
+        const val ANNOTATION_SIZE = "annotation_size"
     }
 
     object Geom {

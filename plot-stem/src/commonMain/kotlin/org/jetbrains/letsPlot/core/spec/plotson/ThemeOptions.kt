@@ -18,6 +18,7 @@ class ThemeOptions : Options() {
     var axisTicksX: Element? by map(ThemeOption.AXIS_TICKS_X)
     var axisTicksY: Element? by map(ThemeOption.AXIS_TICKS_Y)
     var axisTooltip: Element? by map(ThemeOption.AXIS_TOOLTIP)
+    var labelText: Element? by map(ThemeOption.ANNOTATION_TEXT)
 
     enum class ThemeName(val value: String) {
         GREY(ThemeOption.Name.R_GREY),
@@ -34,6 +35,12 @@ class ThemeOptions : Options() {
         var fill: Color? by map(ThemeOption.Elem.FILL)
         var color: Color? by map(ThemeOption.Elem.COLOR)
         var size: Double? by map(ThemeOption.Elem.SIZE)
+
+        var family: String? by map(ThemeOption.Elem.FONT_FAMILY)
+        var face: String? by map(ThemeOption.Elem.FONT_FACE)
+        var angle: Double? by map(ThemeOption.Elem.ANGLE)
+        var hjust: Double? by map(ThemeOption.Elem.HJUST)
+        var vjust: Double? by map(ThemeOption.Elem.VJUST)
 
         init {
             blank = false

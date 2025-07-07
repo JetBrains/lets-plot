@@ -19,24 +19,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
 
                 api(project(":commons"))
+                api(project(":canvas"))
                 api(project(":datamodel"))
                 api(project(":plot-base"))
                 api(project(":plot-builder"))
                 api(project(":plot-stem"))
-            }
-        }
-
-        named("jvmMain") {
-            dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-            }
-        }
-
-        named("jsMain") {
-            dependencies {
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

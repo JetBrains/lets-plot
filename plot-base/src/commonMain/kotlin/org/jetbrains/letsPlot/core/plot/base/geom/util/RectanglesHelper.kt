@@ -77,17 +77,6 @@ class RectanglesHelper(
         return result
     }
 
-    fun iterateRectangleGeometry(
-        iterator: (DataPointAesthetics, DoubleRectangle) -> Unit
-    ) {
-        for (index in 0 until myAesthetics.dataPointCount()) {
-            val p = myAesthetics.dataPointAt(index)
-            geometryFactory(p)?.let { rect ->
-                iterator(p, rect)
-            }
-        }
-    }
-
     fun createSvgRectHelper(): SvgRectHelper {
         return SvgRectHelper()
     }
