@@ -220,7 +220,7 @@ fun getCurrentDir(): String {
 fun writeToFile(path: String, data: ByteArray) {
     memScoped {
         // O_WRONLY: write only, O_CREAT: create if not exists, O_TRUNC: truncate if exists
-        val fd = open(path, O_WRONLY or O_CREAT or O_TRUNC, 0b110_100_100) // 0644 in octal
+        val fd = open(path, O_WRONLY or O_CREAT or O_TRUNC or O_BINARY, 0b110_100_100) // 0644 in octal
 
         if (fd == -1) {
             perror("open")
@@ -245,7 +245,7 @@ fun writeToFile(path: String, data: ByteArray) {
 fun readFromFile(path: String): ByteArray {
     memScoped {
         // O_RDONLY: read only
-        val fd = open(path, O_RDONLY)
+        val fd = open(path, O_RDONLY or O_BINARY)
 
         if (fd == -1) {
             perror("open")
@@ -253,7 +253,8 @@ fun readFromFile(path: String): ByteArray {
         }
 
         val fileSize = lseek(fd, 0, SEEK_END)
-        if (fileSize == -1L) {
+        @Suppress("RemoveRedundantCallsOfConversionMethods") // On Windows `fileSize` is Int
+        if (fileSize.toLong() == -1L) {
             perror("lseek")
             close(fd)
             throw Error("Failed to get file size: $path")
@@ -269,7 +270,7 @@ fun readFromFile(path: String): ByteArray {
         if (readBytes != fileSize) {
             perror("read")
             close(fd)
-            throw Error("Failed to read all data from file: $path")
+            throw Error("Failed to read all data from file: $path, $readBytes")
         }
 
         close(fd)
