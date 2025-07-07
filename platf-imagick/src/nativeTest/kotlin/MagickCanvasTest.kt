@@ -20,7 +20,7 @@ class MagickCanvasTest {
         ctx.fillText("World!", 0.0, 48.0)
 
         // No assertion needed; the test passes if no exception is thrown.
-        assertCanvas("text_unknown_font.bmp", canvas)
+        assertCanvas("text_unknown_font.png", canvas)
     }
 
 }

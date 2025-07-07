@@ -8,6 +8,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.PngBitmapIO
 import kotlin.test.Test
 
 /*
@@ -21,7 +22,7 @@ class SvgTest {
         expectedDir = getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
         outDir = getCurrentDir() + "/build/reports/",
         canvasProvider = MagickCanvasProvider,
-        bitmapIO = MagickBitmapIO,
+        bitmapIO = PngBitmapIO,
         tol = 1
     )
 
@@ -29,7 +30,7 @@ class SvgTest {
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
 
-        assertSvg("svg_reference_test.bmp", svg)
+        assertSvg("svg_reference_test.png", svg)
     }
 
 

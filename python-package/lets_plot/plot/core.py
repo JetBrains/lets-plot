@@ -928,7 +928,6 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit
 
         with Image.open(io.BytesIO(png)) as img:
             if img.mode == 'RGBA':
-                print("Image has alpha channel, converting to RGB for PDF.")
                 img = img.convert('RGB')
 
             dpi = dpi if dpi is not None else 96  # Default DPI if not specified

@@ -27,9 +27,9 @@ class ImageComparer(
 
 
     fun assertBitmapEquals(expectedFileName: String, actualBitmap: Bitmap) {
-        val testName = expectedFileName.removeSuffix(".bmp") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
-        val expectedFilePath = "$expectedDir$testName.bmp"
-        val actualFilePath = "$outDir$testName.bmp"
+        val testName = expectedFileName.removeSuffix(".png") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
+        val expectedFilePath = "$expectedDir$testName.png"
+        val actualFilePath = "$outDir$testName.png"
 
         val expectedBitmap = runCatching { bitmapIO.read(expectedFilePath) }.getOrElse {
             println("expectedWand failure - $expectedFilePath")
@@ -45,7 +45,7 @@ class ImageComparer(
 
         val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)
         if (diffBitmap != null) {
-            val diffFilePath = outDir + "${testName}_diff.bmp"
+            val diffFilePath = outDir + "${testName}_diff.png"
             val visualDiffBitmap = composeVisualDiff(expectedBitmap, actualBitmap, diffBitmap)
 
             bitmapIO.write(visualDiffBitmap, diffFilePath)

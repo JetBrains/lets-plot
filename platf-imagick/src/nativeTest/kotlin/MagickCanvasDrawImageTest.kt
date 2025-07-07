@@ -16,7 +16,7 @@ class MagickCanvasDrawImageTest {
         ctx.fillStyle = Color.BLACK
         ctx.fillRect(12.5, 12.5, 25.0, 25.0)
 
-        assertCanvas("scaled_canvas.bmp", canvas)
+        assertCanvas("scaled_canvas.png", canvas)
     }
 
     @Test
@@ -30,7 +30,7 @@ class MagickCanvasDrawImageTest {
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot)
 
-        assertCanvas("draw_image_simple.bmp", canvas)
+        assertCanvas("draw_image_simple.png", canvas)
     }
 
     @Test
@@ -66,7 +66,7 @@ class MagickCanvasDrawImageTest {
         ctx.fillRect(0, 0, 20, 20)
         ctx.restore()
 
-        assertCanvas("draw_image_transformed.bmp", canvas)
+        assertCanvas("draw_image_transformed.png", canvas)
     }
 
     @Test
@@ -100,7 +100,7 @@ class MagickCanvasDrawImageTest {
         ctx.lineTo(100, 50)
         ctx.stroke()
 
-        assertCanvas("draw_image_overlay.bmp", canvas)
+        assertCanvas("draw_image_overlay.png", canvas)
     }
 
     @Test
@@ -129,7 +129,7 @@ class MagickCanvasDrawImageTest {
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot, x = 5.0, y = 20.0, dw = 90.0, dh = 60.0)
 
-        assertCanvas("draw_image_pixelated.bmp", canvas)
+        assertCanvas("draw_image_pixelated.png", canvas)
     }
 
     @Test
@@ -160,6 +160,6 @@ class MagickCanvasDrawImageTest {
 //        val (canvas, ctx) = createCanvas()
 //        ctx.drawImage(snapshot)
 //
-//        imageComparer.assertImageEquals("draw_image_image_data_url.bmp", canvas.img)
+//        imageComparer.assertImageEquals("draw_image_image_data_url.png", canvas.img)
     }
 }

@@ -43,7 +43,7 @@ class ContextPath2dTest {
         ctx.closePath()
         ctx.stroke()
 
-        assertCanvas("sheared_ellipse.bmp", canvas)
+        assertCanvas("sheared_ellipse.png", canvas)
     }
 
     @Test
@@ -70,7 +70,7 @@ class ContextPath2dTest {
         ctx.closePath()
         ctx.stroke()
 
-        assertCanvas("sheared_circular_arc.bmp", canvas)
+        assertCanvas("sheared_circular_arc.png", canvas)
     }
 
     @Test
@@ -97,7 +97,7 @@ class ContextPath2dTest {
 
         ctx.restore()
 
-        assertCanvas("nested_translates.bmp", canvas)
+        assertCanvas("nested_translates.png", canvas)
     }
 
     @Test
@@ -124,7 +124,7 @@ class ContextPath2dTest {
         ctx.fill()
         ctx.stroke()
 
-        assertCanvas("multi_path_fill.bmp", canvas)
+        assertCanvas("multi_path_fill.png", canvas)
     }
 
     @Test
@@ -148,7 +148,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "multi_path_stroke.bmp",
+            expectedFileName = "multi_path_stroke.png",
             canvas = canvas,
         )
     }
@@ -175,7 +175,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "zigzag_stroke.bmp",
+            expectedFileName = "zigzag_stroke.png",
             canvas = canvas,
         )
     }
@@ -204,7 +204,7 @@ class ContextPath2dTest {
         ctx.fill()
 
         assertCanvas(
-            expectedFileName = "zigzag_fill.bmp",
+            expectedFileName = "zigzag_fill.png",
             canvas = canvas,
         )
     }
@@ -220,7 +220,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "circle_stroke.bmp",
+            expectedFileName = "circle_stroke.png",
             canvas = canvas
         )
     }
@@ -238,7 +238,7 @@ class ContextPath2dTest {
         ctx.fill()
 
         assertCanvas(
-            expectedFileName = "circle_fill.bmp",
+            expectedFileName = "circle_fill.png",
             canvas = canvas
         )
     }
@@ -258,7 +258,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "circle_fill_stroke.bmp",
+            expectedFileName = "circle_fill_stroke.png",
             canvas = canvas
         )
     }
@@ -284,7 +284,7 @@ class ContextPath2dTest {
         ctx.fill()
 
         assertCanvas(
-            expectedFileName = "ellipse.bmp",
+            expectedFileName = "ellipse.png",
             canvas = canvas
         )
     }
@@ -309,7 +309,7 @@ class ContextPath2dTest {
         ctx.fill()
 
         assertCanvas(
-            expectedFileName = "rotated_ellipse.bmp",
+            expectedFileName = "rotated_ellipse.png",
             canvas = canvas
         )
     }
@@ -332,7 +332,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "path_transform_on_build.bmp",
+            expectedFileName = "path_transform_on_build.png",
             canvas = canvas
         )
     }
@@ -352,7 +352,7 @@ class ContextPath2dTest {
         ctx.fill()
 
         assertCanvas(
-            expectedFileName = "arc_transform_after_restore.bmp",
+            expectedFileName = "arc_transform_after_restore.png",
             canvas = canvas
         )
     }
@@ -379,7 +379,7 @@ class ContextPath2dTest {
 
         ctx.fillText("Test", w * 0.5, h * 0.5)
 
-        assertCanvas("text_skew_transform.bmp", canvas)
+        assertCanvas("text_skew_transform.png", canvas)
     }
 
 
@@ -396,7 +396,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "simple_bezier_curve.bmp",
+            expectedFileName = "simple_bezier_curve.png",
             canvas = canvas
         )
     }
@@ -416,7 +416,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "bezier_curve_inside_path.bmp",
+            expectedFileName = "bezier_curve_inside_path.png",
             canvas = canvas
         )
     }
@@ -446,7 +446,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "ellipse_inside_path.bmp",
+            expectedFileName = "ellipse_inside_path.png",
             canvas = canvas
         )
     }
@@ -475,7 +475,7 @@ class ContextPath2dTest {
         ctx.stroke()
 
         assertCanvas(
-            expectedFileName = "rounded_rect_with_curves.bmp",
+            expectedFileName = "rounded_rect_with_curves.png",
             canvas = canvas
         )
     }
@@ -507,7 +507,7 @@ class ContextPath2dTest {
         }
 
         assertCanvas(
-            expectedFileName = "perf_5_000_points.bmp",
+            expectedFileName = "perf_5_000_points.png",
             canvas = canvas
         )
     }
