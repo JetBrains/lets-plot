@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
@@ -36,6 +37,12 @@ private constructor(
 
     internal data class AwtSnapshot(val image: BufferedImage) : Canvas.Snapshot {
         override val size: Vector = Vector(image.width, image.height)
+        override val bitmap: Bitmap
+            get() {
+                val argbArray = IntArray(image.width * image.height)
+                image.getRGB(0, 0, image.width, image.height, argbArray, 0, image.width)
+                return Bitmap(image.width, image.height, argbArray)
+            }
 
         override fun copy(): AwtSnapshot {
             val b = BufferedImage(image.width, image.height, image.type)

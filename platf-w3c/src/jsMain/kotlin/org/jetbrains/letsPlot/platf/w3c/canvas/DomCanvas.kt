@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.platf.w3c.canvas
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
@@ -35,6 +36,10 @@ internal class DomCanvas private constructor(
         private val pixelRatio: Double
     ) : Canvas.Snapshot {
         override val size: Vector = Vector((size.x * pixelRatio).roundToInt(), (size.y * pixelRatio).roundToInt())
+        override val bitmap: Bitmap
+            get() {
+                TODO("DomSnapshot.toBitmap() is not implemented yet")
+            }
 
         override fun copy(): Canvas.Snapshot {
             val canvasCopy = createNativeCanvas(size, pixelRatio)

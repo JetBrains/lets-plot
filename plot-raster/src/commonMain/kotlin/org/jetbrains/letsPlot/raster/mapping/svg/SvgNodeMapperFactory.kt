@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -22,10 +23,7 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
     }
 
     private val rgbEncoder: RGBEncoder = object : RGBEncoder {
-        override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
-            val dataImage = Png.encodeDataImage(width, height, argbValues)
-            return dataImage
-        }
+        override fun toDataUrl(bitmap: Bitmap) = Png.encodeDataImage(bitmap)
     }
 
 

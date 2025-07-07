@@ -32,6 +32,8 @@ object Option {
         const val H_LINE = "hline"
         const val H_LINE_ON_TOP = "hline_ontop"
         const val CONNECTOR = "connector"
+        const val RELATIVE_LABELS = "relative_labels"
+        const val ABSOLUTE_LABELS = "absolute_labels"
         const val LABEL = "label"
         const val LABEL_FORMAT = "label_format"
         const val BACKGROUND_LAYERS = "background_layers"

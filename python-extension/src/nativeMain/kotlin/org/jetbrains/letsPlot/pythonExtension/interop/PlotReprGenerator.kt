@@ -114,12 +114,12 @@ object PlotReprGenerator {
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun saveImage(
+    fun exportPng(
         plotSpecDict: CPointer<PyObject>?,
-        filePath: CPointer<ByteVar>,
+        width: Float,
+        height: Float,
+        unit: CPointer<ByteVar>,
         dpi: Int,
-        width: Int,
-        height: Int,
         scale: Float
     ): CPointer<PyObject>? {
         println("WARNING: set enable_magick_canvas=true in local.properties to enable native raster export")

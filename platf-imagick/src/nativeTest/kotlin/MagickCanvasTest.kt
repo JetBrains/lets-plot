@@ -1,8 +1,4 @@
-import ImageMagick.TypeInfo
-import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
-import platform.posix.size_tVar
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -13,7 +9,7 @@ import kotlin.test.Test
 
 @Ignore
 class MagickCanvasTest {
-    private val imageComparer = ImageComparer()
+    private val imageComparer = imageComparer()
 
     @Test
     fun unknownFont() {
@@ -24,7 +20,7 @@ class MagickCanvasTest {
         ctx.fillText("World!", 0.0, 48.0)
 
         // No assertion needed; the test passes if no exception is thrown.
-        imageComparer.assertImageEquals("text_unknown_font.bmp", canvas.img)
+        assertCanvas("text_unknown_font.png", canvas)
     }
 
 }

@@ -5,10 +5,6 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.convert
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.refTo
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.event.MouseEvent
@@ -72,7 +68,7 @@ class MagickCanvasControl(
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
-        return MagickCanvas.MagickSnapshot.fromPixels(bitmap.rgbaBytes(), size = Vector(bitmap.width, bitmap.height))
+        return MagickSnapshot.fromBitmap(bitmap)
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
@@ -84,12 +80,14 @@ class MagickCanvasControl(
             val data = dataUrl.removePrefix("data:image/png;base64,")
             val pngData = Base64.decode(data)
 
-            val img = loadImageFromPngBytes(pngData)
+            println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${pngData.size}")
+            val png = Png.decode(pngData)
+            val img = MagickUtil.fromBitmap(png)
 
-            return Asyncs.constant(MagickCanvas.MagickSnapshot(img))
+            return Asyncs.constant(MagickSnapshot(img))
         } else {
-            val img = Png.decodeDataImage(dataUrl)
-            return Asyncs.constant(MagickCanvas.MagickSnapshot.fromPixels(img.rgbaBytes(), size = Vector(img.width, img.height)))
+            val bitmap = Png.decodeDataImage(dataUrl)
+            return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
         }
     }
 
@@ -111,41 +109,4 @@ class MagickCanvasControl(
         TODO("Not yet implemented")
     }
 
-
-    fun loadImageFromPngBytes(bytes: ByteArray): CPointer<ImageMagick.MagickWand> {
-        println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${bytes.size}")
-        val png = Png.decode(bytes)
-        val w = png.width
-        val h = png.height
-        val rgba = png.rgbaBytes()
-        val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
-        val backgroundPixel = ImageMagick.NewPixelWand()
-        ImageMagick.PixelSetColor(backgroundPixel, "transparent")
-
-        memScoped {
-            val status = ImageMagick.MagickNewImage(
-                img,
-                w.toULong(),
-                h.toULong(),
-                backgroundPixel
-            )
-            if (status == ImageMagick.MagickFalse) {
-                val err = ImageMagick.MagickGetException(img, null)
-                ImageMagick.DestroyMagickWand(img)
-                throw RuntimeException("Failed to create new image: $err")
-            }
-
-            // Set pixels
-            ImageMagick.MagickImportImagePixels(
-                img, 0, 0, w.convert(), h.convert(),
-                "RGBA",
-                ImageMagick.StorageType.CharPixel,
-                rgba.refTo(0)
-            )
-            ImageMagick.DestroyPixelWand(backgroundPixel)
-
-            return img
-        }
-
-    }
 }

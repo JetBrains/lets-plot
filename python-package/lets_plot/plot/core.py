@@ -9,7 +9,7 @@ from typing import Union
 
 __all__ = ['aes', 'layer']
 
-from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
+from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED, MAGICK_EXPORT
 
 
 def aes(x=None, y=None, **kwargs):
@@ -875,8 +875,73 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
-    str, None]:
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+    if get_global_bool(MAGICK_EXPORT):
+        return _export_with_magick(
+            spec,
+            path,
+            scale if scale is not None else 1.0,
+            export_format,
+            w if w is not None else -1,
+            h if h is not None else -1,
+            unit if unit is not None else '',
+            dpi if dpi is not None else -1
+        )
+    else:
+        return _export_with_cairo(spec, path, scale, export_format, w, h, unit, dpi)
+
+
+def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit, dpi) -> Union[str, None]:
+    import base64
+    from .. import _kbridge
+
+    if isinstance(path, str):
+        file_path = _makedirs(path)
+        file_like_object = None
+    else:
+        file_like_object = path
+        file_path = None
+
+    png_base64 = _kbridge._export_png(spec.as_dict(), float(w), float(h), unit, int(dpi), float(scale))
+    png = base64.b64decode(png_base64)
+
+    if export_format.lower() == 'png':
+        if file_path is not None:
+            with open(file_path, 'wb') as f:
+                f.write(png)
+            return file_path
+        else:
+            file_like_object.write(png)
+            return None
+    elif export_format.lower() == 'pdf':
+        try:
+            from PIL import Image
+        except ImportError:
+            import sys
+            print("\n"
+                  "To export Lets-Plot figure to a PDF file please install pillow library"
+                  "to your Python environment.\n"
+                  "Pillow is free and distributed under the MIT-CMU license.\n"
+                  "For more details visit: https://python-pillow.github.io/\n", file=sys.stderr)
+            return None
+
+
+        with Image.open(io.BytesIO(png)) as img:
+            if img.mode == 'RGBA':
+                img = img.convert('RGB')
+
+            dpi = dpi if dpi is not None else 96  # Default DPI if not specified
+            if file_path is not None:
+                img.save(file_path, "PDF", dpi=(dpi, dpi))
+                return file_path
+            else:
+                img.save(file_like_object, "PDF", dpi=(dpi, dpi))
+                return None
+    else:
+        raise ValueError("Unknown export format: {}".format(export_format))
+
+
+def _export_with_cairo(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
     from .. import _kbridge
 
     input = None
@@ -901,9 +966,6 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
 
         # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
         input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
-    elif export_format.lower() == 'bmp':
-        export_function = _kbridge._save_image
-        input = spec.as_dict()
     else:
         raise ValueError("Unknown export format: {}".format(export_format))
 

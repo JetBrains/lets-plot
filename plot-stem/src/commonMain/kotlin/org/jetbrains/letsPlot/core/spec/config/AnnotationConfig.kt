@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
-import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.AnnotationSpec.ANNOTATION_SIZE
 
 class AnnotationConfig(
     opts: Map<String, Any>,
@@ -22,7 +22,7 @@ class AnnotationConfig(
             AnnotationSpecification(
                 valueSources = valueSources,
                 linePatterns = linePatterns ?: emptyList(),
-                textSize = getDouble(Option.Layer.ANNOTATION_SIZE)
+                textSize = getDouble(ANNOTATION_SIZE)
             )
         }
     }
