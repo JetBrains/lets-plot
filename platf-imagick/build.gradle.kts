@@ -63,7 +63,6 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":canvas"))
-                implementation(project(":platf-native"))
                 implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
             }
         }
@@ -71,13 +70,6 @@ kotlin {
         nativeTest {
             dependencies {
                 implementation(project(":demo-and-test-shared"))
-                //implementation(project(":demo-common-svg"))
-
-                //implementation(project(":datamodel"))
-                //implementation(project(":plot-base"))
-                //implementation(project(":plot-builder"))
-                //implementation(project(":plot-stem"))
-                //implementation(project(":plot-raster"))
             }
         }
     }
