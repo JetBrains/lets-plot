@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import ImageMagick.*
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
@@ -13,12 +12,12 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 
 class MagickSnapshot(
-    img: CPointer<MagickWand>
+    img: CPointer<ImageMagick.MagickWand>
 ) : Disposable, Canvas.Snapshot {
-    val img: CPointer<MagickWand> = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
+    val img: CPointer<ImageMagick.MagickWand> = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
     override val size: Vector = Vector(
-        MagickGetImageWidth(img).toInt(),
-        MagickGetImageHeight(img).toInt()
+        ImageMagick.MagickGetImageWidth(img).toInt(),
+        ImageMagick.MagickGetImageHeight(img).toInt()
     )
     override val bitmap: Bitmap
         get() = toBitmap()
@@ -41,16 +40,16 @@ class MagickSnapshot(
             // Allocate native buffer: 4 bytes per pixel (RGBA)
             val pixelBuffer = allocArray<UByteVar>(numPixels * 4)
 
-            val success = MagickExportImagePixels(
+            val success = ImageMagick.MagickExportImagePixels(
                 img,
                 0, 0,
                 width.convert(), height.convert(),
                 "RGBA",
-                StorageType.CharPixel,
+                ImageMagick.StorageType.CharPixel,
                 pixelBuffer
             )
 
-            if (success == MagickFalse) {
+            if (success == ImageMagick.MagickFalse) {
                 throw RuntimeException("Failed to export image pixels from MagickWand")
             }
 

@@ -30,6 +30,8 @@ import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.math.roundToInt
 
 object PlotReprGenerator {
+    private var magickFontManager: MagickFontManager? = null
+
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
@@ -130,7 +132,8 @@ object PlotReprGenerator {
         height: Float,
         unit: String,
         dpi: Int,
-        scale: Double
+        scale: Double,
+        fontManager: MagickFontManager
     ): Bitmap? {
         var canvasReg: Registration? = null
 
@@ -177,7 +180,7 @@ object PlotReprGenerator {
                 w = (svgCanvasFigure.width * scaleFactor).roundToInt(),
                 h = (svgCanvasFigure.height * scaleFactor).roundToInt(),
                 pixelDensity = scaleFactor,
-                fontManager = MagickFontManager.DEFAULT,
+                fontManager = fontManager,
             )
 
             canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
@@ -205,13 +208,23 @@ object PlotReprGenerator {
         dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
+        // Potential race condition, but not critical - minor resource leak.
+        val fontManager = if (magickFontManager == null) {
+            val fontManager = MagickFontManager()
+            magickFontManager = fontManager
+            fontManager
+        } else {
+            magickFontManager!!
+        }
+
         val bitmap = exportBitmap(
             plotSpec = pyDictToMap(plotSpecDict),
             width = width,
             height = height,
             unit = unit.toKString(),
             dpi = dpi,
-            scale = scale.toDouble()
+            scale = scale.toDouble(),
+            fontManager = fontManager
         ) ?: return Py_BuildValue("s", "Failed to generate image")
         // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
         // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected

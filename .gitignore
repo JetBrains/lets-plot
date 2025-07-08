@@ -12,6 +12,7 @@ build-idea
 #**/out-repo  - no longer used
 .maven-publish-dev-repo
 .ipynb_checkpoints
+platf-imagick/ImageMagick/install/
 
 node_modules/
 

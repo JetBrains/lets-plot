@@ -52,7 +52,6 @@ internal object PlotConfigScaleProviders {
             .distinct()
             .filter { aes -> aes !in scaleProviderBuilderByAes }
             .forEach { aes ->
-                val dataType = dataByVarBinding
                 scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(
                     aes,
                     dataType = dataType(aes),
@@ -61,7 +60,7 @@ internal object PlotConfigScaleProviders {
             }
 
         // All aes used in bindings and x/y aes.
-        // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
+        // Exclude "stat positional" because we don't know which of axis they will use (i.e., orientation="y").
         val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
 
         // Append all the rest scale providers.
