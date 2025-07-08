@@ -30,7 +30,7 @@ import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.math.roundToInt
 
 object PlotReprGenerator {
-    private var magickFontManager: MagickFontManager? = null
+    private val defaultFontManager by lazy { MagickFontManager() }
 
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
         return try {
@@ -208,15 +208,6 @@ object PlotReprGenerator {
         dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
-        // Potential race condition, but not critical - minor resource leak.
-        val fontManager = if (magickFontManager == null) {
-            val fontManager = MagickFontManager()
-            magickFontManager = fontManager
-            fontManager
-        } else {
-            magickFontManager!!
-        }
-
         val bitmap = exportBitmap(
             plotSpec = pyDictToMap(plotSpecDict),
             width = width,
@@ -224,7 +215,7 @@ object PlotReprGenerator {
             unit = unit.toKString(),
             dpi = dpi,
             scale = scale.toDouble(),
-            fontManager = fontManager
+            fontManager = defaultFontManager
         ) ?: return Py_BuildValue("s", "Failed to generate image")
         // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
         // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
