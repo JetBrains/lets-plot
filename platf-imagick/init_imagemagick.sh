@@ -285,16 +285,8 @@ build_library () {
 
 # CHECK INSTALLATION AND SOURCES DIRECTORIES:
 if [[ -d "$INSTALL_PREFIX" && -n $(ls -A "$INSTALL_PREFIX") ]]; then
-  print_warning "${INSTALL_PREFIX} directory exists and is not empty."
-  read -p "If you continue, ${INSTALL_PREFIX} content will be removed.
-  Type 'yes' to confirm: " confirmation
-  if [[ "$confirmation" != "yes" ]]; then
-    printf "\n Operation was cancelled due to user request.\n\n"
-    exit 0
-  else
-    print_message "$INSTALL_PREFIX"
-    rm -rf "$INSTALL_PREFIX"
-  fi
+  print_warning "${INSTALL_PREFIX} directory exists and is not empty.\n ${INSTALL_PREFIX} content will be removed."
+  rm -rf "$INSTALL_PREFIX"
 fi
 
 if [[ -d "$SOURCES_DIR" && -n $(ls -A "$SOURCES_DIR") ]]; then

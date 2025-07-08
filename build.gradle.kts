@@ -221,6 +221,18 @@ if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) 
         ?: defaultImageMagickLibPath
 
     extra.set("imagemagick_lib_path", imageMagickLibPath)
+    val initImageMagick by tasks.registering {
+        group = letsPlotTaskGroup
+        doLast {
+            exec {
+                this.workingDir = File(rootDir.path + "/platf-imagick")
+                commandLine(
+                    "./init_imagemagick.sh",
+                    imageMagickLibPath
+                )
+            }
+        }
+    }
 }
 
 // Generating JavaDoc task for each publication task.
