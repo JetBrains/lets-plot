@@ -6,6 +6,7 @@ import org.jetbrains.letsPlot.commons.intern.io.Native
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
@@ -205,16 +206,17 @@ fun drawAffine(
     }
 }
 
-fun imageComparer(): ImageComparer {
+val serifFontPath = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/NotoSerif-Regular.ttf"
+fun embeddedFontsManager() = MagickFontManager().apply {
+    registerFont(Font(fontFamily = "serif"), serifFontPath)
+}
+
+fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
         expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = Native.getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider(MagickFontManager()),
+        canvasProvider = MagickCanvasProvider(fontManager),
         bitmapIO = NativeBitmapIO,
         tol = 1
     )
-}
-
-fun assertCanvas(expectedFileName: String, canvas: MagickCanvas) {
-    imageComparer().assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
 }

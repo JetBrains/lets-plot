@@ -11,7 +11,7 @@ import kotlin.test.Test
  */
 
 
-class ContextPath2dTest {
+class CanvasPath2dTest : CanvasTestBase() {
     private val w = 100.0
     private val h = 100.0
 
@@ -362,7 +362,7 @@ class ContextPath2dTest {
 
         ctx.fillStyle = strokeColor
         ctx.strokeStyle = strokeColor
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 30.0))
+        ctx.setFont(Font(fontFamily = "serif", fontSize = 30.0))
 
         ctx.transform(sx = 1.0, ry = 0.0, rx = -0.33, sy = 1.0, tx = 0.0, ty = 0.0)
 
@@ -510,5 +510,4 @@ class ContextPath2dTest {
             canvas = canvas
         )
     }
-
 }

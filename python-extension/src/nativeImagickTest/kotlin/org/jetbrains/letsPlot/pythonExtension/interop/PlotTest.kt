@@ -15,8 +15,10 @@ import kotlin.test.Test
  */
 
 class PlotTest {
-    private val embeddedFontsManager = embeddedFontsManager()
-    private val imageComparer = createImageComparer(embeddedFontsManager)
+    companion object {
+        private val embeddedFontsManager by lazy { embeddedFontsManager() }
+        private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
+    }
 
     @Test
     fun barPlot() {

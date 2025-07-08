@@ -11,12 +11,12 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-class MagickWandClippingPlayground {
+class WandClippingPlayground {
     private lateinit var img: CPointer<MagickWand>
     private lateinit var wand: CPointer<DrawingWand>
     private var outFile: String? = null
         set(value) {
-            field = value?.let { "build/test-results/$it" }
+            field = value?.let { "build/reports/$it" }
         }
 
     private var saveFile = false
@@ -50,7 +50,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipRestore() {
-        outFile = "magickwand_clip_restore.png"
+        outFile = "magickwand_clip_restore.bmp"
 
         val clipPathId = "clip_42"
 
@@ -90,7 +90,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipSimple() {
-        outFile = "magickwand_clip_simple.png"
+        outFile = "magickwand_clip_simple.bmp"
         val clipPathId = "clip_42"
 
         run {
@@ -114,7 +114,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipText() {
-        outFile = "magickwand_clip_text.png"
+        outFile = "magickwand_clip_text.bmp"
 
         val clipPathId = "clip_42"
 
@@ -125,7 +125,7 @@ class MagickWandClippingPlayground {
         ImageMagick.DrawSetClipPath(wand, clipPathId)
 
         ImageMagick.DrawSetFontSize(wand, 50.0)
-        ImageMagick.DrawSetFontFamily(wand, "Times New Roman")
+        ImageMagick.DrawSetFont(wand, serifFontPath)
         ImageMagick.DrawSetFillColor(wand, black)
 
         drawAnnotation(wand, 0.0, 47.0, "Test")
@@ -136,7 +136,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipTextBeforeTransform() {
-        outFile = "magickwand_clip_text_before_transform.png"
+        outFile = "magickwand_clip_text_before_transform.bmp"
 
         val clipPathId = "clip_42"
 
@@ -154,7 +154,7 @@ class MagickWandClippingPlayground {
         ImageMagick.DrawSetStrokeColor(wand, none)
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawSetFontSize(wand, 50.0)
-        ImageMagick.DrawSetFontFamily(wand, "Times New Roman")
+        ImageMagick.DrawSetFont(wand, serifFontPath)
         drawAnnotation(wand, 0.0, 47.0, "Test")
 
         ImageMagick.MagickDrawImage(img, wand)
@@ -163,7 +163,7 @@ class MagickWandClippingPlayground {
 
     @Test
     fun clipTextAfterTransform() {
-        outFile = "magickwand_clip_text_after_transform.png"
+        outFile = "magickwand_clip_text_after_transform.bmp"
 
         val clipPathId = "clip_42"
 
@@ -182,7 +182,7 @@ class MagickWandClippingPlayground {
         ImageMagick.DrawSetStrokeColor(wand, none)
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawSetFontSize(wand, 50.0)
-        ImageMagick.DrawSetFontFamily(wand, "Times New Roman")
+        ImageMagick.DrawSetFont(wand, serifFontPath)
         drawAnnotation(wand, 0.0, 47.0, "Test")
 
         ImageMagick.MagickDrawImage(img, wand)
