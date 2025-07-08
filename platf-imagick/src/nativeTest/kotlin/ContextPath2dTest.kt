@@ -12,7 +12,6 @@ import kotlin.test.Test
 
 
 class ContextPath2dTest {
-    private val imageComparer = imageComparer()
     private val w = 100.0
     private val h = 100.0
 

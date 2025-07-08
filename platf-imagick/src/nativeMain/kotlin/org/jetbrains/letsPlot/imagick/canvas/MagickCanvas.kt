@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import kotlinx.cinterop.*
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -17,7 +18,7 @@ class MagickCanvas(
     private val fontManager: MagickFontManager,
 ) : Canvas {
     // TODO: replace usage in tests with Snapshot
-    val img: CPointer<ImageMagick.MagickWand>
+    private val img: CPointer<ImageMagick.MagickWand>
         get() {
             val wand = (context2d as MagickContext2d).wand
 
@@ -34,13 +35,15 @@ class MagickCanvas(
 
 
     override fun takeSnapshot(): Canvas.Snapshot {
-        return MagickSnapshot(img)
-    }
+        val wand = (context2d as MagickContext2d).wand
 
-    fun saveBmp(filename: String) {
-        if (ImageMagick.MagickWriteImage(img, filename) == ImageMagick.MagickFalse) {
-            throw RuntimeException("Failed to write image")
+        if (false) {
+            val v = ImageMagick.DrawGetVectorGraphics(wand)
+            println(v!!.toKString())
         }
+
+        ImageMagick.MagickDrawImage(_img, wand)
+        return MagickSnapshot(_img)
     }
 
     companion object {

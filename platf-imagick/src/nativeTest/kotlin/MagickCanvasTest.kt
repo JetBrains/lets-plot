@@ -9,8 +9,6 @@ import kotlin.test.Test
 
 @Ignore
 class MagickCanvasTest {
-    private val imageComparer = imageComparer()
-
     @Test
     fun unknownFont() {
         val (canvas, ctx) = createCanvas()
@@ -22,5 +20,4 @@ class MagickCanvasTest {
         // No assertion needed; the test passes if no exception is thrown.
         assertCanvas("text_unknown_font.png", canvas)
     }
-
 }

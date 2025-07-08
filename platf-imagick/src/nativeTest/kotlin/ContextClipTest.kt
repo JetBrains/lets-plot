@@ -10,8 +10,6 @@ import kotlin.test.Test
  */
 
 class ContextClipTest {
-    private val imageComparer = imageComparer()
-
     private fun nwRect(ctx: Context2d) {
         ctx.moveTo(0, 0)
         ctx.lineTo(50, 0)

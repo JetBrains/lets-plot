@@ -8,8 +8,6 @@ import kotlin.test.Test
  */
 
 class MagickCanvasDrawImageTest {
-    private val imageComparer = imageComparer()
-
     @Test
     fun scaledCanvas() {
         val (canvas, ctx) = createCanvas(100, 100, pixelDensity = 2.0)

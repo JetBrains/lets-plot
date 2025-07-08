@@ -13,7 +13,8 @@ import org.jetbrains.letsPlot.core.canvas.applyPath
 
 
 internal class Path : Figure() {
-    //var fillRule: PathFillMode? by visualProp(null)
+
+    var fillRule: FillMode? by visualProp(null)
     var pathData: Path2d? by visualProp(null)
 
     override fun render(canvas: Canvas) {
@@ -36,13 +37,15 @@ internal class Path : Figure() {
 
     override val localBounds: DoubleRectangle
         get() {
-            // `paint.getFillPath()` is not available in skiko v. 0.7.63
-//            return (strokePaint?.getFillPath(path) ?: path).bounds
-
             val path = pathData ?: return DoubleRectangle.XYWH(0, 0, 0, 0)
             val strokeWidth = strokePaint?.strokeWidth ?: return path.bounds
 
             return path.bounds.inflate(strokeWidth / 2.0)
         }
+
+    enum class FillMode {
+        WINDING,
+        EVEN_ODD
+    }
 
 }
