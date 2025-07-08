@@ -5,9 +5,16 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
+import demoAndTestShared.ImageComparer
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import platform.posix.*
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.PngBitmapIO
 
 @OptIn(ExperimentalNativeApi::class)
 fun getOSName(): String {
@@ -102,4 +109,36 @@ fun readFromFile(path: String): ByteArray {
     } finally {
         fclose(file)
     }
+}
+
+fun embeddedFontsManager() = MagickFontManager().apply {
+    val fontsDir = getCurrentDir() + "/src/nativeImagickTest/resources/fonts/"
+
+    registerFont(Font(fontFamily = "sans"), "$fontsDir/NotoSans-Regular.ttf")
+    registerFont(Font(fontFamily = "sans", fontWeight = FontWeight.BOLD), "$fontsDir/NotoSans-Bold.ttf")
+    registerFont(Font(fontFamily = "sans", fontStyle = FontStyle.ITALIC), "$fontsDir/NotoSans-Italic.ttf")
+    registerFont(Font(fontFamily = "sans", fontWeight = FontWeight.BOLD, fontStyle = FontStyle.ITALIC), "$fontsDir/NotoSans-BoldItalic.ttf")
+
+    registerFont(Font(fontFamily = "sans-serif"), "$fontsDir/NotoSans-Regular.ttf")
+    registerFont(Font(fontFamily = "sans-serif", fontWeight = FontWeight.BOLD), "$fontsDir/NotoSans-Bold.ttf")
+    registerFont(Font(fontFamily = "sans-serif", fontStyle = FontStyle.ITALIC), "$fontsDir/NotoSans-Italic.ttf")
+    registerFont(Font(fontFamily = "sans-serif", fontWeight = FontWeight.BOLD, fontStyle = FontStyle.ITALIC), "$fontsDir/NotoSans-BoldItalic.ttf")
+
+    registerFont(Font(fontFamily = "serif"), "$fontsDir/NotoSerif-Regular.ttf")
+    registerFont(Font(fontFamily = "serif", fontWeight = FontWeight.BOLD), "$fontsDir/NotoSerif-Bold.ttf")
+    registerFont(Font(fontFamily = "serif", fontWeight = FontWeight.BOLD, fontStyle = FontStyle.ITALIC), "$fontsDir/NotoSerif-BoldItalic.ttf")
+    registerFont(Font(fontFamily = "serif", fontStyle = FontStyle.ITALIC), "$fontsDir/NotoSerif-Italic.ttf")
+
+    registerFont(Font(fontFamily = "monospace", fontWeight = FontWeight.BOLD), "$fontsDir/NotoSansMono-Bold.ttf")
+    registerFont(Font(fontFamily = "monospace"), "$fontsDir/NotoSansMono-Regular.ttf")
+}
+
+fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
+    return ImageComparer(
+        expectedDir = getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
+        outDir = getCurrentDir() + "/build/reports/",
+        canvasProvider = MagickCanvasProvider(fontManager),
+        bitmapIO = PngBitmapIO,
+        tol = 1
+    )
 }

@@ -5,10 +5,7 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
-import demoAndTestShared.ImageComparer
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
-import kotlin.org.jetbrains.letsPlot.pythonExtension.interop.PngBitmapIO
 import kotlin.test.Test
 
 
@@ -18,14 +15,8 @@ import kotlin.test.Test
  */
 
 class PlotTest {
-    private val imageComparer = ImageComparer(
-        suffix = getOSName(),
-        expectedDir = getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
-        outDir = getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider,
-        bitmapIO = PngBitmapIO,
-        tol = 1
-    )
+    private val embeddedFontsManager = embeddedFontsManager()
+    private val imageComparer = createImageComparer(embeddedFontsManager)
 
     @Test
     fun barPlot() {
@@ -364,8 +355,16 @@ class PlotTest {
         dpi: Int = -1,
         scale: Number = 1.0
     ) {
-        val bitmap = PlotReprGenerator.exportBitmap(plotSpec, width.toFloat(), height.toFloat(), unit=unit, dpi=dpi, scale=scale.toDouble())
-            ?: error("Failed to export bitmap from plot spec")
+        val bitmap = PlotReprGenerator.exportBitmap(
+            plotSpec = plotSpec,
+            width = width.toFloat(),
+            height = height.toFloat(),
+            unit=unit,
+            dpi=dpi,
+            scale=scale.toDouble(),
+            fontManager = embeddedFontsManager
+        ) ?: error("Failed to export bitmap from plot spec")
+
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }
 }

@@ -114,7 +114,7 @@ class MagickContext2d(
     override fun setFont(f: Font) {
         stateDelegate.setFont(f)
 
-        val resolved = fontManager.resolveFont(f.fontFamily)
+        val resolved = fontManager.resolveFont(f)
         if (resolved.fontFamily != null) {
             ImageMagick.DrawSetFontFamily(wand, resolved.fontFamily)
         } else if (resolved.fontFilePath != null) {

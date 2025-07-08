@@ -14,9 +14,11 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasProvider
 
-object MagickCanvasProvider : CanvasProvider {
+class MagickCanvasProvider(
+    private val magickFontManager: MagickFontManager,
+) : CanvasProvider {
     override fun createCanvas(size: Vector): Canvas {
-        return MagickCanvas.create(size.x.toInt(), size.y.toInt(), 1.0, MagickFontManager.DEFAULT)
+        return MagickCanvas.create(size.x.toInt(), size.y.toInt(), 1.0, magickFontManager)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {

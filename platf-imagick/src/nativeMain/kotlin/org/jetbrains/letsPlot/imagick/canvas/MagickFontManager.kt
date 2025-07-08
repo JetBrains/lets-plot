@@ -8,17 +8,14 @@
 package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import platform.posix.size_t
 import platform.posix.size_tVar
 import kotlin.experimental.ExperimentalNativeApi
 
-class MagickFontManager {
-    companion object {
-        val DEFAULT = MagickFontManager()
-    }
-
+class MagickFontManager constructor() {
     private val fallbackFont: ResolvedFont
     private val winMonospaceFonts = listOf("Consolas", "Courier New", "Lucida Console", "Courier")
     private val winSerifFonts = listOf("Times New Roman", "Georgia", "Cambria", "Serif")
@@ -61,6 +58,7 @@ class MagickFontManager {
     }
 
     private val cache = mutableMapOf<String, ResolvedFont>()
+    private val fonts = mutableMapOf<Font, ResolvedFont>()
 
     init {
         val fonts = findFonts("*")
@@ -90,7 +88,7 @@ class MagickFontManager {
         cache["sans-serif"] = sansFont
         cache["serif"] = serifFont
 
-        log { "Monospace font: '${monospaceFont.repr}" }
+        log { "Monospace font: ${monospaceFont.repr}" }
         log { "Serif font: ${serifFont.repr}" }
         log { "Sans font: ${sansFont.repr}" }
         log { "------------------------\n\n" }
@@ -108,9 +106,26 @@ class MagickFontManager {
         }
     }
 
+    fun registerFont(font: Font, filePath: String) {
+        log { "registerFont('$font', '$filePath')" }
+        fonts[font.copy(fontSize = 0.0)] = ResolvedFont.withFontFilePath(filePath)
+    }
+
+    fun resolveFont(font: Font): ResolvedFont {
+        val f = font.copy(fontSize = 0.0)
+
+        log { "resolveFont('$f')" }
+        val fileFont = fonts[f]
+        if (fileFont != null) {
+            log { "resolveFont('$f') -> ${fileFont.repr} (fontFile cache)" }
+            return fileFont
+        }
+        return resolveFont(font.fontFamily)
+    }
+
     fun resolveFont(fontFamily: String): ResolvedFont {
         cache[fontFamily]?.let {
-            log { "resolveFont('$fontFamily') -> ${it.repr} (cache)" }
+            log { "resolveFont('$fontFamily') -> ${it.repr} (fontFamily cache)" }
             return it
         }
 

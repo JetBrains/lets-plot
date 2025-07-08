@@ -295,7 +295,7 @@ fun imageComparer(): ImageComparer {
     return ImageComparer(
         expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider,
+        canvasProvider = MagickCanvasProvider(MagickFontManager()),
         bitmapIO = PngBitmapIO,
         tol = 1
     )
