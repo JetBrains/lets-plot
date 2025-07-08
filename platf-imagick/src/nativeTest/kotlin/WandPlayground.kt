@@ -12,12 +12,12 @@ import kotlin.test.Test
  */
 
 // This test class is used to demonstrate the usage of the ImageMagick library
-class MagickWandPlayground {
+class WandPlayground {
     private lateinit var img: CPointer<MagickWand>
     private lateinit var wand: CPointer<DrawingWand>
     private var outFile: String? = null
         set(value) {
-            field = value?.let { "build/test-results/$it" }
+            field = value?.let { "build/reports/$it" }
         }
     private var saveFile = false
 
@@ -50,7 +50,7 @@ class MagickWandPlayground {
 
     @Test
     fun simple() {
-        outFile = "magickwand_simple.wand"
+        outFile = "magickwand_simple.bmp"
 
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawRectangle(wand, 10.0, 10.0, 90.0, 90.0)
@@ -60,7 +60,7 @@ class MagickWandPlayground {
 
         // Draw text with a font name
         ImageMagick.DrawSetFillColor(wand, black)
-        ImageMagick.DrawSetFont(wand, "DejaVu-Sans-Bold") // Use font name
+        ImageMagick.DrawSetFont(wand, serifFontPath) // Use font name
         ImageMagick.DrawSetFontSize(wand, 36.0) // Set font size
 
         drawAnnotation(wand, 150.0, 300.0, "Hello, MagicWand!")
@@ -71,7 +71,7 @@ class MagickWandPlayground {
 
     @Test
     fun miterJoinWithOppositeSegments() {
-        outFile = "magickwand_bug_miter_join.png"
+        outFile = "magickwand_bug_miter_join.bmp"
 
         ImageMagick.DrawSetStrokeColor(wand, black)
         ImageMagick.DrawSetStrokeWidth(wand, 20.0)
@@ -88,7 +88,7 @@ class MagickWandPlayground {
 
     @Test
     fun affine_ry() {
-        outFile = "magickwand_bug_affine_ry.png"
+        outFile = "magickwand_bug_affine_ry.bmp"
 
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawRectangle(wand, 30.0, 30.0, 70.0, 70.0)
@@ -104,7 +104,7 @@ class MagickWandPlayground {
 
     @Test
     fun simpleBezierCurve() {
-        outFile = "magickwand_bezier.png"
+        outFile = "magickwand_bezier.bmp"
 
         ImageMagick.DrawSetFillColor(wand, none)
         ImageMagick.DrawSetStrokeColor(wand, black)
@@ -125,7 +125,7 @@ class MagickWandPlayground {
 
     @Test
     fun circleWihCurve() {
-        outFile = "magickwand_circle_with_curve.png"
+        outFile = "magickwand_circle_with_curve.bmp"
 
         val cps = listOf(
             DoubleVector(100.0, 50.0),
@@ -158,7 +158,7 @@ class MagickWandPlayground {
 
     @Test
     fun curve() {
-        outFile = "magickwand_curve.png"
+        outFile = "magickwand_curve.bmp"
 
         val cp0 = DoubleVector(50.0, 0.0)
         val cp1 = DoubleVector(-100.0, 50.0)

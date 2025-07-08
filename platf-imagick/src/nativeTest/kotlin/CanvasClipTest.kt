@@ -9,8 +9,7 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-class ContextClipTest {
-    private val imageComparer = imageComparer()
+class CanvasClipTest : CanvasTestBase() {
 
     private fun nwRect(ctx: Context2d) {
         ctx.moveTo(0, 0)
@@ -166,7 +165,7 @@ class ContextClipTest {
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
 
         ctx.beginPath()
         nwRect(ctx)
@@ -184,7 +183,7 @@ class ContextClipTest {
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
 
         ctx.beginPath()
         nwRect(ctx)
@@ -206,7 +205,7 @@ class ContextClipTest {
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
 
         ctx.beginPath()
         nwRectWithTranslates(ctx)
@@ -228,7 +227,7 @@ class ContextClipTest {
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
 
         ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
 
@@ -250,7 +249,7 @@ class ContextClipTest {
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "Times New Roman", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
 
         ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
 
@@ -264,6 +263,5 @@ class ContextClipTest {
 
         assertCanvas("clip_text_with_translates_after_transform.png", canvas)
     }
-
 
 }

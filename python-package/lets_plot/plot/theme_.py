@@ -32,6 +32,7 @@ def theme(*,
           axis_text=None, axis_text_x=None, axis_text_y=None,
           # ToDo: axis.text.x.top, axis.text.x.bottom
           # ToDo: axis.text.x.left, axis.text.x.right
+          axis_text_spacing=None, axis_text_spacing_x=None, axis_text_spacing_y=None,
           axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
           # ToDo: axis.ticks.x.top, axis.ticks.x.bottom
           # ToDo: axis.ticks.x.left, axis.ticks.x.right
@@ -147,6 +148,8 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify all axes tick label parameters.
         `axis_text_*` inherits from `axis_text` which inherits from `text`.
+    axis_text_spacing, axis_text_spacing_x, axis_text_spacing_y: float
+        Spacing between the axis label text and its tick mark.
     axis_ticks, axis_ticks_x, axis_ticks_y : str or dict
         Tick marks along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.

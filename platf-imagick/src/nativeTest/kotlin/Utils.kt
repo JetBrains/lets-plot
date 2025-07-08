@@ -1,13 +1,15 @@
 import ImageMagick.DrawingWand
 import demoAndTestShared.ImageComparer
+import demoAndTestShared.NativeBitmapIO
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.intern.io.Native
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
-import platform.posix.*
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -204,103 +206,17 @@ fun drawAffine(
     }
 }
 
-fun getCurrentDir(): String {
-    return memScoped {
-        val bufferSize = 4096 * 8
-        val buffer = allocArray<ByteVar>(bufferSize)
-        if (getcwd(buffer, bufferSize.convert()) != null) {
-            buffer.toKString()
-        } else {
-            "." // Default to current directory on error
-        }
-    }
+val serifFontPath = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/NotoSerif-Regular.ttf"
+fun embeddedFontsManager() = MagickFontManager().apply {
+    registerFont(Font(fontFamily = "serif"), serifFontPath)
 }
 
-fun writeToFile(path: String, data: ByteArray) {
-    if (data.isEmpty()) {
-        val file = fopen(path, "wb")
-        if (file == null) {
-            perror("fopen")
-            throw Error("Failed to open file for writing (empty): $path")
-        }
-        fclose(file)
-        return
-    }
-
-    val file: CPointer<FILE>? = fopen(path, "wb")
-    if (file == null) {
-        perror("fopen")
-        throw Error("Failed to open file for writing: $path")
-    }
-    try {
-        val written = data.usePinned { pinned ->
-            // fwrite(ptr, size_of_element, number_of_elements, stream)
-            // It's common to use size 1 and number of elements as the total size.
-            fwrite(pinned.addressOf(0), 1.toULong(), data.size.toULong(), file)
-        }
-        @Suppress("RemoveRedundantCallsOfConversionMethods")
-        if (written.toLong() != data.size.toLong()) {
-            val errorNum = ferror(file)
-            if (errorNum != 0) {
-                println("fwrite error: ferror returned $errorNum")
-            }
-            throw Error("Failed to write all data to file: $path. Wrote $written of ${data.size} bytes.")
-        }
-    } finally {
-        fclose(file)
-    }
-}
-fun readFromFile(path: String): ByteArray {
-    val file: CPointer<FILE>? = fopen(path, "rb")
-    if (file == null) {
-        perror("fopen")
-        throw Error("Failed to open file for reading: $path")
-    }
-    try {
-        fseek(file, 0, SEEK_END)
-        @Suppress("RemoveRedundantCallsOfConversionMethods")
-        val fileSize = ftell(file).toLong()
-        if (fileSize < 0L) { // ftell returns -1 on error
-            perror("ftell")
-            throw Error("Failed to determine file size: $path")
-        }
-        rewind(file)
-        if (fileSize == 0L) {
-            return ByteArray(0)
-        }
-        val buffer = ByteArray(fileSize.toInt())
-        val readBytes = buffer.usePinned { pinned ->
-            // fread(ptr, size_of_element, number_of_elements, stream)
-            fread(pinned.addressOf(0), 1.toULong(), fileSize.toULong(), file)
-        }
-        @Suppress("RemoveRedundantCallsOfConversionMethods") // on Windows readBytes has type Int
-        if (readBytes.toLong() != fileSize) {
-            val errorNum = ferror(file)
-            if (errorNum != 0) {
-                println("fread error: ferror returned $errorNum")
-            }
-            val atEof = feof(file)
-            if (atEof != 0) {
-                println("fread error: End-of-file reached prematurely.")
-            }
-            throw Error("Failed to read all data from file: $path. Read $readBytes of $fileSize bytes.")
-        }
-        return buffer
-    } finally {
-        fclose(file)
-    }
-}
-
-fun imageComparer(): ImageComparer {
+fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
-        expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/",
-        outDir = getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider(MagickFontManager()),
-        bitmapIO = PngBitmapIO,
+        expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
+        outDir = Native.getCurrentDir() + "/build/reports/",
+        canvasProvider = MagickCanvasProvider(fontManager),
+        bitmapIO = NativeBitmapIO,
         tol = 1
     )
-}
-
-fun assertCanvas(expectedFileName: String, canvas: MagickCanvas) {
-    imageComparer().assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
 }

@@ -7,9 +7,7 @@ import kotlin.test.Test
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-class MagickCanvasDrawImageTest {
-    private val imageComparer = imageComparer()
-
+class CanvasDrawImageTest : CanvasTestBase() {
     @Test
     fun scaledCanvas() {
         val (canvas, ctx) = createCanvas(100, 100, pixelDensity = 2.0)

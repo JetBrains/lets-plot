@@ -13,7 +13,10 @@ import kotlin.test.Test
  */
 
 class SvgTest {
-    private val imageComparer = createImageComparer(embeddedFontsManager())
+    companion object {
+        private val embeddedFontsManager by lazy { embeddedFontsManager() }
+        private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
+    }
 
     @Test
     fun referenceTest() {
@@ -23,10 +26,10 @@ class SvgTest {
     }
 
 
-    fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
+    private fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
         val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
-        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = embeddedFontsManager())
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = embeddedFontsManager)
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas

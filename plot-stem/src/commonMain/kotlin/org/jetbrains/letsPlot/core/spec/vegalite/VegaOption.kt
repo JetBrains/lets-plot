@@ -28,6 +28,7 @@ internal object VegaOption {
         const val LOG_SPEC = "logSpec"
         const val REPORT_CONVERTER_SUMMARY = "reportConverterSummary"
         const val DARK_MODE = "darkMode"
+        const val SPEC_AUGMENTATION = "specAugmentation"
     }
 
     object Data {
