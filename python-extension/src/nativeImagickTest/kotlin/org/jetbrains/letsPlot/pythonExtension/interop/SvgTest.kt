@@ -4,7 +4,6 @@ import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
-import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.test.Test
 
@@ -27,7 +26,7 @@ class SvgTest {
     fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
         val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
-        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = MagickFontManager())
+        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = embeddedFontsManager())
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
         val canvas = canvasControl.children.single() as MagickCanvas
