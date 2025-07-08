@@ -64,11 +64,13 @@ if this_system == 'Darwin':
     ]
     if imagemagick_lib_path is not None:
         extra_link += [
+            '-Wl,-rpath,@loader_path/../lib',
             f'-L{imagemagick_lib_path}/lib',
+            '-lMagickWand-7.Q16HDRI',
+            '-lMagickCore-7.Q16HDRI',
             '-lfontconfig',
             '-lfreetype',
-            '-lMagickWand-7.Q8',
-            '-lMagickCore-7.Q8',
+            '-lexpat'
         ]
 
 elif this_system == 'Windows':
@@ -85,14 +87,14 @@ elif this_system == 'Windows':
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
-            '-lMagickWand-7.Q8',
-            '-lMagickCore-7.Q8',
-            '-lz',
+            '-lMagickWand-7.Q16HDRI',
+            '-lMagickCore-7.Q16HDRI',
             '-lfontconfig',
             '-lfreetype',
-            '-lpthread',
+            '-lexpat',
+            '-lurlmon',
             '-lgdi32',
-            '-lurlmon'
+            '-lz'
         ]
 
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
@@ -107,10 +109,11 @@ elif this_system == 'Linux':
     if imagemagick_lib_path is not None:
         extra_link += [
             f'-L{imagemagick_lib_path}/lib',
-            '-lMagickWand-7.Q8',
-            '-lMagickCore-7.Q8',
+            '-lMagickWand-7.Q16HDRI',
+            '-lMagickCore-7.Q16HDRI',
             '-lfontconfig',
             '-lfreetype',
+            '-lexpat'
         ]
 
 else:

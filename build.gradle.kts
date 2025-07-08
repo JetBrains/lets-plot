@@ -215,23 +215,24 @@ val uploadMavenArtifacts by tasks.registering {
 
 
 if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) {
-    extra.set("imagemagick_lib_path", rootDir.path + "/platf-imagick/ImageMagick/install")
-    val pythonBinDir = extra.get("python.bin_path") as String
+    val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/deps"
+    val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
+        ?: System.getenv("IMAGICK_LIB_PATH")
+        ?: defaultImageMagickLibPath
 
+    extra.set("imagemagick_lib_path", imageMagickLibPath)
     val initImageMagick by tasks.registering {
         group = letsPlotTaskGroup
         doLast {
             exec {
                 this.workingDir = File(rootDir.path + "/platf-imagick")
                 commandLine(
-                    "$pythonBinDir/python",
-                    "init_imagemagick.py"
+                    "./init_imagemagick.sh",
+                    imageMagickLibPath
                 )
             }
         }
     }
-
-    logger.info("Run './gradlew initImageMagick' to initialize ImageMagick.")
 }
 
 // Generating JavaDoc task for each publication task.

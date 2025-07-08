@@ -9,7 +9,8 @@ plugins {
     kotlin("multiplatform")
 }
 
-val imagickDir = rootProject.file("platf-imagick/ImageMagick")
+val imageMagickLibPath = rootProject.project.extra["imagemagick_lib_path"].toString()
+val imagickDir = File(imageMagickLibPath)
 
 if (!imagickDir.exists() || !imagickDir.isDirectory) {
     logger.warn("ImageMagick source directory not found at: $imagickDir.\nRun the following task to init:\n./gradlew :initImageMagick")
@@ -35,23 +36,31 @@ kotlin {
                 compilerOpts += listOf("-D_LIB")
             }
             compilerOpts += listOf(
-                "-I${rootProject.project.extra["imagemagick_lib_path"]}/include/ImageMagick-7",
+                "-I${imageMagickLibPath}/include/ImageMagick-7",
             )
         }
     }
 
-    target.binaries.forEach {
-        it.linkerOpts += listOf(
-            "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-            "-L/usr/lib/x86_64-linux-gnu/",
-            "-L/opt/homebrew/opt/fontconfig/lib",
-            "-L/opt/homebrew/opt/freetype/lib",
-            "-lfreetype",
+    target.binaries.all {
+        linkerOpts += listOf(
+            "-L${imageMagickLibPath}/lib",
+            "-lMagickWand-7.Q16HDRI",
+            "-lMagickCore-7.Q16HDRI",
             "-lfontconfig",
-            "-lMagickWand-7.Q8",
-            "-lMagickCore-7.Q8",
+            "-lfreetype",
+            "-lexpat",
             "-lz"
         )
+        if (os.isWindows) {
+            linkerOpts += listOf(
+                "-lurlmon",
+                "-lgdi32"
+            )
+        } else {
+            linkerOpts += listOf(
+                "-Wl,-rpath,${imageMagickLibPath}/lib"
+            )
+        }
     }
 
     sourceSets {
