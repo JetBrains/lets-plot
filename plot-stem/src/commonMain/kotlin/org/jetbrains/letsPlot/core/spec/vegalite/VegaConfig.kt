@@ -6,13 +6,10 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
-import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.getBool
-import org.jetbrains.letsPlot.core.spec.getList
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.toJson
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Data
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.LetsPlotExt
-import org.jetbrains.letsPlot.core.spec.write
 
 object VegaConfig {
     fun isVegaLiteSpec(opts: Map<String, Any>): Boolean {
@@ -31,6 +28,12 @@ object VegaConfig {
 
         val plotOptions = VegaPlotConverter.convert(vegaSpec)
         val plotSpec = plotOptions.toJson()
+
+        vegaSpec.getMap(VegaOption.LETS_PLOT_EXT, LetsPlotExt.SPEC_AUGMENTATION)?.let { aug ->
+            aug.forEach { (key, value) ->
+                plotSpec[key] = value
+            }
+        }
 
         if (vegaSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.LOG_SPEC) == true) {
             plotOptions.data = plotOptions.data?.mapValues { (_, values) -> values.take(5) }

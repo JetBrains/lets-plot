@@ -17,7 +17,7 @@ import org.junit.Test
 class LetsPlotExtTest {
 
     @Test
-    fun `dark mode`() {
+    fun `spec augmentation`() {
         val vegaSpec = parseJson(
             """
                 |{
@@ -29,8 +29,8 @@ class LetsPlotExtTest {
                 |    "y": { "field": "b" }
                 |  },
                 |  "title": "My Chart",
-                |  "letsPlotExt": {
-                |    "darkMode": true
+                |  "letsPlotExt": { 
+                |    "specAugmentation": { "theme": { "flavor": "darcula" } }
                 |  }
                 |}
             """.trimMargin()
@@ -43,6 +43,5 @@ class LetsPlotExtTest {
                 Option.Theme.FLAVOR to ThemeOption.Flavor.DARCULA,
             )
         )
-
     }
 }
