@@ -215,7 +215,7 @@ val uploadMavenArtifacts by tasks.registering {
 
 
 if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) {
-    val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/imagick_deps"
+    val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/deps"
     val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
         ?: System.getenv("IMAGICK_LIB_PATH")
         ?: defaultImageMagickLibPath

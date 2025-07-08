@@ -61,7 +61,7 @@ export WORKING_DIR=$(pwd)
 
 # Prefix path for libraries installation can be set as a script argument.
 if [[ -z "$1" ]]; then
-  export INSTALL_PREFIX="${WORKING_DIR}/imagick_deps"
+  export INSTALL_PREFIX="${WORKING_DIR}/deps"
 else
   export INSTALL_PREFIX="$1"
   PATH_WARNING=1
