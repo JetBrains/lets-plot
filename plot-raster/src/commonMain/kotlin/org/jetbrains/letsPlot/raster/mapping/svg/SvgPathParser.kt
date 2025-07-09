@@ -148,7 +148,7 @@ class SvgPathParser(private val pathData: String) {
             index++
         }
 
-        if (pathData[index] == 'e' || pathData[index] == 'E') {
+        if (index < length && (pathData[index] == 'e' || pathData[index] == 'E')) {
             index++ // skip 'e' or 'E'
             if (index < length && (pathData[index] == '-' || pathData[index] == '+')) {
                 index++ // skip sign after 'e' or 'E'

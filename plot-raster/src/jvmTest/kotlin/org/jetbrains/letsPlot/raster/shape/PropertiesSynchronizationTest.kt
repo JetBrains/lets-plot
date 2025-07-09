@@ -1,11 +1,10 @@
 /*
- * Copyright (c) 2024 JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.skia.shape
+package org.jetbrains.letsPlot.raster.shape
 
-import org.jetbrains.letsPlot.raster.shape.Node
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

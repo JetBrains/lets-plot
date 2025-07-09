@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2023 JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.skia.shape
+package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
@@ -18,10 +18,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
 import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
-import org.jetbrains.letsPlot.raster.shape.Container
-import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.Pane
-import org.jetbrains.letsPlot.raster.shape.breadthFirstTraversal
 
 
 internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
