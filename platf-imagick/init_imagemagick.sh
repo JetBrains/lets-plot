@@ -82,7 +82,7 @@ case $getPlatform in
       print_warning "Your system is Linux. We will run build process inside the Docker container."
       user_id=$(id -u)
       group_id=$(id -g)
-      docker run -it --rm \
+      docker run --rm \
          -e DOCKER_TRUE="1" \
          -e USER_ID=$user_id \
          -e GROUP_ID=$group_id \
