@@ -242,7 +242,16 @@ internal class FigureToAwt(
 
             plotComponent.addMouseWheelListener { e ->
                 executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, AwtEventUtil.translate(e))
+                    val plotEvent = AwtEventUtil.translate(e)
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, plotEvent)
+
+                    // This is a workaround to allow scrolling in JScrollPane.
+                    // Not calling `e.consume()` still blocks scrolling in JScrollPane, even if plotContainer
+                    // does not handle the event (i.e., panning or zooming is disabled).
+                    // See: https://stackoverflow.com/a/35260098
+                    if (!plotEvent.preventDefault) {
+                        plotComponent.parent?.dispatchEvent(e)
+                    }
                 }
             }
 
