@@ -129,4 +129,19 @@ class SvgPathParserTest {
                 Path2d.ClosePath,
             )
     }
+
+    @Test
+    fun `coords in scientific notation`() {
+        val pathData = "M.0 0e1 L2e2 2e+2 L3E-2 3e+2"
+
+        val path = SvgPathParser.parse(pathData)
+
+        assertThat(path)
+            .hasCommands(
+                Path2d.MoveTo(0.0, 0.0),
+                Path2d.LineTo(200.0, 200.0),
+                Path2d.LineTo(0.03, 300.0)
+            )
+    }
+
 }
