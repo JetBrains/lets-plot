@@ -880,7 +880,7 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
         return _export_with_magick(
             spec,
             path,
-            scale if scale is not None else 1.0,
+            scale if scale is not None else 2.0,
             export_format,
             w if w is not None else -1,
             h if h is not None else -1,
