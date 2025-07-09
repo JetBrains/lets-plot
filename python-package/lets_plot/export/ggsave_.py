@@ -68,17 +68,25 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     1. If `w`, `h`, `unit`, and `dpi` are all specified:
 
-       - `scale` is ignored.
-       - The plot's pixel size (default or set by `ggsize()`) is converted to the specified units using the given dpi.
-       - If the aspect ratio of `w` and `h` differs from the plot's pixel aspect ratio:
+       - The plot's pixel size (default or set by `ggsize()`) is ignored.
+       - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
 
-         * The plot maintains its original (pixel) aspect ratio.
-         * It's fitted within the specified `w` x `h` area.
-         * Any extra space is left empty.
+         * The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
 
-    2. If `w`, `h` are not specified:
+   2. If only `dpi` is specified:
+
+       - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display DPI of 96.
+       - The output size is then calculated based on the specified DPI.
+
+         * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+         * Useful for printing - the plot will appear nearly the same size as on screen.
+
+    3. If `w`, `h` are not specified:
 
        - The `scale` parameter is used to determine the output size.
+
+         * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+         * Useful for generating high-resolution images suitable for publication.
 
     Examples
     --------
@@ -99,8 +107,8 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
         from lets_plot import *
         LetsPlot.setup_html()
-        plot = ggplot() + geom_point(x=0, y=0) + ggsize(800, 400)
-        ggsave(plot, 'plot.png', w=8, h=4, unit='in', dpi=300)
+        plot = ggplot() + geom_point(x=0, y=0)
+        ggsave(plot, 'plot.png', w=4, h=3, unit='in', dpi=300, scale=1)
 
     """
 

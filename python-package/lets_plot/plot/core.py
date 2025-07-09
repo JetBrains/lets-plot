@@ -580,9 +580,27 @@ class PlotSpec(FeatureSpec):
 
         Notes
         -----
-        Export to PNG file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
+        1. If `w`, `h`, `unit`, and `dpi` are all specified:
+
+           - The plot's pixel size (default or set by `ggsize()`) is ignored.
+           - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
+
+             * The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
+
+       2. If only `dpi` is specified:
+
+           - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display DPI of 96.
+           - The output size is then calculated based on the specified DPI.
+
+             * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+             * Useful for printing - the plot will appear nearly the same size as on screen.
+
+       3. If `w`, `h` are not specified:
+
+           - The `scale` parameter is used to determine the output size.
+
+             * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+             * Useful for generating high-resolution images suitable for publication.
 
         Examples
         --------
@@ -637,9 +655,27 @@ class PlotSpec(FeatureSpec):
 
         Notes
         -----
-        Export to PDF file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
+        1. If `w`, `h`, `unit`, and `dpi` are all specified:
+
+           - The plot's pixel size (default or set by `ggsize()`) is ignored.
+           - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
+
+             * The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
+
+       2. If only `dpi` is specified:
+
+           - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display DPI of 96.
+           - The output size is then calculated based on the specified DPI.
+
+             * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+             * Useful for printing - the plot will appear nearly the same size as on screen.
+
+       3. If `w`, `h` are not specified:
+
+           - The `scale` parameter is used to determine the output size.
+
+             * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+             * Useful for generating high-resolution images suitable for publication.
 
         Examples
         --------
