@@ -32,6 +32,7 @@ import kotlin.math.roundToInt
 object PlotReprGenerator {
     private val defaultFontManager by lazy { MagickFontManager() }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
@@ -40,10 +41,11 @@ object PlotReprGenerator {
             val html = PlotHtmlHelper.getDynamicDisplayHtmlForRawSpec(plotSpecMap as MutableMap<String, Any>)
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}");
+            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}")
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
@@ -61,10 +63,11 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
-            Py_BuildValue("s", svgStr);
+            Py_BuildValue("s", svgStr)
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateStaticHtmlPage(
         plotSpecDict: CPointer<PyObject>?,
         scriptUrlCStr: CPointer<ByteVar>,
@@ -82,10 +85,11 @@ object PlotReprGenerator {
             )
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}");
+            Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}")
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateStaticConfigureHtml(
         scriptUrlCStr: CPointer<ByteVar>,
     ): CPointer<PyObject>? {
@@ -94,10 +98,11 @@ object PlotReprGenerator {
             val html = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            Py_BuildValue("s", "generateStaticConfigureHtml() - Exception: ${e.message}");
+            Py_BuildValue("s", "generateStaticConfigureHtml() - Exception: ${e.message}")
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateDisplayHtmlForRawSpec(
         plotSpecDict: CPointer<PyObject>,
         sizingOptionsDict: CPointer<PyObject>,
@@ -152,6 +157,7 @@ object PlotReprGenerator {
                     val (logicalWidth, logicalHeight) = when (unit) {
                         "cm" -> (width * 96 / 2.54) to (height * 96 / 2.54)
                         "in" -> (width * 96) to (height * 96)
+                        "mm" -> (width * 96 / 25.4) to (height * 96 / 25.4)
                         "" -> width to height // "px" or any other unit
                         else -> throw IllegalArgumentException("Unsupported unit: $unit")
                     }
@@ -200,6 +206,7 @@ object PlotReprGenerator {
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun exportPng(
         plotSpecDict: CPointer<PyObject>?,
         width: Float,
