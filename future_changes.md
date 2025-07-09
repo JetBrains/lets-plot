@@ -44,6 +44,7 @@
 
 ### Fixed
 
+- AWT: plot prevents wheel events from bubbling up to the parent component
 - Add tooltip for `geom_hline` and `geom_vline` on `geom_livemap` [[#1056](https://github.com/JetBrains/lets-plot/issues/1056)]
 - `geom_boxplot`: unable to draw a y-oriented plot with `stat='identity'` [[#1319](https://github.com/JetBrains/lets-plot/issues/1319)]
 - Can't add layer which uses continuous data to a plot where other layers use discrete input [[#1323](https://github.com/JetBrains/lets-plot/issues/1323)].
