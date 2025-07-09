@@ -112,5 +112,12 @@ internal abstract class Figure : Element() {
             fill()
         }
 
+        internal fun Context2d.fillEvenOdd(paint: Paint) {
+            require(!paint.isStroke) { "Paint must be a fill paint" }
+
+            setFillStyle(paint.color)
+
+            fillEvenOdd()
+        }
     }
 }

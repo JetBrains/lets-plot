@@ -13,8 +13,7 @@ import org.jetbrains.letsPlot.core.canvas.applyPath
 
 
 internal class Path : Figure() {
-
-    var fillRule: FillMode? by visualProp(null)
+    var fillRule: FillRule by visualProp(FillRule.NON_ZERO)
     var pathData: Path2d? by visualProp(null)
 
     override fun render(canvas: Canvas) {
@@ -22,15 +21,20 @@ internal class Path : Figure() {
 
         fillPaint?.let {
             drawPath(path, canvas.context2d)
-            canvas.context2d.fill(it)
+
+            when(fillRule) {
+                FillRule.NON_ZERO -> canvas.context2d.fill(it)
+                FillRule.EVEN_ODD -> canvas.context2d.fillEvenOdd(it)
+            }
         }
+
         strokePaint?.let {
             drawPath(path, canvas.context2d)
             canvas.context2d.stroke(it)
         }
     }
 
-    fun drawPath(path: Path2d, context2d: Context2d) {
+    private fun drawPath(path: Path2d, context2d: Context2d) {
         context2d.beginPath()
         context2d.applyPath(path.getCommands())
     }
@@ -43,9 +47,8 @@ internal class Path : Figure() {
             return path.bounds.inflate(strokeWidth / 2.0)
         }
 
-    enum class FillMode {
-        WINDING,
+    enum class FillRule {
+        NON_ZERO,
         EVEN_ODD
     }
-
 }

@@ -21,8 +21,12 @@ class MagickContext2d(
     private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     val wand = ImageMagick.NewDrawingWand() ?: error { "Failed to create DrawingWand" }
+    private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
 
     init {
+        ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
+        currentFillRule = ImageMagick.FillRule.NonZeroRule
+
         ImageMagick.PixelSetColor(none, "none")
         transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
     }
@@ -149,6 +153,25 @@ class MagickContext2d(
         val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
 
         withFillWand { fillWand ->
+            if (currentFillRule != ImageMagick.FillRule.NonZeroRule) {
+                ImageMagick.DrawSetFillRule(fillWand, ImageMagick.FillRule.NonZeroRule)
+                currentFillRule = ImageMagick.FillRule.NonZeroRule
+            }
+
+            drawPath(fillWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
+        }
+    }
+
+    override fun fillEvenOdd() {
+        // Make ctm identity. null for degenerate case, e.g., scale(0, 0) - skip drawing.
+        val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
+
+        withFillWand { fillWand ->
+            if (currentFillRule != ImageMagick.FillRule.EvenOddRule) {
+                ImageMagick.DrawSetFillRule(fillWand, ImageMagick.FillRule.EvenOddRule)
+                currentFillRule = ImageMagick.FillRule.EvenOddRule
+            }
+
             drawPath(fillWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
         }
     }
