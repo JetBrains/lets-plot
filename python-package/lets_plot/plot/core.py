@@ -913,10 +913,15 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
 
 def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
     if get_global_bool(MAGICK_EXPORT):
+        if w is None and h is None and unit is None and dpi is None:
+            def_scale = 2.0
+        else:
+            def_scale = 1.0
+
         return _export_with_magick(
             spec,
             path,
-            scale if scale is not None else 2.0,
+            scale if scale is not None else def_scale,
             export_format,
             w if w is not None else -1,
             h if h is not None else -1,
