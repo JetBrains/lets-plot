@@ -117,61 +117,61 @@ def theme(*,
 
         Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
-        All line elements.
+        Style settings for all line elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify line parameters.
     rect : str or dict
-        All rectangular elements.
+        Style settings for all rectangular elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_rect()` to specify rectangular element parameters.
     text : str or dict
-        All text elements.
+        Style settings for all text elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify text parameters.
     title : str or dict
-        All title elements: plot, axes, legends.
+        Style settings for all title elements: plot, axes, legends.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify title text parameters, inherited from `text`.
     axis : str or dict
-        All axis elements: lines, ticks, texts, titles.
+        Style settings for all axis elements: lines, ticks, texts, titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify axes parameters.
     axis_ontop, axis_ontop_x, axis_ontop_y : bool, default=True
         Option to place axis (lines, tickmarks and labels) over the data layers.
     axis_title, axis_title_x, axis_title_y : str or dict
-        Labels of axes.
+        Style settings for axis titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify axes label parameters.
+        Set `element_text()` to specify axis title parameters.
         `axis_title_*` inherits from `axis_title` which inherits from `text`.
     axis_text, axis_text_x, axis_text_y : str or dict
-        Tick labels along axes.
+        Style settings for tick labels along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify all axes tick label parameters.
         `axis_text_*` inherits from `axis_text` which inherits from `text`.
     axis_text_spacing, axis_text_spacing_x, axis_text_spacing_y : float
         Spacing between the axis label text and its tick mark.
     axis_ticks, axis_ticks_x, axis_ticks_y : str or dict
-        Tick marks along axes.
+        Style settings for tick marks along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify all tick mark parameters.
         `axis_ticks_*` inherits from `axis_ticks` which inherits from `line`.
     axis_ticks_length, axis_ticks_length_x, axis_ticks_length_y : float
         Length of tick marks in px.
     axis_line, axis_line_x, axis_line_y : str or dict
-        Lines along axes.
+        Style settings for lines along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify line parameters along all axes.
         `axis_line_*` inherits from `axis_line` which inherits from `line`.
     legend_background : str or dict
-        Background of legend.
+        Style settings for background of legend.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify legend background parameters, inherited from `rect`.
     legend_text : str or dict
-        Legend item labels.
+        Style settings for legend item labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify legend item label parameters, inherited from `text`.
     legend_title : str or dict
-        Title of legend.
+        Style settings for legend title.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify legend title parameters, inherited from `title`.
     legend_position : {'none', 'left', 'right', 'bottom', 'top'} or list
@@ -203,7 +203,7 @@ def theme(*,
     legend_spacing_y : float
         Spacing between legends in the vertical direction, inherited from `legend_spacing`.
     legend_key : str or dict
-        Background underneath legend keys.
+        Style settings for legend key background.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify legend key background parameters, inherited from `rect`.
     legend_key_size : float
@@ -225,7 +225,7 @@ def theme(*,
     legend_box_spacing : float
         Spacing between plotting area and legend box.
     legend_ticks : str or dict
-        Tick marks in colorbars.
+        Style settings for tick marks in colorbars.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify all tick mark parameters.
         `legend_ticks_*` DOES NOT inherit from `line`.
@@ -233,17 +233,17 @@ def theme(*,
     legend_ticks_length : float
         Length of colorbar tick marks in px.
     panel_background : str or dict
-        Background of plotting area.
+        Style settings for background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify plotting area background parameters, inherited from `rect`.
     panel_border : str or dict
-        Border around plotting area.
+        Style settings for border around plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify border parameters, inherited from `rect`.
     panel_border_ontop : bool, default=True
         Option to place border around plotting area over the data layers.
     panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
-        Grid lines. Specify major grid lines or minor grid lines separately if needed.
+        Style settings for grid lines. Specify major grid lines or minor grid lines separately if needed.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_line()` to specify grid line parameters.
         `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
@@ -261,23 +261,23 @@ def theme(*,
     panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y : bool, default=False
         Option to place major grid lines and minor grid lines over the data layers.
     plot_background : str or dict
-        Background of the entire plot.
+        Style settings for overall plot background.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify plot background parameters, inherited from `rect`.
     plot_title : str or dict
-        Plot title.
+        Style settings for plot title.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify plot title parameters, inherited from `title`.
     plot_subtitle : str or dict
-        Plot subtitle.
+        Style settings for plot subtitle.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify plot subtitle parameters, inherited from `plot_title` or `title`.
     plot_caption : str or dict
-        Plot caption.
+        Style settings for plot caption.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify plot caption parameters, inherited from `title`.
     plot_message : str or dict
-        Plot message (e.g. sampling messages).
+        Style settings for plot message (e.g. sampling messages).
         Set 'blank' or result of `element_blank()` to show nothing.
         Set `element_text()` to show sampling messages (`element_text()` options don't affect a message text).
     plot_margin : number or list of numbers
@@ -309,55 +309,55 @@ def theme(*,
         A value of 'panel' means that caption is aligned to the plot panels.
         A value of 'plot' means that caption is aligned to the entire plot (excluding margins).
     strip_background : str or dict
-        Background of facet labels.
+        Style settings for facet strip background.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify facet label background parameters, inherited from `rect`.
     strip_background_x : str or dict
-        Horizontal facet background.
+        Style settings for horizontal facet background.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
     strip_background_y : str or dict
-        Vertical facet background.
+        Style settings for vertical facet background.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
     strip_text : str or dict
-        Facet labels.
+        Style settings for facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify facet label parameters, inherited from `text`.
     strip_text_x : str or dict
-        Horizontal facet labels.
+        Style settings for horizontal facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
     strip_text_y : str or dict
-        Vertical facet labels.
+        Style settings for vertical facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
     axis_tooltip, axis_tooltip_x, axis_tooltip_y : str or dict
-        Axes tooltips.
+        Style settings for axes tooltips.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_rect()` to specify axes tooltip parameters.
         `axis_tooltip_*` inherits from `axis_tooltip` which inherits from `rect`.
     axis_tooltip_text, axis_tooltip_text_x, axis_tooltip_text_y : str or dict
-        Text in axes tooltips.
+        Style settings for text in axes tooltips.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify axes text tooltip parameters.
         `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
     tooltip : str or dict
-        General tooltip.
+        Style settings for general tooltip.
         Set 'blank' or result of `element_blank()` to hide the tooltip (also hides side tooltips).
         Set `element_rect()` to specify tooltip rectangular parameters, inherited from `rect`.
     tooltip_text : str or dict
-        Text in general tooltip.
+        Style settings for text in general tooltip.
         Set `element_text()` to specify tooltip text parameters.
     tooltip_title_text : str or dict
-        Tooltip title text.
+        Style settings for tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
-    label_text : str or dict
-        Annotation text.
-        Annotations are currently supported for pie and bar charts.
+    label_text : dict
+        Style settings for annotation text.
+        Annotations are currently supported for pie, bar chart and crossbar.
         Set `element_text()` to specify annotation text parameters: font family and face, text size, text color.
     geom : dict
-        Geometry colors.
+        Color settings for geometries.
         Set `element_geom()` to specify new values for the named colors.
 
     Returns
