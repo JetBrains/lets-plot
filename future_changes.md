@@ -21,7 +21,7 @@
 - `geom_crossbar()` - annotation support  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_crossbar_annotation.ipynb).
 - `waterfall_plot` - now uses `geom_crossbar()` layer annotations to render labels. Added support for `relative_labels` and `absolute_labels` parameters.  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_on_crossbar_annotation.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
 
 - Time Series Plotting [[#278](https://github.com/JetBrains/lets-plot-kotlin/issues/278)], 
 [[discussion](https://github.com/JetBrains/lets-plot-kotlin/discussions/92#discussioncomment-12976040)],
