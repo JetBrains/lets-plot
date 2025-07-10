@@ -148,7 +148,7 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify all axes tick label parameters.
         `axis_text_*` inherits from `axis_text` which inherits from `text`.
-    axis_text_spacing, axis_text_spacing_x, axis_text_spacing_y: float
+    axis_text_spacing, axis_text_spacing_x, axis_text_spacing_y : float
         Spacing between the axis label text and its tick mark.
     axis_ticks, axis_ticks_x, axis_ticks_y : str or dict
         Tick marks along axes.
@@ -632,7 +632,7 @@ def element_text(
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
         ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(axis_text=element_text(color='#cb181d', face='bold_italic', margin=[5, 10]))
+            theme(axis_text=element_text(color='#cb181d', face='bold_italic'))
 
     """
     return locals()
