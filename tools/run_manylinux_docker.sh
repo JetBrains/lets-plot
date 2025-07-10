@@ -37,6 +37,14 @@ else
   cpython_version=$2
 fi
 
+if [[ -z "$3" ]]
+then
+  printf "Set ImageMagick dependencies absolute path."
+  exit 1
+else
+  imagemagick_path=$3
+fi
+
 root_path=$PWD
 python_extension_path="${root_path}/python-extension"
 python_package_path="${root_path}/python-package"
@@ -49,16 +57,18 @@ echo "-------------------------"
 echo "Started manylinux packages build for ${arch} on ${platform_name}..."
 echo "-------------------------"
 docker run --rm \
-  -e ARCH=$arch \
-  -e CPYTHON_VERSION=$cpython_version \
-  -e PLAT=$platform_name \
-  -e USER_ID=$sys_user_id \
-  -e GROUP_ID=$sys_group_id \
-  -v $python_package_path:/tmp/python-package \
-  -v $python_extension_path:/tmp/python-extension \
-  -v $js_package_path:/tmp/js-package \
-  -v ${root_path}/tools/$build_script:/tmp/$build_script \
-  -v ${root_path}/LICENSE:/tmp/LICENSE \
-  -v ${root_path}/README.md:/tmp/README.md \
+  -e ARCH="$arch" \
+  -e CPYTHON_VERSION="$cpython_version" \
+  -e PLAT="$platform_name" \
+  -e USER_ID="$sys_user_id" \
+  -e GROUP_ID="$sys_group_id" \
+  -e LP_IMAGEMAGICK_PATH=/tmp/deps \
+  -v "$imagemagick_path":/tmp/deps \
+  -v "$python_package_path":/tmp/python-package \
+  -v "$python_extension_path":/tmp/python-extension \
+  -v "$js_package_path":/tmp/js-package \
+  -v "${root_path}/tools/$build_script":/tmp/$build_script \
+  -v "${root_path}/LICENSE":/tmp/LICENSE \
+  -v "${root_path}/README.md":/tmp/README.md \
   $docker_image \
   /tmp/$build_script
