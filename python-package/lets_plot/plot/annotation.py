@@ -255,7 +255,7 @@ class layer_labels(FeatureSpec):
         self._size = value
         return self
 
-    def inheritColor(self):
+    def inherit_color(self):
         """
         Use the layer's color for the annotation text.
 
