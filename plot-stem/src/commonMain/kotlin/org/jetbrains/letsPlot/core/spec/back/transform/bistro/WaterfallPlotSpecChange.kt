@@ -153,7 +153,7 @@ class WaterfallPlotSpecChange : SpecChange {
         }
 
         val labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
-        val isLabelInheritsColor = bistroSpec.getBool(optionName, Option.AnnotationSpec.USE_LAYER_COLOR) == true
+        val labelInheritsLayerColor = bistroSpec.getBool(optionName, Option.AnnotationSpec.USE_LAYER_COLOR) == true
                 && bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) == null
 
         return bistroSpec.getMap(optionName)?.let { annotationOptions ->
@@ -181,7 +181,7 @@ class WaterfallPlotSpecChange : SpecChange {
                 }
 
                 size = annotationOptions.getDouble(Option.AnnotationSpec.ANNOTATION_SIZE)
-                useLayerColor = isLabelInheritsColor
+                useLayerColor = labelInheritsLayerColor
             }
         } ?: annotation {
             lines = listOf("@${Waterfall.Var.Stat.LABEL}")
@@ -192,7 +192,7 @@ class WaterfallPlotSpecChange : SpecChange {
                     format = labelFormat
                 })
             }
-            useLayerColor = isLabelInheritsColor
+            useLayerColor = labelInheritsLayerColor
         }
     }
 
