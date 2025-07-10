@@ -12,13 +12,15 @@ class AnnotationSpecification(
     val valueSources: List<ValueSource>,
     val linePatterns: List<LinePattern>,
     // other settings
-    val textSize: Double?
+    val textSize: Double?,
+    val useLayerColor: Boolean,
 ) {
     companion object {
         val NONE = AnnotationSpecification(
             valueSources = emptyList(),
             linePatterns = emptyList(),
-            textSize = null
+            textSize = null,
+            useLayerColor = false
         )
     }
 }

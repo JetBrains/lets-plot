@@ -15,6 +15,7 @@ class AnnotationOptions private constructor(
     var lines: List<String>? by map(Option.AnnotationSpec.LINES)
     var formats: List<Format>? by map(Option.AnnotationSpec.FORMATS)
     var size: Double? by map(Option.AnnotationSpec.ANNOTATION_SIZE)
+    var useLayerColor: Boolean? by map(Option.AnnotationSpec.USE_LAYER_COLOR)
 
     companion object {
         fun variable(name: String) = "@$name"

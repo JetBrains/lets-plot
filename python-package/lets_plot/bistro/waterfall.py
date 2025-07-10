@@ -115,7 +115,7 @@ def waterfall_plot(data, x, y, *,
         Label on the box. Shows change value.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_text()` to specify parameters.
-        Use 'flow_type' for `color` parameter of the `element_text()` to color labels by the direction of the flow.
+        Use 'flow_type' for the ` color ` parameter of the `element_text()` to color labels by the direction of the flow.
         Flow type names: "Absolute", "Increase", "Decrease" and "Total".
         You could use these names to change the default colors with the `scale_color_manual()` function.
     label_format : str

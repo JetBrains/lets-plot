@@ -246,6 +246,7 @@ object Option {
         const val LINES = "lines"
         const val FORMATS = "formats"
         const val ANNOTATION_SIZE = "annotation_size"
+        const val USE_LAYER_COLOR = "use_layer_color"
     }
 
     object Geom {

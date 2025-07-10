@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.PathPoint
 import org.jetbrains.letsPlot.core.plot.base.geom.util.PolygonData
@@ -64,12 +65,18 @@ object BarAnnotation {
             }
 
             val text = annotation.getAnnotationText(p.index(), ctx.plotContext)
+            val (textColor, _) = textColorAndLabelAlpha(
+                annotation, p.color(), p.fill(),
+                insideGeom = true
+            )
+
             AnnotationUtil.createLabelElement(
                 text,
                 centroid,
                 textParams = AnnotationUtil.TextParams(
                     style = annotation.textStyle,
-                    color = annotation.getTextColor(p.fill()),
+//                    color = annotation.getTextColor(p.fill()),
+                    color = textColor,
                     hjust = "middle",
                     vjust = "center",
                     alpha = 0.0,
@@ -132,17 +139,10 @@ object BarAnnotation {
                         )
                             ?: return@forEachIndexed
 
-                        val alpha: Double
-                        val labelColor = when {
-                            barRect.contains(textRect) -> {
-                                alpha = 0.0
-                                annotation.getTextColor(p.fill())
-                            }
-                            else -> {
-                                alpha = 0.75
-                                annotation.getTextColor()
-                            }
-                        }
+                        val (textColor, alpha) = textColorAndLabelAlpha(
+                            annotation, p.color(), p.fill(),
+                            insideGeom = barRect.contains(textRect)
+                        )
 
                         var location = DoubleVector(
                             x = when (hAlignment) {
@@ -160,7 +160,7 @@ object BarAnnotation {
                                 location,
                                 textParams = AnnotationUtil.TextParams(
                                     style = annotation.textStyle,
-                                    color = labelColor,
+                                    color = textColor,
                                     hjust = hAlignment.toString().lowercase(),
                                     vjust = "top",
                                     fill = ctx.backgroundColor,
@@ -201,6 +201,7 @@ object BarAnnotation {
                     if (isUpsideDown) it.flip() else it
                 }
             }
+
             index == 0 -> PlacementInsideBar.MIN
             index == barsCount - 1 -> PlacementInsideBar.MAX
             else -> PlacementInsideBar.MIDDLE

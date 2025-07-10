@@ -153,6 +153,8 @@ class WaterfallPlotSpecChange : SpecChange {
         }
 
         val labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
+        val labelStyle = bistroSpec.getMap(Waterfall.LABEL)
+        val textColorFlowType = labelStyle?.get("color") == Waterfall.Keyword.COLOR_FLOW_TYPE
         return bistroSpec.getMap(optionName)?.let { annotationOptions ->
             annotation {
                 lines = annotationOptions.getList(Option.AnnotationSpec.LINES)?.typed<String>()
@@ -178,6 +180,7 @@ class WaterfallPlotSpecChange : SpecChange {
                 }
 
                 size = annotationOptions.getDouble(Option.AnnotationSpec.ANNOTATION_SIZE)
+                useLayerColor = textColorFlowType
             }
         } ?: annotation {
             lines = listOf("@${Waterfall.Var.Stat.LABEL}")
@@ -188,6 +191,7 @@ class WaterfallPlotSpecChange : SpecChange {
                     format = labelFormat
                 })
             }
+            useLayerColor = textColorFlowType
         }
     }
 
