@@ -333,15 +333,23 @@ object DataProcessing {
                         // Stats like 'bin' are generally not applicable to discrete series.
                         // However, we can make them work by rounding stat values to integers,
                         // which allows the inverse transform to be applied.
-                        serie.map {
-                            it?.toDouble()?.let { if (it.isFinite()) it.roundToInt().toDouble() else it }
+                        serie.map { v ->
+                            v?.toDouble()?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
                         }
                     } else {
                         serie
                     }
                 }
 
-                transform.applyInverse(statSerie)
+                if (transform is DiscreteTransform && transform.initialDomain.isEmpty()) {
+                    // If the discrete transform has no initial domain, it means that
+                    // a discrete scale was created for continuous data, where it is not applicable.
+                    // In this case, we just return the stat serie without applying the inverse transform.
+                    // This allows avoiding NPE down the stream and an acceptable plot is produced.
+                    statSerie
+                } else {
+                    transform.applyInverse(statSerie)
+                }
             }
 
         // Replace series in the stat data.
