@@ -105,21 +105,27 @@ def waterfall_plot(data, x, y, *,
         Line between neighbouring boxes connecting the end of the previous box and the beginning of the next box.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_line()` to specify parameters.
-    relative_labels : `layer_labels`
+    relative_labels : dict
         Result of the call to the `layer_labels()` function.
-        Specify style and content of the annotations.
-    absolute_labels : `layer_labels`
+        Specify content and formatting of annotation labels on relative change bars.
+        If specified, overrides `label_format` for relative bars.
+        See `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__.
+    absolute_labels : dict
         Result of the call to the `layer_labels()` function.
-        Specify style and content of the annotations.
+        Specify content and formatting of annotation labels on absolute value bars.
+        If specified, overrides `label_format` for absolute bars.
+        See `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__.
     label : str or dict
-        Label on the box. Shows change value.
+        Style configuration for labels on bars. Applied to default labels or to
+        relative/absolute labels when `relative_labels` or `absolute_labels` are specified.
         Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_text()` to specify parameters.
-        Use 'flow_type' for the ` color ` parameter of the `element_text()` to color labels by the direction of the flow.
-        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
-        You could use these names to change the default colors with the `scale_color_manual()` function.
+        Set `element_text()` to specify style parameters.
+        Use `element_text(color='inherit')` to make labels inherit the color of bar borders.
+        See `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__.
     label_format : str
-        Format used to transform label mapping values to a string.
+        Format string used to transform label values to text. Applied to default labels or to
+        relative/absolute labels when `relative_labels` or `absolute_labels` are specified.
+        Can be overridden by formatting specified in `relative_labels` or `absolute_labels`.
         Examples:
 
         - '.2f' -> '12.45'
@@ -128,7 +134,7 @@ def waterfall_plot(data, x, y, *,
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     background_layers : LayerSpec or FeatureSpecArray
-        Background layers to be added to the plot.
+            Background layers to be added to the plot.
 
     Returns
     -------
