@@ -96,6 +96,48 @@ class WaterfallPlotSpecChangeTest {
 
         assertThat(resSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
         assertThat(resSpec.getBool("layers", 2, "labels", "use_layer_color")).isTrue()
+    }
 
+    @Test
+    fun `waterfall_plot(color='flow_type', label=element_text(color='red'), relative_labels=layer_labels()-inherit_color())`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "cat": [ "A", "B" ],
+            |    "val": [ 2.0, -1.0 ]
+            |  },
+            |  "bistro": {
+            |    "name": "waterfall",
+            |    "x": "cat",
+            |    "y": "val",
+            |    "color": "flow_type",
+            |    "fill": "gray90",
+            |    "size": 0.75,
+            |    "relative_labels": {
+            |      "formats": [],
+            |      "lines": [ "@..dy.." ],
+            |      "use_layer_color": true
+            |    },
+            |    "label": {
+            |      "color": "pink",
+            |      "blank": false
+            |    },
+            |    "background_layers": []
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "str", "column": "cat" },
+            |      { "type": "int", "column": "val" }
+            |    ]
+            |  },
+            |  "kind": "plot"
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        val resSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
+
+        assertThat(resSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
+        assertThat(resSpec.getBool("layers", 2, "labels", "use_layer_color")).isFalse()
     }
 }

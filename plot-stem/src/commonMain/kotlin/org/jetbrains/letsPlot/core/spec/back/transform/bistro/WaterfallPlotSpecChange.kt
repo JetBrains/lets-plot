@@ -155,7 +155,6 @@ class WaterfallPlotSpecChange : SpecChange {
         val labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
         val labelInheritsLayerColor = when {
             bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) == Waterfall.Keyword.COLOR_INHERIT -> true // for both absolute and relative labels
-            bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) != null -> false // explicit color set
             bistroSpec.getBool(optionName, Option.AnnotationSpec.USE_LAYER_COLOR) == true -> true
             else -> false
         }
