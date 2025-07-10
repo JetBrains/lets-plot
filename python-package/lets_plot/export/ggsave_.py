@@ -75,7 +75,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
    2. If only `dpi` is specified:
 
-       - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display DPI of 96.
+       - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display PPI of 96.
        - The output size is then calculated based on the specified DPI.
 
          * The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
