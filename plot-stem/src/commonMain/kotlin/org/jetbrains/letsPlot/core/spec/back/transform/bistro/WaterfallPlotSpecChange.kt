@@ -153,8 +153,12 @@ class WaterfallPlotSpecChange : SpecChange {
         }
 
         val labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
-        val labelInheritsLayerColor = bistroSpec.getBool(optionName, Option.AnnotationSpec.USE_LAYER_COLOR) == true
-                && bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) == null
+        val labelInheritsLayerColor = when {
+            bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) == Waterfall.Keyword.COLOR_INHERIT -> true // for both absolute and relative labels
+            bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) != null -> false // explicit color set
+            bistroSpec.getBool(optionName, Option.AnnotationSpec.USE_LAYER_COLOR) == true -> true
+            else -> false
+        }
 
         return bistroSpec.getMap(optionName)?.let { annotationOptions ->
             annotation {
@@ -228,7 +232,7 @@ class WaterfallPlotSpecChange : SpecChange {
         return bistroSpec.getMap(option)?.let { elementTextSpec ->
             defaults.merge(
                 ElementTextOptions(
-                    color = elementTextSpec.getString(Option.Theme.Elem.COLOR),
+                    color = elementTextSpec.getString(Option.Theme.Elem.COLOR)?.takeIf { it != Waterfall.Keyword.COLOR_INHERIT },
                     family = elementTextSpec.getString(Option.Theme.Elem.FONT_FAMILY),
                     face = elementTextSpec.getString(Option.Theme.Elem.FONT_FACE),
                     size = elementTextSpec.getDouble(Option.Theme.Elem.SIZE),

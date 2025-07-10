@@ -42,6 +42,7 @@ object Option {
         object Keyword {
             const val COLOR_FLOW_TYPE = "flow_type" // for params: color, fill, label#color
             const val TOOLTIP_DETAILED = "detailed" // for params: relative_tooltips, absolute_tooltips
+            const val COLOR_INHERIT = "inherit"
         }
 
         object Var {
