@@ -124,6 +124,7 @@ update_js()
 
 setup(name='lets-plot',
       license="MIT",
+      license_files=('LICENSE', 'licenses/*'),
       version=version_locals['__version__'],
       maintainer='JetBrains',
       maintainer_email='lets-plot@jetbrains.com',
@@ -139,7 +140,6 @@ setup(name='lets-plot',
       long_description_content_type='text/markdown',
       keywords=["ggplot", "ggplot2", "geospatial", "geopandas", "geocoding"],
       classifiers=[
-          "License :: OSI Approved :: MIT License",
           "Development Status :: 5 - Production/Stable",
           "Programming Language :: Python :: 3.9",
           "Programming Language :: Python :: 3.10",
