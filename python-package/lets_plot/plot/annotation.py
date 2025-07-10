@@ -271,7 +271,18 @@ class layer_labels(FeatureSpec):
         Examples
         --------
 
-        ToDo
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 8
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+            ggplot(data) + geom_pie(aes(slice='value', color='name'), alpha=0, size=15, hole=0.4, \
+                                    stroke=5, spacer_color='pen', \
+                                    stat='identity', tooltips = 'none', \
+                                    labels=layer_labels().line('@value')
+                                                             .inherit_color())
 
         """
 
