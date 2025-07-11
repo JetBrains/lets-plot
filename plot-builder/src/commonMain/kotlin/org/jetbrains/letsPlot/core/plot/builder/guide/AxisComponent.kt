@@ -58,7 +58,7 @@ class AxisComponent(
                     }
                     if (loc in start..end) {
                         val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
-                        val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                        val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(breaksData.majorIndices[i]))
                         val group = buildTick(label, labelOffset, axisTheme)
 
                         when (orientation.isHorizontal) {
@@ -153,6 +153,7 @@ class AxisComponent(
 
     class BreaksData(
         val majorBreaks: List<DoubleVector>,
+        val majorIndices: List<Int>,
         val majorLabels: List<String>,
         val minorBreaks: List<DoubleVector>,
         val majorGrid: List<List<DoubleVector>>,
