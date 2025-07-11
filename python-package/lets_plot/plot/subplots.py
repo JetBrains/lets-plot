@@ -221,10 +221,10 @@ class SupPlotsSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
+        unit : {'in', 'cm', 'mm'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
 
@@ -282,10 +282,10 @@ class SupPlotsSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
+        unit : {'in', 'cm', 'mm'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
 

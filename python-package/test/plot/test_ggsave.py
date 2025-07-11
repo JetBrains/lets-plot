@@ -41,42 +41,56 @@ def test_ggsave_svg():
 
 def test_ggsave_png():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_magick.png'))
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png.png'))
     print("Output path:", out_path)
     assert_png(out_path, 800, 600)  # 2x scale by default
 
 
 def test_ggsave_png_scale3():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_magick.png'), scale=3)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_scale3.png'), scale=3)
     print("Output path:", out_path)
     assert_png(out_path, 1200, 900)
 
 
 def test_ggsave_png_dpi150():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_with_dpi.png'), dpi=150)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_dpi150.png'), dpi=150)
     print("Output path:", out_path)
     assert_png(out_path, 625, 468)  # 400*150/96, 300*150/96
 
 
 def test_ggsave_png_wh():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_with_dpi.png'), w=5, h=3, unit='in')
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh.png'), w=5, h=3)
     print("Output path:", out_path)
-    assert_png(out_path, 480, 288)  #  5*96, 3*96
+    assert_png(out_path, 1500, 900)  #  5*300, 3*300
+
+
+def test_ggsave_png_wh_inch():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_inch.png'), w=5, h=3, unit='in')
+    print("Output path:", out_path)
+    assert_png(out_path, 1500, 900)  #  5*300, 3*300
+
+
+def test_ggsave_png_wh_cm():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_cm.png'), w=5, h=3, unit='cm')
+    print("Output path:", out_path)
+    assert_png(out_path, 590, 356)  #  1.98inch * 300, 1.18inch * 300
 
 
 def test_ggsave_png_wh_150dpi():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_with_dpi.png'), w=5, h=3, unit='in', dpi=150)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi.png'), w=5, h=3, unit='in', dpi=150)
     print("Output path:", out_path)
     assert_png(out_path, 750, 450)  # 5*150, 3*150
 
 
 def test_ggsave_png_wh_150dpi_scale2():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_with_dpi.png'), w=5, h=3, unit='in', dpi=150, scale=2)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi_scale2.png'), w=5, h=3, unit='in', dpi=150, scale=2)
     print("Output path:", out_path)
     assert_png(out_path, 1500, 900)  # 5*150*2, 3*150*2
 
@@ -90,8 +104,10 @@ def test_filelike_ggsave_png():
 
 
 def test_ggsave_png_cairo():
+    gg.LetsPlot.set({"magick_export": False})
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_cairo.png'), scale=1)
+    gg.LetsPlot.set({"magick_export": True})
     print("Output path:", out_path)
     assert_png(out_path, 400, 300)
 

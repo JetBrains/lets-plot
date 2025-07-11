@@ -566,10 +566,10 @@ class PlotSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
+        unit : {'in', 'cm', 'mm'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
 
@@ -642,10 +642,10 @@ class PlotSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
+        unit : {'in', 'cm', 'mm'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
 
@@ -917,8 +917,12 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
     if get_global_bool(MAGICK_EXPORT):
         if w is None and h is None and unit is None and dpi is None:
             def_scale = 2.0
+            def_dpi = -1
+            def_unit = ""
         else:
             def_scale = 1.0
+            def_dpi = 300
+            def_unit = 'in'
 
         return _export_with_magick(
             spec,
@@ -927,8 +931,8 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
             export_format,
             w if w is not None else -1,
             h if h is not None else -1,
-            unit if unit is not None else '',
-            dpi if dpi is not None else -1
+            unit if unit is not None else def_unit,
+            dpi if dpi is not None else def_dpi
         )
     else:
         return _export_with_cairo(spec, path, scale, export_format, w, h, unit, dpi)

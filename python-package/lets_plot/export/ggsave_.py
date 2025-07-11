@@ -48,10 +48,10 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     h : float, default=None
         Height of the output image in units.
         Only applicable when exporting to PNG or PDF.
-    unit : {'in', 'cm', 'mm'}, default=None
+    unit : {'in', 'cm', 'mm'}, default='in'
         Unit of the output image. One of: 'in', 'cm', 'mm'.
         Only applicable when exporting to PNG or PDF.
-    dpi : int, default=None
+    dpi : int, default=300
         Resolution in dots per inch.
         Only applicable when exporting to PNG or PDF.
 
@@ -108,7 +108,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         from lets_plot import *
         LetsPlot.setup_html()
         plot = ggplot() + geom_point(x=0, y=0)
-        ggsave(plot, 'plot.png', w=4, h=3, unit='in', dpi=300, scale=1)
+        ggsave(plot, 'plot.png', w=4, h=3)
 
     """
 
