@@ -17,11 +17,15 @@ val artifactVersion = project.version as String
 val assertjVersion = project.extra["assertj_version"]
 val batikGroupId = "org.apache.xmlgraphics"
 val batikArtifacts = listOf("batik-transcoder", "batik-codec")
+
 val batikVersion = project.extra["batik_version"]
+val commonsIOVersion = project.extra["commons-io.version"] as String
+
 val hamcrestVersion = project.extra["hamcrest_version"]
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"]
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 val mockitoVersion = project.extra["mockito_version"]
+
 val tiffioGroupId = "com.twelvemonkeys.imageio"
 val tiffioArtifact = "imageio-tiff"
 val tiffioVersion = project.extra["twelvemonkeys_imageio_version"]
@@ -32,7 +36,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation( kotlin("stdlib-common"))
+                implementation(kotlin("stdlib-common"))
 
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
@@ -53,9 +57,12 @@ kotlin {
 
                 implementation(project(":platf-awt"))
 
+                // Batik artifacts
                 batikArtifacts.forEach {
                     api("$batikGroupId:$it:$batikVersion")
                 }
+                // commons-io: a newer version than the one in Batik transitive dependency.
+                implementation("commons-io:commons-io:${commonsIOVersion}")
 
                 // TIFF support
                 implementation("$tiffioGroupId:$tiffioArtifact:$tiffioVersion")
@@ -80,7 +87,7 @@ kotlin {
 val jvmJarPlotImageExport by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
 
-    // Add LICENSE file to the META-INF folder inside published JAR files.
+    // Add the LICENSE file to the META-INF folder inside published JAR files.
     metaInf {
         from("$rootDir") {
             include("LICENSE")
@@ -93,14 +100,14 @@ val jvmPlotImageExportSourcesJar by tasks.named<Jar>("jvmSourcesJar") {
     archiveClassifier.set("sources")
 }
 
-// Generating JavaDoc task for each publication task.
+// Generating a Javadoc task for each publication task.
 // Fixes "Task ':plot-image-export:publishJsPublicationToMavenRepository' uses this output of task
 // ':plot-image-export:signJvmPublication' without declaring an explicit or implicit dependency" error.
 // Issues:
 //  - https://github.com/gradle-nexus/publish-plugin/issues/208
 //  - https://github.com/gradle/gradle/issues/26091
 //
-val jvmPlotImageExportJarJavaDoc by tasks.registering (Jar::class) {
+val jvmPlotImageExportJarJavaDoc by tasks.registering(Jar::class) {
     archiveBaseName.set("$artifactBaseName-$artifactVersion-javadoc.jar")
     archiveClassifier.set("javadoc")
     from("$rootDir/README.md")

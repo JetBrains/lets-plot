@@ -4,6 +4,7 @@
  */
 
 val batikVersion = project.extra["batik_version"] as String
+val commonsIOVersion = project.extra["commons-io.version"] as String
 
 dependencies {
     compileOnly(project(":commons"))
@@ -11,6 +12,8 @@ dependencies {
     compileOnly(project(":plot-stem"))
     compileOnly(project(":platf-awt"))
     compileOnly("org.apache.xmlgraphics:batik-codec:$batikVersion")
+    compileOnly("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
+
     testImplementation(project(":commons"))
     testImplementation(project(":datamodel"))
     testImplementation(project(":plot-base"))
