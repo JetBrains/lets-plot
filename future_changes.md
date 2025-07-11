@@ -2,9 +2,6 @@
 
 ### Added
 
-- More named colors, including all HTML/CSS colors.
-- Support different color naming styles like `dark-gray`, `darkgrey`, `dark_grey`, `DARKGRAY`, etc.
-- Grayscale colors from `gray0` (black) to `gray100` (white).
 - Geometries:
 
     - `geom_sina()` [[#1298](https://github.com/JetBrains/lets-plot/issues/1298)].
@@ -22,6 +19,11 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_crossbar_annotation.ipynb).
 - `waterfall_plot` - now uses `geom_crossbar()` layer annotations to render labels. Added support for `relative_labels` and `absolute_labels` parameters.  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
+- More variants to specify a color by name:
+    - all HTML/CSS colors;
+    - different naming styles like `dark-gray`, `darkgrey`, `dark_grey`, `DARKGRAY`, etc.;
+    - grayscale colors from `gray0` (black) to `gray100` (white);
+    - See [the complete list](https://lets-plot.org/python/pages/named_colors.html)
 
 - Time Series Plotting [[#278](https://github.com/JetBrains/lets-plot-kotlin/issues/278)], 
 [[discussion](https://github.com/JetBrains/lets-plot-kotlin/discussions/92#discussioncomment-12976040)],
@@ -29,6 +31,7 @@
 [[LPK-129](https://github.com/JetBrains/lets-plot-kotlin/issues/129)]:
   - Support for Python `time` and `date` objects.
   - Support for timezone-aware `datetime` objects and Pandas/Polars `Series`.
+  - New `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` parameters in `theme()` to control spacing between axis ticks and labels.
 
 ### Changed
 
@@ -44,6 +47,7 @@
 - `ggsave`: the `w` and `h` parameters override plot size, allowing to specify the output image size independently of the plot size.
 - `ggsave`: the `dpi` default value changed to 300.
 - `ggsave`: the `unit` default value changed to `in` (inches).
+- Plot layout: reduced margins and spacing for title, caption, axes, and legend.
 
 ### Fixed
 
