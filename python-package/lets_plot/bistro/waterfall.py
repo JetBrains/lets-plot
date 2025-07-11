@@ -229,7 +229,7 @@ def waterfall_plot(data, x, y, *,
                        width=.7, size=1, fill="white", color='flow_type', \\
                        hline=element_line(linetype='solid'), hline_ontop=False, \\
                        connector=element_line(linetype='dotted'), \\
-                       label=element_text(color='flow_type'), \\
+                       label=element_text(color='inherit'), \\
                        total_title="Result", show_legend=True)
 
     |

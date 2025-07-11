@@ -20,8 +20,8 @@ class layer_labels(FeatureSpec):
     layers. This class provides methods to customize the appearance and
     content of text labels displayed on these geometries.
 
-    Text Color Behavior
-    -------------------
+    Notes
+    -----
     By default, annotation text color is automatically selected for optimal
     contrast: white text appears on darker filled geometries, and black text
     appears on lighter filled geometries.
@@ -29,7 +29,7 @@ class layer_labels(FeatureSpec):
     The text color can be manually specified using:
     ``theme(label_text=element_text(color=...))``
 
-    Alternatively, the ``inheritColor()`` method can be used to override both
+    Alternatively, the ``inherit_color()`` method can be used to override both
     automatic and manual color settings, making the annotation text use the
     geometry's ``color`` aesthetic instead.
 
