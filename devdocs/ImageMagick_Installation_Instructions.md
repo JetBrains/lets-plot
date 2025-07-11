@@ -16,7 +16,6 @@ Various systems require additional environment setup to support ImageMagick inst
 ```shell
 brew install automake libtool gettext pkgconf zlib
 ```
-<br>
 
 ### Linux
 
@@ -32,7 +31,6 @@ If you choose not to do this, you will need to run the initialization script wit
 ```shell
 sudo apt update && sudo apt install -y automake libtool gperf gettext autopoint pkg-config
 ```
-<br>
 
 ### Windows
 
