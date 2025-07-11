@@ -134,7 +134,7 @@ def waterfall_plot(data, x, y, *,
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     background_layers : LayerSpec or FeatureSpecArray
-            Background layers to be added to the plot.
+        Background layers to be added to the plot.
 
     Returns
     -------
