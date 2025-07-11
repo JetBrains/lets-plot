@@ -42,8 +42,8 @@
 - `geom_band`: the `alpha` aesthetic only affects the inner part of the geometry, as in `geom_rect()`.
 - `geom_band`: show tooltip over the whole band, not just at the edges.
 - `ggsave`: the `w` and `h` parameters override plot size, allowing to specify the output image size independently of the plot size.
-- `ggsave`: the `dpi` default value changed to 300
-- `ggsave`: the `unit` default value changed to `in` (inches)
+- `ggsave`: the `dpi` default value changed to 300.
+- `ggsave`: the `unit` default value changed to `in` (inches).
 
 ### Fixed
 
