@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -24,6 +23,7 @@ import org.jetbrains.letsPlot.raster.shape.Element
 import kotlin.math.ceil
 
 class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
+    private var needRedraw: Boolean = true
     private var nodeContainer: SvgNodeContainer? = null
     private var canvasPeer: SvgCanvasPeer? = null
     private var canvas: Canvas? = null
@@ -60,13 +60,20 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         canvasControl.addChild(canvas!!)
 
         // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
-        render(rootMapper.target, canvas!!)
+        renderElement(rootMapper.target, canvas!!)
 
         val anim = canvasControl.createAnimationTimer(object : AnimationProvider.AnimationEventHandler {
             override fun onEvent(millisTime: Long): Boolean {
                 val canvas = canvas ?: return false
+
+                if (!needRedraw) {
+                    return false
+                }
+
                 canvas.context2d.clearRect(DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble()))
-                render(rootMapper.target, canvas)
+                renderElement(rootMapper.target, canvas)
+                needRedraw = false
+
                 return true
             }
         })
@@ -80,25 +87,25 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
         nodeContainer = SvgNodeContainer(value)  // attach root
         nodeContainer!!.addListener(object : SvgNodeContainerListener {
-            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = needRedraw()
-            override fun onNodeAttached(node: SvgNode) = needRedraw()
-            override fun onNodeDetached(node: SvgNode) = needRedraw()
+            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = requestRedraw()
+            override fun onNodeAttached(node: SvgNode) = requestRedraw()
+            override fun onNodeDetached(node: SvgNode) = requestRedraw()
         })
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
         rootMapper.attachRoot(MappingContext())
 
         canvas?.let {
-            render(rootMapper.target, it)
+            renderElement(rootMapper.target, it)
         }
     }
 
     private fun render(elements: List<Element>, canvas: Canvas) {
         elements.forEach { element ->
-            render(element, canvas)
+            renderElement(element, canvas)
         }
     }
 
-    private fun render(element: Element, canvas: Canvas) {
+    private fun renderElement(element: Element, canvas: Canvas) {
         if (!element.isVisible) {
             return
         }
@@ -144,6 +151,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         }
     }
 
-    private fun needRedraw() {
+    private fun requestRedraw() {
+        needRedraw = true
     }
 }
