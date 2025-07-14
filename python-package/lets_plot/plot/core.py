@@ -402,9 +402,11 @@ class PlotSpec(FeatureSpec):
                 return plot
 
             if other.kind == 'mapping':  # +aes(..)
-                existing_spec = plot.props().get('mapping', aes())
-                merged_mapping = {**existing_spec.as_dict(), **other.as_dict()}
-                plot.props()['mapping'] = aes(**merged_mapping)
+                # existing_spec = plot.props().get('mapping', aes())
+                # merged_mapping = {**existing_spec.as_dict(), **other.as_dict()}
+                # plot.props()['mapping'] = aes(**merged_mapping)
+                from lets_plot.plot.util import update_plot_aes_mapping  # local import to break circular reference
+                update_plot_aes_mapping(plot, other)
                 return plot
 
             # add feature to properties

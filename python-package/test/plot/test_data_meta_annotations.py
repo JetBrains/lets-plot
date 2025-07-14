@@ -3,11 +3,11 @@
 
 from datetime import datetime, timezone, date, time
 from datetime import timedelta
+# Python 3.9+ is required for ZoneInfo.
+from zoneinfo import ZoneInfo
 
 import numpy as np
 from pandas import DataFrame, Categorical
-# Python 3.9+ is required for ZoneInfo.
-from zoneinfo import ZoneInfo
 
 from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
@@ -422,3 +422,29 @@ def test_as_discrete_with_levels():
     ]
 
     assert 'mapping_annotations' not in p.as_dict()['layers'][0]['data_meta']
+
+
+def test_as_discrete_in_aes_addition():
+    d = {
+        'x': [1, 2, 3, 4, 5],
+        'y': [0, 0, 0, 0, 0],
+        'c': [1, 2, 3, 1, 2]
+    }
+
+    # `data` in ggplot()
+    p = ggplot(d) + aes(x='x', y='y', color=as_discrete('c')) + geom_point()
+
+    # Plot has data meta and mapping_annotations are present
+    assert 'data_meta' in p.as_dict()
+    assert p.as_dict()['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete', 'parameters': {'label': 'c'}}
+    ]
+
+    # `data` in geom_point()
+    p = ggplot() + aes(x='x', y='y', color=as_discrete('c')) + geom_point(data=d)
+
+    # Plot has data meta and mapping_annotations are present
+    assert 'data_meta' in p.as_dict()
+    assert p.as_dict()['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete', 'parameters': {'label': 'c'}}
+    ]

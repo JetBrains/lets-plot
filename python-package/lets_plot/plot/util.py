@@ -7,7 +7,7 @@ from typing import Any, Tuple, Sequence, Optional, Dict, List
 from lets_plot._type_utils import is_pandas_data_frame
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
-from lets_plot.plot.core import aes, FeatureSpec
+from lets_plot.plot.core import aes, FeatureSpec, PlotSpec
 from lets_plot.plot.series_meta import _infer_type, TYPE_UNKNOWN, TYPE_DATE_TIME, _detect_time_zone
 
 
@@ -16,6 +16,21 @@ def as_boolean(val, *, default):
         return default
 
     return bool(val) and val != 'False'
+
+
+def update_plot_aes_mapping(plot: PlotSpec, add_mapping: FeatureSpec):
+    existing_spec = plot.props().get('mapping', aes())
+    merged_mapping = {**existing_spec.as_dict(), **add_mapping.as_dict()}
+
+    # Re-annotate the data with the merged mapping.
+    data = plot.props().get('data', None)
+    data, processed_mapping, data_meta = as_annotated_data(data, aes(**merged_mapping))
+    plot.props()['data'] = data
+    plot.props()['mapping'] = processed_mapping
+
+    # Add data_meta to plot properties
+    for key, value in data_meta.items():
+        plot.props()[key] = value
 
 
 def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:

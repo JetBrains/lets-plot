@@ -67,3 +67,4 @@
 - Ordered data was re-ordered by `geom_boxplot` [[#1342](https://github.com/JetBrains/lets-plot/issues/1342)].
 - `geom_rect`: fixed data conversion for `geom_livemap` [[#1347](https://github.com/JetBrains/lets-plot/issues/1347)].
 - `ggsave`: incorrect output when exporting markdown demo to PNG [[#1362](https://github.com/JetBrains/lets-plot/issues/1362)].
+- `as_discrete()` does not work with aes addition [[#1363](https://github.com/JetBrains/lets-plot/issues/1363)].
