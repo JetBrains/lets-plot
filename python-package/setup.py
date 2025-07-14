@@ -179,5 +179,6 @@ setup(name='lets-plot',
       install_requires=[
           'pypng',  # for geom_imshow
           'palettable',  # for geom_imshow
+          'pillow' # for ggsave() to PDF
       ],
       )

@@ -37,3 +37,6 @@ A free software, distributed under the LGPL-3.0 license : [documentation](https:
 Date and time library for JavaScript.
 Copyright © 2016, Philipp Thürwächter & Pattrick Hüper. Licensed under BSD License.
 
+### Pillow
+Copyright (c) 1997-2011 by Secret Labs AB. Copyright (c) 1995-2011 by Fredrik Lundh and contributors.
+Licensed under MIT-CMU License: [documentation](https://pillow.readthedocs.io/en/stable/about.html#license)
