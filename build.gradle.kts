@@ -305,6 +305,7 @@ val multiPlatformCoreModulesForPublish = listOf(
     "livemap",
     "plot-base",
     "plot-builder",
+    "plot-raster",
     "plot-stem",
     "plot-livemap"
 )
