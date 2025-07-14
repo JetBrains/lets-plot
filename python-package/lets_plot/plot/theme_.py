@@ -346,10 +346,10 @@ def theme(*,
         Style settings for general tooltip.
         Set 'blank' or result of `element_blank()` to hide the tooltip (also hides side tooltips).
         Set `element_rect()` to specify tooltip rectangular parameters, inherited from `rect`.
-    tooltip_text : str or dict
+    tooltip_text : dict
         Style settings for text in general tooltip.
         Set `element_text()` to specify tooltip text parameters.
-    tooltip_title_text : str or dict
+    tooltip_title_text : dict
         Style settings for tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
     label_text : dict
