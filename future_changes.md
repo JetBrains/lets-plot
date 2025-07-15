@@ -68,9 +68,9 @@
   Instead, it remains continuous, allowing for precise positioning of continuous elements relative to discrete ones. <br>
   This resolves issues where combining discrete and continuous data in the same plot was difficult or impossible: [[#1279](https://github.com/JetBrains/lets-plot/issues/1279)].
 
-  > [!TIP]
-  > New way of handling continuous data on discrete scales could potentially break existing plots.
-  > If you want to restore a broken plot to its original form, you can use the [`as_discrete()`](https://lets-plot.org/python/pages/api/lets_plot.mapping.as_discrete.html) function to annotate continuous data as discrete.
+> [!TIP]
+> New way of handling continuous data on discrete scales could potentially break existing plots.
+> If you want to restore a broken plot to its original form, you can use the [`as_discrete()`](https://lets-plot.org/python/pages/api/lets_plot.mapping.as_discrete.html) function to annotate continuous data as discrete.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
 
