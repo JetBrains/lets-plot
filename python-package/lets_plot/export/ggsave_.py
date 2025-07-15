@@ -23,11 +23,11 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
-    if not specified otherwise (see the `path` parameter).
+    if not specified otherwise (see the ``path`` parameter).
 
     Parameters
     ----------
-    plot : `PlotSpec`
+    plot : ``PlotSpec``
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
@@ -66,24 +66,24 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     For PNG and PDF formats:
 
-    - If `w`, `h`, `unit`, and `dpi` are all specified:
+    - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
 
-      - The plot's pixel size (default or set by `ggsize()`) is ignored.
-      - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+      - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
 
-        - The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
+        - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
 
-    - If only `dpi` is specified:
+    - If only ``dpi`` is specified:
 
-      - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display PPI of 96.
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
       - The output size is then calculated based on the specified DPI.
 
         - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
         - Useful for printing - the plot will appear nearly the same size as on screen.
 
-    - If `w`, `h` are not specified:
+    - If ``w``, ``h`` are not specified:
 
-      - The `scale` parameter is used to determine the output size.
+      - The ``scale`` parameter is used to determine the output size.
 
         - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
         - Useful for generating high-resolution images suitable for publication.
