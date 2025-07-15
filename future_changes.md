@@ -39,7 +39,7 @@
 - Plot Layout:
 
   - New `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` parameters in `theme()` to control spacing between axis ticks and labels.
-  - Plot layout diagram showing various layout options and their effects on plot appearance:  [plot layout scheme](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb). 
+  - See new [plot layout scheme](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb) showing various layout options and their effects on plot appearance. 
 
 - More variants to specify a color by name:
 
@@ -55,7 +55,7 @@
 - Native support for PNG and PDF exports [[#1268](https://github.com/JetBrains/lets-plot/issues/1268)]:
 
   Exporting to PNG and PDF formats now uses the `ImageMagick` library bundled with Lets-Plot Python wheels and available out-of-the-box. <br>
-  This replaces the previous dependency on the `CairoSVG` library and comes with improved support of LaTeX labels rasterization. <br>
+  This replaces the previous dependency on the `CairoSVG` library and comes with improved support for LaTeX labels rasterization. <br>
   Related changes:
   - `ggsave`: the `w` and `h` parameters override plot size, allowing to specify the output image size independently of the plot size.
   - `ggsave`: the `dpi` default value changed to 300.
