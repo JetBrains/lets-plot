@@ -39,7 +39,7 @@
 - Plot Layout:
 
   - New `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` parameters in `theme()` to control spacing between axis ticks and labels.
-  - See new [plot layout scheme](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb) showing various layout options and their effects on plot appearance. 
+  - See new [plot layout diagram](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb) notebook showing various layout options and their effects on plot appearance. 
 
 - More variants to specify a color by name:
 
