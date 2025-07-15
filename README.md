@@ -66,7 +66,7 @@ Also read:
 
 - #### Native support for PNG and PDF exports
   Exporting to PNG and PDF formats now uses the `ImageMagick` library bundled with Lets-Plot Python wheels and available out-of-the-box. <br>
-  This replaces the previous dependency on the `CairoSVG` library and comes with improved support of LaTeX labels rasterization. <br>
+  This replaces the previous dependency on the `CairoSVG` library and comes with improved support for LaTeX labels rasterization. <br>
 
 - #### `geom_sina()` Geometry
 
@@ -110,7 +110,7 @@ Also read:
   Also, new `theme()` options `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` control spacing between axis ticks and labels. <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/plot_layout_diagram.png" alt="f-25b/images/plot_layout_diagram.png" width="400" height="175">
 
-  See the plot layout diagram showing various layout options and their effects on plot appearance:  [plot layout diagram](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb).
+  See the [plot layout diagram](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb) showing various layout options and their effects on plot appearance.
 
 
 - #### And More
