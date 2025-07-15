@@ -54,38 +54,63 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.6.0
+## What is new in 4.7.0
 
-- #### Markdown Support in *Title*, *Subtitle*, *Caption*, and Axis Labels
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/markdown.png" alt="f-25a/images/markdown.png" width="400" height="237">
+- #### Time Series Plotting
+  - Support for Python `time` and `date` objects.
+  - Support for timezone-aware `datetime` objects and Pandas/Polars `Series`.
+
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/time_date_datetime.png" alt="f-25b/images/time_date_datetime.png" width="400" height="237">
   
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/markdown.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/time_date_datetime.ipynb).
 
-- #### Support for Multiline Axis Labels, Text Justification in Axis Labels
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/multiline_axis_labels.png" alt="f-25a/images/multiline_axis_labels.png" width="400" height="275">
+- #### Native support for PNG and PDF exports
+  Exporting to PNG and PDF formats now uses the `ImageMagick` library bundled with Lets-Plot Python wheels and available out-of-the-box. <br>
+  This replaces the previous dependency on the `CairoSVG` library and comes with improved support of LaTeX labels rasterization. <br>
 
-  See examples: [multiline axis labels](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/multiline_axis_labels.ipynb),
-  [axis label justification](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/axis_label_justification.ipynb),
+- #### `geom_sina()` Geometry
 
-- #### `geom_hex()` Geometry
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/geom_hex.png" alt="f-25a/images/geom_hex.png" width="370" height="296">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/geom_sina.png" alt="f-25b/images/geom_sina.png" width="400" height="276">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_hex.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
 
-- #### `ggbunch()` Function: Combining Plots with Custom Layout
-  It replaces the deprecated `GGBunch` class.  <br/>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/ggbunch_indonesia.png" alt="f-25a/images/ggbunch_indonesia.png" width="400" height="164">
-     
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/ggbunch_indonesia.ipynb).
+- #### `geom_text_repel()` and `geom_label_repel()` Geometries
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/magnifier_inset.png" alt="f-25a/images/magnifier_inset.png" width="400" height="251">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/geom_repel.png" alt="f-25b/images/geom_repel.png" width="400" height="232">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/magnifier_inset.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/ggrepel.ipynb).
 
-- #### Parameters `start` and `direction` in `geom_pie()` Geometry
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/geom_pie_params.png" alt="f-25a/images/geom_pie_params.png" width="400" height="119">
+- #### `waterfall_plot()` Chart
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25a/geom_pie_params.ipynb).
+  - Annotations support via `relative_labels` and `absolute_labels` parameters. <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/waterfall_plot_annotations.png" alt="f-25b/images/waterfall_plot_annotations.png" width="400" height="253">
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
+                                   
+  - Support for combining waterfall bars with other geometry layers. <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/waterfall_plot_layers.png" alt="f-25b/images/waterfall_plot_layers.png" width="400" height="227">
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_layers.ipynb).
+
+- #### Continuous Data on Discrete Scales
+
+  Continuous data when used with discrete positional scales is no longer transformed to discrete data. <br>
+  Instead, it remains continuous, allowing for precise positioning of continuous elements relative to discrete ones. <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/combo_discrete_continuous.png" alt="f-25b/images/combo_discrete_continuous.png" width="400" height="151">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
+
+> [!TIP]
+> New way of handling continuous data on discrete scales could potentially break existing plots.
+> If you want to restore a broken plot to its original form, you can use the [`as_discrete()`](https://lets-plot.org/python/pages/api/lets_plot.mapping.as_discrete.html) function to annotate continuous data as discrete.
+
+
+- #### Plot Layout
+  The default plot layout has been improved to better accommodate axis labels and titles. <br>
+  Also, new `theme()` options `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` control spacing between axis ticks and labels. <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/plot_layout_diagram.png" alt="f-25b/images/plot_layout_diagram.png" width="400" height="175">
+
+  See the plot layout diagram showing various layout options and their effects on plot appearance:  [plot layout diagram](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb).
 
 
 - #### And More
