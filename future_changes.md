@@ -47,7 +47,7 @@
   - various naming styles, e.g., `dark-gray`, `darkgrey`, `dark_grey`, `DARKGRAY`, etc.;
   - grayscale colors from `gray0` (black) to `gray100` (white);
   
-  See [the complete list of named color](https://lets-plot.org/python/pages/named_colors.html)
+  See [the complete list of named colors](https://lets-plot.org/python/pages/named_colors.html).
 
 
 ### Changed
