@@ -41,18 +41,15 @@ class WaterfallPlotSpecChangeTest {
             |      { "type": "int", "column": "val" }
             |    ]
             |  },
-            |  "kind": "plot",
-            |  "scales": [],
-            |  "layers": [],
-            |  "metainfo_list": []
+            |  "kind": "plot"
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        val resSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
+        val bistroSpec = parsePlotSpec(spec)
+        val plotSpec = PlotConfigBackendTransforms.bistroTransform().apply(bistroSpec)
 
-        assertThat(resSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
-        assertThat(resSpec.getBool("layers", 2, "labels", "use_layer_color")).isFalse()
+        assertThat(plotSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
+        assertThat(plotSpec.getBool("layers", 2, "labels", "use_layer_color")).isFalse()
     }
 
     @Test
@@ -75,8 +72,7 @@ class WaterfallPlotSpecChangeTest {
             |            "lines": [ "@..dy.." ], 
             |            "use_layer_color": true
             |        }, 
-            |        "label": { "color": "inherit", "blank": false }, 
-            |        "background_layers": [ ]
+            |        "label": { "color": "inherit", "blank": false }
             |    }, 
             |    "data_meta": {
             |        "series_annotations": [
@@ -84,19 +80,16 @@ class WaterfallPlotSpecChangeTest {
             |            { "type": "int", "column": "val" }
             |        ]
             |    }, 
-            |    "kind": "plot", 
-            |    "scales": [ ], 
-            |    "layers": [ ], 
-            |    "metainfo_list": [ ]
+            |    "kind": "plot"
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
+        val bistroSpec = parsePlotSpec(spec)
 
-        val resSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
+        val plotSpec = PlotConfigBackendTransforms.bistroTransform().apply(bistroSpec)
 
-        assertThat(resSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
-        assertThat(resSpec.getBool("layers", 2, "labels", "use_layer_color")).isTrue()
+        assertThat(plotSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
+        assertThat(plotSpec.getBool("layers", 2, "labels", "use_layer_color")).isTrue()
     }
 
     @Test
@@ -130,11 +123,7 @@ class WaterfallPlotSpecChangeTest {
             |      "lines": [ "@..dy.." ],
             |      "use_layer_color": true
             |    },
-            |    "label": {
-            |      "color": "pink",
-            |      "blank": false
-            |    },
-            |    "background_layers": []
+            |    "label": { "color": "pink", "blank": false }
             |  },
             |  "data_meta": {
             |    "series_annotations": [
@@ -146,11 +135,11 @@ class WaterfallPlotSpecChangeTest {
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        val resSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
+        val bistroSpec = parsePlotSpec(spec)
+        val plotSpec = PlotConfigBackendTransforms.bistroTransform().apply(bistroSpec)
 
-        assertThat(resSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
-        assertThat(resSpec.getBool("layers", 2, "labels", "use_layer_color")).isFalse()
+        assertThat(plotSpec.getBool("layers", 1, "labels", "use_layer_color")).isTrue()
+        assertThat(plotSpec.getBool("layers", 2, "labels", "use_layer_color")).isFalse()
     }
 
     @Test
@@ -166,8 +155,7 @@ class WaterfallPlotSpecChangeTest {
             |    "name": "waterfall",
             |    "x": "cat",
             |    "y": "val",
-            |    "label": "blank",
-            |    "background_layers": []
+            |    "label": "blank"
             |  },
             |  "data_meta": {
             |    "series_annotations": [
@@ -179,10 +167,10 @@ class WaterfallPlotSpecChangeTest {
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        val resSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
+        val bistroSpec = parsePlotSpec(spec)
+        val plotSpec = PlotConfigBackendTransforms.bistroTransform().apply(bistroSpec)
 
-        assertThat(resSpec.getString("layers", 1, "labels")).isEqualTo("none")
-        assertThat(resSpec.getString("layers", 2, "labels")).isEqualTo("none")
+        assertThat(plotSpec.getString("layers", 1, "labels")).isEqualTo("none")
+        assertThat(plotSpec.getString("layers", 2, "labels")).isEqualTo("none")
     }
 }

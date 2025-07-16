@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
@@ -16,25 +17,11 @@ class MagickCanvas(
     override val size: Vector,
     pixelDensity: Double,
     private val fontManager: MagickFontManager,
-) : Canvas {
-    // TODO: replace usage in tests with Snapshot
-    private val img: CPointer<ImageMagick.MagickWand>
-        get() {
-            val wand = (context2d as MagickContext2d).wand
+) : Canvas, Disposable {
+    private val magickContext2d = MagickContext2d(_img, pixelDensity, fontManager)
+    override val context2d: Context2d = magickContext2d
 
-            if (false) {
-                val v = ImageMagick.DrawGetVectorGraphics(wand)
-                println(v!!.toKString())
-            }
-
-            ImageMagick.MagickDrawImage(_img, wand)
-            return _img
-        }
-
-    override val context2d: Context2d = MagickContext2d(_img, pixelDensity, fontManager)
-
-
-    override fun takeSnapshot(): Canvas.Snapshot {
+    override fun takeSnapshot(): MagickSnapshot {
         val wand = (context2d as MagickContext2d).wand
 
         if (false) {
@@ -44,6 +31,11 @@ class MagickCanvas(
 
         ImageMagick.MagickDrawImage(_img, wand)
         return MagickSnapshot(_img)
+    }
+
+    override fun dispose() {
+        ImageMagick.DestroyMagickWand(_img)
+        magickContext2d.dispose()
     }
 
     companion object {
@@ -57,6 +49,7 @@ class MagickCanvas(
             val background = ImageMagick.NewPixelWand()
             ImageMagick.PixelSetColor(background, "transparent")
             ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
+            ImageMagick.DestroyPixelWand(background)
             return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble(), fontManager = fontManager)
         }
     }
