@@ -74,7 +74,7 @@
 > New way of handling continuous data on discrete scales could potentially break existing plots.
 > If you want to restore a broken plot to its original form, you can use the [`as_discrete()`](https://lets-plot.org/python/pages/api/lets_plot.mapping.as_discrete.html) function to annotate continuous data as discrete.
 
-
+- [**BREAKING**] Dropped support for Python 3.8 as it is in the ["end-of-life"](https://devguide.python.org/versions/#unsupported-versions) of its release cycle.
 - [**BREAKING**] `geom_boxplot()`: when y-oriented, it now uses aesthetics `xlower`/`xmiddle`/`xupper` instead of  `lower`/`middle`/`upper` [[#1319](https://github.com/JetBrains/lets-plot/issues/1319)].
 - [**BREAKING**] `waterfall_plot()`: special `flow_type` value for `label=element_text(color=...)` replaced with `inherit`. See `label` in the [documentation](https://lets-plot.org/python/pages/api/lets_plot.bistro.waterfall.waterfall_plot.html).
 - [**DEPRECATED**] The `position_dodgev()` function and the `'dodgev'` value for the `position` parameter are deprecated and will be removed in future releases.
@@ -89,7 +89,7 @@
 
 ### Fixed
 
-- AWT: plot now prevents wheel events from bubbling up to the parent component.
+- AWT: plot prevents wheel events from bubbling up to the parent component.
 - Added tooltip for `geom_hline` and `geom_vline` on `geom_livemap` [[#1056](https://github.com/JetBrains/lets-plot/issues/1056)].
 - `geom_boxplot`: unable to draw a y-oriented plot with `stat='identity'` [[#1319](https://github.com/JetBrains/lets-plot/issues/1319)].
 - Can't add layer which uses continuous data to a plot where other layers use discrete input [[#1323](https://github.com/JetBrains/lets-plot/issues/1323)].
