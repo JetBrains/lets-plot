@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions.SizeUnit
 import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.liveMap
 import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.vectorTiles
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
@@ -178,8 +179,8 @@ internal class VegaPlotConverter private constructor(
                     COLOR to Aes.COLOR
                 )
             ) {
-                size = 0.6
-                prop[PieLayer.SIZE_UNIT] = Option.Geom.SizeUnit.MIN
+                size = 0.9
+                prop[PieLayer.SIZE_UNIT] = SizeUnit.MIN
                 prop[PieLayer.DIRECTION] = -1
                 plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).setVoid()
             }
