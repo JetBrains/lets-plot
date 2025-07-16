@@ -14,8 +14,7 @@ import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 
-
-fun embeddedFontsManager() = MagickFontManager().apply {
+fun newEmbeddedFontsManager() = MagickFontManager().apply {
     val fontsDir = Native.getCurrentDir() + "/src/nativeImagickTest/resources/fonts/"
 
     registerFont(Font(fontFamily = "sans"), "$fontsDir/NotoSans-Regular.ttf")

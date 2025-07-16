@@ -14,7 +14,7 @@ import kotlin.test.Test
 
 class SvgTest {
     companion object {
-        private val embeddedFontsManager by lazy { embeddedFontsManager() }
+        private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
         private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
     }
 

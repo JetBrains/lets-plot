@@ -158,7 +158,7 @@ object PlotReprGenerator {
                         "cm" -> (width * 96 / 2.54) to (height * 96 / 2.54)
                         "in" -> (width * 96) to (height * 96)
                         "mm" -> (width * 96 / 25.4) to (height * 96 / 25.4)
-                        "" -> width to height // "px" or any other unit
+                        "px" -> width to height
                         else -> throw IllegalArgumentException("Unsupported unit: $unit")
                     }
 
@@ -172,7 +172,9 @@ object PlotReprGenerator {
             val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
                 plotSpec = processedSpec,
                 sizingPolicy = sizingPolicy,
-                computationMessagesHandler = { println(it.joinToString("\n")) }
+                computationMessagesHandler = {
+                    //println(it.joinToString("\n"))
+                }
             )
 
             val svgCanvasFigure = SvgCanvasFigure(vm.svg)
@@ -197,6 +199,7 @@ object PlotReprGenerator {
             // Save the image to a file
             val snapshot = plotCanvas.takeSnapshot()
             val bitmap = snapshot.bitmap
+            snapshot.dispose()
             return bitmap
         } catch (e: Throwable) {
             e.printStackTrace()

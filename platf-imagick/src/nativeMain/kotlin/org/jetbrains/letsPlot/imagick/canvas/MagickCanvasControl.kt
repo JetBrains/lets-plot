@@ -39,7 +39,10 @@ class MagickCanvasControl(
     }
 
     override fun removeChild(canvas: Canvas) {
+        require(canvas is MagickCanvas) { "Canvas must be of type MagickCanvas" }
+
         children.remove(canvas)
+        canvas.dispose()
     }
 
     override fun onResize(listener: (Vector) -> Unit): Registration {
@@ -72,29 +75,11 @@ class MagickCanvasControl(
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
-        println("MagickCanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
-        if (false) {
-            if (!dataUrl.startsWith("data:image/png;base64,")) {
-                throw IllegalArgumentException("Unsupported data URL format: $dataUrl")
-            }
-            val data = dataUrl.removePrefix("data:image/png;base64,")
-            val pngData = Base64.decode(data)
-
-            println("MagickCanvasControl.loadImageFromPngBytes: bytes.size = ${pngData.size}")
-            val png = Png.decode(pngData)
-            val img = MagickUtil.fromBitmap(png)
-
-            return Asyncs.constant(MagickSnapshot(img))
-        } else {
-            val bitmap = Png.decodeDataImage(dataUrl)
-            return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
-        }
+        val bitmap = Png.decodeDataImage(dataUrl)
+        return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
     }
 
-    override fun decodePng(
-        png: ByteArray,
-        size: Vector
-    ): Async<Canvas.Snapshot> {
+    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
         TODO("Not yet implemented")
     }
 

@@ -16,7 +16,7 @@ import kotlin.test.Test
 
 class PlotTest {
     companion object {
-        private val embeddedFontsManager by lazy { embeddedFontsManager() }
+        private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
         private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
     }
 
@@ -353,7 +353,7 @@ class PlotTest {
         plotSpec: MutableMap<String, Any>,
         width: Number = -1f,
         height: Number = -1f,
-        unit: String = "",
+        unit: String = "px",
         dpi: Int = -1,
         scale: Number = 1.0
     ) {

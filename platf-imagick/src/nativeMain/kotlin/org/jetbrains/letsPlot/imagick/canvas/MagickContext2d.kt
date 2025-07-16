@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
@@ -17,7 +18,7 @@ class MagickContext2d(
     pixelDensity: Double,
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
-) : Context2d by stateDelegate {
+) : Context2d by stateDelegate, Disposable {
     private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
     val wand = ImageMagick.NewDrawingWand() ?: error { "Failed to create DrawingWand" }
@@ -284,6 +285,13 @@ class MagickContext2d(
         ImageMagick.DrawSetStrokeColor(wand, none)
         block(wand)
         ImageMagick.DrawSetStrokeColor(wand, pixelWand)
+    }
+
+    override fun dispose() {
+        //ImageMagick.DestroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
+        ImageMagick.DestroyPixelWand(pixelWand)
+        ImageMagick.DestroyPixelWand(none)
+        ImageMagick.DestroyDrawingWand(wand)
     }
 
     companion object {

@@ -79,7 +79,13 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         })
         anim.start()
 
-        return Registration.Companion.EMPTY
+        return object : Registration() {
+            override fun doRemove() {
+                canvasControl.removeChild(canvas ?: error("Should not happen - canvas is null"))
+                rootMapper.detachRoot()
+                anim.stop()
+            }
+        }
     }
 
     private fun mapSvgSvgElement(value: SvgSvgElement) {
