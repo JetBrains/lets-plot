@@ -87,8 +87,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the point to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along x and y axes.
+        'max' uses the larger of the unit steps along x and y axes.
         If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -7259,8 +7262,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along x and y axes.
+        'max' uses the larger of the unit steps along x and y axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -7513,8 +7519,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text label to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along x and y axes.
+        'max' uses the larger of the unit steps along x and y axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -7773,8 +7782,11 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along x and y axes.
+        'max' uses the larger of the unit steps along x and y axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -7993,8 +8005,11 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text label to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along x and y axes.
+        'max' uses the larger of the unit steps along x and y axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -8200,8 +8215,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Default is a negative angle of the first sector.
     direction : {1, -1}, default=1
         Specify angle direction, 1=clockwise, -1=counter-clockwise.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the pie chart to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along x and y axes.
+        'max' uses the larger of the unit steps along x and y axes.
         If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
