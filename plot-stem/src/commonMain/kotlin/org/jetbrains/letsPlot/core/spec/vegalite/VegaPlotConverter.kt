@@ -144,7 +144,8 @@ internal class VegaPlotConverter private constructor(
                     this.geom = geom
 
                     val vegaData = when (VegaOption.DATA in layerSpec) {
-                        true -> layerSpec.getMap(VegaOption.DATA) ?: emptyMap() // if explicitly null - don't use plot data
+                        true -> layerSpec.getMap(VegaOption.DATA)
+                            ?: emptyMap() // if explicitly null - don't use plot data
                         false -> vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
                     }
 
@@ -178,10 +179,11 @@ internal class VegaPlotConverter private constructor(
                 )
             ) {
                 size = 0.6
-                prop[PieLayer.SIZE_UNIT] = Aes.X // TODO: replace with MINMAX when it will be supported
+                prop[PieLayer.SIZE_UNIT] = Option.Geom.SizeUnit.MIN
                 prop[PieLayer.DIRECTION] = -1
                 plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).setVoid()
             }
+
             Mark.Types.BAR ->
                 if (transformResult?.stat?.kind == StatKind.BIN) {
                     appendLayer(
@@ -234,6 +236,7 @@ internal class VegaPlotConverter private constructor(
                 // So, we need to convert the area to the diameter
                 size = size?.let(::sqrt)
             }
+
             Mark.Types.AREA -> appendLayer(
                 channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
             ) {

@@ -464,6 +464,8 @@ object Option {
         object SizeUnit {
             const val X = "x"
             const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
         }
     }
 
