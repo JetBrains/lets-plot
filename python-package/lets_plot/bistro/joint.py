@@ -47,19 +47,19 @@ def joint_plot(data, x, y, *,
 
     Parameters
     ----------
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed.
     x, y : str
         Names of a variables.
     geom : {'point', 'tile', 'hex', 'density2d', 'density2df'}, default='point'
         The geometric object to use to display the data.
     bins : int or list of int
-        Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+        Number of bins in both directions, vertical and horizontal. Overridden by ``binwidth``.
         If only one value given - interpret it as list of two equal values.
         Applicable simultaneously for 'tile'/'hex' geom and 'histogram' marginal.
     binwidth : float or list of float
         The width of the bins in both directions, vertical and horizontal.
-        Overrides `bins`. The default is to use bin widths that cover the entire range of the data.
+        Overrides ``bins``. The default is to use bin widths that cover the entire range of the data.
         If only one value given - interpret it as list of two equal values.
         Applicable simultaneously for 'tile'/'hex' geom and 'histogram' marginal.
     color : str
@@ -86,7 +86,7 @@ def joint_plot(data, x, y, *,
         Second parameter is a string specifying which sides of the plot the marginal layer will appear on.
         Possible values: 't' (top), 'b' (bottom), 'l' (left), 'r' (right).
         Third parameter (optional) is size of marginal.
-        To suppress marginals use `marginal='none'`.
+        To suppress marginals use ``marginal='none'``.
         Examples:
         "hist:tr:0.3",
         "dens:tr,hist:bl",
@@ -94,13 +94,13 @@ def joint_plot(data, x, y, *,
 
     Returns
     -------
-    `PlotSpec`
+    ``PlotSpec``
         Plot object specification.
 
     Notes
     -----
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
