@@ -25,7 +25,7 @@ class MagickFontManager constructor() {
     private val macSerifFonts = listOf("Times", "Georgia", "Palatino", "Serif")
     private val macSansFonts = listOf("Helvetica", "Arial", "San Francisco", "Sans")
 
-    private val linuxMonospaceFonts = listOf("DejaVu Sans Mono", "FreeMono", "Noto Mono", "Nimbus Mono", "Liberation Mono", "Courier")
+    private val linuxMonospaceFonts = listOf("Liberation Mono", "DejaVu Sans Mono", "FreeMono", "Noto Mono", "Nimbus Mono", "Courier")
     private val linuxSerifFonts = listOf("DejaVu Serif", "FreeSerif", "Noto Serif", "Nimbus Roman", "Liberation Serif", "Times")
     private val linuxSansFonts =listOf("DejaVu Sans", "FreeSans", "Noto Sans", "Nimbus Sans", "Liberation Sans", "Ubuntu", "Cantarell", "Sans")
 
