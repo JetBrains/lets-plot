@@ -12,6 +12,12 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyDrawingWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newDrawingWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
@@ -19,9 +25,9 @@ class MagickContext2d(
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate, Disposable {
-    private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
-    private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
-    val wand = ImageMagick.NewDrawingWand() ?: error { "Failed to create DrawingWand" }
+    private val none = newPixelWand("MagickContext2d.none")
+    private val pixelWand = newPixelWand("MagickContext2d.pixelWand")
+    val wand = newDrawingWand("MagickContext2d.wand")
     private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
 
     init {
@@ -46,10 +52,10 @@ class MagickContext2d(
         require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
             // Resize the image if the dimensions do not match
-            val scaledImage = ImageMagick.CloneMagickWand(snapshot.img)
+            val scaledImage = cloneMagickWand(snapshot.img, "MagickContext2d.drawImage.scaledImage")
             ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
-            ImageMagick.DestroyMagickWand(scaledImage)
+            destroyMagickWand(scaledImage, "MagickContext2d.drawImage.scaledImage")
         } else {
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
         }
@@ -288,10 +294,10 @@ class MagickContext2d(
     }
 
     override fun dispose() {
-        //ImageMagick.DestroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
-        ImageMagick.DestroyPixelWand(pixelWand)
-        ImageMagick.DestroyPixelWand(none)
-        ImageMagick.DestroyDrawingWand(wand)
+        //destroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
+        destroyPixelWand(pixelWand, "MagickContext2d.dispose().pixelWand")
+        destroyPixelWand(none, "MagickContext2d.dispose().none")
+        destroyDrawingWand(wand, "MagickContext2d.dispose().wand")
     }
 
     companion object {
