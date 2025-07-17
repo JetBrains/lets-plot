@@ -17,13 +17,13 @@ def _create_html_frontend_context(isolated_frame: bool = None, offline: bool = N
     Parameters
     ----------
     isolated_frame : bool, optional, default None - auto-detect
-        If `True`, generate HTLM which can be used in `iframe` or in a standalone HTML document
-        If `False`, pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
+        If True, generate HTLM which can be used in `iframe` or in a standalone HTML document
+        If False, pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
 
     offline : bool, optional, default None - evaluated to 'connected' mode in production environment.
-        If `True`, full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
+        If True, full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
         to work with notebook without the Internet connection.
-        If `False`, load Lets-Plot JS library from CDN.
+        If False, load Lets-Plot JS library from CDN.
     """
     if isolated_frame is None:
         isolated_frame = _use_isolated_frame()
@@ -44,8 +44,8 @@ def _create_wb_html_frontend_context(exec: str, new: bool) -> FrontendContext:
         The name of the web browser to use.
         If not specified, the default browser will be used.
     new : bool, default=False
-        If `True`, the URL is opened in a new window of the web browser.
-        If `False`, the URL is opened in the already opened web browser window.
+        If True, the URL is opened in a new window of the web browser.
+        If False, the URL is opened in the already opened web browser window.
     """
     return WebBrHtmlPageContext(exec, new)
 
