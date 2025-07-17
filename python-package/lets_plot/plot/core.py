@@ -24,7 +24,7 @@ def aes(x=None, y=None, **kwargs):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Aesthetic mapping specification.
 
     Notes
@@ -87,17 +87,18 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
         'bin' (count number of points with x-axis coordinate in the same bin),
         'smooth' (perform smoothing - linear default),
         'density' (compute and draw kernel density estimate).
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    position : str or `FeatureSpec`
+    position : str or ``FeatureSpec``
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     kwargs:
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -105,7 +106,7 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -162,8 +163,10 @@ class FeatureSpec():
 
     Do not use this class explicitly.
 
-    Instead, you should construct its objects with functions `ggplot()`, `geom_point()`,
-    `position_dodge()`, `scale_x_continuous()` etc.
+    Instead, you should construct its objects with functions `ggplot() <https://lets-plot.org/python/pages/api/lets_plot.ggplot.html>`__,
+    `geom_point() <https://lets-plot.org/python/pages/api/lets_plot.geom_point.html>`__,
+    `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__,
+    `scale_x_continuous() <https://lets-plot.org/python/pages/api/lets_plot.scale_x_continuous.html>`__ etc.
     """
 
     def __init__(self, kind, name, **kwargs):
@@ -179,8 +182,8 @@ class FeatureSpec():
 
     def as_dict(self):
         """
-        Return the dictionary of all properties of the object with `as_dict()`
-        applied recursively to all subproperties of `FeatureSpec` type.
+        Return the dictionary of all properties of the object with ``as_dict()``
+        applied recursively to all subproperties of ``FeatureSpec`` type.
 
         Returns
         -------
@@ -229,8 +232,8 @@ class PlotSpec(FeatureSpec):
 
     Do not use this class explicitly.
 
-    Instead, you should construct its objects with functions `ggplot()`,
-    `corr_plot(...).points().build()` etc.
+    Instead, you should construct its objects with functions `ggplot() <https://lets-plot.org/python/pages/api/lets_plot.ggplot.html>`__,
+    ``corr_plot(...).points().build()`` etc.
     """
 
     @classmethod
@@ -263,7 +266,7 @@ class PlotSpec(FeatureSpec):
 
         Returns
         -------
-        dict or `DataFrame`
+        dict or ``DataFrame``
             Object data.
 
         Examples
@@ -284,7 +287,7 @@ class PlotSpec(FeatureSpec):
 
     def has_layers(self) -> bool:
         """
-        Check if the `PlotSpec` object has at least one layer.
+        Check if the ``PlotSpec`` object has at least one layer.
 
         Returns
         -------
@@ -309,7 +312,7 @@ class PlotSpec(FeatureSpec):
 
     def __add__(self, other):
         """
-        Allow to add different specs to the `PlotSpec` object.
+        Allow to add different specs to the ``PlotSpec`` object.
 
         Examples
         --------
@@ -476,7 +479,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
@@ -515,7 +518,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
@@ -554,7 +557,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -582,24 +585,24 @@ class PlotSpec(FeatureSpec):
 
         Notes
         -----
-        - If `w`, `h`, `unit`, and `dpi` are all specified:
+        - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
 
-          - The plot's pixel size (default or set by `ggsize()`) is ignored.
-          - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+          - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
 
-            - The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
+            - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
 
-        - If only `dpi` is specified:
+        - If only ``dpi`` is specified:
 
-          - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display PPI of 96.
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
           - The output size is then calculated based on the specified DPI.
 
             - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
             - Useful for printing - the plot will appear nearly the same size as on screen.
 
-        - If `w`, `h` are not specified:
+        - If ``w``, ``h`` are not specified:
 
-          - The `scale` parameter is used to determine the output size.
+          - The ``scale`` parameter is used to determine the output size.
 
             - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
             - Useful for generating high-resolution images suitable for publication.
@@ -630,7 +633,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -658,24 +661,24 @@ class PlotSpec(FeatureSpec):
 
         Notes
         -----
-        - If `w`, `h`, `unit`, and `dpi` are all specified:
+        - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
 
-          - The plot's pixel size (default or set by `ggsize()`) is ignored.
-          - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+          - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
 
-            - The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
+            - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
 
-        - If only `dpi` is specified:
+        - If only ``dpi`` is specified:
 
-          - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display PPI of 96.
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
           - The output size is then calculated based on the specified DPI.
 
             - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
             - Useful for printing - the plot will appear nearly the same size as on screen.
 
-        - If `w`, `h` are not specified:
+        - If ``w``, ``h`` are not specified:
 
-          - The `scale` parameter is used to determine the output size.
+          - The ``scale`` parameter is used to determine the output size.
 
             - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
             - Useful for generating high-resolution images suitable for publication.
@@ -710,8 +713,10 @@ class LayerSpec(FeatureSpec):
 
     Do not use this class explicitly.
 
-    Instead, you should construct its objects with functions `geom_point()`,
-    `geom_contour()`, `geom_boxplot()`, `geom_text()` etc.
+    Instead, you should construct its objects with functions `geom_point() <https://lets-plot.org/python/pages/api/lets_plot.geom_point.html>`__,
+    `geom_contour() <https://lets-plot.org/python/pages/api/lets_plot.geom_contour.html>`__,
+    `geom_boxplot() <https://lets-plot.org/python/pages/api/lets_plot.geom_boxplot.html>`__,
+    `geom_text() <https://lets-plot.org/python/pages/api/lets_plot.geom_text.html>`__ etc.
     """
 
     __own_features = ['geom', 'stat', 'mapping', 'position']
@@ -872,8 +877,8 @@ def _merge_dicts_recursively(d1, d2):
 
 def _theme_dicts_merge(x, y):
     """
-    Simple values in `y` override values in `x`.
-    If values in `y` and `x` both are dictionaries, then they are merged.
+    Simple values in ``y`` override values in ``x``.
+    If values in ``y`` and ``x`` both are dictionaries, then they are merged.
     """
     overlapping_keys = x.keys() & y.keys()
     z = {k: {**x[k], **y[k]} for k in overlapping_keys if type(x[k]) is dict and type(y[k]) is dict}
