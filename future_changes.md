@@ -30,7 +30,7 @@
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
 
-  - New `inherit_layer()` option in annotations configuration (see example notebooks above)
+  - New `inherit_color()` option in annotations configuration (see example notebooks above)
 
 - `waterfall_plot()` - support for combining waterfall bars with other geometry layers [[#1344](https://github.com/JetBrains/lets-plot/issues/1344)].
 
