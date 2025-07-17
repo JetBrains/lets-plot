@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
@@ -34,11 +35,11 @@ class MagickCanvas(
         }
 
         ImageMagick.MagickDrawImage(_img, wand)
-        return MagickSnapshot(_img)
+        return MagickSnapshot(cloneMagickWand(_img))
     }
 
     override fun dispose() {
-        destroyMagickWand(_img, "MagickCanvas.dispose()._img")
+        destroyMagickWand(_img)
         magickContext2d.dispose()
     }
 
@@ -48,12 +49,12 @@ class MagickCanvas(
         }
 
         fun create(size: Vector, pixelDensity: Number, fontManager: MagickFontManager): MagickCanvas {
-            val wand = newMagickWand("MagickCanvas.create().wand")
+            val wand = newMagickWand()
             ImageMagick.MagickSetImageAlphaChannel(wand, ImageMagick.AlphaChannelOption.OnAlphaChannel)
-            val background = newPixelWand("MagickCanvas.create().background")
+            val background = newPixelWand()
             ImageMagick.PixelSetColor(background, "transparent")
             ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
-            destroyPixelWand(background, "MagickCanvas.create().background")
+            destroyPixelWand(background)
             return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble(), fontManager = fontManager)
         }
     }

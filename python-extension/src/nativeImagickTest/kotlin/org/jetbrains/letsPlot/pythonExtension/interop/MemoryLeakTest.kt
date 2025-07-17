@@ -1,6 +1,6 @@
 package kotlin.org.jetbrains.letsPlot.pythonExtension.interop
-/*  WORKS ONLY ON LINUX
-
+//  WORKS ONLY ON LINUX
+/*
 import demoAndTestShared.parsePlotSpec
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.allocArray
@@ -16,6 +16,7 @@ import kotlin.math.absoluteValue
 import kotlin.test.Test
 import platform.posix.*
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import platform.linux.RUSAGE_SELF
 import platform.linux.getrusage
 import platform.linux.rusage
@@ -33,7 +34,11 @@ class MemoryLeakTest {
             val deltaRss: Long
         ) {
             override fun toString(): String {
-                return "MemorySnapshot: vmSize = ${byteSizeToString(vmSize)}, vmRss = ${byteSizeToString(vmRss)}, deltaSize = ${byteSizeToString(deltaSize)}, deltaRss = ${byteSizeToString(deltaRss)}"
+                return "MemorySnapshot: vmSize = ${byteSizeToString(vmSize)}, vmRss = ${byteSizeToString(vmRss)}, deltaSize = ${
+                    byteSizeToString(
+                        deltaSize
+                    )
+                }, deltaRss = ${byteSizeToString(deltaRss)}"
             }
         }
 
@@ -63,6 +68,7 @@ class MemoryLeakTest {
                         line.startsWith("VmSize:") -> {
                             vmSize = extractKbValue(line)
                         }
+
                         line.startsWith("VmRSS:") -> {
                             vmRss = extractKbValue(line)
                         }
@@ -86,7 +92,7 @@ class MemoryLeakTest {
 
         fun byteSizeToString(size: Long): String {
             val v = size.absoluteValue
-            return when  {
+            return when {
                 v < 1024 -> "$size B"
                 v < 1024 * 1024 -> "${size / 1024} KB"
                 v < 1024 * 1024 * 1024 -> "${size / (1024 * 1024)} MB"
@@ -107,10 +113,44 @@ class MemoryLeakTest {
 
     }
 
+
     @Test
-    fun memoryLeakTest() {
-        // This test is to ensure that the PlotReprGenerator does not leak memory.
-        // It runs a simple plot generation multiple times and checks for memory leaks.
+    fun smallPictures1xLeakTest() {
+        runTest(n = 1, w = 5, h = 5)
+    }
+
+    @Test
+    fun smallPictures50xLeakTest() {
+        runTest(n = 50, w = 5, h = 5)
+    }
+
+    @Test
+    fun smallPictures100xLeakTest() {
+        runTest(n = 100, w = 5, h = 5)
+    }
+
+    @Test
+    fun smallPictures30xLeakTest() {
+        runTest(n = 30, w = 5, h = 5)
+    }
+
+    @Test
+    fun smallPictures10xLeakTest() {
+        runTest(n = 10, w = 5, h = 5)
+    }
+
+    @Test
+    fun largePictures10xLeakTest() {
+        runTest(n = 10, w = 600, h = 400)
+    }
+
+    @Test
+    fun largePictures30xLeakTest() {
+        runTest(n = 30, w = 600, h = 400)
+    }
+
+    private fun runTest(n: Int, w: Int, h: Int) {
+        // This is a helper function to run the test multiple times with different parameters.
         val spec = """
             |{
             |  "kind": "plot",
@@ -119,16 +159,19 @@ class MemoryLeakTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        fun exportBitmap() = PlotReprGenerator.exportBitmap(plotSpec, 5f, 5f, "px", 0, 1.0, embeddedFontsManager)
-            ?: error("Failed to export bitmap from plot spec")
 
         val startupMemoryStatus = logProcStatus()
 
-        exportBitmap()
+        fun exportBitmap(plotSpec: MutableMap<String, Any>, w: Int, h: Int): Bitmap {
+            return PlotReprGenerator.exportBitmap(plotSpec, w.toFloat(), h.toFloat(), "px", 0, 1.0, embeddedFontsManager)
+                ?: error("Failed to export bitmap from plot spec")
+        }
+
+        exportBitmap(plotSpec, w, h)
 
         val firstRunMemoryStatus = logProcStatus(startupMemoryStatus)
 
-        repeat(30) { runIndex -> exportBitmap() }
+        repeat(n - 1) { runIndex -> exportBitmap(plotSpec, w, h) }
 
         val finalMemoryStatus = logProcStatus(firstRunMemoryStatus)
 
@@ -138,5 +181,4 @@ class MemoryLeakTest {
         println("Final Memory: $finalMemoryStatus")
     }
 }
-
- */
+*/

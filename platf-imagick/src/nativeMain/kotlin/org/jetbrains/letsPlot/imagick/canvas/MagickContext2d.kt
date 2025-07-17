@@ -25,9 +25,9 @@ class MagickContext2d(
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate, Disposable {
-    private val none = newPixelWand("MagickContext2d.none")
-    private val pixelWand = newPixelWand("MagickContext2d.pixelWand")
-    val wand = newDrawingWand("MagickContext2d.wand")
+    private val none = newPixelWand()
+    private val pixelWand = newPixelWand()
+    val wand = newDrawingWand()
     private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
 
     init {
@@ -52,10 +52,10 @@ class MagickContext2d(
         require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
             // Resize the image if the dimensions do not match
-            val scaledImage = cloneMagickWand(snapshot.img, "MagickContext2d.drawImage.scaledImage")
+            val scaledImage = cloneMagickWand(snapshot.img)
             ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
-            destroyMagickWand(scaledImage, "MagickContext2d.drawImage.scaledImage")
+            destroyMagickWand(scaledImage)
         } else {
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
         }
@@ -295,9 +295,9 @@ class MagickContext2d(
 
     override fun dispose() {
         //destroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
-        destroyPixelWand(pixelWand, "MagickContext2d.dispose().pixelWand")
-        destroyPixelWand(none, "MagickContext2d.dispose().none")
-        destroyDrawingWand(wand, "MagickContext2d.dispose().wand")
+        destroyPixelWand(pixelWand)
+        destroyPixelWand(none)
+        destroyDrawingWand(wand)
     }
 
     companion object {
@@ -336,7 +336,6 @@ class MagickContext2d(
                         is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(wand, cmd.x, cmd.y)
                         is LineTo -> lineTo(cmd.x, cmd.y)
                         is CubicCurveTo -> {
-                            //cmd.start?.let { (x, y) -> lineTo(x, y) }
                             cmd.controlPoints.asSequence()
                                 .windowed(size = 3, step = 3)
                                 .forEach { (cp1, cp2, cp3) ->

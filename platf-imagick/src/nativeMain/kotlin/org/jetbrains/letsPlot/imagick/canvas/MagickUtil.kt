@@ -19,42 +19,42 @@ object MagickUtil {
         }
     }
 
-    fun newPixelWand(tag: String): CPointer<ImageMagick.PixelWand> {
+    fun newPixelWand(): CPointer<ImageMagick.PixelWand> {
         val pixelWand = ImageMagick.NewPixelWand() ?: throw RuntimeException("Failed to create new PixelWand")
-        log { "newPixelWand($tag): $pixelWand" }
+        log { "newPixelWand(): $pixelWand" }
         return pixelWand
     }
 
-    fun destroyPixelWand(pixelWand: CPointer<ImageMagick.PixelWand>, tag: String) {
-        log { "destroyPixelWand($tag): $pixelWand" }
+    fun destroyPixelWand(pixelWand: CPointer<ImageMagick.PixelWand>) {
+        log { "destroyPixelWand(): $pixelWand" }
         ImageMagick.DestroyPixelWand(pixelWand)
     }
 
-    fun newMagickWand(tag: String): CPointer<ImageMagick.MagickWand> {
+    fun newMagickWand(): CPointer<ImageMagick.MagickWand> {
         val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create new MagickWand")
-        log { "newMagickWand($tag): $magickWand" }
+        log { "newMagickWand(): $magickWand" }
         return magickWand
     }
 
-    fun cloneMagickWand(magickWand: CPointer<ImageMagick.MagickWand>, tag: String): CPointer<ImageMagick.MagickWand> {
+    fun cloneMagickWand(magickWand: CPointer<ImageMagick.MagickWand>): CPointer<ImageMagick.MagickWand> {
         val clonedWand = ImageMagick.CloneMagickWand(magickWand) ?: throw RuntimeException("Failed to clone MagickWand")
-        log { "cloneMagickWand($tag): $clonedWand" }
+        log { "cloneMagickWand(): $clonedWand" }
         return clonedWand
     }
 
-    fun destroyMagickWand(magickWand: CPointer<ImageMagick.MagickWand>, tag: String) {
-        log { "destroyMagickWand($tag): $magickWand" }
+    fun destroyMagickWand(magickWand: CPointer<ImageMagick.MagickWand>) {
+        log { "destroyMagickWand(): $magickWand" }
         ImageMagick.DestroyMagickWand(magickWand)
     }
 
-    fun newDrawingWand(tag: String): CPointer<ImageMagick.DrawingWand> {
+    fun newDrawingWand(): CPointer<ImageMagick.DrawingWand> {
         val drawingWand = ImageMagick.NewDrawingWand() ?: throw RuntimeException("Failed to create new DrawingWand")
-        log { "newDrawingWand($tag): $drawingWand" }
+        log { "newDrawingWand(): $drawingWand" }
         return drawingWand
     }
 
-    fun destroyDrawingWand(drawingWand: CPointer<ImageMagick.DrawingWand>, tag: String) {
-        log { "destroyDrawingWand($tag): $drawingWand" }
+    fun destroyDrawingWand(drawingWand: CPointer<ImageMagick.DrawingWand>) {
+        log { "destroyDrawingWand(): $drawingWand" }
         ImageMagick.DestroyDrawingWand(drawingWand)
     }
 

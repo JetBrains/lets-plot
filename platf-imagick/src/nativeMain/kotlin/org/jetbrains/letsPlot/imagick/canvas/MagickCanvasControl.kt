@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -50,7 +49,7 @@ class MagickCanvasControl(
         return Registration.EMPTY
     }
 
-    override fun snapshot(): Canvas.Snapshot {
+    override fun snapshot(): MagickSnapshot {
         TODO("snapshot() - Not yet implemented")
     }
 
@@ -66,11 +65,11 @@ class MagickCanvasControl(
         }
     }
 
-    override fun createCanvas(size: Vector): Canvas {
+    override fun createCanvas(size: Vector): MagickCanvas {
         return MagickCanvas.create(size, pixelDensity, fontManager)
     }
 
-    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+    override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
         return MagickSnapshot.fromBitmap(bitmap)
     }
 

@@ -14,9 +14,8 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 
 class MagickSnapshot(
-    img: CPointer<ImageMagick.MagickWand>
+    val img: CPointer<ImageMagick.MagickWand>
 ) : Disposable, Canvas.Snapshot {
-    val img: CPointer<ImageMagick.MagickWand> = cloneMagickWand(img, "MagickSnapshot.img")
     override val size: Vector = Vector(
         ImageMagick.MagickGetImageWidth(img).toInt(),
         ImageMagick.MagickGetImageHeight(img).toInt()
@@ -25,11 +24,11 @@ class MagickSnapshot(
         get() = toBitmap()
 
     override fun dispose() {
-        destroyMagickWand(img, "MagickSnapshot.dispose().img")
+        destroyMagickWand(img)
     }
 
     override fun copy(): Canvas.Snapshot {
-        val copiedImg = cloneMagickWand(img, "MagickSnapshot.copy().img")
+        val copiedImg = cloneMagickWand(img)
         return MagickSnapshot(copiedImg)
     }
 
@@ -65,7 +64,7 @@ class MagickSnapshot(
                 argbIntArray[i] = (a shl 24) or (r shl 16) or (g shl 8) or b
             }
 
-            return Bitmap(width = width.toInt(), height = height.toInt(), argbInts = argbIntArray)
+            return Bitmap(width = width, height = height, argbInts = argbIntArray)
         }
     }
 

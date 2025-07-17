@@ -17,11 +17,11 @@ import org.jetbrains.letsPlot.core.canvas.CanvasProvider
 class MagickCanvasProvider(
     private val magickFontManager: MagickFontManager,
 ) : CanvasProvider {
-    override fun createCanvas(size: Vector): Canvas {
-        return MagickCanvas.create(size.x.toInt(), size.y.toInt(), 1.0, magickFontManager)
+    override fun createCanvas(size: Vector): MagickCanvas {
+        return MagickCanvas.create(size.x, size.y, 1.0, magickFontManager)
     }
 
-    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+    override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
         return MagickSnapshot.fromBitmap(bitmap)
     }
 

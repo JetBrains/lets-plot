@@ -194,7 +194,10 @@ object PlotReprGenerator {
             canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
 
             // TODO: canvasControl can provide takeSnapshot() method
-            val plotCanvas = canvasControl.children.single() as MagickCanvas
+            val plotCanvas = canvasControl.children.last() as MagickCanvas
+            require(plotCanvas.size.x > 0 && plotCanvas.size.y > 0) {
+                "Plot canvas size must be greater than zero"
+            }
 
             // Save the image to a file
             val snapshot = plotCanvas.takeSnapshot()

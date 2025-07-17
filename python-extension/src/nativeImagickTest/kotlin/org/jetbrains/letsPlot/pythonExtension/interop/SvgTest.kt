@@ -32,7 +32,7 @@ class SvgTest {
         val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = embeddedFontsManager)
         SvgCanvasFigure(svg).mapToCanvas(canvasControl)
 
-        val canvas = canvasControl.children.single() as MagickCanvas
+        val canvas = canvasControl.children.last() as MagickCanvas
         imageComparer.assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
     }
 }

@@ -26,7 +26,8 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     private var needRedraw: Boolean = true
     private var nodeContainer: SvgNodeContainer? = null
     private var canvasPeer: SvgCanvasPeer? = null
-    private var canvas: Canvas? = null
+    private var contentCanvas: Canvas? = null
+    private var textMeasureCanvas: Canvas? = null
 
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
@@ -46,25 +47,30 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
         canvasControl.onResize { size ->
-            val oldCanvas = canvas ?: error("Should not happen - canvas is null")
+            val oldCanvas = contentCanvas ?: error("Should not happen - canvas is null")
             val newCanvas = canvasControl.createCanvas(size)
-            canvas = newCanvas
+            contentCanvas = newCanvas
 
             canvasControl.removeChild(oldCanvas)
             canvasControl.addChild(newCanvas)
         }
-        canvasPeer = SvgCanvasPeer(textMeasurer = TextMeasurer.create(canvasControl), canvasControl)
+
+        textMeasureCanvas = canvasControl.createCanvas(0, 0)
+        canvasControl.addChild(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
+
+        contentCanvas = canvasControl.createCanvas(width * canvasControl.pixelDensity, height * canvasControl.pixelDensity)
+        canvasControl.addChild(contentCanvas!!)
+
+        val textMeasurer = TextMeasurer.create(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
+        canvasPeer = SvgCanvasPeer(textMeasurer, canvasControl)
         mapSvgSvgElement(svgSvgElement)
 
-        canvas = canvasControl.createCanvas(width * canvasControl.pixelDensity, height * canvasControl.pixelDensity)
-        canvasControl.addChild(canvas!!)
-
         // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
-        renderElement(rootMapper.target, canvas!!)
+        renderElement(rootMapper.target, contentCanvas!!)
 
         val anim = canvasControl.createAnimationTimer(object : AnimationProvider.AnimationEventHandler {
             override fun onEvent(millisTime: Long): Boolean {
-                val canvas = canvas ?: return false
+                val canvas = contentCanvas ?: return false
 
                 if (!needRedraw) {
                     return false
@@ -81,7 +87,8 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
         return object : Registration() {
             override fun doRemove() {
-                canvasControl.removeChild(canvas ?: error("Should not happen - canvas is null"))
+                canvasControl.removeChild(contentCanvas ?: error("Should not happen - canvas is null"))
+                canvasControl.removeChild(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
                 rootMapper.detachRoot()
                 anim.stop()
             }
@@ -100,7 +107,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
         rootMapper.attachRoot(MappingContext())
 
-        canvas?.let {
+        contentCanvas?.let {
             renderElement(rootMapper.target, it)
         }
     }
