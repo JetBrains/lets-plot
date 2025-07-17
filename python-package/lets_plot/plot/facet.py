@@ -38,21 +38,21 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1,
         Specify the format pattern for displaying faceting values in rows.
     x_labwidth : int, default=None
         The maximum label length (in characters) before a line breaking is applied.
-        If the original facet label already contains `\\\\n` as a text separator, it splits at those points first,
-        then wraps each part according to `x_labwidth`.
+        If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
+        then wraps each part according to ``x_labwidth``.
     y_labwidth : int, default=None
         The maximum label length (in characters) before a line breaking is applied.
-        If the original facet label already contains `\\\\n` as a text separator, it splits at those points first,
-        then wraps each part according to `y_labwidth`.
+        If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
+        then wraps each part according to ``y_labwidth``.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Facet grid specification.
 
     Notes
     -----
-    Format pattern in the `x_format` / `y_format` parameters can be
+    Format pattern in the ``x_format`` / ``y_format`` parameters can be
     just a number format (like 'd') or a string template where number format
     is surrounded by curly braces: "{d} cylinders".
 
@@ -111,7 +111,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
     """
     Split data by one or more faceting variables.
     For each data subset creates a plot panel and lays out panels
-    according to the `ncol`, `nrow` and `dir` settings.
+    according to the ``ncol``, ``nrow`` and ``dir`` settings.
 
     Parameters
     ----------
@@ -127,26 +127,26 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         'free_x' or 'free_y' - vary across rows or columns respectively.
     order : int or list, default=1
         Specify ordering direction panels. 1 - ascending, -1 - descending, 0 - no ordering.
-        When a list is given, then values in the list are positionally matched to variables in `facets`.
+        When a list is given, then values in the list are positionally matched to variables in ``facets``.
     format : str or list
         Specify the format pattern for displaying faceting values.
-        The `format` values are positionally matched to variables in `facets`.
+        The ``format`` values are positionally matched to variables in ``facets``.
     dir : {'h', 'v'}, default='h'
         Direction: either 'h' for horizontal, or 'v' for vertical.
     labwidth : int or list
         The maximum label length (in characters) before a line breaking is applied.
-        If the original facet label already contains `\\\\n` as a text separator, it splits at those points first,
-        then wraps each part according to `labwidth`.
+        If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
+        then wraps each part according to ``labwidth``.
 
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Facet wrap specification.
 
     Notes
     -----
-    Format patterns in the `format` parameter can be just a number format (like 'd') or
+    Format patterns in the ``format`` parameter can be just a number format (like 'd') or
     a string template where number format is surrounded by curly braces: "{d} cylinders".
 
     For example:
