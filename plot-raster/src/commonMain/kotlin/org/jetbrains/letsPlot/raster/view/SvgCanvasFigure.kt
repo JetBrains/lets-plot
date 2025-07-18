@@ -46,7 +46,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        canvasControl.onResize { size ->
+        val resizeReg = canvasControl.onResize { size ->
             val oldCanvas = contentCanvas ?: error("Should not happen - canvas is null")
             val newCanvas = canvasControl.createCanvas(size)
             contentCanvas = newCanvas
@@ -91,6 +91,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
                 canvasControl.removeChild(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
                 rootMapper.detachRoot()
                 anim.stop()
+                resizeReg.dispose()
             }
         }
     }
