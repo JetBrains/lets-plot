@@ -7805,9 +7805,9 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Define the color aesthetic for the geometry.
     seed : int
         Random seed for reproducibility.
-    max_iter : int
+    max_iter : int, default=2000
         Maximum number of iterations used to resolve collisions.
-    max_time : float
+    max_time : float, default=5
         Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
         Direction in which text labels can be moved.
@@ -7815,7 +7815,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Padding around data points to prevent overlap with text labels.
     box_padding : float
         Padding around text labels to prevent overlap between labels.
-    max_overlaps : int
+    max_overlaps : int, default=10
         The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
@@ -8029,9 +8029,9 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Define the fill aesthetic for the geometry.
     seed : int
         Random seed for reproducibility.
-    max_iter : int
+    max_iter : int, default=2000
         Maximum number of iterations used to resolve collisions.
-    max_time : float
+    max_time : float, default=5
         Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
         Direction in which text labels can be moved.
@@ -8039,7 +8039,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Padding around data points to prevent overlap with text labels.
     box_padding : float
         Padding around text labels to prevent overlap between labels.
-    max_overlaps : int
+    max_overlaps : int, default=10
         The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
