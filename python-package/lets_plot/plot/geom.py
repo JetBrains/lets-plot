@@ -981,7 +981,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_histogram()` displays a 1D distribution by dividing tje variable
+    `geom_histogram()` displays a 1D distribution by dividing the variable
     mapped to the x-axis into bins and counting the number of observations in each bin.
 
     Computed variables:
