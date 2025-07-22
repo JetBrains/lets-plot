@@ -2101,6 +2101,9 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specify style and content of the annotations.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
