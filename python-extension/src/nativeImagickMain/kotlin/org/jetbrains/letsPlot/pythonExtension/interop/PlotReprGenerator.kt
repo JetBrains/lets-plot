@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -26,7 +25,6 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.math.roundToInt
 
 object PlotReprGenerator {
@@ -143,12 +141,6 @@ object PlotReprGenerator {
         var canvasReg: Registration? = null
 
         try {
-            @Suppress("UNCHECKED_CAST")
-            val processedSpec = MonolithicCommon.processRawSpecs(
-                plotSpec = plotSpec as MutableMap<String, Any>,
-                frontendOnly = false
-            )
-
             val sizingPolicy = when {
                 width < 0 || height < 0 -> SizingPolicy.keepFigureDefaultSize()
                 else -> {
@@ -169,15 +161,14 @@ object PlotReprGenerator {
                 }
             }
 
-            val vm = MonolithicCanvas.buildPlotFromProcessedSpecs(
-                plotSpec = processedSpec,
+            @Suppress("UNCHECKED_CAST")
+            val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
+                rawSpec = plotSpec as MutableMap<String, Any>,
                 sizingPolicy = sizingPolicy,
                 computationMessagesHandler = {
                     //println(it.joinToString("\n"))
                 }
             )
-
-            val svgCanvasFigure = SvgCanvasFigure(vm.svg)
 
             val scaleFactor = when {
                 dpi > 0 -> dpi / 96.0 * scale
@@ -185,13 +176,13 @@ object PlotReprGenerator {
             }
 
             val canvasControl = MagickCanvasControl(
-                w = (svgCanvasFigure.width * scaleFactor).roundToInt(),
-                h = (svgCanvasFigure.height * scaleFactor).roundToInt(),
+                w = (plotCanvasFigure.plotWidth * scaleFactor).roundToInt(),
+                h = (plotCanvasFigure.plotHeight * scaleFactor).roundToInt(),
                 pixelDensity = scaleFactor,
                 fontManager = fontManager,
             )
 
-            canvasReg = svgCanvasFigure.mapToCanvas(canvasControl)
+            canvasReg = plotCanvasFigure.mapToCanvas(canvasControl)
 
             // TODO: canvasControl can provide takeSnapshot() method
             val plotCanvas = canvasControl.children.last() as MagickCanvas

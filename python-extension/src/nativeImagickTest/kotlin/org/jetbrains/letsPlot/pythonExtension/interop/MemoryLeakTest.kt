@@ -1,5 +1,7 @@
 package kotlin.org.jetbrains.letsPlot.pythonExtension.interop
 //  WORKS ONLY ON LINUX
+// To enable allocation tracking, enable the following log:
+// org/jetbrains/letsPlot/imagick/canvas/MagickUtil.kt:15
 /*
 import demoAndTestShared.parsePlotSpec
 import kotlinx.cinterop.ByteVar

@@ -34,6 +34,14 @@ abstract class Registration : Disposable {
     companion object {
         val EMPTY: Registration = EmptyRegistration()
 
+        fun onRemove(code: () -> Unit): Registration {
+            return object : Registration() {
+                override fun doRemove() {
+                    code()
+                }
+            }
+        }
+
         fun from(disposable: Disposable): Registration {
             return object : Registration() {
                 override fun doRemove() {

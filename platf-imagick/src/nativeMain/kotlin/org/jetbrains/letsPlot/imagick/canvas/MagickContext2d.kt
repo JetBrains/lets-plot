@@ -27,6 +27,9 @@ class MagickContext2d(
 ) : Context2d by stateDelegate, Disposable {
     private val none = newPixelWand()
     private val pixelWand = newPixelWand()
+    private val currentFillWand = newPixelWand()
+    private val currentStrokeWand = newPixelWand()
+
     val wand = newDrawingWand()
     private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
 
@@ -36,6 +39,19 @@ class MagickContext2d(
 
         ImageMagick.PixelSetColor(none, "none")
         transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
+    }
+
+    override fun clearRect(rect: DoubleRectangle) {
+        ImageMagick.DrawGetFillColor(wand, currentFillWand)
+        ImageMagick.DrawGetStrokeColor(wand, currentStrokeWand)
+
+        ImageMagick.DrawSetFillColor(wand, none)
+        ImageMagick.DrawSetStrokeColor(wand, none)
+
+        ImageMagick.DrawRectangle(wand, rect.left, rect.top, rect.right, rect.bottom)
+
+        ImageMagick.DrawSetFillColor(wand, currentFillWand)
+        ImageMagick.DrawSetStrokeColor(wand, currentStrokeWand)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
@@ -296,6 +312,8 @@ class MagickContext2d(
     override fun dispose() {
         //destroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
         destroyPixelWand(pixelWand)
+        destroyPixelWand(currentFillWand)
+        destroyPixelWand(currentStrokeWand)
         destroyPixelWand(none)
         destroyDrawingWand(wand)
     }

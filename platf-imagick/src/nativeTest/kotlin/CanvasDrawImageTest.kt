@@ -10,7 +10,9 @@ import kotlin.test.Test
 class CanvasDrawImageTest : CanvasTestBase() {
     @Test
     fun scaledCanvas() {
-        val (canvas, ctx) = createCanvas(100, 100, pixelDensity = 2.0)
+        // 50x50 is the logical size (TODO: should be pixel size)
+        // Image will be rendered at 100x100 pixels due to pixelDensity = 2.0
+        val (canvas, ctx) = createCanvas(50, 50, pixelDensity = 2.0)
         ctx.fillStyle = Color.BLACK
         ctx.fillRect(12.5, 12.5, 25.0, 25.0)
 

@@ -53,7 +53,7 @@ class MagickCanvas(
             ImageMagick.MagickSetImageAlphaChannel(wand, ImageMagick.AlphaChannelOption.OnAlphaChannel)
             val background = newPixelWand()
             ImageMagick.PixelSetColor(background, "transparent")
-            ImageMagick.MagickNewImage(wand, size.x.toULong(), size.y.toULong(), background)
+            ImageMagick.MagickNewImage(wand, (size.x * pixelDensity.toFloat()).toULong(), (size.y * pixelDensity.toFloat()).toULong(), background)
             destroyPixelWand(background)
             return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble(), fontManager = fontManager)
         }

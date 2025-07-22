@@ -11,41 +11,31 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
-import org.jetbrains.letsPlot.core.util.sizing.SizingMode
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
-import org.jetbrains.letsPlot.raster.builder.ViewModel
 
-class PlotCanvasFigure internal constructor(
-    private val processedSpec: Map<String, Any>,
-    private val sizingPolicy: SizingPolicy,
-    private val computationMessagesHandler: (List<String>) -> Unit
-) : CanvasFigure {
+class PlotCanvasFigure : CanvasFigure {
+    val plotWidth: Int get() = plotSvgFigure.width
+    val plotHeight: Int get() = plotSvgFigure.height
 
-    val preferredWidth: Int? // null if forced to fit the container
-    val preferredHeight: Int? // null if forced to fit the container
+    private var processedSpec: Map<String, Any>? = null
+    private var sizingPolicy: SizingPolicy = SizingPolicy.keepFigureDefaultSize()
+    private var computationMessagesHandler: (List<String>) -> Unit = { _ -> }
 
-    val plotWidth: Int get() = plotSvgFigure.svgSvgElement.width().get()?.toInt() ?: 0
-    val plotHeight: Int get() = plotSvgFigure.svgSvgElement.height().get()?.toInt() ?: 0
+    private var canvasControl: CanvasControl? = null
+    private var viewModelReg = Registration.EMPTY
+    private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure()
 
-    private var viewModel: ViewModel = MonolithicCanvas.buildPlotFromProcessedSpecs(
-        plotSpec = processedSpec,
-        sizingPolicy = sizingPolicy,
-        containerSize = null, // no container size at this point
-        computationMessagesHandler = computationMessagesHandler
-    )
-    private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure(viewModel.svg)
-    private var plotReg = CompositeRegistration()
+    fun update(
+        processedSpec: Map<String, Any>,
+        sizingPolicy: SizingPolicy,
+        computationMessagesHandler: (List<String>) -> Unit
+    ) {
+        this.processedSpec = processedSpec
+        this.sizingPolicy = sizingPolicy
+        this.computationMessagesHandler = computationMessagesHandler
 
-    init {
-        if (sizingPolicy.widthMode == SizingMode.FIT && sizingPolicy.heightMode == SizingMode.FIT) {
-            preferredWidth = null
-            preferredHeight = null
-        } else {
-            preferredWidth = viewModel.svg.width().get()?.toInt() ?: error("Width is not specified in the plot spec")
-            preferredHeight = viewModel.svg.height().get()?.toInt() ?: error("Height is not specified in the plot spec")
-        }
-
+        buildPlotSvg()
     }
 
     override fun bounds(): ReadableProperty<Rectangle> {
@@ -53,39 +43,40 @@ class PlotCanvasFigure internal constructor(
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
+        this.canvasControl = canvasControl
         val reg = CompositeRegistration(
             plotSvgFigure.mapToCanvas(canvasControl),
-            canvasControl.onResize {
-                buildPlot(canvasControl)
-            },
-            // via closure because plotReg may change after resize
-            object : Registration() {
-                override fun doRemove() {
-                    // via closure because plotReg may change after resize
-                    // via closure because plotReg may change after resize
-                    this@PlotCanvasFigure.plotReg.dispose() // via closure because plotReg may change after resize
-                }
+            canvasControl.onResize { buildPlotSvg() },
+            Registration.onRemove {
+                // Do not pass reference to the viewModelReg - it changes on CanvasControl resize or plot spec update.
+                // With closure, we ensure that the current viewModelReg is disposed.
+                viewModelReg.dispose()
             }
         )
 
-        buildPlot(canvasControl)
+        buildPlotSvg()
 
         return reg
     }
 
-    private fun buildPlot(canvasControl: CanvasControl) {
-        plotReg.dispose()
+    private fun buildPlotSvg() {
+        val processedSpec = processedSpec ?: return
 
-        viewModel = MonolithicCanvas.buildPlotFromProcessedSpecs(
+        // It's fine to build a view model without a canvasControl.
+        // Size policy may work with a null container size.
+        val viewModel = MonolithicCanvas.buildViewModelFromProcessedSpecs(
             plotSpec = processedSpec,
             sizingPolicy = sizingPolicy,
-            containerSize = canvasControl.size.toDoubleVector(),
+            containerSize = canvasControl?.size?.toDoubleVector(),
             computationMessagesHandler = computationMessagesHandler
         )
 
         plotSvgFigure.svgSvgElement = viewModel.svg
 
-        plotReg = CompositeRegistration(
+        val canvasControl = canvasControl ?: return
+
+        viewModelReg.dispose()
+        viewModelReg = CompositeRegistration(
             Registration.from(viewModel),
             viewModel.eventDispatcher.addEventSource(canvasControl)
         )
