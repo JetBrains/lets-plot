@@ -7514,11 +7514,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Vertical adjustment to nudge labels by.
     na_text : str, default='n/a'
         Text to show for missing values.
-    label_padding : float
-        Amount of padding around label. Default is 0.25 of font size.
-    label_r : float
-        Radius of rounded corners. Default is 0.15 of label height.
-    label_size : float, default = 1.0
+    label_padding : float, default=0.25
+        Amount of padding around label, measured in font size units.
+    label_r : float, default=0.15
+        Radius of rounded corners, measured in units of label height.
+    label_size : float, default=1.0
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
@@ -7723,7 +7723,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
               arrow=None,
               **other_args):
     """
-    Add text labels that repel away from each other and from data points.
+    Add repelling text labels that avoid overlapping with other labels and data points.
 
     Parameters
     ----------
@@ -7804,22 +7804,21 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     seed : int
-        Random seed used for reproducibility of label positions.
+        Random seed for reproducibility.
     max_iter : int
-        Maximum number of iterations used to resolve label collisions.
+        Maximum number of iterations used to resolve collisions.
     max_time : float
         Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
-        Limit direction of repulsion movement.
+        Direction in which text labels can be moved.
     point_padding : float
-        Padding around data points to avoid label overlap.
+        Padding around data points to prevent overlap with text labels.
     box_padding : float
-        Padding around text labels to avoid label-label overlap.
+        Padding around text labels to prevent overlap between labels.
     max_overlaps : int
-        Maximum number of overlapping labels allowed. Labels beyond this number will be hidden.
+        The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
-        Minimum length of the line segment connecting the label to the point.
-        Shorter segments will be omitted.
+        Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     other_args
@@ -7938,7 +7937,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                **other_args):
 
     """
-    Add repelling text labels with background boxes to the plot.
+    Add repelling text labels with background boxes that avoid overlapping with other labels and data points.
 
     Parameters
     ----------
@@ -7994,17 +7993,17 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+    na_text : str, default='n/a'
+        Text to show for missing values.
     nudge_x : float
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    na_text : str, default='n/a'
-        Text to show for missing values.
-    label_padding : float
-        Amount of padding around label. Default is 0.25 of font size.
-    label_r : float
-        Radius of rounded corners. Default is 0.15 of label height.
-    label_size : float, default = 1.0
+    label_padding : float, default=0.25
+        Amount of padding around label, measured in units of font size.
+    label_r : float, default=0.15
+        Radius of rounded corners, measured in units of label height.
+    label_size : float, default=1.0
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
@@ -8031,19 +8030,19 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     seed : int
         Random seed for reproducibility.
     max_iter : int
-        Maximum number of iterations for the repulsion algorithm.
+        Maximum number of iterations used to resolve collisions.
     max_time : float
         Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
-        Direction in which labels can be moved.
+        Direction in which text labels can be moved.
     point_padding : float
-        Padding around the data point.
+        Padding around data points to prevent overlap with text labels.
     box_padding : float
-        Padding around the label box.
+        Padding around text labels to prevent overlap between labels.
     max_overlaps : int
-        Max number of overlapping labels to allow.
+        The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
-        Minimum length of the connecting line segment. Shorter ones are omitted.
+        Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     other_args
