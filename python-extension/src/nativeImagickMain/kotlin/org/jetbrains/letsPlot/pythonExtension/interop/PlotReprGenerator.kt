@@ -25,7 +25,6 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
-import kotlin.math.roundToInt
 
 object PlotReprGenerator {
     private val defaultFontManager by lazy { MagickFontManager() }
@@ -176,8 +175,8 @@ object PlotReprGenerator {
             }
 
             val canvasControl = MagickCanvasControl(
-                w = (plotCanvasFigure.plotWidth * scaleFactor).roundToInt(),
-                h = (plotCanvasFigure.plotHeight * scaleFactor).roundToInt(),
+                w = plotCanvasFigure.plotWidth,
+                h = plotCanvasFigure.plotHeight,
                 pixelDensity = scaleFactor,
                 fontManager = fontManager,
             )

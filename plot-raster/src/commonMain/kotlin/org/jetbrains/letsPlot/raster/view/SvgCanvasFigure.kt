@@ -29,7 +29,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         set(value) {
             field = value
             needMapSvgSvgElement = true
-            needResizeContentCanvas = true
         }
 
     private var needMapSvgSvgElement: Boolean = true // The whole svgSvgElement was replaced
@@ -38,7 +37,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
     private var nodeContainer: SvgNodeContainer? = null
     private var canvasPeer: SvgCanvasPeer? = null
-    private var contentCanvas: Canvas? = null // Should have the same size as svgSvgElement.
+    private var contentCanvas: Canvas? = null // Should have the same size as CanvasControl
     private var canvasControl: CanvasControl? = null
     private var textMeasureCanvas: Canvas? = null
 
@@ -51,6 +50,9 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
         this.canvasControl = canvasControl
+        val canvasControlResizeReg = canvasControl.onResize {
+            needResizeContentCanvas = true
+        }
 
         textMeasureCanvas = canvasControl.createCanvas(0, 0)
         canvasControl.addChild(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
@@ -66,6 +68,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
         return object : Registration() {
             override fun doRemove() {
+                canvasControlResizeReg.dispose()
                 contentCanvas?.let(canvasControl::removeChild)
                 textMeasureCanvas?.let(canvasControl::removeChild)
                 rootMapper.detachRoot()
@@ -93,6 +96,9 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     private fun resizeContentCanvas() {
         //println("SvgCanvasFigure.resizeContentCanvas: width=$width, height=$height")
         val canvasControl = canvasControl ?: return
+
+        val width = canvasControl.size.x
+        val height = canvasControl.size.y
 
         val newContentCanvas = canvasControl.createCanvas(width, height)
         val oldContentCanvas = contentCanvas
@@ -127,9 +133,19 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         val canvas = contentCanvas ?: return false
 
         canvas.context2d.clearRect(DoubleRectangle.XYWH(0.0, 0.0, canvas.size.x, canvas.size.y))
-        renderElement(rootMapper.target, canvas)
-        needRedraw = false
 
+        if (canvas.size.x != width || canvas.size.y != height) {
+            // center the SVG in the canvas
+            val xOffset = (canvas.size.x - width) / 2.0
+            val yOffset = (canvas.size.y - height) / 2.0
+            canvas.context2d.translate(xOffset, yOffset)
+            renderElement(rootMapper.target, canvas)
+            canvas.context2d.translate(-xOffset, -yOffset)
+        } else {
+            renderElement(rootMapper.target, canvas)
+        }
+
+        needRedraw = false
         return true
     }
 
