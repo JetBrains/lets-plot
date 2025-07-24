@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 class RegionIdComponent(var regionId: String) : EcsComponent
 
 object NeedLocationComponent : EcsComponent
-object NeedGeocodeLocationComponent : EcsComponent
 
 object NeedCalculateLocationComponent : EcsComponent
 

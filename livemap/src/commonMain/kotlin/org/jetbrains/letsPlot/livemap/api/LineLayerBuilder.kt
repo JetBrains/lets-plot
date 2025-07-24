@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
 import org.jetbrains.letsPlot.livemap.core.layers.LayerKind
 import org.jetbrains.letsPlot.livemap.geocoding.NeedCalculateLocationComponent
-import org.jetbrains.letsPlot.livemap.geocoding.NeedGeocodeLocationComponent
 import org.jetbrains.letsPlot.livemap.geocoding.NeedLocationComponent
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.LayerEntitiesComponent
@@ -106,7 +105,6 @@ class LineEntityBuilder(
     }
         .remove<NeedLocationComponent>()
         .remove<NeedCalculateLocationComponent>()
-        .remove<NeedGeocodeLocationComponent>()
 
 }
 

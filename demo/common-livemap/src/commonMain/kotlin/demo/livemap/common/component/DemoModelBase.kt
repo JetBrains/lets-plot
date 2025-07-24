@@ -6,7 +6,6 @@
 package demo.livemap.common.component
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.livemap.LiveMapLocation
@@ -24,7 +23,6 @@ abstract class DemoModelBase(private val dimension: DoubleVector) {
         val liveMap = createLiveMapSpec()
             .apply(block)
             .run(LiveMapBuilder::build)
-            .run(Asyncs::constant)
 
         return Registration.from(
             LiveMapPresenter().apply { render(canvasControl, liveMap) }
