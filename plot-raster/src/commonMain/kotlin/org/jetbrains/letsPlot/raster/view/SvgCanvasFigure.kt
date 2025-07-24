@@ -28,6 +28,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
             field = value
+            myBounds.set(Rectangle(0, 0, width, height))
             needMapSvgSvgElement = true
         }
 
@@ -107,7 +108,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         }
         canvasControl.addChild(newContentCanvas)
         contentCanvas = newContentCanvas
-        myBounds.set(Rectangle(0, 0, width, height))
 
         needResizeContentCanvas = false
 
