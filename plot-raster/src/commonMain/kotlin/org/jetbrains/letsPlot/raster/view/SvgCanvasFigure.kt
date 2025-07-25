@@ -23,13 +23,11 @@ import org.jetbrains.letsPlot.raster.shape.Element
 import kotlin.math.ceil
 
 class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
-    val width get() = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
-    val height get() = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
             field = value
-            myBounds.set(Rectangle(0, 0, width, height))
             needMapSvgSvgElement = true
+            needResizeContentCanvas = true
         }
 
     private var needMapSvgSvgElement: Boolean = true // The whole svgSvgElement was replaced
@@ -38,21 +36,20 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
     private var nodeContainer: SvgNodeContainer? = null
     private var canvasPeer: SvgCanvasPeer? = null
-    private var contentCanvas: Canvas? = null // Should have the same size as CanvasControl
+    private var contentCanvas: Canvas? = null // Should have the same size as Figure
     private var canvasControl: CanvasControl? = null
     private var textMeasureCanvas: Canvas? = null
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-    private val myBounds = ValueProperty(Rectangle(0, 0, width, height))
+    private val svgBounds = ValueProperty(Rectangle(0, 0, 0, 0))
 
     override fun bounds(): ReadableProperty<Rectangle> {
-        return myBounds
+        return svgBounds
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
         this.canvasControl = canvasControl
         val canvasControlResizeReg = canvasControl.onResize {
-            needResizeContentCanvas = true
         }
 
         textMeasureCanvas = canvasControl.createCanvas(0, 0)
@@ -98,18 +95,19 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         //println("SvgCanvasFigure.resizeContentCanvas: width=$width, height=$height")
         val canvasControl = canvasControl ?: return
 
-        val width = canvasControl.size.x
-        val height = canvasControl.size.y
-
-        val newContentCanvas = canvasControl.createCanvas(width, height)
-        val oldContentCanvas = contentCanvas
-        if (oldContentCanvas != null) {
-            canvasControl.removeChild(oldContentCanvas)
+        contentCanvas?.let {
+            canvasControl.removeChild(it)
         }
+
+        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
+        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+
+        val newContentCanvas = canvasControl.createCanvas(contentWidth, contentHeight)
         canvasControl.addChild(newContentCanvas)
         contentCanvas = newContentCanvas
 
         needResizeContentCanvas = false
+        svgBounds.set(Rectangle(0, 0, contentWidth, contentHeight))
 
         //println("SvgCanvasFigure.resizeContentCanvas: done")
         return
@@ -134,16 +132,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
         canvas.context2d.clearRect(DoubleRectangle.XYWH(0.0, 0.0, canvas.size.x, canvas.size.y))
 
-        if (canvas.size.x != width || canvas.size.y != height) {
-            // center the SVG in the canvas
-            val xOffset = (canvas.size.x - width) / 2.0
-            val yOffset = (canvas.size.y - height) / 2.0
-            canvas.context2d.translate(xOffset, yOffset)
-            renderElement(rootMapper.target, canvas)
-            canvas.context2d.translate(-xOffset, -yOffset)
-        } else {
-            renderElement(rootMapper.target, canvas)
-        }
+        renderElement(rootMapper.target, canvas)
 
         needRedraw = false
         return true

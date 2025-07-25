@@ -15,9 +15,6 @@ import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 
 class PlotCanvasFigure : CanvasFigure {
-    val plotWidth: Int get() = plotSvgFigure.width
-    val plotHeight: Int get() = plotSvgFigure.height
-
     private var processedSpec: Map<String, Any>? = null
     private var sizingPolicy: SizingPolicy = SizingPolicy.keepFigureDefaultSize()
     private var computationMessagesHandler: (List<String>) -> Unit = { _ -> }
