@@ -8,7 +8,8 @@ package org.jetbrains.letsPlot.awt.canvas
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
@@ -17,9 +18,10 @@ import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
 internal class AwtCanvas
 private constructor(
     val image: BufferedImage,
-    size: Vector,
+    override val size: Vector,
     pixelDensity: Double,
-) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelDensity) {
+) : Canvas {
+    override val context2d: Context2d = ScaledContext2d.wrap(AwtContext2d(image.createGraphics() as Graphics2D), pixelDensity)
 
     companion object {
         fun create(size: Vector, pixelDensity: Double): AwtCanvas {
