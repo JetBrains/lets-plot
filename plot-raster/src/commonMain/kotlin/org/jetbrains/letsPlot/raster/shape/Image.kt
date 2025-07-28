@@ -9,6 +9,7 @@ package org.jetbrains.letsPlot.raster.shape
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 
 
 internal class Image : Element() {
@@ -26,12 +27,12 @@ internal class Image : Element() {
         peer.canvasProvider.createSnapshot(image)
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(ctx: Context2d) {
         val snapshot = snapshot ?: return
         if (preserveRatio) {
-            canvas.context2d.drawImage(snapshot, x.toDouble(), y.toDouble())
+            ctx.drawImage(snapshot, x.toDouble(), y.toDouble())
         } else {
-            canvas.context2d.drawImage(snapshot, x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+            ctx.drawImage(snapshot, x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
         }
     }
 

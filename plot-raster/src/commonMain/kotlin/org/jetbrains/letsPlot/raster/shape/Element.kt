@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Path2d
 
 
@@ -37,7 +37,7 @@ internal abstract class Element() : Node() {
     open val screenBounds: DoubleRectangle
         get() = ctm.transform(localBounds)
 
-    open fun render(canvas: Canvas) {}
+    open fun render(ctx: Context2d) {}
 
     override fun repr(): String? {
         return ", ctm: ${ctm.repr()}, $screenBounds"

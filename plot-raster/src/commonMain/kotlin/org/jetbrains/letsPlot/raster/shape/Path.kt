@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Path2d
 import org.jetbrains.letsPlot.core.canvas.applyPath
@@ -16,21 +15,21 @@ internal class Path : Figure() {
     var fillRule: FillRule by visualProp(FillRule.NON_ZERO)
     var pathData: Path2d? by visualProp(null)
 
-    override fun render(canvas: Canvas) {
+    override fun render(ctx: Context2d) {
         val path = pathData ?: return
 
         fillPaint?.let {
-            drawPath(path, canvas.context2d)
+            drawPath(path, ctx)
 
             when(fillRule) {
-                FillRule.NON_ZERO -> canvas.context2d.fill(it)
-                FillRule.EVEN_ODD -> canvas.context2d.fillEvenOdd(it)
+                FillRule.NON_ZERO -> ctx.fill(it)
+                FillRule.EVEN_ODD -> ctx.fillEvenOdd(it)
             }
         }
 
         strokePaint?.let {
-            drawPath(path, canvas.context2d)
-            canvas.context2d.stroke(it)
+            drawPath(path, ctx)
+            ctx.stroke(it)
         }
     }
 

@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 
 
 internal class Rectangle : Figure() {
@@ -14,19 +14,16 @@ internal class Rectangle : Figure() {
     var y: Float by visualProp(0.0f)
     var width: Float by visualProp(0.0f)
     var height: Float by visualProp(0.0f)
-    private val rect: DoubleRectangle by computedProp(Rectangle::x, Rectangle::y, Rectangle::width, Rectangle::height) {
-        DoubleRectangle.XYWH(x, y, width, height)
-    }
 
-    override fun render(canvas: Canvas) {
+    override fun render(ctx: Context2d) {
         fillPaint?.let {
-            applyPaint(it, canvas)
-            canvas.context2d.fillRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+            applyPaint(it, ctx)
+            ctx.fillRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
         }
 
         strokePaint?.let {
-            applyPaint(it, canvas)
-            canvas.context2d.strokeRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+            applyPaint(it, ctx)
+            ctx.strokeRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
         }
     }
 

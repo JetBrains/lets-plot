@@ -49,8 +49,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
         this.canvasControl = canvasControl
-        val canvasControlResizeReg = canvasControl.onResize {
-        }
 
         textMeasureCanvas = canvasControl.createCanvas(0, 0)
         canvasControl.addChild(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
@@ -66,7 +64,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
         return object : Registration() {
             override fun doRemove() {
-                canvasControlResizeReg.dispose()
                 contentCanvas?.let(canvasControl::removeChild)
                 textMeasureCanvas?.let(canvasControl::removeChild)
                 rootMapper.detachRoot()
@@ -132,31 +129,27 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
 
         canvas.context2d.clearRect(DoubleRectangle.XYWH(0.0, 0.0, canvas.size.x, canvas.size.y))
 
-        renderElement(rootMapper.target, canvas)
+        renderElement(rootMapper.target, canvas.context2d)
 
         needRedraw = false
         return true
     }
 
-    private fun render(elements: List<Element>, canvas: Canvas) {
+    private fun render(elements: List<Element>, ctx: Context2d) {
         elements.forEach { element ->
-            renderElement(element, canvas)
+            renderElement(element, ctx)
         }
     }
 
-    private fun renderElement(element: Element, canvas: Canvas) {
+    private fun renderElement(element: Element, ctx: Context2d) {
         if (!element.isVisible) {
             return
         }
 
-        val ctx = canvas.context2d
-
         var needRestore = false
         if (!element.transform.isIdentity) {
-            if (!needRestore) {
-                ctx.save()
-                needRestore = true
-            }
+            needRestore = true
+            ctx.save()
             ctx.affineTransform(element.transform)
         }
 
@@ -168,22 +161,13 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
             ctx.beginPath()
             ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
-            canvas.context2d.clip()
+            ctx.clip()
         }
 
-        //val globalAlphaSet = element.opacity?.let {
-        //    val paint = Paint().apply {
-        //        setAlphaf(it)
-        //    }
-        //    ctx.saveLayer(null, paint)
-        //}
-
-        element.render(canvas)
+        element.render(ctx)
         if (element is Container) {
-            render(element.children, canvas)
+            render(element.children, ctx)
         }
-
-        //globalAlphaSet?.let { canvas.restore() }
 
         if (needRestore) {
             ctx.restore()
