@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setLeft
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setTop
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
+import org.w3c.dom.CanvasImageSource
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil
@@ -31,7 +32,7 @@ internal class DomCanvas private constructor(
     override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size, pixelRatio)
 
     internal class DomSnapshot(
-        val canvasElement: HTMLCanvasElement,
+        val canvasElement: CanvasImageSource,
         size: Vector,
         private val pixelRatio: Double
     ) : Canvas.Snapshot {

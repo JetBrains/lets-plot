@@ -15,7 +15,7 @@ interface CanvasProvider {
     fun createSnapshot(bitmap: Bitmap): Snapshot
 
     fun decodeDataImageUrl(dataUrl: String): Async<Snapshot>
-    fun decodePng(png: ByteArray, size: Vector): Async<Snapshot>
+    fun decodePng(png: ByteArray): Async<Snapshot>
 
     fun createCanvas(width: Number, height: Number): Canvas = createCanvas(Vector(width.toInt(), height.toInt()))
 }

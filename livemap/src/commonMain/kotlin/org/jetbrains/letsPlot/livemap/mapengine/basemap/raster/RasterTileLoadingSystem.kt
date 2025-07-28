@@ -6,15 +6,16 @@
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.raster
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
-import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
 import org.jetbrains.letsPlot.livemap.core.multitasking.setMicroThread
 import org.jetbrains.letsPlot.livemap.mapengine.LiveMapContext
@@ -42,8 +43,8 @@ class RasterTileLoadingSystem(
 
             createEntity("http_tile_$cellKey")
                 .addComponents {
-                    + BasemapCellComponent(cellKey)
-                    + tileResponseComponent
+                    +BasemapCellComponent(cellKey)
+                    +tileResponseComponent
                 }
 
             myTileTransport.get(replacePlaceholders(cellKey, nextDomain())).onResult(
@@ -62,42 +63,25 @@ class RasterTileLoadingSystem(
             downloadedEntities.add(entity)
             val cellKey = entity.get<BasemapCellComponent>().cellKey
 
-            val microThreads = ArrayList<MicroTask<Unit>>()
-            getTileLayerEntities(cellKey).forEach { httpTileEntity ->
-                microThreads.add(
+            val microThreads = getTileLayerEntities(cellKey).toList()
+                .map { httpTileEntity ->
                     MicroTaskUtil.create {
-                        if (response.errorCode != null) {
-                            val errorText = response.errorCode!!.message ?: "Unknown error"
-                            val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
-                            val tileCtx = tileCanvas.context2d
-                            val textDim = tileCtx.measureTextWidth(errorText)
-                            val x =
-                                if (textDim < TILE_PIXEL_SIZE) {
-                                    TILE_PIXEL_SIZE / 2 - textDim / 2
-                                } else {
-                                    4.0
+                        when (response.errorCode) {
+                            null -> drawImageTile(imageData, context)
+                            else -> drawErrorTile(response.errorCode, context)
+                        }.onSuccess { snapshot ->
+                            runLaterBySystem(httpTileEntity) { theEntity ->
+                                theEntity.get<BasemapTileComponent>().apply {
+                                    nonCacheable = response.errorCode != null
+                                    tile = Tile.SnapshotTile(snapshot)
                                 }
-                            tileCtx.setFont(Font())
-                            tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
-                            Asyncs.constant(tileCanvas.takeSnapshot())
-                        } else {
-                            context.mapRenderContext.canvasProvider.decodePng(imageData, TILE_PIXEL_DIMENSION)
-                        }
-                            .onSuccess { snapshot ->
-                                runLaterBySystem(httpTileEntity) { theEntity ->
-                                    theEntity.get<BasemapTileComponent>().apply {
-                                        nonCacheable = response.errorCode != null
-                                        tile = Tile.SnapshotTile(snapshot)
-                                    }
-                                    ParentLayerComponent.tagDirtyParentLayer(theEntity)
-                                }
+                                ParentLayerComponent.tagDirtyParentLayer(theEntity)
+                            }
                         }
                     }
-                )
-            }
+                }
 
             MicroTaskUtil.join(microThreads)
-
             entity.setMicroThread(1, MicroTaskUtil.join(microThreads))
         }
 
@@ -105,10 +89,51 @@ class RasterTileLoadingSystem(
         downloadedEntities.forEach { it.remove<HttpTileResponseComponent>() }
     }
 
+    private fun drawImageTile(imageData: ByteArray, context: LiveMapContext): Async<Canvas.Snapshot> {
+        return context.mapRenderContext.canvasProvider
+            .decodePng(imageData)
+            .map { imageSnapshot ->
+                val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
+
+                // Scale the image to fit the tile size, e.g.:
+                // For DPI=2 and image 256x256, the resulting tile will be 512x512 pixels.
+                // For DPI=1 and image 512x512, the resulting tile will be 256x256 pixels.
+                tileCanvas.context2d.drawImage(
+                    snapshot = imageSnapshot,
+                    x = 0.0,
+                    y = 0.0,
+                    dw = TILE_PIXEL_SIZE,
+                    dh = TILE_PIXEL_SIZE
+                )
+
+                tileCanvas.takeSnapshot()
+            }
+    }
+
+    private fun drawErrorTile(
+        errorCode: Throwable?,
+        context: LiveMapContext
+    ): Async<Canvas.Snapshot> {
+        val errorText = errorCode!!.message ?: "Unknown error"
+        val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
+        val tileCtx = tileCanvas.context2d
+        val textDim = tileCtx.measureTextWidth(errorText)
+        val x = if (textDim < TILE_PIXEL_SIZE) {
+            TILE_PIXEL_SIZE / 2 - textDim / 2
+        } else {
+            4.0
+        }
+        tileCtx.setFont(Font())
+        tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
+        return Asyncs.constant(tileCanvas.takeSnapshot())
+    }
+
     private fun getTileLayerEntities(cellKey: CellKey): Sequence<EcsEntity> {
         return getEntities2<BasemapCellComponent, KindComponent>()
-            .filter { it.get<BasemapCellComponent>().cellKey == cellKey &&
-            it.get<KindComponent>().layerKind == BasemapLayerKind.RASTER }
+            .filter {
+                it.get<BasemapCellComponent>().cellKey == cellKey
+                        && it.get<KindComponent>().layerKind == BasemapLayerKind.RASTER
+            }
     }
 
     companion object {
@@ -118,15 +143,16 @@ class RasterTileLoadingSystem(
                 .let(cellKey::projectOrigin)
                 .let {
                     domain
-                        .replace("{z}", cellKey.length.toString(),  ignoreCase = true)
+                        .replace("{z}", cellKey.length.toString(), ignoreCase = true)
                         .replace("{x}", it.x.roundToInt().toString(), ignoreCase = true)
                         .replace("{y}", it.y.roundToInt().toString(), ignoreCase = true)
                 }
         }
+
         val TILE_PIXEL_DIMENSION = Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt())
     }
 
-    class HttpTileResponseComponent: EcsComponent {
+    class HttpTileResponseComponent : EcsComponent {
         var imageData: ByteArray? = null
         var errorCode: Throwable? = null
     }

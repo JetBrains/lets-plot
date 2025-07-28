@@ -45,7 +45,7 @@ class MagickCanvasProvider(
         }
     }
 
-    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
         val img = MagickUtil.fromBitmap(Png.decode(png))
         return Asyncs.constant(MagickSnapshot(img))
     }

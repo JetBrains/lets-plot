@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
-import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -151,13 +150,9 @@ class CanvasPane(
             )
         }
 
-        override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
             val src = ImageIO.read(ByteArrayInputStream(png))
-            val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
-            val graphics2D = dst.createGraphics() as Graphics2D
-            graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
-            graphics2D.dispose()
-            val snapshot = AwtCanvas.AwtSnapshot(dst)
+            val snapshot = AwtCanvas.AwtSnapshot(src)
             return Asyncs.constant(snapshot)
         }
 

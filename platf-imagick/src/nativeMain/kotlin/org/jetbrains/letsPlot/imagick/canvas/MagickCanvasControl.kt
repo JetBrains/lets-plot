@@ -78,7 +78,7 @@ class MagickCanvasControl(
         return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
     }
 
-    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
         TODO("Not yet implemented")
     }
 
