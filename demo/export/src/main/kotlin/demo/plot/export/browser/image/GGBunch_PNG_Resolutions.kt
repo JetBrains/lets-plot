@@ -17,8 +17,8 @@ object GGBunch_PNG_Resolutions {
             PlotImageDemoUtil.show(
                 "ggbunch()",
                 plotSpecList.first(),
-                scalingFactors = listOf(1.0, 2.0, 4.0),
-                targetDPIs = listOf(72, 144, 288),
+                scalingFactors = listOf(1.0, 2.0, 3.0),
+                targetDPIs = listOf(96, 96, 96),
                 formats = MutableList(3) { PlotImageExport.Format.PNG }
             )
         }

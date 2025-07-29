@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 
-class CompositeFigureEventDispatcher() : CanvasEventDispatcher {
+internal class CompositeFigureEventDispatcher() : CanvasEventDispatcher {
     private val dispatchers = LinkedHashMap<Rectangle, CanvasEventDispatcher>()
 
     fun addEventDispatcher(bounds: Rectangle, eventDispatcher: CanvasEventDispatcher) {

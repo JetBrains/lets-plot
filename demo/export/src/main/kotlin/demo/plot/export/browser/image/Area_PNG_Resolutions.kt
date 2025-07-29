@@ -17,7 +17,7 @@ object Area_PNG_Resolutions {
             (PlotImageDemoUtil.show(
                 "Area plot",
                 plotSpecList().first(),
-                scalingFactors = listOf(1.0, 2.0, 4.0),
+                scalingFactors = listOf(1.0, 1.0, 1.0),
                 targetDPIs = listOf(72, 144, 288),
                 formats = MutableList(3) { PlotImageExport.Format.PNG }
             ))
