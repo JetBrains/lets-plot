@@ -7,16 +7,17 @@ package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
+import kotlin.math.roundToInt
 
 
-internal class AwtCanvas
-private constructor(
+class AwtCanvas private constructor(
     val image: BufferedImage,
     override val size: Vector,
     pixelDensity: Double,
@@ -29,7 +30,7 @@ private constructor(
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage(s.x, s.y, TYPE_4BYTE_ABGR), s, pixelDensity)
+            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s, pixelDensity)
         }
     }
 
@@ -37,14 +38,9 @@ private constructor(
         return AwtSnapshot(image)
     }
 
-    internal data class AwtSnapshot(val image: BufferedImage) : Canvas.Snapshot {
+    data class AwtSnapshot(val image: BufferedImage) : Canvas.Snapshot {
         override val size: Vector = Vector(image.width, image.height)
-        override val bitmap: Bitmap
-            get() {
-                val argbArray = IntArray(image.width * image.height)
-                image.getRGB(0, 0, image.width, image.height, argbArray, 0, image.width)
-                return Bitmap(image.width, image.height, argbArray)
-            }
+        override val bitmap: Bitmap by lazy { BitmapUtil.fromBufferedImage(image) }
 
         override fun copy(): AwtSnapshot {
             val b = BufferedImage(image.width, image.height, image.type)
@@ -52,6 +48,13 @@ private constructor(
             g.drawImage(image, 0, 0, null)
             g.dispose()
             return AwtSnapshot(b)
+        }
+
+        companion object {
+            fun fromBitmap(bitmap: Bitmap): AwtSnapshot {
+                val image = BitmapUtil.toBufferedImage(bitmap)
+                return AwtSnapshot(image)
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
-sealed class ViewModel(
+internal sealed class ViewModel(
     val svg: SvgSvgElement,
     val toolEventDispatcher: ToolEventDispatcher,
     val eventDispatcher: CanvasEventDispatcher,

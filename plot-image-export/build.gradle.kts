@@ -56,13 +56,15 @@ kotlin {
                 implementation(kotlin("stdlib-jdk8"))
 
                 implementation(project(":platf-awt"))
+                implementation(project(":canvas"))
+                implementation(project(":plot-raster"))
 
                 // Batik artifacts
-                batikArtifacts.forEach {
-                    api("$batikGroupId:$it:$batikVersion")
-                }
+                //batikArtifacts.forEach {
+                //    api("$batikGroupId:$it:$batikVersion")
+                //}
                 // commons-io: a newer version than the one in Batik transitive dependency.
-                implementation("commons-io:commons-io:${commonsIOVersion}")
+                //implementation("commons-io:commons-io:${commonsIOVersion}")
 
                 // TIFF support
                 implementation("$tiffioGroupId:$tiffioArtifact:$tiffioVersion")
