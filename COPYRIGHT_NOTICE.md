@@ -8,10 +8,6 @@ Copyright © 2016 The Apache Software Foundation. Licensed under the Apache Lice
 
 Copyright © 2009, David Jones. Licensed under MIT License.
 
-### TwelveMonkeys ImageIO Library
-
-Copyright © 2008, Harald Kuhr. Licensed under BSD 3-Clause License.
-
 ### ColorBrewer
 
 Copyright © 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University.

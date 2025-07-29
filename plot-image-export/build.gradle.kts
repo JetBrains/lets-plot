@@ -15,20 +15,11 @@ val artifactBaseName = "lets-plot-image-export"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val assertjVersion = project.extra["assertj_version"]
-val batikGroupId = "org.apache.xmlgraphics"
-val batikArtifacts = listOf("batik-transcoder", "batik-codec")
-
-val batikVersion = project.extra["batik_version"]
-val commonsIOVersion = project.extra["commons-io.version"] as String
 
 val hamcrestVersion = project.extra["hamcrest_version"]
 val kotlinLoggingVersion = project.extra["kotlinLogging_version"]
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 val mockitoVersion = project.extra["mockito_version"]
-
-val tiffioGroupId = "com.twelvemonkeys.imageio"
-val tiffioArtifact = "imageio-tiff"
-val tiffioVersion = project.extra["twelvemonkeys_imageio_version"]
 
 kotlin {
     jvm()
@@ -58,16 +49,6 @@ kotlin {
                 implementation(project(":platf-awt"))
                 implementation(project(":canvas"))
                 implementation(project(":plot-raster"))
-
-                // Batik artifacts
-                //batikArtifacts.forEach {
-                //    api("$batikGroupId:$it:$batikVersion")
-                //}
-                // commons-io: a newer version than the one in Batik transitive dependency.
-                //implementation("commons-io:commons-io:${commonsIOVersion}")
-
-                // TIFF support
-                implementation("$tiffioGroupId:$tiffioArtifact:$tiffioVersion")
             }
         }
         jvmTest {
@@ -150,21 +131,20 @@ publishing {
                 // Dependencies
                 withXml {
                     val deps = asNode().appendNode("dependencies")
-                    batikArtifacts.forEach {
-                        val dep = deps.appendNode("dependency")
-                        dep.appendNode("groupId", batikGroupId)
-                        dep.appendNode("artifactId", it)
-                        dep.appendNode("version", batikVersion)
-                    }
 
                     var dep = deps.appendNode("dependency")
-                    dep.appendNode("groupId", tiffioGroupId)
-                    dep.appendNode("artifactId", tiffioArtifact)
-                    dep.appendNode("version", tiffioVersion)
+                    dep.appendNode("groupId", project.group)
+                    dep.appendNode("artifactId", "platf-awt")
+                    dep.appendNode("version", project.version)
 
                     dep = deps.appendNode("dependency")
                     dep.appendNode("groupId", project.group)
-                    dep.appendNode("artifactId", "platf-awt")
+                    dep.appendNode("artifactId", "canvas")
+                    dep.appendNode("version", project.version)
+
+                    dep = deps.appendNode("dependency")
+                    dep.appendNode("groupId", project.group)
+                    dep.appendNode("artifactId", "plot-raster")
                     dep.appendNode("version", project.version)
 
                 }
