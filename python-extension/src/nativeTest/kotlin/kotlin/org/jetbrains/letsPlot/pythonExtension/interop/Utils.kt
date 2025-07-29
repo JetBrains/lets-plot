@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 
 fun newEmbeddedFontsManager() = MagickFontManager().apply {
-    val fontsDir = Native.getCurrentDir() + "/src/nativeImagickTest/resources/fonts/"
+    val fontsDir = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/"
 
     registerFont(Font(fontFamily = "sans"), "$fontsDir/NotoSans-Regular.ttf")
     registerFont(Font(fontFamily = "sans", fontWeight = FontWeight.BOLD), "$fontsDir/NotoSans-Bold.ttf")
@@ -38,7 +38,7 @@ fun newEmbeddedFontsManager() = MagickFontManager().apply {
 
 fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
-        expectedDir = Native.getCurrentDir() + "/src/nativeImagickTest/resources/expected/",
+        expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = Native.getCurrentDir() + "/build/reports/",
         canvasProvider = MagickCanvasProvider(fontManager),
         bitmapIO = NativeBitmapIO,

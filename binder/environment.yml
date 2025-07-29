@@ -23,4 +23,3 @@ dependencies:
       - cartopy
       - rasterio
       - statsmodels                 # for 'residual plot'
-#      - cairosvg                   # no longer used

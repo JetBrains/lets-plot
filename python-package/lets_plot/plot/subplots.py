@@ -233,12 +233,6 @@ class SupPlotsSpec(FeatureSpec):
         str
             Absolute pathname of created file or None if a file-like object is provided.
 
-        Notes
-        -----
-        Export to PNG file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
-
         Examples
         --------
         .. jupyter-execute::
@@ -296,9 +290,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Notes
         -----
-        Export to PDF file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
+        Export to a PDF file uses the pillow library.
 
         Examples
         --------
