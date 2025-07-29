@@ -18,7 +18,6 @@ ENV_OFFLINE = 'LETS_PLOT_OFFLINE'  # bool
 ENV_NO_JS = 'LETS_PLOT_NO_JS'  # bool
 ENV_MAX_WIDTH = 'LETS_PLOT_MAX_WIDTH'
 ENV_MAX_HEIGHT = 'LETS_PLOT_MAX_HEIGHT'
-ENV_MAGICK_EXPORT = 'LETS_PLOT_MAGICK_EXPORT'  # bool
 ENV_MAPTILES_KIND = 'LETS_PLOT_MAPTILES_KIND'
 ENV_MAPTILES_URL = 'LETS_PLOT_MAPTILES_URL'
 ENV_MAPTILES_THEME = 'LETS_PLOT_MAPTILES_THEME'
@@ -47,7 +46,6 @@ JS_NAME = 'js_name'
 JS_URL_MANUAL = 'js_url_manual'
 MAX_WIDTH = 'max_width'
 MAX_HEIGHT = 'max_height'
-MAGICK_EXPORT = 'magick_export'
 
 MAPTILES_KIND = 'maptiles_kind'
 MAPTILES_URL = 'maptiles_url'
@@ -85,7 +83,6 @@ def _get_env_val(actual_name: str) -> Any:
 _settings = {
     OFFLINE: _init_value(OFFLINE, False),  # default: download from CDN
     NO_JS: _init_value(NO_JS, False),
-    MAGICK_EXPORT: _init_value(MAGICK_EXPORT, True),  # default: use cairo for export
     # JS_BASE_URL: 'https://dl.bintray.com/jetbrains/lets-plot',
     # JS_BASE_URL: "https://cdnjs.cloudflare.com/ajax/libs/lets-plot",
     JS_BASE_URL: "https://cdn.jsdelivr.net/gh/JetBrains/lets-plot@v{version}".format(version=__version__),
@@ -101,7 +98,6 @@ _settings = {
 
     'dev_' + OFFLINE: _init_value('dev_' + OFFLINE, True),  # default: embed js into the notebook
     'dev_' + NO_JS: _init_value('dev_' + NO_JS, False),
-    'dev_' + MAGICK_EXPORT: _init_value('dev_' + MAGICK_EXPORT, True),  # default: use cairo for export
     # We don't publish "dev" version, it must be served on localhost:
     # $ cd lets-plot
     # ./gradlew js-package:jsBrowserDevelopmentWebpack

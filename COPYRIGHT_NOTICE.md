@@ -33,10 +33,6 @@ Bechtold ([@bastibe](https://github.com/bastibe)) : [twilight](https://github.co
 
 Copyright © 2019 Matt Davis. Licensed under MIT License.
 
-### CairoSVG
-
-A free software, distributed under the LGPL-3.0 license : [documentation](https://cairosvg.org/documentation/).
-
 ### js-joda
 
 Date and time library for JavaScript.
