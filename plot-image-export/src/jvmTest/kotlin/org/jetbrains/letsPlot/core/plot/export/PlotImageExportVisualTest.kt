@@ -311,7 +311,7 @@ class PlotImageExportVisualTest {
         plotSpec: MutableMap<String, Any>,
         width: Number? = null,
         height: Number? = null,
-        unit: PlotImageExport.Unit = PlotImageExport.Unit.PIXEL,
+        unit: PlotImageExport.Unit = PlotImageExport.Unit.PX,
         dpi: Int = -1,
         scale: Number = 1.0
     ) {
