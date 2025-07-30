@@ -8,6 +8,8 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 
@@ -16,6 +18,15 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+fun Context2d.setFont(family: String, size: Number, style: FontStyle = FontStyle.NORMAL, weight: FontWeight = FontWeight.NORMAL) {
+    val font = Font(
+        fontFamily = family,
+        fontSize = size.toDouble(),
+        fontStyle = style,
+        fontWeight = weight
+    )
+    setFont(font)
+}
 
 var Context2d.lineWidth: Double
     get() = error("lineWidth is write only")
@@ -201,9 +212,20 @@ fun drawAffine(
     }
 }
 
-val serifFontPath = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/NotoSerif-Regular.ttf"
-fun embeddedFontsManager() = MagickFontManager().apply {
-    registerFont(Font(fontFamily = "serif"), serifFontPath)
+val resourcesDir = Native.getCurrentDir() + "/src/nativeTest/resources/"
+
+val notoSerifRegularFontPath = resourcesDir + "fonts/NotoSerif-Regular.ttf"
+val notoSerifBoldFontPath = resourcesDir + "fonts/NotoSerif-Bold.ttf"
+val notoSerifItalicFontPath = resourcesDir + "fonts/NotoSerif-Italic.ttf"
+val notoSerifBoldItalicFontPath = resourcesDir + "fonts/NotoSerif-BoldItalic.ttf"
+
+val notoSansMonoRegularFontPath = resourcesDir + "fonts/NotoSansMono-Regular.ttf"
+val notoSansMonoBoldFontPath = resourcesDir + "fonts/NotoSansMono-Bold.ttf"
+
+
+fun embeddedFontsManager() = MagickFontManager.default().apply {
+    registerFont(Font(fontFamily = "serif"), notoSerifRegularFontPath)
+    registerFont(Font(fontFamily = "NotoMono"), notoSansMonoRegularFontPath)
 }
 
 fun createImageComparer(fontManager: MagickFontManager): ImageComparer {

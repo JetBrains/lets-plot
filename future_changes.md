@@ -3,10 +3,11 @@
 ### Added
 
 - plot-image-export: added `width`, `height` and `unit` parameters. If specified, they will override plot's pixels size (default or set by `ggsize()`).
+- ggsave(): support font synthesis for *italic* and **bold** styles.
 
 ### Changed
 
-- plot-image-export: parameter `dpi` now affects image rendering quality.
+- plot-image-export: use `dpi` to calculate exported image pixel size.
 
 
 ### Fixed

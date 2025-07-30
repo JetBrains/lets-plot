@@ -2,6 +2,7 @@ import ImageMagick.DrawingWand
 import ImageMagick.MagickWand
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.io.Native
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -39,6 +40,7 @@ class WandPlayground {
         if (saveFile) {
             check(outFile != null) { "outFile is null" }
             ImageMagick.MagickWriteImage(img, outFile)
+            println("Image saved to: ${Native.getCurrentDir()}/$outFile")
         }
         saveFile = false
 
@@ -60,7 +62,7 @@ class WandPlayground {
 
         // Draw text with a font name
         ImageMagick.DrawSetFillColor(wand, black)
-        ImageMagick.DrawSetFont(wand, serifFontPath) // Use font name
+        ImageMagick.DrawSetFont(wand, notoSerifRegularFontPath) // Use font name
         ImageMagick.DrawSetFontSize(wand, 36.0) // Set font size
 
         drawAnnotation(wand, 150.0, 300.0, "Hello, MagicWand!")
@@ -174,6 +176,40 @@ class WandPlayground {
         ImageMagick.DrawPathCurveToAbsolute(wand, cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
         ImageMagick.DrawPathFinish(wand)
 
+        ImageMagick.MagickDrawImage(img, wand)
+    }
+
+    @Test
+    fun textStroke() {
+        saveFile = true
+        outFile = "magickwand_text_stroke.bmp"
+        val fontSize = 28.0
+
+        ImageMagick.DrawSetFillColor(wand, black)
+        ImageMagick.DrawSetStrokeColor(wand, none)
+        ImageMagick.DrawSetFont(wand, notoSerifRegularFontPath) // Use font name
+        ImageMagick.DrawSetFontSize(wand, fontSize) // Set font size
+
+        //ImageMagick.DrawSetStrokeWidth(wand, 2.0)
+
+        memScoped {
+            ImageMagick.DrawAnnotation(wand, 5.0, fontSize, "Stroke 0.0".cstr.ptr.reinterpret())
+        }
+
+        // Draw text with stroke
+        ImageMagick.DrawSetStrokeColor(wand, black)
+
+        ImageMagick.DrawSetStrokeWidth(wand, 1.0) // Set stroke width
+        memScoped {
+            ImageMagick.DrawAnnotation(wand, 5.0, fontSize * 2, "Stroke 1.0".cstr.ptr.reinterpret())
+        }
+
+        ImageMagick.DrawSetStrokeWidth(wand, 0.1) // Set stroke width
+        memScoped {
+            ImageMagick.DrawAnnotation(wand, 5.0, fontSize * 3, "Stroke 0.1".cstr.ptr.reinterpret())
+        }
+
+        // Apply the drawing to the MagickWand
         ImageMagick.MagickDrawImage(img, wand)
     }
 }

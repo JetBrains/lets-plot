@@ -215,6 +215,50 @@ class PlotTest {
     }
 
     @Test
+    fun plotMarkdownMonospaceFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "mono" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_monospace_font_style_test.png", plotSpec)
+    }
+
+    @Test
+    fun plotMarkdownRegularMonospaceFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "regular_mono" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_regular_monospace_font_style_test.png", plotSpec)
+    }
+
+    @Test
     fun plot5x2cm96dpi() {
         val (w, h, dpi) = Triple(5, 2, 96)
         val spec = """
