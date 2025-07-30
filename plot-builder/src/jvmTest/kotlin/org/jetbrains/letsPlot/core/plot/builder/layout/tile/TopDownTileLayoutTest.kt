@@ -29,7 +29,8 @@ class TopDownTileLayoutTest {
     @Test
     fun issue1074() {
         val containerSize = DoubleVector(600, 800)
-        val li = doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
+        val li =
+            doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
@@ -48,7 +49,8 @@ class TopDownTileLayoutTest {
     @Test
     fun verticalPlotWithDefaultMarginalLayers() {
         val containerSize = DoubleVector(600, 800)
-        val li = doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.1, top = 0.1))
+        val li =
+            doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.1, top = 0.1))
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
@@ -68,7 +70,8 @@ class TopDownTileLayoutTest {
     fun verticalPlotWithLargeMarginalLayers() {
         val containerSize = DoubleVector(934, 524)
 
-        val li = doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
+        val li =
+            doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
@@ -171,7 +174,14 @@ class TopDownTileLayoutTest {
         )
 
         val coord = if (coordFixed) {
-            FixedRatioCoordProvider(1.0, xLim = Pair(null, null), yLim = Pair(null, null), flipped = false)
+            FixedRatioCoordProvider(
+                ratio = 1.0,
+                xLim = Pair(null, null),
+                yLim = Pair(null, null),
+                xReversed = false,
+                yReversed = false,
+                flipped = false
+            )
         } else {
             error("Not implemented")
         }

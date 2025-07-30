@@ -97,6 +97,8 @@ class PolarTileLayoutTest {
         val coordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
+            xReversed = false,
+            yReversed = false,
             flipped = false,
             start = 0.0,
             clockwise = true,

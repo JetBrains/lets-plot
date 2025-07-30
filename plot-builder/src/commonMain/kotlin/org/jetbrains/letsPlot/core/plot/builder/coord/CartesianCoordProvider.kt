@@ -11,15 +11,19 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 internal class CartesianCoordProvider(
     xLim: Pair<Double?, Double?>,
     yLim: Pair<Double?, Double?>,
+    xReversed: Boolean,
+    yReversed: Boolean,
     flipped: Boolean = false
-) : CoordProviderBase(xLim, yLim, flipped) {
+) : CoordProviderBase(xLim, yLim, xReversed, yReversed, flipped) {
 
     override fun with(
         xLim: Pair<Double?, Double?>,
         yLim: Pair<Double?, Double?>,
+        xReversed: Boolean,
+        yReversed: Boolean,
         flipped: Boolean
     ): CoordProvider {
-        return CartesianCoordProvider(xLim, yLim, flipped)
+        return CartesianCoordProvider(xLim, yLim, xReversed, yReversed, flipped)
     }
 
     override fun adjustGeomSize(

@@ -11,59 +11,58 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
 abstract class CoordProviderBase(
     protected val xLim: Pair<Double?, Double?>,
     protected val yLim: Pair<Double?, Double?>,
+    protected val xReversed: Boolean,
+    protected val yReversed: Boolean,
     override val flipped: Boolean,
     protected val projection: Projection = identity(),
 ) : CoordProvider {
 
-    init {
-        require(
-            xLim.first == null || xLim.second == null ||
-                    xLim.second!! > xLim.first!!
-        ) { "Invalid coord x-limits: $xLim " }
-        require(
-            yLim.first == null || yLim.second == null ||
-                    yLim.second!! > yLim.first!!
-        ) { "Invalid coord y-limits: $yLim" }
-    }
-
     override val isLinear: Boolean = !projection.nonlinear
     override val isPolar: Boolean = false
 
-
     override fun withXlimOverride(xlimOverride: Pair<Double?, Double?>): CoordProvider {
         if (xlimOverride.first == null && xlimOverride.second == null) return this
-        val newXLim = Pair(
-            xlimOverride.first ?: xLim.first,
-            xlimOverride.second ?: xLim.second,
+
+        val newXLim = mergeRanges(
+            xlimOverride,
+            xLim,
+            xReversed,
+            checkRange = false
         )
-        return with(newXLim, yLim, flipped)
+        return with(newXLim, yLim, xReversed, yReversed, flipped)
     }
 
     override fun withYlimOverride(ylimOverride: Pair<Double?, Double?>): CoordProvider {
         if (ylimOverride.first == null && ylimOverride.second == null) return this
-        val newYLim = Pair(
-            ylimOverride.first ?: xLim.first,
-            ylimOverride.second ?: xLim.second,
+        val newYLim = mergeRanges(
+            ylimOverride,
+            yLim,
+            yReversed,
+            checkRange = false
         )
-        return with(xLim, newYLim, flipped)
+        return with(xLim, newYLim, xReversed, yReversed, flipped)
     }
 
     final override fun adjustDomain(dataDomain: DoubleRectangle): DoubleRectangle {
-        val xSpan = DoubleSpan(
-            xLim.first ?: dataDomain.left,
-            xLim.second ?: dataDomain.right
-        )
+        @Suppress("UNCHECKED_CAST")
+        val xRange = mergeRanges(xLim, dataDomain.xRange().toPair(), xReversed, checkRange = true) {
+            "Incompatible x-limits and the data range"
+        } as Pair<Double, Double>
 
-        val ySpan = DoubleSpan(
-            yLim.first ?: dataDomain.top,
-            yLim.second ?: dataDomain.bottom
-        )
+        @Suppress("UNCHECKED_CAST")
+        val yRange = mergeRanges(yLim, dataDomain.yRange().toPair(), yReversed, checkRange = true) {
+            "Incompatible y-limits and the data range"
+        } as Pair<Double, Double>
 
-        return adjustXYDomains(xSpan, ySpan)
+        return adjustXYDomains(
+            xDomain = DoubleSpan(xRange.first, xRange.second),
+            yDomain = DoubleSpan(yRange.first, yRange.second)
+        )
     }
 
     protected open fun adjustXYDomains(xDomain: DoubleSpan, yDomain: DoubleSpan): DoubleRectangle {
@@ -88,5 +87,55 @@ abstract class CoordProviderBase(
         clientSize: DoubleVector,
     ): CoordinatesMapper {
         return CoordinatesMapper.create(adjustedDomain, clientSize, projection, flipped)
+    }
+
+    private companion object {
+        private fun mergeRanges(
+            r0: Pair<Double?, Double?>,
+            r1: Pair<Double?, Double?>,
+            reversed: Boolean,
+            checkRange: Boolean,
+            errorMessagePrefix: () -> String = { "Incompatible unspecified ranges" },
+        ): Pair<Double?, Double?> {
+            fun unReverse(range: Pair<Double?, Double?>, reversed: Boolean): Pair<Double?, Double?> {
+                return if (reversed) {
+                    val first = range.first?.let { Transforms.REVERSE.applyInverse(it) }
+                    val second = range.second?.let { Transforms.REVERSE.applyInverse(it) }
+                    if (first != null && second != null) {
+                        DoubleSpan(first, second).toPair()
+                    } else {
+                        Pair(first, second)
+                    }
+                } else {
+                    range
+                }
+            }
+
+            fun reReverse(range: Pair<Double?, Double?>, unReversed: Boolean): Pair<Double?, Double?> {
+                return if (unReversed) {
+                    val first = range.first?.let { Transforms.REVERSE.apply(it) }
+                    val second = range.second?.let { Transforms.REVERSE.apply(it) }
+                    if (first != null && second != null) {
+                        DoubleSpan(first, second).toPair()
+                    } else {
+                        Pair(first, second)
+                    }
+                } else {
+                    range
+                }
+            }
+
+            val norm0 = unReverse(r0, reversed)
+            val norm1 = unReverse(r1, reversed)
+
+            val first = norm0.first ?: norm1.first
+            val second = norm0.second ?: norm1.second
+
+            if (first != null && second != null && checkRange) {
+                require(first < second) { "${errorMessagePrefix.invoke()} : $r0 and $r1" }
+            }
+
+            return reReverse(Pair(first, second), reversed)
+        }
     }
 }

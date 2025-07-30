@@ -84,16 +84,23 @@ fun main() {
         """.trimIndent()
 
     SwingUtilities.invokeLater {
-        val spec = parsePlotSpec(specString)
-        val specToSet = if (spec.containsKey("kind")) {
-            JsonSupport.formatJson(spec, pretty = true)
-        } else {
-            specString
-        }
 
         val plotSpecDebugger = PlotSpecDebugger()
-        plotSpecDebugger.setSpec(specToSet)
-        plotSpecDebugger.evaluate()
+        try {
+            val spec = parsePlotSpec(specString)
+            val specToSet = if (spec.containsKey("kind")) {
+                JsonSupport.formatJson(spec, pretty = true)
+            } else {
+                specString
+            }
+
+            plotSpecDebugger.setSpec(specToSet)
+            plotSpecDebugger.evaluate()
+        } catch (e: Exception) {
+            plotSpecDebugger.setSpec(specString)
+            e.printStackTrace()
+        }
+
         plotSpecDebugger.isVisible = true
     }
 }
@@ -235,11 +242,21 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 plotSpecTextArea.caretPosition = 0
                 return true
             } else {
-                JOptionPane.showMessageDialog(this, "No text found on the clipboard.", "Paste Info", JOptionPane.INFORMATION_MESSAGE)
+                JOptionPane.showMessageDialog(
+                    this,
+                    "No text found on the clipboard.",
+                    "Paste Info",
+                    JOptionPane.INFORMATION_MESSAGE
+                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            JOptionPane.showMessageDialog(this, "Could not paste text from clipboard.\nError: ${e.message}", "Paste Error", JOptionPane.ERROR_MESSAGE)
+            JOptionPane.showMessageDialog(
+                this,
+                "Could not paste text from clipboard.\nError: ${e.message}",
+                "Paste Error",
+                JOptionPane.ERROR_MESSAGE
+            )
         }
         return false
     }
@@ -262,7 +279,11 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,
-        ) { messages -> for (message in messages) { println("[Demo Plot Viewer] $message") } }
+        ) { messages ->
+            for (message in messages) {
+                println("[Demo Plot Viewer] $message")
+            }
+        }
         plotPanel.add(newPlotComponent, BorderLayout.CENTER)
         plotPanel.revalidate()
         plotPanel.repaint()
@@ -282,7 +303,12 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 plotSpec.write("data", "values") { VegaDataUtil.parseVegaDataset(content, url) }
             } catch (e: Exception) {
                 e.printStackTrace()
-                JOptionPane.showMessageDialog(this, "Failed to fetch data from URL: $url\nError: ${e.message}", "Data Fetch Error", JOptionPane.ERROR_MESSAGE)
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Failed to fetch data from URL: $url\nError: ${e.message}",
+                    "Data Fetch Error",
+                    JOptionPane.ERROR_MESSAGE
+                )
             }
         }
         return plotSpec

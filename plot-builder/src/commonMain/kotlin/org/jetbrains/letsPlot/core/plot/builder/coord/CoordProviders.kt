@@ -15,9 +15,11 @@ object CoordProviders {
     fun cartesian(
         xLim: Pair<Double?, Double?> = NO_LIM,
         yLim: Pair<Double?, Double?> = NO_LIM,
+        xReversed: Boolean = false,
+        yReversed: Boolean = false,
         flipped: Boolean = false
     ): CoordProvider {
-        return CartesianCoordProvider(xLim, yLim, flipped)
+        return CartesianCoordProvider(xLim, yLim, xReversed, yReversed, flipped)
     }
 
     @Suppress("NAME_SHADOWING")
@@ -25,9 +27,11 @@ object CoordProviders {
         ratio: Double,
         xLim: Pair<Double?, Double?> = NO_LIM,
         yLim: Pair<Double?, Double?> = NO_LIM,
+        xReversed: Boolean = false,
+        yReversed: Boolean = false,
         flipped: Boolean = false
     ): CoordProvider {
-        return FixedRatioCoordProvider(ratio, xLim, yLim, flipped)
+        return FixedRatioCoordProvider(ratio, xLim, yLim, xReversed, yReversed, flipped)
     }
 
     @Suppress("NAME_SHADOWING")
@@ -48,11 +52,24 @@ object CoordProviders {
     fun polar(
         xLim: Pair<Double?, Double?> = NO_LIM,
         yLim: Pair<Double?, Double?> = NO_LIM,
-        flipped: Boolean,
-        start: Double,
-        clockwise: Boolean,
-        transformBkgr: Boolean
+        xReversed: Boolean = false,
+        yReversed: Boolean = false,
+        flipped: Boolean = false,
+        start: Double = 0.0,
+        clockwise: Boolean = true,
+        transformBkgr: Boolean = true,
+        isTest: Boolean = false,
     ): CoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr)
+        return PolarCoordProvider(
+            xLim,
+            yLim,
+            xReversed = xReversed,
+            yReversed = yReversed,
+            flipped = flipped,
+            start = start,
+            clockwise = clockwise,
+            transformBkgr = transformBkgr,
+            isTest = isTest,
+        )
     }
 }
