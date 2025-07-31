@@ -36,7 +36,7 @@ object PolarAxisUtil {
         val orientation: Orientation,
         val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ) {
-        val center = coord.toClient(gridDomain.origin) ?: error("Failed to get center of the polar coordinate system")
+        val center = coord.toClient(gridDomain.origin.flipIf(flipAxis)) ?: error("Failed to get center of the polar coordinate system")
         val IndexedValue<Triple<String, Double, DoubleVector>>.label get() = value.first
         val IndexedValue<Triple<String, Double, DoubleVector>>.domValue get() = value.second
         val IndexedValue<Triple<String, Double, DoubleVector>>.coord get() = value.third
