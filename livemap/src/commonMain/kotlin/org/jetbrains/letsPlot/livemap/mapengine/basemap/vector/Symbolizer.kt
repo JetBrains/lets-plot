@@ -193,10 +193,10 @@ internal interface Symbolizer {
         override fun applyTo(ctx: Context2d) {
             ctx.setFont(
                 Font(
-                    myStyle.fontStyle?.fontStyle,
-                    myStyle.fontStyle?.fontWeight,
-                    myStyle.size,
-                    myStyle.fontFamily
+                    myStyle.fontStyle?.fontStyle ?: FontStyle.NORMAL,
+                    myStyle.fontStyle?.fontWeight ?: FontWeight.NORMAL,
+                    myStyle.size ?: Font.DEFAULT_SIZE,
+                    myStyle.fontFamily ?: Font.DEFAULT_FAMILY
                 )
             )
             ctx.setTextAlign(TextAlign.CENTER)

@@ -27,7 +27,7 @@ import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 
 object PlotReprGenerator {
-    private val defaultFontManager by lazy { MagickFontManager() }
+    private val defaultFontManager by lazy { MagickFontManager.default() }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {

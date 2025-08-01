@@ -1,3 +1,4 @@
+import demoAndTestShared.ImageComparer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
@@ -14,7 +15,7 @@ open class CanvasTestBase {
         private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
     }
 
-    fun assertCanvas(expectedFileName: String, canvas: MagickCanvas) {
+    fun assertCanvas(expectedFileName: String, canvas: MagickCanvas, imageComparer: ImageComparer = CanvasTestBase.imageComparer) {
         imageComparer.assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
     }
 
