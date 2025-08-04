@@ -315,6 +315,7 @@ class PlotImageExportVisualTest {
         dpi: Int = -1,
         scale: Number = 1.0
     ) {
+
         val imageData = PlotImageExport.buildImageFromRawSpecs(
             plotSpec = plotSpec,
             format = PlotImageExport.Format.PNG,
@@ -324,6 +325,7 @@ class PlotImageExportVisualTest {
             height = height?.toDouble(),
             unit = unit
         )
+
         val image = ImageIO.read(imageData.bytes.inputStream())
         val bitmap = BitmapUtil.fromBufferedImage(image)
 

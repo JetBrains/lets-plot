@@ -8,6 +8,7 @@ package demo.common.utils.swingCanvas
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
@@ -25,7 +26,7 @@ class SvgViewerDemoWindowSwingCanvas(
 
         rootPanel = JPanel()
         rootPanel.layout = GridLayout(0, min(maxCol, svgRoots.size))
-//        rootPanel.background = Color.WHITE
+        rootPanel.background = Color.WHITE
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
 
 

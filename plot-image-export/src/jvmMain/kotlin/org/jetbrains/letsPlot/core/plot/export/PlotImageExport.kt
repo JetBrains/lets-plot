@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.export
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasProvider
+import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
@@ -99,10 +100,8 @@ object PlotImageExport {
             computationMessagesHandler = {}
         )
 
-        val canvasPane = CanvasPane(
-            figure = plotFigure,
-            pixelDensity = scaleFactor
-        )
+        val awtCanvasProvider = AwtCanvasProvider()
+        val reg = plotFigure.mapToCanvas(awtCanvasProvider)
 
         val buffer = BufferedImage(
             (plotFigure.bounds().get().width * scaleFactor).roundToInt(),
@@ -121,9 +120,10 @@ object PlotImageExport {
         // Yet, when exporting, we apply the scaling factor again - pixelDensity doesn't seem to work as expected.
         graphics.scale(scaleFactor, scaleFactor)
 
-        canvasPane.paint(graphics)
+        plotFigure.draw(AwtContext2d(graphics))
 
         graphics.dispose()
+        reg.dispose()
 
         val img = ByteArrayOutputStream()
         ImageIO.write(buffer, format.defFileExt, img)

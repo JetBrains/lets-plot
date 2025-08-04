@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
@@ -21,6 +22,8 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import java.awt.Graphics
+import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -28,36 +31,44 @@ import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import javax.swing.JComponent
-import javax.swing.JLayeredPane
 
 class CanvasPane(
     figure: CanvasFigure? = null,
     private val pixelDensity: Double = 1.0
-) : JLayeredPane() {
+) : JComponent() {
     private val canvasControl: CanvasControl = AwtCanvasControl()
     private var figureRegistration: Registration = Registration.EMPTY
     val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
     var figure: CanvasFigure? = null
-        set(value) {
-            if (field == value) {
+        set(canvasFigure) {
+            if (field == canvasFigure) {
                 return
             }
 
             figureRegistration.remove()
-            if (value != null) {
-                figureRegistration = value.mapToCanvas(canvasControl)
-                bounds = Rectangle(0, 0, value.bounds().get().dimension.x, value.bounds().get().dimension.y)
+            if (canvasFigure != null) {
+                figureRegistration = CompositeRegistration(
+                    canvasFigure.mapToCanvas(canvasControl),
+                    canvasFigure.onRepaintRequest(::repaint),
+                )
+                bounds = Rectangle(0, 0, canvasFigure.bounds().get().dimension.x, canvasFigure.bounds().get().dimension.y)
             }
-            field = value
+            field = canvasFigure
         }
 
     init {
         this.figure = figure
     }
 
+    override fun paintComponent(g: Graphics?) {
+        super.paintComponent(g)
+        val g2d = g as Graphics2D
 
-    override fun isPaintingOrigin(): Boolean = true
+        if (figure != null) {
+            figure!!.draw(AwtContext2d(g2d))
+        }
+    }
 
     internal inner class AwtCanvasControl : CanvasControl {
         override val pixelDensity: Double
@@ -78,13 +89,13 @@ class CanvasPane(
 
         override fun addChild(index: Int, canvas: Canvas) {
             val canvasComponent = CanvasComponent(canvas as AwtCanvas)
-            add(canvasComponent, componentCount - index)
+            //add(canvasComponent, componentCount - index)
             revalidate()
             myMappedCanvases[canvas] = canvasComponent
         }
 
         override fun removeChild(canvas: Canvas) {
-            remove(myMappedCanvases[canvas])
+            //remove(myMappedCanvases[canvas])
             revalidate()
             myMappedCanvases.remove(canvas)
         }

@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.TextMetrics
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLocatable
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -20,17 +22,37 @@ import org.jetbrains.letsPlot.raster.shape.Text
 import org.jetbrains.letsPlot.raster.shape.breadthFirstTraversal
 
 internal class SvgCanvasPeer(
-    val textMeasurer: TextMeasurer,
     val canvasProvider: CanvasProvider,
-//    val fontManager: FontManager
 ) : SvgPlatformPeer {
+    private val textMeasuringCanvas = canvasProvider.createCanvas(0, 0)
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Element>>()
+
     var styleSheet: StyleSheet? = null
         private set
 
     fun applyStyleSheet(styleSheet: StyleSheet) {
         this.styleSheet = styleSheet
     }
+
+    fun measureTextWidth(text: String, font: Font): Double {
+        val ctx = textMeasuringCanvas.context2d
+        ctx.save()
+        ctx.setFont(font)
+        val width = ctx.measureTextWidth(text)
+        ctx.restore()
+        return width
+    }
+
+    fun measureText(text: String, font: Font): TextMetrics {
+        val ctx = textMeasuringCanvas.context2d
+        ctx.save()
+        ctx.setFont(font)
+        val textMetrics = ctx.measureText(text)
+        ctx.restore()
+
+        return textMetrics
+    }
+
 
 //    private fun ensureElementConsistency(source: SvgNode, target: Node) {
 //        if (source is SvgElement && target !is SVGOMElement) {

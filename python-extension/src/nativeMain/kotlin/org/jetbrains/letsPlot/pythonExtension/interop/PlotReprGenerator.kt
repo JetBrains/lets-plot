@@ -183,16 +183,22 @@ object PlotReprGenerator {
 
             canvasReg = plotCanvasFigure.mapToCanvas(canvasControl)
 
-            // TODO: canvasControl can provide takeSnapshot() method
-            val plotCanvas = canvasControl.children.last() as MagickCanvas
-            require(plotCanvas.size.x > 0 && plotCanvas.size.y > 0) {
-                "Plot canvas size must be greater than zero"
-            }
+
+            val magickCanvas = MagickCanvas.create(
+                width = plotCanvasFigure.bounds().get().width,
+                height = plotCanvasFigure.bounds().get().height,
+                pixelDensity = scaleFactor,
+                fontManager
+            )
+
+            plotCanvasFigure.draw(magickCanvas.context2d)
 
             // Save the image to a file
-            val snapshot = plotCanvas.takeSnapshot()
+            val snapshot = magickCanvas.takeSnapshot()
             val bitmap = snapshot.bitmap
             snapshot.dispose()
+            magickCanvas.dispose()
+
             return bitmap
         } catch (e: Throwable) {
             e.printStackTrace()

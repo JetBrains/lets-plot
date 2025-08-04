@@ -22,7 +22,7 @@ import kotlin.math.abs
 import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
 
-internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
+class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath = GeneralPath()
     private var state = ContextState()
     private val stateStack = ArrayList<ContextState>()
@@ -39,6 +39,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
         graphics.background = Color.TRANSPARENT.toAwtColor()
         setLineCap(LineCap.BUTT)
+        state.transform = graphics.transform
     }
 
     internal data class ContextState(

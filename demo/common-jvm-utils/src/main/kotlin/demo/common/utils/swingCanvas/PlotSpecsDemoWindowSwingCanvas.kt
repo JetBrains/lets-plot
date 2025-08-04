@@ -5,7 +5,7 @@
 
 package demo.common.utils.swingCanvas
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.plot.PlotCanvasPanel
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.Color
@@ -65,10 +65,9 @@ class PlotSpecsDemoWindowSwingCanvas(
         }
 
         val components = specs.map { rawSpec ->
-            val canvasPane = CanvasPane()
+            val canvasPane = PlotCanvasPanel()
             canvasPane.figure = MonolithicCanvas.buildPlotFigureFromRawSpec(rawSpec, sizingPolicy, ::printAllMessages)
             canvasPane.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-            canvasPane.preferredSize = plotSize ?: canvasPane.preferredSize
             canvasPane
         }
 
