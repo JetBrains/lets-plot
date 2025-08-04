@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors.Companion.create
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
-private const val compact = true
+private const val compact = false
 
 object ReferenceSvgModel {
     fun createModel(fontFamily: String = FontFamily.SERIF.name): SvgSvgElement {

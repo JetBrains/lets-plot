@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.livemap.LiveMap
@@ -37,7 +37,7 @@ class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure {
         return Registration.from(myLiveMapPresenter)
     }
 
-    override fun mapToCanvas(canvasProvider: CanvasProvider): Registration {
+    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         TODO("Not yet implemented")
     }
 

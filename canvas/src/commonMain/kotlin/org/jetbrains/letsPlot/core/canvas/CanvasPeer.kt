@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
-interface CanvasProvider {
+interface CanvasPeer {
     fun createCanvas(size: Vector): Canvas
     fun createSnapshot(bitmap: Bitmap): Snapshot
 

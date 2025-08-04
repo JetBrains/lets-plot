@@ -1,6 +1,6 @@
 package org.jetbrains.letsPlot.awt.plot
 
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasProvider
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
 import org.jetbrains.letsPlot.awt.canvas.AwtMouseEventMapper
 import org.jetbrains.letsPlot.commons.event.MouseEvent
@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -18,10 +18,9 @@ import java.awt.event.ComponentEvent
 import javax.swing.JComponent
 
 class PlotCanvasPanel(
-    fig: PlotCanvasFigure? = null,
-    private val pixelDensity: Double = 1.0
+    fig: PlotCanvasFigure? = null
 ) : JComponent() {
-    private val canvasProvider: CanvasProvider = AwtCanvasProvider()
+    private val canvasPeer: CanvasPeer = AwtCanvasPeer()
     private var figureRegistration: Registration = Registration.EMPTY
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
@@ -34,7 +33,7 @@ class PlotCanvasPanel(
             figureRegistration.remove()
             if (canvasFigure != null) {
                 figureRegistration = CompositeRegistration(
-                    canvasFigure.mapToCanvas(canvasProvider),
+                    canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequest(::repaint),
                 )
             }

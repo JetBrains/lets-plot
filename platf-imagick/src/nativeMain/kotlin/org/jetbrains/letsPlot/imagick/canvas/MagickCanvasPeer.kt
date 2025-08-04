@@ -11,17 +11,21 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 
-class MagickCanvasProvider(
+class MagickCanvasPeer(
     private val magickFontManager: MagickFontManager,
-) : CanvasProvider {
+) : CanvasPeer {
     override fun createCanvas(size: Vector): MagickCanvas {
         return MagickCanvas.create(size.x, size.y, 1.0, magickFontManager)
     }
 
     override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
         return MagickSnapshot.fromBitmap(bitmap)
+    }
+
+    override fun createCanvas(width: Number, height: Number): MagickCanvas {
+        return createCanvas(Vector(width.toInt(), height.toInt()))
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {

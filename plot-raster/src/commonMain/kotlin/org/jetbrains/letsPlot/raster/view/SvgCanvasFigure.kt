@@ -44,17 +44,12 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        canvasPeer = SvgCanvasPeer(canvasControl)
-
-        return object : Registration() {
-            override fun doRemove() {
-                rootMapper.detachRoot()
-            }
-        }
+        error("Use mapToCanvas(canvasPeer: CanvasPeer) instead.")
     }
 
-    override fun mapToCanvas(canvasProvider: CanvasProvider): Registration {
-        canvasPeer = SvgCanvasPeer(canvasProvider)
+    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
+        this@SvgCanvasFigure.canvasPeer = SvgCanvasPeer(canvasPeer)
+        mapSvgSvgElement()
 
         return object : Registration() {
             override fun doRemove() {

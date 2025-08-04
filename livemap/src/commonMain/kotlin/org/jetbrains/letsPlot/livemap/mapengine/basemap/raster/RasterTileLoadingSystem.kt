@@ -90,10 +90,10 @@ class RasterTileLoadingSystem(
     }
 
     private fun drawImageTile(imageData: ByteArray, context: LiveMapContext): Async<Canvas.Snapshot> {
-        return context.mapRenderContext.canvasProvider
+        return context.mapRenderContext.canvasPeer
             .decodePng(imageData)
             .map { imageSnapshot ->
-                val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
+                val tileCanvas = context.mapRenderContext.canvasPeer.createCanvas(TILE_PIXEL_DIMENSION)
 
                 // Scale the image to fit the tile size, e.g.:
                 // For DPI=2 and image 256x256, the resulting tile will be 512x512 pixels.
@@ -115,7 +115,7 @@ class RasterTileLoadingSystem(
         context: LiveMapContext
     ): Async<Canvas.Snapshot> {
         val errorText = errorCode!!.message ?: "Unknown error"
-        val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
+        val tileCanvas = context.mapRenderContext.canvasPeer.createCanvas(TILE_PIXEL_DIMENSION)
         val tileCtx = tileCanvas.context2d
         val textDim = tileCtx.measureTextWidth(errorText)
         val x = if (textDim < TILE_PIXEL_SIZE) {

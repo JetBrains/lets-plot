@@ -1,7 +1,7 @@
 package org.jetbrains.letsPlot.core.plot.export
 
 import demoAndTestShared.AwtBitmapIO
-import demoAndTestShared.AwtTestCanvasProvider
+import demoAndTestShared.AwtTestCanvasPeer
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
@@ -21,7 +21,7 @@ class PlotImageExportVisualTest {
 
     fun createImageComparer(): ImageComparer {
         return ImageComparer(
-            canvasProvider = AwtTestCanvasProvider(),
+            canvasPeer = AwtTestCanvasPeer(),
             bitmapIO = AwtBitmapIO,
             expectedDir = System.getProperty("user.dir") + "/src/jvmTest/resources/expected/",
             outDir = System.getProperty("user.dir") + "/build/reports/"

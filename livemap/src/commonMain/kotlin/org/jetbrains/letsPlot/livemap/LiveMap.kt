@@ -129,7 +129,7 @@ class LiveMap(
             camera = camera,
             layerManager = myLayerManager
         )
-        myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+        myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasPeer.createCanvas(Vector.ZERO).context2d)
         myUiService = UiService(myComponentManager, myTextMeasurer)
         init(myComponentManager)
 
@@ -209,7 +209,7 @@ class LiveMap(
                 ViewportGridUpdateSystem(componentManager),
                 LiveMapUiSystem(
                     myUiService,
-                    ResourceManager(myContext.mapRenderContext.canvasProvider),
+                    ResourceManager(myContext.mapRenderContext.canvasPeer),
                     componentManager,
                     myMapLocationConsumer,
                     myLayerManager,
@@ -262,7 +262,7 @@ class LiveMap(
             .addComponents {
                 + ClickableComponent(
                     Rectangle().apply {
-                        origin = org.jetbrains.letsPlot.livemap.Client.ZERO_VEC.toDoubleVector()
+                        origin = Client.ZERO_VEC.toDoubleVector()
                         dimension = viewport.size.toDoubleVector()
                     }
                 )

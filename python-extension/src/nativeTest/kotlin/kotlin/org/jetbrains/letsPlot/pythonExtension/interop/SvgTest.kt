@@ -2,8 +2,7 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.test.Test
 
@@ -27,12 +26,23 @@ class SvgTest {
 
 
     private fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
-        val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
-        val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
-        val canvasControl = MagickCanvasControl(w = w, h = h, pixelDensity = 1.0, fontManager = embeddedFontsManager)
-        SvgCanvasFigure(svg).mapToCanvas(canvasControl)
+        val canvasPeer = MagickCanvasPeer(embeddedFontsManager)
+        val svgFigure = SvgCanvasFigure()
+        svgFigure.mapToCanvas(canvasPeer)
 
-        val canvas = canvasControl.children.last() as MagickCanvas
-        imageComparer.assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
+        svgFigure.svgSvgElement = svg
+
+        val canvas = canvasPeer.createCanvas(
+            svg.width().get() ?: error("SVG width is not specified"),
+            svg.height().get() ?: error("SVG height is not specified")
+        )
+
+        svgFigure.draw(canvas.context2d)
+
+        val snapshot = canvas.takeSnapshot()
+        imageComparer.assertBitmapEquals(expectedFileName, snapshot.bitmap)
+
+        snapshot.dispose()
+        canvas.dispose()
     }
 }

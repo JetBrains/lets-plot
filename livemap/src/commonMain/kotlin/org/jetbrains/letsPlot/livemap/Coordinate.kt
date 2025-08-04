@@ -27,7 +27,7 @@ interface World {
  */
 interface Client {
     companion object {
-        val ZERO_VEC: Vec<Client> = Vec(0.0, 0.0)
+        val ZERO_VEC: Vec<Client> = Vec.ZERO
         val Number.px: Scalar<Client> get() = Scalar(this.toDouble())
     }
 

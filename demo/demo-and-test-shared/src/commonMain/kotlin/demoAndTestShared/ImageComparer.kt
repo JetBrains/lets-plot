@@ -9,7 +9,7 @@ package demoAndTestShared
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.canvas.CanvasProvider
  */
 
 class ImageComparer(
-    private val canvasProvider: CanvasProvider,
+    private val canvasPeer: CanvasPeer,
     private val bitmapIO: BitmapIO,
     private val expectedDir: String, // Adjusted path
     private val outDir: String,
@@ -65,7 +65,7 @@ class ImageComparer(
     private fun createDiffImage(expected: Bitmap, actual: Bitmap, tolerance: Int = tol): Bitmap? {
         val diffWidth = maxOf(expected.width, actual.width)
         val diffHeight = maxOf(expected.height, actual.height)
-        val diffCanvas = canvasProvider.createCanvas(diffWidth, diffHeight)
+        val diffCanvas = canvasPeer.createCanvas(diffWidth, diffHeight)
         diffCanvas.context2d.setFillStyle(Color.TRANSPARENT)
         diffCanvas.context2d.fillRect(0.0, 0.0, diffWidth.toDouble(), diffHeight.toDouble())
 
@@ -115,15 +115,15 @@ class ImageComparer(
         val totalWidth = width * 2 + separatorSize
         val totalHeight = height * 2 + separatorSize
 
-        val canvas = canvasProvider.createCanvas(totalWidth, totalHeight)
+        val canvas = canvasPeer.createCanvas(totalWidth, totalHeight)
         val ctx = canvas.context2d
 
         ctx.setFillStyle(Color.WHITE)
         ctx.fillRect(0.0, 0.0, totalWidth.toDouble(), totalHeight.toDouble())
 
-        val expectedSnapshot = canvasProvider.createSnapshot(expectedBitmap)
-        val actualSnapshot = canvasProvider.createSnapshot(actualBitmap)
-        val diffSnapshot = canvasProvider.createSnapshot(addBorderToBitmap(diffBitmap, 1, Color.GRAY))
+        val expectedSnapshot = canvasPeer.createSnapshot(expectedBitmap)
+        val actualSnapshot = canvasPeer.createSnapshot(actualBitmap)
+        val diffSnapshot = canvasPeer.createSnapshot(addBorderToBitmap(diffBitmap, 1, Color.GRAY))
 
         val vertSeparatorSnapshot = createZigZagPattern(separatorSize, height).takeSnapshot()
         val horizSeparatorSnapshot = createZigZagPattern(totalWidth, separatorSize).takeSnapshot()
@@ -151,7 +151,7 @@ class ImageComparer(
     }
 
     private fun createZigZagPattern(width: Int, height: Int): Canvas {
-        val canvas = canvasProvider.createCanvas(width, height)
+        val canvas = canvasPeer.createCanvas(width, height)
         val ctx = canvas.context2d
 
         ctx.setFillStyle(Color.GRAY)
@@ -176,7 +176,7 @@ class ImageComparer(
     ): Bitmap {
         val newWidth = bitmap.width + borderSize * 2
         val newHeight = bitmap.height + borderSize * 2
-        val canvas = canvasProvider.createCanvas(newWidth, newHeight)
+        val canvas = canvasPeer.createCanvas(newWidth, newHeight)
         val ctx = canvas.context2d
 
         // Draw border rectangle
@@ -184,7 +184,7 @@ class ImageComparer(
         ctx.fillRect(0.0, 0.0, newWidth.toDouble(), newHeight.toDouble())
 
         // Draw original image inside the border
-        ctx.drawImage(canvasProvider.createSnapshot(bitmap), borderSize.toDouble(), borderSize.toDouble())
+        ctx.drawImage(canvasPeer.createSnapshot(bitmap), borderSize.toDouble(), borderSize.toDouble())
 
         return canvas.takeSnapshot().bitmap
     }

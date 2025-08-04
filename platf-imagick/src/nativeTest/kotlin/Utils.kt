@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 
 /*
@@ -232,7 +232,7 @@ fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
         expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = Native.getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider(fontManager),
+        canvasPeer = MagickCanvasPeer(fontManager),
         bitmapIO = NativeBitmapIO,
         tol = 1
     )

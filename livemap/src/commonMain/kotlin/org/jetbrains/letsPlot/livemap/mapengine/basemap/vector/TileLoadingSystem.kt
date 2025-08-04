@@ -40,7 +40,7 @@ class TileLoadingSystem(
     override fun initImpl(context: LiveMapContext) {
         myMapRect = context.mapProjection.mapRect
         val dimension = round(myMapRect.dimension.x, myMapRect.dimension.y)
-        myCanvasSupplier = { context.mapRenderContext.canvasProvider.createCanvas(dimension) }
+        myCanvasSupplier = { context.mapRenderContext.canvasPeer.createCanvas(dimension) }
 
         myTileDataFetcher = TileDataFetcherImpl(context.mapProjection, myTileService)
         myTileDataParser = TileDataParserImpl(context.mapProjection)

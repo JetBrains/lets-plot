@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.livemap.mapengine.basemap.solid
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
@@ -23,7 +23,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 import kotlin.random.Random
 
 class SolidColorTileSystem(
-    private val tileFactory: (CellKey, CanvasProvider) -> Canvas.Snapshot,
+    private val tileFactory: (CellKey, CanvasPeer) -> Canvas.Snapshot,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -31,7 +31,7 @@ class SolidColorTileSystem(
         getSingleton<RequestTilesComponent>().requestTiles.forEach { cellKey ->
             onEachEntity<BasemapCellComponent>() { entity, cellComponent ->
                 if (cellComponent.cellKey == cellKey) {
-                    val snapshot = tileFactory(cellKey, context.mapRenderContext.canvasProvider)
+                    val snapshot = tileFactory(cellKey, context.mapRenderContext.canvasPeer)
                     runLaterBySystem(entity) {
                         it.get<BasemapTileComponent>().apply {
                             tile = Tile.SnapshotTile(snapshot)
@@ -45,30 +45,30 @@ class SolidColorTileSystem(
     }
 }
 
-private fun drawSolidColorTile(color: Color, canvasProvider: CanvasProvider): Canvas.Snapshot {
-    val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
+private fun drawSolidColorTile(color: Color, canvasPeer: CanvasPeer): Canvas.Snapshot {
+    val tileCanvas = canvasPeer.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
     tileCanvas.context2d.apply {
         setFillStyle(color)
-        fillRect(0.0, 0.0, TILE_PIXEL_SIZE.toDouble(), TILE_PIXEL_SIZE.toDouble())
+        fillRect(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
     }
 
     return tileCanvas.takeSnapshot()
 }
 
-fun fixed(color: Color): (CellKey, CanvasProvider) -> Canvas.Snapshot {
+fun fixed(color: Color): (CellKey, CanvasPeer) -> Canvas.Snapshot {
     var tile: Canvas.Snapshot? = null
-    return { _: CellKey, canvasProvider: CanvasProvider ->
-        tile = tile ?: drawSolidColorTile(color, canvasProvider)
-        tile!!
+    return { _: CellKey, canvasPeer: CanvasPeer ->
+        tile = tile ?: drawSolidColorTile(color, canvasPeer)
+        tile
     }
 }
 
-fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Canvas.Snapshot {
+fun chessBoard(black: Color, white: Color): (CellKey, CanvasPeer) -> Canvas.Snapshot {
     var tile: Canvas.Snapshot? = null
 
-    fun drawChessQuad(canvasProvider: CanvasProvider): Canvas.Snapshot {
+    fun drawChessQuad(canvasPeer: CanvasPeer): Canvas.Snapshot {
 
-        val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
+        val tileCanvas = canvasPeer.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
         val centerX = TILE_PIXEL_SIZE / 2
         val centerY = TILE_PIXEL_SIZE / 2
         tileCanvas.context2d.apply {
@@ -84,15 +84,15 @@ fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Canvas.
         return tileCanvas.takeSnapshot()
     }
 
-    return { _: CellKey, canvasProvider: CanvasProvider ->
-        tile = tile ?: drawChessQuad(canvasProvider)
-        tile!!
+    return { _: CellKey, canvasPeer: CanvasPeer ->
+        tile = tile ?: drawChessQuad(canvasPeer)
+        tile
     }
 }
 
-fun random(): (CellKey, CanvasProvider) -> Canvas.Snapshot {
-    return { _: CellKey, canvasProvider: CanvasProvider ->
+fun random(): (CellKey, CanvasPeer) -> Canvas.Snapshot {
+    return { _: CellKey, canvasPeer: CanvasPeer ->
         val color = Color(Random.nextInt(0, 256), Random.nextInt(0, 256), Random.nextInt(0, 256))
-        drawSolidColorTile(color, canvasProvider)
+        drawSolidColorTile(color, canvasPeer)
     }
 }

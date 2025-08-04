@@ -5,40 +5,20 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.commons.encoding.Png
-import org.jetbrains.letsPlot.commons.event.MouseEvent
-import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Rectangle
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
-import javax.imageio.ImageIO
 import javax.swing.JComponent
 
 class CanvasPane(
-    figure: CanvasFigure? = null,
-    private val pixelDensity: Double = 1.0
+    figure: CanvasFigure? = null
 ) : JComponent() {
-    private val canvasControl: CanvasControl = AwtCanvasControl()
+    private val canvasPeer: CanvasPeer = AwtCanvasPeer()
     private var figureRegistration: Registration = Registration.EMPTY
-    val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
     var figure: CanvasFigure? = null
         set(canvasFigure) {
@@ -49,7 +29,7 @@ class CanvasPane(
             figureRegistration.remove()
             if (canvasFigure != null) {
                 figureRegistration = CompositeRegistration(
-                    canvasFigure.mapToCanvas(canvasControl),
+                    canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequest(::repaint),
                 )
                 bounds = Rectangle(0, 0, canvasFigure.bounds().get().dimension.x, canvasFigure.bounds().get().dimension.y)
@@ -64,115 +44,6 @@ class CanvasPane(
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
         val g2d = g as Graphics2D
-
-        if (figure != null) {
-            figure!!.draw(AwtContext2d(g2d))
-        }
-    }
-
-    internal inner class AwtCanvasControl : CanvasControl {
-        override val pixelDensity: Double
-            get() = this@CanvasPane.pixelDensity
-
-        override val size: Vector
-            get() = Vector(
-                x = this@CanvasPane.width,
-                y = this@CanvasPane.height
-            )
-
-        private val animationTimerPeer: AwtAnimationTimerPeer = AwtAnimationTimerPeer()
-        private val myMappedCanvases = HashMap<Canvas, JComponent>()
-
-        override fun addChild(canvas: Canvas) {
-            addChild(componentCount, canvas)
-        }
-
-        override fun addChild(index: Int, canvas: Canvas) {
-            val canvasComponent = CanvasComponent(canvas as AwtCanvas)
-            //add(canvasComponent, componentCount - index)
-            revalidate()
-            myMappedCanvases[canvas] = canvasComponent
-        }
-
-        override fun removeChild(canvas: Canvas) {
-            //remove(myMappedCanvases[canvas])
-            revalidate()
-            myMappedCanvases.remove(canvas)
-        }
-
-        override fun onResize(listener: (Vector) -> Unit): Registration {
-            val sizeListener = object : ComponentAdapter() {
-                override fun componentResized(e: ComponentEvent?) {
-                    listener(size)
-                }
-            }
-
-            addComponentListener(sizeListener)
-
-            return object : Registration() {
-                override fun doRemove() {
-                    this@CanvasPane.removeComponentListener(sizeListener)
-                }
-            }
-        }
-
-        override fun snapshot(): Canvas.Snapshot {
-            TODO("Not yet implemented")
-        }
-
-        override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
-            return object : AnimationTimer {
-                override fun start() {
-                    animationTimerPeer.addHandler(::handle)
-                }
-
-                override fun stop() {
-                    animationTimerPeer.removeHandler(::handle)
-                }
-
-                fun handle(millisTime: Long) {
-                    if (eventHandler.onEvent(millisTime)) {
-                        repaint()
-                    }
-                }
-            }
-        }
-
-        override fun createCanvas(size: Vector): Canvas {
-            return AwtCanvas.create(size, pixelDensity)
-        }
-
-        override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
-            val img = BitmapUtil.toBufferedImage(bitmap)
-            return AwtCanvas.AwtSnapshot(img)
-        }
-
-        private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-            val img = Png.decodeDataImage(dataUrl)
-            val bufImg = BitmapUtil.toBufferedImage(img)
-            return bufImg
-        }
-
-        override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
-            println("CanvasPane.CanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
-            return Asyncs.constant(
-                AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
-            )
-        }
-
-        override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
-            val src = ImageIO.read(ByteArrayInputStream(png))
-            val snapshot = AwtCanvas.AwtSnapshot(src)
-            return Asyncs.constant(snapshot)
-        }
-
-        override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-            return mouseEventSource.addEventHandler(eventSpec, eventHandler)
-        }
-
-        override fun <T> schedule(f: () -> T) {
-//        invokeLater { f() }
-            animationTimerPeer.executor { f() }
-        }
+        figure?.draw(AwtContext2d(g2d))
     }
 }

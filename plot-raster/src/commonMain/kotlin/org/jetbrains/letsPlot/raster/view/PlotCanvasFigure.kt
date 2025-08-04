@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -44,12 +44,12 @@ class PlotCanvasFigure : CanvasFigure {
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        TODO("Not yet implemented")
+        error("Use mapToCanvas(canvasPeer: CanvasPeer) instead.")
     }
 
-    override fun mapToCanvas(canvasProvider: CanvasProvider): Registration {
+    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         val reg = CompositeRegistration(
-            plotSvgFigure.mapToCanvas(canvasProvider),
+            plotSvgFigure.mapToCanvas(canvasPeer),
             //canvasControl.onResize { buildPlotSvg() },
             Registration.onRemove {
                 // Do not pass reference to the viewModelReg - it changes on CanvasControl resize or plot spec update.

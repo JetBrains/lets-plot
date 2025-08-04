@@ -7,14 +7,14 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 
-class AwtCanvasProvider(
+class AwtCanvasPeer(
     private val pixelDensity: Double = 1.0
-) : CanvasProvider {
+) : CanvasPeer {
     override fun createCanvas(size: Vector): Canvas {
         return AwtCanvas.create(size, pixelDensity)
     }

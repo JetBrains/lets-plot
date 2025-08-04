@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
@@ -128,6 +128,7 @@ object PlotReprGenerator {
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
     fun exportBitmap(
         plotSpec: Map<*, *>,
         width: Float,
@@ -137,7 +138,7 @@ object PlotReprGenerator {
         scale: Double,
         fontManager: MagickFontManager
     ): Bitmap? {
-        var canvasReg: Registration? = null
+        var reg: Registration? = null
 
         try {
             val sizingPolicy = when {
@@ -174,24 +175,20 @@ object PlotReprGenerator {
                 else -> scale
             }
 
-            val canvasControl = MagickCanvasControl(
-                w = plotCanvasFigure.bounds().get().width,
-                h = plotCanvasFigure.bounds().get().height,
-                pixelDensity = scaleFactor,
-                fontManager = fontManager,
-            )
-
-            canvasReg = plotCanvasFigure.mapToCanvas(canvasControl)
-
-
             val magickCanvas = MagickCanvas.create(
-                width = plotCanvasFigure.bounds().get().width,
-                height = plotCanvasFigure.bounds().get().height,
-                pixelDensity = scaleFactor,
+                width = plotCanvasFigure.bounds().get().width * scaleFactor,
+                height = plotCanvasFigure.bounds().get().height * scaleFactor,
+                pixelDensity = 1,
                 fontManager
             )
 
-            plotCanvasFigure.draw(magickCanvas.context2d)
+            val magickContext2d = magickCanvas.context2d
+            magickContext2d.scale(scaleFactor, scaleFactor)
+
+            val magickCanvasPeer = MagickCanvasPeer(fontManager)
+            reg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+
+            plotCanvasFigure.draw(magickContext2d)
 
             // Save the image to a file
             val snapshot = magickCanvas.takeSnapshot()
@@ -204,7 +201,7 @@ object PlotReprGenerator {
             e.printStackTrace()
             return null
         } finally {
-            canvasReg?.dispose()
+            reg?.dispose()
         }
     }
 

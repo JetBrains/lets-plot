@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
 interface CanvasFigure : SomeFig {
@@ -21,5 +21,5 @@ interface CanvasFigure : SomeFig {
     // v2 interface
     fun draw(context2d: Context2d)
     fun onRepaintRequest(handler: () -> Unit): Registration
-    fun mapToCanvas(canvasProvider: CanvasProvider): Registration
+    fun mapToCanvas(canvasPeer: CanvasPeer): Registration
 }

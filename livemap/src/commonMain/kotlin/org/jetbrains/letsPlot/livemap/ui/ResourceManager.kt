@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.livemap.ui
 
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 
-class ResourceManager(private val canvasProvider: CanvasProvider) {
+class ResourceManager(private val canvasPeer: CanvasPeer) {
     private val snapshotMap: MutableMap<String, Canvas.Snapshot> = HashMap()
 
     init {
@@ -26,7 +26,7 @@ class ResourceManager(private val canvasProvider: CanvasProvider) {
     }
 
     private fun add(key: String, dataUrl: String): ResourceManager {
-        canvasProvider.decodeDataImageUrl(dataUrl).onResult(
+        canvasPeer.decodeDataImageUrl(dataUrl).onResult(
             { snapshot -> snapshotMap[key] = snapshot },
             { message -> error(message) })
         return this

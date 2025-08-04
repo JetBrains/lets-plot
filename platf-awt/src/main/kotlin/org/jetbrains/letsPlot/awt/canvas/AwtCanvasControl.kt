@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import javax.swing.JComponent
 
 // TODO: remove this class and use CanvasPane instead
@@ -24,8 +24,8 @@ class AwtCanvasControl(
     private val animationTimerPeer: AwtAnimationTimerPeer,
     private val mouseEventSource: MouseEventSource,
     override val pixelDensity: Double = 1.0,
-    private val awtCanvasProvider: AwtCanvasProvider = AwtCanvasProvider(pixelDensity)
-) : CanvasControl, CanvasProvider by awtCanvasProvider {
+    private val awtCanvasProvider: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
+) : CanvasControl, CanvasPeer by awtCanvasProvider {
 
     private val myComponent = CanvasContainerPanel(size)
     private val myMappedCanvases = HashMap<Canvas, JComponent>()

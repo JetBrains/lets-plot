@@ -31,7 +31,7 @@ class LayersRenderingSystem internal constructor(
             val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>()
                 .toList()
 
-            if (context.camera.panFrameDistance == org.jetbrains.letsPlot.livemap.Client.ZERO_VEC && dirtyLayerEntities.isEmpty()) {
+            if (context.camera.panFrameDistance == Client.ZERO_VEC && dirtyLayerEntities.isEmpty()) {
                 return
             }
 

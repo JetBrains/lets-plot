@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.TextMetrics
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
@@ -22,9 +22,9 @@ import org.jetbrains.letsPlot.raster.shape.Text
 import org.jetbrains.letsPlot.raster.shape.breadthFirstTraversal
 
 internal class SvgCanvasPeer(
-    val canvasProvider: CanvasProvider,
+    val canvasPeer: CanvasPeer,
 ) : SvgPlatformPeer {
-    private val textMeasuringCanvas = canvasProvider.createCanvas(0, 0)
+    private val textMeasuringCanvas = canvasPeer.createCanvas(0, 0)
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Element>>()
 
     var styleSheet: StyleSheet? = null

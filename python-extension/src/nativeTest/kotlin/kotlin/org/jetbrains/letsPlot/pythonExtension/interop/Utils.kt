@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.NativeBitmapIO
 import org.jetbrains.letsPlot.commons.intern.io.Native
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 
 val fontsDir = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/"
@@ -45,7 +45,7 @@ fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
         expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = Native.getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider(fontManager),
+        canvasPeer = MagickCanvasPeer(fontManager),
         bitmapIO = NativeBitmapIO,
         tol = 1
     )

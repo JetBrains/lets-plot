@@ -5,11 +5,11 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 
-class AwtTestCanvasProvider(
+class AwtTestCanvasPeer(
     val pixelDensity: Double = 1.0 // Default pixel density for testing
-) : CanvasProvider {
+) : CanvasPeer {
     override fun createCanvas(size: Vector): Canvas {
         return AwtCanvas.create(size, pixelDensity)
     }

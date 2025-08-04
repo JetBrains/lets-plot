@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.export
 
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasProvider
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -89,19 +89,16 @@ object PlotImageExport {
             }
         }
 
-        val scaleFactor = when {
-            targetDPI.toDouble() > 0 -> targetDPI.toDouble() / 96.0 * scalingFactor
-            else -> scalingFactor
-        }
-
         val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
             rawSpec = plotSpec,
             sizingPolicy = sizingPolicy,
             computationMessagesHandler = {}
         )
 
-        val awtCanvasProvider = AwtCanvasProvider()
-        val reg = plotFigure.mapToCanvas(awtCanvasProvider)
+        val scaleFactor = when {
+            targetDPI.toDouble() > 0 -> targetDPI.toDouble() / 96.0 * scalingFactor
+            else -> scalingFactor
+        }
 
         val buffer = BufferedImage(
             (plotFigure.bounds().get().width * scaleFactor).roundToInt(),
@@ -112,13 +109,11 @@ object PlotImageExport {
                 is Format.JPEG -> BufferedImage.TYPE_INT_RGB
             }
         )
-
         val graphics = buffer.createGraphics()
-
-        // TODO: investigate inconsistency in scaling factor.
-        // CanvasPane already accepts pixelDensity, which is used to scale the canvas.
-        // Yet, when exporting, we apply the scaling factor again - pixelDensity doesn't seem to work as expected.
         graphics.scale(scaleFactor, scaleFactor)
+
+        val awtCanvasProvider = AwtCanvasPeer()
+        val reg = plotFigure.mapToCanvas(awtCanvasProvider)
 
         plotFigure.draw(AwtContext2d(graphics))
 
