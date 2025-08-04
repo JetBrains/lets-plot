@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.GeometryType.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementLocationComponent
 import org.jetbrains.letsPlot.livemap.chart.fragment.RegionBBoxComponent
@@ -60,7 +61,7 @@ class LocationCalculateSystem(
                     entity.contains<WorldOriginComponent>() -> {
                         Rect.XYWH(
                             entity.get<WorldOriginComponent>().origin,
-                            entity.tryGet<WorldDimensionComponent>()?.dimension ?: World.ZERO_VEC
+                            entity.tryGet<WorldDimensionComponent>()?.dimension ?: Vec.ZERO
                         )
                     }
                     entity.contains<RegionBBoxComponent>() -> {

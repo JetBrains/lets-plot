@@ -38,7 +38,7 @@ class MutableCamera(val myComponentManager: EcsComponentManager) : Camera {
     var animationValue: Double? = null
 
     override var zoom: Double = 0.0
-    override var position: Vec<World> = World.ZERO_VEC
+    override var position: Vec<World> = Vec.ZERO
     override var canReset: Boolean = false
 
     override var isZoomLevelChanged: Boolean = false

@@ -14,5 +14,5 @@ class WorldDimensionComponent(var dimension: WorldPoint) : EcsComponent
 class WorldOriginComponent(var origin: WorldPoint) : EcsComponent
 
 class ScreenDimensionComponent : EcsComponent {
-    var dimension: Vec<Client> = Client.ZERO_VEC
+    var dimension: Vec<Client> = Vec.ZERO
 }

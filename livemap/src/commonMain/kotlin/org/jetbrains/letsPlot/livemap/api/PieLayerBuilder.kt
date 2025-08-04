@@ -58,7 +58,7 @@ class PieEntityBuilder(
     var alphaScalingEnabled: Boolean = false
 
     var layerIndex: Int? = null
-    var point: Vec<LonLat> = LonLat.ZERO_VEC
+    var point: Vec<LonLat> = Vec.ZERO
 
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()

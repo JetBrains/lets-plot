@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
  */
 interface World {
     companion object {
-        val ZERO_VEC: Vec<World> = Vec(0.0, 0.0)
         val DOMAIN: Rect<World> = Rect.Companion.XYWH(0.0, 0.0, 256.0, 256.0)
     }
 }
@@ -27,7 +26,6 @@ interface World {
  */
 interface Client {
     companion object {
-        val ZERO_VEC: Vec<Client> = Vec.ZERO
         val Number.px: Scalar<Client> get() = Scalar(this.toDouble())
     }
 

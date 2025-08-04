@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.core.layers
 
-import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
@@ -31,7 +31,7 @@ class LayersRenderingSystem internal constructor(
             val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>()
                 .toList()
 
-            if (context.camera.panFrameDistance == Client.ZERO_VEC && dirtyLayerEntities.isEmpty()) {
+            if (context.camera.panFrameDistance == Vec.ZERO && dirtyLayerEntities.isEmpty()) {
                 return
             }
 

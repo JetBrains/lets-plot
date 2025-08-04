@@ -22,7 +22,7 @@ abstract class LayerManager {
     abstract fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>)
     abstract fun repaint(dirtyLayers: List<CanvasLayer>)
 
-    protected abstract fun repaintLayer(layer: CanvasLayer, offset: Vec<Client> = Client.ZERO_VEC)
+    protected abstract fun repaintLayer(layer: CanvasLayer, offset: Vec<Client> = Vec.ZERO)
 
     private val children = HashMap<LayerKind, MutableList<CanvasLayer>>()
     val layers: MutableList<CanvasLayer> = mutableListOf()
@@ -74,8 +74,8 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
 
     private fun panLayer(layer: CanvasLayer, offset: Vec<Client>) {
         when (layer.kind) {
-            UI -> Client.ZERO_VEC
-            else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
+            UI -> Vec.ZERO
+            else -> offset - (myPanningOffsets[layer] ?: Vec.ZERO)
         }.let { p ->
             myBackingStore[layer]?.let { snapshot ->
                 singleCanvasControl.context.drawImage(snapshot, p)
@@ -158,7 +158,7 @@ class ScreenLayerManager(
                 myBackingStore.getOrPut(layer, layer::snapshot)
                     .let { snapshot ->
                         layer.clear()
-                        layer.canvas.context2d.drawImage(snapshot, offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC))
+                        layer.canvas.context2d.drawImage(snapshot, offset - (myPanningOffsets[layer] ?: Vec.ZERO))
                 }
             }
         }

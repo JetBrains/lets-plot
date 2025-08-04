@@ -28,7 +28,7 @@ class BasemapCellRenderer : Renderer {
 
         entity.get<ScreenDimensionComponent>()
             .dimension
-            .run { Rect.XYWH(Client.ZERO_VEC, this) }
+            .run { Rect.XYWH(Vec.ZERO, this) }
             .run { render(tile, this, ctx) }
     }
 

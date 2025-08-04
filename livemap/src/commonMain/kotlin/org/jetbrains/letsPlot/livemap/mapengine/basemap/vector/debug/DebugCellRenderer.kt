@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.debug
 
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
@@ -33,7 +33,7 @@ class DebugCellRenderer : Renderer {
         ctx.setLineWidth(LINE_WIDTH)
         ctx.setFont(FONT)
 
-        ctx.strokeRect(Client.ZERO_VEC, cellDimension)
+        ctx.strokeRect(Vec.ZERO, cellDimension)
 
         ctx.drawNextLine(entity.get<BasemapCellComponent>().cellKey.toString())
 

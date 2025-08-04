@@ -55,7 +55,7 @@ class TextEntityBuilder(
     private val myFactory: FeatureEntityFactory
 ) {
     var index: Int = 0
-    var point: Vec<LonLat> = LonLat.ZERO_VEC
+    var point: Vec<LonLat> = Vec.ZERO
 
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false

@@ -12,7 +12,6 @@ import kotlin.math.min
 interface LonLat {
     companion object {
         val DOMAIN = Rect.LTRB<LonLat>(-180.0, -90.0, 180.0, 90.0)
-        val ZERO_VEC: Vec<LonLat> = Vec(0.0, 0.0)
     }
 }
 typealias LonLatPoint = Vec<LonLat>

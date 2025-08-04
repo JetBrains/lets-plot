@@ -59,7 +59,7 @@ fun fixed(color: Color): (CellKey, CanvasPeer) -> Canvas.Snapshot {
     var tile: Canvas.Snapshot? = null
     return { _: CellKey, canvasPeer: CanvasPeer ->
         tile = tile ?: drawSolidColorTile(color, canvasPeer)
-        tile
+        tile!!
     }
 }
 
@@ -86,7 +86,7 @@ fun chessBoard(black: Color, white: Color): (CellKey, CanvasPeer) -> Canvas.Snap
 
     return { _: CellKey, canvasPeer: CanvasPeer ->
         tile = tile ?: drawChessQuad(canvasPeer)
-        tile
+        tile!!
     }
 }
 

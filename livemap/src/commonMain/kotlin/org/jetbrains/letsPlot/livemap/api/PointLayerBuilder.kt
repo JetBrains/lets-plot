@@ -57,7 +57,7 @@ class PointEntityBuilder(
     var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 4.0
-    var point: Vec<LonLat> = LonLat.ZERO_VEC
+    var point: Vec<LonLat> = Vec.ZERO
 
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0

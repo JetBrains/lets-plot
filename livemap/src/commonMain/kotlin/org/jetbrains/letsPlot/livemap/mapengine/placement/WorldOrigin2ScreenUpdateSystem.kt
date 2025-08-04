@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.placement
 
-import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.layers.CanvasLayerComponent
@@ -28,7 +28,7 @@ class WorldOrigin2ScreenUpdateSystem(componentManager: EcsComponentManager) : Ab
                 requestRepaint()
             }
 
-            if (camera.panFrameDistance?.let { it != org.jetbrains.letsPlot.livemap.Client.ZERO_VEC } == true) {
+            if (camera.panFrameDistance?.let { it != Vec.ZERO } == true) {
                 requestRepaint()
             }
         }

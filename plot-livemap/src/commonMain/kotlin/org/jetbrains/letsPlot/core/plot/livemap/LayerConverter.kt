@@ -263,7 +263,7 @@ object LayerConverter {
         if (position is NudgePos && (position.unit == DimensionUnit.SIZE || position.unit == DimensionUnit.PIXEL)) {
             return position.adjustedDimension.toVec()
         }
-        return Vec(0.0, 0.0)
+        return Vec.ZERO
     }
 
     private fun nudgeScaling(position: PositionAdjustment): Boolean {

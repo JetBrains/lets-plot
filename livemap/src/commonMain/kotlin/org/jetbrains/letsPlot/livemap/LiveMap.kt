@@ -12,10 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
@@ -262,7 +259,7 @@ class LiveMap(
             .addComponents {
                 + ClickableComponent(
                     Rectangle().apply {
-                        origin = Client.ZERO_VEC.toDoubleVector()
+                        origin = Vec.ZERO.toDoubleVector()
                         dimension = viewport.size.toDoubleVector()
                     }
                 )

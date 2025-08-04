@@ -5,10 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.viewport
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.livemap.*
 import org.jetbrains.letsPlot.livemap.core.Transform
 import org.jetbrains.letsPlot.livemap.core.Transforms
@@ -28,27 +25,23 @@ open class Viewport internal constructor(
     }
 
     val center: ClientPoint = size / 2.0
-    private var windowSize = World.ZERO_VEC
-    private var windowOrigin = World.ZERO_VEC
-    var window: WorldRectangle =
-        WorldRectangle(
-            World.ZERO_VEC,
-            World.ZERO_VEC
-        )
+    private var windowSize: Vec<World> = Vec.ZERO
+    private var windowOrigin: Vec<World> = Vec.ZERO
+    var window: WorldRectangle = WorldRectangle(Vec.ZERO, Vec.ZERO)
         private set
 
     var zoom: Int = minZoom
         set(zoom) {
             field = max(minZoom, min(zoom, maxZoom))
             windowSize = zoomTransform.invert(size)
-            windowOrigin = viewportTransform.invert(Client.ZERO_VEC)
+            windowOrigin = viewportTransform.invert(Vec.ZERO)
             updateWindow()
         }
 
-    open var position: WorldPoint = World.ZERO_VEC
+    open var position: WorldPoint = Vec.ZERO
         set(value) {
             field = helper.normalize(value)
-            windowOrigin = viewportTransform.invert(Client.ZERO_VEC)
+            windowOrigin = viewportTransform.invert(Vec.ZERO)
             updateWindow()
         }
 
@@ -67,7 +60,7 @@ open class Viewport internal constructor(
     fun calculateBoundingBox(bBoxes: List<Rect<World>>): Rect<World> = helper.calculateBoundingBox(bBoxes)
 
     fun getMapOrigins(): List<ClientPoint> {
-        val origin = getViewCoord(World.ZERO_VEC)
+        val origin = getViewCoord(Vec.ZERO)
         val dim = toClientDimension(World.DOMAIN.dimension)
         return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dim))
             .let { helper.getOrigins(it, window) }
