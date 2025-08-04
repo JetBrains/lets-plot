@@ -15,3 +15,4 @@
 - Coordinate limits do not work on reversed scales [[#1365](https://github.com/JetBrains/lets-plot/issues/1365)]
 - Display order of fill categories not being set correctly in stacked plots? [[#1367](https://github.com/JetBrains/lets-plot/issues/1367)]
 - Polars: add handling for `Enum` values [[#1373](https://github.com/JetBrains/lets-plot/issues/1373)]
+- Unclear error when using geom_rect with discrete scales [[#1287](https://github.com/JetBrains/lets-plot/issues/1287)]
