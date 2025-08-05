@@ -2,15 +2,13 @@
 
 ### Added
 
-- plot-image-export: added `width`, `height` and `unit` parameters. If specified, they will override plot's pixels size (default or set by `ggsize()`).
 - ggsave(): support font synthesis for *italic* and **bold** styles.
 
 ### Changed
 
-- plot-image-export: use `dpi` to calculate exported image pixel size.
-
 
 ### Fixed
+- geom_livemap: can't draw path crossing the antimeridian [[#649](https://github.com/JetBrains/lets-plot/issues/649)].
 - geom_ribbon(): tooltip appears in wrong place on flipped ribbon [[#1334](https://github.com/JetBrains/lets-plot/issues/1334)].
 - Arrow crossing -180 longitude is split into two arrows [[#1364](https://github.com/JetBrains/lets-plot/issues/1364)].
 - Coordinate limits do not work on reversed scales [[#1365](https://github.com/JetBrains/lets-plot/issues/1365)]
