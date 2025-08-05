@@ -16,18 +16,45 @@ object ScaleProviderHelper {
         return ScaleProviderBuilder(aes).build()
     }
 
+    fun configureDateTimeScaleBreaks(
+        scaleProviderBuilder: ScaleProviderBuilder<*>,
+        dateTimeFormatter: ((Any) -> String)?,
+        dataType: DataType,
+        tz: TimeZone?,
+    ) {
+        scaleProviderBuilder.breaksGeneratorIfNone(
+            createDateTimeBreaksGen(
+                dateTimeFormatter,
+                dataType,
+                tz
+            )
+        )
+    }
+
     fun <T> createDateTimeScaleProviderBuilder(
         aes: Aes<T>,
         dataType: DataType,
-        tz: TimeZone?
+        tz: TimeZone?,
     ): ScaleProviderBuilder<T> {
-        return ScaleProviderBuilder(aes)
-            .breaksGenerator(
-                DateTimeBreaksGen(
-                    minInterval = NiceTimeInterval.minIntervalOf(dataType),
-                    maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
-                    tz = tz,
-                )
+        return ScaleProviderBuilder(aes).breaksGenerator(
+            createDateTimeBreaksGen(
+                dateTimeFormatter = null,
+                dataType,
+                tz
             )
+        )
+    }
+
+    private fun createDateTimeBreaksGen(
+        dateTimeFormatter: ((Any) -> String)?,
+        dataType: DataType,
+        tz: TimeZone?
+    ): DateTimeBreaksGen {
+        return DateTimeBreaksGen(
+            providedFormatter = dateTimeFormatter,
+            minInterval = NiceTimeInterval.minIntervalOf(dataType),
+            maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
+            tz = tz,
+        )
     }
 }

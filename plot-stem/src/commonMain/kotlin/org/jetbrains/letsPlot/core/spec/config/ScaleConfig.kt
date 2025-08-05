@@ -11,13 +11,12 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.commons.data.DataType
-import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
 import org.jetbrains.letsPlot.core.spec.Option
@@ -221,13 +220,11 @@ class ScaleConfig<T> constructor(
                 val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
-            b.breaksGenerator(
-                DateTimeBreaksGen(
-                    providedFormatter = dateTimeFormatter,
-                    minInterval = NiceTimeInterval.minIntervalOf(dataType),
-                    maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
-                    tz = tz
-                )
+            configureDateTimeScaleBreaks(
+                b,
+                dateTimeFormatter,
+                dataType,
+                tz,
             )
         } else if (getBoolean(Option.Scale.TIME)) {
             b.breaksGenerator(TimeBreaksGen())
