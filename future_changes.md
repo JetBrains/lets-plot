@@ -8,8 +8,8 @@
 
 
 ### Fixed
-- geom_livemap: can't draw path crossing the antimeridian [[#649](https://github.com/JetBrains/lets-plot/issues/649)].
-- geom_ribbon(): tooltip appears in wrong place on flipped ribbon [[#1334](https://github.com/JetBrains/lets-plot/issues/1334)].
+- geom_livemap: can't draw a path crossing the antimeridian [[#649](https://github.com/JetBrains/lets-plot/issues/649)].
+- geom_ribbon(): tooltip appears in the wrong place on flipped ribbon [[#1334](https://github.com/JetBrains/lets-plot/issues/1334)].
 - Arrow crossing -180 longitude is split into two arrows [[#1364](https://github.com/JetBrains/lets-plot/issues/1364)].
 - Coordinate limits do not work on reversed scales [[#1365](https://github.com/JetBrains/lets-plot/issues/1365)]
 - Display order of fill categories not being set correctly in stacked plots? [[#1367](https://github.com/JetBrains/lets-plot/issues/1367)]
