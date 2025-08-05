@@ -18,3 +18,4 @@
 - xlim() breaks default scale_x_datetime() [[#1348](https://github.com/JetBrains/lets-plot/issues/1348)]
 - scale_x_reverse breaks datetime formatting [[#1257](https://github.com/JetBrains/lets-plot/issues/1257)]
 - theme(plot_title="blank") doesn't work with gggrid [[#1349](https://github.com/JetBrains/lets-plot/issues/1349)]
+- theme: error parsing color value pen [[#1216](https://github.com/JetBrains/lets-plot/issues/1216)]
