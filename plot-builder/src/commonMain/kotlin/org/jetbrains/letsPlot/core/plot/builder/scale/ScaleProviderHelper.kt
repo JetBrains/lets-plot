@@ -21,8 +21,8 @@ object ScaleProviderHelper {
         dateTimeFormatter: ((Any) -> String)?,
         dataType: DataType,
         tz: TimeZone?,
-    ) {
-        scaleProviderBuilder.breaksGeneratorIfNone(
+    ): ScaleProviderBuilder<*> {
+        return scaleProviderBuilder.breaksGeneratorIfNone(
             createDateTimeBreaksGen(
                 dateTimeFormatter,
                 dataType,
