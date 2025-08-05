@@ -16,3 +16,4 @@
 - Polars: add handling for `Enum` values [[#1373](https://github.com/JetBrains/lets-plot/issues/1373)]
 - Unclear error when using geom_rect with discrete scales [[#1287](https://github.com/JetBrains/lets-plot/issues/1287)]
 - xlim() breaks default scale_x_datetime() [[#1348](https://github.com/JetBrains/lets-plot/issues/1348)]
+- theme(plot_title="blank") doesn't work with gggrid [[#1349](https://github.com/JetBrains/lets-plot/issues/1349)]
