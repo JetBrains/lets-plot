@@ -94,7 +94,7 @@ def theme(*,
           geom=None
           ):
     """
-    Use `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__ to modify individual components of a theme,
+    Use ``theme()`` to modify individual components of a theme,
     allowing you to control all non-data components of the plot.
     See also the `Plot Layout Diagrams <https://lets-plot.org/python/pages/charts.html#plot-layout-diagrams>`__ section.
 
