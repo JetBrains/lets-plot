@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -13,14 +14,55 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.MappedDataAccessMock
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.createLocator
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.horizontalPathTarget
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.pointTarget
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class LocatedTargetsPickerFilterTargetsTest {
+
+    @Test
+    fun `line geom targets have increased distance to allow a point tooltip to win`() {
+        // https://github.com/JetBrains/lets-plot/issues/1060
+        val lineTargetLocator = createLocator(
+            geomKind = GeomKind.H_LINE,
+            lookupSpec = LookupSpec(XY, HOVER),
+            targets = listOf(
+                horizontalPathTarget(key = 1, y = 10.0, xList = doubleArrayOf(0.0, 50.0))
+            )
+        )
+
+        val pointTargetLocator = createLocator(
+            geomKind = GeomKind.POINT,
+            lookupSpec = LookupSpec(XY, NEAREST),
+            targets = listOf(
+                pointTarget(key = 2, DoubleVector(25.0, 10.0), radius = 3.0)
+            )
+        )
+
+        // Distance to the hline is shorter than the distance to the center of the point target.
+        // But the point target has a radius, and the cursor is within that radius.
+        // So the point target should win.
+        val cursorCoord = DoubleVector(23.0, 9.0)
+
+        val lineLookupResult = lineTargetLocator.search(cursorCoord)!!
+        val pointLookupResult = pointTargetLocator.search(cursorCoord)!!
+
+        LocatedTargetsPicker(flippedAxis = false, myCursorCoord = cursorCoord).apply {
+            addLookupResult(lineLookupResult)
+            addLookupResult(pointLookupResult)
+        }.picked.let { picked ->
+            assertThat(picked).hasSize(1)
+            assertThat(picked[0].geomKind).isEqualTo(GeomKind.POINT)
+        }
+    }
 
     @Test
     fun `line plot - choose targets closest to cursor by x`() {
@@ -108,7 +150,7 @@ class LocatedTargetsPickerFilterTargetsTest {
         return createLocator(
             lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
             contextualMapping = contextualMapping,
-            targetPrototypes = targetPrototypes,
+            targets = targetPrototypes,
             geomKind = geomKind
         )
     }
