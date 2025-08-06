@@ -37,7 +37,7 @@ def ggbunch(plots: List,
 
     Returns
     -------
-    `SupPlotsSpec`
+    ``SupPlotsSpec``
         A specification describing the combined figure with all plots and their layout.
 
     Examples
