@@ -21,7 +21,7 @@ def font_metrics_adjustment(width_correction: numbers.Real) -> FeatureSpec:
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Metainfo specification.
 
     Notes
@@ -51,11 +51,11 @@ def font_family_info(family: str, width_correction: numbers.Real = None, mono: b
     width_correction : number, optional
         Correcting coefficient applied to default width estimate of a text label.
     mono : bool, optional
-        When True - the font is marked as `monospaced`.
+        When True - the font is marked as 'monospaced'.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Metainfo specification.
 
     Notes
