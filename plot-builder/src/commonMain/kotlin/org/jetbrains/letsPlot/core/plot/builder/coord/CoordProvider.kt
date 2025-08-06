@@ -20,6 +20,8 @@ interface CoordProvider {
     fun with(
         xLim: Pair<Double?, Double?>,
         yLim: Pair<Double?, Double?>,
+        xReversed: Boolean,
+        yReversed: Boolean,
         flipped: Boolean
     ): CoordProvider
 

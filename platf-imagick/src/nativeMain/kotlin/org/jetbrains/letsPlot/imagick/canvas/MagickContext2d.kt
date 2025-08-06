@@ -7,21 +7,39 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform.Companion.makeShear
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform.Companion.makeTranslation
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyDrawingWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newDrawingWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
+import kotlin.math.tan
 
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
-) : Context2d by stateDelegate {
-    private val none = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
-    private val pixelWand = ImageMagick.NewPixelWand() ?: error { "Failed to create PixelWand" }
-    val wand = ImageMagick.NewDrawingWand() ?: error { "Failed to create DrawingWand" }
+) : Context2d by stateDelegate, Disposable {
+    private val none = newPixelWand()
+    private val pixelWand = newPixelWand()
+    private val currentFillWand = newPixelWand()
+    private val currentStrokeWand = newPixelWand()
+
+    val wand = newDrawingWand()
     private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
+
+    private var dirtyFont = true
+    private var fontPath: String? = null
+    private var emulateBoldWeight: Boolean = false
+    private var emulateItalicStyle: Boolean = false
 
     init {
         ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
@@ -29,6 +47,19 @@ class MagickContext2d(
 
         ImageMagick.PixelSetColor(none, "none")
         transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
+    }
+
+    override fun clearRect(rect: DoubleRectangle) {
+        ImageMagick.DrawGetFillColor(wand, currentFillWand)
+        ImageMagick.DrawGetStrokeColor(wand, currentStrokeWand)
+
+        ImageMagick.DrawSetFillColor(wand, none)
+        ImageMagick.DrawSetStrokeColor(wand, none)
+
+        ImageMagick.DrawRectangle(wand, rect.left, rect.top, rect.right, rect.bottom)
+
+        ImageMagick.DrawSetFillColor(wand, currentFillWand)
+        ImageMagick.DrawSetStrokeColor(wand, currentStrokeWand)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
@@ -45,10 +76,10 @@ class MagickContext2d(
         require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
             // Resize the image if the dimensions do not match
-            val scaledImage = ImageMagick.CloneMagickWand(snapshot.img)
+            val scaledImage = cloneMagickWand(snapshot.img)
             ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
-            ImageMagick.DestroyMagickWand(scaledImage)
+            destroyMagickWand(scaledImage)
         } else {
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
         }
@@ -61,8 +92,9 @@ class MagickContext2d(
 
     override fun restore() {
         stateDelegate.restore()
-
         ImageMagick.PopDrawingWand(wand)
+
+        dirtyFont = true
     }
 
     override fun setFillStyle(color: Color?) {
@@ -117,19 +149,7 @@ class MagickContext2d(
 
     override fun setFont(f: Font) {
         stateDelegate.setFont(f)
-
-        val resolved = fontManager.resolveFont(f)
-        if (resolved.fontFamily != null) {
-            ImageMagick.DrawSetFontFamily(wand, resolved.fontFamily)
-        } else if (resolved.fontFilePath != null) {
-            ImageMagick.DrawSetFont(wand, resolved.fontFilePath)
-        } else {
-            error("Font family '${f.fontFamily}' could not be resolved.")
-        }
-
-        ImageMagick.DrawSetFontSize(wand, f.fontSize)
-        ImageMagick.DrawSetFontStyle(wand, f.fontStyle.convert())
-        ImageMagick.DrawSetFontWeight(wand, f.fontWeight.convert())
+        dirtyFont = true
     }
 
     override fun setGlobalAlpha(alpha: Double) {
@@ -176,21 +196,79 @@ class MagickContext2d(
         }
     }
 
-    override fun fillText(text: String, x: Double, y: Double) {
-        withFillWand { fillWand ->
-            memScoped {
-                val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
-                ImageMagick.DrawAnnotation(fillWand, x, y, textCStr)
+    private fun withTextWand(fill: Boolean, painter: (CPointer<ImageMagick.DrawingWand>) -> Unit) {
+        val font = stateDelegate.getFont()
+
+        if (dirtyFont) {
+            dirtyFont = false
+            val fontSet = fontManager.resolveFont(font.fontFamily)
+
+            fontPath = when {
+                font.isNormal && fontSet.regularFontPath != null -> fontSet.regularFontPath
+                font.isItalic && fontSet.italicFontPath != null -> fontSet.italicFontPath
+                font.isBold && fontSet.boldFontPath != null -> fontSet.boldFontPath
+                font.isBoldItalic -> when {
+                    fontSet.boldItalicFontPath != null -> fontSet.boldItalicFontPath
+                    fontSet.boldFontPath != null -> fontSet.boldFontPath // take bold, emulate italic
+                    fontSet.italicFontPath != null -> fontSet.italicFontPath // take italic, emulate bold
+                    else -> fontSet.regularFontPath
+                }
+                else -> fontSet.regularFontPath
             }
+
+            emulateBoldWeight = when {
+                !font.isBold && !font.isBoldItalic -> false
+                font.isBold && fontSet.boldFontPath != null -> false
+                font.isBoldItalic && fontSet.boldItalicFontPath != null -> false
+                font.isBoldItalic && fontSet.boldFontPath != null -> false
+                else -> true
+            }
+
+            emulateItalicStyle = when {
+                !font.isItalic && !font.isBoldItalic -> false
+                font.isItalic && fontSet.italicFontPath != null -> false
+                font.isBoldItalic && fontSet.boldItalicFontPath != null -> false
+                font.isBoldItalic && fontSet.italicFontPath != null -> false
+                else -> true
+            }
+        }
+
+        ImageMagick.DrawSetFont(wand, fontPath)
+        ImageMagick.DrawSetFontSize(wand, font.fontSize)
+        ImageMagick.DrawSetFontStyle(wand, font.fontStyle.convert())
+        ImageMagick.DrawSetFontWeight(wand, font.fontWeight.convert())
+
+        if (emulateItalicStyle) {
+            transform(wand, italicShearTransform)
+        }
+
+        when {
+            fill -> withFillWand { fillWand ->
+                if (emulateBoldWeight) {
+                    ImageMagick.DrawSetStrokeWidth(fillWand, 0.1) // Faux bold stroke width
+                    ImageMagick.DrawGetFillColor(fillWand, currentFillWand)
+                    ImageMagick.DrawSetStrokeColor(fillWand, currentFillWand)
+                }
+                fillWand.apply(painter)
+            }
+
+            else -> withStrokeWand { strokeWand -> strokeWand.apply(painter) }
+        }
+
+        if (emulateItalicStyle) {
+            transform(wand, italicShearTransform.inverse() ?: error("Failed to inverse italic shear transform"))
+        }
+    }
+
+    override fun fillText(text: String, x: Double, y: Double) {
+        withTextWand(fill = true) { fillWand ->
+            drawText(fillWand, text, x, y)
         }
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
-        withStrokeWand { strokeWand ->
-            memScoped {
-                val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
-                ImageMagick.DrawAnnotation(strokeWand, x, y, textCStr)
-            }
+        withTextWand(fill = false) { strokeWand ->
+            drawText(strokeWand, text, x, y)
         }
     }
 
@@ -257,11 +335,18 @@ class MagickContext2d(
     }
 
     override fun measureText(str: String): TextMetrics {
-        val metrics = ImageMagick.MagickQueryFontMetrics(img, wand, str) ?: error("Failed to measure text")
-        val ascent = metrics[2]
-        val descent = metrics[3]
-        val width = metrics[4]
-        val height = metrics[5]
+        var ascent = 0.0
+        var descent = 0.0
+        var width = 0.0
+        var height = 0.0
+
+        withTextWand(fill = true) {
+            val metrics = ImageMagick.MagickQueryFontMetrics(img, wand, str) ?: error("Failed to measure text")
+            ascent = metrics[2]
+            descent = metrics[3]
+            width = metrics[4]
+            height = metrics[5]
+        }
 
         return TextMetrics(ascent, descent, DoubleRectangle.XYWH(0, 0, width, height))
     }
@@ -286,7 +371,37 @@ class MagickContext2d(
         ImageMagick.DrawSetStrokeColor(wand, pixelWand)
     }
 
+    override fun dispose() {
+        //destroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
+        destroyPixelWand(pixelWand)
+        destroyPixelWand(currentFillWand)
+        destroyPixelWand(currentStrokeWand)
+        destroyPixelWand(none)
+        destroyDrawingWand(wand)
+    }
+
+    private fun drawText(wand: CPointer<ImageMagick.DrawingWand>, text: String, x: Double, y: Double) {
+        fun italicOffsetAdjustment() = makeTranslation(-tan(ITALIC_SHEAR_ANGLE) * y, 0)
+
+        if (emulateItalicStyle) {
+            transform(wand, italicOffsetAdjustment())
+        }
+
+        memScoped {
+            val textCStr = text.cstr.ptr.reinterpret<UByteVar>()
+            ImageMagick.DrawAnnotation(wand, x, y, textCStr)
+        }
+
+        if (emulateItalicStyle) {
+            transform(wand, italicOffsetAdjustment().inverse()!!)
+        }
+    }
+
+
     companion object {
+        private const val ITALIC_SHEAR_ANGLE = -0.25 // radians, approx. 14 degrees
+        private val italicShearTransform = makeShear(rx = ITALIC_SHEAR_ANGLE, ry = 0.0)
+
         const val logEnabled = false
         fun log(str: () -> String) {
             if (logEnabled)
@@ -322,7 +437,6 @@ class MagickContext2d(
                         is MoveTo -> ImageMagick.DrawPathMoveToAbsolute(wand, cmd.x, cmd.y)
                         is LineTo -> lineTo(cmd.x, cmd.y)
                         is CubicCurveTo -> {
-                            //cmd.start?.let { (x, y) -> lineTo(x, y) }
                             cmd.controlPoints.asSequence()
                                 .windowed(size = 3, step = 3)
                                 .forEach { (cp1, cp2, cp3) ->

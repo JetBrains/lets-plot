@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions.SizeUnit
 import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.liveMap
 import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.vectorTiles
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
@@ -144,7 +145,8 @@ internal class VegaPlotConverter private constructor(
                     this.geom = geom
 
                     val vegaData = when (VegaOption.DATA in layerSpec) {
-                        true -> layerSpec.getMap(VegaOption.DATA) ?: emptyMap() // if explicitly null - don't use plot data
+                        true -> layerSpec.getMap(VegaOption.DATA)
+                            ?: emptyMap() // if explicitly null - don't use plot data
                         false -> vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
                     }
 
@@ -177,11 +179,12 @@ internal class VegaPlotConverter private constructor(
                     COLOR to Aes.COLOR
                 )
             ) {
-                size = 0.6
-                prop[PieLayer.SIZE_UNIT] = Aes.X // TODO: replace with MINMAX when it will be supported
+                size = 0.9
+                prop[PieLayer.SIZE_UNIT] = SizeUnit.MIN
                 prop[PieLayer.DIRECTION] = -1
                 plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).setVoid()
             }
+
             Mark.Types.BAR ->
                 if (transformResult?.stat?.kind == StatKind.BIN) {
                     appendLayer(
@@ -234,6 +237,7 @@ internal class VegaPlotConverter private constructor(
                 // So, we need to convert the area to the diameter
                 size = size?.let(::sqrt)
             }
+
             Mark.Types.AREA -> appendLayer(
                 channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
             ) {

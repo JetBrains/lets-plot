@@ -100,7 +100,13 @@ def _infer_type_polars_dataframe(var_name: str, var_type) -> str:
     lp_dtype = TYPE_UNKNOWN
 
     # https://docs.pola.rs/api/python/stable/reference/datatypes.html
-    if var_type in PL_FLOAT_DTYPES:
+    if isinstance(var_type, pl.datatypes.Enum):
+        # In the current version of Polars, Enum is always a string
+        # https://docs.pola.rs/api/python/stable/reference/datatypes.html#string
+        return TYPE_STRING
+    elif isinstance(var_type, pl.datatypes.Categorical):
+        return TYPE_STRING
+    elif var_type in PL_FLOAT_DTYPES:
         lp_dtype = TYPE_FLOATING
     elif var_type in PL_INTEGER_DTYPES:
         lp_dtype = TYPE_INTEGER

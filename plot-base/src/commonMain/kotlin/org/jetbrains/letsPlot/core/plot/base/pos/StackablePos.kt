@@ -5,11 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.pos
 
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.max
 
 enum class StackingMode {
     GROUPS, ALL;
@@ -21,7 +22,7 @@ enum class StackingMode {
         fun safeValueOf(v: String): StackingMode {
             return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
                 "Unsupported stacking mode: '$v'\n" +
-                "Use one of: groups, all."
+                        "Use one of: groups, all."
             )
         }
     }
@@ -37,15 +38,19 @@ abstract class StackablePos : PositionAdjustment {
         val indexedDataPoints = aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
             .filter { SeriesUtil.allFinite(it.second.x(), it.second.y()) }
-        indexedDataPoints.groupBy { it.second.group() }.forEach { (_, indexedDataPoints) ->
-            for ((i, dataPoint) in indexedDataPoints) {
-                val x = dataPoint.x()!!
-                val y = dataPoint.y()!!
-                val offset = stackingContext.getTotalOffset(x, y)
-                offsetByIndex[i] = StackOffset(offset - y * (1 - vjust), 0.0)
+
+        indexedDataPoints.groupBy { it.second.group() }
+            .toList() // a list of pairs (group, indexedDataPoints)
+            .sortedBy { it.first } // Sort by group to ensure a consistent stacking order (see issue #1367)
+            .forEach { (_, indexedDataPoints) ->
+                for ((i, dataPoint) in indexedDataPoints) {
+                    val x = dataPoint.x()!!
+                    val y = dataPoint.y()!!
+                    val offset = stackingContext.getTotalOffset(x, y)
+                    offsetByIndex[i] = StackOffset(offset - y * (1 - vjust), 0.0)
+                }
+                stackingContext.computeStackOffset()
             }
-            stackingContext.computeStackOffset()
-        }
         indexedDataPoints.forEach { (i, dataPoint) ->
             val x = dataPoint.x()!!
             val y = dataPoint.y()!!

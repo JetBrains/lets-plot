@@ -213,24 +213,21 @@ val uploadMavenArtifacts by tasks.registering {
     }
 }
 
+val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/deps"
+val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
+    ?: System.getenv("IMAGICK_LIB_PATH")
+    ?: defaultImageMagickLibPath
 
-if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) {
-    val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/deps"
-    val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
-        ?: System.getenv("IMAGICK_LIB_PATH")
-        ?: defaultImageMagickLibPath
-
-    extra.set("imagemagick_lib_path", imageMagickLibPath)
-    val initImageMagick by tasks.registering {
-        group = letsPlotTaskGroup
-        doLast {
-            exec {
-                this.workingDir = File(rootDir.path + "/platf-imagick")
-                commandLine(
-                    "./init_imagemagick.sh",
-                    imageMagickLibPath
-                )
-            }
+extra.set("imagemagick_lib_path", imageMagickLibPath)
+val initImageMagick by tasks.registering {
+    group = letsPlotTaskGroup
+    doLast {
+        exec {
+            this.workingDir = File(rootDir.path + "/platf-imagick")
+            commandLine(
+                "./init_imagemagick.sh",
+                imageMagickLibPath
+            )
         }
     }
 }

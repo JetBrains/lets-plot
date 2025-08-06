@@ -7,13 +7,15 @@ package org.jetbrains.letsPlot.commons.intern.typedGeometry
 
 import kotlin.math.sqrt
 
-// TODO: change to <out Vec> for proper ZERO const. Now it causes "xxx is not a function" in JS
-data class Vec<TypeT> (
+data class Vec<out TypeT> (
     val x: Double,
     val y: Double
 ) {
     constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
-    //val ZERO: Vec<Nothing> = Vec<Nothing>(0.0, 0.0) // TODO: proper ZERO const
+
+    companion object {
+        val ZERO: Vec<Nothing> = Vec(0.0, 0.0) // Ensure that the 'xxx is not a function' error does not occur in JavaScript.
+    }
 }
 
 fun <T> explicitVec(x: Double, y: Double): Vec<T> = Vec(x, y)

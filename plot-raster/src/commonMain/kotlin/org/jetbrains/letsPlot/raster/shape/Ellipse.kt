@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import kotlin.math.PI
 
 internal class Ellipse : Figure() {
@@ -15,26 +15,17 @@ internal class Ellipse : Figure() {
     var radiusX: Float by visualProp(0.0f)
     var radiusY: Float by visualProp(0.0f)
 
-    private val rect: DoubleRectangle by computedProp(Ellipse::centerX, Ellipse::centerY, Ellipse::radiusX, Ellipse::radiusY) {
-        DoubleRectangle.LTRB(
-            left = centerX - radiusX,
-            top = centerY - radiusY,
-            right = centerX + radiusX,
-            bottom = centerY + radiusY
-        )
-    }
-
-    override fun render(canvas: Canvas) {
+    override fun render(ctx: Context2d) {
         if (fillPaint == null && strokePaint == null) {
             return
         }
 
-        canvas.context2d.beginPath()
-        canvas.context2d.ellipse(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble(), 0.0, 0.0, 2 * PI, false)
-        canvas.context2d.closePath()
+        ctx.beginPath()
+        ctx.ellipse(centerX.toDouble(), centerY.toDouble(), radiusX.toDouble(), radiusY.toDouble(), 0.0, 0.0, 2 * PI, false)
+        ctx.closePath()
 
-        fillPaint?.let { canvas.context2d.fill(it) }
-        strokePaint?.let { canvas.context2d.stroke(it) }
+        fillPaint?.let { ctx.fill(it) }
+        strokePaint?.let { ctx.stroke(it) }
     }
 
     override val localBounds: DoubleRectangle

@@ -103,15 +103,6 @@ def test_filelike_ggsave_png():
     assert_png(out_buffer, 400, 300)
 
 
-def test_ggsave_png_cairo():
-    gg.LetsPlot.set({"magick_export": False})
-    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_cairo.png'), scale=1)
-    gg.LetsPlot.set({"magick_export": True})
-    print("Output path:", out_path)
-    assert_png(out_path, 400, 300)
-
-
 def test_ggsave_pdf():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave.pdf'))

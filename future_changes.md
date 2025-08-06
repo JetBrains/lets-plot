@@ -1,70 +1,21 @@
-## [4.7.0] - 2025-07-dd
+## [4.7.1] - 2025-mm-dd
 
 ### Added
 
-- Geometries:
-
-    - `geom_sina()` [[#1298](https://github.com/JetBrains/lets-plot/issues/1298)].
-
-      See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
-  
-    - `geom_text_repel()` and `geom_label_repel()` for avoiding text overlaps in plots [[#1092](https://github.com/JetBrains/lets-plot/issues/1092)].  
-      See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/ggrepel.ipynb).
-
-- Combining discrete and continuous layers [[#1279](https://github.com/JetBrains/lets-plot/issues/1279)].  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
-
-- `waterfall_plot` - extra layers support [[#1344](https://github.com/JetBrains/lets-plot/issues/1344)].  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_layers.ipynb).
-
-- `geom_crossbar()` - annotation support  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_crossbar_annotation.ipynb).
-
-- `waterfall_plot` - now uses `geom_crossbar()` layer annotations to render labels. Added support for `relative_labels` and `absolute_labels` parameters.  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
-
-- More variants to specify a color by name:
-    - all HTML/CSS colors;
-    - various naming styles, e.g., `dark-gray`, `darkgrey`, `dark_grey`, `DARKGRAY`, etc.;
-    - grayscale colors from `gray0` (black) to `gray100` (white);
-    - See [the complete list](https://lets-plot.org/python/pages/named_colors.html)
-
-- Time Series Plotting [[#278](https://github.com/JetBrains/lets-plot-kotlin/issues/278)], 
-[[discussion](https://github.com/JetBrains/lets-plot-kotlin/discussions/92#discussioncomment-12976040)],
-[[#678](https://github.com/JetBrains/lets-plot/issues/678)],
-[[LPK-129](https://github.com/JetBrains/lets-plot-kotlin/issues/129)]:
-  - Support for Python `time` and `date` objects.
-  - Support for timezone-aware `datetime` objects and Pandas/Polars `Series`.
-  - New `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` parameters in `theme()` to control spacing between axis ticks and labels.
-
-    See: [plot layout scheme](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb).
+- ggsave(): support font synthesis for *italic* and **bold** styles.
 
 ### Changed
 
-- [**BREAKING**] The `position_dodgev()` function and the `'dodgev'` value for the `position` parameter are deprecated and will be removed in future releases.
-- [**BREAKING**] The y-oriented boxplot now use the aesthetics `xlower`/`xmiddle`/`xupper` instead of  `lower`/`middle`/`upper`.
-- [**BREAKING**] `waterfall_plot`: special `flow_type` value for `label=element_text(color=...)` renamed to `inherit`.
-- Updated RGB values for `lightgray` and `green`. To restore the previous colors, use `gray75` and `lime`, respectively. 
-- `geom_violin`: tooltips are not shown in the centerline of the violin if `show_half != 0`.
-- `geom_crossbar`: the midline is not shown in the legend when `fatten` is set to 0, or when there is no mapping for it.
-- `waterfall_plot`: the appearance of the legend has been improved.
-- `geom_pointrange`: the midpoint will not be drawn if the y aesthetic is set to `None`.
-- `geom_band`: the `alpha` aesthetic only affects the inner part of the geometry, as in `geom_rect()`.
-- `geom_band`: show tooltip over the whole band, not just at the edges.
-- `ggsave`: the `w` and `h` parameters override plot size, allowing to specify the output image size independently of the plot size.
-- `ggsave`: the `dpi` default value changed to 300.
-- `ggsave`: the `unit` default value changed to `in` (inches).
-- Plot layout: reduced margins and spacing for title, caption, axes, and legend.
 
 ### Fixed
-
-- AWT: plot now prevents wheel events from bubbling up to the parent component.
-- Added tooltip for `geom_hline` and `geom_vline` on `geom_livemap` [[#1056](https://github.com/JetBrains/lets-plot/issues/1056)].
-- `geom_boxplot`: unable to draw a y-oriented plot with `stat='identity'` [[#1319](https://github.com/JetBrains/lets-plot/issues/1319)].
-- Can't add layer which uses continuous data to a plot where other layers use discrete input [[#1323](https://github.com/JetBrains/lets-plot/issues/1323)].
-- Multiline legend labels were not vertically centered with their keys [[#1331](https://github.com/JetBrains/lets-plot/issues/1331)].   
-- Poor alignment in legend between columns [[#1332](https://github.com/JetBrains/lets-plot/issues/1332)].
-- Ordered data was re-ordered by `geom_boxplot` [[#1342](https://github.com/JetBrains/lets-plot/issues/1342)].
-- `geom_rect`: fixed data conversion for `geom_livemap` [[#1347](https://github.com/JetBrains/lets-plot/issues/1347)].
-- `ggsave`: incorrect output when exporting markdown demo to PNG [[#1362](https://github.com/JetBrains/lets-plot/issues/1362)].
-- `as_discrete()` does not work with aes addition [[#1363](https://github.com/JetBrains/lets-plot/issues/1363)].
+- geom_livemap: can't draw a path crossing the antimeridian [[#649](https://github.com/JetBrains/lets-plot/issues/649)].
+- geom_ribbon(): tooltip appears in the wrong place on flipped ribbon [[#1334](https://github.com/JetBrains/lets-plot/issues/1334)].
+- Arrow crossing -180 longitude is split into two arrows [[#1364](https://github.com/JetBrains/lets-plot/issues/1364)].
+- Coordinate limits do not work on reversed scales [[#1365](https://github.com/JetBrains/lets-plot/issues/1365)]
+- Display order of fill categories not being set correctly in stacked plots? [[#1367](https://github.com/JetBrains/lets-plot/issues/1367)]
+- Polars: add handling for `Enum` values [[#1373](https://github.com/JetBrains/lets-plot/issues/1373)]
+- Unclear error when using geom_rect with discrete scales [[#1287](https://github.com/JetBrains/lets-plot/issues/1287)]
+- xlim() breaks default scale_x_datetime() [[#1348](https://github.com/JetBrains/lets-plot/issues/1348)]
+- scale_x_reverse breaks datetime formatting [[#1257](https://github.com/JetBrains/lets-plot/issues/1257)]
+- theme(plot_title="blank") doesn't work with gggrid [[#1349](https://github.com/JetBrains/lets-plot/issues/1349)]
+- theme: error parsing color value pen [[#1216](https://github.com/JetBrains/lets-plot/issues/1216)]

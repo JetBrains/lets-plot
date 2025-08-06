@@ -33,7 +33,7 @@ class PolarBreaksTest {
     fun simple() {
         val angleBreaks = computeBreaks(axisKind = ANGLE)
 
-        // Breaks start at top center
+        // Breaks start at a top center
         assertDoubleVectorEquals(x = 0, y = -219, angleBreaks.majorBreaks[0])
         assertDoubleVectorEquals(x = 208, y = -67, angleBreaks.majorBreaks[1])
         assertDoubleVectorEquals(x = 128, y = 177, angleBreaks.majorBreaks[2])
@@ -72,7 +72,7 @@ class PolarBreaksTest {
 
     @Test
     fun shouldNotFailWithZeroClientSize() {
-        // Not failing, breaks count is equals to domain breaks count
+        // Not failing, break count is equals to domain breaks count
 
         val angleBreaks = computeBreaks(clientSize = DoubleVector(0.0, 0.0))
         assertEquals(6, angleBreaks.majorBreaks.size)
@@ -120,6 +120,8 @@ class PolarBreaksTest {
         val polarCoordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
+            xReversed = false,
+            yReversed = false,
             flipped = false,
             start = toRadians(startAngleDeg),
             clockwise = true,

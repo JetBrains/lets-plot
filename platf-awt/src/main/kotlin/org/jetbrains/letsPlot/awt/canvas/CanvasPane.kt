@@ -15,12 +15,12 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
-import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -59,7 +59,7 @@ class CanvasPane(
 
     override fun isPaintingOrigin(): Boolean = true
 
-    inner class AwtCanvasControl : CanvasControl {
+    internal inner class AwtCanvasControl : CanvasControl {
         override val pixelDensity: Double
             get() = this@CanvasPane.pixelDensity
 
@@ -132,15 +132,13 @@ class CanvasPane(
         }
 
         override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
-            val img = BufferedImage(bitmap.width, bitmap.height, BufferedImage.TYPE_INT_ARGB)
-            img.setRGB(0, 0, bitmap.width, bitmap.height, bitmap.argbInts, 0, bitmap.width)
+            val img = BitmapUtil.toBufferedImage(bitmap)
             return AwtCanvas.AwtSnapshot(img)
         }
 
         private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
             val img = Png.decodeDataImage(dataUrl)
-            val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
-            bufImg.setRGB(0, 0, img.width, img.height, img.argbInts, 0, img.width)
+            val bufImg = BitmapUtil.toBufferedImage(img)
             return bufImg
         }
 
@@ -151,13 +149,9 @@ class CanvasPane(
             )
         }
 
-        override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+        override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
             val src = ImageIO.read(ByteArrayInputStream(png))
-            val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
-            val graphics2D = dst.createGraphics() as Graphics2D
-            graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
-            graphics2D.dispose()
-            val snapshot = AwtCanvas.AwtSnapshot(dst)
+            val snapshot = AwtCanvas.AwtSnapshot(src)
             return Asyncs.constant(snapshot)
         }
 

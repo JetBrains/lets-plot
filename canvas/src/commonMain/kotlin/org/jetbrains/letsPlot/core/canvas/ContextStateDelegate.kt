@@ -60,6 +60,10 @@ class ContextStateDelegate(
         return currentState.lineDashOffset
     }
 
+    fun getFont(): Font {
+        return currentState.font
+    }
+
     override fun beginPath() {
         currentPath = Path2d()
     }

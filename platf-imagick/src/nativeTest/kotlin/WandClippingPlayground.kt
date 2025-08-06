@@ -125,7 +125,7 @@ class WandClippingPlayground {
         ImageMagick.DrawSetClipPath(wand, clipPathId)
 
         ImageMagick.DrawSetFontSize(wand, 50.0)
-        ImageMagick.DrawSetFont(wand, serifFontPath)
+        ImageMagick.DrawSetFont(wand, notoSerifRegularFontPath)
         ImageMagick.DrawSetFillColor(wand, black)
 
         drawAnnotation(wand, 0.0, 47.0, "Test")
@@ -154,7 +154,7 @@ class WandClippingPlayground {
         ImageMagick.DrawSetStrokeColor(wand, none)
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawSetFontSize(wand, 50.0)
-        ImageMagick.DrawSetFont(wand, serifFontPath)
+        ImageMagick.DrawSetFont(wand, notoSerifRegularFontPath)
         drawAnnotation(wand, 0.0, 47.0, "Test")
 
         ImageMagick.MagickDrawImage(img, wand)
@@ -182,7 +182,7 @@ class WandClippingPlayground {
         ImageMagick.DrawSetStrokeColor(wand, none)
         ImageMagick.DrawSetFillColor(wand, black)
         ImageMagick.DrawSetFontSize(wand, 50.0)
-        ImageMagick.DrawSetFont(wand, serifFontPath)
+        ImageMagick.DrawSetFont(wand, notoSerifRegularFontPath)
         drawAnnotation(wand, 0.0, 47.0, "Test")
 
         ImageMagick.MagickDrawImage(img, wand)

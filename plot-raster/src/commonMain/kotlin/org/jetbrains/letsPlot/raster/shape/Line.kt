@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 
 
 internal class Line : Figure() {
@@ -15,14 +15,14 @@ internal class Line : Figure() {
     var x1: Float by visualProp(0.0f)
     var y1: Float by visualProp(0.0f)
 
-    override fun render(canvas: Canvas) {
+    override fun render(ctx: Context2d) {
         val strokePaint = strokePaint ?: return
 
-        canvas.context2d.beginPath()
-        canvas.context2d.moveTo(x0.toDouble(), y0.toDouble())
-        canvas.context2d.lineTo(x1.toDouble(), y1.toDouble())
+        ctx.beginPath()
+        ctx.moveTo(x0.toDouble(), y0.toDouble())
+        ctx.lineTo(x1.toDouble(), y1.toDouble())
 
-        canvas.context2d.stroke(strokePaint)
+        ctx.stroke(strokePaint)
     }
 
     override val localBounds: DoubleRectangle

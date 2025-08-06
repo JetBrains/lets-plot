@@ -11,12 +11,12 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.commons.intern.util.VectorAdapter.Companion.VEC_ADAPTER
 
 object VecUtil {
-    fun <T> padLineString(lineString: List<Vec<T>>, startPadding: Double, endPadding: Double): List<Vec<T>> {
+    fun <T> padLineString(lineString: List<Vec<T>>, startPadding: Scalar<T>, endPadding: Scalar<T>): List<Vec<T>> {
         val paddingHelper = PaddingHelper(VEC_ADAPTER)
         val lineStringAfterPadding = paddingHelper.padLineString(
             lineString = lineString,
-            startPadding = startPadding,
-            endPadding = endPadding
+            startPadding = startPadding.value,
+            endPadding = endPadding.value
         )
 
         @Suppress("UNCHECKED_CAST")

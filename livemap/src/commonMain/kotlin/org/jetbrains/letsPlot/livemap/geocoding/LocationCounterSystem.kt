@@ -27,7 +27,6 @@ class LocationCounterSystem(
         } else {
             entities.forEach {
                 it.remove<NeedCalculateLocationComponent>()
-                it.remove<NeedGeocodeLocationComponent>()
             }
         }
 

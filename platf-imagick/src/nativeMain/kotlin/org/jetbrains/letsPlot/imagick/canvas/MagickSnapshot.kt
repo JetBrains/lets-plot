@@ -10,11 +10,12 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 
 class MagickSnapshot(
-    img: CPointer<ImageMagick.MagickWand>
+    val img: CPointer<ImageMagick.MagickWand>
 ) : Disposable, Canvas.Snapshot {
-    val img: CPointer<ImageMagick.MagickWand> = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
     override val size: Vector = Vector(
         ImageMagick.MagickGetImageWidth(img).toInt(),
         ImageMagick.MagickGetImageHeight(img).toInt()
@@ -23,11 +24,11 @@ class MagickSnapshot(
         get() = toBitmap()
 
     override fun dispose() {
-        ImageMagick.DestroyMagickWand(img)
+        destroyMagickWand(img)
     }
 
     override fun copy(): Canvas.Snapshot {
-        val copiedImg = ImageMagick.CloneMagickWand(img) ?: error("MagickSnapshot: Failed to clone image wand")
+        val copiedImg = cloneMagickWand(img)
         return MagickSnapshot(copiedImg)
     }
 
@@ -63,7 +64,7 @@ class MagickSnapshot(
                 argbIntArray[i] = (a shl 24) or (r shl 16) or (g shl 8) or b
             }
 
-            return Bitmap(width = width.toInt(), height = height.toInt(), argbInts = argbIntArray)
+            return Bitmap(width = width, height = height, argbInts = argbIntArray)
         }
     }
 

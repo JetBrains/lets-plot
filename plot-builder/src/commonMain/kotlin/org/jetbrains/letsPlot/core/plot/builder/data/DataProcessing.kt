@@ -376,6 +376,7 @@ object DataProcessing {
             }
 
             check(currentGroups.size == groups.size) {
+                @Suppress("UNNECESSARY_SAFE_CALL")
                 "Data series used to compute groups must be equal in size (encountered sizes: " +
                         "${currentGroups?.size}, ${groups.size} )"
             }

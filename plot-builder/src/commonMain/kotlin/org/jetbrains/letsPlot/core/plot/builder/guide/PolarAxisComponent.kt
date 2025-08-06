@@ -72,8 +72,10 @@ class PolarAxisComponent(
                 rootElement.children().add(axisLine)
             } else {
                 val axisLine = SvgLineElement().apply {
-                    y1().set(breaksData.center.y)
-                    y2().set(breaksData.center.y - length / 2.0)
+//                    y1().set(breaksData.center.y)
+//                    y2().set(breaksData.center.y - length / 2.0)
+                    y1().set(breaksData.axisLine[0].y)
+                    y2().set(breaksData.axisLine[1].y)
                     strokeWidth().set(axisTheme.lineWidth())
                     strokeColor().set(axisTheme.lineColor())
                     StrokeDashArraySupport.apply(this, axisTheme.lineWidth(), axisTheme.lineType())

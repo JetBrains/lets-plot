@@ -464,6 +464,8 @@ object Option {
         object SizeUnit {
             const val X = "x"
             const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
         }
     }
 
@@ -551,6 +553,7 @@ object Option {
         }
 
         object Sina {
+            const val SCALE = "scale"
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
             const val QUANTILES = "quantiles"

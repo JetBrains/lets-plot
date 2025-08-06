@@ -96,6 +96,7 @@ def theme(*,
     """
     Use `theme()` to modify individual components of a theme,
     allowing you to control all non-data components of the plot.
+    See also the `Plot Layout Diagrams <https://lets-plot.org/python/pages/charts.html#plot-layout-diagrams>`__ section.
 
     Parameters
     ----------

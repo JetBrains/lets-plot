@@ -12,6 +12,52 @@ import kotlinx.cinterop.refTo
 import org.jetbrains.letsPlot.commons.values.Bitmap
 
 object MagickUtil {
+    private const val MEMORY_LOG_ENABLED = false
+    private fun log(message: () -> String) {
+        if (MEMORY_LOG_ENABLED) {
+            println(message())
+        }
+    }
+
+    fun newPixelWand(): CPointer<ImageMagick.PixelWand> {
+        val pixelWand = ImageMagick.NewPixelWand() ?: throw RuntimeException("Failed to create new PixelWand")
+        log { "newPixelWand(): $pixelWand" }
+        return pixelWand
+    }
+
+    fun destroyPixelWand(pixelWand: CPointer<ImageMagick.PixelWand>) {
+        log { "destroyPixelWand(): $pixelWand" }
+        ImageMagick.DestroyPixelWand(pixelWand)
+    }
+
+    fun newMagickWand(): CPointer<ImageMagick.MagickWand> {
+        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create new MagickWand")
+        log { "newMagickWand(): $magickWand" }
+        return magickWand
+    }
+
+    fun cloneMagickWand(magickWand: CPointer<ImageMagick.MagickWand>): CPointer<ImageMagick.MagickWand> {
+        val clonedWand = ImageMagick.CloneMagickWand(magickWand) ?: throw RuntimeException("Failed to clone MagickWand")
+        log { "cloneMagickWand(): $clonedWand" }
+        return clonedWand
+    }
+
+    fun destroyMagickWand(magickWand: CPointer<ImageMagick.MagickWand>) {
+        log { "destroyMagickWand(): $magickWand" }
+        ImageMagick.DestroyMagickWand(magickWand)
+    }
+
+    fun newDrawingWand(): CPointer<ImageMagick.DrawingWand> {
+        val drawingWand = ImageMagick.NewDrawingWand() ?: throw RuntimeException("Failed to create new DrawingWand")
+        log { "newDrawingWand(): $drawingWand" }
+        return drawingWand
+    }
+
+    fun destroyDrawingWand(drawingWand: CPointer<ImageMagick.DrawingWand>) {
+        log { "destroyDrawingWand(): $drawingWand" }
+        ImageMagick.DestroyDrawingWand(drawingWand)
+    }
+
     fun fromBitmap(bitmap: Bitmap): CPointer<ImageMagick.MagickWand> {
         val w = bitmap.width
         val h = bitmap.height

@@ -10,12 +10,14 @@ import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setLeft
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setTop
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
+import org.w3c.dom.CanvasImageSource
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil
@@ -23,15 +25,15 @@ import kotlin.math.roundToInt
 
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
-    size: Vector,
+    override val size: Vector,
     private val pixelRatio: Double
-) : ScaledCanvas(DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D), size, pixelRatio) {
-
+) : Canvas {
+    override val context2d: Context2d = ScaledContext2d.wrap(DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D), pixelRatio)
 
     override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size, pixelRatio)
 
     internal class DomSnapshot(
-        val canvasElement: HTMLCanvasElement,
+        val canvasElement: CanvasImageSource,
         size: Vector,
         private val pixelRatio: Double
     ) : Canvas.Snapshot {

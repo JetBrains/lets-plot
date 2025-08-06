@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.livemap
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -132,23 +130,22 @@ object LiveMapProviderUtil {
                 )
             }
 
-            return liveMapBuilder.build()
-                .let(Asyncs::constant)
-                .let { liveMapAsync ->
-                    LiveMapData(
-                        LiveMapCanvasFigure(liveMapAsync).apply {
-                            setBounds(
-                                Rectangle(
-                                    bounds.origin.x.roundToInt(),
-                                    bounds.origin.y.roundToInt(),
-                                    bounds.dimension.x.roundToInt(),
-                                    bounds.dimension.y.roundToInt()
-                                )
-                            )
-                        },
-                        createTargetLocators(plotLayers, liveMapAsync)
+            val liveMap = liveMapBuilder.build()
+            val liveMapCanvasFigure = LiveMapCanvasFigure(liveMap).apply {
+                setBounds(
+                    Rectangle(
+                        bounds.origin.x.roundToInt(),
+                        bounds.origin.y.roundToInt(),
+                        bounds.dimension.x.roundToInt(),
+                        bounds.dimension.y.roundToInt()
                     )
-                }
+                )
+            }
+
+            return LiveMapData(
+                liveMapCanvasFigure,
+                createTargetLocators(plotLayers, liveMap)
+            )
         }
     }
 
@@ -197,29 +194,25 @@ object LiveMapProviderUtil {
         }
     }
 
-    private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMapAsync: Async<LiveMap>): List<GeomTargetLocator> {
+    private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMap: LiveMap): List<GeomTargetLocator> {
         class LiveMapInteractionAdapter {
-            private var myLiveMap: LiveMap? = null
+            private var myLiveMap: LiveMap = liveMap
             private val adapters: List<GeomTargetLocatorAdapter> = plotLayers.mapIndexed(::GeomTargetLocatorAdapter)
             private var lastCoord: DoubleVector? = null
             private var lastResult: Map<Int, GeomTargetLocator.LookupResult> = emptyMap()
 
             val geomTargetLocators: List<GeomTargetLocator> = adapters
 
-            init {
-                liveMapAsync.map { myLiveMap = it }
-            }
-
             // called n-times with same coord (where n - number of "layers").
             // Search only if coord changed, return cached result for the rest calls.
             private fun search(layerIndex: Int, coord: DoubleVector): GeomTargetLocator.LookupResult? {
                 if (lastCoord != coord) {
                     lastResult = myLiveMap
-                        ?.hoverObjects()
-                        ?.groupBy(HoverObject::layerIndex)
-                        ?.mapValues { (layerIndex, hoverObjects) ->
+                        .hoverObjects()
+                        .groupBy(HoverObject::layerIndex)
+                        .mapValues { (layerIndex, hoverObjects) ->
                             adapters[layerIndex].buildLookupResult(coord, hoverObjects)
-                        } ?: emptyMap()
+                        }
                 }
                 return lastResult[layerIndex]
             }

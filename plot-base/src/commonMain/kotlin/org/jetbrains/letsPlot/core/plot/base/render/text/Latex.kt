@@ -17,8 +17,9 @@ import kotlin.math.roundToInt
 internal object Latex {
     fun parse(text: String): List<RichTextNode> {
         val formulas = extractFormulas(text).map { (formula, range) ->
-            val text = formula.replace("-", "−") // Use minus sign instead of hyphen
-            LatexElement(parse(Token.tokenize(text))) to range
+            val tokens = Token.tokenize(formula.replace("-", "−")) // Use minus sign instead of hyphen
+            val span = parse(tokens)
+            LatexElement(span) to range
         }.toList()
 
         return fillTextTermGaps(text, formulas)

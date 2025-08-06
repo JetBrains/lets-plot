@@ -29,6 +29,12 @@ kotlin {
                 api(project(":plot-stem"))
             }
         }
+
+        jvmMain {
+            dependencies {
+                api(project(":platf-awt"))
+            }
+        }
     }
 }
 

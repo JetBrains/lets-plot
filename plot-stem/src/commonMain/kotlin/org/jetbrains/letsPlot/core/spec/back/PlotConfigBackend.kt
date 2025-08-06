@@ -119,14 +119,14 @@ open class PlotConfigBackend(
 
         // replace layer data with data after stat
         layerConfigs.withIndex().forEach { (layerIndex, layerConfig) ->
-            // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
+            // optimization: only replace layer's data if 'combined' data was changed (because of stat or sampling occurred)
             if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
                 val layerStatData = dataByLayerAfterStat[layerIndex]
                 layerConfig.replaceOwnData(layerStatData)
             }
         }
 
-        // Clean-up data before sending it to the front-end.
+        // Cleanup data before sending it to the front-end.
         dropUnusedDataBeforeEncoding(layerConfigs)
 
         // Re-create the "natural order" existed before faceting
@@ -134,7 +134,7 @@ open class PlotConfigBackend(
         if (facets.isDefined || specifiedFactorLevelsByLayers.any { it.isNotEmpty() }) {
             layerConfigs.zip(specifiedFactorLevelsByLayers)
                 .filter { (layerConfig, factorLevels) ->
-                    // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
+                    // When faceting, each layer's data was split to panels, then re-combined with loss of 'natural order'.
                     facets.isFacettable(layerConfig.ownData)
                             || factorLevels.isNotEmpty()
                 }

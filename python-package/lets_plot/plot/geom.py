@@ -39,7 +39,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                color_by=None, fill_by=None,
                **other_args):
     """
-    Draw points defined by an x and y coordinate, as for a scatter plot.
+    Draw points defined by x and y coordinates, as for a scatter plot.
 
     Parameters
     ----------
@@ -53,11 +53,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate),
-        'sum' (counts the number of points at each location - might help to workaround overplotting).
+        'sum' (counts the number of points at each location - might help to work around overplotting).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
@@ -87,8 +87,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the point to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along the x- and y-axes.
+        'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -233,7 +236,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
               color_by=None,
               **other_args):
     """
-    Connect observations in the order, how they appear in the data.
+    Connect observations in the order they appear in the data.
 
     Parameters
     ----------
@@ -247,8 +250,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -419,7 +422,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
               color_by=None,
               **other_args):
     """
-    Connect points in the order of the variable on the x axis.
+    Connect points in the order of the variable on the x-axis.
     In case points need to be connected in the order in which they appear in the data,
     use `geom_path()`.
 
@@ -435,8 +438,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -472,7 +475,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Notes
     -----
-    `geom_line()` connects the observations in the order of the variable on the x axis.
+    `geom_line()` connects the observations in the order of the variable on the x-axis.
     `geom_line()` can be used to plot time series.
 
     `geom_line()` understands the following aesthetics mappings:
@@ -566,8 +569,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     stat : str, default='smooth'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -593,7 +596,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
-        If value of `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
+        If the value of the `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
     n : int
         Number of points to evaluate smoother at.
     se : bool, default=True
@@ -644,7 +647,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color for the confidence interval around the line. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
-    - linetype : type of the line of conditional mean line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
+    - linetype : type of the line for conditional mean. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
     ----
@@ -738,7 +741,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              **other_args):
     """
     Display a bar chart which makes the height of the bar proportional to the
-    number of observed variable values, mapped to x axis.
+    number of observed variable values, mapped to the x-axis.
 
     Parameters
     ----------
@@ -752,8 +755,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     stat : str, default='count'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='stack'
@@ -799,18 +802,18 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     Notes
     -----
     `geom_bar()` makes the height of the bar proportional to the number
-    of observed variable values, mapped to x axis. Is intended to use for discrete data.
+    of observed variable values, mapped to x-axis. Is intended to use for discrete data.
     If used for continuous data with stat='bin' produces histogram for binned data.
     `geom_bar()` handles no group aesthetics.
 
     Computed variables:
 
-    - ..count.. : number of points with same x-axis coordinate.
-    - ..sum.. : total number of points with same x-axis coordinate.
+    - ..count.. : number of points with the same x-axis coordinate.
+    - ..sum.. : total number of points with the same x-axis coordinate.
     - ..prop.. : groupwise proportion.
     - ..proppct.. : groupwise proportion in percent.
-    - ..sumprop.. : proportion of points with same x-axis coordinate among all points in the dataset.
-    - ..sumpct.. : proportion of points with same x-axis coordinate among all points in the dataset in percent.
+    - ..sumprop.. : proportion of points with the same x-axis coordinate among all points in the dataset.
+    - ..sumpct.. : proportion of points with the same x-axis coordinate among all points in the dataset in percent.
 
     `geom_bar()` understands the following aesthetics mappings:
 
@@ -905,7 +908,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    color_by=None, fill_by=None,
                    **other_args):
     """
-    Display a 1d distribution by dividing variable mapped to x axis into bins
+    Display a 1D distribution by dividing the variable mapped to the x-axis into bins
     and counting the number of observations in each bin.
 
     Parameters
@@ -920,8 +923,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     stat : str, default='bin'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='stack'
@@ -960,7 +963,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     center : float
         Specify x-value to align bin centers to.
     boundary : float
-        Specify x-value to align bin boundary (i.e. point between bins) to.
+        Specify x-value to align bin boundary (i.e., point between bins) to.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -978,15 +981,15 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_histogram()` displays a 1d distribution by dividing variable
-    mapped to x-axis into bins and counting the number of observations in each bin.
+    `geom_histogram()` displays a 1D distribution by dividing the variable
+    mapped to the x-axis into bins and counting the number of observations in each bin.
 
     Computed variables:
 
-    - ..count.. : number of points with x-axis coordinate in the same bin.
-    - ..density.. : normalised number of points so that plot area is 1.
-    - ..sumprop.. : normalised number of points so that sum of y-values is 1.
-    - ..sumpct.. : normalised number of points so that sum of y-values is 100.
+    - ..count.. : number of points with the x-axis coordinate in the same bin.
+    - ..density.. : normalized number of points so that plot area is 1.
+    - ..sumprop.. : normalized number of points so that sum of y-values is 1.
+    - ..sumpct.. : normalized number of points so that sum of y-values is 100.
     - ..binwidth.. : width of each bin.
 
     `geom_histogram()` understands the following aesthetics mappings:
@@ -1131,7 +1134,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
         When method is 'histodot', this specifies x-value to align bin centers to.
     boundary : float
         When method is 'histodot', this specifies x-value to align bin boundary
-        (i.e. point between bins) to.
+        (i.e., point between bins) to.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1154,7 +1157,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
 
     Computed variables:
 
-    - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..count.. : number of points with the x-axis coordinate in the same bin.
     - ..binwidth.. : max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
 
     `geom_dotplot()` understands the following aesthetics mappings:
@@ -1318,7 +1321,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
-    - size : line width, default=0 (i.e. tiles outline initially is not visible).
+    - size : line width, default=0 (i.e., tiles outline initially is not visible).
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     ----
@@ -1513,7 +1516,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
-    - size : line width, default=0 (i.e. tiles outline initially is not visible).
+    - size : line width, default=0 (i.e., tiles outline initially is not visible).
     - weight : used by 'binhex' stat to compute weighted sum instead of simple count.
     - width : width of the hexagon.
     - height : the real height of the hexagon will be 2/sqrt(3) times this value, so with width=height the hexagon will be the regular.
@@ -1695,7 +1698,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
-    - size : line width, default=0 (i.e. tiles outline initially is not visible).
+    - size : line width, default=0 (i.e., tiles outline initially is not visible).
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - linetype : type of the line of tile's border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
@@ -1904,8 +1907,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -2076,8 +2079,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default=position_dodge(width=.95)
@@ -2098,6 +2101,9 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specify style and content of the annotations.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
@@ -2231,8 +2237,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -2372,8 +2378,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -2994,8 +3000,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -3187,7 +3193,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     slope : float
         The line slope.
     intercept : float
-        The value of y at the point where the line crosses the y axis.
+        The value of y at the point where the line crosses the y-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -3418,7 +3424,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     yintercept : float
-        The value of y at the point where the line crosses the y axis.
+        The value of y at the point where the line crosses the y-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -3543,7 +3549,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     xintercept : float
-        The value of x at the point where the line crosses the x axis.
+        The value of x at the point where the line crosses the x-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -4373,7 +4379,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
         When method is 'histodot', this specifies x-value to align bin centers to.
     boundary : float
         When method is 'histodot', this specifies x-value to align bin boundary
-        (i.e. point between bins) to.
+        (i.e., point between bins) to.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -4396,7 +4402,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
 
     Computed variables:
 
-    - ..count.. : number of points with y-axis coordinate in the same bin.
+    - ..count.. : number of points with the y-axis coordinate in the same bin.
     - ..binwidth.. : max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
 
     `geom_ydotplot()` understands the following aesthetics mappings:
@@ -4834,8 +4840,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='gstack'
@@ -4876,7 +4882,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Notes
     -----
-    `geom_area()` draws an area bounded by the data and x axis.
+    `geom_area()` draws an area bounded by the data and the x-axis.
 
     `geom_area()` understands the following aesthetics mappings:
 
@@ -4979,8 +4985,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     stat : str, default='density'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -5672,8 +5678,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default=position_jitter(width=.4, height=.4)
@@ -5816,8 +5822,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'qq' (compare two probability distributions),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -5958,8 +5964,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'qq2' (compare two probability distributions),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -6076,8 +6082,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'qq_line' (compare two probability distributions),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -6211,8 +6217,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'qq2_line' (compare two probability distributions),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -6300,7 +6306,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                   **other_args):
     """
     Display a line chart which makes the y value proportional to the number
-    of observed variable values, mapped to x axis.
+    of observed variable values, mapped to the x-axis.
 
     Parameters
     ----------
@@ -6314,8 +6320,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     stat : str, default='bin'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -6358,7 +6364,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Computed variables:
 
-    - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..count.. : number of points with the x-axis coordinate in the same bin.
 
     `geom_freqpoly()` understands the following aesthetics mappings:
 
@@ -6443,8 +6449,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -6744,8 +6750,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -6906,8 +6912,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -7211,8 +7217,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -7259,8 +7265,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along the x- and y-axes.
+        'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -7457,8 +7466,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -7505,16 +7514,19 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Vertical adjustment to nudge labels by.
     na_text : str, default='n/a'
         Text to show for missing values.
-    label_padding : float
-        Amount of padding around label. Default is 0.25 of font size.
-    label_r : float
-        Radius of rounded corners. Default is 0.15 of label height.
-    label_size : float, default = 1.0
+    label_padding : float, default=0.25
+        Amount of padding around label, measured in font size units.
+    label_r : float, default=0.15
+        Radius of rounded corners, measured in units of label height.
+    label_size : float, default=1.0
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text label to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along the x- and y-axes.
+        'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -7711,7 +7723,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
               arrow=None,
               **other_args):
     """
-    Add text labels that repel away from each other and from data points.
+    Add repelling text labels that avoid overlapping with other labels and data points.
 
     Parameters
     ----------
@@ -7725,8 +7737,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -7773,8 +7785,11 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along the x- and y-axes.
+        'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -7789,22 +7804,21 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     seed : int
-        Random seed used for reproducibility of label positions.
-    max_iter : int
-        Maximum number of iterations used to resolve label collisions.
-    max_time : float
+        Random seed for reproducibility.
+    max_iter : int, default=2000
+        Maximum number of iterations used to resolve collisions.
+    max_time : float, default=5
         Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
-        Limit direction of repulsion movement.
+        Direction in which text labels can be moved.
     point_padding : float
-        Padding around data points to avoid label overlap.
+        Padding around data points to prevent overlap with text labels.
     box_padding : float
-        Padding around text labels to avoid label-label overlap.
-    max_overlaps : int
-        Maximum number of overlapping labels allowed. Labels beyond this number will be hidden.
+        Padding around text labels to prevent overlap between labels.
+    max_overlaps : int, default=10
+        The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
-        Minimum length of the line segment connecting the label to the point.
-        Shorter segments will be omitted.
+        Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     other_args
@@ -7923,7 +7937,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                **other_args):
 
     """
-    Add repelling text labels with background boxes to the plot.
+    Add repelling text labels with background boxes that avoid overlapping with other labels and data points.
 
     Parameters
     ----------
@@ -7937,8 +7951,8 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -7979,22 +7993,25 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+    na_text : str, default='n/a'
+        Text to show for missing values.
     nudge_x : float
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    na_text : str, default='n/a'
-        Text to show for missing values.
-    label_padding : float
-        Amount of padding around label. Default is 0.25 of font size.
-    label_r : float
-        Radius of rounded corners. Default is 0.15 of label height.
-    label_size : float, default = 1.0
+    label_padding : float, default=0.25
+        Amount of padding around label, measured in units of font size.
+    label_r : float, default=0.15
+        Radius of rounded corners, measured in units of label height.
+    label_size : float, default=1.0
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the text label to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along the x- and y-axes.
+        'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -8012,20 +8029,20 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Define the fill aesthetic for the geometry.
     seed : int
         Random seed for reproducibility.
-    max_iter : int
-        Maximum number of iterations for the repulsion algorithm.
-    max_time : float
+    max_iter : int, default=2000
+        Maximum number of iterations used to resolve collisions.
+    max_time : float, default=5
         Maximum allowed time in seconds for resolving label collisions.
     direction : {'both', 'x', 'y'}, default='both'
-        Direction in which labels can be moved.
+        Direction in which text labels can be moved.
     point_padding : float
-        Padding around the data point.
+        Padding around data points to prevent overlap with text labels.
     box_padding : float
-        Padding around the label box.
-    max_overlaps : int
-        Max number of overlapping labels to allow.
+        Padding around text labels to prevent overlap between labels.
+    max_overlaps : int, default=10
+        The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
-        Minimum length of the connecting line segment. Shorter ones are omitted.
+        Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     other_args
@@ -8152,7 +8169,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     stat : str, default='count2d'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count2d' (counts number of points with same x,y coordinate).
+        'count2d' (counts number of points with the same x,y coordinate).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
@@ -8200,8 +8217,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Default is a negative angle of the first sector.
     direction : {1, -1}, default=1
         Specify angle direction, 1=clockwise, -1=counter-clockwise.
-    size_unit : {'x', 'y'}
+    size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the pie chart to the length of the unit step along one of the axes.
+        'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
+        'min' uses the smaller of the unit steps along the x- and y-axes.
+        'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -8222,12 +8242,12 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     -----
     Computed variables:
 
-    - ..count.. : number of points with same (x,y) coordinate.
-    - ..sum.. : total number of points with same (x,y) coordinate.
+    - ..count.. : number of points with the same (x,y) coordinate.
+    - ..sum.. : total number of points with the same (x,y) coordinate.
     - ..prop.. : groupwise proportion.
     - ..proppct.. : groupwise proportion in percent.
-    - ..sumprop.. : proportion of points with same (x,y) coordinate among all points in the dataset.
-    - ..sumpct.. : proportion of points with same (x,y) coordinate among all points in the dataset in percent.
+    - ..sumprop.. : proportion of points with the same (x,y) coordinate among all points in the dataset.
+    - ..sumpct.. : proportion of points with the same (x,y) coordinate among all points in the dataset in percent.
 
     `geom_pie()` understands the following aesthetics mappings:
 
@@ -8406,8 +8426,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
     position : str or `FeatureSpec`, default='identity'
@@ -8440,7 +8460,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     slope : float
         The baseline slope.
     intercept : float
-        The value of y at the point where the baseline crosses the y axis.
+        The value of y at the point where the baseline crosses the y-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -8603,9 +8623,9 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     -----
     Computed variables:
 
-    - ..n.. : number of points with same x-axis and y-axis coordinates.
-    - ..prop.. : proportion of points with same x-axis and y-axis coordinates.
-    - ..proppct.. : proportion of points with same x-axis and y-axis coordinates in percent.
+    - ..n.. : number of points with the same x-axis and y-axis coordinates.
+    - ..prop.. : proportion of points with the same x-axis and y-axis coordinates.
+    - ..proppct.. : proportion of points with the same x-axis and y-axis coordinates in percent.
 
     `geom_count()` understands the following aesthetics mappings:
 
@@ -8693,8 +8713,8 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate),
         'sum' (counts the number of points at each location - might help to workaround overplotting).

@@ -22,13 +22,27 @@ object MonolithicCanvas {
         sizingPolicy: SizingPolicy,
         computationMessagesHandler: (List<String>) -> Unit
     ) : PlotCanvasFigure {
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
+        val plotCanvasFigure = PlotCanvasFigure()
 
-        val plotCanvasFigure = PlotCanvasFigure(processedSpec, sizingPolicy, computationMessagesHandler)
+        plotCanvasFigure.update(
+            processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false),
+            sizingPolicy = sizingPolicy,
+            computationMessagesHandler = computationMessagesHandler
+        )
         return plotCanvasFigure
     }
 
-    fun buildPlotFromProcessedSpecs(
+    fun updatePlotFigureFromRawSpec(
+        plotCanvasFigure: PlotCanvasFigure,
+        rawSpec: MutableMap<String, Any>,
+        sizingPolicy: SizingPolicy,
+        computationMessagesHandler: (List<String>) -> Unit
+    ) {
+        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
+        plotCanvasFigure.update(processedSpec, sizingPolicy, computationMessagesHandler)
+    }
+
+    internal fun buildViewModelFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         sizingPolicy: SizingPolicy,
         computationMessagesHandler: (List<String>) -> Unit,

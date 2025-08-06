@@ -8,10 +8,6 @@ Copyright © 2016 The Apache Software Foundation. Licensed under the Apache Lice
 
 Copyright © 2009, David Jones. Licensed under MIT License.
 
-### TwelveMonkeys ImageIO Library
-
-Copyright © 2008, Harald Kuhr. Licensed under BSD 3-Clause License.
-
 ### ColorBrewer
 
 Copyright © 2002 Cynthia Brewer, Mark Harrower, and The Pennsylvania State University.
@@ -36,10 +32,6 @@ Bechtold ([@bastibe](https://github.com/bastibe)) : [twilight](https://github.co
 ### Palettable
 
 Copyright © 2019 Matt Davis. Licensed under MIT License.
-
-### CairoSVG
-
-A free software, distributed under the LGPL-3.0 license : [documentation](https://cairosvg.org/documentation/).
 
 ### js-joda
 

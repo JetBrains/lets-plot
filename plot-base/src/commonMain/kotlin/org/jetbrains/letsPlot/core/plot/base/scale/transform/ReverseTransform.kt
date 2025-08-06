@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.transform
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
-internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
+class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
     override fun hasDomainLimits() = false
     override fun isInDomain(v: Double?): Boolean {
         return SeriesUtil.isFinite(v)

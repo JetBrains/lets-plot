@@ -12,10 +12,18 @@ import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 internal class MarginalLayerCoordProvider : CoordProviderBase(
     xLim = Pair(null, null),
     yLim = Pair(null, null),
+    xReversed = false,
+    yReversed = false,
     flipped = false
 ) {
 
-    override fun with(xLim: Pair<Double?, Double?>, yLim: Pair<Double?, Double?>, flipped: Boolean): CoordProvider {
+    override fun with(
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
+        xReversed: Boolean,
+        yReversed: Boolean,
+        flipped: Boolean
+    ): CoordProvider {
         UNSUPPORTED("MarginalLayerCoordProvider.with()")
     }
 

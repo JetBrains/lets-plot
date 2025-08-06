@@ -4,7 +4,7 @@
 #
 from typing import Any, Tuple, Sequence, Optional, Dict, List
 
-from lets_plot._type_utils import is_pandas_data_frame
+from lets_plot._type_utils import is_pandas_data_frame, is_polars_dataframe
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes, FeatureSpec, PlotSpec
@@ -75,6 +75,21 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
 
         if is_pandas_data_frame(data) and data[var_name].dtype.name == 'category' and data[var_name].dtype.ordered:
             series_annotation['factor_levels'] = data[var_name].cat.categories.to_list()
+
+        elif is_polars_dataframe(data):
+            import polars
+
+            col_dtype = data[var_name].dtype
+            if isinstance(col_dtype, polars.datatypes.Enum):
+                series_annotation['factor_levels'] = list(col_dtype.categories)
+            elif isinstance(col_dtype, polars.datatypes.Categorical):
+                # # It does not seem possible to get categories in correct order from the Categorical dtype.
+                # categories_series = data[var_name].cat.get_categories()
+                # indises = [col_dtype.categories[cat] for cat in categories_series]
+                # cats = [col_dtype.categories[i] for i in indises]
+                # series_annotation['factor_levels'] = categories_series.to_list()
+                pass
+
         elif var_name in mapping_meta_by_var:
             levels = last_not_none(list(map(lambda mm: mm.levels, mapping_meta_by_var[var_name].values())))
             if levels is not None:
@@ -116,7 +131,7 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
                 if order is not None:
                     mapping_annotation.setdefault('parameters', {})['order'] = order
 
-                # add mapping meta if custom label is set or if series annotation for var doesn't contain order options
+                # add mapping meta if a custom label is set or if series annotation for var doesn't contain order options
                 # otherwise don't add mapping meta - it's redundant, nothing unique compared to series annotation
                 if len(mapping_annotation):
                     mapping_annotation['aes'] = aesthetic

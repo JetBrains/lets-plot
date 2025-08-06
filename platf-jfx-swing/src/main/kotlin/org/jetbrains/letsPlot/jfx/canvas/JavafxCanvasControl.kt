@@ -63,9 +63,8 @@ class JavafxCanvasControl(
         return Asyncs.constant(snapshot)
     }
 
-    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
-        val size1 = size * pixelDensity.toInt()
-        val image = Image(ByteArrayInputStream(png), size1.x.toDouble(), size1.y.toDouble(), false, false)
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+        val image = Image(ByteArrayInputStream(png))
         val snapshot = JavafxCanvas.JavafxSnapshot(image)
         return Asyncs.constant(snapshot)
     }
