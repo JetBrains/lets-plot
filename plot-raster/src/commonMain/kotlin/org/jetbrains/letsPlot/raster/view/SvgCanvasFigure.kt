@@ -5,11 +5,12 @@
 
 package org.jetbrains.letsPlot.raster.view
 
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
-import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.affineTransform
+import org.jetbrains.letsPlot.core.canvas.applyPath
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -25,9 +26,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         set(value) {
             field = value
             mapSvgSvgElement()
-            val contentWidth = value.width().get()?.let { ceil(it).toInt() } ?: 0
-            val contentHeight = value.height().get()?.let { ceil(it).toInt() } ?: 0
-            svgBounds.set(Rectangle(0, 0, contentWidth, contentHeight))
 
             requestRedraw()
         }
@@ -36,15 +34,12 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     private var canvasPeer: SvgCanvasPeer? = null
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-    private val svgBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
 
-    override fun bounds(): ReadableProperty<Rectangle> {
-        return svgBounds
-    }
-
-    override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        error("Use mapToCanvas(canvasPeer: CanvasPeer) instead.")
+    override val size: Vector get() {
+        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
+        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+        return Vector(contentWidth, contentHeight)
     }
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {

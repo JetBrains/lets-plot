@@ -9,14 +9,12 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure {
+class LiveMapCanvasFigure (private val liveMap: LiveMap) : SomeFig {
     private val myBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val myLiveMapPresenter = LiveMapPresenter()
 
@@ -27,25 +25,13 @@ class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure {
         myBounds.set(bounds)
     }
 
-    override fun bounds(): ReadableProperty<Rectangle> {
+    fun bounds(): ReadableProperty<Rectangle> {
         return myBounds
     }
 
-    override fun mapToCanvas(canvasControl: CanvasControl): Registration {
+    fun mapToCanvas(canvasControl: CanvasControl): Registration {
         myLiveMapPresenter.render(canvasControl, liveMap)
 
         return Registration.from(myLiveMapPresenter)
-    }
-
-    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
-        TODO("Not yet implemented")
-    }
-
-    override fun draw(context2d: Context2d) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onRepaintRequest(handler: () -> Unit): Registration {
-        TODO("Not yet implemented")
     }
 }

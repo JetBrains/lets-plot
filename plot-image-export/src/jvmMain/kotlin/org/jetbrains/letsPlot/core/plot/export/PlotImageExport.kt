@@ -101,8 +101,8 @@ object PlotImageExport {
         }
 
         val buffer = BufferedImage(
-            (plotFigure.bounds().get().width * scaleFactor).roundToInt(),
-            (plotFigure.bounds().get().height * scaleFactor).roundToInt(),
+            (plotFigure.size.x * scaleFactor).roundToInt(),
+            (plotFigure.size.y * scaleFactor).roundToInt(),
             when (format) {
                 is Format.PNG -> BufferedImage.TYPE_INT_ARGB
                 is Format.TIFF -> BufferedImage.TYPE_INT_ARGB

@@ -3,10 +3,7 @@ package org.jetbrains.letsPlot.awt.plot
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
 import org.jetbrains.letsPlot.awt.canvas.AwtMouseEventMapper
-import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
@@ -32,6 +29,7 @@ class PlotCanvasPanel(
 
             figureRegistration.remove()
             if (canvasFigure != null) {
+                canvasFigure.setMouseEventSource(mouseEventSource)
                 figureRegistration = CompositeRegistration(
                     canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequest(::repaint),
@@ -62,7 +60,4 @@ class PlotCanvasPanel(
         }
     }
 
-    fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return mouseEventSource.addEventHandler(eventSpec, eventHandler)
-    }
 }

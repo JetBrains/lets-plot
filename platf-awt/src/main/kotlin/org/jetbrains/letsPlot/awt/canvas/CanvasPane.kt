@@ -32,7 +32,7 @@ class CanvasPane(
                     canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequest(::repaint),
                 )
-                bounds = Rectangle(0, 0, canvasFigure.bounds().get().dimension.x, canvasFigure.bounds().get().dimension.y)
+                bounds = Rectangle(0, 0, canvasFigure.size.x, canvasFigure.size.y)
             }
             field = canvasFigure
         }

@@ -5,20 +5,15 @@
 
 package org.jetbrains.letsPlot.core.canvasFigure
 
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.SomeFig
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
 interface CanvasFigure : SomeFig {
-    fun bounds(): ReadableProperty<Rectangle>
+    val size: Vector
 
-    fun mapToCanvas(canvasControl: CanvasControl): Registration
-
-    // v2 interface
     fun draw(context2d: Context2d)
     fun onRepaintRequest(handler: () -> Unit): Registration
     fun mapToCanvas(canvasPeer: CanvasPeer): Registration

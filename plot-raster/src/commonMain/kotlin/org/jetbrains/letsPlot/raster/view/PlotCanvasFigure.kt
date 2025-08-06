@@ -5,27 +5,29 @@
 
 package org.jetbrains.letsPlot.raster.view
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.builder.ViewModel
 
 class PlotCanvasFigure : CanvasFigure {
+    private var mouseEventSource: MouseEventSource? = null
     private var processedSpec: Map<String, Any>? = null
     private var sizingPolicy: SizingPolicy = SizingPolicy.keepFigureDefaultSize()
     private var computationMessagesHandler: (List<String>) -> Unit = { _ -> }
 
-    private var canvasControl: CanvasControl? = null
+    private var viewModel: ViewModel? = null
     private var viewModelReg = Registration.EMPTY
-    private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure()
     private var containerSize: DoubleVector = DoubleVector.ZERO
+
+    private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure()
 
     fun update(
         processedSpec: Map<String, Any>,
@@ -39,13 +41,11 @@ class PlotCanvasFigure : CanvasFigure {
         buildPlotSvg()
     }
 
-    override fun bounds(): ReadableProperty<Rectangle> {
-        return plotSvgFigure.bounds()
+    fun setMouseEventSource(mouseEventSource: MouseEventSource) {
+        this.mouseEventSource = mouseEventSource
     }
 
-    override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        error("Use mapToCanvas(canvasPeer: CanvasPeer) instead.")
-    }
+    override val size: Vector get() = plotSvgFigure.size
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         val reg = CompositeRegistration(
@@ -74,24 +74,21 @@ class PlotCanvasFigure : CanvasFigure {
     private fun buildPlotSvg() {
         val processedSpec = processedSpec ?: return
 
+        viewModel?.dispose()
+
         // It's fine to build a view model without a canvasControl.
         // Size policy may work with a null container size.
-        val viewModel = MonolithicCanvas.buildViewModelFromProcessedSpecs(
+        val vm = MonolithicCanvas.buildViewModelFromProcessedSpecs(
             plotSpec = processedSpec,
             sizingPolicy = sizingPolicy,
             containerSize = containerSize,
             computationMessagesHandler = computationMessagesHandler
         )
 
-        plotSvgFigure.svgSvgElement = viewModel.svg
+        plotSvgFigure.svgSvgElement = vm.svg
+        mouseEventSource?.let { vm.eventDispatcher.addEventSource(it) }
 
-        val canvasControl = canvasControl ?: return
-
-        viewModelReg.dispose()
-        viewModelReg = CompositeRegistration(
-            Registration.from(viewModel),
-            viewModel.eventDispatcher.addEventSource(canvasControl)
-        )
+        viewModel = vm
     }
 
     fun resize(width: Number, height: Number) {

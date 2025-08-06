@@ -6,6 +6,7 @@
 dependencies {
     compileOnly(project(":commons"))
     compileOnly(project(":datamodel"))
+    compileOnly(project(":livemap"))
     compileOnly(project(":plot-livemap"))
     compileOnly(project(":canvas"))
     compileOnly(project(":plot-base"))

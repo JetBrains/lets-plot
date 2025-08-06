@@ -176,8 +176,8 @@ object PlotReprGenerator {
             }
 
             val magickCanvas = MagickCanvas.create(
-                width = plotCanvasFigure.bounds().get().width * scaleFactor,
-                height = plotCanvasFigure.bounds().get().height * scaleFactor,
+                width = plotCanvasFigure.size.x * scaleFactor,
+                height = plotCanvasFigure.size.y * scaleFactor,
                 pixelDensity = 1,
                 fontManager
             )
