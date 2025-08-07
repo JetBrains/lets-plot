@@ -147,13 +147,19 @@ open class LinesHelper(
         }
         val smoothed = mutableListOf<PathPoint>()
 
-        linestring.windowed(size = 2) { (p1, p2) ->
+        linestring.windowed(size = 2).forEach { (p1, p2) ->
             // It is important to use the aes of the first element in each pair,
             // since aes may change depending on the group
             // see https://github.com/JetBrains/lets-plot/issues/1375
             val resampler = resampler(p1.aes)
 
             val resampledPoints = resampler.resample(p1, p2)
+
+            // Return empty list if one of the points could not be transformed to client coordinates
+            if (resampledPoints.isEmpty()) {
+                return emptyList()
+            }
+
             smoothed.addAll(resampledPoints.subList(0, resampledPoints.size - 1)) // Do not add the last point to avoid duplicates
         }
 
