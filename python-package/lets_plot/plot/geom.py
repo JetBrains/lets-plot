@@ -73,7 +73,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -270,7 +270,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame``
@@ -458,7 +458,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -589,7 +589,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -775,7 +775,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     labels : ``layer_labels``
@@ -946,7 +946,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         If a bin's ``..count..`` is less than the threshold, it will be removed, but only if it is on the left or right edge of the histogram.
         Dropping empty edge bins is particularly useful for faceted plots with free scales.
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     labels : ``layer_labels``
@@ -1111,7 +1111,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     binwidth : float
@@ -1283,7 +1283,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : list of int, default=[30, 30]
@@ -1459,7 +1459,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : list of int, default=[30, 30]
@@ -1652,7 +1652,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
@@ -1925,7 +1925,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
@@ -2097,7 +2097,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     labels : ``layer_labels``
@@ -2255,7 +2255,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     fatten : float, default=5.0
@@ -2396,7 +2396,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -2523,7 +2523,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : int
@@ -2677,7 +2677,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : int
@@ -2827,7 +2827,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -3019,7 +3019,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -3304,7 +3304,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -3421,7 +3421,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     yintercept : float
@@ -3546,7 +3546,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     xintercept : float
@@ -3675,7 +3675,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -3914,7 +3914,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -4146,7 +4146,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -4351,7 +4351,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -4542,7 +4542,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     trim : bool, default=False
@@ -4730,7 +4730,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -4861,7 +4861,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     flat : bool, default=False.
@@ -5006,7 +5006,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -5226,7 +5226,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     kernel : str, default='gaussian'
@@ -5461,7 +5461,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     kernel : str, default='gaussian'
@@ -5697,7 +5697,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width : float, default=0.4
@@ -5841,7 +5841,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
@@ -5983,7 +5983,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -6101,7 +6101,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
@@ -6236,7 +6236,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     quantiles : list, default=[0.25, 0.75]
@@ -6339,7 +6339,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -6468,7 +6468,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     direction : {'hv', 'vh'}, default='hv'
@@ -6590,7 +6590,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -6770,7 +6770,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     arrow : ``FeatureSpec``
@@ -6932,7 +6932,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     arrow : ``FeatureSpec``
@@ -7085,7 +7085,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     arrow : ``FeatureSpec``
@@ -7237,7 +7237,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -7487,7 +7487,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -7759,7 +7759,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -7973,7 +7973,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     map : ``GeoDataFrame`` or ``Geocoder``
@@ -8188,7 +8188,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     labels : ``layer_labels``
@@ -8449,7 +8449,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -8605,7 +8605,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : ``layer_tooltips``
-        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html`__ function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
