@@ -128,20 +128,21 @@ def geom_livemap(*,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {
             'x': [-170, 170, -170, 0, 170],
             'y': [10, 10, -10, -10, -10],
-            'g': ["'x': [-170, 170]"] * 2 +
-                 ["'x': [-170, 0, 170]"] * 3,
+            'route': ['A', 'A', 'B', 'B', 'B'],
         }
         ggplot(data) + \\
             geom_livemap(zoom=1, location=[180, 0]) + \\
-            geom_path(aes('x', 'y', color='g'), size=1) + \\
-            scale_color_manual(values=['red', 'green']) + \\
+            geom_path(aes('x', 'y', color='route'), size=1) + \\
+            scale_color_manual(values=['red', 'green'],
+                               labels={'A': "'x': [-170, 170]",
+                                       'B': "'x': [-170, 0, 170]"}) + \\
             ggtitle("A path that crosses the antimeridian")
 
     """
