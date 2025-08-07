@@ -6,8 +6,12 @@
 package org.jetbrains.letsPlot.commons.event
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.Registration
 
 interface MouseEventSource {
     fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration
+    fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: (MouseEvent) -> Unit): Registration {
+        return addEventHandler(eventSpec, handler { eventHandler(it) })
+    }
 }

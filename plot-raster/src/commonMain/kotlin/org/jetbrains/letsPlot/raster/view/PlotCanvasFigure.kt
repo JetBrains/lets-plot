@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.raster.view
 
-import org.jetbrains.letsPlot.commons.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
@@ -18,16 +18,17 @@ import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.builder.ViewModel
 
 class PlotCanvasFigure : CanvasFigure {
-    private var mouseEventSource: MouseEventSource? = null
+    private var eventReg: Registration = Registration.EMPTY
     private var processedSpec: Map<String, Any>? = null
     private var sizingPolicy: SizingPolicy = SizingPolicy.keepFigureDefaultSize()
     private var computationMessagesHandler: (List<String>) -> Unit = { _ -> }
 
     private var viewModel: ViewModel? = null
-    private var viewModelReg = Registration.EMPTY
     private var containerSize: DoubleVector = DoubleVector.ZERO
 
     private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure()
+
+    val eventPeer = MouseEventPeer()
 
     fun update(
         processedSpec: Map<String, Any>,
@@ -41,20 +42,16 @@ class PlotCanvasFigure : CanvasFigure {
         buildPlotSvg()
     }
 
-    fun setMouseEventSource(mouseEventSource: MouseEventSource) {
-        this.mouseEventSource = mouseEventSource
-    }
-
     override val size: Vector get() = plotSvgFigure.size
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         val reg = CompositeRegistration(
             plotSvgFigure.mapToCanvas(canvasPeer),
-            //canvasControl.onResize { buildPlotSvg() },
             Registration.onRemove {
                 // Do not pass reference to the viewModelReg - it changes on CanvasControl resize or plot spec update.
                 // With closure, we ensure that the current viewModelReg is disposed.
-                viewModelReg.dispose()
+                viewModel?.dispose()
+                eventReg.dispose()
             }
         )
 
@@ -74,6 +71,7 @@ class PlotCanvasFigure : CanvasFigure {
     private fun buildPlotSvg() {
         val processedSpec = processedSpec ?: return
 
+        eventReg.dispose()
         viewModel?.dispose()
 
         // It's fine to build a view model without a canvasControl.
@@ -86,7 +84,7 @@ class PlotCanvasFigure : CanvasFigure {
         )
 
         plotSvgFigure.svgSvgElement = vm.svg
-        mouseEventSource?.let { vm.eventDispatcher.addEventSource(it) }
+        eventReg = vm.eventDispatcher.addEventSource(eventPeer)
 
         viewModel = vm
     }

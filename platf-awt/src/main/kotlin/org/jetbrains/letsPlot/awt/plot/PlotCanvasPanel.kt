@@ -29,7 +29,7 @@ class PlotCanvasPanel(
 
             figureRegistration.remove()
             if (canvasFigure != null) {
-                canvasFigure.setMouseEventSource(mouseEventSource)
+                canvasFigure.eventPeer.addEventSource(mouseEventSource)
                 figureRegistration = CompositeRegistration(
                     canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequest(::repaint),
