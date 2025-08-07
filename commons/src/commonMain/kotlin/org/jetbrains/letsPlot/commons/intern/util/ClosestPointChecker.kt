@@ -16,13 +16,17 @@ class ClosestPointChecker(val target: DoubleVector) {
 
     constructor(x: Double, y: Double) : this(DoubleVector(x, y))
 
-    fun check(coord: DoubleVector): Boolean {
-        val cmpResult = compare(coord)
+    fun check(coord: DoubleVector, objectRadius: Double = 0.0): Boolean {
+        val cmpResult = compareObject(coord, objectRadius)
         return cmpResult == COMPARISON_RESULT.NEW_CLOSER || cmpResult == COMPARISON_RESULT.EQUAL
     }
 
-    fun compare(coord: DoubleVector): COMPARISON_RESULT {
-        val newDistance = distance(target, coord)
+    fun compareObject(coord: DoubleVector, objectRadius: Double = 0.0): COMPARISON_RESULT {
+        val newDistance = distance(target, coord).takeIf { it > objectRadius } ?: 0.0
+        return compare(coord, newDistance)
+    }
+
+    private fun compare(coord: DoubleVector, newDistance: Double): COMPARISON_RESULT {
         if (distance < 0) {
             setNewClosestCoord(coord, newDistance)
             return COMPARISON_RESULT.NEW_CLOSER

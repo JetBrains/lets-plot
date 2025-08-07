@@ -7860,11 +7860,11 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
     - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
-    - point_size : A value representing the visual size of the point associated with the label.
-    - point_stroke : Width of the point border.
-    - segment_color : Color of the line segment connecting the label to the point.
-    - segment_size : Width of the line segment connecting the label to the point.
-    - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - point_size : a value representing the visual size of the point associated with the label. Set to 0 to prevent label repulsion from data points.
+    - point_stroke : width of the point border.
+    - segment_color : color of the line segment connecting the label to the point.
+    - segment_size : width of the line segment connecting the label to the point.
+    - segment_alpha : transparency level of the line segment. Accept values between 0 and 1.
     - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     Examples
@@ -8085,11 +8085,11 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
     - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
-    - point_size : A value representing the visual size of the point associated with the label.
-    - point_stroke : Width of the point border.
-    - segment_color : Color of the line segment connecting the label to the point.
-    - segment_size : Width of the line segment connecting the label to the point.
-    - segment_alpha : Transparency level of the line segment. Accept values between 0 and 1.
+    - point_size : a value representing the visual size of the point associated with the label. Set to 0 to prevent label repulsion from data points.
+    - point_stroke : width of the point border.
+    - segment_color : color of the line segment connecting the label to the point.
+    - segment_size : width of the line segment connecting the label to the point.
+    - segment_alpha : transparency level of the line segment. Accept values between 0 and 1.
     - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     Examples

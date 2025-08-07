@@ -92,7 +92,7 @@ class ClosestPointCheckerTest {
     }
 
     private fun compare(coord: DoubleVector): Expectation<COMPARISON_RESULT> {
-        return Expectation { cp!!.compare(coord) }
+        return Expectation { cp!!.compareObject(coord) }
     }
 
     private fun assertCall(vararg assertions: Runnable) {

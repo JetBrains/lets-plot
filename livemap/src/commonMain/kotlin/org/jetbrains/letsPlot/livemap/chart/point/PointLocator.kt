@@ -5,15 +5,14 @@
 
 package org.jetbrains.letsPlot.livemap.chart.point
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.compareTo
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.length
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.chart.*
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
+
 
 object PointLocator : Locator {
     override fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
@@ -27,12 +26,14 @@ object PointLocator : Locator {
         val radius = renderHelper.dimToWorld(pointComponent.scaledRadius(chartElementComponent.scalingSizeFactor))
 
         val distance = (renderHelper.posToWorld(coord) - origin).length
-        if (distance <= radius) {
+        if (distance <= radius + renderHelper.dimToWorld(EXTRA_RADIUS)) {
             return HoverObject(
                 layerIndex = target.get<IndexComponent>().layerIndex,
                 index = target.get<IndexComponent>().index,
-                distance = renderHelper.dimToClient(distance).value,
-                this
+                distance = 0.0,//renderHelper.dimToClient(distance).value,
+                locator = this,
+                targetPosition = renderHelper.worldToPos(origin).toDoubleVector(),
+                targetRadius = renderHelper.dimToClient(radius).value
             )
         }
         return null
@@ -41,4 +42,5 @@ object PointLocator : Locator {
     override fun reduce(hoverObjects: Collection<HoverObject>) = hoverObjects.minByOrNull(HoverObject::distance)
 
     private val REQUIRED_COMPONENTS = listOf(PointComponent::class, ChartElementComponent::class)
+    private val EXTRA_RADIUS = 6.0.px
 }
