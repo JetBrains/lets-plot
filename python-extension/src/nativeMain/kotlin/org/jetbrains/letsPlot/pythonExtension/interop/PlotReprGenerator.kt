@@ -14,8 +14,11 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -43,14 +46,24 @@ object PlotReprGenerator {
     }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
-    fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
+    fun generateSvg(
+        plotSpecDict: CPointer<PyObject>?,
+        width: Float,
+        height: Float,
+        unit: CPointer<ByteVar>,
+        useCssPixelatedImageRendering: Int,
+    ): CPointer<PyObject>? {
+        val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+        val sizeUnit = SizeUnit.fromName(unit.toKString())
+
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
             val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
-                plotSize = null,
+                plotSize = plotSize,
+                sizeUnit = sizeUnit,
                 useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
             )
             Py_BuildValue("s", svg)
@@ -130,35 +143,17 @@ object PlotReprGenerator {
 
     fun exportBitmap(
         plotSpec: Map<*, *>,
-        width: Float,
-        height: Float,
-        unit: String,
-        dpi: Int,
-        scale: Double,
+        plotSize: DoubleVector?,
+        sizeUnit: SizeUnit?,
+        dpi: Number?,
+        scale: Number?,
         fontManager: MagickFontManager
     ): Bitmap? {
+        println("exportBitmap() - plotSize: $plotSize, sizeUnit: $sizeUnit, dpi: $dpi, scale: $scale")
+
         var canvasReg: Registration? = null
-
         try {
-            val sizingPolicy = when {
-                width < 0 || height < 0 -> SizingPolicy.keepFigureDefaultSize()
-                else -> {
-                    // Build the plot in logical pixels (always 96 DPI) and then render it scaled.
-                    // Otherwise, the plot will be rendered incorrectly, i.e., with too many tick labels and small font sizes.
-                    val (logicalWidth, logicalHeight) = when (unit) {
-                        "cm" -> (width * 96 / 2.54) to (height * 96 / 2.54)
-                        "in" -> (width * 96) to (height * 96)
-                        "mm" -> (width * 96 / 25.4) to (height * 96 / 25.4)
-                        "px" -> width to height
-                        else -> throw IllegalArgumentException("Unsupported unit: $unit")
-                    }
-
-                    SizingPolicy.fixed(
-                        width = logicalWidth.toDouble(),
-                        height = logicalHeight.toDouble()
-                    )
-                }
-            }
+            val (sizingPolicy, scaleFactor) = MonolithicCommon.estimateExportConfig(plotSize, dpi, sizeUnit, scale)
 
             @Suppress("UNCHECKED_CAST")
             val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
@@ -168,11 +163,6 @@ object PlotReprGenerator {
                     //println(it.joinToString("\n"))
                 }
             )
-
-            val scaleFactor = when {
-                dpi > 0 -> dpi / 96.0 * scale
-                else -> scale
-            }
 
             val canvasControl = MagickCanvasControl(
                 w = plotCanvasFigure.bounds().get().width,
@@ -211,11 +201,14 @@ object PlotReprGenerator {
         dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
+        val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+        val sizeUnit = SizeUnit.fromName(unit.toKString())
+        val dpi = if (dpi >= 0) dpi.toDouble() else null
+
         val bitmap = exportBitmap(
             plotSpec = pyDictToMap(plotSpecDict),
-            width = width,
-            height = height,
-            unit = unit.toKString(),
+            plotSize = plotSize,
+            sizeUnit = sizeUnit,
             dpi = dpi,
             scale = scale.toDouble(),
             fontManager = defaultFontManager

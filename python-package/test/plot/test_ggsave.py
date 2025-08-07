@@ -95,6 +95,27 @@ def test_ggsave_png_wh_150dpi_scale2():
     assert_png(out_path, 1500, 900)  # 5*150*2, 3*150*2
 
 
+def test_ggsave_png_wh_px():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px.png'), w=300, h=200, unit='px')
+    print("Output path:", out_path)
+    assert_png(out_path, 300, 200)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
+
+
+def test_ggsave_png_wh_px_scale2():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_scale2.png'), w=300, h=200, unit='px', scale=2)
+    print("Output path:", out_path)
+    assert_png(out_path, 600, 400)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
+
+
+def test_ggsave_png_wh_px_150dpi():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_150dpi.png'), w=300, h=200, unit='px', dpi=150)
+    print("Output path:", out_path)
+    assert_png(out_path, 468, 312)  #
+
+
 def test_filelike_ggsave_png():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_buffer = io.BytesIO()

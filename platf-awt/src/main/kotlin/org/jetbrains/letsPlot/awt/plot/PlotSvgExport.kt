@@ -5,9 +5,10 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.jetbrains.letsPlot.awt.util.RGBEncoderAwt
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 
 object PlotSvgExport {
     /**
@@ -25,7 +26,29 @@ object PlotSvgExport {
             plotSpec = plotSpec,
             plotSize = plotSize,
             rgbEncoder = RGBEncoderAwt(),
-            useCssPixelatedImageRendering
+            useCssPixelatedImageRendering = useCssPixelatedImageRendering
+        )
+    }
+
+    /**
+     * @param plotSpec Raw specification of a plot.
+     * @param plotSize Desired plot size.
+     * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
+     * @param sizeUnit Size unit for the plot size. The default is pixels (PX).
+     */
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun buildSvgImageFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector? = null,
+        useCssPixelatedImageRendering: Boolean = true,
+        sizeUnit: SizeUnit
+    ): String {
+        return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
+            plotSpec = plotSpec,
+            plotSize = plotSize,
+            rgbEncoder = RGBEncoderAwt(),
+            useCssPixelatedImageRendering = useCssPixelatedImageRendering,
+            sizeUnit = sizeUnit
         )
     }
 }

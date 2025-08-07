@@ -15,9 +15,9 @@ def _generate_dynamic_display_html(plot_spec: Dict) -> str:
     return lets_plot_kotlin_bridge.generate_html(plot_spec)
 
 
-def _generate_svg(plot_spec: Dict, use_css_pixelated_image_rendering: bool = True) -> str:
+def _generate_svg(plot_spec: Dict, w: float = -1.0, h: float = -1.0, unit: str = '', use_css_pixelated_image_rendering: bool=True) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)
-    return lets_plot_kotlin_bridge.export_svg(plot_spec, use_css_pixelated_image_rendering)
+    return lets_plot_kotlin_bridge.export_svg(plot_spec, w, h, unit, use_css_pixelated_image_rendering)
 
 def _export_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
     """

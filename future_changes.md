@@ -2,7 +2,10 @@
 
 ### Added
 
-- ggsave(): support font synthesis for *italic* and **bold** styles.
+- ggsave(): 
+  - support font synthesis for *italic* and **bold** styles.
+  - `px` unit support for PNG and PDF formats.
+  - `w`, `h` and `unit` parameters support for SVG [[#1368](https://github.com/JetBrains/lets-plot/issues/1368)].
 
 ### Changed
 

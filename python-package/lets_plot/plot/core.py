@@ -470,7 +470,7 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path=None) -> str:
+    def to_svg(self, path=None, w=None, h=None, unit=None) -> str:
         """
         Export the plot in SVG format.
 
@@ -483,6 +483,12 @@ class PlotSpec(FeatureSpec):
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
+        w : float, default=None
+            Width of the output image in units.
+        h : float, default=None
+            Height of the output image in units.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
 
         Returns
         -------
@@ -507,7 +513,7 @@ class PlotSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        return _to_svg(self, path)
+        return _to_svg(self, path, w=w, h=h, unit=unit)
 
     def to_html(self, path=None, iframe: bool = None) -> str:
         """
@@ -568,12 +574,16 @@ class PlotSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default='in'
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+            - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
@@ -644,12 +654,16 @@ class PlotSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default='in'
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+            - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
@@ -880,10 +894,22 @@ def _theme_dicts_merge(x, y):
     return {**x, **y, **z}
 
 
-def _to_svg(spec, path) -> Union[str, None]:
+def _to_svg(spec, path, w=None, h=None, unit=None) -> Union[str, None]:
     from .. import _kbridge as kbr
 
-    svg = kbr._generate_svg(spec.as_dict())
+    if w is None and h is None and unit is None:
+        def_unit = ''
+    else:
+        def_unit = 'in'
+
+    svg = kbr._generate_svg(
+        spec.as_dict(),
+        w if w is not None else -1,
+        h if h is not None else -1,
+        unit if unit is not None else def_unit,
+        use_css_pixelated_image_rendering=True
+    )
+
     if path is None:
         return svg
     elif isinstance(path, str):
@@ -916,24 +942,15 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
 
 
 def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
-    if w is None and h is None and unit is None and dpi is None:
-        def_scale = 2.0
-        def_dpi = -1
-        def_unit = ""
-    else:
-        def_scale = 1.0
-        def_dpi = 300
-        def_unit = 'in'
-
     return _export_with_magick(
         spec,
         path,
-        scale if scale is not None else def_scale,
+        scale,
         export_format,
-        w if w is not None else -1,
-        h if h is not None else -1,
-        unit if unit is not None else def_unit,
-        dpi if dpi is not None else def_dpi
+        w,
+        h,
+        unit,
+        dpi
     )
 
 
@@ -948,7 +965,13 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit
         file_like_object = path
         file_path = None
 
-    png_base64 = _kbridge._export_png(spec.as_dict(), float(w), float(h), unit, int(dpi), float(scale))
+    png_base64 = _kbridge._export_png(
+        spec.as_dict(),
+        float(w if w is not None else -1),
+        float(h if h is not None else -1),
+        unit,
+        int(dpi if dpi is not None else -1),
+        float(scale))
     png = base64.b64decode(png_base64)
 
     if export_format.lower() == 'png':
@@ -994,19 +1017,3 @@ def _makedirs(path: str) -> str:
     if dirname and not os.path.exists(dirname):
         os.makedirs(dirname)
     return abspath
-
-
-def _to_inches(size, size_unit):
-    if size_unit is None:
-        raise ValueError("Unit must be specified")
-
-    if size_unit == 'in':
-        inches = size
-    elif size_unit == 'cm':
-        inches = size / 2.54
-    elif size_unit == 'mm':
-        inches = size / 25.4
-    else:
-        raise ValueError("Unknown unit: {}. Expected one of: 'in', 'cm', 'mm'".format(size_unit))
-
-    return inches

@@ -28,10 +28,13 @@ static PyObject* export_svg(PyObject* self, PyObject* args) {
     T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
 
     PyObject *rawPlotSpecDict;
+    float width;
+    float height;
+    const char* unit;
     int useCssPixelatedImageRendering;          // 0 - false, 1 - true
-    PyArg_ParseTuple(args, "Op", &rawPlotSpecDict, &useCssPixelatedImageRendering);
+    PyArg_ParseTuple(args, "Offsp", &rawPlotSpecDict, &width, &height, &unit, &useCssPixelatedImageRendering);
 
-    PyObject* svg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, useCssPixelatedImageRendering);
+    PyObject* svg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, width, height, unit, useCssPixelatedImageRendering);
     return svg;
 }
 

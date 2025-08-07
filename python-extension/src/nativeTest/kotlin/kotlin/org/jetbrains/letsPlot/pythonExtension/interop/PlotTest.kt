@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
 import kotlin.test.Test
 
 
@@ -335,7 +337,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = SizeUnit.PX, dpi = dpi)
     }
 
     @Test
@@ -395,19 +397,20 @@ class PlotTest {
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
-        width: Number = -1f,
-        height: Number = -1f,
-        unit: String = "px",
-        dpi: Int = -1,
-        scale: Number = 1.0
+        width: Number? = null,
+        height: Number? = null,
+        unit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null
     ) {
+        val plotSize = if (width!= null && height != null) DoubleVector(width, height) else null
+
         val bitmap = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
-            width = width.toFloat(),
-            height = height.toFloat(),
-            unit=unit,
+            plotSize = plotSize,
+            sizeUnit = unit,
             dpi=dpi,
-            scale=scale.toDouble(),
+            scale=scale,
             fontManager = embeddedFontsManager
         ) ?: error("Failed to export bitmap from plot spec")
 

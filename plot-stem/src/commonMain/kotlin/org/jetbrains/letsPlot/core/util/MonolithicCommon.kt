@@ -22,6 +22,20 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object MonolithicCommon {
+    fun buildSvgImageFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        svgToString: SvgToString,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): String {
+        return buildSvgImageFromRawSpecs(
+            plotSpec = plotSpec,
+            plotSize = plotSize,
+            sizeUnit = SizeUnit.PX, // Default size unit is pixels
+            svgToString = svgToString,
+            computationMessagesHandler = computationMessagesHandler
+        )
+    }
 
     /**
      * Static SVG export
@@ -29,19 +43,21 @@ object MonolithicCommon {
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
+        sizeUnit: SizeUnit,
         svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec)
-        val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
-            ?: SizingPolicy.keepFigureDefaultSize()
 
-        val buildResult = buildPlotsFromProcessedSpecs(
-            plotSpec,
-            containerSize = null,
-            sizingPolicy
+        val (sizingPolicy, _) = estimateExportConfig(
+            plotSize = plotSize,
+            unit = sizeUnit,
+            dpi = null, // SVG does not require DPI
+            scaleFactor = 1.0 // SVG does not require scaling factor
         )
+
+        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
@@ -54,6 +70,18 @@ object MonolithicCommon {
         }
 
         val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
+
+        if (plotSize != null && sizeUnit.isPhysicalUnit) {
+            val pixelWidth = svg.width().get()!!
+            val pixelHeight = svg.height().get()!!
+
+            // Set the SVG size attributes.
+            svg.setAttribute("width", "${plotSize.x}$sizeUnit")
+            svg.setAttribute("height", "${plotSize.y}$sizeUnit")
+            // Set the viewBox to match the SVG size.
+            svg.setAttribute("viewBox", "0 0 $pixelWidth $pixelHeight")
+        }
+
         return svgToString.render(svg)
     }
 
@@ -296,7 +324,7 @@ object MonolithicCommon {
             @Suppress("UNCHECKED_CAST")
             val numMessages = (it as Map<String, Any>).getValue(Option.CompMessagesGen.NUM_MESSAGES) as Number
             val simulatedMessages = List<String>(numMessages.toInt()) { i ->
-                val tail = List(i + 1) { " tail"}.joinToString()
+                val tail = List(i + 1) { " tail" }.joinToString()
                 "$i: Simulated computation message #${i + 1} - $tail"
             }
 

@@ -115,7 +115,7 @@ class SupPlotsSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path=None) -> str:
+    def to_svg(self, path=None, w=None, h=None, unit=None) -> str:
         """
         Export the plot in SVG format.
 
@@ -128,6 +128,13 @@ class SupPlotsSpec(FeatureSpec):
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
+        w : float, default=None
+            Width of the output image in units.
+        h : float, default=None
+            Height of the output image in units.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
+
         Returns
         -------
         str
@@ -156,7 +163,7 @@ class SupPlotsSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        return _to_svg(self, path)
+        return _to_svg(self, path, w=w, h=h, unit=unit)
 
     def to_html(self, path=None, iframe: bool = None) -> str:
         """
@@ -221,12 +228,16 @@ class SupPlotsSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default='in'
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+            - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
@@ -276,12 +287,16 @@ class SupPlotsSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default='in'
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+            - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
