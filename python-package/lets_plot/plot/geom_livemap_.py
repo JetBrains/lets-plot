@@ -90,6 +90,10 @@ def geom_livemap(*,
 
     By default the livemap area has a non-zero inset. You can get rid of this with the theme: ``theme(plot_inset=0)``.
 
+    ---
+
+    When drawing a path with two points, the shortest route is taken. To create a longer arc, add intermediate points.
+
     Examples
     --------
     .. jupyter-execute::
@@ -119,6 +123,26 @@ def geom_livemap(*,
             geom_path(color='white', geodesic=True) + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle("The shortest path between New York and Prague")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [-170, 170, -170, 0, 170],
+            'y': [10, 10, -10, -10, -10],
+            'g': ["'x': [-170, 170]"] * 2 +
+                 ["'x': [-170, 0, 170]"] * 3,
+        }
+        ggplot(data) + \\
+            geom_livemap(zoom=1, location=[180, 0]) + \\
+            geom_path(aes('x', 'y', color='g'), size=1) + \\
+            scale_color_manual(values=['red', 'green']) + \\
+            ggtitle("A path that crosses the antimeridian")
 
     """
     if 'symbol' in other_args:
