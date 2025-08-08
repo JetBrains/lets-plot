@@ -17,9 +17,8 @@ import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.util.PlotExportCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.estimateExportConfig
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -54,10 +53,10 @@ object PlotReprGenerator {
         unit: CPointer<ByteVar>,
         useCssPixelatedImageRendering: Int,
     ): CPointer<PyObject>? {
-        val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-        val sizeUnit = PlotExportCommon.SizeUnit.fromName(unit.toKString())
-
         return try {
+            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+            val sizeUnit = SizeUnit.fromName(unit.toKString())
+
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
@@ -74,6 +73,8 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
+            println(e.message)
+            e.printStackTrace()
             Py_BuildValue("s", svgStr)
         }
     }
@@ -154,7 +155,7 @@ object PlotReprGenerator {
 
         var canvasReg: Registration? = null
         try {
-            val (sizingPolicy, scaleFactor) = estimateExportConfig(plotSize, dpi, sizeUnit, scale)
+            val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
             @Suppress("UNCHECKED_CAST")
             val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
@@ -202,26 +203,32 @@ object PlotReprGenerator {
         dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
-        val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-        val sizeUnit = SizeUnit.fromName(unit.toKString())
-        val dpi = if (dpi >= 0) dpi.toDouble() else null
+        try {
+            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+            val sizeUnit = SizeUnit.fromName(unit.toKString())
+            val dpi = if (dpi >= 0) dpi.toDouble() else null
+            val scaleFactor = if (scale >= 0) scale.toDouble() else null
 
-        val bitmap = exportBitmap(
-            plotSpec = pyDictToMap(plotSpecDict),
-            plotSize = plotSize,
-            sizeUnit = sizeUnit,
-            dpi = dpi,
-            scale = scale.toDouble(),
-            fontManager = defaultFontManager
-        ) ?: return Py_BuildValue("s", "Failed to generate image")
-        // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
-        // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
-        // This happens because PyBytes_FromStringAndSize has the following signature:
-        // PyObject *PyBytes_FromStringAndSize(const char *v, Py_ssize_t len);
-        // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
-        // and generate a function with a String parameter instead of ByteArray
+            val bitmap = exportBitmap(
+                plotSpec = pyDictToMap(plotSpecDict),
+                plotSize = plotSize,
+                sizeUnit = sizeUnit,
+                dpi = dpi,
+                scale = scaleFactor,
+                fontManager = defaultFontManager
+            ) ?: return Py_BuildValue("s", "Failed to generate image")
+            // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
+            // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
+            // This happens because PyBytes_FromStringAndSize has the following signature:
+            // PyObject *PyBytes_FromStringAndSize(const char *v, Py_ssize_t len);
+            // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
+            // and generate a function with a String parameter instead of ByteArray
 
-        val png: ByteArray = Png.encode(bitmap)
-        return Py_BuildValue("s", Base64.encode(png))
+            val png: ByteArray = Png.encode(bitmap)
+            return Py_BuildValue("s", Base64.encode(png))
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            return Py_BuildValue("s", "exportPng() - Exception: ${e.message}")
+        }
     }
 }

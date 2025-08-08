@@ -15,9 +15,8 @@ object PlotExportCommon {
         }
 
         companion object {
-            fun fromName(name: String): SizeUnit {
+            fun fromName(name: String): SizeUnit? {
                 return SizeUnit.entries.find { it.value.equals(name, ignoreCase = true) }
-                    ?: throw IllegalArgumentException("Unknown size unit: $name")
             }
         }
     }
@@ -26,34 +25,67 @@ object PlotExportCommon {
     // Returns a Triple containing:
     // 1. SizingPolicy: The policy for sizing the image.
     // 2. Double: The scale factor for rendering the image.
-    fun estimateExportConfig(plotSize: DoubleVector?, dpi: Number?, unit: SizeUnit? = null, scaleFactor: Number? = null): Pair<SizingPolicy, Double> {
-        val actualScale: Double
-        val actualDpi: Double?
-        val actualUnit: SizeUnit
+    fun computeExportParameters(
+        plotSize: DoubleVector? = null,
+        dpi: Number? = null,
+        unit: SizeUnit? = null,
+        scaleFactor: Number? = null
+    ): Triple<SizingPolicy, Double, SizeUnit> {
+        val exportScale: Double
+        val exportUnit: SizeUnit
+
         if (plotSize == null && dpi == null && unit == null) {
-            // Simple saving of a plot with its default size.
-            // Auto-scale to 2.0x for better quality
-            actualScale = scaleFactor?.toDouble() ?: 2.0
-            actualDpi = null // prevent any DPI scaling
-            actualUnit = SizeUnit.PX // unit is not specified, so default to pixels
-        } else if (plotSize != null && unit == SizeUnit.PX && dpi == null){
-            // Plot size is specified in pixels, dpi is not specified
-            actualDpi = null // prevent any DPI scaling - output image will have the same size in pixels as plotSize
-            actualScale = scaleFactor?.toDouble() ?: 1.0
-            actualUnit = SizeUnit.PX
+            // ggsave(png) - user wants to save a plot without specifying size, DPI, or unit
+            // Size from ggsize() or default, meaning the unit is assumed to be pixels
+            exportUnit = SizeUnit.PX
+            exportScale = scaleFactor?.toDouble() ?: 2.0 // The default scale factor is 2.0 for better quality
+        } else if (plotSize != null && unit == null && dpi == null) {
+            // ggsave(png, 3, 2) - user wants to save a plot with a specific size without specifying unit
+            // Size is assumed to be in inches
+            exportUnit = SizeUnit.IN
+            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
+        } else if (plotSize != null && unit == SizeUnit.PX && dpi == null) {
+            // ggsave(png, 300, 200, px) - user wants to save a plot with a specific pixel size
+            exportUnit = SizeUnit.PX
+            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified pixel size
+        } else if (plotSize != null && unit != null && dpi != null) {
+            // ggsave(png, w=3, h=2, unit=cm, dpi=150)
+            // user wants to save a plot with a specific size in physical units (PX handled earlier)
+            exportUnit = unit
+            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
+        } else if (plotSize == null && unit == null && dpi != null) {
+            // ggsave(png, dpi=150) - user wants to scale the output based on DPI with no specified size and unit
+            // This means pixel ggsize() or default size is used to determine the size of the plot
+            exportUnit = SizeUnit.PX
+            exportScale = scaleFactor?.toDouble() ?: 1.0
+        } else if (plotSize != null && unit == null && dpi != null) {
+            // ggsave(png, 3, 2, dpi=150) - user wants to save a plot with a specific size in physical units and DPI
+            // With specified size we assume the size is in inches
+            // No default scaling to preserve the specified size
+            exportUnit = SizeUnit.IN
+            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
         } else {
-            // Regular case with plot size in physical units or DPI specified
-            actualScale = scaleFactor?.toDouble() ?: 1.0 // Default is 1.0 to preserve the specified size
-            actualDpi = dpi?.toDouble() ?: 300.0 // Default DPI is 300 if not specified - for printing
-            actualUnit = unit ?: SizeUnit.IN // Default size unit is inches
+            // ggsave(png, w=3, h=2, unit=cm)
+            // ggsave(png, w=3, h=2, unit=cm, scale=2)
+            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default is 1.0 to preserve the specified size
+            exportUnit = unit ?: SizeUnit.PX // Default size unit is inches
         }
+
+        val exportDpi = dpi?.toDouble() ?: when (exportUnit) {
+            SizeUnit.IN,
+            SizeUnit.CM,
+            SizeUnit.MM -> 300.0
+
+            SizeUnit.PX -> 96.0
+        }
+
 
         val sizingPolicy = when {
             plotSize == null -> SizingPolicy.keepFigureDefaultSize()
             else -> {
                 // Build the plot in logical pixels (always 96 DPI) and then render it scaled.
                 // Otherwise, the plot will be rendered incorrectly, i.e., with too many tick labels and small font sizes.
-                val (logicalWidth, logicalHeight) = when (actualUnit) {
+                val (logicalWidth, logicalHeight) = when (exportUnit) {
                     SizeUnit.IN -> plotSize.mul(96.0) //(w * 96) to (h * 96)
                     SizeUnit.CM -> plotSize.mul(96 / 2.54) //(w * 96 / 2.54) to (h * 96 / 2.54)
                     SizeUnit.MM -> plotSize.mul(96 / 25.4) //(w * 96 / 25.4) to (h * 96 / 25.4)
@@ -64,16 +96,9 @@ object PlotExportCommon {
             }
         }
 
-        val scaleFactor = when {
-            // plot with ggsize() or default size, user want to print it with a specific DPI
-            actualDpi != null && plotSize == null -> actualDpi / 96.0 * actualScale
-            // user want to print a plot with a specific DPI and size in physical units
-            actualDpi != null && plotSize != null && actualUnit.isPhysicalUnit -> actualDpi.toDouble() / 96.0 * actualScale
-            else -> actualScale // no additional scaling needed
-        }
+        val finalScaleFactor = exportDpi / 96.0 * exportScale
 
-        println("estimateExportConfig() - plotSize: $plotSize, dpi: $dpi, unit: $unit, scaleFactor: $scaleFactor")
-        return Pair(sizingPolicy, scaleFactor)
+        return Triple(sizingPolicy, finalScaleFactor, exportUnit)
     }
 
 }

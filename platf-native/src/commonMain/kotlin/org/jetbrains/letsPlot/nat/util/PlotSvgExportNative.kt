@@ -31,6 +31,6 @@ expect object PlotSvgExportNative {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector? = null,
         useCssPixelatedImageRendering: Boolean = true,
-        sizeUnit: SizeUnit = SizeUnit.PX,
+        sizeUnit: SizeUnit? = null,
     ): String
 }

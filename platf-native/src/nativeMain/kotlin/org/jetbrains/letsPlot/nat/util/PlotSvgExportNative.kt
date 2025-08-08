@@ -23,7 +23,7 @@ actual object PlotSvgExportNative {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         useCssPixelatedImageRendering: Boolean,
-        sizeUnit: SizeUnit
+        sizeUnit: SizeUnit?
     ): String {
         return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,

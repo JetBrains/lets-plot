@@ -897,18 +897,7 @@ def _theme_dicts_merge(x, y):
 def _to_svg(spec, path, w=None, h=None, unit=None) -> Union[str, None]:
     from .. import _kbridge as kbr
 
-    if w is None and h is None and unit is None:
-        def_unit = ''
-    else:
-        def_unit = 'in'
-
-    svg = kbr._generate_svg(
-        spec.as_dict(),
-        w if w is not None else -1,
-        h if h is not None else -1,
-        unit if unit is not None else def_unit,
-        use_css_pixelated_image_rendering=True
-    )
+    svg = kbr._generate_svg(spec.as_dict(), w, h, unit, use_css_pixelated_image_rendering=True)
 
     if path is None:
         return svg
@@ -942,19 +931,6 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
 
 
 def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
-    return _export_with_magick(
-        spec,
-        path,
-        scale,
-        export_format,
-        w,
-        h,
-        unit,
-        dpi
-    )
-
-
-def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit, dpi) -> Union[str, None]:
     import base64
     from .. import _kbridge
 
@@ -965,13 +941,7 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit
         file_like_object = path
         file_path = None
 
-    png_base64 = _kbridge._export_png(
-        spec.as_dict(),
-        float(w if w is not None else -1),
-        float(h if h is not None else -1),
-        unit,
-        int(dpi if dpi is not None else -1),
-        float(scale))
+    png_base64 = _kbridge._generate_png(spec.as_dict(), w, h, unit, dpi, scale)
     png = base64.b64decode(png_base64)
 
     if export_format.lower() == 'png':

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.export
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.estimateExportConfig
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -61,7 +61,7 @@ object PlotImageExport {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
     ): ImageData {
-        val (sizingPolicy, scaleFactor) = estimateExportConfig(plotSize, targetDPI, unit, scalingFactor)
+        val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
         val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
             rawSpec = plotSpec,

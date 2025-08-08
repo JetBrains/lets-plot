@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.estimateExportConfig
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
@@ -45,19 +45,14 @@ object MonolithicCommon {
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        sizeUnit: SizeUnit,
+        sizeUnit: SizeUnit?,
         svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec)
 
-        val (sizingPolicy, _) = estimateExportConfig(
-            plotSize = plotSize,
-            unit = sizeUnit,
-            dpi = null, // SVG does not require DPI
-            scaleFactor = 1.0 // SVG does not require scaling factor
-        )
+        val (sizingPolicy, _, unit) = computeExportParameters(plotSize = plotSize, unit = sizeUnit)
 
         val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy)
         if (buildResult.isError) {
@@ -73,7 +68,7 @@ object MonolithicCommon {
 
         val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
 
-        if (plotSize != null && sizeUnit.isPhysicalUnit) {
+        if (plotSize != null && unit.isPhysicalUnit) {
             val pixelWidth = svg.width().get()!!
             val pixelHeight = svg.height().get()!!
 

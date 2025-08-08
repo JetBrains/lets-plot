@@ -27,7 +27,7 @@ object PlotSvgExportCommon {
         plotSize: DoubleVector? = null,
         rgbEncoder: RGBEncoder,
         useCssPixelatedImageRendering: Boolean,
-        sizeUnit: SizeUnit = SizeUnit.PX,
+        sizeUnit: SizeUnit? = null,
     ): String {
         val svgToString = SvgToString(rgbEncoder, useCssPixelatedImageRendering)
         return MonolithicCommon.buildSvgImageFromRawSpecs(plotSpec, plotSize, sizeUnit, svgToString) { messages ->
