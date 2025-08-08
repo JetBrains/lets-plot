@@ -23,6 +23,19 @@ def assert_png(file_path, w, h):
         assert img.size == (w, h)
 
 
+def assert_svg(file_path, w=None, h=None, view_box=None):
+    with open(file_path, 'rb') as f:
+        content = f.read()
+        assert content.startswith(b'<svg xmlns="http://www.w3.org/2000/svg"')
+        if w is not None:
+            assert f'width="{w}"' in content.decode('utf-8')
+        if h is not None:
+            assert f'height="{h}"' in content.decode('utf-8')
+        if view_box is not None:
+            assert f'viewBox="{view_box}"' in content.decode('utf-8')
+
+
+
 def temp_file(filename):
     temp_dir = tempfile.gettempdir()
     return f"{temp_dir}/{filename}"
@@ -34,9 +47,13 @@ def test_ggsave_svg():
 
     print("Output path:", out_path)
 
-    with open(out_path, 'rb') as f:
-        content = f.read()
-        assert content.startswith(b'<svg xmlns="http://www.w3.org/2000/svg"')
+    assert_svg(out_path)
+
+def test_ggsave_svg_wh():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3)
+    print("Output path:", out_path)
+    assert_svg(out_path, w="5.0in", h="3.0in", view_box="0 0 480.0 288.0")
 
 
 def test_ggsave_png():

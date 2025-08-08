@@ -82,21 +82,21 @@ class PlotSvgExportTest {
     }
 
     @Test
-    fun `svg export with pixel plotSize`() {
+    fun `save(p, w=5, h=3)`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
-            plotSize = DoubleVector(400, 200),
+            plotSize = DoubleVector(5, 3),
             svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
-        assertThat(root.attributes["width"]).isEqualTo("400.0")
-        assertThat(root.attributes["height"]).isEqualTo("200.0")
-        assertThat(root.attributes).doesNotContainKey("viewBox")
+        assertThat(root.attributes["width"]).isEqualTo("5.0in")
+        assertThat(root.attributes["height"]).isEqualTo("3.0in")
+        assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")
     }
 
     @Test
-    fun `svg export with physical plotSize`() {
+    fun `save(p, w=8, h=6, unit='in')`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
