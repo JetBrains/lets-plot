@@ -6,6 +6,8 @@
 
 ### Changed
 
+- `facet_wrap()` now drops factor levels that do not appear in the data (i.e., empty panels) by default [[#1322](https://github.com/JetBrains/lets-plot/issues/1322)]. <br>
+  To keep unused factor levels, use the new `drop` parameter, i.e., `drop = False`.
 
 ### Fixed
 - geom_livemap: can't draw a path crossing the antimeridian [[#649](https://github.com/JetBrains/lets-plot/issues/649)].
