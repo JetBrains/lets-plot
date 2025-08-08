@@ -24,6 +24,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object MonolithicCommon {
+    /**
+     * Static SVG export
+     */
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,

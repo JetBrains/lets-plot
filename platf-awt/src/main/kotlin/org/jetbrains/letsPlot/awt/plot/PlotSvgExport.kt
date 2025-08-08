@@ -15,25 +15,6 @@ object PlotSvgExport {
      * @param plotSpec Raw specification of a plot.
      * @param plotSize Desired plot size.
      * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun buildSvgImageFromRawSpecs(
-        plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector? = null,
-        useCssPixelatedImageRendering: Boolean = true
-    ): String {
-        return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
-            plotSpec = plotSpec,
-            plotSize = plotSize,
-            rgbEncoder = RGBEncoderAwt(),
-            useCssPixelatedImageRendering = useCssPixelatedImageRendering
-        )
-    }
-
-    /**
-     * @param plotSpec Raw specification of a plot.
-     * @param plotSize Desired plot size.
-     * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
      * @param sizeUnit Size unit for the plot size. The default is pixels (PX).
      */
     @Suppress("MemberVisibilityCanBePrivate")
@@ -41,7 +22,7 @@ object PlotSvgExport {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector? = null,
         useCssPixelatedImageRendering: Boolean = true,
-        sizeUnit: SizeUnit
+        sizeUnit: SizeUnit = SizeUnit.PX
     ): String {
         return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,

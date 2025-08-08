@@ -26,7 +26,7 @@ class PlotSvgExportTest {
         """.trimMargin())
 
     @Test
-    fun `export svg with ggsize`() {
+    fun `buildSvg(ggsize(222, 111))`() {
         val plotSpecWithGgSize = plotSpec.toMutableMap().apply {
             this["ggsize"] = mapOf(
                 "width" to 222.0,
@@ -47,11 +47,11 @@ class PlotSvgExportTest {
     }
 
     @Test
-    fun `plotsize should override ggsize`() {
+    fun `buildSvg(ggsize(222, 111), w=400, h=200)`() {
         val plotSpecWithGgSize = plotSpec.toMutableMap().apply {
             this["ggsize"] = mapOf(
-                "width" to 900.0,
-                "height" to 900.0
+                "width" to 222.0,
+                "height" to 111.0
             )
         }
 
@@ -68,7 +68,7 @@ class PlotSvgExportTest {
     }
 
     @Test
-    fun `svg export without plotSize`() {
+    fun `buildSvg()`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = null,
@@ -82,21 +82,21 @@ class PlotSvgExportTest {
     }
 
     @Test
-    fun `save(p, w=5, h=3)`() {
+    fun `buildSvg(w=500, h=300)`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
-            plotSize = DoubleVector(5, 3),
+            plotSize = DoubleVector(500, 300),
             svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
-        assertThat(root.attributes["width"]).isEqualTo("5.0in")
-        assertThat(root.attributes["height"]).isEqualTo("3.0in")
-        assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")
+        assertThat(root.attributes["width"]).isEqualTo("500.0")
+        assertThat(root.attributes["height"]).isEqualTo("300.0")
+        assertThat(root.attributes).doesNotContainKey("viewBox")
     }
 
     @Test
-    fun `save(p, w=8, h=6, unit='in')`() {
+    fun `buildSvg(w=8, h=6, unit='in')`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
