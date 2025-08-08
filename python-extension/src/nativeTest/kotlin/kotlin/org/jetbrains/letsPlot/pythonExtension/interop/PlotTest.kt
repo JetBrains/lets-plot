@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import kotlin.test.Test
 
 
@@ -155,7 +155,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_explicit_size_test.png", plotSpec, width = 300, height = 300)
+        assertPlot("plot_explicit_size_test.png", plotSpec, DoubleVector(300, 300))
     }
 
     @Test
@@ -191,7 +191,7 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         // 300x300 is the size in pixels, scale = 2.0 means the bitmap will be 600x600 pixels
-        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, width = 300, height = 300, scale = 2.0)
+        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, DoubleVector(300, 300), scale = 2.0)
     }
 
     @Test
@@ -273,7 +273,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -289,7 +289,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -305,7 +305,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi, scale=2)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi, scale=2)
     }
 
     @Test
@@ -321,7 +321,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -337,7 +337,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = SizeUnit.PX, dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.PX, dpi = dpi)
     }
 
     @Test
@@ -390,6 +390,11 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
+        val bitmap = PlotReprGenerator.exportBitmap(
+            plotSpec = plotSpec,
+            scale = 2.0,
+            fontManager = embeddedFontsManager,
+        ) ?: error("Failed to export bitmap from plot spec")
 
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale=2)
     }
@@ -397,14 +402,11 @@ class PlotTest {
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
-        width: Number? = null,
-        height: Number? = null,
-        unit: SizeUnit? = null,
+        plotSize: DoubleVector? = null,
+        unit: SizeUnit? = SizeUnit.PX,
         dpi: Number? = null,
-        scale: Number? = null
+        scale: Number? = 1
     ) {
-        val plotSize = if (width!= null && height != null) DoubleVector(width, height) else null
-
         val bitmap = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
             plotSize = plotSize,

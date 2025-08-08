@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object PlotSvgExportCommon {

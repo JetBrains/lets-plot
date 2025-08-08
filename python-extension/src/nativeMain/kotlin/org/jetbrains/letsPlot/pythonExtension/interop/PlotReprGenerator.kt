@@ -17,8 +17,9 @@ import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
-import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.estimateExportConfig
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -54,7 +55,7 @@ object PlotReprGenerator {
         useCssPixelatedImageRendering: Int,
     ): CPointer<PyObject>? {
         val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-        val sizeUnit = SizeUnit.fromName(unit.toKString())
+        val sizeUnit = PlotExportCommon.SizeUnit.fromName(unit.toKString())
 
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
@@ -143,17 +144,17 @@ object PlotReprGenerator {
 
     fun exportBitmap(
         plotSpec: Map<*, *>,
-        plotSize: DoubleVector?,
-        sizeUnit: SizeUnit?,
-        dpi: Number?,
-        scale: Number?,
+        plotSize: DoubleVector? = null,
+        sizeUnit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null,
         fontManager: MagickFontManager
     ): Bitmap? {
         println("exportBitmap() - plotSize: $plotSize, sizeUnit: $sizeUnit, dpi: $dpi, scale: $scale")
 
         var canvasReg: Registration? = null
         try {
-            val (sizingPolicy, scaleFactor) = MonolithicCommon.estimateExportConfig(plotSize, dpi, sizeUnit, scale)
+            val (sizingPolicy, scaleFactor) = estimateExportConfig(plotSize, dpi, sizeUnit, scale)
 
             @Suppress("UNCHECKED_CAST")
             val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(

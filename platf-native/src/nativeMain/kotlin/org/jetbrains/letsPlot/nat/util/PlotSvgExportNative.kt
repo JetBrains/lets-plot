@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.nat.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.jetbrains.letsPlot.nat.encoding.RGBEncoderNative
 

@@ -6,6 +6,7 @@ import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 import kotlin.test.Test
 
@@ -99,7 +100,7 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
-            sizeUnit = MonolithicCommon.SizeUnit.IN,
+            sizeUnit = SizeUnit.IN,
             svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
         ) { _ -> }
 

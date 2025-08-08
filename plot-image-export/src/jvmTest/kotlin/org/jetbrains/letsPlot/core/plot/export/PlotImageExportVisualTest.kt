@@ -7,8 +7,8 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit
-import org.jetbrains.letsPlot.core.util.MonolithicCommon.SizeUnit.CM
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.CM
 import javax.imageio.ImageIO
 import kotlin.test.Test
 

@@ -72,6 +72,7 @@ object PlotExportCommon {
             else -> actualScale // no additional scaling needed
         }
 
+        println("estimateExportConfig() - plotSize: $plotSize, dpi: $dpi, unit: $unit, scaleFactor: $scaleFactor")
         return Pair(sizingPolicy, scaleFactor)
     }
 
