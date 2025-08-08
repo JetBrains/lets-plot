@@ -130,7 +130,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         When a list is given, then values in the list are positionally matched to variables in ``facets``.
     format : str or list
         Specify the format pattern for displaying faceting values.
-        The `format` values are positionally matched to variables in `facets`.
+        The ``format`` values are positionally matched to variables in ``facets``.
     drop : bool, default=True
         Specifies whether to drop unused factor levels (the default behavior)
         or to show all factor levels regardless of whether they occur in the data.
