@@ -57,7 +57,7 @@ object PlotExportCommon {
         } else {
             // ggsave(png, w=3, h=2, unit=cm)
             // ggsave(png, w=3, h=2, unit=cm, scale=2)
-            exportUnit = unit ?: SizeUnit.PX // Default size unit is inches
+            exportUnit = unit ?: SizeUnit.PX // The default size unit is inches
             exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
         }
 

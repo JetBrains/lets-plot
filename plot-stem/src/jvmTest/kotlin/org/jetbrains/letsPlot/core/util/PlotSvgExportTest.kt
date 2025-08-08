@@ -109,6 +109,4 @@ class PlotSvgExportTest {
         assertThat(root.attributes["height"]).isEqualTo("6.0in")
         assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")
     }
-
-
 }
