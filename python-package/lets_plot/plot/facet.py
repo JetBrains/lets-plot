@@ -107,7 +107,7 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1,
                   x_labwidth=x_labwidth, y_labwidth=y_labwidth)
 
 
-def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=None, dir="h", labwidth=None):
+def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=None, drop=None, dir="h", labwidth=None):
     """
     Split data by one or more faceting variables.
     For each data subset creates a plot panel and lays out panels
@@ -122,7 +122,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
     nrow : int
         Number of rows.
     scales : str
-        Specify whether scales are shared across all facets.
+        Specifies whether scales are shared across all facets.
         'fixed' - shared (the default), 'free' - vary across both rows and columns,
         'free_x' or 'free_y' - vary across rows or columns respectively.
     order : int or list, default=1
@@ -130,9 +130,12 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         When a list is given, then values in the list are positionally matched to variables in ``facets``.
     format : str or list
         Specify the format pattern for displaying faceting values.
-        The ``format`` values are positionally matched to variables in ``facets``.
+        The `format` values are positionally matched to variables in `facets`.
+    drop : bool, default=True
+        Specifies whether to drop unused factor levels (the default behavior)
+        or to show all factor levels regardless of whether they occur in the data.
     dir : {'h', 'v'}, default='h'
-        Direction: either 'h' for horizontal, or 'v' for vertical.
+        Direction: either 'h' for horizontal or 'v' for vertical.
     labwidth : int or list
         The maximum label length (in characters) before a line breaking is applied.
         If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
@@ -198,6 +201,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
                   scales=scales,
                   order=order,
                   format=format,
+                  drop=drop,
                   dir=dir,
                   labwidth=labwidth)
 

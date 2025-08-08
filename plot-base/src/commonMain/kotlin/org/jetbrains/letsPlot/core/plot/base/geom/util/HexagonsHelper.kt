@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -22,8 +21,6 @@ class HexagonsHelper(
     ctx: GeomContext,
     private val geometryFactory: (DataPointAesthetics) -> List<DoubleVector>?
 ) : LinesHelper(pos, coord, ctx) {
-    private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
-
     fun createHexagons(): List<LinePath> {
         val pointCount = myAesthetics.dataPointCount()
         val hexagons: MutableList<LinePath> = mutableListOf()
