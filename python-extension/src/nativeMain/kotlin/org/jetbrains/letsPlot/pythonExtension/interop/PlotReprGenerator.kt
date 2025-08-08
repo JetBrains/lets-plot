@@ -151,8 +151,6 @@ object PlotReprGenerator {
         scale: Number? = null,
         fontManager: MagickFontManager
     ): Bitmap? {
-        println("exportBitmap() - plotSize: $plotSize, sizeUnit: $sizeUnit, dpi: $dpi, scale: $scale")
-
         var canvasReg: Registration? = null
         try {
             val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, dpi, sizeUnit, scale)
