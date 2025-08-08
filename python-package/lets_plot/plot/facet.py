@@ -126,7 +126,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         'fixed' - shared (the default), 'free' - vary across both rows and columns,
         'free_x' or 'free_y' - vary across rows or columns respectively.
     order : int or list, default=1
-        Specify ordering direction panels. 1 - ascending, -1 - descending, 0 - no ordering.
+        Specify the ordering direction of panels. 1 - ascending, -1 - descending, 0 - no ordering.
         When a list is given, then values in the list are positionally matched to variables in ``facets``.
     format : str or list
         Specify the format pattern for displaying faceting values.
