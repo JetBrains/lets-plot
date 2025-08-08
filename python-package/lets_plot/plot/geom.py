@@ -43,11 +43,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -58,35 +58,35 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate),
         'sum' (counts the number of points at each location - might help to work around overplotting).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     size_unit : {'x', 'y', 'min', 'max'}
         Relate the size of the point to the length of the unit step along one of the axes.
         'x' uses the unit step along the x-axis, 'y' uses the unit step along the y-axis.
@@ -105,7 +105,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -115,7 +115,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     two continuous variables, although it can also be used with one continuous
     and one categorical variable, or two categorical variables.
 
-    `geom_point()` understands the following aesthetics mappings:
+    ``geom_point()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -129,38 +129,39 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -240,11 +241,11 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -254,40 +255,40 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame`
+    map : ``GeoDataFrame``
         Data containing coordinates of lines.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     flat : bool, default=False.
         True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
         False - allow a line to be reprojected, so it can become a curve.
     geodesic : bool, default=False
-        Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
+        Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -298,15 +299,15 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_path()` connects the observations in the order in which they appear in the data.
-    `geom_path()` lets you explore how two variables are related over time.
+    ``geom_path()`` connects the observations in the order in which they appear in the data.
+    ``geom_path()`` lets you explore how two variables are related over time.
 
-    `geom_path()` understands the following aesthetics mappings:
+    ``geom_path()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -317,29 +318,29 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``LineString`` and ``MultiLineString``.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of ``map_join`` parameter are as follows.
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
@@ -424,15 +425,15 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     """
     Connect points in the order of the variable on the x-axis.
     In case points need to be connected in the order in which they appear in the data,
-    use `geom_path()`.
+    use `geom_path() <https://lets-plot.org/python/pages/api/lets_plot.geom_path.html>`__.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -442,22 +443,22 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -470,15 +471,15 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_line()` connects the observations in the order of the variable on the x-axis.
-    `geom_line()` can be used to plot time series.
+    ``geom_line()`` connects the observations in the order of the variable on the x-axis.
+    ``geom_line()`` can be used to plot time series.
 
-    `geom_line()` understands the following aesthetics mappings:
+    ``geom_line()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -489,8 +490,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -559,11 +560,11 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='smooth'
@@ -573,22 +574,22 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -596,7 +597,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
-        If the value of the `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
+        If the value of the ``deg`` parameter is greater than 1 then linear model becomes polynomial of the given degree.
     n : int
         Number of points to evaluate smoother at.
     se : bool, default=True
@@ -626,12 +627,12 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_smooth()` aids the eye in seeing patterns in the presence of overplotting.
+    ``geom_smooth()`` aids the eye in seeing patterns in the presence of overplotting.
 
     Computed variables:
 
@@ -640,7 +641,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ..ymax.. : upper pointwise confidence interval around the mean.
     - ..se.. : standard error.
 
-    `geom_smooth()` understands the following aesthetics mappings:
+    ``geom_smooth()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -652,8 +653,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -745,11 +746,11 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='count'
@@ -759,26 +760,26 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='stack'
+    position : str or ``FeatureSpec``, default='stack'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    labels : `layer_labels`
-        Result of the call to the `layer_labels()` function.
+    labels : ``layer_labels``
+        Result of the call to the `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ function.
         Specify style and content of the annotations.
     orientation : str
         Specify the axis that the layer's stat and geom should run along.
@@ -796,15 +797,15 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_bar()` makes the height of the bar proportional to the number
+    ``geom_bar()`` makes the height of the bar proportional to the number
     of observed variable values, mapped to x-axis. Is intended to use for discrete data.
     If used for continuous data with stat='bin' produces histogram for binned data.
-    `geom_bar()` handles no group aesthetics.
+    ``geom_bar()`` handles no group aesthetics.
 
     Computed variables:
 
@@ -815,7 +816,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - ..sumprop.. : proportion of points with the same x-axis coordinate among all points in the dataset.
     - ..sumpct.. : proportion of points with the same x-axis coordinate among all points in the dataset in percent.
 
-    `geom_bar()` understands the following aesthetics mappings:
+    ``geom_bar()`` understands the following aesthetics mappings:
 
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
@@ -827,8 +828,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -913,11 +914,11 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -927,35 +928,35 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='stack'
+    position : str or ``FeatureSpec``, default='stack'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     threshold : float, default=None
-        If a bin's `..count..` is less than the threshold, it will be removed, but only if it is on the left or right edge of the histogram.
+        If a bin's ``..count..`` is less than the threshold, it will be removed, but only if it is on the left or right edge of the histogram.
         Dropping empty edge bins is particularly useful for faceted plots with free scales.
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    labels : `layer_labels`
-        Result of the call to the `layer_labels()` function.
+    labels : ``layer_labels``
+        Result of the call to the `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ function.
         Specify style and content of the annotations.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     bins : int, default=30
-        Number of bins. Overridden by `binwidth`.
+        Number of bins. Overridden by ``binwidth``.
     binwidth : float
         The width of the bins. The default is to use bin widths that cover
         the range of the data. You should always override this value,
@@ -976,12 +977,12 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_histogram()` displays a 1D distribution by dividing the variable
+    ``geom_histogram()`` displays a 1D distribution by dividing the variable
     mapped to the x-axis into bins and counting the number of observations in each bin.
 
     Computed variables:
@@ -992,7 +993,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - ..sumpct.. : normalized number of points so that sum of y-values is 100.
     - ..binwidth.. : width of each bin.
 
-    `geom_histogram()` understands the following aesthetics mappings:
+    ``geom_histogram()`` understands the following aesthetics mappings:
 
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
@@ -1004,8 +1005,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -1092,32 +1093,32 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     binwidth : float
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
     bins : int, default=30
-        When method is 'histodot', this specifies number of bins. Overridden by `binwidth`.
+        When method is 'histodot', this specifies number of bins. Overridden by ``binwidth``.
     method : {'dotdensity', 'histodot'}, default='dotdensity'
         Use 'dotdensity' for dot-density binning,
         or 'histodot' for fixed bin widths (like in geom_histogram).
@@ -1147,7 +1148,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -1160,7 +1161,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
     - ..count.. : number of points with the x-axis coordinate in the same bin.
     - ..binwidth.. : max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
 
-    `geom_dotplot()` understands the following aesthetics mappings:
+    ``geom_dotplot()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -1170,8 +1171,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -1258,38 +1259,38 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin2d'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : list of int, default=[30, 30]
-        Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+        Number of bins in both directions, vertical and horizontal. Overridden by ``binwidth``.
     binwidth : list of float
         The width of the bins in both directions, vertical and horizontal.
-        Override `bins`. The default is to use bin widths that cover the entire range of the data.
+        Override ``bins``. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
         Specify whether to remove all bins with 0 counts.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -1304,17 +1305,16 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-
     Computed variables:
 
     - ..count.. : number of points with coordinates in the same bin.
 
-    `geom_bin2d()` understands the following aesthetics mappings:
+    ``geom_bin2d()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -1326,8 +1326,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -1435,56 +1435,56 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='binhex'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : list of int, default=[30, 30]
-        Number of hexagonal bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+        Number of hexagonal bins in both directions, vertical and horizontal. Overridden by ``binwidth``.
     binwidth : list of float
         The width of the hexagonal bins in both directions, vertical and horizontal.
-        Override `bins`. The default is to use bin widths that cover the entire range of the data.
+        Override ``bins``. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
         Specify whether to remove all hexagonal bins with 0 counts.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for width of the hexagon.
         Possible values:
 
-        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin width (`binwidth[0]`); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
+        - 'res': if ``stat='binhex'``, the unit equals the hexagonal bin width (``binwidth[0]``); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
         Unit for height of the hexagon.
         Possible values:
 
-        - 'res': if `stat='binhex'`, the unit equals the hexagonal bin height (`binwidth[1]`); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
+        - 'res': if ``stat='binhex'``, the unit equals the hexagonal bin height (``binwidth[1]``); otherwise, it represents the smallest distance between adjacent hexagons along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -1499,17 +1499,16 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-
     Computed variables:
 
     - ..count.. : number of points with coordinates in the same hexagonal bin.
 
-    `geom_hex()` understands the following aesthetics mappings:
+    ``geom_hex()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -1523,8 +1522,8 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -1629,31 +1628,31 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
@@ -1662,7 +1661,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
         - 'res': the unit equals the smallest distance between adjacent tiles along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     height_unit : {'res', 'identity', 'size', 'px'}, default='res'
@@ -1671,7 +1670,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
         - 'res': the unit equals the smallest distance between adjacent tiles along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -1686,12 +1685,12 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_tile()` understands the following aesthetics mappings:
+    ``geom_tile()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
@@ -1705,8 +1704,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -1798,32 +1797,32 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     """
     Display rectangles with x, y values mapped to the center of the tile.
     This is a high performance special function for same-sized tiles.
-    Much faster than `geom_tile()` but doesn't support width/height and color.
+    Much faster than `geom_tile() <https://lets-plot.org/python/pages/api/lets_plot.geom_tile.html>`__ but doesn't support width/height and color.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
@@ -1835,12 +1834,12 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_raster()` understands the following aesthetics mappings:
+    ``geom_raster()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
@@ -1897,11 +1896,11 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1911,22 +1910,22 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width_unit : {'res', 'identity', 'size', 'px'}, default='res'
@@ -1935,7 +1934,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
         - 'res': the unit equals the smallest distance between adjacent error bars along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -1948,15 +1947,15 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
-    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    ``geom_errorbar()`` represents a vertical interval, defined by ``x``, ``ymin``, ``ymax``,
+    or a horizontal interval, defined by ``y``, ``xmin``, ``xmax``.
 
-    `geom_errorbar()` understands the following aesthetics mappings:
+    ``geom_errorbar()`` understands the following aesthetics mappings:
 
     - x or y: x-axis or y-axis coordinates for vertical or horizontal error bar, respectively.
     - ymin or xmin: lower bound for vertical or horizontal error bar, respectively.
@@ -1969,8 +1968,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -2069,11 +2068,11 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2083,26 +2082,26 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default=position_dodge(width=.95)
+    position : str or ``FeatureSpec``, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    labels : `layer_labels`
-        Result of the call to the `layer_labels()` function.
+    labels : ``layer_labels``
+        Result of the call to the `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ function.
         Specify style and content of the annotations.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
@@ -2112,7 +2111,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
         - 'res': the unit equals the smallest distance between adjacent crossbars along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -2127,16 +2126,16 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
-    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    ``geom_crossbar()`` represents a vertical interval, defined by ``x``, ``ymin``, ``ymax``,
+    or a horizontal interval, defined by ``y``, ``xmin``, ``xmax``.
     The mean is represented by horizontal (vertical) line.
 
-    `geom_crossbar()` understands the following aesthetics mappings:
+    ``geom_crossbar()`` understands the following aesthetics mappings:
 
     - x or y: x-axis or y-axis coordinates for vertical or horizontal bar, respectively.
     - y or x : position of median bar for vertical or horizontal bar, respectively.
@@ -2151,8 +2150,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -2227,11 +2226,11 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2241,22 +2240,22 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     fatten : float, default=5.0
@@ -2273,16 +2272,16 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
-    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
-    The mid-point is defined by `y` or `x`, respectively.
+    ``geom_pointrange()`` represents a vertical interval, defined by ``x``, ``ymin``, ``ymax``,
+    or a horizontal interval, defined by ``y``, ``xmin``, ``xmax``.
+    The mid-point is defined by ``y`` or ``x``, respectively.
 
-    `geom_pointrange()` understands the following aesthetics mappings:
+    ``geom_pointrange()`` understands the following aesthetics mappings:
 
     - x or y: x-axis or y-axis coordinates for vertical or horizontal interval, respectively.
     - y or x : position of mid-point for vertical or horizontal interval, respectively.
@@ -2299,8 +2298,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -2368,11 +2367,11 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2382,22 +2381,22 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -2410,15 +2409,15 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
-    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    ``geom_linerange()`` represents a vertical interval, defined by ``x``, ``ymin``, ``ymax``,
+    or a horizontal interval, defined by ``y``, ``xmin``, ``xmax``.
 
-    `geom_linerange()` understands the following aesthetics mappings:
+    ``geom_linerange()`` understands the following aesthetics mappings:
 
     - x or y: x-axis or y-axis coordinates for vertical or horizontal line range, respectively.
     - ymin or xmin: lower bound for vertical or horizontal line range, respectively.
@@ -2430,8 +2429,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -2500,31 +2499,31 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contour'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : int
@@ -2541,18 +2540,18 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_contour()` displays contours of a 3d surface in 2d.
+    ``geom_contour()`` displays contours of a 3d surface in 2d.
 
     Computed variables:
 
     - ..level.. : height of a contour.
 
-    `geom_contour()` understands the following aesthetics mappings:
+    ``geom_contour()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
@@ -2564,8 +2563,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -2654,31 +2653,31 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contourf'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     bins : int
@@ -2697,18 +2696,18 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_contourf()` fills contours of a 3d surface in 2d.
+    ``geom_contourf()`` fills contours of a 3d surface in 2d.
 
     Computed variables:
 
     - ..level.. : height of a contour.
 
-    `geom_contourf()` understands the following aesthetics mappings:
+    ``geom_contourf()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
@@ -2804,44 +2803,44 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data contains coordinates of polygon vertices on map.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -2854,15 +2853,15 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_polygon()` draws polygons, which are filled paths.
+    ``geom_polygon()`` draws polygons, which are filled paths.
     Each vertex of the polygon requires a separate row in the data.
 
-    `geom_polygon()` understands the following aesthetics mappings:
+    ``geom_polygon()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the vertices of the polygon.
     - y : y-axis coordinates of the vertices of the polygon.
@@ -2874,31 +2873,32 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Polygon`` and ``MultiPolygon``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_boundaries()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_boundaries() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_boundaries>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
@@ -2990,11 +2990,11 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3004,35 +3004,35 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -3045,16 +3045,16 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_map()` draws polygons which boundaries are specified by `map` parameter.
-    Aesthetics of ploygons (`fill` etc.) are computed basing on input data and mapping
-    (see `data` and `mapping` arguments).
+    ``geom_map()`` draws polygons which boundaries are specified by ``map`` parameter.
+    Aesthetics of ploygons (``fill`` etc.) are computed basing on input data and mapping
+    (see ``data`` and ``mapping`` arguments).
 
-    `geom_map()` understands the following aesthetics:
+    ``geom_map()`` understands the following aesthetics:
 
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
@@ -3064,31 +3064,32 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Polygon`` and ``MultiPolygon``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_boundaries()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_boundaries() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_boundaries>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of ``map_join`` parameter are as follows.
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
@@ -3167,28 +3168,28 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
     slope : float
         The line slope.
@@ -3204,14 +3205,14 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
     Unlike most other geoms, this geom does not affect the x and y scales.
 
-    `geom_abline()` understands the following aesthetics mappings:
+    ``geom_abline()`` understands the following aesthetics mappings:
 
     - slope : line slope.
     - intercept : line y-intercept.
@@ -3282,28 +3283,28 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -3318,12 +3319,12 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_band()` understands the following aesthetics mappings:
+    ``geom_band()`` understands the following aesthetics mappings:
 
     - xmin : x-axis value.
     - xmax : x-axis value.
@@ -3396,31 +3397,31 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     yintercept : float
@@ -3435,12 +3436,12 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_hline()` understands the following aesthetics mappings:
+    ``geom_hline()`` understands the following aesthetics mappings:
 
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -3521,31 +3522,31 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     xintercept : float
@@ -3560,12 +3561,12 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_hline()` understands the following aesthetics mappings:
+    ``geom_hline()`` understands the following aesthetics mappings:
 
     - xintercept : line x-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -3653,28 +3654,28 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default=position_dodge(width=.95)
+    position : str or ``FeatureSpec``, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -3707,7 +3708,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
         - 'res': the unit equals the smallest distance between adjacent boxes along the corresponding axis;
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -3722,7 +3723,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -3735,7 +3736,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ..ymin.. : lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR.
     - ..ymax.. : upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR.
 
-    `geom_boxplot()` understands the following aesthetics mappings:
+    ``geom_boxplot()`` understands the following aesthetics mappings:
 
     - x or y: x-axis or y-axis coordinates for vertical or horizontal boxplot, respectively.
     - lower or xlower : lower hinge.
@@ -3752,8 +3753,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -3889,31 +3890,31 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydensity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default=position_dodge(width=.95)
+    position : str or ``FeatureSpec``, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -3925,7 +3926,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 1, another half is drawn.
         If 0, violins look as usual.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        A list of quantiles to be calculated and written to the `..quantile..` variable.
+        A list of quantiles to be calculated and written to the ``..quantile..`` variable.
     quantile_lines : bool, default=False
         Show the quantile lines.
     scale : {'area', 'count', 'width'}, default='area'
@@ -3935,7 +3936,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     trim : bool, default=True
         Trim the tails of the violins to the range of the data.
     tails_cutoff : float, default=3.0
-        Extend domain of each violin on `tails_cutoff * bw` if `trim=False`.
+        Extend domain of each violin on ``tails_cutoff * bw`` if ``trim=False``.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -3962,7 +3963,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -3975,7 +3976,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ..scaled.. : density estimate, scaled to maximum of 1.
     - ..quantile.. : quantile estimate.
 
-    `geom_violin()` understands the following aesthetics mappings:
+    ``geom_violin()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
@@ -3989,8 +3990,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -4121,31 +4122,31 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='sina'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default=position_dodge(width=.95)
+    position : str or ``FeatureSpec``, default=position_dodge(width=.95)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -4160,7 +4161,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         If 1, another half is drawn.
         If 0, sina look as usual.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        A list of quantiles to be calculated and written to the `..quantile..` variable.
+        A list of quantiles to be calculated and written to the ``..quantile..`` variable.
     scale : {'area', 'count', 'width'}, default='area'
         If 'area', all groups have the same area.
         If 'count', areas are scaled proportionally to the number of observations.
@@ -4168,7 +4169,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
     trim : bool, default=True
         Trim the tails of the violins, which limit the area for sina points, to the range of the data.
     tails_cutoff : float, default=3.0
-        Extend domain of each violin, which limit the area for sina points, on `tails_cutoff * bw` if `trim=False`.
+        Extend domain of each violin, which limit the area for sina points, on ``tails_cutoff * bw`` if ``trim=False``.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -4195,7 +4196,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -4208,7 +4209,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ..scaled.. : density estimate, scaled to maximum of 1.
     - ..quantile.. : quantile estimate.
 
-    `geom_sina()` understands the following aesthetics mappings:
+    ``geom_sina()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -4224,8 +4225,8 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -4327,29 +4328,30 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
     """
     Dotplot represents individual observations in a batch of data with circular dots.
     The diameter of a dot corresponds to the maximum width or bin width, depending on the binning algorithm.
-    `geom_ydotplot()` is an obvious blend of `geom_violin()` and `geom_dotplot()`.
+    ``geom_ydotplot()`` is an obvious blend of `geom_violin() <https://lets-plot.org/python/pages/api/lets_plot.geom_violin.html>`__
+    and `geom_dotplot() <https://lets-plot.org/python/pages/api/lets_plot.geom_dotplot.html>`__.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -4360,7 +4362,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
     bins : int, default=30
-        When method is 'histodot', this specifies number of bins. Overridden by `binwidth`.
+        When method is 'histodot', this specifies number of bins. Overridden by ``binwidth``.
     method : {'dotdensity', 'histodot'}, default='dotdensity'
         Use 'dotdensity' for dot-density binning,
         or 'histodot' for fixed bin widths (like in geom_histogram).
@@ -4392,7 +4394,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -4405,7 +4407,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
     - ..count.. : number of points with the y-axis coordinate in the same bin.
     - ..binwidth.. : max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
 
-    `geom_ydotplot()` understands the following aesthetics mappings:
+    ``geom_ydotplot()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -4416,8 +4418,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -4510,44 +4512,44 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                      color_by=None, fill_by=None,
                      **other_args):
     """
-    Plot the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
+    Plot the sum of the ``y`` and ``height`` aesthetics versus ``x``. Heights of the ridges are relatively scaled.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='densityridges'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'densityridges' (computes and draws kernel density estimate for each ridge).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     trim : bool, default=False
         Trim the tails of the ridges to the range of the data.
     tails_cutoff : float
-        Extend domain of each ridge on `tails_cutoff * bw` if `trim=False`.
-        `tails_cutoff=None` (default) extends domain to maximum (domain overall ridges).
+        Extend domain of each ridge on ``tails_cutoff * bw`` if ``trim=False``.
+        ``tails_cutoff=None`` (default) extends domain to maximum (domain overall ridges).
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -4567,8 +4569,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         All values that fall below this cutoff will be removed.
     scale : float, default=1.0
         A multiplicative factor applied to height aesthetic.
-        If `scale = 1.0`, the heights of a ridges are automatically scaled
-        such that the ridge with `height = 1.0` just touches the one above.
+        If ``scale=1.0``, the heights of a ridges are automatically scaled
+        such that the ridge with ``height=1.0`` just touches the one above.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw vertical lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
@@ -4585,7 +4587,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -4598,7 +4600,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - ..scaled.. : density estimate, scaled to maximum of 1.
     - ..quantile.. : quantile estimate.
 
-    `geom_area_ridges()` understands the following aesthetics mappings:
+    ``geom_area_ridges()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
@@ -4613,8 +4615,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -4700,35 +4702,35 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                 color_by=None, fill_by=None,
                 **other_args):
     """
-    Display a y interval defined by `ymin` and `ymax`.
+    Display a y interval defined by ``ymin`` and ``ymax``.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -4743,14 +4745,14 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`, or a vertical ribbon, bounded by `xmin`, `xmax`.
+    ``geom_ribbon()`` draws a ribbon bounded by ``ymin`` and ``ymax``, or a vertical ribbon, bounded by ``xmin``, ``xmax``.
 
-    `geom_ribbon()` understands the following aesthetics mappings:
+    ``geom_ribbon()`` understands the following aesthetics mappings:
 
     - x or y: x-axis or y-axis coordinates for horizontal or vertical ribbon, respectively.
     - ymin or xmin: y-axis or x-axis coordinates of the lower bound for horizontal or vertical ribbon, respectively.
@@ -4763,8 +4765,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -4830,11 +4832,11 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -4844,22 +4846,22 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='gstack'
+    position : str or ``FeatureSpec``, default='gstack'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     flat : bool, default=False.
@@ -4877,14 +4879,14 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_area()` draws an area bounded by the data and the x-axis.
+    ``geom_area()`` draws an area bounded by the data and the x-axis.
 
-    `geom_area()` understands the following aesthetics mappings:
+    ``geom_area()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
@@ -4896,8 +4898,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -4975,11 +4977,11 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density'
@@ -4989,22 +4991,22 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -5043,7 +5045,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -5055,7 +5057,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ..scaled.. : density estimate, scaled to maximum of 1.
     - ..quantile.. : quantile estimate.
 
-    `geom_density()` understands the following aesthetics mappings:
+    ``geom_density()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -5068,8 +5070,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -5200,31 +5202,31 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2d'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     kernel : str, default='gaussian'
@@ -5253,18 +5255,17 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-
     Computed variables:
 
     - ..group.. : number of density estimate contour line.
     - ..level.. : calculated value of the density estimate for given contour line.
 
-    `geom_density2d()` understands the following aesthetics mappings:
+    ``geom_density2d()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
@@ -5276,12 +5277,12 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     ----
 
-    'density2d' statistical transformation combined with parameter value `contour=False`
+    'density2d' statistical transformation combined with parameter value ``contour=False``
     could be used to draw heatmaps (see the example below).
 
     Examples
@@ -5436,31 +5437,31 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2df'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     kernel : str, default='gaussian'
@@ -5491,18 +5492,17 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-
     Computed variables:
 
     - ..group.. : number of density estimate contour band.
     - ..level.. : calculated value of the density estimate for given contour band.
 
-    `geom_density2df()` understands the following aesthetics mappings:
+    ``geom_density2df()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -5511,7 +5511,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     ----
 
-    'density2df' statistical transformation combined with parameter value `contour=False`
+    'density2df' statistical transformation combined with parameter value ``contour=False``
     could be used to draw heatmaps (see the example below).
 
     Examples
@@ -5668,11 +5668,11 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -5682,22 +5682,22 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default=position_jitter(width=.4, height=.4)
+    position : str or ``FeatureSpec``, default=position_jitter(width=.4, height=.4)
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     width : float, default=0.4
@@ -5721,7 +5721,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -5729,7 +5729,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     The jitter geometry is used to create jittered points.
     The scatterplot is useful for displaying the relationship between two discrete variables.
 
-    `geom_jitter()` understands the following aesthetics mappings:
+    ``geom_jitter()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -5742,8 +5742,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -5811,11 +5811,11 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='qq'
@@ -5826,34 +5826,34 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use.
     dparams : list
         Additional parameters (of float type) passed on to distribution function.
-        If `distribution` is `'norm'` then `dparams` is a pair [mean, std] (=[0.0, 1.0] by default).
-        If `distribution` is `'uniform'` then `dparams` is a pair [a, b] (=[0.0, 1.0] by default).
-        If `distribution` is `'t'` then `dparams` is an integer number [d] (=[1] by default).
-        If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
-        If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
-        If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
+        If ``distribution`` is ``'norm'`` then ``dparams`` is a pair [mean, std] (=[0.0, 1.0] by default).
+        If ``distribution`` is ``'uniform'`` then ``dparams`` is a pair [a, b] (=[0.0, 1.0] by default).
+        If ``distribution`` is ``'t'`` then ``dparams`` is an integer number [d] (=[1] by default).
+        If ``distribution`` is ``'gamma'`` then ``dparams`` is a pair [alpha, beta] (=[1.0, 1.0] by default).
+        If ``distribution`` is ``'exp'`` then ``dparams`` is a float number [lambda] (=[1.0] by default).
+        If ``distribution`` is ``'chi2'`` then ``dparams`` is an integer number [k] (=[1] by default).
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -5866,7 +5866,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -5882,7 +5882,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - ..theoretical.. : theoretical quantiles.
     - ..sample.. : sample quantiles.
 
-    `geom_qq()` understands the following aesthetics mappings:
+    ``geom_qq()`` understands the following aesthetics mappings:
 
     - sample : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
@@ -5894,8 +5894,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -5953,11 +5953,11 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='qq2'
@@ -5968,22 +5968,22 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -5998,21 +5998,21 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
     The Q-Q plot is used for comparing two probability distributions
-    by plotting their quantiles against each other. A point (`x`, `y`)
+    by plotting their quantiles against each other. A point (``x``, ``y``)
     on the plot corresponds to one of the quantiles of the first distribution
-    (`x`-coordinate) plotted against the same quantile of the second distribution
-    (`y`-coordinate).
+    (x-coordinate) plotted against the same quantile of the second distribution
+    (y-coordinate).
 
     If the two distributions being compared are similar, the points in the Q-Q plot
     will approximately lie on the straight line.
 
-    `geom_qq2()` understands the following aesthetics mappings:
+    ``geom_qq2()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -6025,8 +6025,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -6071,11 +6071,11 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='qq_line'
@@ -6086,34 +6086,34 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use.
     dparams : list
         Additional parameters (of float type) passed on to distribution function.
-        If `distribution` is `'norm'` then `dparams` is a pair [mean, std] (=[0.0, 1.0] by default).
-        If `distribution` is `'uniform'` then `dparams` is a pair [a, b] (=[0.0, 1.0] by default).
-        If `distribution` is `'t'` then `dparams` is an integer number [d] (=[1] by default).
-        If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
-        If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
-        If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
+        If ``distribution`` is ``'norm'`` then ``dparams`` is a pair [mean, std] (=[0.0, 1.0] by default).
+        If ``distribution`` is ``'uniform'`` then ``dparams`` is a pair [a, b] (=[0.0, 1.0] by default).
+        If ``distribution`` is ``'t'`` then ``dparams`` is an integer number [d] (=[1] by default).
+        If ``distribution`` is ``'gamma'`` then ``dparams`` is a pair [alpha, beta] (=[1.0, 1.0] by default).
+        If ``distribution`` is ``'exp'`` then ``dparams`` is a float number [lambda] (=[1.0] by default).
+        If ``distribution`` is ``'chi2'`` then ``dparams`` is an integer number [k] (=[1] by default).
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -6126,7 +6126,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -6139,7 +6139,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ..theoretical.. : theoretical quantiles.
     - ..sample.. : sample quantiles.
 
-    `geom_qq_line()` understands the following aesthetics mappings:
+    ``geom_qq_line()`` understands the following aesthetics mappings:
 
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -6206,11 +6206,11 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='qq2_line'
@@ -6221,22 +6221,22 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     quantiles : list, default=[0.25, 0.75]
@@ -6251,7 +6251,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -6259,7 +6259,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     The Q-Q line plot is used for comparing two probability distributions
     by plotting line passed through the pair of corresponding quantiles.
 
-    `geom_qq2_line()` understands the following aesthetics mappings:
+    ``geom_qq2_line()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -6310,11 +6310,11 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -6324,22 +6324,22 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -6355,18 +6355,18 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_freqpoly()` connects the top points in `geom_bar()`.
+    ``geom_freqpoly()`` connects the top points in `geom_bar() <https://lets-plot.org/python/pages/api/lets_plot.geom_bar.html>`__.
 
     Computed variables:
 
     - ..count.. : number of points with the x-axis coordinate in the same bin.
 
-    `geom_freqpoly()` understands the following aesthetics mappings:
+    ``geom_freqpoly()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -6377,8 +6377,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -6439,11 +6439,11 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -6453,22 +6453,22 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     direction : {'hv', 'vh'}, default='hv'
@@ -6484,14 +6484,14 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_step()` draws steps between the observations in the order of X.
+    ``geom_step()`` draws steps between the observations in the order of X.
 
-    `geom_step()` understands the following aesthetics mappings:
+    ``geom_step()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -6502,8 +6502,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -6566,44 +6566,44 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Bounding boxes of geometries will be drawn.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -6616,14 +6616,14 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_rect()` draws rectangles.
+    ``geom_rect()`` draws rectangles.
 
-    `geom_rect()` understands the following aesthetics mappings:
+    ``geom_rect()`` understands the following aesthetics mappings:
 
     - xmin : x-axis value.
     - xmax : x-axis value.
@@ -6637,31 +6637,32 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``MultiPoint``, ``Line``, ``MultiLine``, ``Polygon`` and ``MultiPolygon``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_limits()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_limits() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_limits>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
@@ -6740,11 +6741,11 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -6754,31 +6755,31 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    arrow : `FeatureSpec`
-        Specification for arrow head, as created by `arrow()` function.
+    arrow : ``FeatureSpec``
+        Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
     flat : bool, default=False.
         True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
         False - allow a line to be reprojected, so it can become a curve.
     geodesic : bool, default=False
-        Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
+        Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__.
     spacer : float, default=0.0
         Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -6791,14 +6792,14 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_segment()` draws segments.
+    ``geom_segment()`` draws segments.
 
-    `geom_segment()` understands the following aesthetics mappings:
+    ``geom_segment()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -6902,11 +6903,11 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -6916,26 +6917,26 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    arrow : `FeatureSpec`
-        Specification for arrow head, as created by `arrow()` function.
+    arrow : ``FeatureSpec``
+        Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
     curvature : float, default=0.5
         The amount of curvature.
         Negative values produce left-hand curves, positive values produce right-hand curves,
@@ -6958,14 +6959,14 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_curve()` draws a curved lines.
+    ``geom_curve()`` draws a curved lines.
 
-    `geom_curve()` understands the following aesthetics mappings:
+    ``geom_curve()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -7062,33 +7063,33 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    arrow : `FeatureSpec`
-        Specification for arrow head, as created by `arrow()` function.
+    arrow : ``FeatureSpec``
+        Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
     pivot : {'tail', 'middle', 'mid', 'tip'}, default='tail'
         The part of the segment that is anchored to the plane. The segment rotates about this point.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -7101,12 +7102,12 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_spoke()` understands the following aesthetics mappings:
+    ``geom_spoke()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -7207,11 +7208,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -7221,35 +7222,35 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -7276,7 +7277,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Possible values:
 
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     check_overlap : bool, default=False
@@ -7291,14 +7292,14 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
     Adds text directly to the plot.
 
-    `geom_text()` understands the following aesthetics mappings:
+    ``geom_text()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -7315,31 +7316,32 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
@@ -7456,11 +7458,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -7470,35 +7472,35 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -7533,7 +7535,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Possible values:
 
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     check_overlap : bool, default=False
@@ -7550,14 +7552,14 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_label()` adds a text directly to the plot and draws a rectangle behind it, making it easier to read.
+    ``geom_label()`` adds a text directly to the plot and draws a rectangle behind it, making it easier to read.
 
-    `geom_label()` understands the following aesthetics mappings:
+    ``geom_label()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -7575,31 +7577,32 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
@@ -7727,11 +7730,11 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -7741,35 +7744,35 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -7796,7 +7799,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Possible values:
 
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     check_overlap : bool, default=False
@@ -7819,8 +7822,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
-    arrow : `FeatureSpec`
-        Specification for arrow head, as created by `arrow()` function.
+    arrow : ``FeatureSpec``
+        Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7829,7 +7832,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -7842,7 +7845,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     and is especially useful for annotating crowded plots while minimizing collisions
     between text elements or label boxes.
 
-    `geom_text_repel()` understands the following aesthetics mappings:
+    ``geom_text_repel()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -7941,11 +7944,11 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -7955,35 +7958,35 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -8018,7 +8021,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Possible values:
 
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     check_overlap : bool, default=False
@@ -8043,8 +8046,8 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         The maximum number of overlapping labels allowed. Additional labels will be hidden.
     min_segment_length : float
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
-    arrow : `FeatureSpec`
-        Specification for arrow head, as created by `arrow()` function.
+    arrow : ``FeatureSpec``
+        Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8053,7 +8056,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -8066,7 +8069,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
     and is especially useful for annotating crowded plots while minimizing collisions
     between text elements or label boxes.
 
-    `geom_label_repel()` understands the following aesthetics mappings:
+    ``geom_label_repel()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -8159,49 +8162,49 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='count2d'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count2d' (counts number of points with the same x,y coordinate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    labels : `layer_labels`
-        Result of the call to the `layer_labels()` function.
+    labels : ``layer_labels``
+        Result of the call to the `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ function.
         Specify style and content of the annotations.
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
         Accept values between 0 and 1.
@@ -8235,7 +8238,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -8249,7 +8252,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - ..sumprop.. : proportion of points with the same (x,y) coordinate among all points in the dataset.
     - ..sumpct.. : proportion of points with the same (x,y) coordinate among all points in the dataset in percent.
 
-    `geom_pie()` understands the following aesthetics mappings:
+    ``geom_pie()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -8264,38 +8267,39 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -8416,11 +8420,11 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -8430,22 +8434,22 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with the x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -8473,12 +8477,12 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_lollipop()` understands the following aesthetics mappings:
+    ``geom_lollipop()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - y : y-axis value.
@@ -8493,13 +8497,13 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     ----
 
-    When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
-    So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
+    When ``slope=0``, the baseline cannot be parallel to the lollipop sticks.
+    So, in this case, if ``dir='h'``, the baseline will becomes vertical, as for infinity slope.
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -8577,31 +8581,31 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='sum'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -8616,7 +8620,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -8627,7 +8631,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - ..prop.. : proportion of points with the same x-axis and y-axis coordinates.
     - ..proppct.. : proportion of points with the same x-axis and y-axis coordinates in percent.
 
-    `geom_count()` understands the following aesthetics mappings:
+    ``geom_count()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
@@ -8640,8 +8644,8 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -8698,16 +8702,17 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                color_by=None, fill_by=None,
                **other_args):
     """
-    Draw nothing, but can be a useful way of ensuring common scales between different plots (see `expand_limits()`).
+    Draw nothing, but can be a useful way of ensuring common scales between different plots
+    (see `expand_limits() <https://lets-plot.org/python/pages/api/lets_plot.expand_limits.html>`__).
     Also, can help to avoid the "No layers in plot" error when building plots using automated tools.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+    data : dict or Pandas or Polars ``DataFrame`` or ``GeoDataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -8718,31 +8723,31 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate),
         'sum' (counts the number of points at each location - might help to workaround overplotting).
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=False
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    map : `GeoDataFrame` or `Geocoder`
+    map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.
     map_join : str or list
         Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -8755,7 +8760,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -8765,7 +8770,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
     two continuous variables, although it can also be used with one continuous
     and one categorical variable, or two categorical variables.
 
-    `geom_blank()` 'understands' any aesthetic mappings of `geom_point()`, but the most useful are those related to the chart guides (i.e., axes and legends):
+    ``geom_blank()`` understands any aesthetic mappings of `geom_point() <https://lets-plot.org/python/pages/api/lets_plot.geom_point.html>`__, but the most useful are those related to the chart guides (i.e., axes and legends):
 
     - x : x-axis value.
     - y : y-axis value.
@@ -8774,31 +8779,32 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     ----
 
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
 
-    The `map` parameter of `Geocoder` type implicitly invokes `get_centroids()` function.
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
 
     ----
 
-    The conventions for the values of `map_join` parameter are as follows:
+    The conventions for the values of ``map_join`` parameter are as follows:
 
-    - Joining data and `GeoDataFrame` object
+    - Joining data and ``GeoDataFrame`` object
 
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
 
       - map_join=['State_Name', 'state']
       - map_join=[['State_Name'], ['state']]
 
-    - Joining data and `Geocoder` object
+    - Joining data and ``Geocoder`` object
 
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
 
       - map_join='State_Name'
       - map_join=['State_Name']
 
     - Joining data by composite key
 
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
 

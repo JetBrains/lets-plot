@@ -81,8 +81,8 @@ def _setup_wb_html_context(*,
         Command to execute to open the plot in a web browser.
         If not specified, the default browser will be used.
     new : bool, default=False
-        If `True`, the URL is opened in a new window of the web browser.
-        If `False`, the URL is opened in the already opened web browser window.
+        If True, the URL is opened in a new window of the web browser.
+        If False, the URL is opened in the already opened web browser window.
     """
     ctx = _create_wb_html_frontend_context(exec, new)
     _frontend_contexts[TEXT_HTML] = ctx

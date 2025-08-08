@@ -35,7 +35,7 @@ class SupPlotsSpec(FeatureSpec):
     """
     Subplots figure specification.
 
-    See: `gggrid()`
+    See: `gggrid() <https://lets-plot.org/python/pages/api/lets_plot.gggrid.html>`__.
     """
 
     @classmethod
@@ -121,7 +121,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
            Subplots specification to export.
         path : str, file-like object, default=None
             It can be a file path, file-like object, or None.
@@ -131,7 +131,7 @@ class SupPlotsSpec(FeatureSpec):
         Returns
         -------
         str
-            The result depends on the `path` parameter.
+            The result depends on the ``path`` parameter.
             It can be the absolute path of the file,
             SVG content as a string, or None if a file-like object is provided.
 
@@ -164,7 +164,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object, default=None
             It can be a file path, file-like object, or None.
@@ -177,7 +177,7 @@ class SupPlotsSpec(FeatureSpec):
         Returns
         -------
         str
-            The result depends on the `path` parameter.
+            The result depends on the ``path`` parameter.
             It can be the absolute path of the file,
             HTML content as a string, or None if a file-like object is provided.
 
@@ -208,7 +208,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -262,7 +262,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.

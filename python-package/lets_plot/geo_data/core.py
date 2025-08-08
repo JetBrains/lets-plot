@@ -30,7 +30,8 @@ GEOFUNC_TYPES = {
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder`. Allow to refine ambiguous request with `where()` method,
+    Create a `NamesGeocoder <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html>`__.
+    Allow to refine ambiguous request with `where() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.where>`__ method,
     scope that limits area of geocoding or with parents.
 
     Parameters
@@ -42,20 +43,20 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
         For 'state' level: 'US-48' returns continental part of United States (48 states)
         in a compact form.
     countries : list
-        Parent countries. Should have same size as names. Can contain strings or `Geocoder` objects.
+        Parent countries. Should have same size as names. Can contain strings or ``Geocoder`` objects.
     states : list
-        Parent states. Should have same size as names. Can contain strings or `Geocoder` objects.
+        Parent states. Should have same size as names. Can contain strings or ``Geocoder`` objects.
     counties : list
-        Parent counties. Should have same size as names. Can contain strings or `Geocoder` objects.
-    scope : str or `Geocoder`
+        Parent counties. Should have same size as names. Can contain strings or ``Geocoder`` objects.
+    scope : str or ``Geocoder``
         Limits area of geocoding. If parent country is set then error will be generated.
         If type is a string - geoobject should have geocoded scope in parents.
-        If type is a `Geocoder` - geoobject should have geocoded scope in parents.
+        If type is a ``Geocoder`` - geoobject should have geocoded scope in parents.
         Scope should contain only one entry.
 
     Returns
     -------
-    `NamesGeocoder`
+    ``NamesGeocoder``
         Geocoder object specification.
 
     Examples
@@ -101,8 +102,9 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
 
 def geocode_cities(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for cities. Allow to refine ambiguous request with
-    `where()` method, with a scope that limits area of geocoding or with parents.
+    Create a `NamesGeocoder <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html>`__ object for cities.
+    Allow to refine ambiguous request with `where() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.where>`__ method,
+    with a scope that limits area of geocoding or with parents.
 
     Parameters
     ----------
@@ -111,7 +113,7 @@ def geocode_cities(names=None) -> NamesGeocoder:
 
     Returns
     -------
-    `NamesGeocoder`
+    ``NamesGeocoder``
         Geocoder object specification.
 
     Examples
@@ -135,8 +137,9 @@ def geocode_cities(names=None) -> NamesGeocoder:
 
 def geocode_counties(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for counties. Allow to refine ambiguous request with
-    `where()` method, with a scope that limits area of geocoding or with parents.
+    Create a `NamesGeocoder <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html>`__ object for counties.
+    Allow to refine ambiguous request with `where() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.where>`__ method,
+    with a scope that limits area of geocoding or with parents.
 
     Parameters
     ----------
@@ -145,7 +148,7 @@ def geocode_counties(names=None) -> NamesGeocoder:
 
     Returns
     -------
-    `NamesGeocoder`
+    ``NamesGeocoder``
         Geocoder object specification.
 
     Examples
@@ -168,8 +171,9 @@ def geocode_counties(names=None) -> NamesGeocoder:
 
 def geocode_states(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for states. Allow to refine ambiguous request with
-    `where()` method, with a scope that limits area of geocoding or with parents.
+    Create a `NamesGeocoder <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html>`__ object for states.
+    Allow to refine ambiguous request with `where() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.where>`__ method,
+    with a scope that limits area of geocoding or with parents.
 
     Parameters
     ----------
@@ -178,7 +182,7 @@ def geocode_states(names=None) -> NamesGeocoder:
 
     Returns
     -------
-    `NamesGeocoder`
+    ``NamesGeocoder``
         Geocoder object specification.
 
     Examples
@@ -203,8 +207,8 @@ def geocode_states(names=None) -> NamesGeocoder:
 
 def geocode_countries(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for countries. Allow to refine ambiguous request with
-    `where()` method.
+    Create a `NamesGeocoder <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html>`__ object for countries.
+    Allow to refine ambiguous request with `where() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.where>`__ method.
 
     Parameters
     ----------
@@ -213,7 +217,7 @@ def geocode_countries(names=None) -> NamesGeocoder:
 
     Returns
     -------
-    `NamesGeocoder`
+    ``NamesGeocoder``
         Geocoder object specification.
 
     Examples
@@ -236,7 +240,7 @@ def geocode_countries(names=None) -> NamesGeocoder:
 
 def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
     """
-    Convert a location as described by geographic coordinates to a `ReverseGeocoder` object.
+    Convert a location as described by geographic coordinates to a ``ReverseGeocoder`` object.
 
     Parameters
     ----------
@@ -246,12 +250,12 @@ def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
         Latitude coordinate of the geoobject.
     level : {'country', 'state', 'county', 'city'}
         The level of administrative division.
-    scope : str or `Geocoder`
+    scope : str or ``Geocoder``
         Specify this for resolving conflicts for disputed territories.
 
     Returns
     -------
-    `ReverseGeocoder`
+    ``ReverseGeocoder``
         Geocoder object specification.
 
     Examples

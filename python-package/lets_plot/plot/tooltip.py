@@ -141,11 +141,11 @@ class layer_tooltips(FeatureSpec):
             a string template ('{.1f}') or a date/time format ('%d.%m.%y').
             The numeric format for non-numeric value will be ignored.
             If you need to include a brace character in the literal text,
-            it can be escaped by doubling: `{{` and `}}`.
+            it can be escaped by doubling: ``{{`` and ``}}``.
 
         Returns
         -------
-        `layer_tooltips`
+        ``layer_tooltips``
             Layer tooltips specification.
 
         Notes
@@ -157,8 +157,8 @@ class layer_tooltips(FeatureSpec):
 
         ----
 
-        The string template in `format` will allow to change lines
-        for the default tooltip without `line` specifying.
+        The string template in ``format`` will allow to change lines
+        for the default tooltip without ``line`` specifying.
         Also the template will change the line for side tooltips.
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
@@ -234,7 +234,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        `layer_tooltips`
+        ``layer_tooltips``
             Layer tooltips specification.
 
         Notes
@@ -329,7 +329,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        `layer_tooltips`
+        ``layer_tooltips``
             Layer tooltips specification.
 
         Examples
@@ -364,7 +364,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        `layer_tooltips`
+        ``layer_tooltips``
             Layer tooltips specification.
 
         Examples
@@ -390,7 +390,7 @@ class layer_tooltips(FeatureSpec):
 
     def color(self, value):
         """
-        Function `color(value)` is deprecated.
+        Function ``color(value)`` is deprecated.
 
         """
         print("WARN: The function color() is deprecated and is no longer supported.")
@@ -410,15 +410,15 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        `layer_tooltips`
+        ``layer_tooltips``
             Layer tooltips specification.
 
         Notes
         -----
-        The specification rules are the same as for the `lines()` function:
+        The specification rules are the same as for the ``lines()`` function:
         variables and aesthetics can be used in the template.
         The resulting string will be at the beginning of the general tooltip, centered and highlighted in bold.
-        A long title can be split into multiple lines using `\\\\n` as a text separator.
+        A long title can be split into multiple lines using ``\\\\n`` as a text separator.
 
         Examples
         --------
@@ -454,13 +454,13 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        `layer_tooltips`
+        ``layer_tooltips``
             Layer tooltips specification.
 
         Notes
         -----
-        By default, the `disable_splitting()` function moves all side tooltips to the general tooltip.
-        If the content of a general tooltip is specified with the `line()` functions,
+        By default, the ``disable_splitting()`` function moves all side tooltips to the general tooltip.
+        If the content of a general tooltip is specified with the ``line()`` functions,
         the general tooltip will get the given lines, and the side tooltips will be hidden.
 
         Examples

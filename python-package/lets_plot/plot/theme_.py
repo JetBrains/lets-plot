@@ -94,7 +94,7 @@ def theme(*,
           geom=None
           ):
     """
-    Use `theme()` to modify individual components of a theme,
+    Use ``theme()`` to modify individual components of a theme,
     allowing you to control all non-data components of the plot.
     See also the `Plot Layout Diagrams <https://lets-plot.org/python/pages/charts.html#plot-layout-diagrams>`__ section.
 
@@ -112,69 +112,69 @@ def theme(*,
 
         For 'g' type formatting, scientific notation is applied when the number's exponent
         is less than or equal to the lower_exp_bound (-7 by default) or greater than or equal
-        to the upper_exp_bound (6 by default, but can be affected by `precision` in format specifier).
+        to the upper_exp_bound (6 by default, but can be affected by ``precision`` in format specifier).
 
         See `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
         Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
         Style settings for all line elements.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify line parameters.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify line parameters.
     rect : str or dict
         Style settings for all rectangular elements.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_rect()` to specify rectangular element parameters.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify rectangular element parameters.
     text : str or dict
         Style settings for all text elements.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify text parameters.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify text parameters.
     title : str or dict
         Style settings for all title elements: plot, axes, legends.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify title text parameters, inherited from `text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify title text parameters, inherited from ``text``.
     axis : str or dict
         Style settings for all axis elements: lines, ticks, texts, titles.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify axes parameters.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify axes parameters.
     axis_ontop, axis_ontop_x, axis_ontop_y : bool, default=True
         Option to place axis (lines, tickmarks and labels) over the data layers.
     axis_title, axis_title_x, axis_title_y : str or dict
         Style settings for axis titles.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify axis title parameters.
-        `axis_title_*` inherits from `axis_title` which inherits from `text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify axis title parameters.
+        ``axis_title_*`` inherits from ``axis_title`` which inherits from ``text``.
     axis_text, axis_text_x, axis_text_y : str or dict
         Style settings for tick labels along axes.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify all axes tick label parameters.
-        `axis_text_*` inherits from `axis_text` which inherits from `text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify all axes tick label parameters.
+        ``axis_text_*`` inherits from ``axis_text`` which inherits from ``text``.
     axis_text_spacing, axis_text_spacing_x, axis_text_spacing_y : float
         Spacing between the axis label text and its tick mark.
     axis_ticks, axis_ticks_x, axis_ticks_y : str or dict
         Style settings for tick marks along axes.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify all tick mark parameters.
-        `axis_ticks_*` inherits from `axis_ticks` which inherits from `line`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify all tick mark parameters.
+        ``axis_ticks_*`` inherits from ``axis_ticks`` which inherits from ``line``.
     axis_ticks_length, axis_ticks_length_x, axis_ticks_length_y : float
         Length of tick marks in px.
     axis_line, axis_line_x, axis_line_y : str or dict
         Style settings for lines along axes.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify line parameters along all axes.
-        `axis_line_*` inherits from `axis_line` which inherits from `line`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify line parameters along all axes.
+        ``axis_line_*`` inherits from ``axis_line`` which inherits from ``line``.
     legend_background : str or dict
         Style settings for background of legend.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify legend background parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify legend background parameters, inherited from ``rect``.
     legend_text : str or dict
         Style settings for legend item labels.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify legend item label parameters, inherited from `text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify legend item label parameters, inherited from ``text``.
     legend_title : str or dict
         Style settings for legend title.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify legend title parameters, inherited from `title`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify legend title parameters, inherited from ``title``.
     legend_position : {'none', 'left', 'right', 'bottom', 'top'} or list
         The position of legends. To remove the plot legend, use the 'none' value.
         If parameter is a list, then it should be a two-element numeric vector,
@@ -200,25 +200,25 @@ def theme(*,
     legend_spacing : float
         Spacing between legends.
     legend_spacing_x : float
-         Spacing between legends in the horizontal direction, inherited from `legend_spacing`.
+         Spacing between legends in the horizontal direction, inherited from ``legend_spacing``.
     legend_spacing_y : float
-        Spacing between legends in the vertical direction, inherited from `legend_spacing`.
+        Spacing between legends in the vertical direction, inherited from ``legend_spacing``.
     legend_key : str or dict
         Style settings for legend key background.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify legend key background parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify legend key background parameters, inherited from ``rect``.
     legend_key_size : float
         Size of legend keys.
     legend_key_width : float
-        Key background width, inherited from `legend_key_size`.
+        Key background width, inherited from ``legend_key_size``.
     legend_key_height : float
-        Key background height, inherited from `legend_key_size`.
+        Key background height, inherited from ``legend_key_size``.
     legend_key_spacing : float
         Spacing between legend keys.
     legend_key_spacing_x : float
-        Spacing between legend keys in the horizontal direction, inherited from `legend_key_spacing`.
+        Spacing between legend keys in the horizontal direction, inherited from ``legend_key_spacing``.
     legend_key_spacing_y : float
-        Spacing between legend keys in the vertical direction, inherited from `legend_key_spacing`.
+        Spacing between legend keys in the vertical direction, inherited from ``legend_key_spacing``.
     legend_box : {'horizontal', 'vertical'}
         Arrangement of multiple legends.
     legend_box_just : {'left', 'right', 'bottom', 'top', 'center'}
@@ -227,30 +227,30 @@ def theme(*,
         Spacing between plotting area and legend box.
     legend_ticks : str or dict
         Style settings for tick marks in colorbars.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_line()` to specify all tick mark parameters.
-        `legend_ticks_*` DOES NOT inherit from `line`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify all tick mark parameters.
+        ``legend_ticks_*`` DOES NOT inherit from ``line``.
         By default, the colorbar tick marks are drawn with the same color as the colorbar background.
     legend_ticks_length : float
         Length of colorbar tick marks in px.
     panel_background : str or dict
         Style settings for background of plotting area.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify plotting area background parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify plotting area background parameters, inherited from ``rect``.
     panel_border : str or dict
         Style settings for border around plotting area.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify border parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify border parameters, inherited from ``rect``.
     panel_border_ontop : bool, default=True
         Option to place border around plotting area over the data layers.
     panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
         Style settings for grid lines. Specify major grid lines or minor grid lines separately if needed.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify grid line parameters.
-        `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
-        which in turn inherits from `line`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify grid line parameters.
+        ``panel_grid_*_*`` inherits from ``panel_grid_*`` which inherits from ``panel_grid``,
+        which in turn inherits from ``line``.
     panel_inset : number or list of numbers
-        Inset for a panel. The inset behaves like a padding for `coord_polar(transform_bkgr=False)` otherwise it behaves like a margin around the panel.
+        Inset for a panel. The inset behaves like a padding for ``coord_polar(transform_bkgr=False)`` otherwise it behaves like a margin around the panel.
         The inset may be specified using a number or a list of numbers:
 
         - a number or list of one number - the same inset is applied to all four sides;
@@ -263,24 +263,24 @@ def theme(*,
         Option to place major grid lines and minor grid lines over the data layers.
     plot_background : str or dict
         Style settings for overall plot background.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify plot background parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify plot background parameters, inherited from ``rect``.
     plot_title : str or dict
         Style settings for plot title.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify plot title parameters, inherited from `title`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify plot title parameters, inherited from ``title``.
     plot_subtitle : str or dict
         Style settings for plot subtitle.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify plot subtitle parameters, inherited from `plot_title` or `title`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify plot subtitle parameters, inherited from ``plot_title`` or ``title``.
     plot_caption : str or dict
         Style settings for plot caption.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify plot caption parameters, inherited from `title`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify plot caption parameters, inherited from ``title``.
     plot_message : str or dict
         Style settings for plot message (e.g. sampling messages).
-        Set 'blank' or result of `element_blank()` to show nothing.
-        Set `element_text()` to show sampling messages (`element_text()` options don't affect a message text).
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to show nothing.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to show sampling messages (`element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ options don't affect a message text).
     plot_margin : number or list of numbers
         Margin around entire plot.
         The margin may be specified using a number or a list of numbers:
@@ -311,59 +311,59 @@ def theme(*,
         A value of 'plot' means that caption is aligned to the entire plot (excluding margins).
     strip_background : str or dict
         Style settings for facet strip background.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify facet label background parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify facet label background parameters, inherited from ``rect``.
     strip_background_x : str or dict
         Style settings for horizontal facet background.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify facet label background parameters, inherited from ``strip_background``.
     strip_background_y : str or dict
         Style settings for vertical facet background.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify facet label background parameters, inherited from ``strip_background``.
     strip_text : str or dict
         Style settings for facet labels.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify facet label parameters, inherited from `text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify facet label parameters, inherited from ``text``.
     strip_text_x : str or dict
         Style settings for horizontal facet labels.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify facet label parameters, inherited from ``strip_text``.
     strip_text_y : str or dict
         Style settings for vertical facet labels.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify facet label parameters, inherited from ``strip_text``.
     axis_tooltip, axis_tooltip_x, axis_tooltip_y : str or dict
         Style settings for axes tooltips.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_rect()` to specify axes tooltip parameters.
-        `axis_tooltip_*` inherits from `axis_tooltip` which inherits from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify axes tooltip parameters.
+        ``axis_tooltip_*`` inherits from ``axis_tooltip`` which inherits from ``rect``.
     axis_tooltip_text, axis_tooltip_text_x, axis_tooltip_text_y : str or dict
         Style settings for text in axes tooltips.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify axes text tooltip parameters.
-        `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify axes text tooltip parameters.
+        ``axis_tooltip_text_*`` inherits from ``axis_tooltip_text`` which inherits from ``tooltip_text``.
     tooltip : str or dict
         Style settings for general tooltip.
-        Set 'blank' or result of `element_blank()` to hide the tooltip (also hides side tooltips).
-        Set `element_rect()` to specify tooltip rectangular parameters, inherited from `rect`.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to hide the tooltip (also hides side tooltips).
+        Set `element_rect() <https://lets-plot.org/python/pages/api/lets_plot.element_rect.html>`__ to specify tooltip rectangular parameters, inherited from ``rect``.
     tooltip_text : dict
         Style settings for text in general tooltip.
-        Set `element_text()` to specify tooltip text parameters.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify tooltip text parameters.
     tooltip_title_text : dict
         Style settings for tooltip title text.
-        Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify tooltip title parameters, inherited from ``tooltip_text``. Bold by default.
     label_text : dict
         Style settings for annotation text.
         Annotations are currently supported for pie, bar chart and crossbar.
-        Set `element_text()` to specify annotation text parameters: font family and face, text size, text color.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify annotation text parameters: font family and face, text size, text color.
     geom : dict
         Color settings for geometries.
-        Set `element_geom()` to specify new values for the named colors.
+        Set `element_geom() <https://lets-plot.org/python/pages/api/lets_plot.element_geom.html>`__ to specify new values for the named colors.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -438,7 +438,7 @@ def element_blank() -> dict:
 
     Returns
     -------
-    `dict`
+    ``dict``
         Theme element specification.
 
     Examples
@@ -491,7 +491,7 @@ def element_rect(
 
     Returns
     -------
-    `dict`
+    ``dict``
         Theme element specification.
 
     Examples
@@ -542,7 +542,7 @@ def element_line(
 
     Returns
     -------
-    `dict`
+    ``dict``
         Theme element specification.
 
     Examples
@@ -618,7 +618,7 @@ def element_text(
 
     Returns
     -------
-    `dict`
+    ``dict``
         Theme element specification.
 
     Examples
@@ -694,7 +694,7 @@ def element_markdown(
 
     Returns
     -------
-    `dict`
+    ``dict``
         Theme element specification.
 
     Examples
@@ -722,7 +722,7 @@ def element_markdown(
 
 def margin(t=None, r=None, b=None, l=None):
     """
-    Function `margin()` is deprecated.
+    Function ``margin()`` is deprecated.
     Please, use a number or list of numbers to specify margins (see description of the parameter used).
 
     """
@@ -752,7 +752,7 @@ def element_geom(
 
     Returns
     -------
-    `dict`
+    ``dict``
         Theme element specification.
 
     Examples
