@@ -61,6 +61,9 @@ object PlotImageExport {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
     ): ImageData {
+        @Suppress("NAME_SHADOWING")
+        val targetDPI = targetDPI?.toDouble()?.takeIf { it.isFinite() } // kandy may pass NaN
+
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
         val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(

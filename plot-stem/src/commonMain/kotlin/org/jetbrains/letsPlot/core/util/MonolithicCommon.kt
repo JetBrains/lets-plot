@@ -36,7 +36,7 @@ object MonolithicCommon {
         return buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
-            sizeUnit = SizeUnit.PX, // Default size unit is pixels
+            sizeUnit = SizeUnit.PX,
             svgToString = svgToString,
             computationMessagesHandler = computationMessagesHandler
         )

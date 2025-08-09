@@ -308,6 +308,24 @@ class PlotImageExportVisualTest {
         assertPlot("geom_imshow_export_test.png", spec)
     }
 
+    @Test
+    fun `with dpi=NaN`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
+            |  "mapping": { "x": "x", "y": "y" },
+            |  "layers": [ { "geom": "point" } ],
+            |  "ggsize": { "width": 200, "height": 200 }
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextBlank()
+
+        // dpi is NaN, so the bitmap will be exported with the default scaling factor of 1.0
+        assertPlot("plot_dpi_nan_test.png", plotSpec, dpi = Double.NaN)
+    }
+
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
