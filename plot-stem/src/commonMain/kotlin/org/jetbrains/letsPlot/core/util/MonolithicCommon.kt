@@ -76,8 +76,8 @@ object MonolithicCommon {
             val pixelHeight = svg.height().get()!!
 
             // Set the SVG size attributes.
-            svg.setAttribute("width", "${plotSize.x}$sizeUnit")
-            svg.setAttribute("height", "${plotSize.y}$sizeUnit")
+            svg.setAttribute("width", "${plotSize.x}$unit")
+            svg.setAttribute("height", "${plotSize.y}$unit")
             // Set the viewBox to match the SVG size.
             svg.setAttribute("viewBox", "0 0 $pixelWidth $pixelHeight")
         }

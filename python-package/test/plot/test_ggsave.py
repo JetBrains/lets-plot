@@ -49,11 +49,18 @@ def test_ggsave_svg():
 
     assert_svg(out_path)
 
-def test_ggsave_svg_wh():
+def test_ggsave_svg_wh_default_unit_is_inch():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3)
     print("Output path:", out_path)
     assert_svg(out_path, w="5.0in", h="3.0in", view_box="0 0 480.0 288.0")
+
+
+def test_ggsave_svg_wh_unit_cm():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3, unit='cm')
+    print("Output path:", out_path)
+    assert_svg(out_path, w="5.0cm", h="3.0cm", view_box="0 0 188.97637795275588 113.38582677165354")
 
 
 def test_ggsave_png():

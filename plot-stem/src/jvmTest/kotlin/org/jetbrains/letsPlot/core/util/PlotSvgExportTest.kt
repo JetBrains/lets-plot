@@ -82,7 +82,7 @@ class PlotSvgExportTest {
     }
 
     @Test
-    fun `buildSvg(w=500, h=300)`() {
+    fun `buildSvg(w=500, h=300) in jvm default unit is px`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(500, 300),
@@ -101,6 +101,21 @@ class PlotSvgExportTest {
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
             sizeUnit = SizeUnit.IN,
+            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+        ) { _ -> }
+
+        val root = Xml.parse(svg) as XmlNode.Element
+        assertThat(root.attributes["width"]).isEqualTo("8.0in")
+        assertThat(root.attributes["height"]).isEqualTo("6.0in")
+        assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")
+    }
+
+    @Test
+    fun `buildSvg(w=8, h=6, unit=null) with explicit null unit should return inches`() {
+        val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
+            plotSpec = plotSpec,
+            plotSize = DoubleVector(8, 6),
+            sizeUnit = null,
             svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
         ) { _ -> }
 
