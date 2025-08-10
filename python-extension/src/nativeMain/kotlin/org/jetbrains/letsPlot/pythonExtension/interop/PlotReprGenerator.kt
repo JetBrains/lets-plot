@@ -14,8 +14,11 @@ import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -43,14 +46,24 @@ object PlotReprGenerator {
     }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
-    fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
+    fun generateSvg(
+        plotSpecDict: CPointer<PyObject>?,
+        width: Float,
+        height: Float,
+        unit: CPointer<ByteVar>,
+        useCssPixelatedImageRendering: Int,
+    ): CPointer<PyObject>? {
         return try {
+            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+            val sizeUnit = SizeUnit.fromName(unit.toKString())
+
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
             val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
-                plotSize = null,
+                plotSize = plotSize,
+                sizeUnit = sizeUnit,
                 useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
             )
             Py_BuildValue("s", svg)
@@ -60,6 +73,8 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
+            println(e.message)
+            e.printStackTrace()
             Py_BuildValue("s", svgStr)
         }
     }
@@ -130,35 +145,15 @@ object PlotReprGenerator {
 
     fun exportBitmap(
         plotSpec: Map<*, *>,
-        width: Float,
-        height: Float,
-        unit: String,
-        dpi: Int,
-        scale: Double,
+        plotSize: DoubleVector? = null,
+        sizeUnit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null,
         fontManager: MagickFontManager
     ): Bitmap? {
         var canvasReg: Registration? = null
-
         try {
-            val sizingPolicy = when {
-                width < 0 || height < 0 -> SizingPolicy.keepFigureDefaultSize()
-                else -> {
-                    // Build the plot in logical pixels (always 96 DPI) and then render it scaled.
-                    // Otherwise, the plot will be rendered incorrectly, i.e., with too many tick labels and small font sizes.
-                    val (logicalWidth, logicalHeight) = when (unit) {
-                        "cm" -> (width * 96 / 2.54) to (height * 96 / 2.54)
-                        "in" -> (width * 96) to (height * 96)
-                        "mm" -> (width * 96 / 25.4) to (height * 96 / 25.4)
-                        "px" -> width to height
-                        else -> throw IllegalArgumentException("Unsupported unit: $unit")
-                    }
-
-                    SizingPolicy.fixed(
-                        width = logicalWidth.toDouble(),
-                        height = logicalHeight.toDouble()
-                    )
-                }
-            }
+            val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
             @Suppress("UNCHECKED_CAST")
             val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
@@ -168,11 +163,6 @@ object PlotReprGenerator {
                     //println(it.joinToString("\n"))
                 }
             )
-
-            val scaleFactor = when {
-                dpi > 0 -> dpi / 96.0 * scale
-                else -> scale
-            }
 
             val canvasControl = MagickCanvasControl(
                 w = plotCanvasFigure.bounds().get().width,
@@ -211,23 +201,32 @@ object PlotReprGenerator {
         dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
-        val bitmap = exportBitmap(
-            plotSpec = pyDictToMap(plotSpecDict),
-            width = width,
-            height = height,
-            unit = unit.toKString(),
-            dpi = dpi,
-            scale = scale.toDouble(),
-            fontManager = defaultFontManager
-        ) ?: return Py_BuildValue("s", "Failed to generate image")
-        // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
-        // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
-        // This happens because PyBytes_FromStringAndSize has the following signature:
-        // PyObject *PyBytes_FromStringAndSize(const char *v, Py_ssize_t len);
-        // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
-        // and generate a function with a String parameter instead of ByteArray
+        try {
+            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+            val sizeUnit = SizeUnit.fromName(unit.toKString())
+            val dpi = if (dpi >= 0) dpi.toDouble() else null
+            val scaleFactor = if (scale >= 0) scale.toDouble() else null
 
-        val png: ByteArray = Png.encode(bitmap)
-        return Py_BuildValue("s", Base64.encode(png))
+            val bitmap = exportBitmap(
+                plotSpec = pyDictToMap(plotSpecDict),
+                plotSize = plotSize,
+                sizeUnit = sizeUnit,
+                dpi = dpi,
+                scale = scaleFactor,
+                fontManager = defaultFontManager
+            ) ?: return Py_BuildValue("s", "Failed to generate image")
+            // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
+            // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
+            // This happens because PyBytes_FromStringAndSize has the following signature:
+            // PyObject *PyBytes_FromStringAndSize(const char *v, Py_ssize_t len);
+            // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
+            // and generate a function with a String parameter instead of ByteArray
+
+            val png: ByteArray = Png.encode(bitmap)
+            return Py_BuildValue("s", Base64.encode(png))
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            return Py_BuildValue("s", "exportPng() - Exception: ${e.message}")
+        }
     }
 }

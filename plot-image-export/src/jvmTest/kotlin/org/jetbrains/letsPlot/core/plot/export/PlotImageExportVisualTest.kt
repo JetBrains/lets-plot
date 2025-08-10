@@ -4,8 +4,11 @@ import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.CM
 import javax.imageio.ImageIO
 import kotlin.test.Test
 
@@ -62,9 +65,8 @@ class PlotImageExportVisualTest {
 
         val plotSpec = parsePlotSpec(spec).themeTextBlank()
 
-        // 300x300 from exportPlot is the size in pixels, scale = 1.0 means the bitmap will be 300x300 pixels
-        // The ggsize option is ignored in this case.
-        assertPlot("plot_explicit_size_test.png", plotSpec, width = 300, height = 300)
+        // 3x3 inches with 300 DPI means the bitmap will be 900x900 pixels (3 * 300 = 900).
+        assertPlot("plot_explicit_size_test.png", plotSpec, width = 3, height = 3)
     }
 
     @Test
@@ -99,8 +101,8 @@ class PlotImageExportVisualTest {
 
         val plotSpec = parsePlotSpec(spec).themeTextBlank()
 
-        // 300x300 is the size in pixels, scale = 2.0 means the bitmap will be 600x600 pixels
-        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, width = 300, height = 300, scale = 2.0)
+        // 3x3 inches with 300 DPI and scale = 2.0 means the bitmap will be 1800x1800 pixels (3 * 300 * 2 = 1800).
+        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, width = 3, height = 3, scale = 2.0)
     }
 
     @Test
@@ -118,7 +120,7 @@ class PlotImageExportVisualTest {
         val plotSpec = parsePlotSpec(spec).themeTextBlank()
 
         // 5x2cm is the size in centimeters, dpi = 96 means the bitmap will be 189x76 pixels (5 * 96 / 2.54 = 189, 2 * 96 / 2.54 = 76).
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = PlotImageExport.Unit.CM, dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
     }
 
     @Test
@@ -136,7 +138,7 @@ class PlotImageExportVisualTest {
         val plotSpec = parsePlotSpec(spec).themeTextBlank()
 
         // 5x2cm is the size in centimeters, dpi = 300 means the bitmap will be 591x238 pixels (5 * 300 / 2.54 = 591, 2 * 300 / 2.54 = 236).
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = PlotImageExport.Unit.CM, dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
     }
 
     @Test
@@ -154,7 +156,7 @@ class PlotImageExportVisualTest {
         val plotSpec = parsePlotSpec(spec).themeTextBlank()
 
         // 5x2cm is the size in centimeters, dpi = 300 and scale = 2 means the bitmap will be 1181x475 pixels (5 * 300 / 2.54 * 2 = 1182, 2 * 300 / 2.54 * 2 = 472).
-        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, width = w, height = h, unit = PlotImageExport.Unit.CM, dpi = dpi, scale=2)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi, scale=2)
     }
 
     @Test
@@ -172,7 +174,7 @@ class PlotImageExportVisualTest {
         val plotSpec = parsePlotSpec(spec).themeTextBlank()
 
         // 12x4cm is the size in centimeters, dpi = 96 means the bitmap will be 452x152 pixels (12 * 96 / 2.54 = 454, 4 * 96 / 2.54 = 152).
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = PlotImageExport.Unit.CM, dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
     }
 
     @Test
@@ -192,7 +194,7 @@ class PlotImageExportVisualTest {
         // 12x4cm is the size in centimeters, dpi = 300.
         // Taking into account rounding errors while transforming cm -> logical size -> pixels,
         // the bitmap will be 1419x475 pixels (the exact size is 12 * 300 / 2.54 = 1417, 4 * 300 / 2.54 = 472).
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = PlotImageExport.Unit.CM, dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
     }
 
     @Test
@@ -306,22 +308,41 @@ class PlotImageExportVisualTest {
         assertPlot("geom_imshow_export_test.png", spec)
     }
 
+    @Test
+    fun `with dpi=NaN`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
+            |  "mapping": { "x": "x", "y": "y" },
+            |  "layers": [ { "geom": "point" } ],
+            |  "ggsize": { "width": 200, "height": 200 }
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextBlank()
+
+        // dpi is NaN, so the bitmap will be exported with the default scaling factor of 1.0
+        assertPlot("plot_dpi_nan_test.png", plotSpec, dpi = Double.NaN)
+    }
+
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
         width: Number? = null,
         height: Number? = null,
-        unit: PlotImageExport.Unit = PlotImageExport.Unit.PX,
-        dpi: Int = -1,
-        scale: Number = 1.0
+        unit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null
     ) {
+        val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
+
         val imageData = PlotImageExport.buildImageFromRawSpecs(
             plotSpec = plotSpec,
             format = PlotImageExport.Format.PNG,
-            scalingFactor = scale.toDouble(),
-            targetDPI = dpi.toDouble(),
-            width = width?.toDouble(),
-            height = height?.toDouble(),
+            scalingFactor = scale ?: 1.0,
+            targetDPI = dpi,
+            plotSize = plotSize,
             unit = unit
         )
         val image = ImageIO.read(imageData.bytes.inputStream())

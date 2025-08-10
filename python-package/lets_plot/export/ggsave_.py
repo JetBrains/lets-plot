@@ -44,16 +44,19 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Only applicable when exporting to PNG or PDF.
     w : float, default=None
         Width of the output image in units.
-        Only applicable when exporting to PNG or PDF.
+        Only applicable when exporting to SVG, PNG or PDF.
     h : float, default=None
         Height of the output image in units.
-        Only applicable when exporting to PNG or PDF.
-    unit : {'in', 'cm', 'mm'}, default='in'
-        Unit of the output image. One of: 'in', 'cm', 'mm'.
-        Only applicable when exporting to PNG or PDF.
+        Only applicable when exporting to SVG, PNG or PDF.
+    unit : {'in', 'cm', 'mm', 'px'}, default='in'
+        Unit of the output image. One of: 'in', 'cm', 'mm' or 'px.
+        Only applicable when exporting to SVG, PNG or PDF.
     dpi : int, default=300
         Resolution in dots per inch.
         Only applicable when exporting to PNG or PDF.
+        The default value depends on the unit:
+        - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+        - for physical units ('in', 'cm', 'mm') it is 300
 
     Returns
     -------
@@ -87,6 +90,14 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
         - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
         - Useful for generating high-resolution images suitable for publication.
+
+    For SVG format:
+
+    - If `w`, `h` and `unit` are specified:
+
+      - The plot's pixel size (default or set by `ggsize()`) is ignored.
+      - The output size is calculated using the specified `w`, `h`, and `unit`.
+
 
     Examples
     --------
@@ -130,7 +141,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        return _to_svg(plot, pathname)
+        return _to_svg(plot, pathname, w=w, h=h, unit=unit)
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
     elif ext in ['png', 'pdf', 'bmp']:
