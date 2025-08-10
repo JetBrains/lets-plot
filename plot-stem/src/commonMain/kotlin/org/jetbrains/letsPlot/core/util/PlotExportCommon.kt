@@ -21,10 +21,11 @@ object PlotExportCommon {
         }
     }
 
-    // Estimates the size of the image based on the plot size, size unit, and DPI.
+    // Compute export parameters based on the provided plot size, DPI, unit, and scale factor.
     // Returns a Triple containing:
-    // 1. SizingPolicy: The policy for sizing the image.
-    // 2. Double: The scale factor for rendering the image.
+    // 1. SizingPolicy: Defines how the plot should be sized.
+    // 2. Double: The scale factor to apply to the plot rendering.
+    // 3. SizeUnit: size unit of the plotSize.
     fun computeExportParameters(
         plotSize: DoubleVector? = null,
         dpi: Number? = null,
