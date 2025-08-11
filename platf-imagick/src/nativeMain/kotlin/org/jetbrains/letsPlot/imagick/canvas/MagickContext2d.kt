@@ -7,8 +7,6 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.geometry.AffineTransform.Companion.makeShear
-import org.jetbrains.letsPlot.commons.geometry.AffineTransform.Companion.makeTranslation
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
@@ -38,6 +36,7 @@ class MagickContext2d(
 
     private var dirtyFont = true
     private var fontPath: String? = null
+    private var fontFamily: String? = null
     private var emulateBoldWeight: Boolean = false
     private var emulateItalicStyle: Boolean = false
 
@@ -203,40 +202,62 @@ class MagickContext2d(
             dirtyFont = false
             val fontSet = fontManager.resolveFont(font.fontFamily)
 
-            fontPath = when {
-                font.isNormal && fontSet.regularFontPath != null -> fontSet.regularFontPath
-                font.isItalic && fontSet.italicFontPath != null -> fontSet.italicFontPath
-                font.isBold && fontSet.boldFontPath != null -> fontSet.boldFontPath
-                font.isBoldItalic -> when {
-                    fontSet.boldItalicFontPath != null -> fontSet.boldItalicFontPath
-                    fontSet.boldFontPath != null -> fontSet.boldFontPath // take bold, emulate italic
-                    fontSet.italicFontPath != null -> fontSet.italicFontPath // take italic, emulate bold
-                    else -> fontSet.regularFontPath
+            val (path, emulateBold, emulateItalic) = when {
+                font.isNormal -> when {
+                    fontSet.regularFontPath != null -> Triple(fontSet.regularFontPath, false, false)
+                    else -> error("No regular font path found for family: ${fontSet.familyName}")
                 }
-                else -> fontSet.regularFontPath
+                font.isItalic -> when {
+                    fontSet.italicFontPath != null -> Triple(fontSet.italicFontPath, false, false)
+                    fontSet.obliqueFontPath != null -> Triple(fontSet.obliqueFontPath, false, false)
+                    else -> Triple(fontSet.regularFontPath, false, true) // take regular, emulate italic
+                }
+                font.isBold -> when {
+                    fontSet.boldFontPath != null -> Triple(fontSet.boldFontPath, false, false)
+                    else -> Triple(fontSet.regularFontPath, true, false) // take regular, emulate bold
+                }
+                font.isBoldItalic -> when {
+                    fontSet.boldItalicFontPath != null -> Triple(fontSet.boldItalicFontPath, false, false)
+                    fontSet.boldFontPath != null -> Triple(fontSet.boldFontPath, false, true) // take bold, emulate italic
+                    fontSet.italicFontPath != null -> Triple(fontSet.italicFontPath, true, false) // take italic, emulate bold
+                    fontSet.obliqueFontPath != null -> Triple(fontSet.obliqueFontPath, true, false) // take oblique, emulate bold
+                    else -> Triple(fontSet.regularFontPath, true, true)
+                }
+
+                else -> Triple(fontSet.regularFontPath, false, false)
             }
 
-            emulateBoldWeight = when {
-                !font.isBold && !font.isBoldItalic -> false
-                font.isBold && fontSet.boldFontPath != null -> false
-                font.isBoldItalic && fontSet.boldItalicFontPath != null -> false
-                font.isBoldItalic && fontSet.boldFontPath != null -> false
-                else -> true
-            }
+            emulateBoldWeight = emulateBold
+            emulateItalicStyle = emulateItalic
 
-            emulateItalicStyle = when {
-                !font.isItalic && !font.isBoldItalic -> false
-                font.isItalic && fontSet.italicFontPath != null -> false
-                font.isBoldItalic && fontSet.boldItalicFontPath != null -> false
-                font.isBoldItalic && fontSet.italicFontPath != null -> false
-                else -> true
+            if (fontSet.embedded) {
+                fontPath = path
+                fontFamily = null
+            } else {
+                fontFamily = fontSet.familyName
+                fontPath = null
             }
         }
 
-        ImageMagick.DrawSetFont(wand, fontPath)
+        if (fontPath != null) {
+            // Embedded font - set path
+            ImageMagick.DrawSetFont(wand, fontPath)
+        } else if (fontFamily != null) {
+            // System font - set family name
+            ImageMagick.DrawSetFontFamily(wand, fontFamily)
+
+            if (!emulateItalicStyle) {
+                // ImageMagick may additionally italicize the text if fontStyle is set to ITALIC.
+                ImageMagick.DrawSetFontStyle(wand, font.fontStyle.convert())
+            }
+
+            if (!emulateBoldWeight) {
+                // ImageMagick may additionally bold the text if fontWeight is set to BOLD.
+                ImageMagick.DrawSetFontWeight(wand, font.fontWeight.convert())
+            }
+        }
+
         ImageMagick.DrawSetFontSize(wand, font.fontSize)
-        ImageMagick.DrawSetFontStyle(wand, font.fontStyle.convert())
-        ImageMagick.DrawSetFontWeight(wand, font.fontWeight.convert())
 
         if (emulateItalicStyle) {
             transform(wand, italicShearTransform)
@@ -381,7 +402,7 @@ class MagickContext2d(
     }
 
     private fun drawText(wand: CPointer<ImageMagick.DrawingWand>, text: String, x: Double, y: Double) {
-        fun italicOffsetAdjustment() = makeTranslation(-tan(ITALIC_SHEAR_ANGLE) * y, 0)
+        fun italicOffsetAdjustment() = AffineTransform.makeTranslation(-tan(ITALIC_SHEAR_ANGLE) * y, 0)
 
         if (emulateItalicStyle) {
             transform(wand, italicOffsetAdjustment())
@@ -400,11 +421,11 @@ class MagickContext2d(
 
     companion object {
         private const val ITALIC_SHEAR_ANGLE = -0.25 // radians, approx. 14 degrees
-        private val italicShearTransform = makeShear(rx = ITALIC_SHEAR_ANGLE, ry = 0.0)
+        private val italicShearTransform = AffineTransform.makeShear(rx = ITALIC_SHEAR_ANGLE, ry = 0.0)
 
-        const val logEnabled = false
-        fun log(str: () -> String) {
-            if (logEnabled)
+        private const val LOG_ENABLED = false
+        private fun log(str: () -> String) {
+            if (LOG_ENABLED)
                 println(str())
         }
 

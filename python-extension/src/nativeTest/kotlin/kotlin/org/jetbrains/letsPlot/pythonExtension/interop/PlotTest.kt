@@ -261,6 +261,50 @@ class PlotTest {
     }
 
     @Test
+    fun plotMarkdownObliqueFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "oblique" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_oblique_font_style_test.png", plotSpec)
+    }
+
+    @Test
+    fun plotMarkdownObliqueBoldFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "oblique_bold" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_oblique_bold_font_style_test.png", plotSpec)
+    }
+
+    @Test
     fun plot5x2cm96dpi() {
         val (w, h, dpi) = Triple(5, 2, 96)
         val spec = """
@@ -390,11 +434,6 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        val bitmap = PlotReprGenerator.exportBitmap(
-            plotSpec = plotSpec,
-            scale = 2.0,
-            fontManager = embeddedFontsManager,
-        ) ?: error("Failed to export bitmap from plot spec")
 
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale=2)
     }
@@ -414,6 +453,7 @@ class PlotTest {
             dpi=dpi,
             scale=scale,
             fontManager = embeddedFontsManager
+            //fontManager = MagickFontManager.default() // For manual testing
         ) ?: error("Failed to export bitmap from plot spec")
 
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
