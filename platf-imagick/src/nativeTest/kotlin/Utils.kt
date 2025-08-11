@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager.FontSet
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -223,10 +224,9 @@ val notoSansMonoRegularFontPath = resourcesDir + "fonts/NotoSansMono-Regular.ttf
 val notoSansMonoBoldFontPath = resourcesDir + "fonts/NotoSansMono-Bold.ttf"
 
 
-fun embeddedFontsManager() = MagickFontManager.default().apply {
-    registerFont(Font(fontFamily = "serif"), notoSerifRegularFontPath)
-    registerFont(Font(fontFamily = "NotoMono"), notoSansMonoRegularFontPath)
-}
+fun embeddedFontsManager() = MagickFontManager.configured(
+    "serif" to FontSet(embedded = true, familyName = "serif", notoSerifRegularFontPath)
+)
 
 fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
