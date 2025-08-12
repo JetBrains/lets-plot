@@ -130,7 +130,7 @@ class MagickFontManager private constructor(
     fun registerFont(font: Font, filePath: String) {
         log { "registerFont('$font', '$filePath')" }
 
-        val current = cache[font.fontFamily] ?: FontSet(familyName = font.fontFamily)
+        val current = cache[font.fontFamily] ?: FontSet(embedded = true, familyName = font.fontFamily)
 
         cache[font.fontFamily] = current.copy(
             regularFontPath = if (font.isNormal) filePath else current.regularFontPath,
@@ -187,6 +187,7 @@ class MagickFontManager private constructor(
 
         log { "findFamilyFontSet('$family') - found ${fonts.size} fonts: ${fonts.joinToString { it.name }}" }
         return FontSet(
+            embedded = false, // resolved from system fonts, not embedded
             familyName = family,
             regularFontPath = fonts.firstOrNull { it.style == FontStyle.NORMAL && it.weight == FontWeight.NORMAL }?.filePath,
             boldFontPath = fonts.firstOrNull { it.style == FontStyle.NORMAL && it.weight == FontWeight.BOLD }?.filePath,
@@ -252,6 +253,10 @@ class MagickFontManager private constructor(
     }
 
     data class FontSet(
+        // - if a true the font may not be resolved from the system, should use filePath directly, e.g., embedded font
+        // - If a false the font is expected to be resolved from the system fonts by family name.
+        //   The *FontPath properties should be used only to determine supported styles and weights.
+        val embedded: Boolean = false,
         val familyName: String,
         val regularFontPath: String? = null,
         val italicFontPath: String? = null,
@@ -262,13 +267,19 @@ class MagickFontManager private constructor(
     ) {
         val repr: String
             get() {
-                return "$familyName(" +
-                        (regularFontPath?.let { "n" } ?: "") +
-                        (boldFontPath?.let { "B" } ?: "") +
-                        (italicFontPath?.let { "i" } ?: "") +
-                        (boldItalicFontPath?.let { "I" } ?: "") +
-                        (obliqueFontPath?.let { "o" } ?: "") +
-                        (boldObliqueFontPath?.let { "O" } ?: "") +
+                return familyName + if (embedded) {
+                    "_embedded"
+                } else {
+                    ""
+                } + "(" +
+                        listOfNotNull(
+                            regularFontPath?.let { "r" },
+                            boldFontPath?.let { "R" },
+                            italicFontPath?.let { "i" },
+                            boldItalicFontPath?.let { "I" },
+                            obliqueFontPath?.let { "o" },
+                            boldObliqueFontPath?.let { "O" },
+                        ).joinToString(separator = "") +
                         ")"
             }
     }

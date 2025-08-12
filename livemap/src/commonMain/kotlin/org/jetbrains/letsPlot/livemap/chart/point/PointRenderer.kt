@@ -32,7 +32,7 @@ class PointRenderer(
         ctx.beginPath()
         drawMarker(
             ctx = ctx,
-            radius = pointData.scaledRadius(chartElement.scalingSizeFactor),
+            radius = pointData.scaledRadius(chartElement.scalingSizeFactor).value,
             stroke = chartElement.scaledStrokeWidth(),
             shape = shape,
             angle = angle

@@ -13,20 +13,19 @@ import kotlin.math.max
 import kotlin.math.min
 
 class FacetWrap constructor(
-    private val facets: List<String>,
-    levels: List<List<Any>>,
+    facets: List<String>,
+    private val varNameAndLevelPairsByTile: List<List<Pair<String, Any>>>,
     nrow: Int?,
     ncol: Int?,
     private val direction: Direction,
-    facetOrdering: List<Int>,
     private val facetFormatters: List<(Any) -> String>,
     scales: FacetScales = FacetScales.FIXED,
     private val labWidths: List<Int>
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
-    private val levels: List<List<Any>> = reorderLevels(facets, levels, facetOrdering)
-    override val numTiles = numTiles(facets, levels)
+
+    override val numTiles = varNameAndLevelPairsByTile.size
     private val shape = shape(numTiles, ncol, nrow, direction)
     override val colCount: Int = shape.first
     override val rowCount: Int = shape.second
@@ -40,18 +39,17 @@ class FacetWrap constructor(
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
-     *          Tiles are enumerated by rows, i.e.:
+     *          Tiles enumerated by rows, i.e.:
      *          the index is computed like: row * nCols + col
      */
     override fun dataByTile(data: DataFrame): List<DataFrame> {
-        val dataByLevelTuple = dataByLevelTuple(
+        val levelTupleAndDataPairs = levelTupleAndDataPairs(
             data,
-            variables,
-            levels
+            varNameAndLevelPairsByTile
         )
 
         val dataByTile: MutableList<DataFrame> = ArrayList()
-        for ((_, tileData) in dataByLevelTuple) {
+        for ((_, tileData) in levelTupleAndDataPairs) {
             dataByTile.add(tileData)
         }
         return dataByTile
@@ -59,16 +57,17 @@ class FacetWrap constructor(
 
     /**
      * @return List of FacetTileInfo.
-     *          Tiles are enumerated by rows, i.e.:
+     *          Tiles enumerated by rows, i.e.:
      *          the index is computed like: row * nCols + col
      */
     override fun tileInfos(): List<FacetTileInfo> {
 
-        val levelTuples = createNameLevelTuples(facets, levels)
-        val tileLabels = levelTuples
-            .map { it.map { pair -> pair.second } }                    // get rid of 'pair'
+        val tileLabels = varNameAndLevelPairsByTile
+            .map { it.map { pair -> pair.second } }  // Extract level values only
             .map {
-                it.mapIndexed { i, level -> wrap(facetFormatters[i](level), labWidths[i]) }   // to string tuples
+                it.mapIndexed { i, level ->
+                    wrap(facetFormatters[i](level), labWidths[i])
+                }
             }
 
         fun toCol(index: Int): Int {
@@ -149,15 +148,6 @@ class FacetWrap constructor(
     }
 
     companion object {
-        private fun numTiles(
-            facets: List<String>,
-            levels: List<List<Any>>,
-        ): Int {
-            require(facets.isNotEmpty()) { "List of facets is empty." }
-            require(facets.distinct().size == facets.size) { "Duplicated values in the facets list: $facets" }
-            check(facets.size == levels.size)
-            return createNameLevelTuples(facets, levels).size
-        }
 
         private fun shape(tilesCount: Int, ncol: Int?, nrow: Int?, dir: Direction): Pair<Int, Int> {
             require(ncol?.let { ncol > 0 } ?: true) { "'ncol' must be positive, was $ncol" }

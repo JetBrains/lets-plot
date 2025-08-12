@@ -58,7 +58,9 @@ internal class CompositeFigureBuildInfo constructor(
             elementSvgRoots,
             overalSize,
             elementsAreaBounds,
-            title, subtitle, caption,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
             theme = theme,
             styleSheet = Style.fromTheme(theme, flippedAxis = false),
         )

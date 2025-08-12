@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.nat.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 
 
 /**
@@ -23,11 +24,13 @@ expect object PlotSvgExportNative {
      * @param plotSpec Raw specification of a plot.
      * @param plotSize Desired plot size.
      * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
+     * @param sizeUnit Size unit for the plot size. The default is pixels (PX).
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector? = null,
-        useCssPixelatedImageRendering: Boolean = true
+        useCssPixelatedImageRendering: Boolean = true,
+        sizeUnit: SizeUnit? = null,
     ): String
 }

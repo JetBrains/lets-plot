@@ -49,15 +49,15 @@ def gggrid(plots: list, ncol: int = None, *,
     vspace : float, default=4.0
         Cell vertical spacing in px.
     fit : bool, default=True
-        Whether to stretch each plot to match the aspect ratio of its cell (`fit=True`),
-        or to preserve the original aspect ratio of plots (`fit=False`).
+        Whether to stretch each plot to match the aspect ratio of its cell (``fit=True``),
+        or to preserve the original aspect ratio of plots (``fit=False``).
     align : bool, default=False
         If True, align inner areas (i.e. "geom" bounds) of plots.
         However, cells containing other (sub)grids are not participating in the plot "inner areas" layouting.
 
     Returns
     -------
-    `SupPlotsSpec`
+    ``SupPlotsSpec``
         The grid specification.
 
     Examples

@@ -16,7 +16,8 @@ data class HoverObject(
     val index: Int,
     val distance: Double,
     val locator: Locator, // TODO: move it out from HoverObject
-    val targetPosition: DoubleVector? = null
+    val targetPosition: DoubleVector? = null,
+    val targetRadius: Double? = null,
 )
 
 interface Locator {

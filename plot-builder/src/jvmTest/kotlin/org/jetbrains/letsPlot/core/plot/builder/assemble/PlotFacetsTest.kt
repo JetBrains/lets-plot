@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.varNameAndLevelPairsByTile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -27,7 +28,11 @@ internal class PlotFacetsTest {
 
         // "A" levels as column labels
         run {
-            val dataByLevelA = PlotFacets.dataByLevelTuple(data, listOf("A"), listOf(listOf(0.0, 1.0, 2.0)))
+            val varNameAndLevelPairsByTile: List<List<Pair<String, Any>>> = varNameAndLevelPairsByTile(
+                varNames = listOf("A"),
+                varLevels = listOf(listOf(0.0, 1.0, 2.0))
+            )
+            val dataByLevelA = PlotFacets.levelTupleAndDataPairs(data, varNameAndLevelPairsByTile)
                 .toMap()
 
             assertEquals(3, dataByLevelA.size)
@@ -38,7 +43,7 @@ internal class PlotFacetsTest {
                 listOf(2.0),
             )
             for (extectedKey in extectedKeys) {
-                assert(dataByLevelA.containsKey(extectedKey)) { "Key: $extectedKey" }
+                assert(dataByLevelA.containsKey(extectedKey)) { "Key missing: $extectedKey" }
             }
 
             val expectedData = listOf(
@@ -64,13 +69,16 @@ internal class PlotFacetsTest {
         // "A" levels as column labels
         // "B" levels as row labels
         run {
-            val dataByLevelAB = PlotFacets.dataByLevelTuple(
-                data,
-                listOf("A", "B"),
-                listOf(
+            val varNameAndLevelPairsByTile: List<List<Pair<String, Any>>> = varNameAndLevelPairsByTile(
+                varNames = listOf("A", "B"),
+                varLevels = listOf(
                     listOf(0.0, 1.0, 2.0),
                     listOf("one", "two"),
                 )
+            )
+            val dataByLevelAB = PlotFacets.levelTupleAndDataPairs(
+                data,
+                varNameAndLevelPairsByTile,
             ).toMap()
 
             assertEquals(6, dataByLevelAB.size)

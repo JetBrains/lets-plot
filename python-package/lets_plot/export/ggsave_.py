@@ -23,11 +23,11 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
-    if not specified otherwise (see the `path` parameter).
+    if not specified otherwise (see the ``path`` parameter).
 
     Parameters
     ----------
-    plot : `PlotSpec`
+    plot : ``PlotSpec``
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
@@ -44,16 +44,19 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Only applicable when exporting to PNG or PDF.
     w : float, default=None
         Width of the output image in units.
-        Only applicable when exporting to PNG or PDF.
+        Only applicable when exporting to SVG, PNG or PDF.
     h : float, default=None
         Height of the output image in units.
-        Only applicable when exporting to PNG or PDF.
-    unit : {'in', 'cm', 'mm'}, default='in'
-        Unit of the output image. One of: 'in', 'cm', 'mm'.
-        Only applicable when exporting to PNG or PDF.
+        Only applicable when exporting to SVG, PNG or PDF.
+    unit : {'in', 'cm', 'mm', 'px'}, default='in'
+        Unit of the output image. One of: 'in', 'cm', 'mm' or 'px.
+        Only applicable when exporting to SVG, PNG or PDF.
     dpi : int, default=300
         Resolution in dots per inch.
         Only applicable when exporting to PNG or PDF.
+        The default value depends on the unit:
+        - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+        - for physical units ('in', 'cm', 'mm') it is 300
 
     Returns
     -------
@@ -66,27 +69,35 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     For PNG and PDF formats:
 
-    - If `w`, `h`, `unit`, and `dpi` are all specified:
+    - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
 
-      - The plot's pixel size (default or set by `ggsize()`) is ignored.
-      - The output size is calculated using the specified `w`, `h`, `unit`, and `dpi`.
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+      - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
 
-        - The plot is resized to fit the specified `w` x `h` area, which may affect the layout, tick labels, and other elements.
+        - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
 
-    - If only `dpi` is specified:
+    - If only ``dpi`` is specified:
 
-      - The plot's pixel size (default or set by `ggsize()`) is converted to inches using the standard display PPI of 96.
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
       - The output size is then calculated based on the specified DPI.
 
         - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
         - Useful for printing - the plot will appear nearly the same size as on screen.
 
-    - If `w`, `h` are not specified:
+    - If ``w``, ``h`` are not specified:
 
-      - The `scale` parameter is used to determine the output size.
+      - The ``scale`` parameter is used to determine the output size.
 
         - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
         - Useful for generating high-resolution images suitable for publication.
+
+    For SVG format:
+
+    - If `w`, `h` and `unit` are specified:
+
+      - The plot's pixel size (default or set by `ggsize()`) is ignored.
+      - The output size is calculated using the specified `w`, `h`, and `unit`.
+
 
     Examples
     --------
@@ -130,7 +141,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        return _to_svg(plot, pathname)
+        return _to_svg(plot, pathname, w=w, h=h, unit=unit)
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
     elif ext in ['png', 'pdf', 'bmp']:

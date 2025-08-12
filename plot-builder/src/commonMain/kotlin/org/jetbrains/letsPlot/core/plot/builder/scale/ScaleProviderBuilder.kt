@@ -102,20 +102,6 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    @Suppress("FunctionName")
-    fun rescaler_NI(
-        @Suppress("UNUSED_PARAMETER") v: Any
-    ): ScaleProviderBuilder<T> {
-        throw IllegalStateException("Not implemented")
-    }
-
-    @Suppress("FunctionName")
-    fun oob_NI(
-        @Suppress("UNUSED_PARAMETER") v: Any
-    ): ScaleProviderBuilder<T> {
-        throw IllegalStateException("Not implemented")
-    }
-
     fun continuousTransform(v: ContinuousTransform): ScaleProviderBuilder<T> {
         myContinuousTransform = v
         return this
@@ -126,17 +112,16 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun exponentFormat(v: ExponentFormat): ScaleProviderBuilder<T> {
-        myExpFormat = v
+    fun breaksGeneratorIfNone(v: BreaksGenerator): ScaleProviderBuilder<T> {
+        if (myBreaksGenerator == null) {
+            myBreaksGenerator = v
+        }
         return this
     }
 
-    @Suppress("FunctionName")
-    fun guide_NI(
-        @Suppress("UNUSED_PARAMETER") v: Any
-    ): ScaleProviderBuilder<T> {
-        // Name of guide object, or object itself.
-        throw IllegalStateException("Not implemented")
+    fun exponentFormat(v: ExponentFormat): ScaleProviderBuilder<T> {
+        myExpFormat = v
+        return this
     }
 
     fun discreteDomain(b: Boolean): ScaleProviderBuilder<T> {

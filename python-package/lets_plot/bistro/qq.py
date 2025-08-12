@@ -16,14 +16,14 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     """
     Produce a Q-Q plot (quantile-quantile plot).
 
-    Supply the `sample` parameter to compare distribution of observations with a theoretical distribution
-    ('normal' or as otherwise specified by the `distribution` parameter).
+    Supply the ``sample`` parameter to compare distribution of observations with a theoretical distribution
+    ('normal' or as otherwise specified by the ``distribution`` parameter).
 
-    Alternatively, supply `x` and `y` parameters to compare the distribution of `x` with the distribution of `y`.
+    Alternatively, supply ``x`` and ``y`` parameters to compare the distribution of ``x`` with the distribution of ``y``.
 
     Parameters
     ----------
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed.
     sample : str
         Name of variable specifying a vector of observations used for computing of "sample quantiles".
@@ -33,16 +33,16 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         x and y "sample quantiles".
         Use these two parameters to produce a "sample X vs. sample Y" Q-Q plot.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
-        Distribution function to use. Could be specified if `sample` is.
+        Distribution function to use. Could be specified if ``sample`` is.
     dparams : list
         Additional parameters (of float type) passed on to distribution function.
-        Could be specified if `sample` is.
-        If `distribution` is `'norm'` then `dparams` is a pair [mean, std] (=[0.0, 1.0] by default).
-        If `distribution` is `'uniform'` then `dparams` is a pair [a, b] (=[0.0, 1.0] by default).
-        If `distribution` is `'t'` then `dparams` is an integer number [d] (=[1] by default).
-        If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
-        If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
-        If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
+        Could be specified if ``sample`` is.
+        If ``distribution`` is ``'norm'`` then ``dparams`` is a pair [mean, std] (=[0.0, 1.0] by default).
+        If ``distribution`` is ``'uniform'`` then ``dparams`` is a pair [a, b] (=[0.0, 1.0] by default).
+        If ``distribution`` is ``'t'`` then ``dparams`` is an integer number [d] (=[1] by default).
+        If ``distribution`` is ``'gamma'`` then ``dparams`` is a pair [alpha, beta] (=[1.0, 1.0] by default).
+        If ``distribution`` is ``'exp'`` then ``dparams`` is a float number [lambda] (=[1.0] by default).
+        If ``distribution`` is ``'chi2'`` then ``dparams`` is an integer number [k] (=[1] by default).
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
     group : str
@@ -59,7 +59,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         Second parameter is a string specifying which sides of the plot the marginal layer will appear on.
         Possible values: 't' (top), 'b' (bottom), 'l' (left), 'r' (right).
         Third parameter (optional) is size of marginal.
-        To suppress marginals use `marginal='none'`.
+        To suppress marginals use ``marginal='none'``.
         Examples:
         "hist:tr:0.3",
         "dens:tr,hist:bl",
@@ -91,7 +91,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
 
     Returns
     -------
-    `PlotSpec`
+    ``PlotSpec``
         Plot object specification.
 
     Notes
@@ -104,8 +104,8 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------

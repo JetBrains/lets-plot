@@ -141,22 +141,17 @@ object TestUtil {
         return createLocator(
             lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
             contextualMapping = mock(ContextualMapping::class.java),
-            targetPrototypes = targetsList
+            targets = targetsList
         )
     }
 
     internal fun createLocator(
         lookupSpec: LookupSpec,
-        contextualMapping: ContextualMapping,
-        targetPrototypes: List<TargetPrototype>,
+        contextualMapping: ContextualMapping = mock(ContextualMapping::class.java),
+        targets: List<TargetPrototype>,
         geomKind: GeomKind = GeomKind.POINT
     ): GeomTargetLocator {
-        return LayerTargetLocator(
-            geomKind,
-            lookupSpec,
-            contextualMapping,
-            targetPrototypes
-        )
+        return LayerTargetLocator(geomKind, lookupSpec, contextualMapping, targets)
     }
 
     fun coord(x: Double, y: Double): DoubleVector {

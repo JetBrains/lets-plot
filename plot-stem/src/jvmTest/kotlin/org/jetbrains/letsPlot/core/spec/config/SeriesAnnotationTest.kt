@@ -130,7 +130,7 @@ class SeriesAnnotationTest {
                 scales = """{"aesthetic": "x", "reverse": true}"""
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = false, isDateTime = false, name = "date")
+                .assertDateTimeScale(Aes.X, isDiscrete = false, isDateTime = true, name = "date")
                 .assertDateTimeVariable(varName = "date", isDateTime = true)
         }
         run {

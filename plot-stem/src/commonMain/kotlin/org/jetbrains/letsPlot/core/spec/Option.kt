@@ -754,6 +754,7 @@ object Option {
         const val FACETS_FILL_DIR = "dir"
         const val FACETS_FORMAT = "format"
         const val FACETS_LABWIDTH = "labwidth"
+        const val DROP_UNUSED_LEVELS = "drop"
 
         const val FACET_ORDER_ASC = 1
         const val FACET_ORDER_DESC = -1

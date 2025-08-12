@@ -113,11 +113,11 @@ class layer_labels(FeatureSpec):
             a string template ('{.1f}') or a date/time format ('%d.%m.%y').
             The numeric format for non-numeric value will be ignored.
             If you need to include a brace character in the literal text,
-            it can be escaped by doubling: `{{` and `}}`.
+            it can be escaped by doubling: ``{{`` and ``}}``.
 
         Returns
         -------
-        `layer_labels`
+        ``layer_labels``
             Annotations specification.
 
         Notes
@@ -179,7 +179,7 @@ class layer_labels(FeatureSpec):
 
         Returns
         -------
-        `layer_labels`
+        ``layer_labels``
             Annotations specification.
 
         Notes
@@ -232,7 +232,7 @@ class layer_labels(FeatureSpec):
 
         Returns
         -------
-        `layer_labels`
+        ``layer_labels``
             Annotations specification.
 
         Examples
@@ -265,7 +265,7 @@ class layer_labels(FeatureSpec):
 
         Returns
         -------
-        `layer_labels`
+        ``layer_labels``
             Annotations specification.
 
         Examples

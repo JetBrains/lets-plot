@@ -119,18 +119,18 @@ class LetsPlot:
         -----
         List of possible settings:
 
-        - html_isolated_frame : preload Lets-Plot JS library or not (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`.
-        - offline : to work with notebook without the Internet connection (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`.
-        - no_js : do not generate HTML+JS as an output (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`. Also note that without JS interactive maps and tooltips doesn't work!
+        - html_isolated_frame : preload Lets-Plot JS library or not (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.setup_html>`__.
+        - offline : to work with notebook without the Internet connection (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.setup_html>`__.
+        - no_js : do not generate HTML+JS as an output (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.setup_html>`__. Also note that without JS interactive maps and tooltips doesn't work!
 
         Interactive map settings could also be specified:
 
-        - maptiles_kind : kind of the tiles, could be 'raster_zxy' or 'vector_lets_plot'. Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
-        - maptiles_url : address of the tile server (str). Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
-        - maptiles_theme : tiles theme, could be 'color', 'light' or 'dark'. Do not use this parameter explicitly. Instead you should construct it with function `maptiles_lets_plot()`.
-        - maptiles_attribution : an attribution or a copyright notice to display on the map as required by the tile license (str, supports HTML links). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy()`.
-        - maptiles_min_zoom : minimal zoom limit (int). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy()`.
-        - maptiles_max_zoom : maximal zoom limit (int). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy()`.
+        - maptiles_kind : kind of the tiles, could be 'raster_zxy' or 'vector_lets_plot'. Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_zxy.html>`__ and `maptiles_lets_plot() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_lets_plot.html>`__.
+        - maptiles_url : address of the tile server (str). Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_zxy.html>`__ and `maptiles_lets_plot() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_lets_plot.html>`__.
+        - maptiles_theme : tiles theme, could be 'color', 'light' or 'dark'. Do not use this parameter explicitly. Instead you should construct it with function `maptiles_lets_plot() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_lets_plot.html>`__.
+        - maptiles_attribution : an attribution or a copyright notice to display on the map as required by the tile license (str, supports HTML links). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_zxy.html>`__.
+        - maptiles_min_zoom : minimal zoom limit (int). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_zxy.html>`__.
+        - maptiles_max_zoom : maximal zoom limit (int). Do not use this parameter explicitly. Instead you should construct it with function `maptiles_zxy() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_zxy.html>`__.
 
         Examples
         --------
@@ -170,7 +170,7 @@ class LetsPlot:
         Parameters
         ----------
         theme : spec
-            Theme spec provided by `theme(...)`, `theme_xxx()`, `flavor_xxx()` functions, or their sum.
+            Theme spec provided by `theme(...) <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__, ``theme_xxx()``, ``flavor_xxx()`` functions, or their sum.
 
         """
         if theme is None:
@@ -189,10 +189,10 @@ class LetsPlot:
         """
         Configure Lets-Plot to show its HTML output in an external browser.
 
-        When the "show externally" is set up, an invocation of `figire.show()` will
+        When the "show externally" is set up, an invocation of ``figire.show()`` will
         - generate HTML output
         - save it to a temporary file
-        - open the file in the default web browser or in a web browser specified by the `exec` parameter.
+        - open the file in the default web browser or in a web browser specified by the ``exec`` parameter.
 
         Parameters
         ----------
@@ -202,8 +202,8 @@ class LetsPlot:
         new : bool, default=False
             If True, the URL is opened in a new window of the web browser.
             If False, the URL is opened in the already opened web browser window.
-            The `new` parameter is only applicable when the `exec` parameter is not specified.
-            Please note that the `new` parameter is not supported by all web browsers and all OS-s.
+            The ``new`` parameter is only applicable when the ``exec`` parameter is not specified.
+            Please note that the ``new`` parameter is not supported by all web browsers and all OS-s.
 
         Examples
         --------

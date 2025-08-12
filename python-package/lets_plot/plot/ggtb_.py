@@ -33,7 +33,7 @@ def ggtb() -> FeatureSpec:
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Toolbar feature specification.
 
     Examples

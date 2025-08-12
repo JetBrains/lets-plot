@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import kotlin.test.Test
 
 
@@ -153,7 +155,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_explicit_size_test.png", plotSpec, width = 300, height = 300)
+        assertPlot("plot_explicit_size_test.png", plotSpec, DoubleVector(300, 300))
     }
 
     @Test
@@ -189,7 +191,7 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         // 300x300 is the size in pixels, scale = 2.0 means the bitmap will be 600x600 pixels
-        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, width = 300, height = 300, scale = 2.0)
+        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, DoubleVector(300, 300), scale = 2.0)
     }
 
     @Test
@@ -259,6 +261,50 @@ class PlotTest {
     }
 
     @Test
+    fun plotMarkdownObliqueFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "oblique" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_oblique_font_style_test.png", plotSpec)
+    }
+
+    @Test
+    fun plotMarkdownObliqueBoldFontStyle() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "oblique_bold" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_oblique_bold_font_style_test.png", plotSpec)
+    }
+
+    @Test
     fun plot5x2cm96dpi() {
         val (w, h, dpi) = Triple(5, 2, 96)
         val spec = """
@@ -271,7 +317,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -287,7 +333,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -303,7 +349,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi, scale=2)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi, scale=2)
     }
 
     @Test
@@ -319,7 +365,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -335,7 +381,7 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = "cm", dpi = dpi)
+        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi)
     }
 
     @Test
@@ -395,20 +441,19 @@ class PlotTest {
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,
-        width: Number = -1f,
-        height: Number = -1f,
-        unit: String = "px",
-        dpi: Int = -1,
-        scale: Number = 1.0
+        plotSize: DoubleVector? = null,
+        unit: SizeUnit? = SizeUnit.PX,
+        dpi: Number? = null,
+        scale: Number? = 1
     ) {
         val bitmap = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
-            width = width.toFloat(),
-            height = height.toFloat(),
-            unit=unit,
+            plotSize = plotSize,
+            sizeUnit = unit,
             dpi=dpi,
-            scale=scale.toDouble(),
+            scale=scale,
             fontManager = embeddedFontsManager
+            //fontManager = MagickFontManager.default() // For manual testing
         ) ?: error("Failed to export bitmap from plot spec")
 
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)

@@ -175,8 +175,12 @@ class Geocoder:
     Do not use this class explicitly.
 
     Instead you should construct its objects with special functions:
-    `geocode()`, `geocode_cities()`, `geocode_counties()`, `geocode_states()`,
-    `geocode_countries()`, `reverse_geocode()`.
+    `geocode() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode.html>`__,
+    `geocode_cities() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_cities.html>`__,
+    `geocode_counties() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_counties.html>`__,
+    `geocode_states() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_states.html>`__,
+    `geocode_countries() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_countries.html>`__,
+    ``reverse_geocode()``.
     """
 
     def __init__(self):
@@ -186,13 +190,13 @@ class Geocoder:
 
     def get_limits(self) -> 'GeoDataFrame':
         """
-        Return bboxes (Polygon geometry) for given regions in form of `GeoDataFrame`.
+        Return bboxes (Polygon geometry) for given regions in form of ``GeoDataFrame``.
         For regions intersecting anti-meridian bbox will be divided into two parts
         and stored as two rows.
 
         Returns
         -------
-        `GeoDataFrame`
+        ``GeoDataFrame``
             Table of data.
 
         Examples
@@ -214,11 +218,11 @@ class Geocoder:
 
     def get_centroids(self) -> 'GeoDataFrame':
         """
-        Return centroids (Point geometry) for given regions in form of `GeoDataFrame`.
+        Return centroids (Point geometry) for given regions in form of ``GeoDataFrame``.
 
         Returns
         -------
-        `GeoDataFrame`
+        ``GeoDataFrame``
             Table of data.
 
         Examples
@@ -240,7 +244,7 @@ class Geocoder:
 
     def get_boundaries(self, resolution=None) -> 'GeoDataFrame':
         """
-        Return boundaries for given regions in the form of `GeoDataFrame`.
+        Return boundaries for given regions in the form of ``GeoDataFrame``.
 
         Parameters
         ----------
@@ -249,12 +253,12 @@ class Geocoder:
 
         Returns
         -------
-        `GeoDataFrame`
+        ``GeoDataFrame``
             Table of data.
 
         Notes
         -----
-        If `resolution` has int type, it may take one of the following values:
+        If ``resolution`` has int type, it may take one of the following values:
 
         - 1-3 for world scale view,
         - 4-6 for country scale view,
@@ -264,7 +268,7 @@ class Geocoder:
 
         Here value 1 corresponds to maximum performance and 15 - to maximum quality.
 
-        If `resolution` is of str type, it may take one of the following values:
+        If ``resolution`` is of str type, it may take one of the following values:
 
         - 'world' corresponds to int value 2,
         - 'country' corresponds to int value 5,
@@ -282,18 +286,18 @@ class Geocoder:
         For example, 'city' scale can be used for a state to get a more detailed boundary
         when zooming in, or 'world' for a small preview.
 
-        If `resolution` is not specified (or equal to None), it will be auto-detected.
+        If ``resolution`` is not specified (or equal to None), it will be auto-detected.
         Auto-detection by level_kind is used for geocoding and the number of objects.
         In this case performance is preferred over quality.
         The pixelated geometries can be obtained.
-        Use explicit resolution or `inc_res()` function for better quality.
+        Use explicit resolution or ``inc_res()`` function for better quality.
 
-        If the number of objects is equal to n, then `resolution` will be the following:
+        If the number of objects is equal to n, then ``resolution`` will be the following:
 
-        - For countries: if n < 3 then `resolution=3`, else `resolution=1`.
-        - For states: if n < 3 then `resolution=7`, if n < 10 then `resolution=4`, else `resolution=2`.
-        - For counties: if n < 5 then `resolution=10`, if n < 20 then `resolution=8`, else `resolution=3`.
-        - For cities: if n < 5 then `resolution=13`, if n < 50 then `resolution=4`, else `resolution=3`.
+        - For countries: if n < 3 then ``resolution=3``, else ``resolution=1``.
+        - For states: if n < 3 then ``resolution=7``, if n < 10 then ``resolution=4``, else ``resolution=2``.
+        - For counties: if n < 5 then ``resolution=10``, if n < 20 then ``resolution=8``, else ``resolution=3``.
+        - For cities: if n < 5 then ``resolution=13``, if n < 50 then ``resolution=4``, else ``resolution=3``.
 
         Examples
         --------
@@ -318,7 +322,7 @@ class Geocoder:
 
         Returns
         -------
-        `DataFrame`
+        ``DataFrame``
             Table of data.
 
         Examples
@@ -344,7 +348,7 @@ class Geocoder:
 
         Returns
         -------
-        `Geocoder`
+        ``Geocoder``
             Geocoder object specification.
 
         Examples
@@ -392,8 +396,12 @@ class ReverseGeocoder(Geocoder):
     Do not use this class explicitly.
 
     Instead you should construct its objects with special functions:
-    `geocode()`, `geocode_cities()`, `geocode_counties()`, `geocode_states()`,
-    `geocode_countries()`, `reverse_geocode()`.
+    `geocode() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode.html>`__,
+    `geocode_cities() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_cities.html>`__,
+    `geocode_counties() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_counties.html>`__,
+    `geocode_states() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_states.html>`__,
+    `geocode_countries() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_countries.html>`__,
+    ``reverse_geocode()``.
     """
 
     def __init__(self, lon, lat, level: Optional[Union[str, LevelKind]], scope=None):
@@ -430,8 +438,11 @@ class NamesGeocoder(Geocoder):
     Do not use this class explicitly.
 
     Instead you should construct its objects with special functions:
-    `geocode()`, `geocode_cities()`, `geocode_counties()`, `geocode_states()`,
-    `geocode_countries()`, `reverse_geocode()`.
+    `geocode() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode.html>`__,
+    `geocode_cities() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_cities.html>`__,
+    `geocode_counties() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_counties.html>`__,
+    `geocode_states() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_states.html>`__,
+    `geocode_countries() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.geocode_countries.html>`__.
     """
 
     def __init__(
@@ -466,14 +477,14 @@ class NamesGeocoder(Geocoder):
 
         Parameters
         ----------
-        scope : str or `Geocoder`
+        scope : str or ``Geocoder``
             Area of interest.
             If it is of str type then it should be the geo-object name.
-            If it is of `Geocoder` type then it must contain only one object.
+            If it is of ``Geocoder`` type then it must contain only one object.
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -498,17 +509,17 @@ class NamesGeocoder(Geocoder):
 
     def highlights(self, v: bool):
         """
-        Add matched string to geocodes `DataFrame`. Doesn't affect `GeoDataFrame`.
+        Add matched string to geocodes ``DataFrame``. Doesn't affect ``GeoDataFrame``.
 
         Parameters
         ----------
         v : bool
-            If True geocodes `DataFrame` will contain column 'highlights'
+            If True geocodes ``DataFrame`` will contain column 'highlights'
             with string that matched the name.
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -531,17 +542,17 @@ class NamesGeocoder(Geocoder):
 
         Parameters
         ----------
-        countries : str or `Geocoder` or list
+        countries : str or ``Geocoder`` or list
             Parents for 'country' level.
             If it is of str type then it should be the country name.
-            If it is of `Geocoder` type then it must contain the same number
-            of values as the number of names of `Geocoder`.
+            If it is of ``Geocoder`` type then it must contain the same number
+            of values as the number of names of ``Geocoder``.
             If it is of list type then it must be the same size
-            as the number of names of `Geocoder`.
+            as the number of names of ``Geocoder``.
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -570,17 +581,17 @@ class NamesGeocoder(Geocoder):
 
         Parameters
         ----------
-        states : str or `Geocoder` or list
+        states : str or ``Geocoder`` or list
             Parents for 'state' level.
             If it is of str type then it should be the state name.
-            If it is of `Geocoder` type then it must contain the same number
-            of values as the number of names of `Geocoder`.
+            If it is of ``Geocoder`` type then it must contain the same number
+            of values as the number of names of ``Geocoder``.
             If it is of list type then it must be the same size
-            as the number of names of `Geocoder`.
+            as the number of names of ``Geocoder``.
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -610,17 +621,17 @@ class NamesGeocoder(Geocoder):
 
         Parameters
         ----------
-        counties : str or `Geocoder` or list
+        counties : str or ``Geocoder`` or list
             Parents for 'county' level.
             If it is of str type then it should be the county name.
-            If it is of `Geocoder` type then it must contain the same number
-            of values as the number of names of `Geocoder`.
+            If it is of ``Geocoder`` type then it must contain the same number
+            of values as the number of names of ``Geocoder``.
             If it is of list type then it must be the same size
-            as the number of names of `Geocoder`.
+            as the number of names of ``Geocoder``.
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -650,7 +661,7 @@ class NamesGeocoder(Geocoder):
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -679,7 +690,7 @@ class NamesGeocoder(Geocoder):
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -708,7 +719,7 @@ class NamesGeocoder(Geocoder):
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples
@@ -747,26 +758,26 @@ class NamesGeocoder(Geocoder):
         Parameters
         ----------
         name : str
-            Name in `Geocoder` that needs better qualification.
+            Name in ``Geocoder`` that needs better qualification.
         county : str
-            If `Geocoder` has parent counties this field must be present to identify a row for the name.
+            If ``Geocoder`` has parent counties this field must be present to identify a row for the name.
         state : str
-            If `Geocoder` has parent states this field must be present to identify a row for the name.
+            If ``Geocoder`` has parent states this field must be present to identify a row for the name.
         country : str
-            If `Geocoder` has parent countries this field must be present to identify a row for the name.
-        scope : str or `Geocoder` or `shapely.geometry.Polygon`
+            If ``Geocoder`` has parent countries this field must be present to identify a row for the name.
+        scope : str or ``Geocoder`` or ``shapely.geometry.Polygon``
             Limits area of geocoding. If parent country is set then error will be generated.
             If type is a str - geoobject should have geocoded scope in parents.
-            If type is a `Geocoder`  - geoobject should have geocoded scope in parents.
+            If type is a ``Geocoder``  - geoobject should have geocoded scope in parents.
             Scope should contain only one entry.
-            If type is a `shapely.geometry.Polygon` -
+            If type is a ``shapely.geometry.Polygon`` -
             geoobject centroid should fall into bbox of the polygon.
-        closest_to : `Geocoder` or `shapely.geometry.Point`
+        closest_to : ``Geocoder`` or ``shapely.geometry.Point``
             Resolve ambiguity by taking closest geoobject.
 
         Returns
         -------
-        `NamesGeocoder`
+        ``NamesGeocoder``
             Geocoder object specification.
 
         Examples

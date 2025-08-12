@@ -33,8 +33,8 @@ def image_matrix(image_data_array,
 
     Parameters
     ----------
-    image_data_array : `ndarray`
-        2D `numpy.ndarray` containing images.
+    image_data_array : ``ndarray``
+        2D ``numpy.ndarray`` containing images.
     cmap : str, optional
         Name of colormap. For example "viridis", "magma", "plasma", "inferno", or any other colormap
         which is supported by the Palettable package (https://github.com/jiffyclub/palettable)
@@ -45,7 +45,7 @@ def image_matrix(image_data_array,
         This parameter is ignored for RGB(A) images.
     vmin, vmax : number, optional
         Define the data range used for luminance normalization in grey-scale images.
-        This parameter is ignored for RGB(A) images or if parameter `norm=False`.
+        This parameter is ignored for RGB(A) images or if parameter ``norm=False``.
     scale : float, default=1.0
         Specify the image size magnification factor.
     spacer : number, default=1
@@ -53,7 +53,7 @@ def image_matrix(image_data_array,
 
     Returns
     -------
-    `SupPlotsSpec`
+    ``SupPlotsSpec``
         A specification describing the combined figure with all plots and their layout.
 
     Examples

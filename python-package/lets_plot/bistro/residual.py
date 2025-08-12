@@ -141,12 +141,12 @@ def residual_plot(data=None, x=None, y=None, *,
     """
     Produce a residual plot that shows the difference between the observed response and the fitted response values.
 
-    To use `residual_plot()`, the `numpy` and `pandas` libraries are required.
+    To use ``residual_plot()``, the `numpy` and `pandas` libraries are required.
     Also, `statsmodels` and `scipy` are required for 'lm' and 'loess' methods.
 
     Parameters
     ----------
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed.
     x : str
         Name of independent variable.
@@ -154,7 +154,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Name of dependent variable that will be fitted.
     method : {'lm', 'loess', 'lowess', 'none'}, default='lm'
         Fitting method: 'lm' (Linear Model) or 'loess'/'lowess' (Locally Estimated Scatterplot Smoothing).
-        If value of `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
+        If value of ``deg`` parameter is greater than 1 then linear model becomes polynomial of the given degree.
         If method is 'none' then data lives as is.
     deg : int, default=1
         Degree of polynomial for linear regression model.
@@ -166,14 +166,14 @@ def residual_plot(data=None, x=None, y=None, *,
     max_n : int
         Maximum number of data-points for 'loess' method. If this quantity exceeded random sampling is applied to data.
     geom : {'point', 'tile', 'hex', 'density2d', 'density2df', 'none'}, default='point'
-        The geometric object to use to display the data. No object will be used if `geom='none'`.
+        The geometric object to use to display the data. No object will be used if ``geom='none'``.
     bins : int or list of int
-        Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
+        Number of bins in both directions, vertical and horizontal. Overridden by ``binwidth``.
         If only one value given - interpret it as list of two equal values.
         Applicable simultaneously for 'tile'/'hex' geom and 'histogram' marginal.
     binwidth : float or list of float
         The width of the bins in both directions, vertical and horizontal.
-        Overrides `bins`. The default is to use bin widths that cover the entire range of the data.
+        Overrides ``bins``. The default is to use bin widths that cover the entire range of the data.
         If only one value given - interpret it as list of two equal values.
         Applicable simultaneously for 'tile'/'hex' geom and 'histogram' marginal.
     color : str
@@ -198,7 +198,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Second parameter is a string specifying which sides of the plot the marginal layer will appear on.
         Possible values: 't' (top), 'b' (bottom), 'l' (left), 'r' (right).
         Third parameter (optional) is size of marginal.
-        To suppress marginals use `marginal='none'`.
+        To suppress marginals use ``marginal='none'``.
         Examples:
         "hist:tr:0.3",
         "dens:tr,hist:bl",
@@ -206,7 +206,7 @@ def residual_plot(data=None, x=None, y=None, *,
 
     Returns
     -------
-    `PlotSpec`
+    ``PlotSpec``
         Plot object specification.
 
     Notes
@@ -216,8 +216,8 @@ def residual_plot(data=None, x=None, y=None, *,
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------

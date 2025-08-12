@@ -26,7 +26,7 @@ def position_dodge(width=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Geom object position specification.
 
     Notes
@@ -56,7 +56,7 @@ def position_dodge(width=None):
 
 def position_dodgev(height=None):
     """
-    Function `position_dodgev()` is deprecated and will be removed in future releases.
+    Function ``position_dodgev()`` is deprecated and will be removed in future releases.
 
     """
     print("WARN: The function position_dodgev() is deprecated and will be removed in future releases.")
@@ -84,7 +84,7 @@ def position_jitter(width=None, height=None, seed=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Geom object position specification.
 
     Notes
@@ -129,12 +129,12 @@ def position_nudge(x=None, y=None, unit=None):
         Possible values:
 
         - 'identity': a unit of 1 corresponds to a difference of 1 in data space;
-        - 'size': a unit of 1 corresponds to the diameter of a point with `size=1`;
+        - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Geom object position specification.
 
     Notes
@@ -165,23 +165,23 @@ def position_nudge(x=None, y=None, unit=None):
 
 def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None, seed=None):
     """
-    This is primarily used for aligning points generated through `geom_point()`
-    with dodged boxplots (e.g., a `geom_boxplot()` with a fill aesthetic supplied).
+    This is primarily used for aligning points generated through `geom_point() <https://lets-plot.org/python/pages/api/lets_plot.geom_point.html>`__
+    with dodged boxplots (e.g., a `geom_boxplot() <https://lets-plot.org/python/pages/api/lets_plot.geom_boxplot.html>`__ with a fill aesthetic supplied).
 
     Parameters
     ----------
     dodge_width : float
         Bin width.
-        The value of `dodge_width` is relative and typically ranges between 0 and 1.
+        The value of ``dodge_width`` is relative and typically ranges between 0 and 1.
         Values that are greater than 1 lead to overlapping of the boxes.
         The default value is taken from the width aesthetics of the data point.
     jitter_width : float, default=.4
         Jittering width.
-        The value of `jitter_width` is relative and typically ranges between 0 and 0.5.
+        The value of ``jitter_width`` is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
     jitter_height : float, default=.4
         Jittering height.
-        The value of `jitter_height` is relative and typically ranges between 0 and 0.5.
+        The value of ``jitter_height`` is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
     seed : int
         A random seed to make the jitter reproducible.
@@ -189,7 +189,7 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Geom object position specification.
 
     Notes
@@ -233,14 +233,14 @@ def position_stack(vjust=None, mode=None):
         not a dimension (like bars or areas).
         Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
     mode : {'groups', 'all'}, default='groups'
-        If 'groups', objects inside one group are positioned as in `position='identity'`,
+        If 'groups', objects inside one group are positioned as in ``position='identity'``,
         but each group is shifted to sum of heights of previous groups
         (where height of a group is a maximum of it's y values).
         If 'all', each object will be shifted.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Geom object position specification.
 
     Notes
@@ -279,14 +279,14 @@ def position_fill(vjust=None, mode=None):
         not a dimension (like bars or areas).
         Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
     mode : {'groups', 'all'}, default='groups'
-        If 'groups', objects inside one group are positioned as in `position='identity'`,
+        If 'groups', objects inside one group are positioned as in ``position='identity'``,
         but each group is shifted to sum of heights of previous groups
         (where height of a group is a maximum of it's y values).
         If 'all', each object will be shifted.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Geom object position specification.
 
     Notes

@@ -13,7 +13,7 @@ __all__ = ['lims', 'xlim', 'ylim']
 
 def lims(x, y):
     """
-    This is a shortcut for supplying the `limits` parameter to the x and y axes.
+    This is a shortcut for supplying the ``limits`` parameter to the x and y axes.
     Observations outside the range will be dropped.
 
     Parameters
@@ -29,7 +29,7 @@ def lims(x, y):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -58,7 +58,7 @@ def lims(x, y):
 
 def xlim(*limits):
     """
-    This is a shortcut for supplying the `limits` parameter to the x axis.
+    This is a shortcut for supplying the ``limits`` parameter to the x axis.
     Observations outside the range will be dropped.
 
     Parameters
@@ -70,7 +70,7 @@ def xlim(*limits):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -95,7 +95,7 @@ def xlim(*limits):
 
 def ylim(*limits):
     """
-    This is a shortcut for supplying the `limits` parameter to the y axis.
+    This is a shortcut for supplying the ``limits`` parameter to the y axis.
     Observations outside the range will be dropped.
     
     Parameters
@@ -107,7 +107,7 @@ def ylim(*limits):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples

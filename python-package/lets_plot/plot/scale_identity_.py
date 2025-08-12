@@ -58,7 +58,7 @@ def scale_identity(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Examples
@@ -128,7 +128,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limit
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -197,7 +197,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -266,7 +266,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limit
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -339,7 +339,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, li
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -415,7 +415,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limit
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -485,7 +485,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -555,7 +555,7 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, l
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -623,7 +623,7 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limi
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes

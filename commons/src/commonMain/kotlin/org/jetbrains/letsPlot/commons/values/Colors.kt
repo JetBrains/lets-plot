@@ -181,7 +181,7 @@ object Colors {
      *     - color(r, g, b, a)
      *     - #rrggbb
      *     - #rgb
-     *     - white, green etc.
+     *     - white, green, etc.
      */
     fun parseColor(c: String): Color {
         return when {

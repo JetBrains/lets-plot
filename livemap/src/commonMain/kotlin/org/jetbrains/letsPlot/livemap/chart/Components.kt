@@ -6,10 +6,7 @@
 package org.jetbrains.letsPlot.livemap.chart
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.times
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
@@ -82,7 +79,7 @@ class TextSpecComponent : EcsComponent {
 }
 
 class PointComponent : EcsComponent {
-    var size: Double = 0.0
+    var size: Scalar<Client> = 0.px
 
     fun scaledRadius(scalingSizeFactor: Double) = size * scalingSizeFactor / 2.0
 }

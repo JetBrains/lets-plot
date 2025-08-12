@@ -31,12 +31,12 @@ class LocatorByGeneralTooltipTest {
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) } // it will be in the general tooltip
                 ),
-                targetPrototypes = listOf(FIRST_TARGET)
+                targets = listOf(FIRST_TARGET)
             ),
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(MappedDataAccessMock()),
-                targetPrototypes = listOf(SECOND_TARGET)
+                targets = listOf(SECOND_TARGET)
             )
         )
         val results = findTargets(targetLocators)
@@ -50,12 +50,12 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(MappedDataAccessMock()),
-                targetPrototypes = listOf(FIRST_TARGET)
+                targets = listOf(FIRST_TARGET)
             ),
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(MappedDataAccessMock()),
-                targetPrototypes = listOf(SECOND_TARGET)
+                targets = listOf(SECOND_TARGET)
             )
         )
         val results = findTargets(targets)
@@ -71,14 +71,14 @@ class LocatorByGeneralTooltipTest {
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                 ),
-                targetPrototypes = listOf(FIRST_TARGET)
+                targets = listOf(FIRST_TARGET)
             ),
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping
                     (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                 ),
-                targetPrototypes = listOf(SECOND_TARGET)
+                targets = listOf(SECOND_TARGET)
             )
         )
         val results = findTargets(targets)
@@ -93,7 +93,7 @@ class LocatorByGeneralTooltipTest {
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                 ),
-                targetPrototypes = listOf(FIRST_TARGET)
+                targets = listOf(FIRST_TARGET)
             ),
             createLocator(
                 lookupSpec = lookupSpec,
@@ -101,7 +101,7 @@ class LocatorByGeneralTooltipTest {
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
                     axisTooltips = true
                 ),
-                targetPrototypes = listOf(SECOND_TARGET)
+                targets = listOf(SECOND_TARGET)
             )
         )
         val results = findTargets(targets)
@@ -117,7 +117,7 @@ class LocatorByGeneralTooltipTest {
                     contextualMapping = createContextualMapping
                         (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.XINTERCEPT)) }
                     ),
-                    targetPrototypes = listOf(FIRST_TARGET),
+                    targets = listOf(FIRST_TARGET),
                     geomKind = GeomKind.V_LINE
                 ),
                 createLocator(
@@ -125,7 +125,7 @@ class LocatorByGeneralTooltipTest {
                     contextualMapping = createContextualMapping(
                         MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                     ),
-                    targetPrototypes = listOf(SECOND_TARGET)
+                    targets = listOf(SECOND_TARGET)
                 )
             )
             val results = findTargets(targets)
@@ -138,14 +138,14 @@ class LocatorByGeneralTooltipTest {
                     contextualMapping = createContextualMapping(
                         MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                     ),
-                    targetPrototypes = listOf(FIRST_TARGET)
+                    targets = listOf(FIRST_TARGET)
                 ),
                 createLocator(
                     lookupSpec = lookupSpec,
                     contextualMapping = createContextualMapping
                         (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.YINTERCEPT)) }
                     ),
-                    targetPrototypes = listOf(SECOND_TARGET),
+                    targets = listOf(SECOND_TARGET),
                     geomKind = GeomKind.H_LINE
                 )
             )
@@ -159,15 +159,15 @@ class LocatorByGeneralTooltipTest {
         // Objects have general and axis tooltips => locator will choose the closest last added object
         val target1 = TestUtil.pointTarget(
             FIRST_POINT_KEY,
-            COORD.add(DoubleVector(2.0, 0.0))
+            COORD.add(DoubleVector(12.0, 0.0))
         )
         val target2 = TestUtil.pointTarget(
             SECOND_POINT_KEY,
-            COORD.add(DoubleVector(2.0, 0.0))
+            COORD.add(DoubleVector(12.0, 0.0))
         )
         val target3 = TestUtil.pointTarget(
             THIRD_PATH_KEY,
-            COORD.add(DoubleVector(5.0, 0.0))
+            COORD.add(DoubleVector(15.0, 0.0))
         )
 
         val targets = listOf(
@@ -181,7 +181,7 @@ class LocatorByGeneralTooltipTest {
                     },
                     axisTooltips = true
                 ),
-                targetPrototypes = listOf(target1)
+                targets = listOf(target1)
             ),
             // closest with axis tooltip only
             createLocator(
@@ -190,7 +190,7 @@ class LocatorByGeneralTooltipTest {
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
                     axisTooltips = true
                 ),
-                targetPrototypes = listOf(target2)
+                targets = listOf(target2)
             ),
             // all types of tooltips but it's not the closest
             createLocator(
@@ -202,7 +202,7 @@ class LocatorByGeneralTooltipTest {
                     },
                     axisTooltips = true
                 ),
-                targetPrototypes = listOf(target3)
+                targets = listOf(target3)
             )
         )
         val results = findTargets(targets)
@@ -213,15 +213,15 @@ class LocatorByGeneralTooltipTest {
     fun `between closest objects with different tooltip type, locator should choose both`() {
         val target1 = TestUtil.pointTarget(
             FIRST_POINT_KEY,
-            COORD.add(DoubleVector(2.0, 0.0))
+            COORD.add(DoubleVector(12.0, 0.0))
         )
         val target2 = TestUtil.pointTarget(
             SECOND_POINT_KEY,
-            COORD.add(DoubleVector(2.0, 0.0))
+            COORD.add(DoubleVector(12.0, 0.0))
         )
         val target3 = TestUtil.pointTarget(
             THIRD_PATH_KEY,
-            COORD.add(DoubleVector(5.0, 0.0))
+            COORD.add(DoubleVector(15.0, 0.0))
         )
 
         val targets = listOf(
@@ -231,7 +231,7 @@ class LocatorByGeneralTooltipTest {
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                 ),
-                targetPrototypes = listOf(target1)
+                targets = listOf(target1)
             ),
             // closest with axis tooltip only
             createLocator(
@@ -240,7 +240,7 @@ class LocatorByGeneralTooltipTest {
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
                     axisTooltips = true
                 ),
-                targetPrototypes = listOf(target2)
+                targets = listOf(target2)
             ),
             // it's not the closest
             createLocator(
@@ -248,7 +248,7 @@ class LocatorByGeneralTooltipTest {
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
                 ),
-                targetPrototypes = listOf(target3)
+                targets = listOf(target3)
             )
         )
         val results = findTargets(targets)
@@ -281,7 +281,7 @@ class LocatorByGeneralTooltipTest {
                             )
                         )
                     }),
-                    targetPrototypes = listOf(target1)
+                    targets = listOf(target1)
                 ),
                 createLocator(
                     lookupSpec = lookupSpec,
@@ -292,7 +292,7 @@ class LocatorByGeneralTooltipTest {
                             )
                         )
                     }),
-                    targetPrototypes = listOf(target2)
+                    targets = listOf(target2)
                 )
             )
             val results = findTargets(targets)
@@ -322,7 +322,7 @@ class LocatorByGeneralTooltipTest {
                         },
                         axisTooltips = true
                     ),
-                    targetPrototypes = listOf(target1)
+                    targets = listOf(target1)
                 ),
                 // with axis tooltip only
                 createLocator(
@@ -333,7 +333,7 @@ class LocatorByGeneralTooltipTest {
                         },
                         axisTooltips = true
                     ),
-                    targetPrototypes = listOf(target2)
+                    targets = listOf(target2)
                 )
             )
             val results = findTargets(targets)

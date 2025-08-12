@@ -12,8 +12,8 @@ __all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid']
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
     """
-    Make vector tiles config. Can be used individually in `geom_livemap()`
-    or in every livemap via `LetsPlot.set()`.
+    Make vector tiles config. Can be used individually in `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__
+    or in every livemap via `LetsPlot.set() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.set>`__.
 
     Parameters
     ----------
@@ -33,8 +33,8 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
     If you are using Safari and having trouble loading tiles, try disabling the NSURLSession Websocket feature.
     Go to `Develop -> Experimental Features -> NSURLSession Websocket` to turn it off.
 
-    Also, you could use raster tiles from `lets_plot.tilesets`, e.g.
-    `ggplot() + geom_livemap(tiles=tilesets.OPEN_TOPO_MAP)`
+    Also, you could use raster tiles from ``lets_plot.tilesets``, e.g.
+    ``ggplot() + geom_livemap(tiles=tilesets.OPEN_TOPO_MAP)``.
 
     Examples
     --------
@@ -86,8 +86,8 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
 def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None, subdomains: str = None,
                  **other_args) -> dict:
     """
-    Make raster tiles config. Can be used individually in `geom_livemap()`
-    or in every livemap via `LetsPlot.set()`.
+    Make raster tiles config. Can be used individually in `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__
+    or in every livemap via `LetsPlot.set() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.set>`__.
 
     Parameters
     ----------
@@ -99,9 +99,9 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         An attribution or a copyright notice to display on the map as required by the tile license.
         Supports HTML links: ``'<a href="http://www.example.com">Example</a>'``.
     min_zoom : int
-        Minimal zoom limit, an integer from 1 to 15. Should be less than or equal to `max_zoom`.
+        Minimal zoom limit, an integer from 1 to 15. Should be less than or equal to ``max_zoom``.
     max_zoom : int
-        Maximal zoom limit, an integer from 1 to 15. Should be greater than or equal to `min_zoom`.
+        Maximal zoom limit, an integer from 1 to 15. Should be greater than or equal to ``min_zoom``.
     subdomains : str
         Each character of this list is interpreted as standalone tile servers, so an interactive map
         can request tiles from any of these servers independently for better load balance. If url
@@ -156,8 +156,8 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
 
 def maptiles_solid(color: str):
     """
-    Make solid color tiles config. Can be used individually in `geom_livemap()`
-    or in every livemap via `LetsPlot.set()`.
+    Make solid color tiles config. Can be used individually in `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__
+    or in every livemap via `LetsPlot.set() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.set>`__.
 
     Parameters
     ----------
@@ -191,8 +191,8 @@ def maptiles_solid(color: str):
 
 def maptiles_chessboard():
     """
-    Make solid color tiles with chessboard pattern. Can be used individually in `geom_livemap()`
-    or in every livemap via `LetsPlot.set()`.
+    Make solid color tiles with chessboard pattern. Can be used individually in `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__
+    or in every livemap via `LetsPlot.set() <https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.set>`__.
 
     Returns
     -------

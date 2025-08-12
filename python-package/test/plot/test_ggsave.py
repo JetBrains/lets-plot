@@ -23,6 +23,19 @@ def assert_png(file_path, w, h):
         assert img.size == (w, h)
 
 
+def assert_svg(file_path, w=None, h=None, view_box=None):
+    with open(file_path, 'rb') as f:
+        content = f.read()
+        assert content.startswith(b'<svg xmlns="http://www.w3.org/2000/svg"')
+        if w is not None:
+            assert f'width="{w}"' in content.decode('utf-8')
+        if h is not None:
+            assert f'height="{h}"' in content.decode('utf-8')
+        if view_box is not None:
+            assert f'viewBox="{view_box}"' in content.decode('utf-8')
+
+
+
 def temp_file(filename):
     temp_dir = tempfile.gettempdir()
     return f"{temp_dir}/{filename}"
@@ -34,9 +47,20 @@ def test_ggsave_svg():
 
     print("Output path:", out_path)
 
-    with open(out_path, 'rb') as f:
-        content = f.read()
-        assert content.startswith(b'<svg xmlns="http://www.w3.org/2000/svg"')
+    assert_svg(out_path)
+
+def test_ggsave_svg_wh_default_unit_is_inch():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3)
+    print("Output path:", out_path)
+    assert_svg(out_path, w="5.0in", h="3.0in", view_box="0 0 480.0 288.0")
+
+
+def test_ggsave_svg_wh_unit_cm():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3, unit='cm')
+    print("Output path:", out_path)
+    assert_svg(out_path, w="5.0cm", h="3.0cm", view_box="0 0 188.97637795275588 113.38582677165354")
 
 
 def test_ggsave_png():
@@ -93,6 +117,27 @@ def test_ggsave_png_wh_150dpi_scale2():
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi_scale2.png'), w=5, h=3, unit='in', dpi=150, scale=2)
     print("Output path:", out_path)
     assert_png(out_path, 1500, 900)  # 5*150*2, 3*150*2
+
+
+def test_ggsave_png_wh_px():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px.png'), w=300, h=200, unit='px')
+    print("Output path:", out_path)
+    assert_png(out_path, 300, 200)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
+
+
+def test_ggsave_png_wh_px_scale2():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_scale2.png'), w=300, h=200, unit='px', scale=2)
+    print("Output path:", out_path)
+    assert_png(out_path, 600, 400)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
+
+
+def test_ggsave_png_wh_px_150dpi():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_150dpi.png'), w=300, h=200, unit='px', dpi=150)
+    print("Output path:", out_path)
+    assert_png(out_path, 468, 312)  #
 
 
 def test_filelike_ggsave_png():

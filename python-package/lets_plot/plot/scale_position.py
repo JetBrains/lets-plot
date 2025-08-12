@@ -74,7 +74,7 @@ def scale_x_continuous(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -158,7 +158,7 @@ def scale_y_continuous(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -239,7 +239,7 @@ def scale_x_log10(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -316,7 +316,7 @@ def scale_y_log10(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -393,7 +393,7 @@ def scale_x_log2(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -470,7 +470,7 @@ def scale_y_log2(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -547,7 +547,7 @@ def scale_x_reverse(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -624,7 +624,7 @@ def scale_y_reverse(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -708,7 +708,7 @@ def scale_x_discrete(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -793,7 +793,7 @@ def scale_x_discrete_reversed(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -877,7 +877,7 @@ def scale_y_discrete(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -962,7 +962,7 @@ def scale_y_discrete_reversed(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -1053,7 +1053,7 @@ def scale_x_datetime(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -1143,7 +1143,7 @@ def scale_y_datetime(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -1223,7 +1223,7 @@ def scale_x_time(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -1302,7 +1302,7 @@ def scale_y_time(name=None, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples

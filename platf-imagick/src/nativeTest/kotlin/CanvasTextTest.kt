@@ -10,6 +10,7 @@ class CanvasTextTest : CanvasTestBase() {
         val monoRegularFontManager by lazy {
             MagickFontManager.configured(
                 "mono" to FontSet(
+                    embedded = true,
                     "NotoMono",
                     regularFontPath = notoSansMonoRegularFontPath
                 ),
@@ -19,6 +20,7 @@ class CanvasTextTest : CanvasTestBase() {
         private val monoBoldFontManager by lazy {
             MagickFontManager.configured(
                 "mono" to FontSet(
+                    embedded = true,
                     "NotoMono",
                     regularFontPath = notoSansMonoRegularFontPath,
                     boldFontPath = notoSansMonoBoldFontPath
@@ -28,13 +30,14 @@ class CanvasTextTest : CanvasTestBase() {
 
         private val serifRegularOnlyFontManager by lazy {
             MagickFontManager.configured(
-                "serif" to FontSet("NotoSerif", regularFontPath = notoSerifRegularFontPath)
+                "serif" to FontSet(embedded = true, "NotoSerif", regularFontPath = notoSerifRegularFontPath)
             )
         }
 
         private val serifItalicFontManager by lazy {
             MagickFontManager.configured(
                 "serif" to FontSet(
+                    embedded = true,
                     "NotoSerif",
                     regularFontPath = notoSerifRegularFontPath,
                     italicFontPath = notoSerifItalicFontPath
@@ -45,6 +48,7 @@ class CanvasTextTest : CanvasTestBase() {
         private val serifBoldFontManager by lazy {
             MagickFontManager.configured(
                 "serif" to FontSet(
+                    embedded = true,
                     "NotoSerif",
                     regularFontPath = notoSerifRegularFontPath,
                     boldFontPath = notoSerifBoldFontPath
@@ -55,6 +59,7 @@ class CanvasTextTest : CanvasTestBase() {
         private val serifFullFontManager by lazy {
             MagickFontManager.configured(
                 "serif" to FontSet(
+                    embedded = true,
                     "NotoSerif",
                     regularFontPath = notoSerifRegularFontPath,
                     boldFontPath = notoSerifBoldFontPath,

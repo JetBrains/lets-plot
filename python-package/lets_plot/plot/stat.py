@@ -21,28 +21,29 @@ def stat_summary(mapping=None, *, data=None, geom=None,
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='pointrange'
         The geometry to display the summary stat for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str
@@ -73,21 +74,21 @@ def stat_summary(mapping=None, *, data=None, geom=None,
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
     Computed variables:
 
-    - ..y.. : result of calculating of `fun`.
-    - ..ymin.. : result of calculating of `fun_min`.
-    - ..ymax.. : result of calculating of `fun_max`.
+    - ..y.. : result of calculating of ``fun``.
+    - ..ymin.. : result of calculating of ``fun_min``.
+    - ..ymax.. : result of calculating of ``fun_max``.
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -173,28 +174,29 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='pointrange'
         The geometry to display the summary stat for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -213,7 +215,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         A list of probabilities defining the quantile functions 'lq', 'mq' and 'uq'.
         Must contain exactly 3 values between 0 and 1.
     bins : int, default=30
-        Number of bins. Overridden by `binwidth`.
+        Number of bins. Overridden by ``binwidth``.
     binwidth : float
         The width of the bins. The default is to use bin widths that cover
         the range of the data. You should always override this value,
@@ -234,21 +236,21 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
     Computed variables:
 
-    - ..y.. : result of calculating of `fun`.
-    - ..ymin.. : result of calculating of `fun_min`.
-    - ..ymax.. : result of calculating of `fun_max`.
+    - ..y.. : result of calculating of ``fun``.
+    - ..ymin.. : result of calculating of ``fun_min``.
+    - ..ymax.. : result of calculating of ``fun_max``.
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -333,28 +335,29 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='step'
         The geometry to display the ecdf stat for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
@@ -364,7 +367,7 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
         If None, do not interpolate.
         If not None, this is the number of points to interpolate with.
     pad : bool, default=True
-        If geometry is `'step'` and `pad=True`, then the points at the ends:
+        If geometry is ``'step'`` and ``pad=True``, then the points at the ends:
         (-inf, 0) and (inf, 1) are added to the ecdf.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -376,22 +379,22 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `stat_ecdf()` understands the following aesthetics mappings:
+    ``stat_ecdf()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
 
-    In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
+    In addition, you can use any aesthetics, available for the geometry defined by the ``geom`` parameter.
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip`` or ``axis_tooltip_x`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -474,28 +477,29 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='point'
         The geometry to display the sum stat for this layer, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -510,7 +514,7 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -521,17 +525,17 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
     - ..prop.. : proportion of points with same x-axis and y-axis coordinates.
     - ..proppct.. : proportion of points with same x-axis and y-axis coordinates in percent.
 
-    `stat_sum()` understands the following aesthetics mappings:
+    ``stat_sum()`` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
 
-    In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
+    In addition, you can use any aesthetics, available for the geometry defined by the ``geom`` parameter.
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------

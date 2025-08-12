@@ -28,10 +28,18 @@ static PyObject* export_svg(PyObject* self, PyObject* args) {
     T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
 
     PyObject *rawPlotSpecDict;
+    float width;
+    float height;
+    const char* unit;
     int useCssPixelatedImageRendering;          // 0 - false, 1 - true
-    PyArg_ParseTuple(args, "Op", &rawPlotSpecDict, &useCssPixelatedImageRendering);
+    if (!PyArg_ParseTuple(args, "Offsp", &rawPlotSpecDict, &width, &height, &unit, &useCssPixelatedImageRendering)) {
+        PyErr_SetString(PyExc_TypeError, "export_svg: failed to parse arguments");
+        return NULL;
+    }
 
-    PyObject* svg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, useCssPixelatedImageRendering);
+    //printf("export_svg: width=%f, height=%f, unit=%s, useCssPixelatedImageRendering=%d\n", width, height, unit, useCssPixelatedImageRendering);
+
+    PyObject* svg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, width, height, unit, useCssPixelatedImageRendering);
     return svg;
 }
 
@@ -44,7 +52,12 @@ static PyObject* export_png(PyObject* self, PyObject* args) {
     const char* unit;
     int dpi;
     float scale;
-    PyArg_ParseTuple(args, "Offsif", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale);
+    if (!PyArg_ParseTuple(args, "Offsif", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale)) {
+        PyErr_SetString(PyExc_TypeError, "export_png: failed to parse arguments");
+        return NULL;
+    }
+
+    //printf("export_png: width=%f, height=%f, unit=%s, dpi=%d, scale=%f\n", width, height, unit, dpi, scale);
 
     PyObject* imageData = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportPng(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale);
     return imageData; // base64 encoded PNG

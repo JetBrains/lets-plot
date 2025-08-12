@@ -42,10 +42,10 @@ class ColorBarComponent(
         )
 
         // Ticks and labels
-        val barThickness = when {
-            horizontal -> barBounds.height
-            else -> barBounds.width
-        }
+//        val barThickness = when {
+//            horizontal -> barBounds.height
+//            else -> barBounds.width
+//        }
 //        val tickLength = barThickness / 5
         val showTickMarks = theme.showTickMarks()
         val tickLength = theme.tickMarkLength()

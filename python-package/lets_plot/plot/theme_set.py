@@ -27,7 +27,7 @@ def theme_grey():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -54,7 +54,7 @@ def theme_light():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -81,7 +81,7 @@ def theme_classic():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -108,7 +108,7 @@ def theme_minimal():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -131,11 +131,12 @@ def theme_minimal():
 
 def theme_minimal2():
     """
-    Default theme similar to `theme_minimal()` but with x axis line and only major grid lines.
+    Default theme similar to `theme_minimal() <https://lets-plot.org/python/pages/api/lets_plot.theme_minimal.html>`__
+    but with x axis line and only major grid lines.
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -162,7 +163,7 @@ def theme_none():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -189,7 +190,7 @@ def theme_bw():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -216,7 +217,7 @@ def theme_void():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -244,7 +245,7 @@ def flavor_darcula():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -275,7 +276,7 @@ def flavor_solarized_light():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -306,7 +307,7 @@ def flavor_solarized_dark():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -337,7 +338,7 @@ def flavor_high_contrast_light():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples
@@ -368,7 +369,7 @@ def flavor_high_contrast_dark():
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Theme specification.
 
     Examples

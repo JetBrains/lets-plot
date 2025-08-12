@@ -15,10 +15,8 @@ import kotlin.math.max
 class FacetGrid constructor(
     private val xVar: String?,
     private val yVar: String?,
-    xLevels: List<Any>,
-    yLevels: List<Any>,
-    xOrder: Int,
-    yOrder: Int,
+    private val xLevels: List<Any>,
+    private val yLevels: List<Any>,
     private val xFormatter: (Any) -> String = DEF_FORMATTER,
     private val yFormatter: (Any) -> String = DEF_FORMATTER,
     scales: FacetScales = FacetScales.FIXED,
@@ -39,36 +37,30 @@ class FacetGrid constructor(
     override val freeVScale: Boolean =
         (scales == FacetScales.FREE || scales == FacetScales.FREE_Y) && yVar != null
 
-    private val xLevels: List<Any> = reorderVarLevels(xVar, xLevels, xOrder)
-    private val yLevels: List<Any> = reorderVarLevels(yVar, yLevels, yOrder)
-
-    private val colLevels: List<Any?> get() = xLevels.ifEmpty { listOf(null) }
-    private val rowLevels: List<Any?> get() = yLevels.ifEmpty { listOf(null) }
+    private val colLevels: List<Any?> = xLevels.ifEmpty { listOf(null) }
+    private val rowLevels: List<Any?> = yLevels.ifEmpty { listOf(null) }
 
 
     /**
      * @return List of Dataframes, one Dataframe per tile.
-     *          Tiles are enumerated by rows, i.e.:
+     *          Tiles enumerated by rows, i.e.:
      *          the index is computed like: row * nCols + col
      */
     override fun dataByTile(data: DataFrame): List<DataFrame> {
         require(isDefined) { "dataByTile() called on Undefined plot facets." }
 
-        val dataByLevelTupleList = dataByLevelTuple(
+        val varNames = listOfNotNull(xVar, yVar)
+        val levels = listOfNotNull(xVar?.let { xLevels }, yVar?.let { yLevels })
+
+        val varNameAndLevelPairsByTile: List<List<Pair<String, Any>>> = varNameAndLevelPairsByTile(varNames, levels)
+        val levelTupleAndDataPairs = levelTupleAndDataPairs(
             data,
-            listOfNotNull(
-                xVar,
-                yVar,
-            ),
-            listOfNotNull(
-                xVar?.let { xLevels },
-                yVar?.let { yLevels },
-            )
+            varNameAndLevelPairsByTile,
         )
-        val dataByLevelTuple = dataByLevelTupleList.toMap()
+        val dataByLevelTuple = levelTupleAndDataPairs.toMap()
 
         val dataByTile: MutableList<DataFrame> = ArrayList()
-        // Enumerate tiles by-row.
+        // List tiles by-row.
         for (rowLevel in rowLevels) {
             for (colLevel in colLevels) {
                 val levelTuple = listOfNotNull(colLevel, rowLevel)
@@ -82,7 +74,7 @@ class FacetGrid constructor(
 
     /**
      * @return List of FacetTileInfo.
-     *          Tiles are enumerated by rows, i.e.:
+     *          Tiles enumerated by rows, i.e.:
      *          the index is computed like: row * nCols + col
      */
     override fun tileInfos(): List<FacetTileInfo> {

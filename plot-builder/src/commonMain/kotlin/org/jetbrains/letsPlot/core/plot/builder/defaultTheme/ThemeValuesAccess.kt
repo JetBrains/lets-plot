@@ -15,7 +15,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.parse
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.GEOM
 
 internal open class ThemeValuesAccess(
     private val values: Map<String, Any>,
@@ -82,8 +84,18 @@ internal open class ThemeValuesAccess(
     protected fun getColor(elem: Map<String, Any>, key: String): Color {
         return when (val value = elem.getValue(key)) {
             is Color -> value
+
+            ThemeOption.Geom.PEN,
+            ThemeOption.Geom.PAPER,
+            ThemeOption.Geom.BRUSH -> getSystemColor(value as String)
+
             else -> Colors.parseColor(value as String)
         }
+    }
+
+    protected fun getSystemColor(systemColorName: String): Color {
+        val geomElem = getElemValue(listOf(GEOM))
+        return getColor(geomElem, systemColorName)
     }
 
     protected fun getColorDef(elem: Map<String, Any>, key: String, defaultValue: Color): Color {

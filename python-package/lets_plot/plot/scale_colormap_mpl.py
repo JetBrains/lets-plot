@@ -82,7 +82,8 @@ def scale_cmapmpl(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__,
+        `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -97,7 +98,7 @@ def scale_cmapmpl(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         The scale specification.
 
     Notes
@@ -165,7 +166,8 @@ def scale_fill_cmapmpl(cmap, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__,
+        `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -180,7 +182,7 @@ def scale_fill_cmapmpl(cmap, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         The scale specification.
 
     Notes
@@ -244,7 +246,8 @@ def scale_color_cmapmpl(cmap, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__,
+        `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -259,7 +262,7 @@ def scale_color_cmapmpl(cmap, *,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         The scale specification.
 
     Notes

@@ -30,12 +30,16 @@ class CompositeFigureSvgComponent(
     internal val elements: List<FigureSvgRoot>,
     private val size: DoubleVector,
     private val elementsAreaBounds: DoubleRectangle,
-    private val title: String?,
-    private val subtitle: String?,
-    private val caption: String?,
+    title: String?,
+    subtitle: String?,
+    caption: String?,
     val theme: Theme,
     val styleSheet: StyleSheet,
 ) : SvgComponent() {
+
+    private val title: String? = title?.takeIf { theme.plot().showTitle() }
+    private val subtitle: String? = subtitle?.takeIf { theme.plot().showSubtitle() }
+    private val caption: String? = caption?.takeIf { theme.plot().showCaption() }
 
     override fun buildComponent() {
 
@@ -53,7 +57,7 @@ class CompositeFigureSvgComponent(
         }
 
         // plot title, subtitle, caption rectangles:
-        //   xxxElementRect - rectangle for element, including margins
+        //   xxxElementRect - rectangle for the element, including margins
         //   xxxTextRect - for text only
 
         val outerBounds = DoubleRectangle(DoubleVector.ZERO, size)

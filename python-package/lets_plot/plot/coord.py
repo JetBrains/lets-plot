@@ -36,7 +36,7 @@ def coord_cartesian(xlim=None, ylim=None, flip=False):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Coordinate system specification.
 
     Examples
@@ -81,7 +81,7 @@ def coord_fixed(ratio=1., xlim=None, ylim=None, flip=False):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Coordinate system specification.
 
     Examples
@@ -126,7 +126,7 @@ def coord_map(xlim=None, ylim=None, flip=False):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Coordinate system specification.
 
     Examples
@@ -164,7 +164,7 @@ def coord_flip(xlim=None, ylim=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Coordinate system specification.
 
     Examples

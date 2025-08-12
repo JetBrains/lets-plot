@@ -11,7 +11,7 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
 
     This function extends the plot boundaries to encompass new data points,
     whether a single value or multiple values are provided. It acts as a
-    thin wrapper around `geom_blank()`.
+    thin wrapper around `geom_blank() <https://lets-plot.org/python/pages/api/lets_plot.geom_blank.html>`__.
 
     Parameters
     ----------
@@ -22,7 +22,7 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
     Returns
     -------
     FeatureSpec
-        A result of the `geom_blank()` call.
+        A result of the `geom_blank() <https://lets-plot.org/python/pages/api/lets_plot.geom_blank.html>`__ call.
 
     Examples
     --------

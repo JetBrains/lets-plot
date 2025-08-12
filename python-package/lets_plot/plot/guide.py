@@ -28,7 +28,7 @@ def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None, override_aes=N
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Legend guide specification.
 
     Notes
@@ -74,7 +74,7 @@ def guide_colorbar(title=None, *, barwidth=None, barheight=None, nbin=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Color guide specification.
 
     Notes
@@ -122,17 +122,17 @@ def guides(**kwargs):
         
         - An aesthetic name
         - 'manual' - a key referring to the default custom legend
-        - A group name referring to a custom legend where the group is defined via the `layer_key()` function
+        - A group name referring to a custom legend where the group is defined via the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function
 
         The value can be either:
 
         - A string ('colorbar', 'legend')
-        - A call to a guide function (`guide_colorbar()`, `guide_legend()`) specifying additional arguments
+        - A call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__) specifying additional arguments
         - 'none' to hide the guide
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Guides specification.
 
     Examples
@@ -195,12 +195,14 @@ def layer_key(label, group=None, *, index=None, **kwargs):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Custom legend specification.
 
     Notes
     -----
-    The group name specified with the `group` parameter can be used in the `labs()` and `guides()` functions
+    The group name specified with the ``group`` parameter can be used in the
+    `labs() <https://lets-plot.org/python/pages/api/lets_plot.labs.html>`__ and
+    `guides() <https://lets-plot.org/python/pages/api/lets_plot.guides.html>`__ functions
     to further customize the display of this group (e.g. change its name).
     In particular, items in the 'manual' group will be displayed without a title unless you change it manually.
 

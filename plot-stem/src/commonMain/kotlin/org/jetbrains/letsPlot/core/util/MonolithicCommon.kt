@@ -17,12 +17,13 @@ import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object MonolithicCommon {
-
     /**
      * Static SVG export
      */
@@ -32,16 +33,31 @@ object MonolithicCommon {
         svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
+        return buildSvgImageFromRawSpecs(
+            plotSpec = plotSpec,
+            plotSize = plotSize,
+            sizeUnit = SizeUnit.PX,
+            svgToString = svgToString,
+            computationMessagesHandler = computationMessagesHandler
+        )
+    }
+
+    /**
+     * Static SVG export
+     */
+    fun buildSvgImageFromRawSpecs(
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector?,
+        sizeUnit: SizeUnit?,
+        svgToString: SvgToString,
+        computationMessagesHandler: ((List<String>) -> Unit)
+    ): String {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec)
-        val sizingPolicy = plotSize?.let { SizingPolicy.fixed(plotSize.x, plotSize.y) }
-            ?: SizingPolicy.keepFigureDefaultSize()
 
-        val buildResult = buildPlotsFromProcessedSpecs(
-            plotSpec,
-            containerSize = null,
-            sizingPolicy
-        )
+        val (sizingPolicy, _, unit) = computeExportParameters(plotSize = plotSize, unit = sizeUnit)
+
+        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
@@ -54,6 +70,18 @@ object MonolithicCommon {
         }
 
         val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
+
+        if (plotSize != null && unit.isPhysicalUnit) {
+            val pixelWidth = svg.width().get()!!
+            val pixelHeight = svg.height().get()!!
+
+            // Set the SVG size attributes.
+            svg.setAttribute("width", "${plotSize.x}$unit")
+            svg.setAttribute("height", "${plotSize.y}$unit")
+            // Set the viewBox to match the SVG size.
+            svg.setAttribute("viewBox", "0 0 $pixelWidth $pixelHeight")
+        }
+
         return svgToString.render(svg)
     }
 
@@ -296,7 +324,7 @@ object MonolithicCommon {
             @Suppress("UNCHECKED_CAST")
             val numMessages = (it as Map<String, Any>).getValue(Option.CompMessagesGen.NUM_MESSAGES) as Number
             val simulatedMessages = List<String>(numMessages.toInt()) { i ->
-                val tail = List(i + 1) { " tail"}.joinToString()
+                val tail = List(i + 1) { " tail" }.joinToString()
                 "$i: Simulated computation message #${i + 1} - $tail"
             }
 
