@@ -10,9 +10,10 @@
 ### Changed
 
 - `facet_wrap()` now drops factor levels that do not appear in the data (i.e., empty panels) by default [[#1322](https://github.com/JetBrains/lets-plot/issues/1322)]. <br>
-  To keep unused factor levels, use the new `drop` parameter, i.e., `drop = False`.
+  To keep unused factor levels, use the new `drop` parameter, i.e., `drop=False`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25c/facet_wrap_empty_panels.ipynb).
+- Removed extra spacing between facet strips and plot panels in `facet_wrap()` and `facet_grid()`.
 
 ### Fixed
 - geom_livemap: can't draw a path crossing the antimeridian [[#649](https://github.com/JetBrains/lets-plot/issues/649)].
