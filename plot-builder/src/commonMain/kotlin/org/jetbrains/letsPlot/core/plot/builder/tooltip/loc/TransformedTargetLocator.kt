@@ -26,7 +26,8 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
             convertToPlotDistance(lookupResult.distance),
             lookupResult.geomKind,
             lookupResult.contextualMapping,
-            lookupResult.contextualMapping.isCrosshairEnabled
+            lookupResult.contextualMapping.isCrosshairEnabled,
+            lookupResult.hitShapeKind
         )
     }
 

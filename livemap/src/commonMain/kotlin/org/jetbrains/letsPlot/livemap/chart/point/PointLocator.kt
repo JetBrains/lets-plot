@@ -28,6 +28,7 @@ object PointLocator : Locator {
         val distance = (renderHelper.posToWorld(coord) - origin).length
         if (distance <= radius + renderHelper.dimToWorld(EXTRA_RADIUS)) {
             return HoverObject(
+                kind = HoverObjectKind.POINT,
                 layerIndex = target.get<IndexComponent>().layerIndex,
                 index = target.get<IndexComponent>().index,
                 distance = 0.0,//renderHelper.dimToClient(distance).value,
