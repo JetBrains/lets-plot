@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpa
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.Y
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetLocator.Collector.CollectingStrategy
@@ -93,7 +94,8 @@ internal class LayerTargetLocator(
 
     private fun addLookupResults(
         collector: Collector<GeomTarget>,
-        targets: MutableList<GeomTargetLocator.LookupResult>
+        targets: MutableList<GeomTargetLocator.LookupResult>,
+        hitShapeKind: HitShape.Kind
     ) {
         if (collector.size() == 0) {
             return
@@ -107,7 +109,8 @@ internal class LayerTargetLocator(
                 max(0.0, collector.closestPointChecker.distance),
                 geomKind,
                 contextualMapping,
-                contextualMapping.isCrosshairEnabled
+                contextualMapping.isCrosshairEnabled,
+                hitShapeKind
             )
         )
     }
@@ -134,10 +137,10 @@ internal class LayerTargetLocator(
 
         val lookupResults = ArrayList<GeomTargetLocator.LookupResult>()
 
-        addLookupResults(pathCollector, lookupResults)
-        addLookupResults(rectCollector, lookupResults)
-        addLookupResults(pointCollector, lookupResults)
-        addLookupResults(polygonCollector, lookupResults)
+        addLookupResults(pathCollector, lookupResults, HitShape.Kind.PATH)
+        addLookupResults(rectCollector, lookupResults, HitShape.Kind.RECT)
+        addLookupResults(pointCollector, lookupResults, HitShape.Kind.POINT)
+        addLookupResults(polygonCollector, lookupResults, HitShape.Kind.POLYGON)
 
         return getClosestTarget(lookupResults)
     }

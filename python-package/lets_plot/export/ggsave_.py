@@ -55,7 +55,8 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Resolution in dots per inch.
         Only applicable when exporting to PNG or PDF.
         The default value depends on the unit:
-        - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+
+        - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
         - for physical units ('in', 'cm', 'mm') it is 300
 
     Returns
@@ -93,10 +94,10 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     For SVG format:
 
-    - If `w`, `h` and `unit` are specified:
+    - If ``w``, ``h`` and ``unit`` are specified:
 
-      - The plot's pixel size (default or set by `ggsize()`) is ignored.
-      - The output size is calculated using the specified `w`, `h`, and `unit`.
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+      - The output size is calculated using the specified ``w``, ``h``, and ``unit``.
 
 
     Examples

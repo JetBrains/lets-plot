@@ -235,7 +235,8 @@ class SupPlotsSpec(FeatureSpec):
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
             The default value depends on the unit:
-            - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+
+            - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
             - for physical units ('in', 'cm', 'mm') it is 300
 
 
@@ -294,7 +295,8 @@ class SupPlotsSpec(FeatureSpec):
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
             The default value depends on the unit:
-            - for 'px' it is 96 (output image will have the same pixel size as w and h values)
+
+            - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
             - for physical units ('in', 'cm', 'mm') it is 300
 
 

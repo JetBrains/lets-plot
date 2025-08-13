@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
@@ -40,6 +41,7 @@ import org.jetbrains.letsPlot.livemap.api.Services
 import org.jetbrains.letsPlot.livemap.api.liveMapGeocoding
 import org.jetbrains.letsPlot.livemap.api.liveMapVectorTiles
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
+import org.jetbrains.letsPlot.livemap.chart.HoverObjectKind
 import org.jetbrains.letsPlot.livemap.config.DevParams
 import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.livemap.core.Clipboard
@@ -246,7 +248,12 @@ object LiveMapProviderUtil {
                         distance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
                         contextualMapping = layer.contextualMapping,
-                        isCrosshairEnabled = false // no crosshair on livemap
+                        isCrosshairEnabled = false, // no crosshair on livemap,
+                        hitShapeKind = when (hoverObjects.first().kind) {
+                            HoverObjectKind.POINT -> HitShape.Kind.POINT
+                            HoverObjectKind.PATH -> HitShape.Kind.PATH
+                            HoverObjectKind.POLYGON -> HitShape.Kind.POLYGON
+                        }
                     )
                 }
             }

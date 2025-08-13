@@ -110,7 +110,7 @@ open class PathRenderer : Renderer {
             angle = arrowSpec.angle,
             arrowLength = arrowLength,
             onStart = false, // it's a two-segment path, arrow head onStart of the second segment will appear in the middle of the overall path
-            onEnd = arrowSpec.isOnFirstEnd,
+            onEnd = arrowSpec.isOnLastEnd,
             closed = arrowSpec.type == ArrowSpec.Type.CLOSED,
             minTailLength = minTailLength,
             minHeadLength = minHeadLength

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import kotlin.math.abs
 
 class LocatedTargetsPicker(
@@ -130,7 +131,6 @@ class LocatedTargetsPicker(
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return if (lookupResult.distance == 0.0) {
                 when {
-                    lookupResult.geomKind == POINT -> 0.0 // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
                     lookupResult.isCrosshairEnabled -> {
                         // use XY distance for tooltips with crosshair to avoid giving them priority
                         lookupResult.targets
@@ -138,6 +138,7 @@ class LocatedTargetsPicker(
                             .minOfOrNull { target -> distance(coord, target.tipLayoutHint.coord!!) }
                             ?: FAKE_DISTANCE
                     }
+                    lookupResult.hitShapeKind == HitShape.Kind.POINT -> 0.0 // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
                     else -> FAKE_DISTANCE // fake distance to give a chance for tooltips from other layers
                 }
             } else {
@@ -154,7 +155,8 @@ class LocatedTargetsPicker(
             distance = distance,
             geomKind = geomKind,
             contextualMapping = contextualMapping,
-            isCrosshairEnabled = isCrosshairEnabled
+            isCrosshairEnabled = isCrosshairEnabled,
+            hitShapeKind = hitShapeKind
         )
 
         private fun filterResults(

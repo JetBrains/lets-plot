@@ -11,7 +11,14 @@ import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 
+enum class HoverObjectKind {
+    POINT,
+    PATH,
+    POLYGON,
+}
+
 data class HoverObject(
+    val kind: HoverObjectKind,
     val layerIndex: Int,
     val index: Int,
     val distance: Double,
