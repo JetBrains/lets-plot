@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
@@ -23,7 +24,9 @@ class MagickCanvasControl(
     val h: Int,
     override val pixelDensity: Double,
     private val fontManager: MagickFontManager,
-) : CanvasControl {
+) : CanvasControl, Disposable {
+    private val snapshots = mutableSetOf<MagickSnapshot>()
+
     val children = mutableListOf<Canvas>()
 
     override val size: Vector
@@ -70,7 +73,9 @@ class MagickCanvasControl(
     }
 
     override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
-        return MagickSnapshot.fromBitmap(bitmap)
+        val snapshot = MagickSnapshot.fromBitmap(bitmap)
+        snapshots.add(snapshot)
+        return snapshot
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
@@ -93,4 +98,11 @@ class MagickCanvasControl(
         TODO("Not yet implemented")
     }
 
+    override fun dispose() {
+        for (snapshot in snapshots) {
+            snapshot.dispose()
+        }
+
+        snapshots.clear()
+    }
 }

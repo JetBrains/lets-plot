@@ -3,16 +3,20 @@ import ImageMagick.DrawingWand
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.NativeBitmapIO
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.encoding.Png
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.io.Native
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.core.canvas.FontStyle
-import org.jetbrains.letsPlot.core.canvas.FontWeight
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager.FontSet
+import org.jetbrains.letsPlot.imagick.canvas.MagickSnapshot
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -236,4 +240,27 @@ fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
         bitmapIO = NativeBitmapIO,
         tol = 1
     )
+}
+
+class MagickCanvasProvider(
+    private val magickFontManager: MagickFontManager,
+) : CanvasProvider {
+    override fun createCanvas(size: Vector): MagickCanvas {
+        return MagickCanvas.create(size.x, size.y, 1.0, magickFontManager)
+    }
+
+    override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
+        return MagickSnapshot.fromBitmap(bitmap)
+    }
+
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
+        println("MagickCanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
+        val bitmap = Png.decodeDataImage(dataUrl)
+        return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
+    }
+
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+        val img = MagickUtil.fromBitmap(Png.decode(png))
+        return Asyncs.constant(MagickSnapshot(img))
+    }
 }

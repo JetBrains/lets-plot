@@ -8,7 +8,9 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 import kotlin.test.Test
+import kotlin.test.fail
 
 
 /*
@@ -20,6 +22,56 @@ class PlotTest {
     companion object {
         private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
         private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
+    }
+
+    @Test
+    fun barPlotShouldNotLeakMemory() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "time": ["Lunch", "Lunch", "Dinner", "Dinner", "Dinner"] },
+            |  "theme": { "text": {"blank": false } },
+            |  "mapping": { "x": "time", "color": "time", "fill": "time" },
+            |  "layers": [ { "geom": "bar", "alpha": "0.5" } ]
+            |}""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertMemoryLeakFree(plotSpec)
+    }
+
+    @Test
+    fun rasterPlotShouldNotLeakMemory() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0, -1.0, -0.5, 0.0, 0.5, 1.0 ],
+            |    "y": [ -1.0, -1.0, -1.0, -1.0, -1.0, -0.5, -0.5, -0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0 ],
+            |    "z": [ 0.024871417406145683, 0.057228531823873385, 0.09435389770895924, 0.11146595955293902, 0.09435389770895924, 0.057228531823873385, 0.11146595955293902, 0.15556327812622517, 0.15556327812622517, 0.11146595955293902, 0.09435389770895924, 0.15556327812622517, 0.1837762984739307, 0.15556327812622517, 0.09435389770895924, 0.11146595955293902, 0.15556327812622517, 0.15556327812622517, 0.11146595955293902, 0.057228531823873385, 0.09435389770895924, 0.11146595955293902, 0.09435389770895924, 0.057228531823873385, 0.024871417406145683 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "float", "column": "x" },
+            |      { "type": "float", "column": "y" },
+            |      { "type": "float", "column": "z" }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [
+            |    {
+            |      "aesthetic": "fill",
+            |      "low": "#54278f",
+            |      "high": "#f2f0f7",
+            |      "scale_mapper_kind": "color_gradient"
+            |    }
+            |  ],
+            |  "layers": [ { "geom": "raster", "mapping": { "x": "x", "y": "y", "fill": "z" } } ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertMemoryLeakFree(plotSpec)
     }
 
     @Test
@@ -48,7 +100,7 @@ class PlotTest {
 
     @Test
     fun polarPlot() {
-            val spec = """
+        val spec = """
                 |{
                 |  "data": { "foo": [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0 ] },
                 |  "coord": { "name": "polar", "theta": "x" },
@@ -349,7 +401,14 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, DoubleVector(w, h), unit = SizeUnit.CM, dpi = dpi, scale=2)
+        assertPlot(
+            "plot_${w}x${h}cm${dpi}dpi2Xscale_test.png",
+            plotSpec,
+            DoubleVector(w, h),
+            unit = SizeUnit.CM,
+            dpi = dpi,
+            scale = 2
+        )
     }
 
     @Test
@@ -435,7 +494,23 @@ class PlotTest {
 
         val plotSpec = parsePlotSpec(spec)
 
-        assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale=2)
+        assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
+    }
+
+    private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {
+        MagickUtil.startCountAllocations()
+
+        PlotReprGenerator.exportBitmap(plotSpec, embeddedFontsManager)
+
+        val (refCounter, log) = MagickUtil.stopCountAllocations()
+
+        if (refCounter.isNotEmpty()) {
+            println("refCounter:")
+            println(refCounter.entries.joinToString(separator = "\n"))
+            println("\nLog:")
+            println(log.joinToString(separator = "\n"))
+            fail("Memory leak detected: $refCounter")
+        }
     }
 
     private fun assertPlot(
@@ -450,8 +525,8 @@ class PlotTest {
             plotSpec = plotSpec,
             plotSize = plotSize,
             sizeUnit = unit,
-            dpi=dpi,
-            scale=scale,
+            dpi = dpi,
+            scale = scale,
             fontManager = embeddedFontsManager
             //fontManager = MagickFontManager.default() // For manual testing
         ) ?: error("Failed to export bitmap from plot spec")

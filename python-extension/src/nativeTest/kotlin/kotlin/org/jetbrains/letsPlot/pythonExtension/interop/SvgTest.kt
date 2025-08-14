@@ -34,5 +34,8 @@ class SvgTest {
 
         val canvas = canvasControl.children.last() as MagickCanvas
         imageComparer.assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
+
+        canvas.dispose()
+        canvasControl.dispose()
     }
 }

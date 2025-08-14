@@ -16,6 +16,8 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 class MagickSnapshot(
     val img: CPointer<ImageMagick.MagickWand>
 ) : Disposable, Canvas.Snapshot {
+    private var isDisposed = false
+
     override val size: Vector = Vector(
         ImageMagick.MagickGetImageWidth(img).toInt(),
         ImageMagick.MagickGetImageHeight(img).toInt()
@@ -24,6 +26,10 @@ class MagickSnapshot(
         get() = toBitmap()
 
     override fun dispose() {
+        if (isDisposed) {
+            return
+        }
+        isDisposed = true
         destroyMagickWand(img)
     }
 

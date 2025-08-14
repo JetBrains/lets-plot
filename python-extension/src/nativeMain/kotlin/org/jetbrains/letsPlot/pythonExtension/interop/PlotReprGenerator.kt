@@ -145,11 +145,11 @@ object PlotReprGenerator {
 
     fun exportBitmap(
         plotSpec: Map<*, *>,
+        fontManager: MagickFontManager,
         plotSize: DoubleVector? = null,
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
-        fontManager: MagickFontManager
     ): Bitmap? {
         var canvasReg: Registration? = null
         try {
@@ -183,6 +183,8 @@ object PlotReprGenerator {
             val snapshot = plotCanvas.takeSnapshot()
             val bitmap = snapshot.bitmap
             snapshot.dispose()
+            canvasControl.dispose()
+
             return bitmap
         } catch (e: Throwable) {
             e.printStackTrace()
