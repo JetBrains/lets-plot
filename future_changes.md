@@ -5,3 +5,5 @@
 ### Changed
 
 ### Fixed
+
+- ggsave(): memory leak when using `geom_raster()`.
