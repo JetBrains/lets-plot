@@ -17,8 +17,8 @@ object Density2df_PNG_Resolutions {
             (PlotImageDemoUtil.show(
                 "Density2df plot",
                 plotSpecList().first(),
-                scalingFactors = listOf(1.0, 2.0, 4.0),
-                targetDPIs = listOf(72, 144, 288),
+                scalingFactors = listOf(1.0, 2.0, 1.0),
+                targetDPIs = listOf(96, 96, 192),
                 formats = MutableList(3) { PlotImageExport.Format.PNG }
             ))
         }

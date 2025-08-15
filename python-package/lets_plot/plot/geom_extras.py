@@ -27,7 +27,7 @@ def arrow(angle=None, length=None, ends=None, type=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Arrow object specification.
 
     Examples

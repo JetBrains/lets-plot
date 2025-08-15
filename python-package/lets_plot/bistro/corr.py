@@ -70,8 +70,8 @@ class corr_plot:
 
     Notes
     -----
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------
@@ -146,7 +146,7 @@ class corr_plot:
         """
         Parameters
         ----------
-        data : dict or Pandas or Polars `DataFrame`
+        data : dict or Pandas or Polars ``DataFrame``
             Correlation matrix or data (correlation will be calculated for each variable pair).
             Data will be recognized as correlation matrix if it has a square shape and all values are
             in range -1.0..+1.0 or NaN.
@@ -189,7 +189,7 @@ class corr_plot:
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_points(type, diag)
@@ -215,7 +215,7 @@ class corr_plot:
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_labels(type, diag, map_size, color)
@@ -234,14 +234,15 @@ class corr_plot:
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_tiles(type, diag)
 
     def palette_gradient(self, low, mid, high):
         """
-        Set `scale_color_gradient2()` and `scale_fill_gradient()` for corr plot.
+        Set `scale_color_gradient2() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_gradient2.html>`__ and
+        `scale_fill_gradient() <https://lets-plot.org/python/pages/api/lets_plot.scale_fill_gradient.html>`__ for corr plot.
 
         Parameters
         ----------
@@ -254,106 +255,106 @@ class corr_plot:
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_gradient_palette(low, mid, high)
 
     def palette_BrBG(self):
         """
-        Set `scale_color_brewer()` with BrBG palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with BrBG palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._set_brewer_palette('BrBG')
 
     def palette_PiYG(self):
         """
-        Set `scale_color_brewer()` with PiYG palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with PiYG palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('PiYG')
 
     def palette_PRGn(self):
         """
-        Set `scale_color_brewer()` with PRGn palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with PRGn palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('PRGn')
 
     def palette_PuOr(self):
         """
-        Set `scale_color_brewer()` with PuOr palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with PuOr palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('PuOr')
 
     def palette_RdBu(self):
         """
-        Set `scale_color_brewer()` with RdBu palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with RdBu palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('RdBu')
 
     def palette_RdGy(self):
         """
-        Set `scale_color_brewer()` with RdGy palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with RdGy palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('RdGy')
 
     def palette_RdYlBu(self):
         """
-        Set `scale_color_brewer()` with RdYlBu palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with RdYlBu palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('RdYlBu')
 
     def palette_RdYlGn(self):
         """
-        Set `scale_color_brewer()` with RdYlGn palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with RdYlGn palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('RdYlGn')
 
     def palette_Spectral(self):
         """
-        Set `scale_color_brewer()` with Spectral palette for corr plot.
+        Set `scale_color_brewer() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_brewer.html>`__ with Spectral palette for corr plot.
 
         Returns
         -------
-        `corr_plot`
+        ``corr_plot``
             Correlation plot specification.
         """
         return self._duplicate()._set_brewer_palette('Spectral')
@@ -391,7 +392,7 @@ class corr_plot:
 
         Returns
         -------
-        `PlotSpec`
+        ``PlotSpec``
             Plot specification.
         """
 

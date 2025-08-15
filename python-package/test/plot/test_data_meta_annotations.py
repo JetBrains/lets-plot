@@ -3,11 +3,11 @@
 
 from datetime import datetime, timezone, date, time
 from datetime import timedelta
+# Python 3.9+ is required for ZoneInfo.
+from zoneinfo import ZoneInfo
 
 import numpy as np
 from pandas import DataFrame, Categorical
-# Python 3.9+ is required for ZoneInfo.
-from zoneinfo import ZoneInfo
 
 from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
@@ -344,31 +344,27 @@ def test_with_mapping_annotations():
     ]
 
 
+#
+# Pandas Categorical variables
+#
+
 def test_pd_categorical_variable():
     df = DataFrame({
         'v': Categorical(['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
     })
 
     p = ggplot(df) + geom_point()
-
     assert p.as_dict()['data_meta']['series_annotations'] == [
+        {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1']},
+    ]
+
+    p = ggplot() + geom_point(data=df)
+    assert p.as_dict()['layers'][0]['data_meta']['series_annotations'] == [
         {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1']},
     ]
 
 
 def test_pd_int_categorical_variable():
-    df = DataFrame({
-        'v': Categorical([4, 5, 2, 1], categories=[5, 4, 2, 1], ordered=True)
-    })
-
-    p = ggplot(df) + geom_point()
-
-    assert p.as_dict()['data_meta']['series_annotations'] == [
-        {'column': 'v', 'type': 'int', 'factor_levels': [5, 4, 2, 1]},
-    ]
-
-
-def test_pd_int_categorical_variable_from_ggplot_dataframe():
     df = DataFrame({
         'v': Categorical([4, 5, 2, 1], categories=[5, 4, 2, 1], ordered=True)
     })
@@ -389,6 +385,45 @@ def test_pd_categorical_variable_with_order_from_mapping():
 
     assert p.as_dict()['data_meta']['series_annotations'] == [
         {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1'], 'order': -1},
+    ]
+
+
+#
+# Polars Enum and Categorical variables
+#
+
+def test_polars_enum_variable():
+    import polars as pl
+
+    df = pl.DataFrame({
+        'v': pl.Series('v', ['ch4', 'ch5', 'ch1', 'ch2'], dtype=pl.Enum(['ch5', 'ch4', 'ch2', 'ch1']))
+    })
+
+    p = ggplot(df) + geom_point()
+    assert p.as_dict()['data_meta']['series_annotations'] == [
+        {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1']},
+    ]
+
+    p = ggplot() + geom_point(data=df)
+    assert p.as_dict()['layers'][0]['data_meta']['series_annotations'] == [
+        {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1']},
+    ]
+
+
+def test_polars_categorical_variable():
+    import polars as pl
+
+    # Note: In Polars v1.32.0 it does not seem possible to get categories in correct order from the Categorical dtype.
+    # Fix me in future versions of Polars, maybe.
+    df = pl.DataFrame({
+        'v': pl.Series('v', ['ch4', 'ch5', 'ch1', 'ch2'],
+                       dtype=pl.Categorical(['ch5', 'ch4', 'ch2', 'ch1']))
+    })
+
+    p = ggplot(df) + geom_point()
+    assert p.as_dict()['data_meta']['series_annotations'] == [
+        # {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1']},
+        {'column': 'v', 'type': 'str'},
     ]
 
 
@@ -422,3 +457,29 @@ def test_as_discrete_with_levels():
     ]
 
     assert 'mapping_annotations' not in p.as_dict()['layers'][0]['data_meta']
+
+
+def test_as_discrete_in_aes_addition():
+    d = {
+        'x': [1, 2, 3, 4, 5],
+        'y': [0, 0, 0, 0, 0],
+        'c': [1, 2, 3, 1, 2]
+    }
+
+    # `data` in ggplot()
+    p = ggplot(d) + aes(x='x', y='y', color=as_discrete('c')) + geom_point()
+
+    # Plot has data meta and mapping_annotations are present
+    assert 'data_meta' in p.as_dict()
+    assert p.as_dict()['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete', 'parameters': {'label': 'c'}}
+    ]
+
+    # `data` in geom_point()
+    p = ggplot() + aes(x='x', y='y', color=as_discrete('c')) + geom_point(data=d)
+
+    # Plot has data meta and mapping_annotations are present
+    assert 'data_meta' in p.as_dict()
+    assert p.as_dict()['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete', 'parameters': {'label': 'c'}}
+    ]

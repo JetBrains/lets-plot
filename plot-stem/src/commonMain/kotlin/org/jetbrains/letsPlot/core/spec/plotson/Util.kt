@@ -61,10 +61,12 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is NamedLineType -> v.code
         is LineType -> null
         is Mapping -> v.toSpec()
+        is LayerOptions.SizeUnit -> v.value
         is MappingAnnotationOptions.AnnotationType -> v.value
         is MappingAnnotationOptions.OrderType -> v.value
         is StatKind -> v.name.lowercase()
         is ThemeOptions.ThemeName -> v.value
+        is ThemeOptions.Flavor -> v.value
         is CoordOptions.CoordName -> v.value
         is SummaryStatOptions.AggFunction -> v.value
         is PositionOptions.PosKind -> v.value

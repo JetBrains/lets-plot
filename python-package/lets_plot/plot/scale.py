@@ -48,7 +48,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, lablim=None, li
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
 
@@ -60,7 +60,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, lablim=None, li
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -132,7 +132,7 @@ def scale_manual(aesthetic, values, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -145,7 +145,7 @@ def scale_manual(aesthetic, values, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -200,7 +200,7 @@ def scale_manual(aesthetic, values, *,
 def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
-    Create your own discrete scale for `color` aesthetic.
+    Create your own discrete scale for ``color`` aesthetic.
 
     Parameters
     ----------
@@ -226,7 +226,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -239,7 +239,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -275,7 +275,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None,
 
 def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Create your own discrete scale for `fill` aesthetic.
+    Create your own discrete scale for ``fill`` aesthetic.
 
     Parameters
     ----------
@@ -301,7 +301,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, 
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -314,12 +314,12 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, 
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Create your own color scale for `fill` aesthetic. Values are strings, encoding filling colors.
+    Create your own color scale for ``fill`` aesthetic. Values are strings, encoding filling colors.
 
     Examples
     --------
@@ -350,7 +350,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, 
 
 def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Create your own discrete scale for `size` aesthetic.
+    Create your own discrete scale for ``size`` aesthetic.
 
     Parameters
     ----------
@@ -375,7 +375,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, 
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
 
@@ -387,12 +387,12 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, 
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Create your own discrete scale for `size` aesthetic. Values are numbers, defining sizes.
+    Create your own discrete scale for ``size`` aesthetic. Values are numbers, defining sizes.
 
     Examples
     --------
@@ -425,7 +425,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, 
 def scale_shape_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
-    Create your own discrete scale for `shape` aesthetic.
+    Create your own discrete scale for ``shape`` aesthetic.
 
     Parameters
     ----------
@@ -450,7 +450,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, lablim=None,
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
 
@@ -462,12 +462,12 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, lablim=None,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Create your own discrete scale for `size` aesthetic. Values are numbers, encoding shapes.
+    Create your own discrete scale for ``size`` aesthetic. Values are numbers, encoding shapes.
 
     Examples
     --------
@@ -525,7 +525,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, lablim=No
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
 
@@ -537,7 +537,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, lablim=No
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -576,7 +576,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, lablim=No
 def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
-    Create your own discrete scale for `alpha` (transparency) aesthetic.
+    Create your own discrete scale for ``alpha`` (transparency) aesthetic.
 
     Parameters
     ----------
@@ -601,7 +601,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
 
@@ -613,12 +613,12 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Create your own discrete scale for `alpha` (transparency) aesthetic.
+    Create your own discrete scale for ``alpha`` (transparency) aesthetic.
     Accept values between 0 and 1.
 
     Examples
@@ -695,7 +695,7 @@ def scale_continuous(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -715,7 +715,7 @@ def scale_continuous(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -778,7 +778,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
                           scale_mapper_kind=None,
                           **kwargs):
     """
-    Color scale for `fill` aesthetic and continuous data.
+    Color scale for ``fill`` aesthetic and continuous data.
 
     Parameters
     ----------
@@ -798,7 +798,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -818,7 +818,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
 
@@ -857,7 +857,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
                            scale_mapper_kind=None,
                            **kwargs):
     """
-    Color scale for `color` aesthetic and continuous data.
+    Color scale for ``color`` aesthetic and continuous data.
 
     Parameters
     ----------
@@ -877,7 +877,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -897,7 +897,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -964,7 +964,7 @@ def scale_gradient(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -979,7 +979,7 @@ def scale_gradient(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -1020,7 +1020,7 @@ def scale_gradient(aesthetic, *,
 def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                         limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for `fill` aesthetic.
+    Define smooth color gradient between two colors for ``fill`` aesthetic.
 
     Parameters
     ----------
@@ -1046,7 +1046,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1061,12 +1061,12 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for `fill` aesthetic.
+    Define smooth gradient between two colors (defined by low and high) for ``fill`` aesthetic.
 
     Examples
     --------
@@ -1100,7 +1100,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for `color` aesthetic.
+    Define smooth color gradient between two colors for ``color`` aesthetic.
 
     Parameters
     ----------
@@ -1126,7 +1126,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1141,12 +1141,12 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for `color` aesthetic.
+    Define smooth gradient between two colors (defined by low and high) for ``color`` aesthetic.
 
     Examples
     --------
@@ -1213,7 +1213,7 @@ def scale_gradient2(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1228,7 +1228,7 @@ def scale_gradient2(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -1270,7 +1270,7 @@ def scale_gradient2(aesthetic, *,
 def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
-    Define diverging color gradient for `fill` aesthetic.
+    Define diverging color gradient for ``fill`` aesthetic.
 
     Parameters
     ----------
@@ -1300,7 +1300,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1315,12 +1315,12 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define diverging color gradient for `fill` aesthetic. Default mid point is set to white color.
+    Define diverging color gradient for ``fill`` aesthetic. Default mid point is set to white color.
 
     Examples
     --------
@@ -1355,7 +1355,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None,
                           limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Define diverging color gradient for `color` aesthetic.
+    Define diverging color gradient for ``color`` aesthetic.
 
     Parameters
     ----------
@@ -1385,7 +1385,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1400,12 +1400,12 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define diverging color gradient for `color` aesthetic. Default mid point is set to white color.
+    Define diverging color gradient for ``color`` aesthetic. Default mid point is set to white color.
 
     Examples
     --------
@@ -1467,7 +1467,7 @@ def scale_gradientn(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1482,7 +1482,7 @@ def scale_gradientn(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -1524,7 +1524,7 @@ def scale_gradientn(aesthetic, *,
 def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                           na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between multiple colors for `color` aesthetic.
+    Define smooth color gradient between multiple colors for ``color`` aesthetic.
 
     Parameters
     ----------
@@ -1548,7 +1548,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, labl
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1563,12 +1563,12 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, labl
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define smooth color gradient between multiple colors for `color` aesthetic.
+    Define smooth color gradient between multiple colors for ``color`` aesthetic.
 
     Examples
     --------
@@ -1603,7 +1603,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, labl
 def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between multiple colors for `fill` aesthetic.
+    Define smooth color gradient between multiple colors for ``fill`` aesthetic.
 
     Parameters
     ----------
@@ -1627,7 +1627,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, labli
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1642,12 +1642,12 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, labli
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define smooth color gradient between multiple colors for `fill` aesthetic.
+    Define smooth color gradient between multiple colors for ``fill`` aesthetic.
 
     Examples
     --------
@@ -1715,7 +1715,7 @@ def scale_hue(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1730,7 +1730,7 @@ def scale_hue(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -1772,7 +1772,7 @@ def scale_hue(aesthetic, *,
 def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Qualitative color scale with evenly spaced hues for `fill` aesthetic.
+    Qualitative color scale with evenly spaced hues for ``fill`` aesthetic.
 
     Parameters
     ----------
@@ -1804,7 +1804,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1819,12 +1819,12 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
+    Define qualitative color scale with evenly spaced hues for ``fill`` aesthetic.
 
     Examples
     --------
@@ -1860,7 +1860,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
                     limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Qualitative color scale with evenly spaced hues for `color` aesthetic.
+    Qualitative color scale with evenly spaced hues for ``color``  aesthetic.
 
     Parameters
     ----------
@@ -1890,7 +1890,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -1905,12 +1905,12 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for `color` aesthetic.
+    Define qualitative color scale with evenly spaced hues for ``color``  aesthetic.
 
     Examples
     --------
@@ -1981,7 +1981,7 @@ def scale_discrete(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1999,7 +1999,7 @@ def scale_discrete(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -2062,7 +2062,7 @@ def scale_fill_discrete(direction=None,
                         scale_mapper_kind=None,
                         **kwargs):
     """
-    Color scale for `fill` aesthetic and discrete data.
+    Color scale for ``fill`` aesthetic and discrete data.
 
     Parameters
     ----------
@@ -2086,7 +2086,7 @@ def scale_fill_discrete(direction=None,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2104,7 +2104,7 @@ def scale_fill_discrete(direction=None,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -2144,7 +2144,7 @@ def scale_color_discrete(direction=None,
                          scale_mapper_kind=None,
                          **kwargs):
     """
-    Color scale for `color` aesthetic and discrete data.
+    Color scale for ``color``  aesthetic and discrete data.
 
     Parameters
     ----------
@@ -2168,7 +2168,7 @@ def scale_color_discrete(direction=None,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2186,7 +2186,7 @@ def scale_color_discrete(direction=None,
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -2253,7 +2253,7 @@ def scale_grey(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2268,7 +2268,7 @@ def scale_grey(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -2311,7 +2311,7 @@ def scale_grey(aesthetic, *,
 def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential grey color scale for `fill` aesthetic.
+    Sequential grey color scale for ``fill`` aesthetic.
 
     Parameters
     ----------
@@ -2337,7 +2337,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2352,12 +2352,12 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define sequential grey color scale for `fill` aesthetic.
+    Define sequential grey color scale for ``fill`` aesthetic.
 
     Examples
     --------
@@ -2391,7 +2391,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
 def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                      na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential grey color scale for `color` aesthetic.
+    Sequential grey color scale for ``color``  aesthetic.
 
     Parameters
     ----------
@@ -2417,7 +2417,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2432,12 +2432,12 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define sequential grey color scale for `color` aesthetic.
+    Define sequential grey color scale for ``color``  aesthetic.
 
     Examples
     --------
@@ -2525,7 +2525,7 @@ def scale_brewer(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2540,7 +2540,7 @@ def scale_brewer(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -2596,7 +2596,7 @@ def scale_brewer(aesthetic, *,
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                       na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer2.org for `fill` aesthetic.
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for ``fill`` aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -2627,7 +2627,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2642,7 +2642,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -2696,7 +2696,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer2.org for `color` aesthetic.
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for ``color``  aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -2727,7 +2727,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2742,12 +2742,12 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
     -----
-    Define sequential, diverging and qualitative color scales from colorbrewer2.org for `color` aesthetic.
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for ``color``  aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
@@ -2796,10 +2796,10 @@ def scale_viridis(aesthetic, *,
                   name=None, breaks=None, labels=None, lablim=None, limits=None,
                   na_value=None, guide=None, trans=None, format=None):
     """
-    The `viridis` color maps are designed to be perceptually-uniform,
+    The ``viridis`` color maps are designed to be perceptually-uniform,
     both in regular form and also when converted to black-and-white.
 
-    The `viridis` color scales are suitable for viewers with common forms of colour blindness.
+    The ``viridis`` color scales are suitable for viewers with common forms of colour blindness.
     See also https://bids.github.io/colormap/.
 
 
@@ -2810,21 +2810,22 @@ def scale_viridis(aesthetic, *,
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than ``end``.
     end : float, default=1.0
-        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than ``begin``.
     direction : {1, -1}, default=1
         Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
-            - "magma" (or "A"),
-            - "inferno" (or "B")
-            - "plasma" (or "C")
-            - "viridis" (or "D")
-            - "cividis" (or "E")
-            - "turbo"
-            - "twilight"
+
+        - "magma" (or "A"),
+        - "inferno" (or "B")
+        - "plasma" (or "C")
+        - "viridis" (or "D")
+        - "cividis" (or "E")
+        - "turbo"
+        - "twilight"
 
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2844,7 +2845,7 @@ def scale_viridis(aesthetic, *,
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2859,7 +2860,7 @@ def scale_viridis(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     Notes
@@ -2906,10 +2907,10 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
                        name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
-    The `viridis` color maps are designed to be perceptually-uniform,
+    The ``viridis`` color maps are designed to be perceptually-uniform,
     both in regular form and also when converted to black-and-white.
 
-    The `viridis` color scales are suitable for viewers with common forms of colour blindness.
+    The ``viridis`` color scales are suitable for viewers with common forms of colour blindness.
     See also https://bids.github.io/colormap/.
 
 
@@ -2918,21 +2919,22 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than ``end``.
     end : float, default=1.0
-        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than ``begin``.
     direction : {1, -1}, default=1
         Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
-            - "magma" (or "A"),
-            - "inferno" (or "B")
-            - "plasma" (or "C")
-            - "viridis" (or "D")
-            - "cividis" (or "E")
-            - "turbo"
-            - "twilight"
+
+        - "magma" (or "A"),
+        - "inferno" (or "B")
+        - "plasma" (or "C")
+        - "viridis" (or "D")
+        - "cividis" (or "E")
+        - "turbo"
+        - "twilight"
 
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2952,7 +2954,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -2967,7 +2969,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -3010,10 +3012,10 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
                         name=None, breaks=None, labels=None, lablim=None, limits=None,
                         na_value=None, guide=None, trans=None, format=None):
     """
-    The `viridis` color maps are designed to be perceptually-uniform,
+    The ``viridis`` color maps are designed to be perceptually-uniform,
     both in regular form and also when converted to black-and-white.
 
-    The `viridis` color scales are suitable for viewers with common forms of colour blindness.
+    The ``viridis`` color scales are suitable for viewers with common forms of colour blindness.
     See also https://bids.github.io/colormap/.
 
 
@@ -3022,21 +3024,22 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than ``end``.
     end : float, default=1.0
-        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than ``begin``.
     direction : {1, -1}, default=1
         Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
-            - "magma" (or "A"),
-            - "inferno" (or "B")
-            - "plasma" (or "C")
-            - "viridis" (or "D")
-            - "cividis" (or "E")
-            - "turbo"
-            - "twilight"
+
+        - "magma" (or "A"),
+        - "inferno" (or "B")
+        - "plasma" (or "C")
+        - "viridis" (or "D")
+        - "cividis" (or "E")
+        - "turbo"
+        - "twilight"
 
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -3056,7 +3059,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         Missing values will be replaced with this value.
     guide
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        or a call to a guide function (`guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__, `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__)
         specifying additional arguments. 'none' will hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
@@ -3071,7 +3074,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -3136,7 +3139,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, lablim=None, li
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
@@ -3150,7 +3153,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, lablim=None, li
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -3209,7 +3212,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, lablim=None, lim
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
@@ -3223,7 +3226,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, lablim=None, lim
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -3283,7 +3286,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, lablim=N
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
@@ -3297,7 +3300,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, lablim=N
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Notes
@@ -3362,7 +3365,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, lablim=None
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
@@ -3376,7 +3379,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, lablim=None
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -3435,7 +3438,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, lablim=None, l
     na_value
         Missing values will be replaced with this value.
     guide
-        A result returned by `guide_legend()` function or 'none' to hide the guide.
+        A result returned by `guide_legend() <https://lets-plot.org/python/pages/api/lets_plot.guide_legend.html>`__ function or 'none' to hide the guide.
     trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
@@ -3449,7 +3452,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, lablim=None, l
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Scale specification.
 
     Examples
@@ -3530,7 +3533,7 @@ def _scale(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Scales specification.
 
     """

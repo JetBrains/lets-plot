@@ -6,10 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 internal object VegaOption {
-    object LetsPlotExt {
-        const val LOG_LETS_PLOT_SPEC = "logLetsPlotSpec"
-        const val REPORT_LETS_PLOT_CONVERTER_SUMMARY = "reportLetsPlotConverterSummary"
-    }
+    const val LETS_PLOT_EXT = "letsPlotExt"
 
     const val SCHEMA = "\$schema"
     const val DESCRIPTION = "description"
@@ -26,6 +23,13 @@ internal object VegaOption {
     const val TITLE = "title"
 
     const val CONFIG = "config"
+
+    object LetsPlotExt {
+        const val LOG_SPEC = "logSpec"
+        const val REPORT_CONVERTER_SUMMARY = "reportConverterSummary"
+        const val DARK_MODE = "darkMode"
+        const val SPEC_AUGMENTATION = "specAugmentation"
+    }
 
     object Data {
         const val VALUES = "values"
@@ -138,6 +142,8 @@ internal object VegaOption {
             const val Y_OFFSET = "yOffset"
 
             const val ERROR_X = "errorX"
+
+            const val THETA = "theta"
         }
 
         object Types {
@@ -157,6 +163,7 @@ internal object VegaOption {
         }
 
         object Types {
+            const val ARC = "arc"
             const val BAR = "bar"
             const val LINE = "line"
             const val TRAIL = "trail"

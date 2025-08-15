@@ -37,7 +37,8 @@ object AnnotationProviderUtil {
                 spec.textSize ?: themeTextStyle.size,
                 themeTextStyle.color
             ),
-            useCustomColor
+            useCustomColor,
+            useLayerColor = spec.useLayerColor
         )
     }
 }

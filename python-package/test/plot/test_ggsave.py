@@ -23,32 +23,121 @@ def assert_png(file_path, w, h):
         assert img.size == (w, h)
 
 
+def assert_svg(file_path, w=None, h=None, view_box=None):
+    with open(file_path, 'rb') as f:
+        content = f.read()
+        assert content.startswith(b'<svg xmlns="http://www.w3.org/2000/svg"')
+        if w is not None:
+            assert f'width="{w}"' in content.decode('utf-8')
+        if h is not None:
+            assert f'height="{h}"' in content.decode('utf-8')
+        if view_box is not None:
+            assert f'viewBox="{view_box}"' in content.decode('utf-8')
+
+
+
+def temp_file(filename):
+    temp_dir = tempfile.gettempdir()
+    return f"{temp_dir}/{filename}"
+
+
 def test_ggsave_svg():
     p = gg.ggplot() + gg.geom_blank()
-    temp_dir = tempfile.gettempdir()
-    out_path = gg.ggsave(p, filename='test_ggsave.svg', path=temp_dir)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave.svg'))
 
     print("Output path:", out_path)
 
-    with open(out_path, 'rb') as f:
-        content = f.read()
-        assert content.startswith(b'<svg xmlns="http://www.w3.org/2000/svg"')
+    assert_svg(out_path)
+
+def test_ggsave_svg_wh_default_unit_is_inch():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3)
+    print("Output path:", out_path)
+    assert_svg(out_path, w="5.0in", h="3.0in", view_box="0 0 480.0 288.0")
+
+
+def test_ggsave_svg_wh_unit_cm():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3, unit='cm')
+    print("Output path:", out_path)
+    assert_svg(out_path, w="5.0cm", h="3.0cm", view_box="0 0 188.97637795275588 113.38582677165354")
 
 
 def test_ggsave_png():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    temp_dir = tempfile.gettempdir()
-    out_path = gg.ggsave(p, filename='test_ggsave_magick.png', path=temp_dir, scale=1)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png.png'))
     print("Output path:", out_path)
-    assert_png(out_path, 400, 300)
+    assert_png(out_path, 800, 600)  # 2x scale by default
 
 
 def test_ggsave_png_scale3():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    temp_dir = tempfile.gettempdir()
-    out_path = gg.ggsave(p, filename='test_ggsave_magick.png', path=temp_dir, scale=3)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_scale3.png'), scale=3)
     print("Output path:", out_path)
     assert_png(out_path, 1200, 900)
+
+
+def test_ggsave_png_dpi150():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_dpi150.png'), dpi=150)
+    print("Output path:", out_path)
+    assert_png(out_path, 625, 468)  # 400*150/96, 300*150/96
+
+
+def test_ggsave_png_wh():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh.png'), w=5, h=3)
+    print("Output path:", out_path)
+    assert_png(out_path, 1500, 900)  #  5*300, 3*300
+
+
+def test_ggsave_png_wh_inch():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_inch.png'), w=5, h=3, unit='in')
+    print("Output path:", out_path)
+    assert_png(out_path, 1500, 900)  #  5*300, 3*300
+
+
+def test_ggsave_png_wh_cm():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_cm.png'), w=5, h=3, unit='cm')
+    print("Output path:", out_path)
+    assert_png(out_path, 590, 356)  #  1.98inch * 300, 1.18inch * 300
+
+
+def test_ggsave_png_wh_150dpi():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi.png'), w=5, h=3, unit='in', dpi=150)
+    print("Output path:", out_path)
+    assert_png(out_path, 750, 450)  # 5*150, 3*150
+
+
+def test_ggsave_png_wh_150dpi_scale2():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi_scale2.png'), w=5, h=3, unit='in', dpi=150, scale=2)
+    print("Output path:", out_path)
+    assert_png(out_path, 1500, 900)  # 5*150*2, 3*150*2
+
+
+def test_ggsave_png_wh_px():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px.png'), w=300, h=200, unit='px')
+    print("Output path:", out_path)
+    assert_png(out_path, 300, 200)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
+
+
+def test_ggsave_png_wh_px_scale2():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_scale2.png'), w=300, h=200, unit='px', scale=2)
+    print("Output path:", out_path)
+    assert_png(out_path, 600, 400)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
+
+
+def test_ggsave_png_wh_px_150dpi():
+    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_150dpi.png'), w=300, h=200, unit='px', dpi=150)
+    print("Output path:", out_path)
+    assert_png(out_path, 468, 312)  #
 
 
 def test_filelike_ggsave_png():
@@ -59,18 +148,9 @@ def test_filelike_ggsave_png():
     assert_png(out_buffer, 400, 300)
 
 
-def test_ggsave_png_cairo():
-    p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
-    temp_dir = tempfile.gettempdir()
-    out_path = gg.ggsave(p, filename='test_ggsave_cairo.png', path=temp_dir, scale=1)
-    print("Output path:", out_path)
-    assert_png(out_path, 400, 300)
-
-
 def test_ggsave_pdf():
     p = gg.ggplot() + gg.geom_blank()
-    temp_dir = tempfile.gettempdir()
-    out_path = gg.ggsave(p, filename='test_ggsave.pdf', path=temp_dir)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave.pdf'))
 
     print("Output path:", out_path)
 
@@ -81,8 +161,7 @@ def test_ggsave_pdf():
 
 def test_ggsave_pdf_with_dpi():
     p = gg.ggplot() + gg.geom_blank()
-    temp_dir = tempfile.gettempdir()
-    out_path = gg.ggsave(p, filename='test_ggsave_with_dpi.pdf', path=temp_dir, dpi=300, w=5, h=3, unit='in', scale=1)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_with_dpi.pdf'), dpi=300, w=5, h=3, unit='in', scale=1)
 
     print("Output path:", out_path)
 

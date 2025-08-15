@@ -5,14 +5,13 @@
 
 package org.jetbrains.letsPlot.livemap.chart
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.newVec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.times
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.onEachEntity
 import org.jetbrains.letsPlot.livemap.mapengine.LiveMapContext
 import org.jetbrains.letsPlot.livemap.mapengine.placement.ScreenDimensionComponent
-import org.jetbrains.letsPlot.livemap.toClientPoint
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.pow
@@ -54,7 +53,7 @@ class ChartElementScalingSystem(
 
                     entity.tryGet<PointComponent>()?.let {
                         entity.provide(::ScreenDimensionComponent).dimension =
-                            DoubleVector(it.size, it.size).toClientPoint() * scalingSizeFactor
+                            newVec(it.size, it.size) * scalingSizeFactor
                     }
                 }
             }

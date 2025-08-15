@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.livemap.api
 
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
@@ -70,7 +71,6 @@ class PointEntityBuilder(
     var angle: Double = 0.0
 
     fun build(nonInteractive: Boolean = false): EcsEntity {
-        val d = radius * 2.0
         return myFactory.createStaticFeatureWithLocation("map_ent_s_point", point)
             .run {
                 myFactory.incrementLayerPointsTotalCount(1)
@@ -107,7 +107,7 @@ class PointEntityBuilder(
                         }
                     }
                     +PointComponent().apply {
-                        size = d
+                        size = Scalar(radius * 2.0)
                     }
 
                     +WorldOriginComponent(worldPoint)

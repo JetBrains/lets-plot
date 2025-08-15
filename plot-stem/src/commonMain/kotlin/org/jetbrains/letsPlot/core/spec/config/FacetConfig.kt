@@ -15,6 +15,8 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_LAB_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.varNameAndLevelPairsByTile
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.dataIndicesByTile
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetGrid
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetWrap
@@ -70,10 +72,14 @@ internal class FacetConfig(
 
         val scales: FacetScales = getScalesOption()
 
+        val xOrder = getOrderOption(X_ORDER)
+        val yOrder = getOrderOption(Y_ORDER)
+        val xLevels: List<Any> = reorderVarLevels(nameX, levelsX.toList(), xOrder)
+        val yLevels: List<Any> = reorderVarLevels(nameY, levelsY.toList(), yOrder)
+
         return FacetGrid(
-            nameX, nameY, ArrayList(levelsX), ArrayList(levelsY),
-            getOrderOption(X_ORDER),
-            getOrderOption(Y_ORDER),
+            nameX, nameY,
+            xLevels, yLevels,
             getFormatterOption(X_FORMAT),
             getFormatterOption(Y_FORMAT),
             scales,
@@ -85,7 +91,7 @@ internal class FacetConfig(
     private fun createWrap(
         dataByLayer: List<DataFrame>
     ): PlotFacets {
-        // 'facets' cal be just one name or a list of names.
+        // 'facets' can be just one name or a list of names.
         val facets = getAsStringList(Facet.FACETS)
 
         val ncol = getInteger(Facet.NCOL)
@@ -108,7 +114,7 @@ internal class FacetConfig(
             toOrderVal(it)
         }
         // Num of order values must be same as num of factes.
-        val ordering = (orderOption + List(facets.size) { DEF_ORDER_DIR }).take(facets.size)
+        val facetOrdering = (orderOption + List(facets.size) { DEF_ORDER_DIR }).take(facets.size)
 
         // facet formatting
         val formatterOption = getAsList(Facet.FACETS_FORMAT).map {
@@ -123,9 +129,30 @@ internal class FacetConfig(
 
         val scales: FacetScales = getScalesOption()
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWidths)
-    }
+        val orderedFacetLevels: List<List<Any>> = reorderLevels(facets, facetLevels, facetOrdering)
+        val varNameAndLevelPairsByTileRaw: List<List<Pair<String, Any>>> = varNameAndLevelPairsByTile(
+            facets,
+            orderedFacetLevels
+        )
 
+        val dropUnusedLevels = getBoolean(Facet.DROP_UNUSED_LEVELS, true)
+        val varNameAndLevelPairsByTile: List<List<Pair<String, Any>>> =
+            if (dropUnusedLevels) {
+                filterUnusedLevels(dataByLayer, varNameAndLevelPairsByTileRaw)
+            } else {
+                varNameAndLevelPairsByTileRaw
+            }
+
+        return FacetWrap(
+            facets,
+            varNameAndLevelPairsByTile,
+            nrow, ncol,
+            direction = getDirOption(),
+            facetFormatters = formatters,
+            scales = scales,
+            labWidths = labWidths
+        )
+    }
 
     private fun getOrderOption(optionName: String): Int {
         return toOrderVal(get(optionName))
@@ -190,5 +217,64 @@ internal class FacetConfig(
                 )
             }
         } ?: FacetScales.FIXED
+    }
+
+    private companion object {
+        fun reorderLevels(
+            varNames: List<String>,
+            varLevels: List<List<Any>>,
+            ordering: List<Int>
+        ): List<List<Any>> {
+            val orderingByFacet = varNames.zip(ordering).toMap()
+
+            val result = ArrayList<List<Any>>()
+            for ((i, name) in varNames.withIndex()) {
+                if (i >= varLevels.size) break
+                result.add(reorderVarLevels(name, varLevels[i], orderingByFacet.getValue(name)))
+            }
+
+            return result
+        }
+
+        fun reorderVarLevels(
+            name: String?,
+            levels: List<Any>,
+            order: Int
+        ): List<Any> {
+            if (name == null) return levels
+
+            // We expect either a list of Doubles or a list of Strings.
+            @Suppress("UNCHECKED_CAST")
+            levels as List<Comparable<Any>>
+
+            return when {
+                order <= -1 -> levels.sortedDescending()
+                order >= 1 -> levels.sorted()
+                else -> levels  // not ordered
+            }
+        }
+
+        fun filterUnusedLevels(
+            dataByLayer: List<DataFrame>,
+            varNameAndLevelPairsByTileRaw: List<List<Pair<String, Any>>>,
+        ): List<List<Pair<String, Any>>> {
+            // Drop empty facets (if any)
+            val dataSizeByTile: List<Int> =
+                MutableList<Int>(varNameAndLevelPairsByTileRaw.size) { 0 }.apply {
+                    dataByLayer.forEach { data ->
+                        val indicesByTile = dataIndicesByTile(data, varNameAndLevelPairsByTileRaw)
+
+                        // Update totals
+                        indicesByTile.forEachIndexed { tileIndex, indices ->
+                            this[tileIndex] = this[tileIndex] + indices.size
+                        }
+                    }
+                }
+
+
+            return varNameAndLevelPairsByTileRaw.filterIndexed { index, _ ->
+                dataSizeByTile[index] > 0
+            }
+        }
     }
 }

@@ -25,7 +25,7 @@ def waterfall_plot(data, x, y, *,
 
     Parameters
     ----------
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed.
     x : str
         Name of a variable.
@@ -47,13 +47,15 @@ def waterfall_plot(data, x, y, *,
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color lines by the direction of the flow.
         Flow type names: "Absolute", "Increase", "Decrease" and "Total".
-        You could use these names to change the default colors with the `scale_color_manual()` function.
+        You could use these names to change the default colors with the
+        `scale_color_manual() <https://lets-plot.org/python/pages/api/lets_plot.scale_color_manual.html>`__ function.
     fill : str
         Fill color of the boxes.
         For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color boxes by the direction of the flow.
         Flow type names: "Absolute", "Increase", "Decrease" and "Total".
-        You could use these names to change the default colors with the `scale_fill_manual()` function.
+        You could use these names to change the default colors with the
+        `scale_fill_manual() <https://lets-plot.org/python/pages/api/lets_plot.scale_fill_manual.html>`__ function.
     size : float, default=0.0
         Line width of the box boundary lines.
     alpha : float
@@ -69,15 +71,15 @@ def waterfall_plot(data, x, y, *,
         Values that are greater than 1 lead to overlapping of the boxes.
     show_legend : bool, default=False
         True - show the legend.
-    relative_tooltips : `layer_tooltips` or str
+    relative_tooltips : ``layer_tooltips`` or str
         Tooltips for boxes with relative values.
-        Result of the call to the `layer_tooltips()` function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         When 'none', tooltips are not shown.
         When 'detailed', a more detailed (compared to the default) version of the tooltips is shown.
-    absolute_tooltips : `layer_tooltips` or str
+    absolute_tooltips : ``layer_tooltips`` or str
         Tooltips for boxes with absolute values.
-        Result of the call to the `layer_tooltips()` function.
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         When 'none', tooltips are not shown.
         When 'detailed', a more detailed (compared to the default) version of the tooltips is shown.
@@ -86,40 +88,43 @@ def waterfall_plot(data, x, y, *,
     threshold : float
         Groups all categories under a certain threshold value into "Other" category.
     max_values : int
-        Groups all categories with the smallest changes, except the first `max_values`, into "Other" category.
+        Groups all categories with the smallest changes, except the first ``max_values``, into "Other" category.
     base : float, default=0.0
         Values with measure 'absolute' or 'total' are relative to this value.
     calc_total : bool, default=True
-        Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
+        Setting the ``calc_total`` to True will put the final cumulative sum into a new separate box.
         Taken into account only if the 'measure' column isn't provided.
     total_title : str
         The header of the last box with the final cumulative sum, if 'measure' column isn't provided.
         Also used as a title in the legend for columns of type 'total'.
     hline : str or dict
         Horizontal line passing through 0.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify parameters.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify parameters.
     hline_ontop : bool, default=True
         Option to place horizontal line over the other layers.
     connector : str or dict
         Line between neighbouring boxes connecting the end of the previous box and the beginning of the next box.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify parameters.
-    relative_labels : `layer_labels`
-        Result of the call to the `layer_labels()` function.
-        Specify style and content of the annotations.
-    absolute_labels : `layer_labels`
-        Result of the call to the `layer_labels()` function.
-        Specify style and content of the annotations.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify parameters.
+    relative_labels : dict
+        Result of the call to the `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ function.
+        Specify content and formatting of annotation labels on relative change bars.
+        If specified, overrides ``label_format`` for relative bars.
+    absolute_labels : dict
+        Result of the call to the `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ function.
+        Specify content and formatting of annotation labels on absolute value bars.
+        If specified, overrides ``label_format`` for absolute bars.
     label : str or dict
-        Label on the box. Shows change value.
-        Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_text()` to specify parameters.
-        Use 'flow_type' for `color` parameter of the `element_text()` to color labels by the direction of the flow.
-        Flow type names: "Absolute", "Increase", "Decrease" and "Total".
-        You could use these names to change the default colors with the `scale_color_manual()` function.
+        Style configuration for labels on bars. Applied to default labels or to
+        relative/absolute labels when ``relative_labels`` or ``absolute_labels`` are specified.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify style parameters.
+        Use ``element_text(color='inherit')`` to make labels inherit the color of bar borders.
     label_format : str
-        Format used to transform label mapping values to a string.
+        Format string used to transform label values to text. Applied to default labels or to
+        relative/absolute labels when ``relative_labels`` or ``absolute_labels`` are specified.
+        Can be overridden by formatting specified in ``relative_labels`` or ``absolute_labels``.
         Examples:
 
         - '.2f' -> '12.45'
@@ -132,7 +137,7 @@ def waterfall_plot(data, x, y, *,
 
     Returns
     -------
-    `PlotSpec`
+    ``PlotSpec``
         Plot object specification.
 
     Notes
@@ -223,7 +228,7 @@ def waterfall_plot(data, x, y, *,
                        width=.7, size=1, fill="white", color='flow_type', \\
                        hline=element_line(linetype='solid'), hline_ontop=False, \\
                        connector=element_line(linetype='dotted'), \\
-                       label=element_text(color='flow_type'), \\
+                       label=element_text(color='inherit'), \\
                        total_title="Result", show_legend=True)
 
     |

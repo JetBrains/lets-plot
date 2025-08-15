@@ -15,11 +15,12 @@ class Bitmap(
             return null // Out of bounds
         }
 
-        val pixel = argbInts[y * width + x]
-        val r = (pixel shr 16) and 0xFF
-        val g = (pixel shr 8) and 0xFF
-        val b = pixel and 0xFF
-        val a = (pixel shr 0) and 0xFF
+        val argb = argbInts[y * width + x]
+        val a = (argb shr 24) and 0xFF
+        val r = (argb shr 16) and 0xFF
+        val g = (argb shr 8) and 0xFF
+        val b = argb and 0xFF
+
         return Color(r, g, b, a)
     }
 

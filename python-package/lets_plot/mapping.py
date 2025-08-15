@@ -37,15 +37,15 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
 
     Returns
     -------
-    `MappingMeta` or list
+    ``MappingMeta`` or list
         Variable meta information.
 
     Notes
     -----
     The plot will use a discrete scale for the aesthetic mapping.
-    It is similar to the `factor()` function from R but works differently - there is no data transformation.
+    It is similar to the ``factor()`` function from R but works differently - there is no data transformation.
 
-    To enable ordering mode, at least one ordering parameter (`order_by` or `order`) should be specified.
+    To enable ordering mode, at least one ordering parameter (``order_by`` or ``order``) should be specified.
     By the default, it will use descending direction and ordering by eigenvalues.
     You cannot specify different order settings for the same variable.
     But if these settings don't contradict each other, they will be combined.

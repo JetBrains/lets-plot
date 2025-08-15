@@ -6,15 +6,17 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import kotlin.math.abs
 
 class LocatedTargetsPicker(
     val flippedAxis: Boolean,
-    private val myCursorCoord: DoubleVector? = null
+    private val myCursorCoord: DoubleVector? = null // TODO: drop null and default, make it required parameter
 ) {
     private val myAllLookupResults = ArrayList<LookupResult>()
 
@@ -38,7 +40,7 @@ class LocatedTargetsPicker(
         // then check distance. This will allow to use bar-alike geoms to use their X lookup strategy and to not win
         // every distance checks as the distance between them and the cursor is an order of magnitude smaller than for XY
         val withDistances = myAllLookupResults
-            .map { lookupResult -> lookupResult to distance(lookupResult, myCursorCoord) }
+            .map { lookupResult -> lookupResult to distance(lookupResult, myCursorCoord ?: ZERO) }
             .filter { (lookupResult, distance) ->
                 lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE
             }
@@ -124,22 +126,23 @@ class LocatedTargetsPicker(
             POINT_RANGE
         )
 
-        private fun distance(locatedTargetList: LookupResult, coord: DoubleVector?): Double {
-            val distance = locatedTargetList.distance
+        private fun distance(lookupResult: LookupResult, coord: DoubleVector): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
-            return if (distance == 0.0) {
-                if (!locatedTargetList.isCrosshairEnabled || coord == null) {
-                    FAKE_DISTANCE
-                } else {
-                    // use XY distance for tooltips with crosshair to avoid giving them priority
-                    locatedTargetList.targets
-                        .filter { it.tipLayoutHint.coord != null }
-                        .minOfOrNull { target -> distance(coord, target.tipLayoutHint.coord!!) }
-                        ?: FAKE_DISTANCE
+            return if (lookupResult.distance == 0.0) {
+                when {
+                    lookupResult.isCrosshairEnabled -> {
+                        // use XY distance for tooltips with crosshair to avoid giving them priority
+                        lookupResult.targets
+                            .filter { it.tipLayoutHint.coord != null }
+                            .minOfOrNull { target -> distance(coord, target.tipLayoutHint.coord!!) }
+                            ?: FAKE_DISTANCE
+                    }
+                    lookupResult.hitShapeKind == HitShape.Kind.POINT -> 0.0 // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
+                    else -> FAKE_DISTANCE // fake distance to give a chance for tooltips from other layers
                 }
             } else {
-                distance
+                lookupResult.distance
             }
         }
 
@@ -152,7 +155,8 @@ class LocatedTargetsPicker(
             distance = distance,
             geomKind = geomKind,
             contextualMapping = contextualMapping,
-            isCrosshairEnabled = isCrosshairEnabled
+            isCrosshairEnabled = isCrosshairEnabled,
+            hitShapeKind = hitShapeKind
         )
 
         private fun filterResults(

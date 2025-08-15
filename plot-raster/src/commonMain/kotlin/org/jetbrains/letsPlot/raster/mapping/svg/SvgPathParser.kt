@@ -147,8 +147,19 @@ class SvgPathParser(private val pathData: String) {
         while (index < length && (pathData[index].isDigit() || pathData[index] == '.')) {
             index++
         }
+
+        if (index < length && (pathData[index] == 'e' || pathData[index] == 'E')) {
+            index++ // skip 'e' or 'E'
+            if (index < length && (pathData[index] == '-' || pathData[index] == '+')) {
+                index++ // skip sign after 'e' or 'E'
+            }
+            while (index < length && pathData[index].isDigit()) {
+                index++
+            }
+        }
+
         val numberStr = pathData.substring(start, index)
-        return numberStr.toDoubleOrNull() ?: error("Expected number at position $start")
+        return numberStr.toDoubleOrNull() ?: error("Expected number at position $start. Found: '${numberStr.take(numberStr.length.coerceAtMost(40))}'")
     }
 
 

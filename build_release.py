@@ -27,8 +27,12 @@ Settings file must have the next format (EXAMPLE):
 
 You can place it anywhere you want, but do not push it to the project repository.
 
-The second command line argument must contain a path to the ImageMagick library root
-directory.
+Set a system environment variable with absolute paths to the ImageMagick dependencies
+installation. Fot build systems supporting both of "x86_64" and "arm64" architectures
+set two variables. Expected variable names are:
+
+ - IMAGICK_LIB_PATH: for x86_64 systems
+ - IMAGICK_ARM_LIB_PATH: for arm64 systems
 
 Run script in terminal by its name and do not forget to pass a path to the settings
 file as argument (EXAMPLE):
@@ -69,7 +73,7 @@ def read_settings_file():
     else:
         return py_settings
 
-def read_imagemagick_path():
+""" def read_imagemagick_path():
     # Reads path to ImageMagick library from commandline arguments.
     try:
         imagemagick_path = sys.argv[2]
@@ -80,7 +84,7 @@ def read_imagemagick_path():
         return imagemagick_path
     else:
         print_error_and_exit("ImageMagick path doesn't exist or it is not a directory!\n"
-                             f"{imagemagick_path}")
+                             f"{imagemagick_path}") """
 
 def run_command(command):
     # Runs shell-command and handles its exit code.
@@ -116,9 +120,9 @@ def get_python_architecture(python_bin_path):
 
 
 # Check command line arguments:
-if len(sys.argv) != 3:
+if len(sys.argv) != 2:
     print_error_and_exit(f"Wrong number of arguments. {len(sys.argv)}\n"
-                         f"Pass the settings filename and path to ImageMagick.")
+                         f"Pass the settings filename.")
 
 # Read Python settings file from script argument.
 # Paths to Python binaries and include directories will be got from here:
@@ -156,6 +160,13 @@ if system == "Linux":
     # For each of supported architectures run manylinux build for all Python binaries,
     # defined in the settings file.
     for architecture in ["x86_64", "arm64"]:
+        if architecture == "x86_64":
+            imagemagick_path = os.getenv('IMAGICK_LIB_PATH')
+        elif architecture == "arm64":
+            imagemagick_path = os.getenv('IMAGICK_ARM_LIB_PATH')
+        else:
+            print_error_and_exit("Cannot run script on this host")
+
         for python_paths in python_settings.values():
             # Collect all predefined parameters:
             build_parameters = [
@@ -164,7 +175,7 @@ if system == "Linux":
                 "-Ppython.include_path=%s" % (python_paths["include_path"]),
                 f"-Penable_python_package=true",
                 "-Parchitecture=%s" % architecture,
-                "-Pimagemagick_lib_path=%s" % read_imagemagick_path()
+                "-Pimagemagick_lib_path=%s" % imagemagick_path
             ]
 
             # Get current Python version in format 'cp3XX':
@@ -173,7 +184,7 @@ if system == "Linux":
                                                   "import sys; print(f'cp{sys.version_info.major}{sys.version_info.minor}')"])
 
             # Run Python 'manylinux' package build:
-            build_python_packages(python_package_build_command + [architecture, cpython_version])
+            build_python_packages(python_package_build_command + [architecture, cpython_version, imagemagick_path])
 
             # And clean Python Extension artifacts before the next iteration:
             run_command(python_extension_clean_command)
@@ -188,14 +199,24 @@ elif system == "Darwin" or system == "Windows":
 
     # Run Python packages build for all Python host installations, defined in the settings file:
     for python_paths in python_settings.values():
+        # Get Python architecture:
+        architecture = get_python_architecture(python_paths["bin_path"])
+
+        # Setup ImageMagick dependencies path from sys env:
+        if architecture == "x86_64" or architecture == "AMD64":
+            imagemagick_path = os.getenv('IMAGICK_LIB_PATH')
+        elif architecture == "arm64":
+            imagemagick_path = os.getenv('IMAGICK_ARM_LIB_PATH')
+        else:
+            print_error_and_exit("Cannot run script on this host")
         # Collect all predefined parameters:
         build_parameters = [
             "-Pbuild_release=true",
             "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
             "-Ppython.include_path=%s" % (python_paths["include_path"]),
             f"-Penable_python_package=true",
-            "-Parchitecture=%s" % (get_python_architecture(python_paths["bin_path"])),
-            "-Pimagemagick_lib_path=%s" % read_imagemagick_path()
+            "-Parchitecture=%s" % architecture,
+            "-Pimagemagick_lib_path=%s" % imagemagick_path
         ]
 
         # Run Python package build:

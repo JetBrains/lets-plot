@@ -59,6 +59,7 @@ object TestUtil {
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
         override fun tickLabelMargins() = Thickness()
+        override fun labelSpacing(): Double = TODO("Not yet implemented")
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
@@ -140,22 +141,17 @@ object TestUtil {
         return createLocator(
             lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
             contextualMapping = mock(ContextualMapping::class.java),
-            targetPrototypes = targetsList
+            targets = targetsList
         )
     }
 
     internal fun createLocator(
         lookupSpec: LookupSpec,
-        contextualMapping: ContextualMapping,
-        targetPrototypes: List<TargetPrototype>,
+        contextualMapping: ContextualMapping = mock(ContextualMapping::class.java),
+        targets: List<TargetPrototype>,
         geomKind: GeomKind = GeomKind.POINT
     ): GeomTargetLocator {
-        return LayerTargetLocator(
-            geomKind,
-            lookupSpec,
-            contextualMapping,
-            targetPrototypes
-        )
+        return LayerTargetLocator(geomKind, lookupSpec, contextualMapping, targets)
     }
 
     fun coord(x: Double, y: Double): DoubleVector {

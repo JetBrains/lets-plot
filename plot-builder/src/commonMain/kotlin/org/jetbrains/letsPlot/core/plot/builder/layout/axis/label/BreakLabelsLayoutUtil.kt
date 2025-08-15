@@ -75,6 +75,7 @@ internal object BreakLabelsLayoutUtil {
                     labelsBounds,
                     tickLength,
                     theme.tickLabelMargins(),
+                    theme.labelSpacing(),
                     orientation
                 )
             }
@@ -85,6 +86,7 @@ internal object BreakLabelsLayoutUtil {
                     labelsBounds,
                     tickLength,
                     theme.tickLabelMargins(),
+                    theme.labelSpacing(),
                     orientation
                 )
             }
@@ -105,19 +107,22 @@ internal object BreakLabelsLayoutUtil {
         bounds: DoubleRectangle,
         tickLength: Double,
         margins: Thickness,
+        spacing: Double,
         orientation: Orientation
     ): DoubleRectangle {
-        val origin = alignToLabelMargin(bounds, tickLength, margins, orientation).let {
-            val offset = when {
-                orientation.isHorizontal -> DoubleVector(0.0, margins.top)
-                else -> DoubleVector(margins.left, 0.0)
+        val origin = alignToLabelMargin(bounds, tickLength, margins, spacing, orientation).let {
+            val offset = when (orientation){
+                TOP -> DoubleVector(0.0, margins.top)
+                BOTTOM -> DoubleVector(0.0, margins.top + spacing)
+                LEFT -> DoubleVector(margins.left, 0.0)
+                RIGHT -> DoubleVector(margins.left + spacing, 0.0)
             }
             it.subtract(offset).origin
         }
         val dimension = bounds.dimension.add(
             when {
-                orientation.isHorizontal -> DoubleVector(0.0, margins.height)
-                else -> DoubleVector(margins.width, 0.0)
+                orientation.isHorizontal -> DoubleVector(0.0, margins.height + spacing)
+                else -> DoubleVector(margins.width + spacing, 0.0)
             }
         )
         return DoubleRectangle(origin, dimension)
@@ -128,9 +133,10 @@ internal object BreakLabelsLayoutUtil {
         bounds: DoubleRectangle,
         tickLength: Double,
         margins: Thickness,
+        spacing: Double,
         orientation: Orientation
     ): DoubleRectangle {
-        val offset = tickLength + when (orientation) {
+        val offset = tickLength + spacing + when (orientation) {
             LEFT -> margins.right + bounds.width
             TOP -> margins.bottom + bounds.height
             RIGHT -> margins.left
@@ -145,25 +151,32 @@ internal object BreakLabelsLayoutUtil {
         return bounds.add(offsetVector)
     }
 
-    fun textBounds(elementRect: DoubleRectangle, margins: Thickness, orientation: Orientation): DoubleRectangle? {
+    fun textBounds(elementRect: DoubleRectangle, margins: Thickness, spacing: Double, orientation: Orientation): DoubleRectangle? {
         if (elementRect.width == 0.0 || elementRect.height == 0.0) {
             return null
         }
+        val corrected_margins = margins + when (orientation) {
+            LEFT -> Thickness(0.0, spacing, 0.0, 0.0)
+            RIGHT -> Thickness(0.0, 0.0, 0.0, spacing)
+            TOP -> Thickness(0.0, 0.0, spacing, 0.0)
+            BOTTOM -> Thickness(spacing,0.0, 0.0, 0.0)
+        }
+
         return when {
             orientation.isHorizontal -> {
                 DoubleRectangle(
                     elementRect.left,
-                    elementRect.top + margins.top,
+                    elementRect.top + corrected_margins.top,
                     elementRect.width,
-                    elementRect.height - margins.height
+                    elementRect.height - corrected_margins.height
                 )
             }
 
             else -> {
                 DoubleRectangle(
-                    elementRect.left + margins.left,
+                    elementRect.left + corrected_margins.left,
                     elementRect.top,
-                    elementRect.width - margins.width,
+                    elementRect.width - corrected_margins.width,
                     elementRect.height
                 )
             }

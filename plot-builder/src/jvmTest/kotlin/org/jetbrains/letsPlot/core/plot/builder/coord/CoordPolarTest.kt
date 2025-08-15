@@ -23,6 +23,8 @@ class PolarCoordTest {
         val polarCoordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
+            xReversed = false,
+            yReversed = false,
             flipped = true,
             start,
             clockwise,
@@ -44,6 +46,8 @@ class PolarCoordTest {
         val polarCoordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
+            xReversed = false,
+            yReversed = false,
             flipped = true,
             start,
             clockwise,

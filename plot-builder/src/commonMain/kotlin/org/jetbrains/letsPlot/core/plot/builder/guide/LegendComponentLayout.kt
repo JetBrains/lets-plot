@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
-import kotlin.math.max
 
 abstract class LegendComponentLayout(
     title: String,
@@ -75,15 +74,15 @@ abstract class LegendComponentLayout(
     private fun doLayout() {
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
         val keyLabelGap = labelSpec.width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2.0
-        val defaultSpacing = DoubleVector(keyLabelGap, labelSpec.height() / 3.0)
-        val spacingBetweenLabels = theme.keySpacing().add(defaultSpacing)
+        val minVerticalDistanceBetweenLabels = labelSpec.height() / 3.0
 
         val colWidths = DoubleArray(colCount)
         val rowHeights = DoubleArray(rowCount)
 
         keySizes.forEachIndexed { i, keySize ->
             val (row, col) = indexToPosition(i)
-            val labelSize = labelSize(i)
+            val labelExtraHeight = if (row == rowCount - 1) 0.0 else minVerticalDistanceBetweenLabels
+            val labelSize = labelSize(i).add(DoubleVector(0.0, labelExtraHeight))
             val labelOffset = DoubleVector(keySize.x + keyLabelGap, keySize.y / 2)
             myLabelBoxes += DoubleRectangle(labelOffset, labelSize)
 
@@ -91,8 +90,9 @@ abstract class LegendComponentLayout(
             rowHeights[row] = maxOf(rowHeights[row], keySize.y, labelSize.y)
         }
 
-        val colX = colWidths.runningFold(0.0) { acc, w -> acc + w + spacingBetweenLabels.x }
-        val rowY = rowHeights.runningFold(0.0) { acc, h -> acc + h + spacingBetweenLabels.y }
+        val spacing = theme.keySpacing().add(DoubleVector(keyLabelGap,0.0))
+        val colX = colWidths.runningFold(0.0) { acc, w -> acc + w + spacing.x }
+        val rowY = rowHeights.runningFold(0.0) { acc, h -> acc + h + spacing.y }
 
         breaks.indices.forEach { i ->
             val (row, col) = indexToPosition(i)
@@ -105,7 +105,7 @@ abstract class LegendComponentLayout(
 
     protected abstract fun labelSize(index: Int): DoubleVector
 
-    private class MyHorizontal internal constructor(
+    private class MyHorizontal constructor(
         title: String,
         breaks: List<LegendBreak>,
         keySizes: List<DoubleVector>,
@@ -126,7 +126,7 @@ abstract class LegendComponentLayout(
         }
     }
 
-    private class MyHorizontalMultiRow internal constructor(
+    private class MyHorizontalMultiRow constructor(
         title: String,
         breaks: List<LegendBreak>,
         keySizes: List<DoubleVector>,
@@ -142,7 +142,7 @@ abstract class LegendComponentLayout(
         }
     }
 
-    private class MyVertical internal constructor(
+    private class MyVertical constructor(
         title: String,
         breaks: List<LegendBreak>,
         keySizes: List<DoubleVector>,
@@ -158,7 +158,7 @@ abstract class LegendComponentLayout(
         }
     }
 
-    private abstract class MyMultiRow internal constructor(
+    private abstract class MyMultiRow constructor(
         title: String,
         breaks: List<LegendBreak>,
         keySizes: List<DoubleVector>,

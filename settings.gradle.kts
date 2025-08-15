@@ -87,7 +87,4 @@ if (localProperties.exists()) {
     localProperties.inputStream().use { properties.load(it) }
 }
 
-val enableMagickCanvas = properties.getProperty("enable_magick_canvas", "true").toBoolean()
-if (enableMagickCanvas) {
-    include("platf-imagick")
-}
+include("platf-imagick")

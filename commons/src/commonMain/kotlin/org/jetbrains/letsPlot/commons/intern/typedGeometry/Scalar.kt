@@ -8,12 +8,17 @@ package org.jetbrains.letsPlot.commons.intern.typedGeometry
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class Scalar<T> (
+value class Scalar<out T>(
     val value: Double
-) : Comparable<Scalar<T>> {
+) : Comparable<Scalar<@UnsafeVariance T>> {
     constructor(value: Number) : this(value.toDouble())
-    override fun compareTo(other: Scalar<T>): Int {
+
+    override fun compareTo(other: Scalar<@UnsafeVariance T>): Int {
         return value.compareTo(other.value)
+    }
+
+    companion object {
+        val ZERO: Scalar<Nothing> = Scalar(0.0)
     }
 }
 

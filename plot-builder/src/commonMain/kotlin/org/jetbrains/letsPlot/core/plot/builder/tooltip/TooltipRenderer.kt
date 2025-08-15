@@ -49,7 +49,7 @@ import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 internal class TooltipRenderer(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
-    private val plotSize: DoubleVector,
+    plotSize: DoubleVector,
     private val xAxisTheme: AxisTheme,
     private val yAxisTheme: AxisTheme,
     private val tooltipsTheme: TooltipsTheme,
@@ -90,8 +90,8 @@ internal class TooltipRenderer(
         fadeEffectRect = SvgRectElement().apply {
             width().set(0.0)
             height().set(0.0)
-            fillColor().set(plotBackground)
-            opacity().set(0.7)
+            fillColor().set(plotBackground.changeAlpha((255 * 0.7).toInt()))
+            visibility().set(Visibility.HIDDEN)
             decorationLayer.children().add(0, this)
         }
 
@@ -236,6 +236,7 @@ internal class TooltipRenderer(
     private fun unpin() {
         fadeEffectRect.width().set(0.0)
         fadeEffectRect.height().set(0.0)
+        fadeEffectRect.visibility().set(Visibility.HIDDEN)
         pinned = false
     }
 
@@ -244,6 +245,7 @@ internal class TooltipRenderer(
         fadeEffectRect.y().set(geomBounds.top)
         fadeEffectRect.width().set(geomBounds.width)
         fadeEffectRect.height().set(geomBounds.height)
+        fadeEffectRect.visibility().set(Visibility.VISIBLE)
         pinned = true
     }
 

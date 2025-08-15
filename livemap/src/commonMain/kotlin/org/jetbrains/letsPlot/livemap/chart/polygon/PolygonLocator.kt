@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.contains
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
+import org.jetbrains.letsPlot.livemap.chart.HoverObjectKind
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.Locator
 import org.jetbrains.letsPlot.livemap.chart.fragment.RegionFragmentsComponent
@@ -25,6 +26,7 @@ object PolygonLocator : Locator {
             target.get<RegionFragmentsComponent>().fragments.forEach { fragment ->
                 if (isCoordinateOnEntity(coord, fragment, renderHelper)) {
                     return HoverObject(
+                        kind = HoverObjectKind.POLYGON,
                         layerIndex = target.get<IndexComponent>().layerIndex,
                         index = target.get<IndexComponent>().index,
                         distance = 0.0,
@@ -37,6 +39,7 @@ object PolygonLocator : Locator {
         } else {
             return when (isCoordinateOnEntity(coord, target, renderHelper)) {
                 true -> HoverObject(
+                    kind = HoverObjectKind.POLYGON,
                     layerIndex = target.get<IndexComponent>().layerIndex,
                     index = target.get<IndexComponent>().index,
                     distance = 0.0,

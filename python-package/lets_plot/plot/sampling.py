@@ -27,7 +27,7 @@ def sampling_random(n, seed=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Random sample specification.
 
     Examples
@@ -66,7 +66,7 @@ def sampling_random_stratified(n, seed=None, min_subsample=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Stratified random sample specification.
 
     Examples
@@ -101,7 +101,7 @@ def sampling_pick(n):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Sample specification.
 
     Examples
@@ -133,7 +133,7 @@ def sampling_systematic(n):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Systematic sample specification.
 
     Examples
@@ -168,7 +168,7 @@ def sampling_group_systematic(n):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Group systematic sample specification.
 
     Examples
@@ -207,7 +207,7 @@ def sampling_group_random(n, seed=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Group sample specification.
 
     Examples
@@ -248,7 +248,7 @@ def sampling_vertex_vw(n, polygon=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Vertices sample specification.
 
     Notes
@@ -299,7 +299,7 @@ def sampling_vertex_dp(n, polygon=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Vertices sample specification.
 
     Notes

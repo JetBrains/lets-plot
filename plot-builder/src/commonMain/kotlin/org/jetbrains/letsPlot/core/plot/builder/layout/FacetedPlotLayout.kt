@@ -265,7 +265,7 @@ internal class FacetedPlotLayout(
 
 
     companion object {
-        const val FACET_PADDING = 3  // space between panel and facet title
+        const val FACET_PADDING = 0  // space between panel and facet title
         private const val PANEL_PADDING = 10.0
 
         // label height + margins

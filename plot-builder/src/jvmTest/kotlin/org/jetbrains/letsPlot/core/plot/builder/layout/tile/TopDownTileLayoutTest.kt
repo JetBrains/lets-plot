@@ -29,59 +29,62 @@ class TopDownTileLayoutTest {
     @Test
     fun issue1074() {
         val containerSize = DoubleVector(600, 800)
-        val li = doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
+        val li =
+            doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(13.9, 0.0, 586.0, 586.0))
+            .isEqualTo(DoubleRectangle.XYWH(10, 0.0, 590.0, 590.0))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(13.98, 293.0, 293.0, 293.0))
+            .isEqualTo(DoubleRectangle.XYWH(10, 295.0, 295.0, 295.0))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-13.98, 0.0, 13.98, 286.19))
+            .isEqualTo(DoubleRectangle.XYWH(-10, 0.0, 10.0, 288.1))
     }
 
     @Test
     fun verticalPlotWithDefaultMarginalLayers() {
         val containerSize = DoubleVector(600, 800)
-        val li = doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.1, top = 0.1))
+        val li =
+            doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.1, top = 0.1))
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577, 577))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 57.2, 515.6, 515.6))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 57.7, 519.3, 519.3))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-27.0, 0.0, 27.0, 509.9))
+            .isEqualTo(DoubleRectangle.XYWH(-23.0, 0.0, 23.0, 513.4))
     }
 
     @Test
     fun verticalPlotWithLargeMarginalLayers() {
         val containerSize = DoubleVector(934, 524)
 
-        val li = doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
+        val li =
+            doLayout(containerSize, marginLayout = GeomMarginsLayout(left = 0.0, bottom = 0.0, right = 0.5, top = 0.5))
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(13.98, 0.0, 501, 501))
+            .isEqualTo(DoubleRectangle.XYWH(10.0, 0.0, 505, 505))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(13.98, 250.5, 250.5, 250.5))
+            .isEqualTo(DoubleRectangle.XYWH(10.0, 252.5, 252.5, 252.5))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-13.98, 0.0, 13.98, 245.61))
+            .isEqualTo(DoubleRectangle.XYWH(-10.0, 0.0, 10.0, 247.5))
     }
 
     @Test
@@ -91,16 +94,16 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577.0, 577.0))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
             .isEqualTo(li.geomContentBounds)
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 576.9, 576.9))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-27.0, 0.0, 27.0, 565.8))
+            .isEqualTo(DoubleRectangle.XYWH(-23.0, 0.0, 23.0, 569.7))
     }
 
     @Test
@@ -110,19 +113,19 @@ class TopDownTileLayoutTest {
 
         assertThat(li.geomOuterBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577.0, 577.0))
 
         assertThat(li.geomInnerBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(27.0, 0.0, 572.9, 572.9))
+            .isEqualTo(DoubleRectangle.XYWH(23.0, 0.0, 577.0, 577.0))
 
         assertThat(li.geomContentBounds)
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(47.0, 20.0, 532.9, 532.9))
+            .isEqualTo(DoubleRectangle.XYWH(43.0, 20.0, 537.0, 537.0))
 
         assertThat(li.axisInfos.left!!.axisBounds())
             .usingComparator(doubleRectangleComparator(0.1))
-            .isEqualTo(DoubleRectangle.XYWH(-27.0, 0.0, 27.0, 527.7))
+            .isEqualTo(DoubleRectangle.XYWH(-23.0, 0.0, 23.0, 531.5))
     }
 
     private fun doLayout(
@@ -171,7 +174,14 @@ class TopDownTileLayoutTest {
         )
 
         val coord = if (coordFixed) {
-            FixedRatioCoordProvider(1.0, xLim = Pair(null, null), yLim = Pair(null, null), flipped = false)
+            FixedRatioCoordProvider(
+                ratio = 1.0,
+                xLim = Pair(null, null),
+                yLim = Pair(null, null),
+                xReversed = false,
+                yReversed = false,
+                flipped = false
+            )
         } else {
             error("Not implemented")
         }

@@ -16,16 +16,22 @@ fun Map<*, *>.getElement(path: List<Any>): Any? {
     return path.fold<Any, Any>(this) { cont, key ->
         when (key) {
             is String -> {
-                require(cont is Map<*, *>) { "Expected Map but found: ${cont::class.simpleName}" }
+                if (cont !is Map<*, *>) {
+                    return null // non-map element in the middle of the path - return null as no element found
+                }
+
                 cont[key]
             }
 
             is Int -> {
-                require(cont is List<*>) { "Expected List but found: ${cont::class.simpleName}" }
+                if (cont !is List<*>) {
+                    return null // non-list element in the middle of the path - return null as no element found
+                }
+
                 cont[key]
             }
 
-            else -> error("Unexpected item type: $key")
+            else -> return null // unsupported key type - return null as no element found
         } ?: return null
     }
 }

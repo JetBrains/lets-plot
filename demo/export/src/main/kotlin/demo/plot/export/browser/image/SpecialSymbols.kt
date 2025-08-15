@@ -17,7 +17,7 @@ object SpecialSymbols {
                 "Special symbols",
                 plotSpec(),
                 scalingFactors = listOf(2.0, 2.0, 2.0),
-                targetDPIs = listOf(144, 144, 144),
+                targetDPIs = listOf(96, 96, 96),
                 formats = listOf(PlotImageExport.Format.PNG, PlotImageExport.Format.TIFF, PlotImageExport.Format.JPEG())
             ))
         }

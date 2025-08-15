@@ -7,11 +7,15 @@ package org.jetbrains.letsPlot.livemap.chart.path
 
 import org.jetbrains.letsPlot.commons.intern.math.isOnSegment
 import org.jetbrains.letsPlot.commons.intern.math.projection
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
+import org.jetbrains.letsPlot.livemap.chart.HoverObjectKind
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.Locator
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
@@ -32,6 +36,7 @@ object PathLocator : Locator {
         )
         if (candidate != null) {
             return HoverObject(
+                kind = HoverObjectKind.PATH,
                 layerIndex = target.get<IndexComponent>().layerIndex,
                 index = target.get<IndexComponent>().index,
                 distance = renderHelper.dimToClient(pointChecker.distance).value,

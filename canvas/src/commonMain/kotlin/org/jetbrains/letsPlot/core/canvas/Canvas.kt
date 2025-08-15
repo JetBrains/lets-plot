@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 // TODO: CANVAS_REFACTOR: implement CanvasProvider
 interface Canvas {
     val context2d: Context2d
-    val size: Vector
+    val size: Vector // TODO: should be in pixels, not in points
 
     fun takeSnapshot(): Snapshot
 

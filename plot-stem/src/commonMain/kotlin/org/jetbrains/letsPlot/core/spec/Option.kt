@@ -246,6 +246,7 @@ object Option {
         const val LINES = "lines"
         const val FORMATS = "formats"
         const val ANNOTATION_SIZE = "annotation_size"
+        const val USE_LAYER_COLOR = "use_layer_color"
     }
 
     object Geom {
@@ -463,6 +464,8 @@ object Option {
         object SizeUnit {
             const val X = "x"
             const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
         }
     }
 
@@ -550,6 +553,7 @@ object Option {
         }
 
         object Sina {
+            const val SCALE = "scale"
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
             const val QUANTILES = "quantiles"
@@ -750,6 +754,7 @@ object Option {
         const val FACETS_FILL_DIR = "dir"
         const val FACETS_FORMAT = "format"
         const val FACETS_LABWIDTH = "labwidth"
+        const val DROP_UNUSED_LEVELS = "drop"
 
         const val FACET_ORDER_ASC = 1
         const val FACET_ORDER_DESC = -1
@@ -853,6 +858,10 @@ object Option {
         const val AXIS_TEXT = ThemeOption.AXIS_TEXT
         const val AXIS_TEXT_X = ThemeOption.AXIS_TEXT_X
         const val AXIS_TEXT_Y = ThemeOption.AXIS_TEXT_Y
+
+        const val AXIS_TEXT_SPACING = ThemeOption.AXIS_TEXT_SPACING
+        const val AXIS_TEXT_SPACING_X = ThemeOption.AXIS_TEXT_SPACING_X
+        const val AXIS_TEXT_SPACING_Y = ThemeOption.AXIS_TEXT_SPACING_Y
 
         const val AXIS_TICKS = ThemeOption.AXIS_TICKS
         const val AXIS_TICKS_X = ThemeOption.AXIS_TICKS_X

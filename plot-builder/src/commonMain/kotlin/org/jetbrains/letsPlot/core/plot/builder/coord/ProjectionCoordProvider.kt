@@ -16,11 +16,20 @@ internal class ProjectionCoordProvider(
     xLim: Pair<Double?, Double?>,
     yLim: Pair<Double?, Double?>,
     flipped: Boolean
-) : CoordProviderBase(xLim, yLim, flipped, projection) {
+) : CoordProviderBase(
+    xLim,
+    yLim,
+    xReversed = false,
+    yReversed = false,
+    flipped = flipped,
+    projection
+) {
 
     override fun with(
         xLim: Pair<Double?, Double?>,
         yLim: Pair<Double?, Double?>,
+        xReversed: Boolean,
+        yReversed: Boolean,
         flipped: Boolean
     ): CoordProvider {
         return ProjectionCoordProvider(projection, xLim, yLim, flipped)

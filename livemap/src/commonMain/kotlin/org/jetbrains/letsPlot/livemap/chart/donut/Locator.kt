@@ -5,16 +5,16 @@
 
 package org.jetbrains.letsPlot.livemap.chart.donut
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.length
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.chart.*
 import org.jetbrains.letsPlot.livemap.chart.Locator
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.length
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -40,6 +40,7 @@ object Locator : Locator {
                 )
             ) {
                 return HoverObject(
+                    kind = HoverObjectKind.POINT,
                     layerIndex = target.get<IndexComponent>().layerIndex,
                     index = sector.index,
                     distance = 0.0,

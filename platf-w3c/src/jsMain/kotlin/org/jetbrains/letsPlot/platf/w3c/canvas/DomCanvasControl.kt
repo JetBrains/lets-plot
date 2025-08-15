@@ -90,41 +90,31 @@ class DomCanvasControl(
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
-        return decode(dataUrl, null)
+        return decode(dataUrl)
     }
 
-    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
         return Blob(arrayOf(png), BlobPropertyBag("image/png"))
             .let(URL.Companion::createObjectURL)
-            .let { decode(it, size) }
+            .let { decode(it) }
     }
 
-    private fun decode(dataUrl: String, size: Vector? = null): Async<Canvas.Snapshot> {
+    private fun decode(dataUrl: String): Async<Canvas.Snapshot> {
         return SimpleAsync<Canvas.Snapshot>().apply {
             with(Image()) {
-                onload = onLoad(this, size, ::success)
+                onload = onLoad(this, ::success)
+                onerror = { _, _, _, _, _ ->
+                    failure(RuntimeException("Failed to load image from data URL: ${dataUrl.take(minOf(dataUrl.length, 40))}..."))
+                }
                 src = dataUrl
             }
         }
     }
 
-    private fun onLoad(image: Image, size: Vector?, consumer: (Canvas.Snapshot) -> Unit) = { _: Event ->
-
-        val domCanvas = size
-            ?.let { createCanvas(it) as DomCanvas }
-            ?: DomCanvas.create(Vector(image.width, image.height), 1.0)
-
-        val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
-
-        ctx.drawImage(
-            image,
-            0.0,
-            0.0,
-            domCanvas.canvasElement.width.toDouble(),
-            domCanvas.canvasElement.height.toDouble()
-        )
-
-        consumer(domCanvas.takeSnapshot())
+    private fun onLoad(image: Image, consumer: (Canvas.Snapshot) -> Unit) = { _: Event ->
+        val imageSize = Vector(image.width, image.height)
+        val snapshot = DomCanvas.DomSnapshot(image, imageSize, pixelDensity)
+        consumer(snapshot)
     }
 
     override fun addChild(canvas: Canvas) {

@@ -27,6 +27,10 @@ def test_infer_type_polars_dataframe():
         'uint8_col': pl.Series('uint8_col', [1, 2, 3, 4, 5], dtype=pl.UInt8),
         'float32_col': pl.Series('float32_col', [1.1, 2.2, 3.3, 4.4, 5.5], dtype=pl.Float32),
         'float64_col': pl.Series('float64_col', [1.1, 2.2, 3.3, 4.4, 5.5], dtype=pl.Float64),
+
+        'enum_col': pl.Series('enum_col', ['a', 'b', 'c', 'a', 'b'], dtype=pl.Enum(['a', 'c', 'b'])),
+        'categorical_col': pl.Series('categorical_col', ['a', 'b', 'c', 'a', 'b'],
+                                     dtype=pl.Categorical(['a', 'c', 'b'])),
     })
 
     # Get type info
@@ -49,6 +53,9 @@ def test_infer_type_polars_dataframe():
     assert type_info['uint8_col'] == TYPE_INTEGER
     assert type_info['float32_col'] == TYPE_FLOATING
     assert type_info['float64_col'] == TYPE_FLOATING
+
+    assert type_info['enum_col'] == TYPE_STRING
+    assert type_info['categorical_col'] == TYPE_STRING
 
     # Test empty dataframe
     empty_df = pl.DataFrame({})

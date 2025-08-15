@@ -8,6 +8,12 @@ package org.jetbrains.letsPlot.commons.geometry
 import org.jetbrains.letsPlot.commons.interval.IntSpan
 
 class Rectangle(val origin: Vector, val dimension: Vector) {
+    val width: Int = dimension.x
+    val height: Int = dimension.y
+    val left: Int = origin.x
+    val top: Int = origin.y
+    val right: Int = origin.x + dimension.x
+    val bottom: Int = origin.y + dimension.y
 
     val isEmpty: Boolean get() = (dimension.x <= 0) || (dimension.y <= 0)
 

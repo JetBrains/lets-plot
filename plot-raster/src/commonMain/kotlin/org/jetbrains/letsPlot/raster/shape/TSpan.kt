@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
@@ -79,20 +79,20 @@ internal class TSpan(
         }
     }
 
-    override fun render(canvas: Canvas) {
-        canvas.context2d.setFont(font)
+    override fun render(ctx: Context2d) {
+        ctx.setFont(font)
 
         val x = (layoutX.toDouble())
         val y = layoutY.toDouble() + baseline
 
         styleData.fillPaint?.let {
-            applyPaint(it, canvas)
-            canvas.context2d.fillText(text, x, y)
+            applyPaint(it, ctx)
+            ctx.fillText(text, x, y)
         }
 
         styleData.strokePaint?.let {
-            applyPaint(it, canvas)
-            canvas.context2d.strokeText(text, x, y)
+            applyPaint(it, ctx)
+            ctx.strokeText(text, x, y)
         }
     }
 

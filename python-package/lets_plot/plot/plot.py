@@ -20,38 +20,38 @@ def ggplot(data=None, mapping=None):
 
     Parameters
     ----------
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         Default dataset to use for the plot. If not specified,
         must be supplied in each layer added to the plot.
-    mapping : `FeatureSpec`
+    mapping : ``FeatureSpec``
         Default list of aesthetic mappings to use for the plot.
         If not specified, must be supplied in each layer added to the plot.
 
     Returns
     -------
-    `PlotSpec`
+    ``PlotSpec``
         Plot specification.
 
     Notes
     -----
-    `ggplot()` initializes a ggplot object.
+    ``ggplot()`` initializes a ggplot object.
     It can be used to declare the input data frame for a graphic and
     to specify the set of plot aesthetics intended to be common
     throughout all subsequent layers unless specifically overridden.
 
-    `ggplot()` is typically used to construct a plot incrementally,
+    ``ggplot()`` is typically used to construct a plot incrementally,
     using the + operator to add layers to the existing ggplot object.
     This is advantageous in that the code is explicit about which layers
     are added and the order in which they are added. For complex graphics
-    with multiple layers, initialization with `ggplot()` is recommended.
+    with multiple layers, initialization with ``ggplot()`` is recommended.
 
     There are three common ways to invoke ggplot (see examples below):
 
-    - `ggplot(data, aes(x, y))`: This method is recommended if all layers use the same data and the same set of aesthetics, although this method can also be used to add a layer using data from another data frame.
-    - `ggplot(data)`: This method specifies the default data frame to use for the plot, but no aesthetics are defined up front. This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary from one layer to another.
-    - `ggplot()`: This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
+    - ``ggplot(data, aes(x, y))``: This method is recommended if all layers use the same data and the same set of aesthetics, although this method can also be used to add a layer using data from another data frame.
+    - ``ggplot(data)``: This method specifies the default data frame to use for the plot, but no aesthetics are defined up front. This is useful when one data frame is used predominantly as layers are added, but the aesthetics may vary from one layer to another.
+    - ``ggplot()``: This method initializes a skeleton ggplot object which is fleshed out as layers are added. This method is useful when multiple data frames are used to produce different layers, as is often the case in complex graphics.
 
-    `ggplot()` with no layers defined will produce an error message:
+    ``ggplot()`` with no layers defined will produce an error message:
     "No layers in plot".
 
     Examples
@@ -109,7 +109,7 @@ def ggsize(width, height):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Plot size specification.
 
     Examples
@@ -142,13 +142,14 @@ def ggsize(width, height):
 
 class GGBunch(FeatureSpec):
     """
-    Class `GGBunch` is deprecated and will be removed in future releases.
-    Please, use function `ggbunch()` to combine several plots into a single figure with custom layout.
+    Class ``GGBunch`` is deprecated and will be removed in future releases.
+    Please, use function `ggbunch() <https://lets-plot.org/python/pages/api/lets_plot.ggbunch.html>`__
+    to combine several plots into a single figure with custom layout.
 
     Collection of plots created by ggplot function.
-    Use method `add_plot()` to add plot to 'bunch'.
+    Use method ``add_plot()`` to add plot to 'bunch'.
     Each plot can have arbitrary location and size.
-    Use `show()` to draw all plots in bunch.
+    Use ``show()`` to draw all plots in bunch.
 
     Examples
     --------
@@ -191,7 +192,7 @@ class GGBunch(FeatureSpec):
         Parameters
         ----------
         plot_spec
-            Plot specification created by `ggplot()` function.
+            Plot specification created by ``ggplot()`` function.
         x : int
             x-coordinate of plot origin in px.
         y : int

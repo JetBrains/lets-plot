@@ -19,6 +19,9 @@ interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, D
 
     fun addChild(index: Int, canvas: Canvas)
 
+    // NOTE: after removing a child, the canvas is no longer valid.
+    // CanvasControl does manage the lifetime of its children.
+    // Crucial for MagickCanvas, which uses native resources.
     fun removeChild(canvas: Canvas)
 
     fun onResize(listener: (Vector) -> Unit): Registration

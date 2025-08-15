@@ -12,12 +12,106 @@ import kotlinx.cinterop.refTo
 import org.jetbrains.letsPlot.commons.values.Bitmap
 
 object MagickUtil {
+    private var countAllocations = false
+    private val refCounter: MutableMap<String, Int> = mutableMapOf()
+    private val refLog = mutableListOf<String>()
+    private const val MEMORY_LOG_ENABLED = false
+
+    fun startCountAllocations() {
+        countAllocations = true
+        refCounter.clear()
+        refLog.clear()
+    }
+
+    fun stopCountAllocations(): Pair<Map<String, Int>, List<String>> {
+        countAllocations = false
+        return Pair(refCounter.toMap(), refLog.toList()).also {
+            refCounter.clear()
+            refLog.clear()
+        }
+    }
+
+    private fun incRefCount(str: String, ptr: CPointer<*>) {
+        if (countAllocations) {
+            refLog += "$str: $ptr"
+
+            val address = ptr.toString()
+            refCounter[address] = refCounter.getOrElse(address) { 0 } + 1
+        }
+    }
+
+    private fun decRefCount(str: String, ptr: CPointer<*>) {
+        if (countAllocations) {
+            refLog += "$str: $ptr"
+
+            val address = ptr.toString()
+            val counter = refCounter[address] ?: error("Attempt to decrement reference count for untracked pointer: $ptr")
+            if (counter == 1) {
+                refCounter.remove(address)
+            } else {
+                refCounter[address] = counter - 1
+            }
+        }
+    }
+
+    private fun log(message: () -> String) {
+        if (MEMORY_LOG_ENABLED) {
+            println(message())
+        }
+    }
+
+    fun newPixelWand(): CPointer<ImageMagick.PixelWand> {
+        val pixelWand = ImageMagick.NewPixelWand() ?: throw RuntimeException("Failed to create new PixelWand")
+        incRefCount("newPixelWand()", pixelWand)
+        log { "newPixelWand(): $pixelWand" }
+        return pixelWand
+    }
+
+    fun destroyPixelWand(pixelWand: CPointer<ImageMagick.PixelWand>) {
+        decRefCount("destroyPixelWand()", pixelWand)
+        log { "destroyPixelWand(): $pixelWand" }
+        ImageMagick.DestroyPixelWand(pixelWand)
+    }
+
+    fun newMagickWand(): CPointer<ImageMagick.MagickWand> {
+        val magickWand = ImageMagick.NewMagickWand() ?: throw RuntimeException("Failed to create new MagickWand")
+        incRefCount("newMagickWand()", magickWand)
+        log { "newMagickWand(): $magickWand" }
+        return magickWand
+    }
+
+    fun cloneMagickWand(magickWand: CPointer<ImageMagick.MagickWand>): CPointer<ImageMagick.MagickWand> {
+        val clonedWand = ImageMagick.CloneMagickWand(magickWand) ?: throw RuntimeException("Failed to clone MagickWand")
+        incRefCount("cloneMagickWand()", clonedWand)
+        log { "cloneMagickWand(): $clonedWand" }
+        return clonedWand
+    }
+
+    fun destroyMagickWand(magickWand: CPointer<ImageMagick.MagickWand>) {
+        decRefCount("destroyMagickWand()", magickWand)
+        log { "destroyMagickWand(): $magickWand" }
+        ImageMagick.DestroyMagickWand(magickWand)
+    }
+
+    fun newDrawingWand(): CPointer<ImageMagick.DrawingWand> {
+        val drawingWand = ImageMagick.NewDrawingWand() ?: throw RuntimeException("Failed to create new DrawingWand")
+        incRefCount("newDrawingWand()", drawingWand)
+        log { "newDrawingWand(): $drawingWand" }
+        return drawingWand
+    }
+
+    fun destroyDrawingWand(drawingWand: CPointer<ImageMagick.DrawingWand>) {
+        decRefCount("destroyDrawingWand()", drawingWand)
+        log { "destroyDrawingWand(): $drawingWand" }
+        ImageMagick.DestroyDrawingWand(drawingWand)
+    }
+
     fun fromBitmap(bitmap: Bitmap): CPointer<ImageMagick.MagickWand> {
         val w = bitmap.width
         val h = bitmap.height
         val rgba = bitmap.rgbaBytes()
-        val img = ImageMagick.NewMagickWand() ?: error("MagickCanvas: Failed to create new MagickWand")
-        val backgroundPixel = ImageMagick.NewPixelWand()
+        val img = newMagickWand()
+        val backgroundPixel = newPixelWand()
         ImageMagick.PixelSetColor(backgroundPixel, "transparent")
 
         memScoped {
@@ -40,7 +134,7 @@ object MagickUtil {
                 ImageMagick.StorageType.CharPixel,
                 rgba.refTo(0)
             )
-            ImageMagick.DestroyPixelWand(backgroundPixel)
+            destroyPixelWand(backgroundPixel)
 
             return img
         }

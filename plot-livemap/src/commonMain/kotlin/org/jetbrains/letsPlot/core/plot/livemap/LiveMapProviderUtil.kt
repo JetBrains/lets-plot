@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.livemap
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -19,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
@@ -42,6 +41,7 @@ import org.jetbrains.letsPlot.livemap.api.Services
 import org.jetbrains.letsPlot.livemap.api.liveMapGeocoding
 import org.jetbrains.letsPlot.livemap.api.liveMapVectorTiles
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
+import org.jetbrains.letsPlot.livemap.chart.HoverObjectKind
 import org.jetbrains.letsPlot.livemap.config.DevParams
 import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.livemap.core.Clipboard
@@ -132,23 +132,22 @@ object LiveMapProviderUtil {
                 )
             }
 
-            return liveMapBuilder.build()
-                .let(Asyncs::constant)
-                .let { liveMapAsync ->
-                    LiveMapData(
-                        LiveMapCanvasFigure(liveMapAsync).apply {
-                            setBounds(
-                                Rectangle(
-                                    bounds.origin.x.roundToInt(),
-                                    bounds.origin.y.roundToInt(),
-                                    bounds.dimension.x.roundToInt(),
-                                    bounds.dimension.y.roundToInt()
-                                )
-                            )
-                        },
-                        createTargetLocators(plotLayers, liveMapAsync)
+            val liveMap = liveMapBuilder.build()
+            val liveMapCanvasFigure = LiveMapCanvasFigure(liveMap).apply {
+                setBounds(
+                    Rectangle(
+                        bounds.origin.x.roundToInt(),
+                        bounds.origin.y.roundToInt(),
+                        bounds.dimension.x.roundToInt(),
+                        bounds.dimension.y.roundToInt()
                     )
-                }
+                )
+            }
+
+            return LiveMapData(
+                liveMapCanvasFigure,
+                createTargetLocators(plotLayers, liveMap)
+            )
         }
     }
 
@@ -197,29 +196,25 @@ object LiveMapProviderUtil {
         }
     }
 
-    private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMapAsync: Async<LiveMap>): List<GeomTargetLocator> {
+    private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMap: LiveMap): List<GeomTargetLocator> {
         class LiveMapInteractionAdapter {
-            private var myLiveMap: LiveMap? = null
+            private var myLiveMap: LiveMap = liveMap
             private val adapters: List<GeomTargetLocatorAdapter> = plotLayers.mapIndexed(::GeomTargetLocatorAdapter)
             private var lastCoord: DoubleVector? = null
             private var lastResult: Map<Int, GeomTargetLocator.LookupResult> = emptyMap()
 
             val geomTargetLocators: List<GeomTargetLocator> = adapters
 
-            init {
-                liveMapAsync.map { myLiveMap = it }
-            }
-
             // called n-times with same coord (where n - number of "layers").
             // Search only if coord changed, return cached result for the rest calls.
             private fun search(layerIndex: Int, coord: DoubleVector): GeomTargetLocator.LookupResult? {
                 if (lastCoord != coord) {
                     lastResult = myLiveMap
-                        ?.hoverObjects()
-                        ?.groupBy(HoverObject::layerIndex)
-                        ?.mapValues { (layerIndex, hoverObjects) ->
+                        .hoverObjects()
+                        .groupBy(HoverObject::layerIndex)
+                        .mapValues { (layerIndex, hoverObjects) ->
                             adapters[layerIndex].buildLookupResult(coord, hoverObjects)
-                        } ?: emptyMap()
+                        }
                 }
                 return lastResult[layerIndex]
             }
@@ -244,7 +239,7 @@ object LiveMapProviderUtil {
                                 hitIndex = hoverObject.index,
                                 tipLayoutHint = TipLayoutHint.horizontalTooltip(
                                     hoverObject.targetPosition ?: coord,
-                                    0.0,
+                                    objectRadius = hoverObject.targetRadius ?: 0.0,
                                     markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
                                 ),
                                 aesTipLayoutHints = emptyMap()
@@ -253,7 +248,12 @@ object LiveMapProviderUtil {
                         distance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
                         contextualMapping = layer.contextualMapping,
-                        isCrosshairEnabled = false // no crosshair on livemap
+                        isCrosshairEnabled = false, // no crosshair on livemap,
+                        hitShapeKind = when (hoverObjects.first().kind) {
+                            HoverObjectKind.POINT -> HitShape.Kind.POINT
+                            HoverObjectKind.PATH -> HitShape.Kind.PATH
+                            HoverObjectKind.POLYGON -> HitShape.Kind.POLYGON
+                        }
                     )
                 }
             }

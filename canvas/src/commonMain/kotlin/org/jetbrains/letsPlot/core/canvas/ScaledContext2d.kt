@@ -9,10 +9,20 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
-internal class ScaledContext2d(
+class ScaledContext2d private constructor(
     private val ctx: Context2d,
     private val myScale: Double
 ) : Context2d {
+
+    companion object {
+        fun wrap(ctx: Context2d, pixelDensity: Double): Context2d {
+            if (pixelDensity == 1.0) {
+                return ctx
+            } else {
+                return ScaledContext2d(ctx, pixelDensity)
+            }
+        }
+    }
 
     private fun scaled(value: Double) = myScale * value
     private fun descaled(value: Double) = value / myScale

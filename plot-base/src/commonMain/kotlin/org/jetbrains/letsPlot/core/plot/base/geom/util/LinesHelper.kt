@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.intern.util.VectorAdapter
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
@@ -29,6 +29,7 @@ open class LinesHelper(
 
     private var myAlphaEnabled = true
     protected var myResamplingEnabled = false
+    protected var myResamplingPrecision = PIXEL_PRECISION
 
     // Polar coordinate system with discrete X scale.
     fun meetsRadarPlotReq(): Boolean {
@@ -41,6 +42,11 @@ open class LinesHelper(
 
     fun setResamplingEnabled(resample: Boolean) {
         this.myResamplingEnabled = resample
+    }
+
+    // for test only
+    internal fun setResamplingPrecision(precision: Double) {
+       this.myResamplingPrecision = precision
     }
 
     fun createLines(
@@ -128,8 +134,43 @@ open class LinesHelper(
     }
 
     private fun resample(linestring: List<PathPoint>): List<PathPoint> {
-        val aes = linestring.firstOrNull()?.aes ?: return emptyList()
-        return resample(linestring.map { it.coord }, PIXEL_PRECISION) { p -> toClient(p, aes) }.map { PathPoint(aes, it) }
+
+        fun resampler(aes: DataPointAesthetics): AdaptiveResampler<PathPoint> {
+            val adapter = object : VectorAdapter<PathPoint> {
+                override fun x(p: PathPoint) = p.coord.x
+                override fun y(p: PathPoint) = p.coord.y
+                override fun create(x: Double, y: Double) = PathPoint(aes, DoubleVector(x, y))
+            }
+            return AdaptiveResampler.generic(myResamplingPrecision, adapter) { p: PathPoint ->
+                toClient(p.coord, aes)?.let { PathPoint(aes, it) }
+            }
+        }
+        val smoothed = mutableListOf<PathPoint>()
+
+        linestring.windowed(size = 2).forEach { (p1, p2) ->
+            // It is important to use the aes of the first element in each pair,
+            // since aes may change depending on the group
+            // see https://github.com/JetBrains/lets-plot/issues/1375
+            val resampler = resampler(p1.aes)
+
+            val resampledPoints = resampler.resample(p1, p2)
+
+            // Return empty list if one of the points could not be transformed to client coordinates
+            if (resampledPoints.isEmpty()) {
+                return emptyList()
+            }
+
+            smoothed.addAll(resampledPoints.subList(0, resampledPoints.size - 1)) // Do not add the last point to avoid duplicates
+        }
+
+        // smoothed path doesn't contain PathPoint for the last point - append it
+        val endPoint = linestring.last()
+        val endCoord = toClient(endPoint.coord, endPoint.aes)
+        if (endCoord != null) {
+            smoothed.add(PathPoint(endPoint.aes, endCoord))
+        }
+
+        return smoothed
     }
 
     private fun toClient(linestring: List<PathPoint>): List<PathPoint> {
@@ -340,7 +381,7 @@ open class LinesHelper(
                     midPoint
                 }
 
-            return path.mapIndexedNotNull() { i, subPath ->
+            return path.mapIndexedNotNull { i, subPath ->
                 when (i) {
                     0 -> {
                         val rightJointPoint = subPath.points.last().copy(coord = jointPoints[i])

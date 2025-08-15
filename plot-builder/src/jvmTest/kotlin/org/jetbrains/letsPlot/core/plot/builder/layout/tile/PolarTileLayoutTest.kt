@@ -36,7 +36,7 @@ class PolarTileLayoutTest {
                 .usingComparator(doubleRectangleComparator(1.0))
                 .isEqualTo(it.geomOuterBounds)
                 .isEqualTo(it.geomContentBounds)
-                .isEqualTo(DoubleRectangle.XYWH(35, 0, 377, 377))
+                .isEqualTo(DoubleRectangle.XYWH(31, 0, 381, 381))
         }
     }
 
@@ -50,11 +50,11 @@ class PolarTileLayoutTest {
             assertThat(it.geomOuterBounds)
                 .usingComparator(doubleRectangleComparator(1.0))
                 .isEqualTo(it.geomInnerBounds)
-                .isEqualTo(DoubleRectangle.XYWH(35, 0, 477, 377))
+                .isEqualTo(DoubleRectangle.XYWH(31, 0, 481, 381))
 
             assertThat(it.geomContentBounds)
                 .usingComparator(doubleRectangleComparator(1.0))
-                .isEqualTo(DoubleRectangle.XYWH(85, 0, 377, 377))
+                .isEqualTo(DoubleRectangle.XYWH(81, 0, 381, 381))
 
         }
     }
@@ -69,11 +69,11 @@ class PolarTileLayoutTest {
             assertThat(it.geomOuterBounds)
                 .usingComparator(doubleRectangleComparator(1.0))
                 .isEqualTo(it.geomInnerBounds)
-                .isEqualTo(DoubleRectangle.XYWH(35, 0, 765, 265))
+                .isEqualTo(DoubleRectangle.XYWH(31, 0, 769, 269))
 
             assertThat(it.geomContentBounds)
                 .usingComparator(doubleRectangleComparator(1.0))
-                .isEqualTo(DoubleRectangle.XYWH(285, 0, 265, 265))
+                .isEqualTo(DoubleRectangle.XYWH(281, 0, 269, 269))
         }
     }
 
@@ -85,11 +85,11 @@ class PolarTileLayoutTest {
             assertThat(it.geomOuterBounds)
                 .usingComparator(doubleRectangleComparator(1.0))
                 .isEqualTo(it.geomInnerBounds)
-                .isEqualTo(DoubleRectangle.XYWH(35, 0, 565, 665))
+                .isEqualTo(DoubleRectangle.XYWH(31, 0, 569, 669))
 
             assertThat(it.geomContentBounds)
                 .usingComparator(doubleRectangleComparator(1.0))
-                .isEqualTo(DoubleRectangle.XYWH(35, 50, 565, 565))
+                .isEqualTo(DoubleRectangle.XYWH(31, 50, 569, 569))
         }
     }
 
@@ -97,6 +97,8 @@ class PolarTileLayoutTest {
         val coordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
+            xReversed = false,
+            yReversed = false,
             flipped = false,
             start = 0.0,
             clockwise = true,

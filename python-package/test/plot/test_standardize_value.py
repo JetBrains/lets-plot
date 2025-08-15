@@ -170,3 +170,28 @@ def test_standardize_value_numpy_datetime64_consistency():
     assert standardized_start_time == standardized_array[0]
 
     assert standardized_list == standardized_array
+
+def test_standardize_value_polars_enum_and_categorical():
+    import polars as pl
+
+    # Create a Polars DataFrame with Enum and Categorical columns
+    df = pl.DataFrame({
+        'enum_col': pl.Series('enum_col', ['a', 'b', 'c', 'a', 'b'],
+                              dtype=pl.Enum(['a', 'c', 'b'])),
+        'categorical_col': pl.Series('categorical_col', ['x', 'y', 'z', 'x', 'y'],
+                                     dtype=pl.Categorical(['x', 'z', 'y']))
+    })
+
+    # Standardize the DataFrame
+    standardized_df = _standardize_value(df)
+
+    # Check that the values in the standardized dataframe are strings
+    assert all(isinstance(v, str) for v in standardized_df['enum_col'])
+    assert all(isinstance(v, str) for v in standardized_df['categorical_col'])
+
+    # Verify specific values
+    assert standardized_df['enum_col'] == ['a', 'b', 'c', 'a', 'b']
+    assert standardized_df['categorical_col'] == ['x', 'y', 'z', 'x', 'y']
+
+    assert all(isinstance(v, str) for v in standardized_df['enum_col'])
+    assert all(isinstance(v, str) for v in standardized_df['categorical_col'])

@@ -15,15 +15,23 @@ def _generate_dynamic_display_html(plot_spec: Dict) -> str:
     return lets_plot_kotlin_bridge.generate_html(plot_spec)
 
 
-def _generate_svg(plot_spec: Dict, use_css_pixelated_image_rendering: bool = True) -> str:
+def _generate_svg(plot_spec: Dict, w: float = None, h: float = None, unit: str = None, use_css_pixelated_image_rendering: bool=True) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)
-    return lets_plot_kotlin_bridge.export_svg(plot_spec, use_css_pixelated_image_rendering)
+    w = -1.0 if w is None else float(w)
+    h = -1.0 if h is None else float(h)
+    unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
+    return lets_plot_kotlin_bridge.export_svg(plot_spec, w, h, unit, use_css_pixelated_image_rendering)
 
-def _export_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
+def _generate_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
     """
     Export a plot to PNG format. Returns base64 encoded string of the PNG image.
     """
     plot_spec = _standardize_plot_spec(bytestring)
+    output_width = -1.0 if output_width is None else float(output_width)
+    output_height = -1.0 if output_height is None else float(output_height)
+    unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
+    dpi = -1 if dpi is None else int(dpi)
+    scale = -1.0 if scale is None else float(scale)
     return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, unit, dpi, scale)
 
 

@@ -193,6 +193,10 @@ object GeomInteractionUtil {
         }
 
         when (geomKind) {
+            GeomKind.RIBBON -> return GeomTooltipSetup.xUnivariateFunction(
+                GeomTargetLocator.LookupStrategy.NEAREST,
+                axisTooltipVisibilityFromConfig = true
+            )
             GeomKind.DENSITY,
             GeomKind.FREQPOLY,
             GeomKind.HISTOGRAM,
@@ -201,19 +205,13 @@ object GeomInteractionUtil {
             GeomKind.AREA,
             GeomKind.BAR,
             GeomKind.SEGMENT,
-            GeomKind.STEP -> return GeomTooltipSetup.xUnivariateFunction(
+            GeomKind.STEP,
+            GeomKind.POINT_RANGE,
+            GeomKind.LINE_RANGE,
+            GeomKind.ERROR_BAR -> return GeomTooltipSetup.xUnivariateFunction(
                 GeomTargetLocator.LookupStrategy.HOVER,
                 axisTooltipVisibilityFromConfig = true
             )
-            GeomKind.RIBBON,
-            GeomKind.POINT_RANGE,
-            GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> {
-                return GeomTooltipSetup.xUnivariateFunction(
-                    GeomTargetLocator.LookupStrategy.HOVER,
-                    axisTooltipVisibilityFromConfig = true
-                )
-            }
 
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
                 GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
@@ -387,6 +385,7 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,
+            GeomKind.RIBBON,
             GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> when (yOrientation) {
                 true -> listOf(Aes.XMAX, Aes.XUPPER, Aes.XMIDDLE, Aes.XLOWER, Aes.XMIN)

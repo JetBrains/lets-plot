@@ -12,17 +12,20 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions.SizeUnit
 import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.liveMap
 import org.jetbrains.letsPlot.core.spec.plotson.LiveMapLayer.Companion.vectorTiles
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.THETA
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channels
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.LetsPlotExt
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 import kotlin.math.sqrt
 
@@ -77,12 +80,19 @@ internal class VegaPlotConverter private constructor(
             }
         }
 
-        if (vegaPlotSpec[VegaOption.LetsPlotExt.REPORT_LETS_PLOT_CONVERTER_SUMMARY] == true) {
+        if (vegaPlotSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.REPORT_CONVERTER_SUMMARY) == true) {
             val summary = accessLogger
                 .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
                 .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
 
             plotOptions.computationMessages = summary
+        }
+
+        if (vegaPlotSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.DARK_MODE) == true) {
+            plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).apply {
+                name = null
+                flavor = ThemeOptions.Flavor.DARCULA
+            }
         }
 
         if (useLiveMap
@@ -135,7 +145,8 @@ internal class VegaPlotConverter private constructor(
                     this.geom = geom
 
                     val vegaData = when (VegaOption.DATA in layerSpec) {
-                        true -> layerSpec.getMap(VegaOption.DATA) ?: emptyMap() // if explicitly null - don't use plot data
+                        true -> layerSpec.getMap(VegaOption.DATA)
+                            ?: emptyMap() // if explicitly null - don't use plot data
                         false -> vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
                     }
 
@@ -160,6 +171,20 @@ internal class VegaPlotConverter private constructor(
         }
 
         when (markType) {
+            Mark.Types.ARC -> appendLayer(
+                geom = GeomKind.PIE,
+                channelMapping = listOf(
+                    THETA to Aes.SLICE,
+                    COLOR to Aes.FILL,
+                    COLOR to Aes.COLOR
+                )
+            ) {
+                size = 0.9
+                prop[PieLayer.SIZE_UNIT] = SizeUnit.MIN
+                prop[PieLayer.DIRECTION] = -1
+                plotOptions.themeOptions = (plotOptions.themeOptions ?: ThemeOptions()).setVoid()
+            }
+
             Mark.Types.BAR ->
                 if (transformResult?.stat?.kind == StatKind.BIN) {
                     appendLayer(
@@ -212,6 +237,7 @@ internal class VegaPlotConverter private constructor(
                 // So, we need to convert the area to the diameter
                 size = size?.let(::sqrt)
             }
+
             Mark.Types.AREA -> appendLayer(
                 channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
             ) {

@@ -27,12 +27,12 @@ def ggtitle(label, subtitle=None):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Plot title specification.
 
     Notes
     -----
-    Split a long title/subtitle into two lines or more using `\\\\n` as a text separator.
+    Split a long title/subtitle into two lines or more using ``\\\\n`` as a text separator.
 
     Examples
     --------
@@ -61,7 +61,7 @@ def xlab(label):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Axis label specification.
 
     Examples
@@ -91,7 +91,7 @@ def ylab(label):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Axis label specification.
 
     Examples
@@ -125,15 +125,15 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     labels
         Name-value pairs where the name can be:
 
-        - An aesthetic name
-        - 'manual' - a key referring to the default custom legend
-        - A group name referring to a custom legend where the group is defined via the `layer_key()` function
+        - An aesthetic name.
+        - 'manual' - a key referring to the default custom legend.
+        - A group name referring to a custom legend where the group is defined via the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
 
-        The value should be a string, e.g. `color="New Color label"`.
+        The value should be a string, e.g. ``color="New Color label"``.
 
     Returns
     -------
-    `FeatureSpec` or `FeatureSpecArray`
+    ``FeatureSpec`` or ``FeatureSpecArray``
         Labels specification.
 
     Examples
