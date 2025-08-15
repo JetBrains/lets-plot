@@ -52,7 +52,7 @@ class LabelOptions {
 
             // Text element
             val label = MultilineLabel(text)
-            TextUtil.decorate(label, p, TextUtil.lineHeights(text, p, ctx, sizeUnitRatio), sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
+            TextUtil.decorate(label, p, ctx, sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
 
             val padding = fontSize * labelOptions.paddingFactor
             val xPosition = when (hAnchor) {
@@ -60,7 +60,7 @@ class LabelOptions {
                 Text.HorizontalAnchor.RIGHT -> location.x - padding
                 Text.HorizontalAnchor.MIDDLE -> location.x
             }
-            val firstLineHeight = TextUtil.firstLineHeight(text, p, ctx, sizeUnitRatio)
+            val firstLineHeight = TextUtil.lineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
             val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
             val textPosition = DoubleVector(
                 xPosition,

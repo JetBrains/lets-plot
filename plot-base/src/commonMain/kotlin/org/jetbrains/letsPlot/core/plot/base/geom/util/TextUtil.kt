@@ -170,7 +170,7 @@ object TextUtil {
     fun decorate(
         label: MultilineLabel,
         p: DataPointAesthetics,
-        lineHeights: List<Double>,
+        ctx: GeomContext,
         scale: Double = 1.0,
         applyAlpha: Boolean = true
     ) {
@@ -186,7 +186,7 @@ object TextUtil {
         label.setTextOpacity(alpha)
 
         label.setFontSize(fontSize(p, scale))
-        label.setLineHeights(lineHeights.map { it * p.lineheight()!! })
+        label.setLineHeights(lineHeights(label.text, p, ctx, scale).map { it * p.lineheight()!! })
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -221,7 +221,6 @@ object TextUtil {
         return DoubleVector(estimated.x, textHeight)
     }
 
-    // TODO: Refactor places that use this method
     fun lineHeights(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<Double> {
         val fontSize = fontSize(p, scale)
         val fontFamily = fontFamily(p)
@@ -234,11 +233,6 @@ object TextUtil {
             fontFace.bold,
             fontFace.italic
         ).map(DoubleVector::y)
-    }
-
-    fun firstLineHeight(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): Double {
-        val fontSize = fontSize(p, scale)
-        return lineHeights(text, p, ctx, scale).firstOrNull() ?: fontSize
     }
 
     fun rectangleForText(
