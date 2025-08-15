@@ -110,6 +110,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             )
             val (position, hAnchor) = applyJustification(
                 boundRect,
+                lineFont.size.toDouble(),
                 textSize,
                 lineHeight,
                 justification,

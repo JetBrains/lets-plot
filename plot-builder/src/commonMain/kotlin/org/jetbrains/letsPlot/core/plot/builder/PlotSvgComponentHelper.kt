@@ -153,14 +153,16 @@ internal object PlotSvgComponentHelper {
         val lineHeights = labelSpec.heights(text)
         val textLabel = MultilineLabel(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
+        val fontSize = labelSpec.font.size.toDouble()
         val (position, hAnchor) = applyJustification(
             boundRect,
+            fontSize = fontSize,
             textSize = PlotLayoutUtil.textDimensions(text, labelSpec),
-            lineHeights.first(),
+            lineHeights.firstOrNull() ?: fontSize,
             justification,
             rotation
         )
-        textLabel.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
+        textLabel.setFontSize(fontSize) // Needed only for calculating correct x-shift for some LaTeX formulas
         textLabel.setLineHeights(lineHeights)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)

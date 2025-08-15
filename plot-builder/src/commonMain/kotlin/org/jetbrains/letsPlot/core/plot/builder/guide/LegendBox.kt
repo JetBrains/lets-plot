@@ -132,16 +132,18 @@ abstract class LegendBox : SvgComponent() {
         val lineHeights = labelSpec.heights(title)
 
         val label = MultilineLabel(title)
+        val fontSize = labelSpec.font.size.toDouble()
         val (pos, hAnchor) = applyJustification(
             boundRect,
+            fontSize = fontSize,
             textSize = titleSize,
-            lineHeights.first(),
+            lineHeights.firstOrNull() ?: fontSize,
             justification
         )
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setLineHeights(lineHeights)
-        label.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
+        label.setFontSize(fontSize) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.moveTo(pos)
         return label
     }

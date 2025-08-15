@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import kotlin.math.pow
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -19,6 +20,7 @@ class TextJustification(val x: Double, val y: Double) {
 
         fun applyJustification(
             boundRect: DoubleRectangle,
+            fontSize: Double,
             textSize: DoubleVector,
             firstLineHeight: Double,
             justification: TextJustification,
@@ -27,7 +29,7 @@ class TextJustification(val x: Double, val y: Double) {
             val rect = if (rotation != null) boundRect.flip() else boundRect
 
             val (x, hAnchor) = xPosition(rect, justification.x)
-            val y = yPosition(rect, textSize, firstLineHeight, justification.y)
+            val y = yPosition(rect, fontSize, textSize, firstLineHeight, justification.y)
 
             val position = when (rotation) {
                 null -> DoubleVector(x, y)
@@ -56,13 +58,15 @@ class TextJustification(val x: Double, val y: Double) {
 
         private fun yPosition(
             boundRect: DoubleRectangle,
+            fontSize: Double,
             textSize: DoubleVector,
             firstLineHeight: Double,
             vjust: Double,
         ): Double {
             val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
             // use 0.8 for better alignment: like vertical_anchor = 'top' (dy="0.8em")
-            return y - textSize.y + firstLineHeight * 0.8 // TODO
+            val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
+            return y - textSize.y + firstLineHeight * magickFactor
         }
     }
 }

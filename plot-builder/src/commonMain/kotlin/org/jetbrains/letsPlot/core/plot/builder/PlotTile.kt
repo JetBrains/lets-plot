@@ -218,10 +218,12 @@ internal class PlotTile constructor(
         val lab = MultilineLabel(label)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
 
+        val fontSize = theme.stripTextStyle().size
         val (pos, hAnchor) = applyJustification(
             textBounds,
+            fontSize,
             textSize,
-            lineHeights.first(),
+            lineHeights.firstOrNull() ?: fontSize,
             theme.stripTextJustification(),
             rotation
         )
