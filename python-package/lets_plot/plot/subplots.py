@@ -35,7 +35,7 @@ class SupPlotsSpec(FeatureSpec):
     """
     Subplots figure specification.
 
-    See: `gggrid()`
+    See: `gggrid() <https://lets-plot.org/python/pages/api/lets_plot.gggrid.html>`__.
     """
 
     @classmethod
@@ -115,23 +115,30 @@ class SupPlotsSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path=None) -> str:
+    def to_svg(self, path=None, w=None, h=None, unit=None) -> str:
         """
         Export the plot in SVG format.
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
            Subplots specification to export.
         path : str, file-like object, default=None
             It can be a file path, file-like object, or None.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
+        w : float, default=None
+            Width of the output image in units.
+        h : float, default=None
+            Height of the output image in units.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
+
         Returns
         -------
         str
-            The result depends on the `path` parameter.
+            The result depends on the ``path`` parameter.
             It can be the absolute path of the file,
             SVG content as a string, or None if a file-like object is provided.
 
@@ -156,7 +163,7 @@ class SupPlotsSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        return _to_svg(self, path)
+        return _to_svg(self, path, w=w, h=h, unit=unit)
 
     def to_html(self, path=None, iframe: bool = None) -> str:
         """
@@ -164,7 +171,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object, default=None
             It can be a file path, file-like object, or None.
@@ -177,7 +184,7 @@ class SupPlotsSpec(FeatureSpec):
         Returns
         -------
         str
-            The result depends on the `path` parameter.
+            The result depends on the ``path`` parameter.
             It can be the absolute path of the file,
             HTML content as a string, or None if a file-like object is provided.
 
@@ -208,7 +215,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -221,23 +228,22 @@ class SupPlotsSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+
+            - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
         str
             Absolute pathname of created file or None if a file-like object is provided.
-
-        Notes
-        -----
-        Export to PNG file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
 
         Examples
         --------
@@ -268,7 +274,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `SupPlotsSpec`
+        self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -282,12 +288,17 @@ class SupPlotsSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+
+            - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
@@ -296,9 +307,7 @@ class SupPlotsSpec(FeatureSpec):
 
         Notes
         -----
-        Export to PDF file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
+        Export to a PDF file uses the pillow library.
 
         Examples
         --------

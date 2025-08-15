@@ -11,12 +11,20 @@ import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 
+enum class HoverObjectKind {
+    POINT,
+    PATH,
+    POLYGON,
+}
+
 data class HoverObject(
+    val kind: HoverObjectKind,
     val layerIndex: Int,
     val index: Int,
     val distance: Double,
     val locator: Locator, // TODO: move it out from HoverObject
-    val targetPosition: DoubleVector? = null
+    val targetPosition: DoubleVector? = null,
+    val targetRadius: Double? = null,
 )
 
 interface Locator {

@@ -12,7 +12,6 @@ plugins {
 val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
-val imagick = (rootProject.project.extra.properties.getOrDefault("imagemagick_lib_path", "") as String).isNotBlank()
 
 // To improve the building time of the Python extension in development mode.
 val pythonExtensionDebugBuild = project.findProperty("python_extension_debug_build") == "true"
@@ -43,18 +42,21 @@ kotlin {
             }
         }
 
-        if (imagick) {
-            target.binaries.forEach {
+        val imageMagickLibPath = rootProject.project.extra["imagemagick_lib_path"].toString()
+        target.binaries.forEach {
+            it.linkerOpts += listOf(
+                "-L${imageMagickLibPath}/lib",
+                "-lMagickWand-7.Q16HDRI",
+                "-lMagickCore-7.Q16HDRI",
+                "-lfontconfig",
+                "-lfreetype",
+                "-lexpat",
+                "-lz"
+            )
+            if (os.isWindows) {
                 it.linkerOpts += listOf(
-                    "-L${rootProject.project.extra["imagemagick_lib_path"]}/lib",
-                    "-L/usr/lib/x86_64-linux-gnu/",
-                    "-L/opt/homebrew/opt/fontconfig/lib",
-                    "-L/opt/homebrew/opt/freetype/lib",
-                    "-lfreetype",
-                    "-lfontconfig",
-                    "-lMagickWand-7.Q8",
-                    "-lMagickCore-7.Q8",
-                    "-lz"
+                    "-lurlmon",
+                    "-lgdi32"
                 )
             }
         }
@@ -74,11 +76,7 @@ kotlin {
             languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
 
-
         val nativeMain by creating {
-            kotlin.setSrcDirs(
-                listOf(if (imagick) "src/nativeImagickMain" else "src/nativeMain")
-            )
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
@@ -88,19 +86,12 @@ kotlin {
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
                 implementation(project(":platf-native"))
-
-                if (imagick) {
-                    implementation(project(":platf-imagick"))
-                    implementation(project(":plot-raster"))
-                }
+                implementation(project(":platf-imagick"))
+                implementation(project(":plot-raster"))
             }
-
         }
 
             val nativeTest by creating {
-                kotlin.setSrcDirs(
-                    listOf("src/nativeTest") + listOfNotNull("src/nativeImagickTest".takeIf { imagick })
-                )
                 dependencies {
                     implementation(project(":demo-and-test-shared"))
                     implementation(project(":demo-common-svg"))

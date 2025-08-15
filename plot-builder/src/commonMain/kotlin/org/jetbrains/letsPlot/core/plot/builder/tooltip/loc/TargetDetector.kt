@@ -116,7 +116,7 @@ internal class TargetDetector(
             LookupSpace.XY -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> false
                 LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.xy(), cursorCoord, pointProjection.radius + POINT_AREA_EPSILON)
-                LookupStrategy.NEAREST -> closestPointChecker.check(pointProjection.xy())
+                LookupStrategy.NEAREST -> closestPointChecker.check(pointProjection.xy(), pointProjection.radius + POINT_AREA_EPSILON)
             }
         }
     }
@@ -186,7 +186,7 @@ internal class TargetDetector(
                     } else {
                         DoubleVector(cursor.x, range.lowerEnd + range.length / 2)
                     }
-                    closestPointChecker.compare(coord) != ClosestPointChecker.COMPARISON_RESULT.NEW_FARTHER
+                    closestPointChecker.compareObject(coord) != ClosestPointChecker.COMPARISON_RESULT.NEW_FARTHER
                 } else {
                     false
                 }

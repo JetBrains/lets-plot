@@ -11,17 +11,10 @@ data class Font(
     val fontSize: Double = DEFAULT_SIZE,
     val fontFamily: String = DEFAULT_FAMILY
 ) {
-    constructor(
-        style: FontStyle?,
-        weight: FontWeight?,
-        size:Double?,
-        family: String?
-    ): this(
-        style ?: FontStyle.NORMAL,
-        weight ?: FontWeight.NORMAL,
-        size ?: DEFAULT_SIZE,
-        family ?: DEFAULT_FAMILY
-    )
+    val isNormal: Boolean = fontStyle == FontStyle.NORMAL && fontWeight == FontWeight.NORMAL
+    val isBold: Boolean = fontStyle == FontStyle.NORMAL && fontWeight == FontWeight.BOLD
+    val isItalic: Boolean = fontStyle == FontStyle.ITALIC && fontWeight == FontWeight.NORMAL
+    val isBoldItalic: Boolean = fontStyle == FontStyle.ITALIC && fontWeight == FontWeight.BOLD
 
     companion object {
         const val DEFAULT_SIZE = 10.0

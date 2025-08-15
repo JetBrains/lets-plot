@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.BarAnnotation.contains
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
@@ -54,17 +55,10 @@ object CrossBarAnnotation {
                     textSize
                 )
 
-                val alpha: Double
-                val labelColor = when {
-                    rect.contains(textRect) -> {
-                        alpha = 0.0
-                        annotation.getTextColor(aes.fill())
-                    }
-                    else -> {
-                        alpha = 0.75
-                        annotation.getTextColor()
-                    }
-                }
+                val (textColor, alpha) = textColorAndLabelAlpha(
+                    annotation, aes.color(), aes.fill(),
+                    insideGeom = rect.contains(textRect)
+                )
 
                 // separate label for each line
                 val labels = MultilineLabel.splitLines(text)
@@ -78,7 +72,7 @@ object CrossBarAnnotation {
                         location,
                         textParams = AnnotationUtil.TextParams(
                             style = annotation.textStyle,
-                            color = labelColor,
+                            color = textColor,
                             hjust = "middle",
                             vjust = "top",
                             fill = ctx.backgroundColor,
@@ -92,7 +86,14 @@ object CrossBarAnnotation {
             }
     }
 
-    private fun findTextLocation(viewPort: DoubleRectangle, rect: DoubleRectangle, midLine: DoubleSegment?, strokeWidth: Double, textSize: DoubleVector, isHorizontallyOriented: Boolean): DoubleVector {
+    private fun findTextLocation(
+        viewPort: DoubleRectangle,
+        rect: DoubleRectangle,
+        midLine: DoubleSegment?,
+        strokeWidth: Double,
+        textSize: DoubleVector,
+        isHorizontallyOriented: Boolean
+    ): DoubleVector {
         return if (isHorizontallyOriented) {
             findLocation(viewPort.flip(), rect.flip(), midLine?.flip(), strokeWidth, textSize.flip()).flip()
         } else {
@@ -100,7 +101,13 @@ object CrossBarAnnotation {
         }
     }
 
-    private fun findLocation(viewPort: DoubleRectangle, rect: DoubleRectangle, midLine: DoubleSegment?, strokeWidth: Double, textSize: DoubleVector): DoubleVector {
+    private fun findLocation(
+        viewPort: DoubleRectangle,
+        rect: DoubleRectangle,
+        midLine: DoubleSegment?,
+        strokeWidth: Double,
+        textSize: DoubleVector
+    ): DoubleVector {
         val upperOuterRect = DoubleRectangle(
             DoubleVector(rect.origin.x, viewPort.origin.y),
             DoubleVector(rect.width, rect.top - viewPort.origin.y)
@@ -123,14 +130,22 @@ object CrossBarAnnotation {
             return when {
                 upperInnerRect.height > textSize.y -> upperInnerRect.center
                 lowerInnerRect.height > textSize.y -> lowerInnerRect.center
-                upperOuterRect.height > textSize.y -> DoubleVector(rect.center.x, upperOuterRect.bottom - textSize.y / 2)
+                upperOuterRect.height > textSize.y -> DoubleVector(
+                    rect.center.x,
+                    upperOuterRect.bottom - textSize.y / 2
+                )
+
                 lowerOuterRect.height > textSize.y -> DoubleVector(rect.center.x, lowerOuterRect.top + textSize.y / 2)
                 else -> rect.center
             }
         } else {
             return when {
                 rect.height > textSize.y -> rect.center
-                upperOuterRect.height > textSize.y -> DoubleVector(rect.center.x, upperOuterRect.bottom - textSize.y / 2)
+                upperOuterRect.height > textSize.y -> DoubleVector(
+                    rect.center.x,
+                    upperOuterRect.bottom - textSize.y / 2
+                )
+
                 lowerOuterRect.height > textSize.y -> DoubleVector(rect.center.x, lowerOuterRect.top + textSize.y / 2)
                 else -> rect.center
             }

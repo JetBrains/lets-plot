@@ -153,19 +153,38 @@ class WaterfallPlotSpecChange : SpecChange {
         }
 
         val labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
+        val labelInheritsLayerColor = when {
+            bistroSpec.getString(Waterfall.LABEL, Waterfall.COLOR) == Waterfall.Keyword.COLOR_INHERIT -> true // for both absolute and relative labels
+            bistroSpec.getBool(optionName, Option.AnnotationSpec.USE_LAYER_COLOR) == true -> true
+            else -> false
+        }
+
         return bistroSpec.getMap(optionName)?.let { annotationOptions ->
             annotation {
                 lines = annotationOptions.getList(Option.AnnotationSpec.LINES)?.typed<String>()
-                formats = annotationOptions.getMaps(Option.AnnotationSpec.FORMATS)?.map { formatOptions ->
-                    format {
-                        field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
-                        format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
+
+                val existingFormats = annotationOptions
+                    .getMaps(Option.AnnotationSpec.FORMATS)
+                    ?.map { formatOptions ->
+                        format {
+                            field = formatOptions.getString(Option.LinesSpec.Format.FIELD)
+                            format = formatOptions.getString(Option.LinesSpec.Format.FORMAT)
+                        }
+                    } ?: emptyList()
+
+                val hasLabelFormat = existingFormats.any { it.field == "@${Waterfall.Var.Stat.LABEL}" }
+
+                formats = if (hasLabelFormat || labelFormat == null) {
+                    existingFormats
+                } else {
+                    existingFormats + format {
+                        field = "@${Waterfall.Var.Stat.LABEL}"
+                        format = labelFormat
                     }
-                } ?: listOf(format {
-                    field = "@${Waterfall.Var.Stat.LABEL}"
-                    format = labelFormat ?: ""
-                })
+                }
+
                 size = annotationOptions.getDouble(Option.AnnotationSpec.ANNOTATION_SIZE)
+                useLayerColor = labelInheritsLayerColor
             }
         } ?: annotation {
             lines = listOf("@${Waterfall.Var.Stat.LABEL}")
@@ -176,8 +195,10 @@ class WaterfallPlotSpecChange : SpecChange {
                     format = labelFormat
                 })
             }
+            useLayerColor = labelInheritsLayerColor
         }
     }
+
 
     private fun readElementLineOptions(
         bistroSpec: Map<String, Any>,
@@ -210,7 +231,7 @@ class WaterfallPlotSpecChange : SpecChange {
         return bistroSpec.getMap(option)?.let { elementTextSpec ->
             defaults.merge(
                 ElementTextOptions(
-                    color = elementTextSpec.getString(Option.Theme.Elem.COLOR),
+                    color = elementTextSpec.getString(Option.Theme.Elem.COLOR)?.takeIf { it != Waterfall.Keyword.COLOR_INHERIT },
                     family = elementTextSpec.getString(Option.Theme.Elem.FONT_FAMILY),
                     face = elementTextSpec.getString(Option.Theme.Elem.FONT_FACE),
                     size = elementTextSpec.getDouble(Option.Theme.Elem.SIZE),

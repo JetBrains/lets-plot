@@ -9,7 +9,7 @@ from typing import Union
 
 __all__ = ['aes', 'layer']
 
-from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED, MAGICK_EXPORT
+from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
 
 def aes(x=None, y=None, **kwargs):
@@ -24,7 +24,7 @@ def aes(x=None, y=None, **kwargs):
 
     Returns
     -------
-    `FeatureSpec`
+    ``FeatureSpec``
         Aesthetic mapping specification.
 
     Notes
@@ -87,17 +87,18 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
         'bin' (count number of points with x-axis coordinate in the same bin),
         'smooth' (perform smoothing - linear default),
         'density' (compute and draw kernel density estimate).
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    position : str or `FeatureSpec`
+    position : str or ``FeatureSpec``
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     kwargs:
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
@@ -105,7 +106,7 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
@@ -162,8 +163,10 @@ class FeatureSpec():
 
     Do not use this class explicitly.
 
-    Instead, you should construct its objects with functions `ggplot()`, `geom_point()`,
-    `position_dodge()`, `scale_x_continuous()` etc.
+    Instead, you should construct its objects with functions `ggplot() <https://lets-plot.org/python/pages/api/lets_plot.ggplot.html>`__,
+    `geom_point() <https://lets-plot.org/python/pages/api/lets_plot.geom_point.html>`__,
+    `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__,
+    `scale_x_continuous() <https://lets-plot.org/python/pages/api/lets_plot.scale_x_continuous.html>`__ etc.
     """
 
     def __init__(self, kind, name, **kwargs):
@@ -179,8 +182,8 @@ class FeatureSpec():
 
     def as_dict(self):
         """
-        Return the dictionary of all properties of the object with `as_dict()`
-        applied recursively to all subproperties of `FeatureSpec` type.
+        Return the dictionary of all properties of the object with ``as_dict()``
+        applied recursively to all subproperties of ``FeatureSpec`` type.
 
         Returns
         -------
@@ -229,8 +232,8 @@ class PlotSpec(FeatureSpec):
 
     Do not use this class explicitly.
 
-    Instead, you should construct its objects with functions `ggplot()`,
-    `corr_plot(...).points().build()` etc.
+    Instead, you should construct its objects with functions `ggplot() <https://lets-plot.org/python/pages/api/lets_plot.ggplot.html>`__,
+    ``corr_plot(...).points().build()`` etc.
     """
 
     @classmethod
@@ -263,7 +266,7 @@ class PlotSpec(FeatureSpec):
 
         Returns
         -------
-        dict or `DataFrame`
+        dict or ``DataFrame``
             Object data.
 
         Examples
@@ -284,7 +287,7 @@ class PlotSpec(FeatureSpec):
 
     def has_layers(self) -> bool:
         """
-        Check if the `PlotSpec` object has at least one layer.
+        Check if the ``PlotSpec`` object has at least one layer.
 
         Returns
         -------
@@ -309,7 +312,7 @@ class PlotSpec(FeatureSpec):
 
     def __add__(self, other):
         """
-        Allow to add different specs to the `PlotSpec` object.
+        Allow to add different specs to the ``PlotSpec`` object.
 
         Examples
         --------
@@ -402,9 +405,11 @@ class PlotSpec(FeatureSpec):
                 return plot
 
             if other.kind == 'mapping':  # +aes(..)
-                existing_spec = plot.props().get('mapping', aes())
-                merged_mapping = {**existing_spec.as_dict(), **other.as_dict()}
-                plot.props()['mapping'] = aes(**merged_mapping)
+                # existing_spec = plot.props().get('mapping', aes())
+                # merged_mapping = {**existing_spec.as_dict(), **other.as_dict()}
+                # plot.props()['mapping'] = aes(**merged_mapping)
+                from lets_plot.plot.util import update_plot_aes_mapping  # local import to break circular reference
+                update_plot_aes_mapping(plot, other)
                 return plot
 
             # add feature to properties
@@ -468,19 +473,25 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path=None) -> str:
+    def to_svg(self, path=None, w=None, h=None, unit=None) -> str:
         """
         Export the plot in SVG format.
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
+        w : float, default=None
+            Width of the output image in units.
+        h : float, default=None
+            Height of the output image in units.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
 
         Returns
         -------
@@ -505,7 +516,7 @@ class PlotSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        return _to_svg(self, path)
+        return _to_svg(self, path, w=w, h=h, unit=unit)
 
     def to_html(self, path=None, iframe: bool = None) -> str:
         """
@@ -513,7 +524,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
@@ -552,7 +563,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -566,12 +577,17 @@ class PlotSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+
+            - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
@@ -580,9 +596,27 @@ class PlotSpec(FeatureSpec):
 
         Notes
         -----
-        Export to PNG file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
+        - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
+
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+          - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
+
+            - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
+
+        - If only ``dpi`` is specified:
+
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
+          - The output size is then calculated based on the specified DPI.
+
+            - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+            - Useful for printing - the plot will appear nearly the same size as on screen.
+
+        - If ``w``, ``h`` are not specified:
+
+          - The ``scale`` parameter is used to determine the output size.
+
+            - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+            - Useful for generating high-resolution images suitable for publication.
 
         Examples
         --------
@@ -600,6 +634,7 @@ class PlotSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_png(file_like)
             display.Image(file_like.getvalue())
+
         """
         return _export_as_raster(self, path, scale, 'png', w=w, h=h, unit=unit, dpi=dpi)
 
@@ -609,7 +644,7 @@ class PlotSpec(FeatureSpec):
 
         Parameters
         ----------
-        self : `PlotSpec`
+        self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
             Сan be either a string specifying a file path or a file-like object.
@@ -623,12 +658,17 @@ class PlotSpec(FeatureSpec):
         h : float, default=None
             Height of the output image in units.
             Only applicable when exporting to PNG or PDF.
-        unit : {'in', 'cm', 'mm'}, default=None
-            Unit of the output image. One of: 'in', 'cm', 'mm'.
+        unit : {'in', 'cm', 'mm', 'px'}, default='in'
+            Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
             Only applicable when exporting to PNG or PDF.
-        dpi : int, default=None
+        dpi : int, default=300
             Resolution in dots per inch.
             Only applicable when exporting to PNG or PDF.
+            The default value depends on the unit:
+
+            - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
+            - for physical units ('in', 'cm', 'mm') it is 300
+
 
         Returns
         -------
@@ -637,9 +677,27 @@ class PlotSpec(FeatureSpec):
 
         Notes
         -----
-        Export to PDF file uses the CairoSVG library.
-        CairoSVG is free and distributed under the LGPL-3.0 license.
-        For more details visit: https://cairosvg.org/documentation/
+        - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
+
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+          - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
+
+            - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
+
+        - If only ``dpi`` is specified:
+
+          - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
+          - The output size is then calculated based on the specified DPI.
+
+            - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+            - Useful for printing - the plot will appear nearly the same size as on screen.
+
+        - If ``w``, ``h`` are not specified:
+
+          - The ``scale`` parameter is used to determine the output size.
+
+            - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+            - Useful for generating high-resolution images suitable for publication.
 
         Examples
         --------
@@ -660,6 +718,7 @@ class PlotSpec(FeatureSpec):
             p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
             file_like = io.BytesIO()
             p.to_pdf(file_like)
+
         """
         return _export_as_raster(self, path, scale, 'pdf', w=w, h=h, unit=unit, dpi=dpi)
 
@@ -670,8 +729,10 @@ class LayerSpec(FeatureSpec):
 
     Do not use this class explicitly.
 
-    Instead, you should construct its objects with functions `geom_point()`,
-    `geom_contour()`, `geom_boxplot()`, `geom_text()` etc.
+    Instead, you should construct its objects with functions `geom_point() <https://lets-plot.org/python/pages/api/lets_plot.geom_point.html>`__,
+    `geom_contour() <https://lets-plot.org/python/pages/api/lets_plot.geom_contour.html>`__,
+    `geom_boxplot() <https://lets-plot.org/python/pages/api/lets_plot.geom_boxplot.html>`__,
+    `geom_text() <https://lets-plot.org/python/pages/api/lets_plot.geom_text.html>`__ etc.
     """
 
     __own_features = ['geom', 'stat', 'mapping', 'position']
@@ -832,18 +893,19 @@ def _merge_dicts_recursively(d1, d2):
 
 def _theme_dicts_merge(x, y):
     """
-    Simple values in `y` override values in `x`.
-    If values in `y` and `x` both are dictionaries, then they are merged.
+    Simple values in ``y`` override values in ``x``.
+    If values in ``y`` and ``x`` both are dictionaries, then they are merged.
     """
     overlapping_keys = x.keys() & y.keys()
     z = {k: {**x[k], **y[k]} for k in overlapping_keys if type(x[k]) is dict and type(y[k]) is dict}
     return {**x, **y, **z}
 
 
-def _to_svg(spec, path) -> Union[str, None]:
+def _to_svg(spec, path, w=None, h=None, unit=None) -> Union[str, None]:
     from .. import _kbridge as kbr
 
-    svg = kbr._generate_svg(spec.as_dict())
+    svg = kbr._generate_svg(spec.as_dict(), w, h, unit, use_css_pixelated_image_rendering=True)
+
     if path is None:
         return svg
     elif isinstance(path, str):
@@ -876,22 +938,6 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
 
 
 def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
-    if get_global_bool(MAGICK_EXPORT):
-        return _export_with_magick(
-            spec,
-            path,
-            scale if scale is not None else 1.0,
-            export_format,
-            w if w is not None else -1,
-            h if h is not None else -1,
-            unit if unit is not None else '',
-            dpi if dpi is not None else -1
-        )
-    else:
-        return _export_with_cairo(spec, path, scale, export_format, w, h, unit, dpi)
-
-
-def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit, dpi) -> Union[str, None]:
     import base64
     from .. import _kbridge
 
@@ -902,7 +948,7 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit
         file_like_object = path
         file_path = None
 
-    png_base64 = _kbridge._export_png(spec.as_dict(), float(w), float(h), unit, int(dpi), float(scale))
+    png_base64 = _kbridge._generate_png(spec.as_dict(), w, h, unit, dpi, scale)
     png = base64.b64decode(png_base64)
 
     if export_format.lower() == 'png':
@@ -941,53 +987,6 @@ def _export_with_magick(spec, path, scale: float, export_format: str, w, h, unit
         raise ValueError("Unknown export format: {}".format(export_format))
 
 
-def _export_with_cairo(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
-    from .. import _kbridge
-
-    input = None
-    export_function = None
-
-    if export_format.lower() == 'png' or export_format.lower() == 'pdf':
-        try:
-            import cairosvg
-        except ImportError:
-            import sys
-            print("\n"
-                  "To export Lets-Plot figure to a PNG or PDF file please install CairoSVG library"
-                  "to your Python environment.\n"
-                  "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
-                  "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
-            return None
-
-        if export_format.lower() == 'png':
-            export_function = cairosvg.svg2png
-        elif export_format.lower() == 'pdf':
-            export_function = cairosvg.svg2pdf
-
-        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
-        input = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
-    else:
-        raise ValueError("Unknown export format: {}".format(export_format))
-
-    if isinstance(path, str):
-        abspath = _makedirs(path)
-        result = abspath
-    else:
-        result = None  # file-like object is provided. No path to return.
-
-    if any(it is not None for it in [w, h, unit, dpi]):
-        if w is None or h is None or unit is None or dpi is None:
-            raise ValueError("w, h, unit, and dpi must all be specified")
-
-        w, h = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
-        export_function(bytestring=input, write_to=path, dpi=dpi, output_width=w, output_height=h)
-    else:
-        scale = scale if scale is not None else 2.0
-        export_function(bytestring=input, write_to=path, scale=scale)
-
-    return result
-
-
 def _makedirs(path: str) -> str:
     """Return absolute path to a file after creating all directories in the path."""
     abspath = os.path.abspath(path)
@@ -995,19 +994,3 @@ def _makedirs(path: str) -> str:
     if dirname and not os.path.exists(dirname):
         os.makedirs(dirname)
     return abspath
-
-
-def _to_inches(size, size_unit):
-    if size_unit is None:
-        raise ValueError("Unit must be specified")
-
-    if size_unit == 'in':
-        inches = size
-    elif size_unit == 'cm':
-        inches = size / 2.54
-    elif size_unit == 'mm':
-        inches = size / 25.4
-    else:
-        raise ValueError("Unknown unit: {}. Expected one of: 'in', 'cm', 'mm'".format(size_unit))
-
-    return inches

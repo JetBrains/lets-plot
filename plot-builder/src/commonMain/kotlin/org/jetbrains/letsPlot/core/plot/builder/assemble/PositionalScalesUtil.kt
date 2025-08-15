@@ -25,7 +25,7 @@ import kotlin.math.min
 
 object PositionalScalesUtil {
     /**
-     * Computers X/Y ranges of transformed input series.
+     * Computes X/Y ranges of transformed input series.
      *
      * @return list of pairs (x-domain, y-domain).
      *          Elements in this list match corresponding elements in the `layersByTile` list.

@@ -6,30 +6,27 @@
 package org.jetbrains.letsPlot.jfx.canvas
 
 import javafx.scene.SnapshotParameters
-import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.PixelFormat
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import kotlin.math.roundToInt
 
-internal class JavafxCanvas
-private constructor(
-    val nativeCanvas: Canvas,
-    size: Vector,
+internal class JavafxCanvas private constructor(
+    val nativeCanvas: javafx.scene.canvas.Canvas,
+    override val size: Vector,
     pixelRatio: Double
-) : ScaledCanvas(
-    org.jetbrains.letsPlot.jfx.canvas.JavafxContext2d(nativeCanvas.graphicsContext2D),
-    size,
-    pixelRatio
-) {
+) : Canvas {
+    override val context2d: Context2d = ScaledContext2d.wrap(JavafxContext2d(nativeCanvas.graphicsContext2D), pixelRatio)
 
     companion object {
-        fun create(size: Vector, pixelRatio: Double): org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas {
-            return org.jetbrains.letsPlot.jfx.canvas.JavafxCanvas(Canvas(), size, pixelRatio)
+        fun create(size: Vector, pixelRatio: Double): JavafxCanvas {
+            return JavafxCanvas(javafx.scene.canvas.Canvas(), size, pixelRatio)
         }
     }
 
@@ -38,13 +35,13 @@ private constructor(
         nativeCanvas.height = size.y * pixelRatio
     }
 
-    override fun takeSnapshot(): org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot {
+    override fun takeSnapshot(): Canvas.Snapshot {
         val params = SnapshotParameters()
         params.fill = Color.TRANSPARENT
         return JavafxSnapshot(nativeCanvas.snapshot(params, null))
     }
 
-    internal class JavafxSnapshot(val image: Image) : org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot {
+    internal class JavafxSnapshot(val image: Image) : Canvas.Snapshot {
         override val size: Vector = Vector(
             image.width.roundToInt(),
             image.height.roundToInt()

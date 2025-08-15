@@ -25,12 +25,14 @@ internal object CoordProto {
         coordName: String,
         xLim: Pair<Double?, Double?>,
         yLim: Pair<Double?, Double?>,
+        xReversed: Boolean,
+        yReversed: Boolean,
         options: OptionsAccessor
     ): CoordProvider {
         val flipped = options.getBoolean(Coord.FLIPPED)
         return when (coordName) {
-            CARTESIAN -> CoordProviders.cartesian(xLim, yLim, flipped)
-            FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0, xLim, yLim, flipped)
+            CARTESIAN -> CoordProviders.cartesian(xLim, yLim, xReversed, yReversed, flipped)
+            FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0, xLim, yLim, xReversed, yReversed, flipped)
             MAP -> {
                 val projection = when (options.getString(Coord.PROJECTION)) {
                     Coord.Projections.MERCATOR -> mercator()
@@ -46,6 +48,8 @@ internal object CoordProto {
             POLAR -> CoordProviders.polar(
                 xLim = xLim,
                 yLim = yLim,
+                xReversed = xReversed,
+                yReversed = yReversed,
                 flipped = when (val theta = options.getString(Coord.THETA)) {
                     Coord.Theta.X -> false
                     Coord.Theta.Y -> true

@@ -99,6 +99,7 @@ object AxisUtil {
 
         return AxisComponent.BreaksData(
             majorBreaks = majorBreaksData.map { (_, tick, _) -> tick },
+            majorIndices = majorBreaks.map { it.index },
             majorGrid = majorBreaksData.map { (_, _, gridLine) -> gridLine },
             majorLabels = majorBreaksData.map { (label, _, _) -> label },
             minorBreaks = minorBreaksData.map { (tick, _) -> tick },

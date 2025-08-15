@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderBuilder
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
 import org.jetbrains.letsPlot.core.spec.Option.Scale.EXPAND
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 
@@ -50,18 +51,26 @@ internal object PlotConfigScaleProviders {
         // Date-time scale providers for all date-time aes.
         (dateTimeAesByVarBinding + dateTimeAxisAesByPositionalVarBinding)
             .distinct()
-            .filter { aes -> aes !in scaleProviderBuilderByAes }
             .forEach { aes ->
-                val dataType = dataByVarBinding
-                scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(
-                    aes,
-                    dataType = dataType(aes),
-                    tz = layerConfigs.firstOrNull()?.tz
-                )
+                scaleProviderBuilderByAes[aes] = if (aes in scaleProviderBuilderByAes) {
+                    // Update the existing scale provider (see issue #1348).
+                    configureDateTimeScaleBreaks(
+                        scaleProviderBuilderByAes.getValue(aes),
+                        dateTimeFormatter = null,
+                        dataType = dataType(aes),
+                        tz = layerConfigs.firstOrNull()?.tz
+                    )
+                } else {
+                    ScaleProviderHelper.createDateTimeScaleProviderBuilder(
+                        aes,
+                        dataType = dataType(aes),
+                        tz = layerConfigs.firstOrNull()?.tz,
+                    )
+                }
             }
 
         // All aes used in bindings and x/y aes.
-        // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
+        // Exclude "stat positional" because we don't know which of axis they will use (i.e., orientation="y").
         val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
 
         // Append all the rest scale providers.

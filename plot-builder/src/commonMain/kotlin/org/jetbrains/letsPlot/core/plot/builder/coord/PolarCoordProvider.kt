@@ -22,22 +22,59 @@ const val R_PADDING = 0.06
 class PolarCoordProvider(
     xLim: Pair<Double?, Double?>,
     yLim: Pair<Double?, Double?>,
+    xReversed: Boolean,
+    yReversed: Boolean,
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean,
     val transformBkgr: Boolean,
-    val isHScaleContinuous: Boolean = true
-) : CoordProviderBase(xLim, yLim, flipped) {
+    val isHScaleContinuous: Boolean = true,
+    val isTest: Boolean = false
+) : CoordProviderBase(
+    xLim,
+    yLim,
+    xReversed = xReversed,
+    yReversed = yReversed,
+    flipped = flipped
+) {
 
     override val isLinear: Boolean = false
     override val isPolar: Boolean = true
 
-    override fun with(xLim: Pair<Double?, Double?>, yLim: Pair<Double?, Double?>, flipped: Boolean): CoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr)
+    override fun with(
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
+        xReversed: Boolean,
+        yReversed: Boolean,
+        flipped: Boolean
+    ): CoordProvider {
+        return PolarCoordProvider(
+            xLim,
+            yLim,
+            xReversed = xReversed,
+            yReversed = yReversed,
+            flipped = flipped,
+            start = start,
+            clockwise = clockwise,
+            transformBkgr = transformBkgr,
+            isHScaleContinuous = isHScaleContinuous,
+            isTest = isTest,
+        )
     }
 
     fun withHScaleContinuous(b: Boolean): PolarCoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr, isHScaleContinuous = b)
+        return PolarCoordProvider(
+            xLim,
+            yLim,
+            xReversed = xReversed,
+            yReversed = yReversed,
+            flipped = flipped,
+            start = start,
+            clockwise = clockwise,
+            transformBkgr = transformBkgr,
+            isHScaleContinuous = b,
+            isTest = isTest,
+        )
     }
 
     override fun adjustXYDomains(xDomain: DoubleSpan, yDomain: DoubleSpan): DoubleRectangle {
@@ -46,22 +83,23 @@ class PolarCoordProvider(
         // Data space -> View space
         val hvDomain = dataDomain.flipIf(flipped)
 
-        // Domain of a data without any adjustments (i.e. no expand).
+        // Domain of data without any adjustments (i.e., no expand).
         // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
         // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
 
         val adjustedHDomain = hvDomain.xRange().let { hDomain ->
-            // For discrete scale add extra segment by increasing domain by 1
+            // For discrete scale add an extra segment by increasing domain by 1
             // so that the last point won't overlap with the first one
             // in contrast to the continuous scale where the last point
             // has the same coordinate as the first one
-            // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
+            // i.e. ['a', 'b', 'c'] instead of [360/0, 180]
             val upperExpand = if (isHScaleContinuous) 0.0 else 1.0
             DoubleSpan.withLowerEnd(hDomain.lowerEnd, hDomain.length + upperExpand)
         }
 
         val adjustedVDomain = hvDomain.yRange().let { vDomain ->
-            DoubleSpan.withLowerEnd(vDomain.lowerEnd, vDomain.length * (1 + R_EXPAND + R_PADDING))
+            val radiusScaler = if (isTest) 1.0 else 1 + R_EXPAND + R_PADDING
+            DoubleSpan.withLowerEnd(vDomain.lowerEnd, vDomain.length * radiusScaler)
         }
 
         return DoubleRectangle(
@@ -114,7 +152,7 @@ class PolarCoordProvider(
 
                 val adjustedTheta = (theta - startAngle) * sign
 
-                val x =  inversedThetaScaleMapper(adjustedTheta) ?: error("Unexpected: x is null")
+                val x = inversedThetaScaleMapper(adjustedTheta) ?: error("Unexpected: x is null")
                 val y = inversedRScaleMapper(r) ?: error("Unexpected: y is null")
 
                 return DoubleVector(x, y).subtract(normOffset).flipIf(flipped)

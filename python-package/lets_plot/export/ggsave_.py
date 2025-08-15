@@ -23,15 +23,15 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
-    if not specified otherwise (see the `path` parameter).
+    if not specified otherwise (see the ``path`` parameter).
 
     Parameters
     ----------
-    plot : `PlotSpec`
+    plot : ``PlotSpec``
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
-        to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library), PDF.
+        to one of the supported formats: SVG, HTML (or HTM), PNG, PDF (requires the pillow library).
     path : str
         Path to a directory to save image files in.
         By default, it is ${user.dir}/lets-plot-images.
@@ -44,16 +44,20 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Only applicable when exporting to PNG or PDF.
     w : float, default=None
         Width of the output image in units.
-        Only applicable when exporting to PNG or PDF.
+        Only applicable when exporting to SVG, PNG or PDF.
     h : float, default=None
         Height of the output image in units.
-        Only applicable when exporting to PNG or PDF.
-    unit : {'in', 'cm', 'mm'}, default=None
-        Unit of the output image. One of: 'in', 'cm', 'mm'.
-        Only applicable when exporting to PNG or PDF.
-    dpi : int, default=None
+        Only applicable when exporting to SVG, PNG or PDF.
+    unit : {'in', 'cm', 'mm', 'px'}, default='in'
+        Unit of the output image. One of: 'in', 'cm', 'mm' or 'px.
+        Only applicable when exporting to SVG, PNG or PDF.
+    dpi : int, default=300
         Resolution in dots per inch.
         Only applicable when exporting to PNG or PDF.
+        The default value depends on the unit:
+
+        - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
+        - for physical units ('in', 'cm', 'mm') it is 300
 
     Returns
     -------
@@ -66,19 +70,35 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     For PNG and PDF formats:
 
-    1. If `w`, `h`, `unit`, and `dpi` are all specified:
+    - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
 
-       - `scale` is ignored.
-       - The plot's pixel size (default or set by `ggsize()`) is converted to the specified units using the given dpi.
-       - If the aspect ratio of `w` and `h` differs from the plot's pixel aspect ratio:
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+      - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
 
-         * The plot maintains its original (pixel) aspect ratio.
-         * It's fitted within the specified `w` x `h` area.
-         * Any extra space is left empty.
+        - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
 
-    2. If `w`, `h` are not specified:
+    - If only ``dpi`` is specified:
 
-       - The `scale` parameter is used to determine the output size.
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
+      - The output size is then calculated based on the specified DPI.
+
+        - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+        - Useful for printing - the plot will appear nearly the same size as on screen.
+
+    - If ``w``, ``h`` are not specified:
+
+      - The ``scale`` parameter is used to determine the output size.
+
+        - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+        - Useful for generating high-resolution images suitable for publication.
+
+    For SVG format:
+
+    - If ``w``, ``h`` and ``unit`` are specified:
+
+      - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
+      - The output size is calculated using the specified ``w``, ``h``, and ``unit``.
+
 
     Examples
     --------
@@ -99,8 +119,8 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
         from lets_plot import *
         LetsPlot.setup_html()
-        plot = ggplot() + geom_point(x=0, y=0) + ggsize(800, 400)
-        ggsave(plot, 'plot.png', w=8, h=4, unit='in', dpi=300)
+        plot = ggplot() + geom_point(x=0, y=0)
+        ggsave(plot, 'plot.png', w=4, h=3)
 
     """
 
@@ -122,7 +142,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        return _to_svg(plot, pathname)
+        return _to_svg(plot, pathname, w=w, h=h, unit=unit)
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
     elif ext in ['png', 'pdf', 'bmp']:

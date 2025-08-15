@@ -29,7 +29,7 @@ class DrawImageAwtTest {
 
     @Test
     fun drawImage_WithImageDataUrl() {
-        val (tempCanvas, tempCtx) = createCanvas()
+        val (_, tempCtx) = createCanvas()
         tempCtx.setFillStyle(Color.BLACK)
         // draw star
         tempCtx.beginPath()

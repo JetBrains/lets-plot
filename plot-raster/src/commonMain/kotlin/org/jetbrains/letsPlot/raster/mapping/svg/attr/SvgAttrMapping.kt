@@ -58,7 +58,14 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
             SvgElement.ID.name -> target.id = value as String?
             SvgGraphicsElement.POINTER_EVENTS.name -> target.isMouseTransparent = value == PointerEvents.NONE
 
-            else -> println("Unsupported attribute `$name` in ${target::class.simpleName}")
+            else -> {
+                val valRepr = when {
+                    value == null -> "null"
+                    value.toString().length > 20 -> "${value.toString().take(20)}..."
+                    else -> value.toString()
+                }
+                println("Unsupported attribute `$name`: `$valRepr` in ${target::class.simpleName}")
+            }
         }
     }
 

@@ -43,7 +43,7 @@ val letsPlotTaskGroup by extra { "lets-plot" }
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.6.3-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "4.7.2-SNAPSHOT" // see also: python-package/lets_plot/_version.py
 //    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
@@ -213,25 +213,23 @@ val uploadMavenArtifacts by tasks.registering {
     }
 }
 
+val defaultImageMagickLibPath = rootDir.path + "/platf-imagick/deps"
+val imageMagickLibPath = project.findProperty("imagemagick_lib_path") as? String
+    ?: System.getenv("IMAGICK_LIB_PATH")
+    ?: defaultImageMagickLibPath
 
-if ((extra.getOrNull("enable_magick_canvas") as? String ?: "true").toBoolean()) {
-    extra.set("imagemagick_lib_path", rootDir.path + "/platf-imagick/ImageMagick/install")
-    val pythonBinDir = extra.get("python.bin_path") as String
-
-    val initImageMagick by tasks.registering {
-        group = letsPlotTaskGroup
-        doLast {
-            exec {
-                this.workingDir = File(rootDir.path + "/platf-imagick")
-                commandLine(
-                    "$pythonBinDir/python",
-                    "init_imagemagick.py"
-                )
-            }
+extra.set("imagemagick_lib_path", imageMagickLibPath)
+val initImageMagick by tasks.registering {
+    group = letsPlotTaskGroup
+    doLast {
+        exec {
+            this.workingDir = File(rootDir.path + "/platf-imagick")
+            commandLine(
+                "./init_imagemagick.sh",
+                imageMagickLibPath
+            )
         }
     }
-
-    logger.info("Run './gradlew initImageMagick' to initialize ImageMagick.")
 }
 
 // Generating JavaDoc task for each publication task.
@@ -304,6 +302,7 @@ val multiPlatformCoreModulesForPublish = listOf(
     "livemap",
     "plot-base",
     "plot-builder",
+    "plot-raster",
     "plot-stem",
     "plot-livemap"
 )

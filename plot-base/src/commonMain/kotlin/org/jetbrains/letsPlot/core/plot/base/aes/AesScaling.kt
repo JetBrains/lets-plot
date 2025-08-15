@@ -89,8 +89,8 @@ object AesScaling {
         val unitSize = when (axis.lowercase()) {
             "x" -> unitSquareSize.x
             "y" -> unitSquareSize.y
-            "min" -> maxOf(unitSquareSize.x, unitSquareSize.y)
-            "max" -> minOf(unitSquareSize.x, unitSquareSize.y)
+            "min" -> minOf(unitSquareSize.x, unitSquareSize.y)
+            "max" -> maxOf(unitSquareSize.x, unitSquareSize.y)
             else -> error("Size unit value must be either 'x' or 'y', but was '$axis'.")
         }
 

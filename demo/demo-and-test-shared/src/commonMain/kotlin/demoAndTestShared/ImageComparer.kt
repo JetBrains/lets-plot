@@ -78,11 +78,17 @@ class ImageComparer(
                 val expectedPixel = expected.getPixel(x, y)
                 val actualPixel = actual.getPixel(x, y)
 
-                if ((expectedPixel?.green ?: 0) - (actualPixel?.green ?: 0) > tolerance ||
-                    (expectedPixel?.red ?: 0) - (actualPixel?.red ?: 0) > tolerance ||
-                    (expectedPixel?.blue ?: 0) - (actualPixel?.blue ?: 0) > tolerance ||
-                    (expectedPixel?.alpha ?: 0) - (actualPixel?.alpha ?: 0) > tolerance
-                ) {
+                if (expectedPixel != null && actualPixel != null) {
+                    if (expectedPixel.green - actualPixel.green > tolerance ||
+                        expectedPixel.red - actualPixel.red > tolerance ||
+                        expectedPixel.blue - actualPixel.blue > tolerance ||
+                        expectedPixel.alpha - actualPixel.alpha > tolerance
+                    ) {
+                        match = false
+                        diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
+                    }
+                } else {
+                    // If one of the pixels is null, consider it a difference
                     match = false
                     diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
                 }

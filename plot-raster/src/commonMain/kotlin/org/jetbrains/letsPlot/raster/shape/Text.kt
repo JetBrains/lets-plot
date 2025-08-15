@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
@@ -69,7 +69,7 @@ internal class Text(
         }
     }
 
-    override fun render(canvas: Canvas) {
+    override fun render(ctx: Context2d) {
         if (needLayout) {
             layoutChildren()
         }

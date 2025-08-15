@@ -16,13 +16,16 @@ kotlin {
 val artifactBaseName = "lets-plot-batik"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
+
 val batikVersion = project.extra["batik_version"] as String
+val commonsIOVersion = project.extra["commons-io.version"] as String
+
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
 val jvmJarBatik by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
 
-    // Add LICENSE file to the META-INF folder inside published JAR files.
+    // Add the LICENSE file to the META-INF folder inside published JAR files.
     metaInf {
         from("$rootDir") {
             include("LICENSE")
@@ -37,7 +40,9 @@ val pomDependencies = listOf(
     listOf(project.group, "platf-awt", project.version),
     listOf(project.group, "platf-batik", project.version),
     // Batik.
-    listOf("org.apache.xmlgraphics", "batik-codec", batikVersion)
+    listOf("org.apache.xmlgraphics", "batik-codec", batikVersion),
+    // commons-io: a newer version than the one in Batik transitive dependency.
+    listOf("commons-io", "commons-io", commonsIOVersion)
 )
 
 publishing {

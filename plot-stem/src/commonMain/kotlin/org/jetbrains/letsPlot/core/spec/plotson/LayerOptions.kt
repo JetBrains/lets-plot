@@ -97,6 +97,13 @@ open class LayerOptions(
     fun const(aes: Aes<*>, value: Any?) {
         properties[toOption(aes)] = value
     }
+
+    enum class SizeUnit(val value: String) {
+        X(Geom.SizeUnit.X),
+        Y(Geom.SizeUnit.Y),
+        MIN(Geom.SizeUnit.MIN),
+        MAX(Geom.SizeUnit.MAX),
+    }
 }
 
 class PointLayer : LayerOptions(GeomKind.POINT) {
@@ -104,6 +111,13 @@ class PointLayer : LayerOptions(GeomKind.POINT) {
 
     companion object {
         val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Point.SIZE_UNIT)
+    }
+}
+
+class PieLayer : LayerOptions(GeomKind.PIE) {
+    companion object {
+        val SIZE_UNIT = PropSpec<SizeUnit?>(Geom.Pie.SIZE_UNIT)
+        val DIRECTION = PropSpec<Int>(Geom.Pie.DIRECTION)
     }
 }
 

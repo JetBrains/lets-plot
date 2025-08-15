@@ -12,6 +12,7 @@ build-idea
 #**/out-repo  - no longer used
 .maven-publish-dev-repo
 .ipynb_checkpoints
+platf-imagick/ImageMagick/install/
 
 node_modules/
 
@@ -43,3 +44,6 @@ qemu-aarch64-static
 
 # Junie AI 
 /.junie/guidelines.md
+
+# ImageMagick and its dependencies.
+platf-imagick/deps

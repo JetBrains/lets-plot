@@ -47,14 +47,14 @@ def geom_livemap(*,
         Zoom of the map in the range 1 - 15.
     projection : str, default='epsg3857'
         The map projection. There are: 'epsg3857' for Mercator projection;
-        'epsg4326' for Equirectangular projection. `projection` only works
+        'epsg4326' for Equirectangular projection. ``projection`` only works
         with vector map tiles (i.e. Lets-Plot map tiles).
     tiles : str
         Tile provider:
 
-        - pass a predefined constant from the `tilesets` module (Lets-Plot's vector tiles, e.g. `LETS_PLOT_COLOR`, or external raster tiles, e.g. `OPEN_TOPO_MAP`);
+        - pass a predefined constant from the ``tilesets`` module (Lets-Plot's vector tiles, e.g. `LETS_PLOT_COLOR <https://lets-plot.org/python/pages/api/lets_plot.tilesets.LETS_PLOT_COLOR.html>`__, or external raster tiles, e.g. `OPEN_TOPO_MAP <https://lets-plot.org/python/pages/api/lets_plot.tilesets.OPEN_TOPO_MAP.html>`__);
         - pass a URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') if the required tileset not present in the module;
-        - pass the result of a call to a `maptiles_zxy()` function if further customisation is required (e.g. attribution or zoom).
+        - pass the result of a call to a `maptiles_zxy() <https://lets-plot.org/python/pages/api/lets_plot.maptiles_zxy.html>`__ function if further customisation is required (e.g. attribution or zoom).
 
         More information about tiles can be found here:
         https://lets-plot.org/python/pages/basemap_tiles.html
@@ -62,33 +62,37 @@ def geom_livemap(*,
         Show buttons "copy location" and "draw geometry".
     data_size_zoomin : int, default=0
         Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
-        when the size is set by means of mapping between the data and the `size` aesthetic.
-        `0` - size never increases;
-        `-1` - size will be increasing without limits;
-        `n` - a number of zooming-in steps (counting from the initial state of the map widget)
+        when the size is set by means of mapping between the data and the ``size`` aesthetic.
+        0 - size never increases;
+        -1 - size will be increasing without limits;
+        n - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
     const_size_zoomin : int, default=-1
         Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is not linked to a data (i.e. constant size).
-        `0` - size never increases;
-        `-1` - size will be increasing without limits;
-        `n` - a number of zooming-in steps (counting from the initial state of the map widget)
+        0 - size never increases;
+        -1 - size will be increasing without limits;
+        n - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
     other_args
         Other arguments passed on to the layer.
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_livemap()` draws a map, which can be dragged and zoomed.
+    ``geom_livemap()`` draws a map, which can be dragged and zoomed.
 
     ----
 
-    By default the livemap area has a non-zero inset. You can get rid of this with the theme: `theme(plot_inset=0)`.
+    By default the livemap area has a non-zero inset. You can get rid of this with the theme: ``theme(plot_inset=0)``.
+
+    ---
+
+    When drawing a path with two points, the shortest route is taken. To create a longer arc, add intermediate points.
 
     Examples
     --------
@@ -119,6 +123,27 @@ def geom_livemap(*,
             geom_path(color='white', geodesic=True) + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle("The shortest path between New York and Prague")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [-170, 170, -170, 0, 170],
+            'y': [10, 10, -10, -10, -10],
+            'route': ['A', 'A', 'B', 'B', 'B'],
+        }
+        ggplot(data) + \\
+            geom_livemap(zoom=1, location=[180, 0]) + \\
+            geom_path(aes('x', 'y', color='route'), size=1) + \\
+            scale_color_manual(values=['red', 'green'],
+                               labels={'A': "'x': [-170, 170]",
+                                       'B': "'x': [-170, 0, 170]"}) + \\
+            ggtitle("A path that crosses the antimeridian")
 
     """
     if 'symbol' in other_args:

@@ -1,23 +1,36 @@
+
 import ImageMagick.DrawingWand
 import demoAndTestShared.ImageComparer
+import demoAndTestShared.NativeBitmapIO
 import kotlinx.cinterop.*
+import org.jetbrains.letsPlot.commons.encoding.Png
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
+import org.jetbrains.letsPlot.commons.intern.io.Native
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasProvider
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
-import platform.posix.*
+import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager.FontSet
+import org.jetbrains.letsPlot.imagick.canvas.MagickSnapshot
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-fun createCanvas(width: Number = 100, height: Number = 100, pixelDensity: Double = 1.0, fontManager: MagickFontManager = MagickFontManager()): Pair<MagickCanvas, Context2d> {
-    val canvas = MagickCanvas.create(width = width, height = height, pixelDensity = pixelDensity, fontManager = fontManager)
-    val context2d = canvas.context2d
-    return canvas to context2d
+fun Context2d.setFont(family: String, size: Number, style: FontStyle = FontStyle.NORMAL, weight: FontWeight = FontWeight.NORMAL) {
+    val font = Font(
+        fontFamily = family,
+        fontSize = size.toDouble(),
+        fontStyle = style,
+        fontWeight = weight
+    )
+    setFont(font)
 }
 
 var Context2d.lineWidth: Double
@@ -204,89 +217,50 @@ fun drawAffine(
     }
 }
 
-fun getCurrentDir(): String {
-    return memScoped {
-        val bufferSize = 4096 * 8
-        val buffer = allocArray<ByteVar>(bufferSize)
-        if (getcwd(buffer, bufferSize.convert()) != null) {
-            buffer.toKString()
-        } else {
-            "." // Default to current directory on error
-        }
-    }
-}
+val resourcesDir = Native.getCurrentDir() + "/src/nativeTest/resources/"
 
-// TODO: never used - need to test. Should be used to store test images in PNG instead of BMP format.
-fun writeToFile(path: String, data: ByteArray) {
-    memScoped {
-        // O_WRONLY: write only, O_CREAT: create if not exists, O_TRUNC: truncate if exists
-        val fd = open(path, O_WRONLY or O_CREAT or O_TRUNC, 0b110_100_100) // 0644 in octal
+val notoSerifRegularFontPath = resourcesDir + "fonts/NotoSerif-Regular.ttf"
+val notoSerifBoldFontPath = resourcesDir + "fonts/NotoSerif-Bold.ttf"
+val notoSerifItalicFontPath = resourcesDir + "fonts/NotoSerif-Italic.ttf"
+val notoSerifBoldItalicFontPath = resourcesDir + "fonts/NotoSerif-BoldItalic.ttf"
 
-        if (fd == -1) {
-            perror("open")
-            throw Error("Failed to open file: $path")
-        }
+val notoSansMonoRegularFontPath = resourcesDir + "fonts/NotoSansMono-Regular.ttf"
+val notoSansMonoBoldFontPath = resourcesDir + "fonts/NotoSansMono-Bold.ttf"
 
-        val written = data.usePinned { pinned ->
-            write(fd, pinned.addressOf(0), data.size.convert())
-        }
 
-        @Suppress("RemoveRedundantCallsOfConversionMethods") // On Windows `written` is Int
-        if (written.toLong() != data.size.toLong()) {
-            perror("write")
-            close(fd)
-            throw Error("Failed to write all data")
-        }
+fun embeddedFontsManager() = MagickFontManager.configured(
+    "serif" to FontSet(embedded = true, familyName = "serif", notoSerifRegularFontPath)
+)
 
-        close(fd)
-    }
-}
-
-fun readFromFile(path: String): ByteArray {
-    memScoped {
-        // O_RDONLY: read only
-        val fd = open(path, O_RDONLY)
-
-        if (fd == -1) {
-            perror("open")
-            throw Error("Failed to open file: $path")
-        }
-
-        val fileSize = lseek(fd, 0, SEEK_END)
-        if (fileSize == -1L) {
-            perror("lseek")
-            close(fd)
-            throw Error("Failed to get file size: $path")
-        }
-
-        lseek(fd, 0, SEEK_SET) // Reset file pointer to the beginning
-
-        val buffer = ByteArray(fileSize.toInt())
-        val readBytes = buffer.usePinned { pinned ->
-            read(fd, pinned.addressOf(0), fileSize.convert())
-        }
-
-        if (readBytes != fileSize) {
-            perror("read")
-            close(fd)
-            throw Error("Failed to read all data from file: $path")
-        }
-
-        close(fd)
-        return buffer
-    }
-}
-
-fun imageComparer(): ImageComparer {
+fun createImageComparer(fontManager: MagickFontManager): ImageComparer {
     return ImageComparer(
-        expectedDir = getCurrentDir() + "/src/nativeTest/resources/expected/",
-        outDir = getCurrentDir() + "/build/reports/",
-        canvasProvider = MagickCanvasProvider,
-        bitmapIO = PngBitmapIO,
+        expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
+        outDir = Native.getCurrentDir() + "/build/reports/",
+        canvasProvider = MagickCanvasProvider(fontManager),
+        bitmapIO = NativeBitmapIO,
         tol = 1
     )
 }
 
-fun assertCanvas(expectedFileName: String, canvas: MagickCanvas) {
-    imageComparer().assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
+class MagickCanvasProvider(
+    private val magickFontManager: MagickFontManager,
+) : CanvasProvider {
+    override fun createCanvas(size: Vector): MagickCanvas {
+        return MagickCanvas.create(size.x, size.y, 1.0, magickFontManager)
+    }
+
+    override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
+        return MagickSnapshot.fromBitmap(bitmap)
+    }
+
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
+        println("MagickCanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
+        val bitmap = Png.decodeDataImage(dataUrl)
+        return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
+    }
+
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+        val img = MagickUtil.fromBitmap(Png.decode(png))
+        return Asyncs.constant(MagickSnapshot(img))
+    }
 }

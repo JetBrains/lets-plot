@@ -5,18 +5,16 @@
 
 package org.jetbrains.letsPlot.livemap.canvascontrols
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.observable.property.Properties
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyBinding
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.scheduleAsync
 import org.jetbrains.letsPlot.livemap.LiveMap
 
 class LiveMapPresenter : Disposable {
-    private val contentPresenter: CanvasContentPresenter
+    private val contentPresenter: CanvasContentPresenter = CanvasContentPresenter()
     private var errorHandlerRegistration = Registration.EMPTY
     private var isLoadingLiveMapRegistration = Registration.EMPTY
     private var removed = false
@@ -25,20 +23,9 @@ class LiveMapPresenter : Disposable {
     private val liveMapIsLoading = ValueProperty(true)
     val isLoading = Properties.map(Properties.or(initializing, liveMapIsLoading)) { it == true }
 
-    constructor() {
-        contentPresenter = CanvasContentPresenter()
-    }
-
-    // for tests
-    internal constructor(presenter: CanvasContentPresenter) {
-        contentPresenter = presenter
-    }
-
-    fun render(canvasControl: CanvasControl, liveMap: Async<LiveMap>) {
+    fun render(canvasControl: CanvasControl, liveMap: LiveMap) {
         contentPresenter.canvasControl = canvasControl
-
-        showSpinner()
-        canvasControl.scheduleAsync(liveMap).onResult(::showLiveMap, ::showError)
+        showLiveMap(liveMap)
     }
 
     private fun showLiveMap(liveMap: LiveMap) {
@@ -52,11 +39,6 @@ class LiveMapPresenter : Disposable {
                 errorHandlerRegistration = liveMapContent.addErrorHandler(::showError)
             }
         }
-    }
-
-    private fun showSpinner() {
-        initializing.set(true)
-        setContent(::SpinnerContent)
     }
 
     private fun showError(throwable: Throwable) {

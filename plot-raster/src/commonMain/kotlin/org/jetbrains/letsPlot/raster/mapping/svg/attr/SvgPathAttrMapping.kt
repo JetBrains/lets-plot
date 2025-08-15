@@ -15,15 +15,14 @@ internal object SvgPathAttrMapping : SvgShapeMapping<Path>() {
         when (name) {
             SvgPathElement.STROKE_MITER_LIMIT.name -> target.strokeMiter = value?.asFloat
 
-            //SvgPathElement.FILL_RULE.name -> {
-            //    val fillRule = when (value) {
-            //        SvgPathElement.FillRule.NON_ZERO -> org.jetbrains.skia.PathFillMode.WINDING
-            //        SvgPathElement.FillRule.EVEN_ODD -> org.jetbrains.skia.PathFillMode.EVEN_ODD
-            //        null -> null
-            //        else -> throw IllegalArgumentException("Unknown fill-rule: $value")
-            //    }
-            //    target.fillRule = fillRule
-            //}
+            SvgPathElement.FILL_RULE.name -> {
+                target.fillRule = when (value) {
+                    SvgPathElement.FillRule.NON_ZERO ->  Path.FillRule.NON_ZERO
+                    SvgPathElement.FillRule.EVEN_ODD -> Path.FillRule.EVEN_ODD
+                    null -> Path.FillRule.NON_ZERO
+                    else -> throw IllegalArgumentException("Unknown fill-rule: $value")
+                }
+            }
 
             SvgPathElement.D.name -> {
                 // Can be string (slim path) or SvgPathData

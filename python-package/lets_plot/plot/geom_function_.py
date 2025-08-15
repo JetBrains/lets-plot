@@ -86,11 +86,11 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or Pandas or Polars `DataFrame`
+    data : dict or Pandas or Polars ``DataFrame``
         The data to be used in this layer. Specify to describe the definition area of a function.
         If None, the default, the data will not be used at all.
     stat : str, default='identity'
@@ -100,19 +100,22 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         'density2d' (computes and draws 2D kernel density estimate).
     geom : str, default='line'
         The geometry to display the function, as a string.
-    position : str or `FeatureSpec`, default='identity'
+    position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function
+        (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     inherit_aes : bool, default=True
         False - do not combine the layer aesthetic mappings with the plot shared mappings.
-    manual_key : str or `layer_key`
+    manual_key : str or ``layer_key``
         The key to show in the manual legend.
-        Specify text for the legend label or advanced settings using the `layer_key()` function.
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
+        Specify text for the legend label or advanced settings using the
+        `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    tooltips : ``layer_tooltips``
+        Result of the call to the
+        `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
     fun : function
@@ -131,12 +134,12 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
 
     Returns
     -------
-    `LayerSpec`
+    ``LayerSpec``
         Geom object specification.
 
     Notes
     -----
-    `geom_function()` understands the following aesthetics mappings:
+    ``geom_function()`` understands the following aesthetics mappings:
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
@@ -146,8 +149,8 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
 
     ----
 
-    To hide axis tooltips, set 'blank' or the result of `element_blank()`
-    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
 
     Examples
     --------

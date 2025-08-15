@@ -10,10 +10,12 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
+@Suppress("RedundantConstructorKeyword")
 class Annotation constructor(
     private val lines: List<LineSpec>,
     val textStyle: TextStyle,
-    private val useCustomColor: Boolean
+    private val useCustomColor: Boolean,
+    private val useLayerColor: Boolean
 ) {
     fun getAnnotationText(index: Int, ctx: PlotContext): String {
         return lines
@@ -21,11 +23,12 @@ class Annotation constructor(
             .joinToString(transform = LineSpec.DataPoint::value, separator = "\n")
     }
 
-    fun getTextColor(background: Color? = null): Color {
+    fun getTextColor(layerColor: Color?, layerFill: Color?): Color {
         return when {
+            useLayerColor -> layerColor ?: textStyle.color
             useCustomColor -> textStyle.color
-            background == null -> textStyle.color
-            else -> AnnotationUtil.chooseColor(background)
+            layerFill == null -> textStyle.color
+            else -> AnnotationUtil.chooseColor(layerFill)
         }
     }
 }

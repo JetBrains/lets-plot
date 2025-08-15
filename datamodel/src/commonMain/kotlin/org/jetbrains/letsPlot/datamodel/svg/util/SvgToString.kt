@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_PREFIX
 
 class SvgToString(
     private val rgbEncoder: RGBEncoder,
-    private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder or Cairo
+    private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder
 ) {
     fun render(svg: SvgSvgElement): String {
         val buffer = StringBuilder()

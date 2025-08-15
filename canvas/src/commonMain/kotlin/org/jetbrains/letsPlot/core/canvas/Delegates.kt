@@ -127,7 +127,7 @@ open class CanvasControlDelegate(
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot = NullSnapshot
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> = Asyncs.constant(NullSnapshot)
-    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
         return Asyncs.constant(NullSnapshot)
     }
 

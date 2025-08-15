@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
 internal abstract class Figure : Element() {
@@ -80,16 +79,16 @@ internal abstract class Figure : Element() {
 
         internal fun applyPaint(
             paint: Paint,
-            canvas: Canvas
+            ctx: Context2d
         ) {
             if (paint.isStroke) {
-                canvas.context2d.setLineWidth(paint.strokeWidth.toDouble())
-                canvas.context2d.setStrokeStyle(paint.color)
-                canvas.context2d.setStrokeMiterLimit(paint.strokeMiter.toDouble())
-                canvas.context2d.setLineDash(paint.strokeDashList)
+                ctx.setLineWidth(paint.strokeWidth.toDouble())
+                ctx.setStrokeStyle(paint.color)
+                ctx.setStrokeMiterLimit(paint.strokeMiter.toDouble())
+                ctx.setLineDash(paint.strokeDashList)
 
             } else {
-                canvas.context2d.setFillStyle(paint.color)
+                ctx.setFillStyle(paint.color)
             }
         }
 
@@ -112,5 +111,12 @@ internal abstract class Figure : Element() {
             fill()
         }
 
+        internal fun Context2d.fillEvenOdd(paint: Paint) {
+            require(!paint.isStroke) { "Paint must be a fill paint" }
+
+            setFillStyle(paint.color)
+
+            fillEvenOdd()
+        }
     }
 }

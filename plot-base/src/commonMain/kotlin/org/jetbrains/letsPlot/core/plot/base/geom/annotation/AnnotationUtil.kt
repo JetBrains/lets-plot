@@ -11,7 +11,9 @@ import org.jetbrains.letsPlot.commons.colorspace.rgbFromHsl
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.geom.LabelGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom
@@ -20,14 +22,34 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
-object AnnotationUtil {
+internal object AnnotationUtil {
 
-    fun textSizeGetter(textStyle: TextStyle, ctx: GeomContext): (String, DataPointAesthetics) -> DoubleVector = { text, p ->
-        TextUtil.measure(
-            text,
-            toTextDataPointAesthetics(TextParams(textStyle), p),
-            ctx
-        )
+    fun textSizeGetter(textStyle: TextStyle, ctx: GeomContext): (String, DataPointAesthetics) -> DoubleVector =
+        { text, p ->
+            TextUtil.measure(
+                text,
+                toTextDataPointAesthetics(TextParams(textStyle), p),
+                ctx
+            )
+        }
+
+    fun textColorAndLabelAlpha(
+        annotation: Annotation,
+        layerColor: Color?,
+        layerFill: Color?,
+        insideGeom: Boolean,
+    ): Pair<Color, Double> {
+        return if (insideGeom) {
+            Pair(
+                annotation.getTextColor(layerColor, layerFill),
+                0.0
+            )
+        } else {
+            Pair(
+                annotation.getTextColor(layerColor, null),
+                0.75
+            )
+        }
     }
 
     fun chooseColor(background: Color) = when {
@@ -38,7 +60,7 @@ object AnnotationUtil {
     // WCAG recommend a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text
     private const val CONTRAST_RATIO = 4.5
 
-    // Choose text color using the Lightness correction to make it readable on the given background
+    // Choose a text color using the Lightness correction to make it readable on the given background
     fun chooseColor(textColor: Color, background: Color): Color {
         fun correctLightness(color: Color, newLightness: Double): Color {
             val hsl = hslFromRgb(color)
@@ -60,7 +82,7 @@ object AnnotationUtil {
             contrastRatio = Colors.contrastRatio(background, newColor)
             newLightness += step
         }
-       return newColor
+        return newColor
     }
 
     data class TextParams(

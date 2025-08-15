@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom.Sector
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -123,10 +124,12 @@ object PieAnnotation {
                 )
             )
         }
-        val textColor = when (side) {
-            Side.INSIDE -> annotation.getTextColor(sector.p.fill())
-            else -> annotation.getTextColor()
-        }
+
+        val (textColor, _) = textColorAndLabelAlpha(
+            annotation, sector.p.color(), sector.p.fill(),
+            insideGeom = side == Side.INSIDE
+        )
+
         return AnnotationLabel(
             text,
             textSize,

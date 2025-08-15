@@ -15,6 +15,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(project(":commons"))
+    implementation(project(":plot-stem"))
     implementation(project(":plot-image-export"))
     implementation(project(":demo-common-plot"))
     implementation(project(":demo-common-jvm-utils"))

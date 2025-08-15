@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.spec.Option
 
 class ThemeOptions : Options() {
     var name: ThemeName? by map(Option.Meta.NAME)
+    var line: Element? by map(ThemeOption.LINE)
+    var axis: Element? by map(ThemeOption.AXIS)
     var axisTitle: Element? by map(ThemeOption.AXIS_TITLE)
     var axisLine: Element? by map(ThemeOption.AXIS_LINE)
     var panelGrid: Element? by map(ThemeOption.PANEL_GRID)
@@ -19,6 +21,7 @@ class ThemeOptions : Options() {
     var axisTicksY: Element? by map(ThemeOption.AXIS_TICKS_Y)
     var axisTooltip: Element? by map(ThemeOption.AXIS_TOOLTIP)
     var labelText: Element? by map(ThemeOption.ANNOTATION_TEXT)
+    var flavor: Flavor? by map(ThemeOption.FLAVOR)
 
     enum class ThemeName(val value: String) {
         GREY(ThemeOption.Name.R_GREY),
@@ -28,6 +31,14 @@ class ThemeOptions : Options() {
         BW(ThemeOption.Name.R_BW),
         MINIMAL2(ThemeOption.Name.LP_MINIMAL),
         NONE(ThemeOption.Name.LP_NONE)
+    }
+
+    enum class Flavor(val value: String) {
+        DARCULA(ThemeOption.Flavor.DARCULA),
+        SOLARIZED_LIGHT(ThemeOption.Flavor.SOLARIZED_LIGHT),
+        SOLARIZED_DARK(ThemeOption.Flavor.SOLARIZED_DARK),
+        HIGH_CONTRAST_LIGHT(ThemeOption.Flavor.HIGH_CONTRAST_LIGHT),
+        HIGH_CONTRAST_DARK(ThemeOption.Flavor.HIGH_CONTRAST_DARK),
     }
 
     class Element : Options() {
@@ -60,3 +71,10 @@ class ThemeOptions : Options() {
 }
 
 fun theme(block: ThemeOptions.() -> Unit) = ThemeOptions().apply(block)
+
+fun ThemeOptions.setVoid(): ThemeOptions {
+    name = ThemeOptions.ThemeName.CLASSIC
+    line = ThemeOptions.Element.BLANK
+    axis = ThemeOptions.Element.BLANK
+    return this
+}

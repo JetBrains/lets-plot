@@ -6,11 +6,10 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
-import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.getList
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.toJson
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Data
-import org.jetbrains.letsPlot.core.spec.write
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.LetsPlotExt
 
 object VegaConfig {
     fun isVegaLiteSpec(opts: Map<String, Any>): Boolean {
@@ -18,7 +17,7 @@ object VegaConfig {
     }
 
     fun toLetsPlotSpec(vegaSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
-        if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
+        if (vegaSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.LOG_SPEC) == true) {
             // deep copy data to avoid modification of the original data
             val specCopy = vegaSpec.let(JsonSupport::formatJson).let(JsonSupport::parseJson)
 
@@ -30,7 +29,13 @@ object VegaConfig {
         val plotOptions = VegaPlotConverter.convert(vegaSpec)
         val plotSpec = plotOptions.toJson()
 
-        if (vegaSpec[VegaOption.LetsPlotExt.LOG_LETS_PLOT_SPEC] == true) {
+        vegaSpec.getMap(VegaOption.LETS_PLOT_EXT, LetsPlotExt.SPEC_AUGMENTATION)?.let { aug ->
+            aug.forEach { (key, value) ->
+                plotSpec[key] = value
+            }
+        }
+
+        if (vegaSpec.getBool(VegaOption.LETS_PLOT_EXT, LetsPlotExt.LOG_SPEC) == true) {
             plotOptions.data = plotOptions.data?.mapValues { (_, values) -> values.take(5) }
             plotOptions.layerOptions?.forEach { layerOptions ->
                 layerOptions.data = layerOptions.data?.mapValues { (_, values) -> values.take(5) }

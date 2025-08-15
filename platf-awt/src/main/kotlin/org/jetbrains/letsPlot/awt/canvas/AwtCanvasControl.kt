@@ -15,11 +15,11 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
@@ -87,17 +87,14 @@ class AwtCanvasControl(
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
-        val bufferedImage = BufferedImage(bitmap.width, bitmap.height, BufferedImage.TYPE_INT_ARGB)
-        bufferedImage.setRGB(0, 0, bitmap.width, bitmap.height, bitmap.argbInts, 0, bitmap.width)
+        val bufferedImage = BitmapUtil.toBufferedImage(bitmap)
         return AwtCanvas.AwtSnapshot(bufferedImage)
     }
 
     private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-        val img = Png.decodeDataImage(dataUrl)
-
-        val bufImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
-        bufImg.setRGB(0, 0, img.width, img.height, img.argbInts, 0, img.width)
-        return bufImg
+        val bitmap = Png.decodeDataImage(dataUrl)
+        val bufferedImage = BitmapUtil.toBufferedImage(bitmap)
+        return bufferedImage
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
@@ -105,13 +102,9 @@ class AwtCanvasControl(
             AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
         )
     }
-    override fun decodePng(png: ByteArray, size: Vector): Async<Canvas.Snapshot> {
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
         val src = ImageIO.read(ByteArrayInputStream(png))
-        val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
-        val graphics2D = dst.createGraphics() as Graphics2D
-        graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
-        graphics2D.dispose()
-        val snapshot = AwtCanvas.AwtSnapshot(dst)
+        val snapshot = AwtCanvas.AwtSnapshot(src)
         return Asyncs.constant(snapshot)
     }
 
