@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import kotlin.math.max
+import kotlin.math.pow
 
 class ColorBarComponent(
     override val spec: ColorBarComponentSpec,
@@ -80,16 +81,19 @@ class ColorBarComponent(
             }
 
             // Label
+            val fontSize = theme.textStyle().size
             val lineHeights = PlotLabelSpecFactory.legendItem(theme).heights(brLabel)
             val label = MultilineLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setLineHeights(lineHeights)
+            label.setFontSize(fontSize)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
+            val magickFactor = 0.85.pow(lineHeights.first() / fontSize) // TODO
             val yOffset = when (brInfo.labelVerticalAnchor) {
-                Text.VerticalAnchor.TOP -> lineHeights.first() * 0.7 // TODO
-                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeights.first()
-                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeights.first() * 0.85
+                Text.VerticalAnchor.TOP -> lineHeights.first() * magickFactor
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeights.first() * magickFactor
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeights.first() * magickFactor
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
