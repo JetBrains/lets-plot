@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
@@ -21,7 +22,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import kotlin.math.max
-import kotlin.math.pow
 
 class ColorBarComponent(
     override val spec: ColorBarComponentSpec,
@@ -89,11 +89,11 @@ class ColorBarComponent(
             label.setLineHeights(lineHeights)
             label.setFontSize(fontSize)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
-            val magickFactor = 0.85.pow(lineHeights.first() / fontSize) // TODO
+            val correction = verticalCorrectionFactor(lineHeights.first(), fontSize)
             val yOffset = when (brInfo.labelVerticalAnchor) {
-                Text.VerticalAnchor.TOP -> lineHeights.first() * magickFactor
-                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeights.first() * magickFactor
-                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeights.first() * magickFactor
+                Text.VerticalAnchor.TOP -> correction(0.7)
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + correction(1.0)
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + correction(0.85)
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)

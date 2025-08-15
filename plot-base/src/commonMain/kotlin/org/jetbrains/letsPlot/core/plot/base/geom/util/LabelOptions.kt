@@ -9,13 +9,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
-import kotlin.math.pow
 
 class LabelOptions {
     var paddingFactor: Double = 0.25    //  Amount of padding around label
@@ -61,10 +61,10 @@ class LabelOptions {
                 Text.HorizontalAnchor.MIDDLE -> location.x
             }
             val firstLineHeight = TextUtil.lineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
-            val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
+            val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
             val textPosition = DoubleVector(
                 xPosition,
-                rectangle.origin.y + padding + magickFactor * firstLineHeight // top-align the first line
+                rectangle.origin.y + padding + correction(0.8) // top-align the first line
             )
             label.setHorizontalAnchor(hAnchor)
             label.moveTo(textPosition)

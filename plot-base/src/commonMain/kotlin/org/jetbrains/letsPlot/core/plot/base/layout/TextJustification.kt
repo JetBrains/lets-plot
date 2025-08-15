@@ -39,6 +39,12 @@ class TextJustification(val x: Double, val y: Double) {
             return position to hAnchor
         }
 
+        fun verticalCorrectionFactor(lineHeight: Double, fontSize: Double): (Double) -> Double {
+            return { correctionCoefficient ->
+                lineHeight * correctionCoefficient.pow(lineHeight / fontSize) // TODO
+            }
+        }
+
         private fun xPosition(
             boundRect: DoubleRectangle,
             hjust: Double,
@@ -65,8 +71,8 @@ class TextJustification(val x: Double, val y: Double) {
         ): Double {
             val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
             // use 0.8 for better alignment: like vertical_anchor = 'top' (dy="0.8em")
-            val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
-            return y - textSize.y + firstLineHeight * magickFactor
+            val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
+            return y - textSize.y + correction(0.8)
         }
     }
 }

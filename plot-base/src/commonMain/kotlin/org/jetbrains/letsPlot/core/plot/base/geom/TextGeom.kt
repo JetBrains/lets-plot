@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
@@ -21,7 +22,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
-import kotlin.math.pow
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -112,12 +112,12 @@ open class TextGeom : GeomBase() {
         //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
         val firstLineHeight = TextUtil.lineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
-        val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
+        val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
         val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
-            Text.VerticalAnchor.TOP -> location.y
-            Text.VerticalAnchor.BOTTOM -> location.y - textHeight
-            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2
-        } + firstLineHeight * magickFactor
+            Text.VerticalAnchor.TOP -> location.y + correction(0.7)
+            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + correction(1.0)
+            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + correction(0.8)
+        }
 
         val textLocation = DoubleVector(location.x, yPosition)
         label.moveTo(textLocation)
