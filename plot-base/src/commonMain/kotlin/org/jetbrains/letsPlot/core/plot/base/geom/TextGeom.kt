@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
+import kotlin.math.pow
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -110,11 +111,13 @@ open class TextGeom : GeomBase() {
         val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
         //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
+        val firstLineHeight = TextUtil.lineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
+        val magickFactor = 0.8.pow(firstLineHeight / fontSize) // TODO
         val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
-            Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
-            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
-            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
-        }
+            Text.VerticalAnchor.TOP -> location.y
+            Text.VerticalAnchor.BOTTOM -> location.y - textHeight
+            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2
+        } + firstLineHeight * magickFactor
 
         val textLocation = DoubleVector(location.x, yPosition)
         label.moveTo(textLocation)
