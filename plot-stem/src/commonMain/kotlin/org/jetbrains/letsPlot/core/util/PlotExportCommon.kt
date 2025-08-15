@@ -36,30 +36,30 @@ object PlotExportCommon {
         val exportUnit: SizeUnit
 
         if (plotSize == null && dpi == null && unit == null) {
-            // ggsave(png) - user wants to save a plot without specifying size, DPI, or unit
-            // Size from ggsize() or default, meaning the unit is assumed to be pixels
+            // ggsave(png) - no size, no unit, no dpi
+            // Use pixel ggsize (or default) and apply scale (default 2.0) for higher-resolution raster.
             exportUnit = SizeUnit.PX
-            exportScale = scaleFactor?.toDouble() ?: 2.0 // The default scale factor is 2.0 for better quality
+            exportScale = scaleFactor?.toDouble() ?: 2.0
         } else if (plotSize == null && unit == null && dpi != null) {
-            // ggsave(png, dpi=150) - user wants to scale the output based on DPI with no specified size and unit
-            // This means pixel ggsize() or default size is used to determine the size of the plot
+            // ggsave(png, dpi=150) - only DPI is specified.
+            // Use pixel ggsize (or default), treat it as 96 PPI to get a physical size, then render at the given DPI.
             exportUnit = SizeUnit.PX
             exportScale = scaleFactor?.toDouble() ?: 1.0
         } else if (plotSize != null && unit == null) {
-            // ggsave(png, 3, 2) - user wants to save a plot with a specific size without specifying unit
-            // Size is assumed to be in inches
+            // ggsave(png, w=3, h=2) - size given without unit; assume inches.
             exportUnit = SizeUnit.IN
             exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
         } else if (plotSize != null && unit != null) {
-            // ggsave(png, w=3, h=2, unit=cm, dpi=150)
+            // ggsave(png, w=3, h=2, unit=cm, dpi=150) - size + explicit unit (dpi optional).
             // user wants to save a plot with a specific size and unit
             exportUnit = unit
             exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
-        } else {
-            // ggsave(png, w=3, h=2, unit=cm)
-            // ggsave(png, w=3, h=2, unit=cm, scale=2)
-            exportUnit = unit ?: SizeUnit.PX // The default size unit is inches
-            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
+        } else { // plotSize == null && unit != null
+            // size is not given, unit alone is ineffective
+            //   ggsave(png, unit = cm)           - no width/height; unit has no effect
+            //   ggsave(png, unit = cm, scale=3)  - scale applies to pixel ggsize
+            exportUnit = unit ?: SizeUnit.PX
+            exportScale = scaleFactor?.toDouble() ?: 1.0
         }
 
         val exportDpi = dpi?.toDouble() ?: when (exportUnit) {
