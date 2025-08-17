@@ -1,10 +1,15 @@
+package demo.plot
+
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaDataUtil
 import org.jetbrains.letsPlot.core.spec.write
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
@@ -15,61 +20,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.swing.*
 import javax.swing.undo.UndoManager
-
-private class PasteIcon(private val size: Int = 20) : Icon {
-    override fun paintIcon(c: Component?, g: Graphics, x: Int, y: Int) {
-        val g2d = g.create() as Graphics2D
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-
-        // A dark, solid color for high contrast
-        val boardColor = Color(80, 80, 80)
-
-        // Draw the clipboard backplate
-        g2d.color = boardColor
-        g2d.fillRoundRect(x + 2, y, size - 4, size, 6, 6)
-
-        // Draw the clip on top
-        g2d.fillRect(x + 6, y - 1, size - 12, 5)
-
-        // Draw the "paper" with a very light color
-        g2d.color = Color(245, 245, 245)
-        g2d.fillRect(x + 4, y + 4, size - 8, size - 7)
-
-        // Draw text lines
-        g2d.stroke = BasicStroke(1.5f)
-        g2d.color = boardColor
-        g2d.drawLine(x + 5, y + 8, x + 14, y + 8)
-        g2d.drawLine(x + 5, y + 11, x + 14, y + 11)
-        g2d.drawLine(x + 5, y + 14, x + 14, y + 14)
-
-        g2d.dispose()
-    }
-
-    override fun getIconWidth(): Int = size
-    override fun getIconHeight(): Int = size
-}
-
-private fun loadSpecFromFile(): String? {
-    val specFile = getSpecFile()
-    return try {
-        if (specFile.isFile && specFile.canRead()) {
-            val content = specFile.readText()
-            if (content.isNotBlank()) content else null
-        } else {
-            null
-        }
-    } catch (e: IOException) {
-        println("Warning: Could not read previous plot spec from ${specFile.absolutePath}")
-        e.printStackTrace()
-        null
-    }
-}
-
-private fun getSpecFile(): File {
-    val homeDir = System.getProperty("user.home")
-    val appDir = File(homeDir, ".lets-plot-debugger")
-    return File(appDir, "last_spec.json")
-}
 
 fun main() {
     val specString = System.getenv("PLOT_SPEC")
@@ -106,6 +56,30 @@ fun main() {
 }
 
 
+private fun loadSpecFromFile(): String? {
+    val specFile = getSpecFile()
+    return try {
+        if (specFile.isFile && specFile.canRead()) {
+            val content = specFile.readText()
+            if (content.isNotBlank()) content else null
+        } else {
+            null
+        }
+    } catch (e: IOException) {
+        println("Warning: Could not read previous plot spec from ${specFile.absolutePath}")
+        e.printStackTrace()
+        null
+    }
+}
+
+private fun getSpecFile(): File {
+    val homeDir = System.getProperty("user.home")
+    val appDir = File(homeDir, ".lets-plot-debugger")
+    return File(appDir, "last_spec.json")
+}
+
+
+
 class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val plotSpecTextArea = JTextArea().apply {
         wrapStyleWord = true
@@ -136,6 +110,40 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private lateinit var undoAction: AbstractAction
     private lateinit var redoAction: AbstractAction
 
+    // New components for frontend selection and pixel density
+    private val frontendComboBox = JComboBox(arrayOf("batik", "canvas")).apply {
+        addItemListener {
+            pixelDensityLabel.isVisible = selectedItem == "canvas"
+            pixelDensitySpinner.isVisible = selectedItem == "canvas"
+            evaluate() // Re-render on frontend change
+        }
+    }
+    private val pixelDensityLabel = JLabel("Pixel Density:").apply { isVisible = false }
+    private val pixelDensitySpinner = JSpinner(SpinnerNumberModel(2.0, 0.1, 5.0, 0.1)).apply {
+        isVisible = false
+        preferredSize = Dimension(80, this.preferredSize.height) // Set a fixed width
+        addChangeListener {
+            // Use the debouncer timer
+            densityDebouncer.restart()
+        }
+    }
+
+    // Debouncer timer for pixel density
+    private val densityDebouncer = Timer(300) {
+        evaluate()
+    }.apply {
+        isRepeats = false // Make it a single-shot timer
+    }
+
+    // Frontend panel
+    private val frontendPanel = JPanel().apply {
+        layout = FlowLayout(FlowLayout.LEFT)
+        add(JLabel("Frontend:"))
+        add(frontendComboBox)
+        add(pixelDensityLabel)
+        add(pixelDensitySpinner)
+    }
+
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         preferredSize = Dimension(1400, 600)
@@ -162,13 +170,22 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             add(specEditorPane, BorderLayout.CENTER)
             add(buttonPanel, BorderLayout.SOUTH)
         }
+
+        // Main layout changes:
+        contentPane.layout = BorderLayout()
+
+        val mainPanel = JPanel(BorderLayout())  // Panel to hold plot and frontend panel
+
+        mainPanel.add(plotPanel, BorderLayout.CENTER) // Plot occupies center
+        mainPanel.add(frontendPanel, BorderLayout.SOUTH) // Frontend panel under the plot
+
         val splitPane = JSplitPane(
-            JSplitPane.HORIZONTAL_SPLIT, controlPanel, plotPanel
+            JSplitPane.HORIZONTAL_SPLIT, controlPanel, mainPanel
         ).apply {
             dividerLocation = 420
         }
-        contentPane.layout = BorderLayout()
-        contentPane.add(splitPane, BorderLayout.CENTER)
+
+        contentPane.add(splitPane, BorderLayout.CENTER) // splitPane occupies the contentPane
 
         pack()
         setLocationRelativeTo(null)
@@ -269,21 +286,43 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     }
 
     fun evaluate() {
+        // Stop the debouncer timer if it's running
+        densityDebouncer.stop()
+
         saveSpecToFile()
 
         val spec = parsePlotSpec(plotSpecTextArea.text).let(::fetchVegaLiteData)
         plotPanel.removeAll()
-        val processedSpec = MonolithicCommon.processRawSpecs(spec)
-        val newPlotComponent = DefaultPlotPanelBatik(
-            processedSpec = processedSpec,
-            preferredSizeFromPlot = false,
-            repaintDelay = 300,
-            preserveAspectRatio = false,
-        ) { messages ->
-            for (message in messages) {
-                println("[Demo Plot Viewer] $message")
+
+        val newPlotComponent = when (frontendComboBox.selectedItem) {
+            "batik" -> {
+                val processedSpec = MonolithicCommon.processRawSpecs(spec)
+                DefaultPlotPanelBatik(
+                    processedSpec = processedSpec,
+                    preferredSizeFromPlot = false,
+                    repaintDelay = 300,
+                    preserveAspectRatio = false,
+                ) { messages ->
+                    for (message in messages) {
+                        println("[Demo Plot Viewer] $message")
+                    }
+                }
             }
+            "canvas" -> {
+                val plotFig = MonolithicCanvas.buildPlotFigureFromRawSpec(
+                    rawSpec = spec,
+                    sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
+                    computationMessagesHandler = { messages ->
+                        for (message in messages) {
+                            println("[PlotSpecDebugger] $message")
+                        }
+                    }
+                )
+                CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+            }
+            else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
         }
+
         plotPanel.add(newPlotComponent, BorderLayout.CENTER)
         plotPanel.revalidate()
         plotPanel.repaint()
@@ -313,4 +352,38 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         }
         return plotSpec
     }
+
+    private class PasteIcon(private val size: Int = 20) : Icon {
+        override fun paintIcon(c: Component?, g: Graphics, x: Int, y: Int) {
+            val g2d = g.create() as Graphics2D
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+
+            // A dark, solid color for high contrast
+            val boardColor = Color(80, 80, 80)
+
+            // Draw the clipboard backplate
+            g2d.color = boardColor
+            g2d.fillRoundRect(x + 2, y, size - 4, size, 6, 6)
+
+            // Draw the clip on top
+            g2d.fillRect(x + 6, y - 1, size - 12, 5)
+
+            // Draw the "paper" with a very light color
+            g2d.color = Color(245, 245, 245)
+            g2d.fillRect(x + 4, y + 4, size - 8, size - 7)
+
+            // Draw text lines
+            g2d.stroke = BasicStroke(1.5f)
+            g2d.color = boardColor
+            g2d.drawLine(x + 5, y + 8, x + 14, y + 8)
+            g2d.drawLine(x + 5, y + 11, x + 14, y + 11)
+            g2d.drawLine(x + 5, y + 14, x + 14, y + 14)
+
+            g2d.dispose()
+        }
+
+        override fun getIconWidth(): Int = size
+        override fun getIconHeight(): Int = size
+    }
+
 }

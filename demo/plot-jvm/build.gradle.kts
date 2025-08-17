@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":plot-base"))
     implementation(project(":plot-builder"))
     implementation(project(":plot-stem"))
+    implementation(project(":plot-raster"))
     implementation(project(":demo-common-plot"))
     implementation(project(":demo-common-jvm-utils"))
     implementation(project(":demo-and-test-shared"))

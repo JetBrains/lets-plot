@@ -357,6 +357,28 @@ class PlotTest {
     }
 
     @Test
+    fun plotMarkdownObliqueBoldFontStyleScale2() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "oblique_bold" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_oblique_bold_font_style_2Xscale_test.png", plotSpec, scale = 2)
+    }
+
+    @Test
     fun plot5x2cm96dpi() {
         val (w, h, dpi) = Triple(5, 2, 96)
         val spec = """
