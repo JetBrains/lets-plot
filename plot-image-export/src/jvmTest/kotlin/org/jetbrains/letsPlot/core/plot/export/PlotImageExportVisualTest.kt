@@ -48,6 +48,27 @@ class PlotImageExportVisualTest {
     private val imageComparer by lazy { createImageComparer() }
 
     @Test
+    fun labels() {
+        val spec = """
+            {
+              "kind": "plot",
+              "theme": {
+                "axis_title_y": { "blank": true }
+              },
+              "layers": [
+                { "geom": "text", "x": 0.0, "y": 0.0, "label": "QWE" },
+                { "geom": "text", "x": 0.0, "y": 0.0, "label": "___", "color": "red" }
+              ],
+              "ggsize": { "width": 200.0, "height": 200.0 }
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_labels_test.png", plotSpec)
+    }
+
+    @Test
     fun markdown2Xscale() {
         val spec = """
             |{
