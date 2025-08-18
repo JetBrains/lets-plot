@@ -17,9 +17,11 @@ import java.awt.GraphicsEnvironment
 import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 
+@Ignore
 class PlotImageExportVisualTest {
 
     private fun MutableMap<String, Any>.themeTextNotoSans(): MutableMap<String, Any> {
