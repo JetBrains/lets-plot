@@ -29,6 +29,9 @@ class PlotImageExportVisualTest {
                 "blank" to false,
                 "family" to "Noto Sans"
             ),
+            "axis_title_y" to mapOf(
+                "blank" to true
+            )
         )
         return this
     }

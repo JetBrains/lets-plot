@@ -48,10 +48,10 @@ class ImageComparer(
         if (diffBitmap != null) {
             val diffFilePath = outDir + "${testName}_diff.png"
             val visualDiffBitmap = composeVisualDiff(expectedBitmap, actualBitmap, diffBitmap)
-            val diffDataImage = Png.encodeDataImage(visualDiffBitmap)
 
             bitmapIO.write(visualDiffBitmap, diffFilePath)
             bitmapIO.write(actualBitmap, actualFilePath)
+            val diffDataImage = Png.encodeDataImage(visualDiffBitmap)
 
             error(
                 """Image mismatch.
