@@ -119,7 +119,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         }
     }
     private val pixelDensityLabel = JLabel("Pixel Density:").apply { isVisible = false }
-    private val pixelDensitySpinner = JSpinner(SpinnerNumberModel(2.0, 0.1, 5.0, 0.1)).apply {
+    private val pixelDensitySpinner = JSpinner(SpinnerNumberModel(2.0, 0.5, 5.0, 0.1)).apply {
         isVisible = false
         preferredSize = Dimension(80, this.preferredSize.height) // Set a fixed width
         addChangeListener {
@@ -294,38 +294,56 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         val spec = parsePlotSpec(plotSpecTextArea.text).let(::fetchVegaLiteData)
         plotPanel.removeAll()
 
-        val newPlotComponent = when (frontendComboBox.selectedItem) {
-            "batik" -> {
-                val processedSpec = MonolithicCommon.processRawSpecs(spec)
-                DefaultPlotPanelBatik(
-                    processedSpec = processedSpec,
-                    preferredSizeFromPlot = false,
-                    repaintDelay = 300,
-                    preserveAspectRatio = false,
-                ) { messages ->
-                    for (message in messages) {
-                        println("[Demo Plot Viewer] $message")
-                    }
-                }
-            }
-            "canvas" -> {
-                val plotFig = MonolithicCanvas.buildPlotFigureFromRawSpec(
-                    rawSpec = spec,
-                    sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
-                    computationMessagesHandler = { messages ->
+        try {
+            val newPlotComponent = when (frontendComboBox.selectedItem) {
+                "batik" -> {
+                    val processedSpec = MonolithicCommon.processRawSpecs(spec)
+                    DefaultPlotPanelBatik(
+                        processedSpec = processedSpec,
+                        preferredSizeFromPlot = false,
+                        repaintDelay = 300,
+                        preserveAspectRatio = false,
+                    ) { messages ->
                         for (message in messages) {
-                            println("[PlotSpecDebugger] $message")
+                            println("[Demo Plot Viewer] $message")
                         }
                     }
-                )
-                CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
-            }
-            else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
-        }
+                }
 
-        plotPanel.add(newPlotComponent, BorderLayout.CENTER)
-        plotPanel.revalidate()
-        plotPanel.repaint()
+                "canvas" -> {
+                    val plotFig = MonolithicCanvas.buildPlotFigureFromRawSpec(
+                        rawSpec = spec,
+                        sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
+                        computationMessagesHandler = { messages ->
+                            for (message in messages) {
+                                println("[PlotSpecDebugger] $message")
+                            }
+                        }
+                    )
+                    CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                }
+                else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
+            }
+
+            plotPanel.add(newPlotComponent, BorderLayout.CENTER)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            JOptionPane.showMessageDialog(
+                this,
+                "Error building plot: ${e.message}",
+                "Plot Error",
+                JOptionPane.ERROR_MESSAGE
+            )
+            // The crucial part:  Reset the selection back to what it was.
+            // This prevents the combo box from getting into a bad state.
+            SwingUtilities.invokeLater {
+                frontendComboBox.selectedItem = frontendComboBox.selectedItem // Reset selection
+            }
+
+        } finally {
+            plotPanel.revalidate()
+            plotPanel.repaint()
+        }
     }
 
     private fun fetchVegaLiteData(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {

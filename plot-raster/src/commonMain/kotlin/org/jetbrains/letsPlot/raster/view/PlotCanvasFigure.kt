@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -58,19 +59,17 @@ class PlotCanvasFigure : CanvasFigure {
 
     private fun buildPlotSvg() {
         val processedSpec = processedSpec ?: return
+        val canvasControl = canvasControl ?: return
+        val size = canvasControl.size.takeIf { it != Vector.ZERO } ?: return
 
-        // It's fine to build a view model without a canvasControl.
-        // Size policy may work with a null container size.
         val viewModel = MonolithicCanvas.buildViewModelFromProcessedSpecs(
             plotSpec = processedSpec,
             sizingPolicy = sizingPolicy,
-            containerSize = canvasControl?.size?.toDoubleVector(),
+            containerSize = size.toDoubleVector(),
             computationMessagesHandler = computationMessagesHandler
         )
 
         plotSvgFigure.svgSvgElement = viewModel.svg
-
-        val canvasControl = canvasControl ?: return
 
         viewModelReg.dispose()
         viewModelReg = CompositeRegistration(
