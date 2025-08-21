@@ -19,7 +19,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
            scale: float = None, w: Optional[float] = None, h: Optional[float] = None, unit: Optional[str] = None,
            dpi: Optional[int] = None) -> str:
     """
-    Export plot or `bunch` to a file.
+    Export plot to a file.
     Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
