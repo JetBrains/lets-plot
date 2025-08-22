@@ -7,7 +7,7 @@ from .core import FeatureSpec
 __all__ = ['ggtb']
 
 
-def ggtb() -> FeatureSpec:
+def ggtb(scale=False) -> FeatureSpec:
     """
     Add a toolbar to a chart.
 
@@ -52,4 +52,4 @@ def ggtb() -> FeatureSpec:
             ggtb()
 
     """
-    return FeatureSpec(kind='ggtoolbar', name=None)
+    return FeatureSpec(kind='ggtoolbar', name=None, scale=scale)
