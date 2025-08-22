@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 object FigureModelHelper {
@@ -26,8 +28,10 @@ object FigureModelHelper {
             if (index < 0) {
                 specOverrideList.add(newSpecOverride)
             } else {
-                val reconciled = reconcile(specOverrideList[index], newSpecOverride)
-                specOverrideList.set(index, reconciled)
+                val lims = reconcile(specOverrideList[index], newSpecOverride)
+                val scale = calculate(specOverrideList[index], newSpecOverride)
+
+                specOverrideList.set(index, lims + scale)
             }
             specOverrideList
         }
@@ -64,5 +68,45 @@ object FigureModelHelper {
         return newLims.zip(wasLims).map { (newLim, wasLim) ->
             newLim ?: wasLim
         }
+    }
+
+    private fun calculate(
+        wasSpecs: Map<String, Any>,
+        newSpecs: Map<String, Any>
+    ): Map<String, Any> {
+        val xScaleRatio = calculateScaleRatio(COORD_XLIM_TRANSFORMED, wasSpecs, newSpecs)
+        val yScaleRatio = calculateScaleRatio(COORD_YLIM_TRANSFORMED, wasSpecs, newSpecs)
+        val ratio = wasSpecs[SCALE_RATIO]?.let { it as DoubleVector
+            DoubleVector(it.x * xScaleRatio, it.y * yScaleRatio)
+        } ?: DoubleVector(xScaleRatio, yScaleRatio)
+
+        return mapOf(SCALE_RATIO to ratio)
+    }
+
+    private fun calculateScaleRatio(
+        option: String,
+        wasSpecs: Map<String, Any>,
+        newSpecs: Map<String, Any>
+    ): Double {
+        @Suppress("UNCHECKED_CAST")
+        val newLims = (newSpecs[option] as? List<Double?>) ?: return 1.0
+
+        @Suppress("UNCHECKED_CAST")
+        val wasLims = (wasSpecs[option] as? List<Double?>) ?: return 1.0
+
+        if (newLims.size != 2 || wasLims.size != 2) {
+            return 1.0
+        }
+
+        val newMin = newLims[0] ?: return 1.0
+        val newMax = newLims[1] ?: return 1.0
+        val wasMin = wasLims[0] ?: return 1.0
+        val wasMax = wasLims[1] ?: return 1.0
+
+
+        val newRange = newMax - newMin
+        val wasRange = wasMax - wasMin
+
+        return wasRange / newRange
     }
 }
