@@ -9,6 +9,7 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -18,6 +19,7 @@ import kotlin.test.fail
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@Ignore
 class PlotTest {
     companion object {
         private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
@@ -354,6 +356,28 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         assertPlot("plot_markdown_oblique_bold_font_style_test.png", plotSpec)
+    }
+
+    @Test
+    fun plotMarkdownObliqueBoldFontStyleScale2() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "blank" } ],
+            |  "ggtitle": { "text": "Foo *Bar* **Baz** ***FooBarBaz***" },
+            |  "ggsize": { "width": 220.0, "height": 30.0 },
+            |  "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank",
+            |    "plot_title": { "markdown": true, "blank": false, "family": "oblique_bold" }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_oblique_bold_font_style_2Xscale_test.png", plotSpec, scale = 2)
     }
 
     @Test

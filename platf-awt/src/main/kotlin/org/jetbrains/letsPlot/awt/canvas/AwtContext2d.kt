@@ -291,6 +291,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
                     clipStack.subList(state.numClipPath, clipStack.size).clear()
                 }
 
+                graphics.transform = AffineTransform()
                 graphics.clip = clipStack.lastOrNull()
                 graphics.transform = state.transform
                 graphics.stroke = state.stroke

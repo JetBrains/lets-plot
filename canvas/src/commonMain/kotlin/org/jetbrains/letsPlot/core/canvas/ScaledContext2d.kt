@@ -134,7 +134,19 @@ class ScaledContext2d private constructor(
     override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(scaled(lineDash))
     override fun setLineDashOffset(lineDashOffset: Double) = ctx.setLineDashOffset(lineDashOffset)
     override fun measureTextWidth(str: String): Double = descaled(ctx.measureTextWidth(str))
-    override fun measureText(str: String): TextMetrics = ctx.measureText(str)
+    override fun measureText(str: String): TextMetrics {
+        val metrics = ctx.measureText(str)
+        return TextMetrics(
+            ascent = descaled(metrics.ascent),
+            descent = descaled(metrics.descent),
+            bbox = DoubleRectangle(
+                descaled(metrics.bbox.left),
+                descaled(metrics.bbox.top),
+                descaled(metrics.bbox.width),
+                descaled(metrics.bbox.height)
+            ),
+        )
+    }
 
     override fun clearRect(rect: DoubleRectangle) {
         ctx.clearRect(
