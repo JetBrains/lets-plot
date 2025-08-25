@@ -40,11 +40,11 @@ internal class HorizontalVerticalLabelsLayout(
         axisLength: Double,
     ): AxisLabelsLayoutInfo {
 
-        val height = breaks.labels.maxOf { labelSpec.heights(it).max() } // TODO: Use whole list
+        val maxHeight = breaks.labels.maxOf { labelSpec.heights(it).maxOrNull() ?: labelSpec.regularLineHeight() }
         val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
         var overlap = false
         if (breaks.size >= 2) {
-            val minTickDistance = height + MIN_DISTANCE
+            val minTickDistance = maxHeight + MIN_DISTANCE
             val tickDistance = abs(ticks[0] - ticks[1])
             overlap = tickDistance < minTickDistance
         }
