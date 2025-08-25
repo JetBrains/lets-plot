@@ -19,7 +19,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
            scale: float = None, w: Optional[float] = None, h: Optional[float] = None, unit: Optional[str] = None,
            dpi: Optional[int] = None) -> str:
     """
-    Export plot or `bunch` to a file.
+    Export plot to a file.
     Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
@@ -30,7 +30,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     plot : ``PlotSpec``
         Plot specification to export.
     filename : str
-        The name of file. It must end with a file extension corresponding
+        Name of the file. It must end with a file extension corresponding
         to one of the supported formats: SVG, HTML (or HTM), PNG, PDF (requires the pillow library).
     path : str
         Path to a directory to save image files in.
@@ -49,7 +49,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Height of the output image in units.
         Only applicable when exporting to SVG, PNG or PDF.
     unit : {'in', 'cm', 'mm', 'px'}, default='in'
-        Unit of the output image. One of: 'in', 'cm', 'mm' or 'px.
+        Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
         Only applicable when exporting to SVG, PNG or PDF.
     dpi : int, default=300
         Resolution in dots per inch.
@@ -57,12 +57,12 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         The default value depends on the unit:
 
         - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
-        - for physical units ('in', 'cm', 'mm') it is 300
+        - for physical units ('in', 'cm', 'mm') it is 300.
 
     Returns
     -------
     str
-        Absolute pathname of created file.
+        Absolute pathname of the created file.
 
     Notes
     -----
@@ -145,7 +145,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         return _to_svg(plot, pathname, w=w, h=h, unit=unit)
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
-    elif ext in ['png', 'pdf', 'bmp']:
+    elif ext in ['png', 'pdf']:
         return _export_as_raster(plot, pathname, scale, export_format=ext, w=w, h=h, unit=unit, dpi=dpi)
     else:
         raise ValueError(
