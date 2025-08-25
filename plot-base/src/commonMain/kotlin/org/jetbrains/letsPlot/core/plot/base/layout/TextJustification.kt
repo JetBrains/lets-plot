@@ -41,7 +41,8 @@ class TextJustification(val x: Double, val y: Double) {
 
         fun verticalCorrectionFactor(lineHeight: Double, fontSize: Double): (Double) -> Double {
             return { correctionCoefficient ->
-                lineHeight * correctionCoefficient.pow(lineHeight / fontSize) // TODO
+                // It's selected by eye to look good with both normal height lines and double height lines (fractions).
+                lineHeight * correctionCoefficient.pow(lineHeight / fontSize)
             }
         }
 

@@ -326,7 +326,7 @@ internal class Latex(
             content.estimateWidth(font, widthCalculator)
 
         override fun estimateHeight(font: Font): Double =
-            content.estimateHeight(font) // TODO: Could be better
+            content.estimateHeight(font)
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefix = prefix)
@@ -339,7 +339,7 @@ internal class Latex(
             content.estimateWidth(font, widthCalculator)
 
         override fun estimateHeight(font: Font): Double =
-            content.estimateHeight(font) // TODO: Could be better
+            content.estimateHeight(font)
 
         override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefix = prefix)

@@ -212,7 +212,7 @@ object TextUtil {
             fontFace.italic
         ).fold(DoubleVector.ZERO) { acc, sz ->
             DoubleVector(
-                x = sz.x,
+                x = max(acc.x, sz.x), // However, this is redundant, since all x have the same width — the maximum width.
                 y = acc.y + sz.y
             )
         }
