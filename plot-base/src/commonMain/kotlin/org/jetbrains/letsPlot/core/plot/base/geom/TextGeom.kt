@@ -111,7 +111,7 @@ open class TextGeom : GeomBase() {
         val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
         //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
-        val firstLineHeight = TextUtil.lineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
+        val firstLineHeight = TextUtil.estimatedLineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
         val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
         val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
             Text.VerticalAnchor.TOP -> location.y + correction(0.7)

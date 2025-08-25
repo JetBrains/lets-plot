@@ -186,7 +186,7 @@ object TextUtil {
         label.setTextOpacity(alpha)
 
         label.setFontSize(fontSize(p, scale))
-        label.setLineHeights(lineHeights(label.text, p, ctx, scale).map { it * p.lineheight()!! })
+        label.setLineHeights(estimatedLineHeights(label.text, p, ctx, scale).map { p.lineheight()!! * it })
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -221,7 +221,7 @@ object TextUtil {
         return DoubleVector(estimated.x, textHeight)
     }
 
-    fun lineHeights(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<Double> {
+    fun estimatedLineHeights(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<Double> {
         val fontSize = fontSize(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())

@@ -60,7 +60,7 @@ class LabelOptions {
                 Text.HorizontalAnchor.RIGHT -> location.x - padding
                 Text.HorizontalAnchor.MIDDLE -> location.x
             }
-            val firstLineHeight = TextUtil.lineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
+            val firstLineHeight = TextUtil.estimatedLineHeights(text, p, ctx, sizeUnitRatio).firstOrNull() ?: fontSize
             val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
             val textPosition = DoubleVector(
                 xPosition,
