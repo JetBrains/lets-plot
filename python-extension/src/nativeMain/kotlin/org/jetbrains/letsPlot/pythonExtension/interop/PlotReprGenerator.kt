@@ -224,7 +224,7 @@ object PlotReprGenerator {
             // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
             // and generate a function with a String parameter instead of ByteArray
 
-            val png: ByteArray = Png.encode(bitmap)
+            val png: ByteArray = Png.encode(bitmap, dpi)
             return Py_BuildValue("s", Base64.encode(png))
         } catch (e: Throwable) {
             e.printStackTrace()
