@@ -9,10 +9,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.core.plot.export.PlotImageExport.Format
 import java.awt.Desktop
 import java.io.File
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
 class PlotImageExportTest {
 
     @Test

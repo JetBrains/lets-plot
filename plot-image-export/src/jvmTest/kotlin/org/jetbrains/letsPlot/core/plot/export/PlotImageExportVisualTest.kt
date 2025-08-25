@@ -17,11 +17,9 @@ import java.awt.GraphicsEnvironment
 import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 
-@Ignore
 class PlotImageExportVisualTest {
 
     private fun MutableMap<String, Any>.themeTextNotoSans(): MutableMap<String, Any> {
@@ -58,8 +56,8 @@ class PlotImageExportVisualTest {
                 "axis_title_y": { "blank": true }
               },
               "layers": [
-                { "geom": "text", "x": 0.0, "y": 0.0, "label": "QWE" },
-                { "geom": "text", "x": 0.0, "y": 0.0, "label": "___", "color": "red" }
+                { "geom": "text", "x": 0.0, "y": 0.0, "label": "QWE", "family": "Noto Sans" },
+                { "geom": "text", "x": 0.0, "y": 0.0, "label": "___", "family": "Noto Sans", "color": "red" }
               ],
               "ggsize": { "width": 200.0, "height": 200.0 }
             }
