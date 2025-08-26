@@ -971,17 +971,15 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
                   "For more details visit: https://python-pillow.github.io/\n", file=sys.stderr)
             return None
 
-
         with Image.open(io.BytesIO(png)) as img:
             if img.mode == 'RGBA':
                 img = img.convert('RGB')
 
-            dpi = dpi if dpi is not None else 96  # Default DPI if not specified
             if file_path is not None:
-                img.save(file_path, "PDF", dpi=(dpi, dpi))
+                img.save(file_path, "PDF", dpi=img.info.get("dpi"))
                 return file_path
             else:
-                img.save(file_like_object, "PDF", dpi=(dpi, dpi))
+                img.save(file_like_object, "PDF", dpi=img.info.get("dpi"))
                 return None
     else:
         raise ValueError("Unknown export format: {}".format(export_format))

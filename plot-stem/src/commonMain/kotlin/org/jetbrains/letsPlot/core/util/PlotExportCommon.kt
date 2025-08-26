@@ -4,6 +4,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotExportCommon {
+    data class ExportParameters(
+        val sizingPolicy: SizingPolicy, // sizing policy to use for building the plot
+        val scaleFactor: Double, // scale factor to apply to the plot rendering
+        val sizeUnit: SizeUnit, // size unit of the plot
+        val dpi: Double // output DPI
+    )
+
     enum class SizeUnit(val value: String, val isPhysicalUnit: Boolean) {
         PX("px", false),
         MM("mm", true),
@@ -22,16 +29,12 @@ object PlotExportCommon {
     }
 
     // Compute export parameters based on the provided plot size, DPI, unit, and scale factor.
-    // Returns a Triple containing:
-    // 1. SizingPolicy: Defines how the plot should be sized.
-    // 2. Double: The scale factor to apply to the plot rendering.
-    // 3. SizeUnit: size unit of the plotSize.
     fun computeExportParameters(
         plotSize: DoubleVector? = null,
         dpi: Number? = null,
         unit: SizeUnit? = null,
         scaleFactor: Number? = null
-    ): Triple<SizingPolicy, Double, SizeUnit> {
+    ): ExportParameters {
         val exportScale: Double
         val exportUnit: SizeUnit
 
@@ -70,7 +73,6 @@ object PlotExportCommon {
             SizeUnit.PX -> 96.0
         }
 
-
         val sizingPolicy = when {
             plotSize == null -> SizingPolicy.keepFigureDefaultSize()
             else -> {
@@ -89,7 +91,7 @@ object PlotExportCommon {
 
         val finalScaleFactor = exportDpi / 96.0 * exportScale
 
-        return Triple(sizingPolicy, finalScaleFactor, exportUnit)
+        return ExportParameters(sizingPolicy, finalScaleFactor, exportUnit, exportDpi)
     }
 
 }
