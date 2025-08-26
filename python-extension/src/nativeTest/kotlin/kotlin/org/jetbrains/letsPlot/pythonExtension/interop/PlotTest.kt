@@ -75,6 +75,46 @@ class PlotTest {
     }
 
     @Test
+    fun `bold_italic geom_bar label`() {
+        val spec = """
+            |{
+            |  "theme": {
+            |    "label_text": {
+            |      "face": "bold_italic",
+            |      "size": 16.0,
+            |      "blank": false
+            |    }
+            |  },
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 0.0, 1.0, 2.0 ],
+            |    "y": [ 4.0, 5.0, 3.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [ 
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" } 
+            |    ]
+            |  },
+            |  "scales": [ { "aesthetic": "fill", "discrete": true } ],
+            |  "layers": [
+            |    {
+            |      "geom": "bar",
+            |      "stat": "identity",
+            |      "mapping": { "x": "x", "y": "y", "fill": "x" },
+            |      "show_legend": false,
+            |      "labels": { "formats": [], "lines": [ "Value: @y" ] }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_bold_italic_geom_bar_label_test.png", plotSpec)
+    }
+
+
+    @Test
     fun barPlot() {
         val spec = """
             |{

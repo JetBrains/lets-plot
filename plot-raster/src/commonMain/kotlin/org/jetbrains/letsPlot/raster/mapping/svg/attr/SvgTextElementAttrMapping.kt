@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_DY_CENTER
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_DY_TOP
@@ -21,8 +23,19 @@ import org.jetbrains.letsPlot.raster.shape.Text.VerticalAlignment
 internal object SvgTextElementAttrMapping : SvgAttrMapping<Text>() {
     override fun setAttribute(target: Text, name: String, value: Any?) {
         when (name) {
-            "font-size" -> target.fontSize = value?.asPxSize ?: DEFAULT_FONT_SIZE
-            "font-family" -> target.fontFamily = value?.asFontFamily ?: DEFAULT_FONT_FAMILY
+            SvgTextContent.FONT_SIZE.name -> target.fontSize = value?.asPxSize ?: DEFAULT_FONT_SIZE
+            SvgTextContent.FONT_FAMILY.name -> target.fontFamily = value?.asFontFamily ?: DEFAULT_FONT_FAMILY
+            SvgTextContent.FONT_WEIGHT.name -> target.fontWeight = when(value) {
+                "bold" -> FontWeight.BOLD
+                "normal" -> FontWeight.NORMAL
+                else -> FontWeight.NORMAL
+            }
+            SvgTextContent.FONT_STYLE.name -> target.fontStyle = when(value) {
+                "italic" -> FontStyle.ITALIC
+                "normal" -> FontStyle.NORMAL
+                else -> FontStyle.NORMAL
+            }
+
             SvgTextElement.X.name -> target.x = value?.asFloat ?: 0.0f
             SvgTextElement.Y.name -> target.y = value?.asFloat ?: 0.0f
             SvgTextContent.TEXT_ANCHOR.name -> {

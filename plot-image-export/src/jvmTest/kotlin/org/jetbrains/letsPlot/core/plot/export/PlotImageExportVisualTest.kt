@@ -30,7 +30,7 @@ class PlotImageExportVisualTest {
                 "family" to "Noto Sans"
             ),
             "axis_title_y" to mapOf(
-                "blank" to true
+                "blank" to true // hide rotated text - antialiasing may cause image differences
             )
         )
         return this
@@ -46,6 +46,45 @@ class PlotImageExportVisualTest {
     }
 
     private val imageComparer by lazy { createImageComparer() }
+
+    @Test
+    fun `bold_italic geom_bar label`() {
+        val spec = """
+            |{
+            |  "theme": {
+            |    "label_text": {
+            |      "face": "bold_italic",
+            |      "size": 16.0,
+            |      "blank": false
+            |    }
+            |  },
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 0.0, 1.0, 2.0 ],
+            |    "y": [ 4.0, 5.0, 3.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [ 
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" } 
+            |    ]
+            |  },
+            |  "scales": [ { "aesthetic": "fill", "discrete": true } ],
+            |  "layers": [
+            |    {
+            |      "geom": "bar",
+            |      "stat": "identity",
+            |      "mapping": { "x": "x", "y": "y", "fill": "x" },
+            |      "show_legend": false,
+            |      "labels": { "formats": [], "lines": [ "Value: @y" ] }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_bold_italic_geom_bar_label_test.png", plotSpec)
+    }
 
     @Test
     fun labels() {
