@@ -48,6 +48,112 @@ class PlotImageExportVisualTest {
     private val imageComparer by lazy { createImageComparer() }
 
     @Test
+    fun `latex formula`() {
+        val spec = """
+            |{
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "text",
+            |      "x": 0.0,
+            |      "label": "\\( e^{i \\cdot \\pi} = -1 \\)",
+            |      "size": 70.0,
+            |      "family": "Noto Sans",
+            |      "fontface": "italic"
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun `multi-level latex formula`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)"
+            |    ]
+            |  },
+            |  "mapping": { "x": "x" },
+            |  "data_meta": {
+            |    "series_annotations": [ { "type": "str", "column": "x" } ],
+            |    "mapping_annotations": [
+            |      {
+            |        "parameters": {
+            |          "label": "x",
+            |          "order_by": "..count.."
+            |        },
+            |        "aes": "x",
+            |        "annotation": "as_discrete"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "bar" } ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_multi_level_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
     fun `bold_italic geom_bar label`() {
         val spec = """
             |{

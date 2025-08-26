@@ -41,12 +41,12 @@ internal class TSpan(
         Font(fontStyle, fontWeight, fontSize.toDouble() * fontScale, family)
     }
 
-    private val lineHeight by computedProp(TSpan::font) {
+    val lineHeight by computedProp(TSpan::font) {
         font.fontSize
     }
 
     private val baseline by computedProp(TSpan::baselineShift, TSpan::dy, TSpan::lineHeight) {
-        -(baselineShift.percent * lineHeight) + lineHeight * dy
+        -(baselineShift.percent * lineHeight)
     }
 
     private val styleData: StyleData by computedProp(

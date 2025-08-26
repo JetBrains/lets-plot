@@ -77,12 +77,15 @@ internal class Text(
 
     fun layoutChildren() {
         var curX = 0f
+        var dy = 0f
 
         children.forEach {
             it as TSpan
 
+            dy += (it.dy * it.lineHeight).toFloat()
+
             it.layoutX = x + cx + curX
-            it.layoutY = y + cy
+            it.layoutY = y + cy + dy
 
             curX += it.bbox.width.toFloat()
         }
