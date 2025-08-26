@@ -469,6 +469,38 @@ class PlotImageExportVisualTest {
         assertPlot("plot_dpi_nan_test.png", plotSpec, dpi = Double.NaN)
     }
 
+    @Test
+    fun `shape with 90 degree rotation`() {
+        // Was a bug caused by multiplying stroke by the transform.sx (which is 0.0 for 90-degree rotation)
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 1.0 ],
+            |    "y": [ 1.0 ],
+            |    "angle": [ -30.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" },
+            |      { "type": "int", "column": "angle" }
+            |    ]
+            |  },
+            |  "layers": [
+            |    { "geom": "point", "mapping": { "x": "x", "y": "y", "angle": "angle" }, "size": 20.0, "shape": 2.0 },
+            |    { "geom": "point", "x": 5.0, "y": 1.0, "angle": 90.0, "size": 20.0, "shape": 2.0, "color": "red" },
+            |    { "geom": "blank", "mapping": { "x": [0.0, 6.0], "y": [null, null] }, "inherit_aes": false, "tooltips": "none" }
+            |  ],
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "ggsize": { "width": 200.0, "height": 200.0 }
+            |}
+        """.trimMargin())
+
+        // stroke size should remain the same (3 pixels) at any scaling factor
+        assertPlot("plot_constant_stroke_size_test.png", spec, scale = 1.0)
+    }
+
     private fun assertPlot(
         expectedFileName: String,
         plotSpec: MutableMap<String, Any>,

@@ -152,20 +152,18 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     override fun stroke() {
         graphics.color = state.strokeColor
-        graphics.stroke = state.stroke.copy(width = (state.stroke.lineWidth * minOf(state.transform.scaleX, state.transform.scaleY)).toFloat())
         graphics.paintPath(currentPath, Graphics2D::draw)
-        graphics.stroke = state.stroke
     }
 
     override fun fill() {
         graphics.color = state.fillColor
-        graphics.fillPath(currentPath)
+        graphics.paintPath(currentPath, Graphics2D::fill)
     }
 
     override fun fillEvenOdd() {
         currentPath.windingRule = Path2D.WIND_EVEN_ODD
         graphics.color = state.fillColor
-        graphics.fillPath(currentPath)
+        graphics.paintPath(currentPath, Graphics2D::fill)
     }
 
     override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
@@ -440,10 +438,6 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
             transform = AffineTransform()
             painter(this, path)
             transform = currentTransform
-        }
-
-        private fun Graphics2D.fillPath(path: Path2D) {
-            paintPath(path, Graphics2D::fill)
         }
 
         private fun Color.toAwtColor(): AwtColor {
