@@ -143,6 +143,7 @@ object PlotReprGenerator {
         }
     }
 
+    // Returns bitmap and dpi or null on error
     fun exportBitmap(
         plotSpec: Map<*, *>,
         fontManager: MagickFontManager,
@@ -150,15 +151,15 @@ object PlotReprGenerator {
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
-    ): Bitmap? {
+    ): Pair<Bitmap, Double>? {
         var canvasReg: Registration? = null
         try {
-            val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, dpi, sizeUnit, scale)
+            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
             @Suppress("UNCHECKED_CAST")
             val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
                 rawSpec = plotSpec as MutableMap<String, Any>,
-                sizingPolicy = sizingPolicy,
+                sizingPolicy = exportParameters.sizingPolicy,
                 computationMessagesHandler = {
                     //println(it.joinToString("\n"))
                 }
@@ -167,7 +168,7 @@ object PlotReprGenerator {
             val canvasControl = MagickCanvasControl(
                 w = plotCanvasFigure.bounds().get().width,
                 h = plotCanvasFigure.bounds().get().height,
-                pixelDensity = scaleFactor,
+                pixelDensity = exportParameters.scaleFactor,
                 fontManager = fontManager,
             )
 
@@ -185,7 +186,7 @@ object PlotReprGenerator {
             snapshot.dispose()
             canvasControl.dispose()
 
-            return bitmap
+            return bitmap to exportParameters.dpi
         } catch (e: Throwable) {
             e.printStackTrace()
             return null
@@ -209,7 +210,7 @@ object PlotReprGenerator {
             val dpi = if (dpi >= 0) dpi.toDouble() else null
             val scaleFactor = if (scale >= 0) scale.toDouble() else null
 
-            val bitmap = exportBitmap(
+            val (bitmap, bitmapDpi) = exportBitmap(
                 plotSpec = pyDictToMap(plotSpecDict),
                 plotSize = plotSize,
                 sizeUnit = sizeUnit,
@@ -224,7 +225,7 @@ object PlotReprGenerator {
             // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
             // and generate a function with a String parameter instead of ByteArray
 
-            val png: ByteArray = Png.encode(bitmap, dpi)
+            val png: ByteArray = Png.encode(bitmap, bitmapDpi)
             return Py_BuildValue("s", Base64.encode(png))
         } catch (e: Throwable) {
             e.printStackTrace()

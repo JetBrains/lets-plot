@@ -975,14 +975,11 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
             if img.mode == 'RGBA':
                 img = img.convert('RGB')
 
-            img_dpi = img.info.get("dpi")
-
-            dpi = float(img_dpi[0]) if img_dpi else dpi if dpi else 96.0
             if file_path is not None:
-                img.save(file_path, "PDF", dpi=(dpi, dpi))
+                img.save(file_path, "PDF", dpi=img.info.get("dpi"))
                 return file_path
             else:
-                img.save(file_like_object, "PDF", dpi=(dpi, dpi))
+                img.save(file_like_object, "PDF", dpi=img.info.get("dpi"))
                 return None
     else:
         raise ValueError("Unknown export format: {}".format(export_format))

@@ -543,7 +543,7 @@ class PlotTest {
         dpi: Number? = null,
         scale: Number? = 1
     ) {
-        val bitmap = PlotReprGenerator.exportBitmap(
+        val (bitmap, _) = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
             plotSize = plotSize,
             sizeUnit = unit,

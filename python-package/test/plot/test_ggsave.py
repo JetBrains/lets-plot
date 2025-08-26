@@ -8,6 +8,10 @@ from PIL import Image
 
 import lets_plot as gg
 
+try:
+    import pymupdf
+except ImportError:
+    pymupdf = None
 
 def assert_png(file_path, w, h):
     if isinstance(file_path, str):
@@ -34,6 +38,33 @@ def assert_svg(file_path, w=None, h=None, view_box=None):
         if view_box is not None:
             assert f'viewBox="{view_box}"' in content.decode('utf-8')
 
+
+def assert_pdf(file_path, w=None, h=None, unit=None):
+    if pymupdf is None:
+        with open(file_path, 'rb') as f:
+            content = f.read()
+            assert content.startswith(b'%PDF-1.')
+    else:
+        doc = pymupdf.open(file_path)
+        page = doc.load_page(0)  # Load the first page
+        size = page.rect  # Get the page size
+        doc.close()
+
+        page_width = size.width / 72  # Convert from points to inches
+        page_height = size.height / 72  # Convert from points to inches
+
+        if all(v is not None for v in (w, h, unit)):
+            if unit == 'in':
+                expected_w, expected_h = w, h
+            elif unit == 'cm':
+                expected_w, expected_h = w / 2.54, h / 2.54
+            elif unit == 'mm':
+                expected_w, expected_h = w / 25.4, h / 25.4
+            else:
+                raise ValueError(f"Unknown unit: {unit}")
+
+            assert abs(page_width - expected_w) < 0.1, f"Width mismatch: expected {expected_w}, got {page_width}"
+            assert abs(page_height - expected_h) < 0.1, f"Height mismatch: expected {expected_h}, got {page_height}"
 
 
 def temp_file(filename):
@@ -158,15 +189,59 @@ def test_ggsave_pdf():
         assert content.startswith(b'%PDF-1.')
 
 
-def test_ggsave_pdf_with_dpi():
+def test_ggsave_pdf_5x3_inch():
     p = gg.ggplot() + gg.geom_blank()
-    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_with_dpi.pdf'), dpi=300, w=5, h=3, unit='in', scale=1)
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch.pdf'), w=5, h=3, unit='in', scale=1)
 
     print("Output path:", out_path)
 
-    with open(out_path, 'rb') as f:
-        content = f.read()
-        assert content.startswith(b'%PDF-1.')
+    assert_pdf(out_path, w=5, h=3, unit='in')
+
+
+def test_ggsave_pdf_5x3_inch_150dpi():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch_150dpi.pdf'), w=5, h=3, unit='in', dpi=150, scale=1)
+
+    print("Output path:", out_path)
+
+    assert_pdf(out_path, w=5, h=3, unit='in')
+
+
+def test_ggsave_pdf_5x3_inch_300dpi():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch_300dpi.pdf'), w=5, h=3, dpi=300, unit='in', scale=1)
+
+    print("Output path:", out_path)
+
+    assert_pdf(out_path, w=5, h=3, unit='in')
+
+
+def test_ggsave_pdf_5x3_inch_150dpi_2Xscale():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch_150dpi_2Xscale.pdf'), w=5, h=3, unit='in', dpi=150, scale=2)
+
+    print("Output path:", out_path)
+
+    # Scale affects size, 5 * 2 = 10 inches, 3 * 2 = 6 inches
+    assert_pdf(out_path, w=10, h=6, unit='in')
+
+
+def test_ggsave_pdf_5x3_cm():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_cm.pdf'), w=5, h=3, unit='cm', scale=1)
+
+    print("Output path:", out_path)
+
+    assert_pdf(out_path, w=5, h=3, unit='cm')
+
+
+def test_ggsave_pdf_5x3_cm_150dpi():
+    p = gg.ggplot() + gg.geom_blank()
+    out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_cm_150dpi.pdf'), w=5, h=3, unit='cm', dpi=150, scale=1)
+
+    print("Output path:", out_path)
+
+    assert_pdf(out_path, w=5, h=3, unit='cm')
 
 
 def test_filelike_ggsave_pdf():
