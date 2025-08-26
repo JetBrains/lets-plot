@@ -329,7 +329,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
         graphics.color = state.strokeColor
-        graphics.drawRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
+        val rect = Rectangle2D.Double(x, y, w, h)
+        graphics.draw(rect)
     }
 
     override fun strokeText(text: String, x: Double, y: Double) {
