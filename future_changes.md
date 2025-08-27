@@ -8,8 +8,11 @@
     
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25d/facet_spacings.ipynb).
 
+- Image resolution is saved in the metadata of PNG files created with `ggsave()`.
+
 ### Changed
 
 ### Fixed
 
 - ggsave(): memory leak when using `geom_raster()`.
+- Incorrect physical image size when exporting PDF with `ggsave()` without specifying `dpi`.
