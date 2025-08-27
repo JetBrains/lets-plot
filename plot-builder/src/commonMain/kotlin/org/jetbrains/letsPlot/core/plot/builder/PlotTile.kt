@@ -28,7 +28,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.FACET_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
@@ -142,7 +141,11 @@ internal class PlotTile constructor(
             return
         }
 
-        val totalHeadHeight = tileLayoutInfo.facetXLabels.map { it.second }.let(::facetColHeadTotalHeight)
+        val totalHeadHeight =
+            facetColHeadTotalHeight(
+                tileLayoutInfo.facetXLabels.map { it.second },
+                theme.stripSpacing().y
+            )
         val labelOrig = DoubleVector(
             geomBounds.left,
             geomBounds.top - totalHeadHeight
@@ -170,7 +173,7 @@ internal class PlotTile constructor(
         val (yLabel, labWidth) = tileLayoutInfo.facetYLabel
 
         val labelBounds = DoubleRectangle(
-            geomBounds.right + FACET_PADDING,
+            geomBounds.right + theme.stripSpacing().x,
             geomBounds.top,
             labWidth,
             geomBounds.height

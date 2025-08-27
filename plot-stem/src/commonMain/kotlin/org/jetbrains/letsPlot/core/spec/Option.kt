@@ -908,6 +908,12 @@ object Option {
         const val FACET_STRIP_TEXT = ThemeOption.FACET_STRIP_TEXT
         const val FACET_STRIP_TEXT_X = ThemeOption.FACET_STRIP_TEXT_X
         const val FACET_STRIP_TEXT_Y = ThemeOption.FACET_STRIP_TEXT_Y
+        const val FACET_STRIP_SPACING = ThemeOption.FACET_STRIP_SPACING
+        const val FACET_STRIP_SPACING_X = ThemeOption.FACET_STRIP_SPACING_X
+        const val FACET_STRIP_SPACING_Y = ThemeOption.FACET_STRIP_SPACING_Y
+        const val FACET_PANEL_SPACING = ThemeOption.FACET_PANEL_SPACING
+        const val FACET_PANEL_SPACING_X = ThemeOption.FACET_PANEL_SPACING_X
+        const val FACET_PANEL_SPACING_Y = ThemeOption.FACET_PANEL_SPACING_Y
 
         // Legend
         const val LEGEND_BKGR_RECT = ThemeOption.LEGEND_BKGR_RECT

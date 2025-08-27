@@ -81,6 +81,8 @@ def theme(*,
 
           strip_background=None, strip_background_x=None, strip_background_y=None,
           strip_text=None, strip_text_x=None, strip_text_y=None,
+          strip_spacing=None, strip_spacing_x=None, strip_spacing_y=None,
+          panel_spacing=None, panel_spacing_x=None, panel_spacing_y=None,
           # ToDo: strip.placement
 
           axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
@@ -333,6 +335,18 @@ def theme(*,
         Style settings for vertical facet labels.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
         Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify facet label parameters, inherited from ``strip_text``.
+    strip_spacing : float
+        Spacing between facet labels and the plotting area.
+    strip_spacing_x : float
+        Spacing between facet labels and the plotting area in horizontal direction, inherited from ``strip_spacing``.
+    strip_spacing_y : float
+        Spacing between facet labels and the plotting area in vertical direction, inherited from ``strip_spacing``.
+    panel_spacing : float
+        Spacing between panels in facets.
+    panel_spacing_x : float
+        Spacing between panels in facets in horizontal direction, inherited from ``panel_spacing``.
+    panel_spacing_y : float
+        Spacing between panels in facets in vertical direction, inherited from ``panel_spacing``.
     axis_tooltip, axis_tooltip_x, axis_tooltip_y : str or dict
         Style settings for axes tooltips.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
