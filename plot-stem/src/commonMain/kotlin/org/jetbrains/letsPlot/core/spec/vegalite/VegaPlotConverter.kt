@@ -29,7 +29,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.LetsPlotExt
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 import kotlin.math.sqrt
 
-internal class VegaPlotConverter private constructor(
+class VegaPlotConverter private constructor(
     private val vegaPlotSpecMap: MutableMap<String, Any?>
 ) {
     private val accessLogger = TraceableMapWrapper.AccessLogger()
