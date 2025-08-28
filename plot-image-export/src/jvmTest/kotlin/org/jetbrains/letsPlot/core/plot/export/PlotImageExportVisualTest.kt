@@ -72,6 +72,56 @@ class PlotImageExportVisualTest {
     }
 
     @Test
+    fun superscript() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Default limits" },
+            |      "theme": { "name": "classic", "exponent_format": "pow", "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Scientific notation for \\( x \\leq 10^{-3} \\) and \\( x \\geq 10^3 \\)" },
+            |      "theme": { "name": "classic", "exponent_format": [ "pow", -3.0, 3.0 ], "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_superscript_test.png", plotSpec)
+    }
+
+    @Test
     fun `multi-level latex formula`() {
         val spec = """
             |{
@@ -255,6 +305,7 @@ class PlotImageExportVisualTest {
 
         assertPlot("plot_markdown2Xscale_test.png", plotSpec, scale = 2)
     }
+
     @Test
     fun markdown() {
         val spec = """
