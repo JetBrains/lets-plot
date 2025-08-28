@@ -13,7 +13,8 @@ class Sina {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            withParameters()
+            withParameters(),
+            colored()
         )
     }
 
@@ -86,6 +87,37 @@ class Sina {
         """.trimIndent()
 
         return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun colored(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'target',
+                'y': 'sepal length (cm)'
+              },
+              'ggtitle': {
+                'text': 'Colored sina points'
+              },
+              'layers': [
+                {
+                  'geom': 'violin'
+                },
+                {
+                  'mapping': {
+                    'color': 'sepal width (cm)'
+                  },
+                  'geom': 'sina'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
 
     }
 }
