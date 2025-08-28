@@ -32,6 +32,7 @@ object DensityStatUtil {
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
+        indices: List<Int>,
         trim: Boolean,
         tailsCutoff: Double?,
         bandWidth: Double?,
@@ -52,7 +53,7 @@ object DensityStatUtil {
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
 
-        handleBinnedData(bins, values, weights) { bin, binValue, binWeight ->
+        handleBinnedData(bins, values, weights, indices) { bin, binValue, binWeight, _ ->
             val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
@@ -87,17 +88,27 @@ object DensityStatUtil {
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
-        binHandler: (Double, List<Double>, List<Double>) -> Unit,
+        indices: List<Int>,
+        binHandler: (Double, List<Double>, List<Double>, List<Int>) -> Unit,
     ) {
-        val binnedData = (bins.asSequence() zip (values.asSequence() zip weights.asSequence()))
+        val binnedData = (bins.asSequence() zip (values.asSequence() zip (weights.asSequence() zip indices.asSequence())))
             .filter { (bin, _) -> bin?.isFinite() == true }
             .groupBy({ (bin, _) -> bin!! }, { (_, binValues) -> binValues })
-            .mapValues { (_, binData) -> binData.unzip() }
+            .mapValues { (_, binData) ->
+                val (binValues, binOther) = binData.unzip()
+                val (binWeights, binIndices) = binOther.unzip()
+                Triple(binValues, binWeights, binIndices)
+            }
         for ((bin, binData) in binnedData) {
-            val (binValue, binWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
-            if (binValue.isEmpty()) continue
+            val indices = SeriesUtil.indicesOfFinite(binData.first, binData.second)
+            if (indices.isEmpty()) continue
+            @Suppress("UNCHECKED_CAST")
+            val binValue = binData.first.slice(indices) as List<Double>
+            @Suppress("UNCHECKED_CAST")
+            val binWeight = binData.second.slice(indices) as List<Double>
+            val binIndex = binData.third.slice(indices)
             val sortingIndices = binValue.indices.sortedBy { binValue[it] }
-            binHandler(bin, binValue.slice(sortingIndices), binWeight.slice(sortingIndices))
+            binHandler(bin, binValue.slice(sortingIndices), binWeight.slice(sortingIndices), binIndex.slice(sortingIndices))
         }
     }
 

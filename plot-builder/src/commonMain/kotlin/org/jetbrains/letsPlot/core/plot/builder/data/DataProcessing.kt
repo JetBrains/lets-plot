@@ -232,6 +232,16 @@ object DataProcessing {
             else -> facetVariables.associateWith { data[it][0].let { facetLevel -> List(statDataSize) { facetLevel } } }
         }
 
+        fun oldSerieForVariable(variable: Variable, indices: List<Int?>): List<Any?> {
+            val series = data[variable]
+            return indices.map { i ->
+                when (i) {
+                    null -> null
+                    else -> series[i]
+                }
+            }
+        }
+
         // generate new series for input variables
         fun newSerieForVariable(variable: Variable): List<Any?> {
             val value = when (data.isNumeric(variable)) {
@@ -249,13 +259,22 @@ object DataProcessing {
             }
 
             val aes = binding.aes
-            if (stat.hasDefaultMapping(aes)) {
-                val defaultStatVar = stat.getDefaultMapping(aes)
-                newInputSeries[variable] = statData.get(defaultStatVar)
-            } else {
-                // Do not override series obtained via 'default stat var'
-                if (!newInputSeries.containsKey(variable)) {
-                    newInputSeries[variable] = newSerieForVariable(variable)
+            when {
+                stat.hasDefaultMapping(aes) -> {
+                    val defaultStatVar = stat.getDefaultMapping(aes)
+                    newInputSeries[variable] = statData.get(defaultStatVar)
+                }
+                statData.variables().contains(Stats.INDEX) -> {
+                    // Do not override series obtained via 'default stat var'
+                    if (!newInputSeries.containsKey(variable)) {
+                        newInputSeries[variable] = oldSerieForVariable(variable, statData[Stats.INDEX] as List<Int?>)
+                    }
+                }
+                else -> {
+                    // Do not override series obtained via 'default stat var' and 'original var'
+                    if (!newInputSeries.containsKey(variable)) {
+                        newInputSeries[variable] = newSerieForVariable(variable)
+                    }
                 }
             }
         }

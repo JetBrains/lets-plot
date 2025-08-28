@@ -42,6 +42,8 @@ object Stats {
 
     val GROUP = DataFrame.Variable("..group..", STAT, "group")
 
+    val INDEX = DataFrame.Variable("..index..", STAT, "index") // Technical variable for internal purposes
+
     val IDENTITY: Stat = IdentityStat()
 
     val VARS: Map<String, DataFrame.Variable> = run {

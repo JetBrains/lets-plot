@@ -29,7 +29,7 @@ class YDensityStat(
     fullScanMax,
     quantiles
 ) {
-    override fun applyPostProcessing(statData: DataFrame, xs: List<Double?>, ys: List<Double?>, ws: List<Double?>): DataFrame {
+    override fun applyPostProcessing(statData: DataFrame, xs: List<Double?>, ys: List<Double?>, ws: List<Double?>, ids: List<Int>): DataFrame {
         return statData
     }
 

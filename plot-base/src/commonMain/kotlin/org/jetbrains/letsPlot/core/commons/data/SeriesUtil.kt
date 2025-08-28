@@ -113,6 +113,18 @@ object SeriesUtil {
         }
     }
 
+    fun indicesOfFinite(l0: List<Double?>, l1: List<Double?>): List<Int> {
+        check(l0.size == l1.size)
+        return (l0 zip l1)
+            .mapIndexed { i, (v0, v1) ->
+                when (allFinite(v0, v1)) {
+                    true -> i
+                    else -> null
+                }
+            }
+            .filterNotNull()
+    }
+
     fun resolution(values: Iterable<Double?>, naValue: Double): Double {
 
         // check if this is a row of a regular grid

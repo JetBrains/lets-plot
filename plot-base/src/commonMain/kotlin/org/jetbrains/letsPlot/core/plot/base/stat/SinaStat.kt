@@ -34,7 +34,8 @@ class SinaStat(
         statData: DataFrame,
         xs: List<Double?>,
         ys: List<Double?>,
-        ws: List<Double?>
+        ws: List<Double?>,
+        ids: List<Int>
     ): DataFrame {
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
@@ -43,8 +44,9 @@ class SinaStat(
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
         val statN = ArrayList<Double>()
+        val index = ArrayList<Int?>()
 
-        DensityStatUtil.handleBinnedData(xs, ys, ws) { x, binValue, _ ->
+        DensityStatUtil.handleBinnedData(xs, ys, ws, ids) { x, binValue, _, binIndices ->
             val indices = statData.getNumeric(Stats.X).indicesOf { it == x }
             val statDataSlice = statData.slice(indices)
             val yValues = statDataSlice.getNumeric(Stats.Y).map { it!! }
@@ -63,6 +65,7 @@ class SinaStat(
                 quantiles + binValue.map(pwCeilInterp(yValues, quantiles))
             }
             statN += List(statDataSlice.rowCount()) { 0.0 } + List(binValue.size) { 1.0 }
+            index += List(statDataSlice.rowCount()) { null } + binIndices
         }
 
         return DataFrame.Builder()
@@ -73,6 +76,7 @@ class SinaStat(
             .putNumeric(Stats.SCALED, statScaled)
             .putNumeric(Stats.QUANTILE, statQuantile)
             .putNumeric(Stats.N, statN)
+            .put(Stats.INDEX, index)
             .build()
     }
 
