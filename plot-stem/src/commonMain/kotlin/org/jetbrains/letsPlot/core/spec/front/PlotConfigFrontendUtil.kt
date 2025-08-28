@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -18,7 +19,9 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import org.jetbrains.letsPlot.core.spec.StatProto
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
@@ -197,6 +200,15 @@ object PlotConfigFrontendUtil {
             sharedContinuousDomainX,
             sharedContinuousDomainY
         )
+
+        val scaleFactor = config.getMap(SPEC_OVERRIDE).get(SCALE_RATIO).let { scaleRatio ->
+            if (scaleRatio is DoubleVector) {
+                scaleRatio.x
+            } else {
+                1.0
+            }
+        }
+
         return PlotAssembler(
             plotGeomTiles,
             config.facets,
@@ -209,6 +221,7 @@ object PlotConfigFrontendUtil {
             guideOptionsMap = config.guideOptionsMap,
             plotSpecId = config.specId,
             tz = config.tz,
+            scaleFactor
         )
     }
 }

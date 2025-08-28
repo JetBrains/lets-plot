@@ -43,6 +43,7 @@ class PlotAssembler constructor(
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
     private val plotSpecId: String?,
     private val tz: TimeZone?,
+    scaleFactor: Double = 1.0,
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -63,7 +64,8 @@ class PlotAssembler constructor(
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
             expFormat = extractExponentFormat(theme.exponentFormat),
-            tz = tz
+            tz = tz,
+            scaleFactor
         )
 
         val legendBoxInfos: List<LegendBoxInfo> = when {

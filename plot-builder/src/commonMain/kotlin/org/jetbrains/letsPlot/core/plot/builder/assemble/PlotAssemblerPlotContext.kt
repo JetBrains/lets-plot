@@ -17,6 +17,7 @@ internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
     override val expFormat: ExponentFormat,
     override val tz: TimeZone?,
+    private val myScaleFactor: Double = 1.0
 ) : PlotContext {
 
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
@@ -26,6 +27,10 @@ internal class PlotAssemblerPlotContext constructor(
     override fun getScale(aes: Aes<*>): Scale {
         checkPositionalAes(aes)
         return geomTiles.scalesBeforeFacets.getValue(aes)
+    }
+
+    override fun getScaleFactor(): Double {
+        return myScaleFactor
     }
 
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {

@@ -201,6 +201,7 @@ class SquareFrameOfReferenceGridTest {
 
                 override fun hasScale(aes: Aes<*>): Boolean = error("unexpected call")
                 override fun getScale(aes: Aes<*>): Scale = error("unexpected call")
+                override fun getScaleFactor(): Double = 1.0
                 override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan = error("unexpected call")
                 override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String = error("unexpected call")
             }
