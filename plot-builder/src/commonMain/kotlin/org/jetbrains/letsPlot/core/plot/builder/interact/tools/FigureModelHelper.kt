@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.CURRENT_SCALE_RANGE
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.INITIAL_SCALE_RANGE
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
@@ -26,10 +28,14 @@ object FigureModelHelper {
             val specOverrideList = ArrayList(specOverrideList)
             val index = specOverrideList.indexOfFirst { it[TARGET_ID] == targetId }
             if (index < 0) {
-                specOverrideList.add(newSpecOverride)
+                val initialScaleRange = newSpecOverride[CURRENT_SCALE_RANGE] as DoubleVector
+                val scale = calculate(initialScaleRange, newSpecOverride)
+                specOverrideList.add(newSpecOverride + scale)
+
             } else {
                 val lims = reconcile(specOverrideList[index], newSpecOverride)
-                val scale = calculate(specOverrideList[index], newSpecOverride)
+                val initialScaleRange = specOverrideList[index][INITIAL_SCALE_RANGE] as DoubleVector
+                val scale = calculate(initialScaleRange, newSpecOverride)
 
                 specOverrideList.set(index, lims + scale)
             }
@@ -71,42 +77,35 @@ object FigureModelHelper {
     }
 
     private fun calculate(
-        wasSpecs: Map<String, Any>,
+        initialScaleRange: DoubleVector,
         newSpecs: Map<String, Any>
     ): Map<String, Any> {
-        val xScaleRatio = calculateScaleRatio(COORD_XLIM_TRANSFORMED, wasSpecs, newSpecs)
-        val yScaleRatio = calculateScaleRatio(COORD_YLIM_TRANSFORMED, wasSpecs, newSpecs)
-        val ratio = wasSpecs[SCALE_RATIO]?.let { it as DoubleVector
-            DoubleVector(it.x * xScaleRatio, it.y * yScaleRatio)
-        } ?: DoubleVector(xScaleRatio, yScaleRatio)
+        val xScaleRatio = calculateScaleRatio(COORD_XLIM_TRANSFORMED, newSpecs, initialScaleRange.x)
+        val yScaleRatio = calculateScaleRatio(COORD_YLIM_TRANSFORMED, newSpecs, initialScaleRange.y)
 
-        return mapOf(SCALE_RATIO to ratio)
+        return mapOf(
+            INITIAL_SCALE_RANGE to initialScaleRange,
+            SCALE_RATIO to DoubleVector(xScaleRatio, yScaleRatio)
+        )
     }
 
     private fun calculateScaleRatio(
         option: String,
-        wasSpecs: Map<String, Any>,
-        newSpecs: Map<String, Any>
+        newSpecs: Map<String, Any>,
+        initialRange: Double
     ): Double {
         @Suppress("UNCHECKED_CAST")
         val newLims = (newSpecs[option] as? List<Double?>) ?: return 1.0
 
-        @Suppress("UNCHECKED_CAST")
-        val wasLims = (wasSpecs[option] as? List<Double?>) ?: return 1.0
-
-        if (newLims.size != 2 || wasLims.size != 2) {
+        if (newLims.size != 2) {
             return 1.0
         }
 
         val newMin = newLims[0] ?: return 1.0
         val newMax = newLims[1] ?: return 1.0
-        val wasMin = wasLims[0] ?: return 1.0
-        val wasMax = wasLims[1] ?: return 1.0
-
 
         val newRange = newMax - newMin
-        val wasRange = wasMax - wasMin
 
-        return wasRange / newRange
+        return initialRange / newRange
     }
 }

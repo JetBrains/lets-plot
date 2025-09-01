@@ -5,11 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_TARGET
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_SCALE_RANGE
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
@@ -17,6 +19,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHA
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.CURRENT_SCALE_RANGE
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 abstract class FigureToolsController {
@@ -60,18 +63,25 @@ abstract class FigureToolsController {
             }
 
             SELECTION_CHANGED -> {
+                val specOverride = HashMap<String, Any>()
+
                 event[EVENT_RESULT_DATA_BOUNDS]?.let { bounds ->
                     @Suppress("UNCHECKED_CAST")
                     bounds as List<Double?>
-                    val specOverride = HashMap<String, Any>().also { map ->
+                    specOverride.also { map ->
                         map[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
                         map[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
                         event[EVENT_INTERACTION_TARGET]?.let { targetId ->
                             map[TARGET_ID] = targetId
                         }
                     }
-                    updateFigureView(specOverride)
                 }
+
+                event[EVENT_RESULT_SCALE_RANGE]?.let { range ->
+                    specOverride[CURRENT_SCALE_RANGE] = range as DoubleVector
+                }
+
+                updateFigureView(specOverride)
             }
 
             ROLLBACK_ALL_CHANGES -> {

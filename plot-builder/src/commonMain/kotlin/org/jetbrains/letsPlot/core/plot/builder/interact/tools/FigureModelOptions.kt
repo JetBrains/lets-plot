@@ -12,5 +12,7 @@ object FigureModelOptions {
     // Tools can temporarily override default or provided limits.
     const val COORD_XLIM_TRANSFORMED = "coord_xlim_transformed"  // array of two nullable numbers
     const val COORD_YLIM_TRANSFORMED = "coord_ylim_transformed"
+    const val CURRENT_SCALE_RANGE = "current_scale_range" // DoubleVector
+    const val INITIAL_SCALE_RANGE = "initial_scale_range" // DoubleVector
     const val SCALE_RATIO = "scale_ratio" // DoubleVector
 }

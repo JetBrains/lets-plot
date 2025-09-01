@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.interact.feedback
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
@@ -14,7 +15,7 @@ import org.jetbrains.letsPlot.core.interact.mouse.MouseWheelInteraction
 import kotlin.math.abs
 
 class WheelZoomFeedback(
-    private val onCompleted: (targetId: String?, dataBounds: DoubleRectangle) -> Unit
+    private val onCompleted: (targetId: String?, dataBounds: DoubleRectangle, currentScaleRange: DoubleVector) -> Unit
 ) : ToolFeedback {
     override fun start(ctx: InteractionContext): Disposable {
         val interaction = MouseWheelInteraction(ctx)
@@ -37,8 +38,10 @@ class WheelZoomFeedback(
                 }
 
                 val viewport = InteractionUtil.viewportFromScale(target.geomBounds, factor, zoomOrigin)
+
+                val (currentBounds, _) = target.dataBounds()
                 val (dataBounds, _) = target.applyViewport(viewport, ctx)
-                onCompleted(target.id, dataBounds)
+                onCompleted(target.id, dataBounds, currentBounds.dimension)
             }
         )
 

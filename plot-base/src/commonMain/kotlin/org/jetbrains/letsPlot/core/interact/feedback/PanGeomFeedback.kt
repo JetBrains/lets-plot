@@ -15,12 +15,13 @@ import org.jetbrains.letsPlot.core.interact.mouse.MouseDragInteraction
 import kotlin.math.abs
 
 class PanGeomFeedback(
-    private val onCompleted: ((
+    private val onCompleted: (
         targetId: String?,
         dataBounds: DoubleRectangle,
         flipped: Boolean,
-        mode: PanningMode
-    ) -> Unit)
+        mode: PanningMode,
+        currentScaleRange: DoubleVector
+    ) -> Unit
 ) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
@@ -65,7 +66,7 @@ class PanGeomFeedback(
             },
             onCompleted = {
                 val (target, _, _, dragDelta) = it
-
+                val (currentBounds, _) = target.dataBounds()
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 val (dataBounds, flipped) = target.applyViewport(viewport, ctx)
 
@@ -73,7 +74,7 @@ class PanGeomFeedback(
 
                 panningMode?.let { pm ->
                     panningMode = null
-                    onCompleted(target.id, dataBounds, flipped, pm)
+                    onCompleted(target.id, dataBounds, flipped, pm, currentBounds.dimension)
                 }
             },
             onAborted = {
