@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -59,22 +58,21 @@ class PlotCanvasFigure : CanvasFigure {
 
     private fun buildPlotSvg() {
         val processedSpec = processedSpec ?: return
-        val canvasControl = canvasControl ?: return
-        val size = canvasControl.size.takeIf { it != Vector.ZERO } ?: return
+
+        viewModelReg.dispose()
 
         val viewModel = MonolithicCanvas.buildViewModelFromProcessedSpecs(
             plotSpec = processedSpec,
             sizingPolicy = sizingPolicy,
-            containerSize = size.toDoubleVector(),
+            containerSize = canvasControl?.size?.toDoubleVector(), // ok when sizingPolicy is independent on container size
             computationMessagesHandler = computationMessagesHandler
         )
 
         plotSvgFigure.svgSvgElement = viewModel.svg
 
-        viewModelReg.dispose()
         viewModelReg = CompositeRegistration(
             Registration.from(viewModel),
-            viewModel.eventDispatcher.addEventSource(canvasControl)
+            canvasControl?.let { viewModel.eventDispatcher.addEventSource(it) } ?: Registration.EMPTY
         )
     }
 }

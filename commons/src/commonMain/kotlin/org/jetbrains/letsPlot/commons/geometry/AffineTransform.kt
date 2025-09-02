@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.geometry
 
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -138,6 +139,10 @@ class AffineTransform(
         return """sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty"""
     }
 
+    override fun toString(): String {
+        return "AffineTransform(${repr()})"
+    }
+
 
     companion object {
         val IDENTITY = AffineTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
@@ -155,17 +160,15 @@ class AffineTransform(
         }
 
         fun makeRotation(angle: Number, centerX: Number = 0, centerY: Number = 0): AffineTransform {
-            // TODO: check is it really needed
-            //val tolerance = (1.0f / (1 shl 12)).toDouble()
-            val sin = sin(angle.toDouble())//.takeIf { abs(it) > tolerance } ?: 0.0
-            val cos = cos(angle.toDouble())//.takeIf { abs(it) > tolerance } ?: 0.0
+            val tolerance = (1.0f / (1 shl 12)).toDouble()
+            val sin = sin(angle.toDouble()).takeIf { abs(it) > tolerance } ?: 0.0
+            val cos = cos(angle.toDouble()).takeIf { abs(it) > tolerance } ?: 0.0
+            val center = DoubleVector(centerX, centerY)
             return makeTransform(
-                sx = cos,
-                ry = sin,
-                rx = -sin,
-                sy = cos,
-                tx = centerX.toDouble() * (1 - cos) + centerY.toDouble() * sin,
-                ty = centerY.toDouble() * (1 - cos) - centerX.toDouble() * sin
+                sx = cos, sy = cos,
+                rx = -sin, ry = sin,
+                tx = center.x * (1 - cos) + center.y * sin,
+                ty = center.y * (1 - cos) - center.x * sin
             )
         }
 

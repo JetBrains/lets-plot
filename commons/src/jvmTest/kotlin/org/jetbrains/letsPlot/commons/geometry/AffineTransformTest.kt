@@ -112,6 +112,19 @@ class AffineTransformTest {
     }
 
     @Test
+    fun `rotate 90 concat`() {
+        val tr = AffineTransform.makeRotation(Math.PI / 2, 200, 200)
+
+        assertTransform(tr).isEqualTo(
+            AffineTransform.makeTransform(
+                sx = 0.0, sy = 0.0,
+                rx = -1.0, ry = 1.0,
+                tx = 400.0, ty = 0.0,
+            )
+        )
+    }
+
+    @Test
     fun `shear concat`() {
         val tr = AffineTransform.makeShear(1.0, 1.0)
         val at = AffineTransform.IDENTITY.concat(tr)

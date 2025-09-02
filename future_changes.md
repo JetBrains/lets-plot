@@ -1,9 +1,7 @@
-## [4.7.2] - 2025-mm-dd
+## [4.7.3] - 2025-mm-dd
 
 ### Added
 
 ### Changed
 
 ### Fixed
-
-- ggsave(): memory leak when using `geom_raster()`.

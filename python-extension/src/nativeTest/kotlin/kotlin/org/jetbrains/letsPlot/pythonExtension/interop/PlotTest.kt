@@ -9,7 +9,6 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 
@@ -19,7 +18,6 @@ import kotlin.test.fail
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
 class PlotTest {
     companion object {
         private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
@@ -75,6 +73,246 @@ class PlotTest {
 
         assertMemoryLeakFree(plotSpec)
     }
+
+    @Test
+    fun markdown() {
+        val spec = """
+            |{
+            |  "theme": {
+            |    "title": { "markdown": true, "blank": false },
+            |    "plot_title": { "family": "Noto Sans Regular", "size": 30.0, "hjust": 0.5, "blank": false },
+            |    "plot_subtitle": { "family": "Noto Sans Regular", "hjust": 0.5, "blank": false }
+            |  },
+            |  "ggtitle": {
+            |    "text": "<span style=\"color:#66c2a5\">**Forward**</span>, <span style=\"color:#8da0cb\">**Rear**</span> and <span style=\"color:#fc8d62\">**4WD**</span> Drivetrain",
+            |    "subtitle": "**City milage** *vs* **displacement**"
+            |  },
+            |  "caption": {
+            |    "text": "<span style='color:grey'>Powered by <a href='https://lets-plot.org'>Lets-Plot</a>.  \nVisit the <a href='https://github.com/jetbrains/lets-plot/issues'>issue tracker</a> for feedback.</span>"
+            |  },
+            |  "guides": {
+            |    "x": { "title": "Displacement (***inches***)" },
+            |    "y": { "title": "Miles per gallon (***cty***)" }
+            |  },
+            |  "kind": "plot",
+            |  "scales": [
+            |    {
+            |      "aesthetic": "color",
+            |      "guide": "none",
+            |      "values": [ "#66c2a5", "#fc8d62", "#8da0cb" ]
+            |    }
+            |  ],
+            |  "layers": [
+            |    {
+            |      "geom": "blank",
+            |      "inherit_aes": false,
+            |      "tooltips": "none"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_test.png", plotSpec)
+    }
+
+
+    @Test
+    fun `latex formula`() {
+        val spec = """
+            |{
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "text",
+            |      "x": 0.0,
+            |      "label": "\\( e^{i \\cdot \\pi} = -1 \\)",
+            |      "size": 70.0,
+            |      "family": "Noto Sans",
+            |      "fontface": "italic"
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun superscript() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Default limits" },
+            |      "theme": { "name": "classic", "exponent_format": "pow", "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Scientific notation for \\( x \\leq 10^{-3} \\) and \\( x \\geq 10^3 \\)" },
+            |      "theme": { "name": "classic", "exponent_format": [ "pow", -3.0, 3.0 ], "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_superscript_test.png", plotSpec)
+    }
+
+    @Test
+    fun `multi-level latex formula`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)"
+            |    ]
+            |  },
+            |  "mapping": { "x": "x" },
+            |  "data_meta": {
+            |    "series_annotations": [ { "type": "str", "column": "x" } ],
+            |    "mapping_annotations": [
+            |      {
+            |        "parameters": {
+            |          "label": "x",
+            |          "order_by": "..count.."
+            |        },
+            |        "aes": "x",
+            |        "annotation": "as_discrete"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "bar" } ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_multi_level_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun `bold_italic geom_bar label`() {
+        val spec = """
+            |{
+            |  "theme": {
+            |    "label_text": {
+            |      "face": "bold_italic",
+            |      "size": 16.0,
+            |      "blank": false
+            |    }
+            |  },
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 0.0, 1.0, 2.0 ],
+            |    "y": [ 4.0, 5.0, 3.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [ 
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" } 
+            |    ]
+            |  },
+            |  "scales": [ { "aesthetic": "fill", "discrete": true } ],
+            |  "layers": [
+            |    {
+            |      "geom": "bar",
+            |      "stat": "identity",
+            |      "mapping": { "x": "x", "y": "y", "fill": "x" },
+            |      "show_legend": false,
+            |      "labels": { "formats": [], "lines": [ "Value: @y" ] }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_bold_italic_geom_bar_label_test.png", plotSpec)
+    }
+
 
     @Test
     fun barPlot() {
@@ -545,7 +783,7 @@ class PlotTest {
         dpi: Number? = null,
         scale: Number? = 1
     ) {
-        val bitmap = PlotReprGenerator.exportBitmap(
+        val (bitmap, _) = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
             plotSize = plotSize,
             sizeUnit = unit,

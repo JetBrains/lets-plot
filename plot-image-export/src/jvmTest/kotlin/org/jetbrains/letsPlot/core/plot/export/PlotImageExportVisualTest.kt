@@ -17,11 +17,9 @@ import java.awt.GraphicsEnvironment
 import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 
-@Ignore
 class PlotImageExportVisualTest {
 
     private fun MutableMap<String, Any>.themeTextNotoSans(): MutableMap<String, Any> {
@@ -32,7 +30,7 @@ class PlotImageExportVisualTest {
                 "family" to "Noto Sans"
             ),
             "axis_title_y" to mapOf(
-                "blank" to true
+                "blank" to true // hide rotated text - antialiasing may cause image differences
             )
         )
         return this
@@ -50,6 +48,201 @@ class PlotImageExportVisualTest {
     private val imageComparer by lazy { createImageComparer() }
 
     @Test
+    fun `latex formula`() {
+        val spec = """
+            |{
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "text",
+            |      "x": 0.0,
+            |      "label": "\\( e^{i \\cdot \\pi} = -1 \\)",
+            |      "size": 70.0,
+            |      "family": "Noto Sans",
+            |      "fontface": "italic"
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun superscript() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Default limits" },
+            |      "theme": { "name": "classic", "exponent_format": "pow", "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Scientific notation for \\( x \\leq 10^{-3} \\) and \\( x \\geq 10^3 \\)" },
+            |      "theme": { "name": "classic", "exponent_format": [ "pow", -3.0, 3.0 ], "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_superscript_test.png", plotSpec)
+    }
+
+    @Test
+    fun `multi-level latex formula`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^{a \\cdot b^{c - d}}}}+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b^c}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^{a \\cdot b}+1 \\)",
+            |      "\\( x^a+1 \\)"
+            |    ]
+            |  },
+            |  "mapping": { "x": "x" },
+            |  "data_meta": {
+            |    "series_annotations": [ { "type": "str", "column": "x" } ],
+            |    "mapping_annotations": [
+            |      {
+            |        "parameters": {
+            |          "label": "x",
+            |          "order_by": "..count.."
+            |        },
+            |        "aes": "x",
+            |        "annotation": "as_discrete"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "bar" } ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_multi_level_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun `bold_italic geom_bar label`() {
+        val spec = """
+            |{
+            |  "theme": {
+            |    "label_text": {
+            |      "face": "bold_italic",
+            |      "size": 16.0,
+            |      "blank": false
+            |    }
+            |  },
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 0.0, 1.0, 2.0 ],
+            |    "y": [ 4.0, 5.0, 3.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [ 
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" } 
+            |    ]
+            |  },
+            |  "scales": [ { "aesthetic": "fill", "discrete": true } ],
+            |  "layers": [
+            |    {
+            |      "geom": "bar",
+            |      "stat": "identity",
+            |      "mapping": { "x": "x", "y": "y", "fill": "x" },
+            |      "show_legend": false,
+            |      "labels": { "formats": [], "lines": [ "Value: @y" ] }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_bold_italic_geom_bar_label_test.png", plotSpec)
+    }
+
+    @Test
     fun labels() {
         val spec = """
             {
@@ -58,8 +251,8 @@ class PlotImageExportVisualTest {
                 "axis_title_y": { "blank": true }
               },
               "layers": [
-                { "geom": "text", "x": 0.0, "y": 0.0, "label": "QWE" },
-                { "geom": "text", "x": 0.0, "y": 0.0, "label": "___", "color": "red" }
+                { "geom": "text", "x": 0.0, "y": 0.0, "label": "QWE", "family": "Noto Sans" },
+                { "geom": "text", "x": 0.0, "y": 0.0, "label": "___", "family": "Noto Sans", "color": "red" }
               ],
               "ggsize": { "width": 200.0, "height": 200.0 }
             }
@@ -112,6 +305,7 @@ class PlotImageExportVisualTest {
 
         assertPlot("plot_markdown2Xscale_test.png", plotSpec, scale = 2)
     }
+
     @Test
     fun markdown() {
         val spec = """
@@ -469,6 +663,38 @@ class PlotImageExportVisualTest {
 
         // dpi is NaN, so the bitmap will be exported with the default scaling factor of 1.0
         assertPlot("plot_dpi_nan_test.png", plotSpec, dpi = Double.NaN)
+    }
+
+    @Test
+    fun `shape with 90 degree rotation`() {
+        // Was a bug caused by multiplying stroke by the transform.sx (which is 0.0 for 90-degree rotation)
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 1.0 ],
+            |    "y": [ 1.0 ],
+            |    "angle": [ -30.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" },
+            |      { "type": "int", "column": "angle" }
+            |    ]
+            |  },
+            |  "layers": [
+            |    { "geom": "point", "mapping": { "x": "x", "y": "y", "angle": "angle" }, "size": 20.0, "shape": 2.0 },
+            |    { "geom": "point", "x": 5.0, "y": 1.0, "angle": 90.0, "size": 20.0, "shape": 2.0, "color": "red" },
+            |    { "geom": "blank", "mapping": { "x": [0.0, 6.0], "y": [null, null] }, "inherit_aes": false, "tooltips": "none" }
+            |  ],
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "ggsize": { "width": 200.0, "height": 200.0 }
+            |}
+        """.trimMargin())
+
+        // stroke size should remain the same (3 pixels) at any scaling factor
+        assertPlot("plot_constant_stroke_size_test.png", spec, scale = 1.0)
     }
 
     private fun assertPlot(

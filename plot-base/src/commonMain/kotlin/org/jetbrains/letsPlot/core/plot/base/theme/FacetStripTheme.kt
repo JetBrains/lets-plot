@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.theme
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
@@ -21,4 +22,5 @@ interface FacetStripTheme {
     fun stripTextStyle(): ThemeTextStyle
     fun stripMargins(): Thickness
     fun stripTextJustification(): TextJustification
+    fun stripSpacing(): DoubleVector
 }
