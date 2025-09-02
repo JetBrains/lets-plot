@@ -108,6 +108,10 @@ object Option {
         }
     }
 
+    object GGToolbar {
+        const val SCALE = "scale"
+    }
+
     // Unlisted supported features:
     // - Plot.SIZE (a.k.a. "ggsize")
     // - Plot.THEME

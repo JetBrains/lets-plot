@@ -87,7 +87,8 @@ internal class PlotToolEventDispatcher(
                 CoroutineScope(Dispatchers.Default)
             ) { (targetId, dataBounds, scaleRange) ->
                 val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-                fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleRange)
+                val scaleRangeList = listOf(scaleRange.x, scaleRange.y)
+                fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleRangeList)
             }
 
         val feedback = when (interactionName) {
@@ -109,7 +110,8 @@ internal class PlotToolEventDispatcher(
                             PanningMode.VERTICAL -> listOf(null, top, null, bottom)
                         }
                     }
-                    fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleRange)
+                    val scaleRangeList = listOf(scaleRange.x, scaleRange.y)
+                    fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleRangeList)
                 }
             )
 
@@ -134,7 +136,8 @@ internal class PlotToolEventDispatcher(
                                 SelectionMode.HORIZONTAL_BAND -> listOf(null, top, null, bottom)
                             }
                         }
-                        fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleRange)
+                        val scaleRangeList = listOf(scaleRange.x, scaleRange.y)
+                        fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleRangeList)
                     })
             }
 
@@ -184,7 +187,7 @@ internal class PlotToolEventDispatcher(
         interactionName: String,
         targetId: String?,
         dataBoundsLTRB: List<Double?>,
-        currentScaleRange: DoubleVector
+        currentScaleRange: List<Double>
     ) {
         toolEventCallback.invoke(
             mapOf(

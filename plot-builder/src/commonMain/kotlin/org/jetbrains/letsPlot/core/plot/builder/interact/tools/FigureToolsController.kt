@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_TARGET
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
@@ -78,7 +77,9 @@ abstract class FigureToolsController {
                 }
 
                 event[EVENT_RESULT_SCALE_RANGE]?.let { range ->
-                    specOverride[CURRENT_SCALE_RANGE] = range as DoubleVector
+                    @Suppress("UNCHECKED_CAST")
+                    range as List<Double>
+                    specOverride[CURRENT_SCALE_RANGE] = range
                 }
 
                 updateFigureView(specOverride)

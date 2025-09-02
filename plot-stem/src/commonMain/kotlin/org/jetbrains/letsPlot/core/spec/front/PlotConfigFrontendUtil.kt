@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import org.jetbrains.letsPlot.core.spec.StatProto
@@ -201,9 +202,13 @@ object PlotConfigFrontendUtil {
             sharedContinuousDomainY
         )
 
+        val needScale = config.getMap(GG_TOOLBAR).get(Option.GGToolbar.SCALE) as Boolean? ?: false
+
         val scaleFactor = config.getMap(SPEC_OVERRIDE).get(SCALE_RATIO).let { scaleRatio ->
-            if (scaleRatio is DoubleVector) {
-                scaleRatio.x
+            @Suppress("UNCHECKED_CAST")
+            scaleRatio as List<Double>?
+            if (needScale && scaleRatio != null) {
+                scaleRatio[0]
             } else {
                 1.0
             }

@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 object FigureModelHelper {
+    @Suppress("UNCHECKED_CAST")
     fun updateSpecOverrideList(
         specOverrideList: List<Map<String, Any>>,
         newSpecOverride: Map<String, Any>?
@@ -27,14 +28,15 @@ object FigureModelHelper {
             @Suppress("NAME_SHADOWING")
             val specOverrideList = ArrayList(specOverrideList)
             val index = specOverrideList.indexOfFirst { it[TARGET_ID] == targetId }
+
             if (index < 0) {
-                val initialScaleRange = newSpecOverride[CURRENT_SCALE_RANGE] as DoubleVector
+                val initialScaleRange = newSpecOverride[CURRENT_SCALE_RANGE] as List<Double>
                 val scale = calculate(initialScaleRange, newSpecOverride)
                 specOverrideList.add(newSpecOverride + scale)
 
             } else {
                 val lims = reconcile(specOverrideList[index], newSpecOverride)
-                val initialScaleRange = specOverrideList[index][INITIAL_SCALE_RANGE] as DoubleVector
+                val initialScaleRange = specOverrideList[index][INITIAL_SCALE_RANGE] as List<Double>
                 val scale = calculate(initialScaleRange, newSpecOverride)
 
                 specOverrideList.set(index, lims + scale)
@@ -77,15 +79,15 @@ object FigureModelHelper {
     }
 
     private fun calculate(
-        initialScaleRange: DoubleVector,
+        initialScaleRange: List<Double>,
         newSpecs: Map<String, Any>
     ): Map<String, Any> {
-        val xScaleRatio = calculateScaleRatio(COORD_XLIM_TRANSFORMED, newSpecs, initialScaleRange.x)
-        val yScaleRatio = calculateScaleRatio(COORD_YLIM_TRANSFORMED, newSpecs, initialScaleRange.y)
+        val xScaleRatio = calculateScaleRatio(COORD_XLIM_TRANSFORMED, newSpecs, initialScaleRange[0])
+        val yScaleRatio = calculateScaleRatio(COORD_YLIM_TRANSFORMED, newSpecs, initialScaleRange[1])
 
         return mapOf(
             INITIAL_SCALE_RANGE to initialScaleRange,
-            SCALE_RATIO to DoubleVector(xScaleRatio, yScaleRatio)
+            SCALE_RATIO to listOf(xScaleRatio, yScaleRatio)
         )
     }
 
