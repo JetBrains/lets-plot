@@ -20,7 +20,7 @@ class PanGeomFeedback(
         dataBounds: DoubleRectangle,
         flipped: Boolean,
         mode: PanningMode,
-        currentScaleRange: DoubleVector
+        scaleFactor: List<Double>
     ) -> Unit
 ) : ToolFeedback {
 
@@ -72,9 +72,14 @@ class PanGeomFeedback(
 
                 it.reset()
 
+                val scaleFactor = listOf(
+                    currentBounds.dimension.x / dataBounds.dimension.x,
+                    currentBounds.dimension.y / dataBounds.dimension.y
+                )
+
                 panningMode?.let { pm ->
                     panningMode = null
-                    onCompleted(target.id, dataBounds, flipped, pm, currentBounds.dimension)
+                    onCompleted(target.id, dataBounds, flipped, pm, scaleFactor)
                 }
             },
             onAborted = {

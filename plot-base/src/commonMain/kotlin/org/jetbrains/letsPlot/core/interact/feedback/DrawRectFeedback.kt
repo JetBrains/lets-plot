@@ -27,7 +27,7 @@ class DrawRectFeedback(
         dataBounds: DoubleRectangle,
         flipped: Boolean,
         SelectionMode,
-        currentScaleRange: DoubleVector
+        scaleFactor: List<Double>
     ) -> Unit
 ) : ToolFeedback {
 
@@ -117,7 +117,13 @@ class DrawRectFeedback(
                 if (selector.isAcceptable(selection)) {
                     val (currentBounds, _) = target.dataBounds()
                     val (dataBounds, flipped) = target.applyViewport(selection, ctx)
-                    onCompleted(target.id, dataBounds, flipped, selector.mode, currentBounds.dimension)
+
+                    val scaleFactor = listOf(
+                        currentBounds.dimension.x / dataBounds.dimension.x,
+                        currentBounds.dimension.y / dataBounds.dimension.y
+                    )
+
+                    onCompleted(target.id, dataBounds, flipped, selector.mode, scaleFactor)
                 }
 
                 selector = UnknownSelector()

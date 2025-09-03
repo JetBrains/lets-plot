@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTIO
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_SCALE_RANGE
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_SCALE_FACTOR
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHA
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.CURRENT_SCALE_RANGE
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 abstract class FigureToolsController {
@@ -76,10 +76,10 @@ abstract class FigureToolsController {
                     }
                 }
 
-                event[EVENT_RESULT_SCALE_RANGE]?.let { range ->
+                event[EVENT_RESULT_SCALE_FACTOR]?.let { factor ->
                     @Suppress("UNCHECKED_CAST")
-                    range as List<Double>
-                    specOverride[CURRENT_SCALE_RANGE] = range
+                    factor as List<Double>
+                    specOverride[SCALE_RATIO] = factor
                 }
 
                 updateFigureView(specOverride)

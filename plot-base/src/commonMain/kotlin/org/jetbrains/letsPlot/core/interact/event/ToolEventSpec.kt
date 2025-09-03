@@ -19,6 +19,6 @@ object ToolEventSpec {
     const val EVENT_INTERACTION_NAME = "interaction"
     const val EVENT_INTERACTION_TARGET = "target.id" // str
     const val EVENT_RESULT_DATA_BOUNDS = "selected.dataBounds" // 4-elements array of nullable numbers: [x,y,x1,y1]
-    const val EVENT_RESULT_SCALE_RANGE = "selected.scaleRange" // 2-elements array [xScale, yScale]
+    const val EVENT_RESULT_SCALE_FACTOR = "selected.scaleFactor" // 2-elements array [xScale, yScale]
     const val EVENT_RESULT_ERROR_MSG = "error.msg" // string
 }
