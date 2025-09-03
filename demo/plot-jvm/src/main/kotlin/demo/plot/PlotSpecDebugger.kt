@@ -4,20 +4,14 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
-import org.jetbrains.letsPlot.core.spec.getString
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaDataUtil
-import org.jetbrains.letsPlot.core.spec.write
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
-import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -476,7 +470,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         saveSpecToFile()
 
-        val spec = parsePlotSpec(plotSpecTextArea.text).let(::fetchVegaLiteData)
+        val spec = parsePlotSpec(plotSpecTextArea.text)
         plotPanel.removeAll()
 
         try {
@@ -529,31 +523,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             plotPanel.revalidate()
             plotPanel.repaint()
         }
-    }
-
-    private fun fetchVegaLiteData(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-        val url = plotSpec.getString("data", "url")
-        if (url != null) {
-            try {
-                val urlObj = URL("https://vega.github.io/editor/$url")
-                val connection = urlObj.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.connectTimeout = 5000
-                connection.readTimeout = 5000
-                val content = connection.inputStream.bufferedReader().use(BufferedReader::readText)
-                plotSpec.remove("data")
-                plotSpec.write("data", "values") { VegaDataUtil.parseVegaDataset(content, url) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Failed to fetch data from URL: $url\nError: ${e.message}",
-                    "Data Fetch Error",
-                    JOptionPane.ERROR_MESSAGE
-                )
-            }
-        }
-        return plotSpec
     }
 
     private class PasteIcon(private val size: Int = 20) : Icon {
