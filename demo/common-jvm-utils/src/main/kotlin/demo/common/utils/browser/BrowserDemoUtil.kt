@@ -72,7 +72,7 @@ object BrowserDemoUtil {
             userDir
         }
 
-        // Step 2: Validate the path contains the expected project
+        // Validate the path contains the expected project
         if (workingDir.contains(ROOT_PROJECT)) {
             println("✓ Project root contains '$ROOT_PROJECT'")
             return workingDir
