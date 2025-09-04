@@ -8,11 +8,11 @@ plugins {
     id("org.openjfx.javafxplugin")
 }
 
-val batikVersion = project.extra["batik_version"] as String
+val batikVersion = project.extra["batik.version"] as String
 val commonsIOVersion = project.extra["commons-io.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val ktorVersion = project.extra["ktor_version"] as String
-val jfxVersion = extra["jfx_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val ktorVersion = project.extra["ktor.version"] as String
+val jfxVersion = extra["jfx.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 javafx {
@@ -50,5 +50,5 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:${ktorVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
-    implementation("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
+    implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
 }

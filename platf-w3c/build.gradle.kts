@@ -7,8 +7,8 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {

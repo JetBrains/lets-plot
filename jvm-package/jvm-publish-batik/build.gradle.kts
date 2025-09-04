@@ -17,7 +17,7 @@ val artifactBaseName = "lets-plot-batik"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 
-val batikVersion = project.extra["batik_version"] as String
+val batikVersion = project.extra["batik.version"] as String
 val commonsIOVersion = project.extra["commons-io.version"] as String
 
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
