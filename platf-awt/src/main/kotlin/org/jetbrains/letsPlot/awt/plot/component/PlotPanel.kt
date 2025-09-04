@@ -48,9 +48,9 @@ open class PlotPanel constructor(
     val figureModel: FigureModel
 
     init {
-        // Layout a single child component.
+        // Lay out a single child component.
         // 1. FlowLayout
-        // Works greate, at least in corretto-17 JRE.
+        // Works well, at least in corretto-17 JRE.
         // However, in some cases undesirable "animation" effects were noticed.
         // This was happening because of continuous re-layouting after parent re-size.
         // Not sure now what cases it were, maybe just in older JRE.
@@ -132,7 +132,7 @@ open class PlotPanel constructor(
 
     /**
      * Invoked each time a new plot component is created.
-     * Every time the plot need to be rebuilt, old plot coponent (if any) is removed from
+     * Every time the plot needs to be rebuilt, an old plot coponent (if any) is removed from
      * this panel. Then a new plot component is created and
      * added to this paned.
      */

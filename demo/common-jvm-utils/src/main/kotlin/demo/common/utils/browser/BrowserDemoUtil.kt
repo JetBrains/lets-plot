@@ -57,26 +57,44 @@ object BrowserDemoUtil {
     fun isDev(dev: Boolean? = null): Boolean = dev ?: (System.getenv()["DEV"] != null)
 
     fun getRootPath(): String {
-        // works when launching from IDEA
-        // [UPD]: on linux PWD points to user home dir
-        val projectRoot = System.getenv()["PWD"] ?: throw IllegalStateException("'PWD' env variable is not defined")
+        println("=== Determining project root path ===")
 
-        if (projectRoot.contains(ROOT_PROJECT)) {
-            return projectRoot
+        // First, try to get a PWD env variable - might be set by running configurations in IDEA
+        // [UPD]: on linux PWD points to the user home dir
+        val pwdPath = System.getenv()["PWD"]
+        println("System.getenv()[\"PWD\"]: $pwdPath")
+
+        val workingDir = if (pwdPath != null) {
+            pwdPath
+        } else {
+            val userDir = System.getProperty("user.dir")
+            println("System.getProperty('user.dir'): $userDir")
+            userDir
         }
 
-        val userDir = Path(System.getProperty("user.dir"))
+        // Step 2: Validate the path contains the expected project
+        if (workingDir.contains(ROOT_PROJECT)) {
+            println("✓ Project root contains '$ROOT_PROJECT'")
+            return workingDir
+        }
 
+        println("⚠ Project root doesn't contain '$ROOT_PROJECT', trying path traversal...")
+
+        // Fallback to traversal logic
+        val userDir = Path(workingDir)
         var curDir: Path? = userDir
         while (curDir != null) {
+            println("Checking directory: $curDir")
             if (curDir.endsWith(ROOT_DEMO_DIR_NAME)) {
-                return curDir.parent.toString()
+                val foundRoot = curDir.parent.toString()
+                println("✓ Found project root via traversal: $foundRoot")
+                return foundRoot
             } else {
                 curDir = curDir.parent
             }
         }
 
-        throw IllegalStateException("'PWD' is not pointing to $ROOT_PROJECT : $projectRoot. \nTODO: use getProperty('user.dir')")
+        throw IllegalStateException("Could not determine project root. PWD: $pwdPath, user.dir: ${System.getProperty("user.dir")}")
     }
 
     fun getPlotLibPath(dev: Boolean? = null): String {
@@ -108,7 +126,13 @@ object BrowserDemoUtil {
         return "${getRootPath()}/$projectPath/${getJsOutputDir(dev)}/$projectName.js"
     }
 
-    fun mapperDemoHtml(demoProjectPath: String, demoProject: String, callFun: String, title: String, dev: Boolean? = null): String {
+    fun mapperDemoHtml(
+        demoProjectPath: String,
+        demoProject: String,
+        callFun: String,
+        title: String,
+        dev: Boolean? = null
+    ): String {
         return mapperDemoHtml(demoProjectPath, demoProject, callFun, null, title, dev)
     }
 
