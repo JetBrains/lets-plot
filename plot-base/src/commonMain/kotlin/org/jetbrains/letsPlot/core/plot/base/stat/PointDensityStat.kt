@@ -11,7 +11,9 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
-class PointDensityStat : BaseStat(DEF_MAPPING) {
+class PointDensityStat(
+    private val adjust: Double
+) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y)
@@ -27,12 +29,14 @@ class PointDensityStat : BaseStat(DEF_MAPPING) {
         }
 
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
+        val adjustedXRange = xRange.length * adjust
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
+        val adjustedYRange = yRange.length * adjust
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val r2 = (xRange.length + yRange.length) / 70.0
-        val xy = xRange.length / yRange.length
+        val r2 = (adjustedXRange + adjustedYRange) / 70.0
+        val xy = adjustedXRange / adjustedYRange
 
         val statData = buildStat(xs, ys, r2, xy)
 
@@ -64,6 +68,8 @@ class PointDensityStat : BaseStat(DEF_MAPPING) {
     }
 
     companion object {
+        const val DEF_ADJUST = 1.0
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,

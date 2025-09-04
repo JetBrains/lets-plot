@@ -552,6 +552,10 @@ object Option {
             const val QUANTILES = "quantiles"
         }
 
+        object PointDensity {
+            const val ADJUST = "adjust"
+        }
+
         object Sina {
             const val SCALE = "scale"
             const val TRIM = "trim"

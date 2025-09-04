@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Density
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density2d
 import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
 import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
+import org.jetbrains.letsPlot.core.spec.Option.Stat.PointDensity
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
@@ -143,7 +144,11 @@ object StatProto {
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
             DENSITY2DF -> configureDensity2dStat(options, true)
-            POINTDENSITY -> PointDensityStat()
+            POINTDENSITY -> {
+                PointDensityStat(
+                    adjust = options.getDoubleDef(PointDensity.ADJUST, PointDensityStat.DEF_ADJUST)
+                )
+            }
             StatKind.QQ -> configureQQStat(options)
             QQ2 -> Stats.qq2()
             QQ_LINE -> configureQQLineStat(options)

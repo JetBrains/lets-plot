@@ -13,6 +13,8 @@ class PointDensity {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            withParameters(adjust = 10.0),
+            withParameters(adjust = 0.1),
         )
     }
 
@@ -30,6 +32,34 @@ class PointDensity {
               'layers': [
                 {
                   'geom': 'pointdensity'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun withParameters(
+        adjust: Double
+    ): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'sepal width (cm)',
+                'y': 'sepal length (cm)'
+              },
+              'ggtitle': {
+                'text': 'With parameters:\nadjust = $adjust'
+              },
+              'layers': [
+                {
+                  'geom': 'pointdensity',
+                  'adjust': $adjust
                 }
               ]
             }
