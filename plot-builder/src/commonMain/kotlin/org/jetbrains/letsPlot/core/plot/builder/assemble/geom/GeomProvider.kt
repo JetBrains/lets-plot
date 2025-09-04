@@ -221,6 +221,13 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun pointDensity(): GeomProvider {
+            return GeomProvider(
+                GeomKind.POINT_DENSITY,
+                PointDensityGeom.HANDLES_GROUPS
+            ) { PointDensityGeom() }
+        }
+
         fun ydotplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.Y_DOT_PLOT,

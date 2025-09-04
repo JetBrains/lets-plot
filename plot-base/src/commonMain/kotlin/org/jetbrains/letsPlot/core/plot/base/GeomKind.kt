@@ -39,6 +39,7 @@ enum class GeomKind {
     CONTOURF,
     DENSITY2D,
     DENSITY2DF,
+    POINT_DENSITY,
     JITTER,
     Q_Q,
     Q_Q_2,

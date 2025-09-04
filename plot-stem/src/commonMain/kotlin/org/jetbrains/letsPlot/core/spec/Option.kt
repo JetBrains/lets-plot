@@ -1053,6 +1053,7 @@ object Option {
         private const val CONTOURF = "contourf"
         private const val DENSITY2D = "density2d"
         private const val DENSITY2DF = "density2df"
+        private const val POINT_DENSITY = "pointdensity"
         const val JITTER = "jitter"
         private const val Q_Q = "qq"
         private const val Q_Q_2 = "qq2"
@@ -1111,6 +1112,7 @@ object Option {
             map[CONTOURF] = GeomKind.CONTOURF
             map[DENSITY2D] = GeomKind.DENSITY2D
             map[DENSITY2DF] = GeomKind.DENSITY2DF
+            map[POINT_DENSITY] = GeomKind.POINT_DENSITY
             map[JITTER] = GeomKind.JITTER
             map[Q_Q] = GeomKind.Q_Q
             map[Q_Q_2] = GeomKind.Q_Q_2

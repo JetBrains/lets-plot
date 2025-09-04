@@ -44,6 +44,7 @@ object DefaultSampling {
     val HEX = POINT
     val JITTER = POINT
     val SINA = POINT
+    val POINT_DENSITY = POINT
     val Q_Q = POINT
     val PIE = POINT
 

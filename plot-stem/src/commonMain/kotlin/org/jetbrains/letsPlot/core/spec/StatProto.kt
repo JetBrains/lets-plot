@@ -143,6 +143,7 @@ object StatProto {
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
             DENSITY2DF -> configureDensity2dStat(options, true)
+            POINTDENSITY -> PointDensityStat()
             StatKind.QQ -> configureQQStat(options)
             QQ2 -> Stats.qq2()
             QQ_LINE -> configureQQLineStat(options)

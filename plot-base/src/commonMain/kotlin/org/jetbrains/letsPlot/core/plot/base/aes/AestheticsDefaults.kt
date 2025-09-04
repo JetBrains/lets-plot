@@ -143,6 +143,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.POINT,
                 GeomKind.JITTER,
                 GeomKind.SINA,
+                GeomKind.POINT_DENSITY,
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> point(geomTheme)
 
