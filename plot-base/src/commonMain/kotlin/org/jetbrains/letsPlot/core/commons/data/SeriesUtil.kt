@@ -114,15 +114,17 @@ object SeriesUtil {
     }
 
     fun indicesOfFinite(l0: List<Double?>, l1: List<Double?>): List<Int> {
-        check(l0.size == l1.size)
-        return (l0 zip l1)
-            .mapIndexed { i, (v0, v1) ->
-                when (allFinite(v0, v1)) {
-                    true -> i
-                    else -> null
-                }
+        val n = l0.size
+        check(n == l1.size)
+        val indices = ArrayList<Int>(n)
+        for (i in 0 until n) {
+            val v0 = l0[i]
+            val v1 = l1[i]
+            if (allFinite(v0, v1)) {
+                indices.add(i)
             }
-            .filterNotNull()
+        }
+        return indices
     }
 
     fun resolution(values: Iterable<Double?>, naValue: Double): Double {
