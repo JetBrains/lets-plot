@@ -35,7 +35,8 @@ class Sina {
                   'geom': 'violin'
                 },
                 {
-                  'geom': 'sina'
+                  'geom': 'sina',
+                  'seed': 42
                 }
               ]
             }
@@ -109,7 +110,8 @@ class Sina {
                   'mapping': {
                     'color': 'sepal width (cm)'
                   },
-                  'geom': 'sina'
+                  'geom': 'sina',
+                  'seed': 42
                 }
               ]
             }
