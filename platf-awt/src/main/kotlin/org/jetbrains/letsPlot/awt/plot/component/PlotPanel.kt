@@ -75,7 +75,7 @@ open class PlotPanel constructor(
 
         val providedComponent = if (preferredSizeFromPlot) {
             // Build the plot component now with its default size.
-            // So that the container could take plot's preferred size in account.
+            // So that the container could take the plot's preferred size into account.
             rebuildProvidedComponent(null, sizingPolicy)
         } else {
             null
