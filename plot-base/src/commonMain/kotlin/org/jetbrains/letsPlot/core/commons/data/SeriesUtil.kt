@@ -118,9 +118,7 @@ object SeriesUtil {
         check(n == l1.size)
         val indices = ArrayList<Int>(n)
         for (i in 0 until n) {
-            val v0 = l0[i]
-            val v1 = l1[i]
-            if (allFinite(v0, v1)) {
+            if (allFinite(l0[i], l1[i])) {
                 indices.add(i)
             }
         }
