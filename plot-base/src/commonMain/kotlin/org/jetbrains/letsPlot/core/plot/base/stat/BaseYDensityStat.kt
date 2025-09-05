@@ -33,7 +33,7 @@ abstract class BaseYDensityStat(
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
-    abstract fun applyPostProcessing(statData: DataFrame, xs: List<Double?>, ys: List<Double?>, ws: List<Double?>, ids: List<Int>): DataFrame
+    abstract fun applyPostProcessing(statData: DataFrame, xs: List<Double?>, ys: List<Double?>, ws: List<Double?>, indices: List<Int>): DataFrame
 
     final override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
@@ -51,13 +51,14 @@ abstract class BaseYDensityStat(
         } else {
             List(ys.size) { 1.0 }
         }
+        val indices = xs.indices.toList()
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
         val statData = DensityStatUtil.binnedStat(
             bins = xs,
             values = ys,
             weights = ws,
-            indices = xs.indices.toList(),
+            indices = indices,
             trim = trim,
             tailsCutoff = tailsCutoff,
             bandWidth = bandWidth,
@@ -74,7 +75,7 @@ abstract class BaseYDensityStat(
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
         }
-        return applyPostProcessing(builder.build(), xs, ys, ws, xs.indices.toList())
+        return applyPostProcessing(builder.build(), xs, ys, ws, indices)
     }
 
     protected fun areaViolinWidth(statData: DataFrame, normalizationData: DataFrame? = null): List<Double> {
