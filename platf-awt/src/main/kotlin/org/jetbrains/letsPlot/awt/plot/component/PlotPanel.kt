@@ -50,11 +50,8 @@ open class PlotPanel constructor(
 
     val figureModel: FigureModel
 
-    private val toolbarComp: PlotToolbar? = if (showToolbar) PlotToolbar() else null
-    private val toolbarPlotComp: JPanel? = if (showToolbar) {
-        JPanel(BorderLayout(0, 0))
-            .apply { isOpaque = false; border = null }
-    } else null
+    // The panel that contains the plot component when a toolbar is shown.
+    private lateinit var plotComponentContainer: JPanel
 
     init {
         // Lay out a single child component.
@@ -71,14 +68,8 @@ open class PlotPanel constructor(
         // 3. GridLayout, BorderLayout
         // Almost as good as FlowLayout
         layout = BorderLayout(0, 0)
-//        background = Color.WHITE
         isOpaque = false
         border = null
-
-        if (showToolbar) {
-            add(toolbarComp!!, BorderLayout.NORTH)
-            add(toolbarPlotComp!!, BorderLayout.CENTER)
-        }
 
         // Extra cleanup on 'dispose'.
         addContainerListener(object : ContainerAdapter() {
@@ -87,11 +78,20 @@ open class PlotPanel constructor(
             }
         })
 
-        toolbarPlotComp?.addContainerListener(object : ContainerAdapter() {
-            override fun componentRemoved(e: ContainerEvent) {
-                handleChildRemovedIntern(e.child)
-            }
-        })
+        if (showToolbar) {
+            // The panel that contains the plot component when a toolbar is shown.
+            // Must be initialized before the first call to 'rebuildProvidedComponent()'.
+            plotComponentContainer = JPanel(BorderLayout(0, 0))
+                .apply { isOpaque = false; border = null }
+                .also {
+                    // Extra cleanup on 'dispose'.
+                    addContainerListener(object : ContainerAdapter() {
+                        override fun componentRemoved(e: ContainerEvent) {
+                            handleChildRemovedIntern(e.child)
+                        }
+                    })
+                }
+        }
 
         val providedComponent = if (preferredSizeFromPlot) {
             // Build the plot component now with its default size.
@@ -124,10 +124,17 @@ open class PlotPanel constructor(
                 repaintDelay = repaintDelay
             )
         )
+
+        if (showToolbar) {
+            add(PlotPanelToolbar(figureModel), BorderLayout.NORTH)
+            add(plotComponentContainer, BorderLayout.CENTER)
+        }
     }
 
     override fun dispose() {
-        toolbarPlotComp?.removeAll()
+        if (showToolbar) {
+            plotComponentContainer.removeAll()
+        }
         removeAll()
     }
 
@@ -166,7 +173,7 @@ open class PlotPanel constructor(
         sizingPolicy: SizingPolicy,
         specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent {
-        val plotComponentContainer = if (toolbarPlotComp != null) toolbarPlotComp else this
+        val plotComponentContainer = if (showToolbar) plotComponentContainer else this
         plotComponentContainer.removeAll()
 
         // Adjust the container size if we have a toolbar
