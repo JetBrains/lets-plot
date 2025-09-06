@@ -23,5 +23,6 @@ open class DefaultPlotPanelBatik(
     sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio),
     preferredSizeFromPlot = preferredSizeFromPlot,
     repaintDelay = repaintDelay,
-    applicationContext = DefaultSwingContextBatik()
+    applicationContext = DefaultSwingContextBatik(),
+    showToolbar = processedSpec.containsKey("ggtoolbar")
 )

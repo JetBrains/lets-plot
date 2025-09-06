@@ -23,13 +23,14 @@ open class PlotPanel constructor(
     private val sizingPolicy: SizingPolicy,
     repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
+    private val showToolbar: Boolean = false,
 ) : JPanel(), Disposable {
 
     @Deprecated(
         message = "Removed API: use constructor with sizingPolicy parameter",
         level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith(
-            expression = "PlotPanel(plotComponentProvider = plotComponentProvider, preferredSizeFromPlot = preferredSizeFromPlot, sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio), repaintDelay = repaintDelay, applicationContext = applicationContext)",
+            expression = "PlotPanel(plotComponentProvider = plotComponentProvider, preferredSizeFromPlot = preferredSizeFromPlot, sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio), repaintDelay = repaintDelay, applicationContext = applicationContext, showToolbar = false)",
             imports = ["org.jetbrains.letsPlot.core.util.sizing.SizingPolicy"]
         )
     )
@@ -43,9 +44,17 @@ open class PlotPanel constructor(
         preferredSizeFromPlot,
         SizingPolicy.fitContainerSize(preserveAspectRatio = false),
         repaintDelay,
-        applicationContext
+        applicationContext,
+        false
     )
+
     val figureModel: FigureModel
+
+    private val toolbarComp: PlotToolbar? = if (showToolbar) PlotToolbar() else null
+    private val toolbarPlotComp: JPanel? = if (showToolbar) {
+        JPanel(BorderLayout(0, 0))
+            .apply { isOpaque = false; border = null }
+    } else null
 
     init {
         // Lay out a single child component.
@@ -66,8 +75,19 @@ open class PlotPanel constructor(
         isOpaque = false
         border = null
 
-        // Extra clean-up on 'dispose'.
+        if (showToolbar) {
+            add(toolbarComp!!, BorderLayout.NORTH)
+            add(toolbarPlotComp!!, BorderLayout.CENTER)
+        }
+
+        // Extra cleanup on 'dispose'.
         addContainerListener(object : ContainerAdapter() {
+            override fun componentRemoved(e: ContainerEvent) {
+                handleChildRemovedIntern(e.child)
+            }
+        })
+
+        toolbarPlotComp?.addContainerListener(object : ContainerAdapter() {
             override fun componentRemoved(e: ContainerEvent) {
                 handleChildRemovedIntern(e.child)
             }
@@ -107,6 +127,7 @@ open class PlotPanel constructor(
     }
 
     override fun dispose() {
+        toolbarPlotComp?.removeAll()
         removeAll()
     }
 
@@ -145,9 +166,18 @@ open class PlotPanel constructor(
         sizingPolicy: SizingPolicy,
         specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent {
-        removeAll()
+        val plotComponentContainer = if (toolbarPlotComp != null) toolbarPlotComp else this
+        plotComponentContainer.removeAll()
+
+        // Adjust the container size if we have a toolbar
+        val adjustedContainerSize = if (showToolbar && containerSize != null) {
+            Dimension(containerSize.width, containerSize.height - 33)
+        } else {
+            containerSize
+        }
+
         val providedComponent: JComponent = plotComponentProvider.createComponent(
-            containerSize,
+            adjustedContainerSize,
             sizingPolicy,
             specOverrideList
         )
@@ -156,7 +186,7 @@ open class PlotPanel constructor(
         plotComponentCreated(actualPlotComponentFromProvidedComponent(providedComponent))
 
         // add
-        add(providedComponent)
+        plotComponentContainer.add(providedComponent)
         return providedComponent
     }
 
