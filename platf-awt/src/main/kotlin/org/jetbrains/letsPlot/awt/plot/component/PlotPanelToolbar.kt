@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.BBOX_ZO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.CBOX_ZOOM_TOOL_SPEC
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.PAN_TOOL_SPEC
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
+import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
@@ -62,13 +63,52 @@ internal class PlotPanelToolbar constructor(
     private fun createToolButton(toolSpec: Map<String, Any>): JButton {
         val tool = ToggleTool(toolSpec)
         val iconSvg = toolSpec["icon"] as? String
-        val icon = iconSvg?.let { createSvgIcon(it) }
+        val normalIcon = iconSvg?.let { createSvgIcon(it, color = C_STROKE) }
+        val selectedIcon = iconSvg?.let { createSvgIcon(it, color = C_STROKE_SEL) }
 
-        val button = JButton(tool.label).apply {
-            icon?.let {
-                this.icon = it
-                text = null // Remove text when the icon is present
-                toolTipText = tool.label
+        val button = JButton().apply {
+            // Remove all text and borders
+            text = ""
+            toolTipText = tool.label
+
+            // Set icons
+            icon = normalIcon
+            this.selectedIcon = selectedIcon
+            rolloverIcon = normalIcon  // Keep normal icon on hover
+            pressedIcon = selectedIcon
+
+            // Remove default button styling
+            isBorderPainted = false
+            isFocusPainted = false
+            isContentAreaFilled = false
+
+            // Set size
+            preferredSize = BUTTON_DIM
+            minimumSize = BUTTON_DIM
+            maximumSize = BUTTON_DIM
+
+            // Set background colors
+            background = C_BACKGR
+            isOpaque = true
+
+            // Add mouse listener for hover effects (background only)
+            addMouseListener(object : java.awt.event.MouseAdapter() {
+                override fun mouseEntered(e: java.awt.event.MouseEvent) {
+                    if (!isSelected) {
+                        background = C_BACKGR_HOVER
+                    }
+                }
+
+                override fun mouseExited(e: java.awt.event.MouseEvent) {
+                    if (!isSelected) {
+                        background = C_BACKGR
+                    }
+                }
+            })
+
+            // Handle selection state changes
+            addChangeListener {
+                background = if (isSelected) C_BACKGR_SEL else C_BACKGR
             }
         }
 
@@ -78,9 +118,7 @@ internal class PlotPanelToolbar constructor(
             }
 
             override fun onAction(handler: () -> Unit) {
-                button.addActionListener {
-                    handler()
-                }
+                button.addActionListener { handler() }
             }
         }
         controller.registerTool(tool, view)
@@ -88,23 +126,59 @@ internal class PlotPanelToolbar constructor(
     }
 
     private fun resetButton(): JButton {
-        val icon = createSvgIcon(ToolbarIcons.RESET)
-        val button = JButton(icon).apply {
+        val icon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE)
+
+        val button = JButton().apply {
+            // Remove all text and borders
+            text = ""
             toolTipText = "Reset"
+
+            // Set icon
+            this.icon = icon
+
+            // Remove default button styling
+            isBorderPainted = false
+            isFocusPainted = false
+            isContentAreaFilled = false
+
+            // Set size
+            preferredSize = BUTTON_DIM
+            minimumSize = BUTTON_DIM
+            maximumSize = BUTTON_DIM
+
+            // Set background colors
+            background = C_BACKGR
+            isOpaque = true
+
+            // Add mouse listener for hover effects
+            addMouseListener(object : java.awt.event.MouseAdapter() {
+                override fun mouseEntered(e: java.awt.event.MouseEvent) {
+                    background = C_BACKGR_HOVER
+                }
+
+                override fun mouseExited(e: java.awt.event.MouseEvent) {
+                    background = C_BACKGR
+                }
+            })
         }
+
         button.addActionListener {
             controller.resetFigure(deactiveTools = true)
         }
         return button
     }
 
-    private fun createSvgIcon(svgString: String, size: Dimension = Dimension(16, 16)): Icon? {
+    private fun createSvgIcon(svgString: String, size: Dimension = Dimension(16, 16), color: Color = C_STROKE): Icon? {
         return try {
             val loader = SVGLoader()
-            val inputStream = svgString.byteInputStream()
+            // Replace stroke and fill colors in SVG string
+            val coloredSvg = svgString.replace(
+                """stroke="none"""",
+                """stroke="none" fill="${colorToHex(color)}""""
+            )
+            val inputStream = coloredSvg.byteInputStream()
             val document: SVGDocument = loader.load(inputStream) ?: return null
 
-            // Create BufferedImage and Graphics2D for rendering
             val bufferedImage = java.awt.image.BufferedImage(
                 size.width,
                 size.height,
@@ -113,7 +187,6 @@ internal class PlotPanelToolbar constructor(
 
             val graphics = bufferedImage.createGraphics()
             try {
-                // Render SVG to the graphics context with null ViewBox (uses document's default)
                 document.render(null, graphics, null)
             } finally {
                 graphics.dispose()
@@ -121,11 +194,22 @@ internal class PlotPanelToolbar constructor(
 
             ImageIcon(bufferedImage)
         } catch (e: Exception) {
-            null // Return null if SVG parsing/rendering fails
+            null
         }
+    }
+
+    private fun colorToHex(color: Color): String {
+        return "#%02x%02x%02x".format(color.red, color.green, color.blue)
     }
 
     companion object {
         const val TOOLBAR_HEIGHT = 33
+        val BUTTON_DIM = Dimension(22, 22)
+
+        private val C_BACKGR = Color(247, 248, 250)
+        private val C_STROKE = Color(110, 110, 110)
+        private val C_BACKGR_HOVER = Color(218, 219, 221)
+        private val C_BACKGR_SEL = Color(54, 89, 226)
+        private val C_STROKE_SEL = Color.WHITE
     }
 }
