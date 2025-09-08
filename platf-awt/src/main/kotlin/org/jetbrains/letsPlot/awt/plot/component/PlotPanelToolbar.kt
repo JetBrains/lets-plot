@@ -74,13 +74,13 @@ internal class PlotPanelToolbar constructor(
             // Set icons
             icon = normalIcon
             this.selectedIcon = selectedIcon
-            rolloverIcon = normalIcon  // Keep normal icon on hover
             pressedIcon = selectedIcon
 
             // Remove default button styling
             isBorderPainted = false
             isFocusPainted = false
             isContentAreaFilled = false
+            isRolloverEnabled = false  // Disable automatic rollover behavior
 
             // Set size
             preferredSize = BUTTON_DIM
@@ -91,7 +91,7 @@ internal class PlotPanelToolbar constructor(
             background = C_BACKGR
             isOpaque = true
 
-            // Add mouse listener for hover effects (background only)
+            // Add mouse listener for hover effects
             addMouseListener(object : java.awt.event.MouseAdapter() {
                 override fun mouseEntered(e: java.awt.event.MouseEvent) {
                     if (!isSelected) {
@@ -105,16 +105,18 @@ internal class PlotPanelToolbar constructor(
                     }
                 }
             })
-
-            // Handle selection state changes
-            addChangeListener {
-                background = if (isSelected) C_BACKGR_SEL else C_BACKGR
-            }
         }
 
         val view = object : ToggleToolView {
             override fun setState(selected: Boolean) {
                 button.isSelected = selected
+                if (selected) {
+                    button.background = C_BACKGR_SEL
+                    button.icon = selectedIcon
+                } else {
+                    button.background = C_BACKGR
+                    button.icon = normalIcon
+                }
             }
 
             override fun onAction(handler: () -> Unit) {
