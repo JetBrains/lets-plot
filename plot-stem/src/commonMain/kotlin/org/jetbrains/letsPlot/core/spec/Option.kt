@@ -110,6 +110,7 @@ object Option {
 
     object GGToolbar {
         const val SCALE = "scale"
+        const val SIZE_ZOOMIN = "size_zoomin"
     }
 
     // Unlisted supported features:

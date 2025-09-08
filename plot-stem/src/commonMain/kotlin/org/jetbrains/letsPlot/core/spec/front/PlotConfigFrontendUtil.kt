@@ -202,16 +202,28 @@ object PlotConfigFrontendUtil {
             sharedContinuousDomainY
         )
 
-        val needScale = config.getMap(GG_TOOLBAR).get(Option.GGToolbar.SCALE) as Boolean? ?: false
+        val scale = config.getMap(GG_TOOLBAR).get(Option.GGToolbar.SCALE) as String? ?: "max"
+        val sizeZoomIn = config.getMap(GG_TOOLBAR).get(Option.GGToolbar.SIZE_ZOOMIN) as Double? ?: 0.0
+        val scaleLimits = when (sizeZoomIn) {
+            0.0 -> 1.0..1.0
+            -1.0 -> Double.MIN_VALUE ..Double.MAX_VALUE
+            else -> (1.0 / sizeZoomIn)..sizeZoomIn
+        }
 
         val scaleFactor = config.getMap(SPEC_OVERRIDE).get(SCALE_RATIO).let { scaleRatio ->
             @Suppress("UNCHECKED_CAST")
             scaleRatio as List<Double>?
-            if (needScale && scaleRatio != null) {
-                scaleRatio[0]
-            } else {
-                1.0
-            }
+            val factor = scaleRatio?.let {
+                when (scale) {
+                    "x" -> it[0]
+                    "y" -> it[1]
+                    "max" -> maxOf(it[0], it[1])
+                    "min" -> minOf(it[0], it[1])
+                    else -> 1.0
+                }
+            } ?: 1.0
+
+            factor.coerceIn(scaleLimits)
         }
 
         return PlotAssembler(
