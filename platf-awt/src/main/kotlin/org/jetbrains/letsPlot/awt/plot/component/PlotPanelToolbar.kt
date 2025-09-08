@@ -94,13 +94,13 @@ internal class PlotPanelToolbar constructor(
             // Add mouse listener for hover effects
             addMouseListener(object : java.awt.event.MouseAdapter() {
                 override fun mouseEntered(e: java.awt.event.MouseEvent) {
-                    if (!isSelected) {
+                    if (!tool.active) {
                         background = C_BACKGR_HOVER
                     }
                 }
 
                 override fun mouseExited(e: java.awt.event.MouseEvent) {
-                    if (!isSelected) {
+                    if (!tool.active) {
                         background = C_BACKGR
                     }
                 }
@@ -109,7 +109,6 @@ internal class PlotPanelToolbar constructor(
 
         val view = object : ToggleToolView {
             override fun setState(selected: Boolean) {
-                button.isSelected = selected
                 if (selected) {
                     button.background = C_BACKGR_SEL
                     button.icon = selectedIcon
@@ -211,7 +210,7 @@ internal class PlotPanelToolbar constructor(
         private val C_BACKGR = Color(247, 248, 250)
         private val C_STROKE = Color(110, 110, 110)
         private val C_BACKGR_HOVER = Color(218, 219, 221)
-        private val C_BACKGR_SEL = Color(54, 89, 226)
+        private val C_BACKGR_SEL = Color(69, 114, 232)
         private val C_STROKE_SEL = Color.WHITE
     }
 }
