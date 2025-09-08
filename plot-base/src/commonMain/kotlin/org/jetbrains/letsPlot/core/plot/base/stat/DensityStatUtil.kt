@@ -91,24 +91,15 @@ object DensityStatUtil {
         indices: List<Int>,
         binHandler: (Double, List<Double>, List<Double>, List<Int>) -> Unit,
     ) {
-        val binnedData = (bins.asSequence() zip (values.asSequence() zip (weights.asSequence() zip indices.asSequence())))
-            .filter { (bin, _) -> bin?.isFinite() == true }
-            .groupBy({ (bin, _) -> bin!! }, { (_, binValues) -> binValues })
-            .mapValues { (_, binData) ->
-                val (binValues, binOther) = binData.unzip()
-                val (binWeights, binIndices) = binOther.unzip()
-                Triple(binValues, binWeights, binIndices)
+        val binnedData = bins.indices.mapNotNull { i ->
+            when (SeriesUtil.allFinite(bins[i], values[i], weights[i])) {
+                true -> BinnedDataRow(bins[i]!!, values[i]!!, weights[i]!!, indices[i])
+                else -> null
             }
+        }.groupBy { it.bin }
         for ((bin, binData) in binnedData) {
-            val indices = SeriesUtil.indicesOfFinite(binData.first, binData.second)
-            if (indices.isEmpty()) continue
-            @Suppress("UNCHECKED_CAST")
-            val binValue = binData.first.slice(indices) as List<Double>
-            @Suppress("UNCHECKED_CAST")
-            val binWeight = binData.second.slice(indices) as List<Double>
-            val binIndex = binData.third.slice(indices)
-            val sortingIndices = binValue.indices.sortedBy { binValue[it] }
-            binHandler(bin, binValue.slice(sortingIndices), binWeight.slice(sortingIndices), binIndex.slice(sortingIndices))
+            val sortedBinData = binData.sortedBy { it.value }
+            binHandler(bin, sortedBinData.map { it.value }, sortedBinData.map { it.weight }, sortedBinData.map { it.index })
         }
     }
 
@@ -380,4 +371,11 @@ object DensityStatUtil {
         }
         return result
     }
+
+    private data class BinnedDataRow(
+        val bin: Double,
+        val value: Double,
+        val weight: Double,
+        val index: Int
+    )
 }
