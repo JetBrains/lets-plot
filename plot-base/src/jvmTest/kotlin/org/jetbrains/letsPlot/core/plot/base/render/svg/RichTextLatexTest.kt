@@ -25,8 +25,7 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
             svg.tspans().single(),
-            text,
-            level = TestUtil.FormulaLevel()
+            text
         )
         assertThat(width).isEqualTo(toTestWidth("There are no formulas here"))
     }
@@ -49,7 +48,6 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(2)
         val (first, second) = svg.tspans()
-        val level = TestUtil.FormulaLevel()
 
         assertFormulaTSpan(first, "A")
         assertFormulaTSpan(second, "B")
@@ -64,7 +62,6 @@ class RichTextLatexTest {
 
         assertThat(svg.tspans()).hasSize(3)
         val (first, space, second) = svg.tspans()
-        val level = TestUtil.FormulaLevel()
 
         assertFormulaTSpan(first, "A")
         assertFormulaTSpan(space, " ")
@@ -81,8 +78,7 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
             svg.tspans().single(),
-            "∞",
-            level = TestUtil.FormulaLevel()
+            "∞"
         )
         assertThat(width).isEqualTo(toTestWidth("∞"))
     }
@@ -96,8 +92,7 @@ class RichTextLatexTest {
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
             svg.tspans().single(),
-            "Ω",
-            level = TestUtil.FormulaLevel()
+            "Ω"
         )
         assertThat(width).isEqualTo(toTestWidth("Ω"))
     }
