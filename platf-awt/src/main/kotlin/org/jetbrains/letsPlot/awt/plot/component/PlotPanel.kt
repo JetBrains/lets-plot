@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
+import org.jetbrains.letsPlot.awt.plot.component.PlotPanelToolbar.Companion.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -178,7 +179,7 @@ open class PlotPanel constructor(
 
         // Adjust the container size if we have a toolbar
         val adjustedContainerSize = if (showToolbar && containerSize != null) {
-            Dimension(containerSize.width, containerSize.height - 33)
+            Dimension(containerSize.width, containerSize.height - TOOLBAR_HEIGHT)
         } else {
             containerSize
         }
