@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
+import com.github.weisj.jsvg.SVGDocument
+import com.github.weisj.jsvg.parser.SVGLoader
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
@@ -12,11 +14,10 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolView
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.BBOX_ZOOM_TOOL_SPEC
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.CBOX_ZOOM_TOOL_SPEC
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.PAN_TOOL_SPEC
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
+import java.awt.Dimension
 import java.awt.FlowLayout
-import javax.swing.JButton
-import javax.swing.JOptionPane
-import javax.swing.JPanel
-import javax.swing.SwingUtilities
+import javax.swing.*
 
 internal class PlotPanelToolbar constructor(
     figureModel: FigureModel
@@ -38,9 +39,9 @@ internal class PlotPanelToolbar constructor(
 
     init {
         layout = FlowLayout(FlowLayout.CENTER)
-        preferredSize = java.awt.Dimension(preferredSize.width, 33)
-        minimumSize = java.awt.Dimension(minimumSize.width, 33)
-        maximumSize = java.awt.Dimension(maximumSize.width, 33)
+        preferredSize = java.awt.Dimension(preferredSize.width, TOOLBAR_HEIGHT)
+        minimumSize = java.awt.Dimension(minimumSize.width, TOOLBAR_HEIGHT)
+        maximumSize = java.awt.Dimension(maximumSize.width, TOOLBAR_HEIGHT)
 
         listOf(
             PAN_TOOL_SPEC,
@@ -60,11 +61,20 @@ internal class PlotPanelToolbar constructor(
 
     private fun createToolButton(toolSpec: Map<String, Any>): JButton {
         val tool = ToggleTool(toolSpec)
-        val button = JButton("${tool.label} off")
+        val iconSvg = toolSpec["icon"] as? String
+        val icon = iconSvg?.let { createSvgIcon(it) }
+
+        val button = JButton(tool.label).apply {
+            icon?.let {
+                this.icon = it
+                text = null // Remove text when the icon is present
+                toolTipText = tool.label
+            }
+        }
 
         val view = object : ToggleToolView {
             override fun setState(selected: Boolean) {
-                button.text = "${tool.label} ${if (selected) "on" else "off"}"
+                button.isSelected = selected
             }
 
             override fun onAction(handler: () -> Unit) {
@@ -78,10 +88,44 @@ internal class PlotPanelToolbar constructor(
     }
 
     private fun resetButton(): JButton {
-        val button = JButton("Reset")
+        val icon = createSvgIcon(ToolbarIcons.RESET)
+        val button = JButton(icon).apply {
+            toolTipText = "Reset"
+        }
         button.addActionListener {
             controller.resetFigure(deactiveTools = true)
         }
         return button
+    }
+
+    private fun createSvgIcon(svgString: String, size: Dimension = Dimension(16, 16)): Icon? {
+        return try {
+            val loader = SVGLoader()
+            val inputStream = svgString.byteInputStream()
+            val document: SVGDocument = loader.load(inputStream) ?: return null
+
+            // Create BufferedImage and Graphics2D for rendering
+            val bufferedImage = java.awt.image.BufferedImage(
+                size.width,
+                size.height,
+                java.awt.image.BufferedImage.TYPE_INT_ARGB
+            )
+
+            val graphics = bufferedImage.createGraphics()
+            try {
+                // Render SVG to the graphics context with null ViewBox (uses document's default)
+                document.render(null, graphics, null)
+            } finally {
+                graphics.dispose()
+            }
+
+            ImageIcon(bufferedImage)
+        } catch (e: Exception) {
+            null // Return null if SVG parsing/rendering fails
+        }
+    }
+
+    companion object {
+        const val TOOLBAR_HEIGHT = 33
     }
 }

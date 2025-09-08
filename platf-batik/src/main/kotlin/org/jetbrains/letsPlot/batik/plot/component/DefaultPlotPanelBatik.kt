@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.batik.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 open class DefaultPlotPanelBatik(
@@ -24,5 +25,5 @@ open class DefaultPlotPanelBatik(
     preferredSizeFromPlot = preferredSizeFromPlot,
     repaintDelay = repaintDelay,
     applicationContext = DefaultSwingContextBatik(),
-    showToolbar = processedSpec.containsKey("ggtoolbar")
+    showToolbar = processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
 )
