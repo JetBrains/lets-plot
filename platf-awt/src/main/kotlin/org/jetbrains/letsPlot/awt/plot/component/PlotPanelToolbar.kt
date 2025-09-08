@@ -63,59 +63,20 @@ internal class PlotPanelToolbar constructor(
     private fun createToolButton(toolSpec: Map<String, Any>): JButton {
         val tool = ToggleTool(toolSpec)
         val iconSvg = toolSpec["icon"] as? String
-        val normalIcon = iconSvg?.let { createSvgIcon(it, color = C_STROKE) }
-        val selectedIcon = iconSvg?.let { createSvgIcon(it, color = C_STROKE_SEL) }
+        val normalIcon = createSvgIcon(iconSvg, color = C_STROKE, backgroundColor = C_BACKGR)
+        val hoverIcon = createSvgIcon(iconSvg, color = C_STROKE, backgroundColor = C_BACKGR_HOVER)
+        val selectedIcon = createSvgIcon(iconSvg, color = C_STROKE_SEL, backgroundColor = C_BACKGR_SEL)
 
-        val button = JButton().apply {
-            // Remove all text and borders
-            text = ""
-            toolTipText = tool.label
-
-            // Set icons
-            icon = normalIcon
-            this.selectedIcon = selectedIcon
-            pressedIcon = selectedIcon
-
-            // Remove default button styling
-            isBorderPainted = false
-            isFocusPainted = false
-            isContentAreaFilled = false
-            isRolloverEnabled = false  // Disable automatic rollover behavior
-
-            // Set size
-            preferredSize = BUTTON_DIM
-            minimumSize = BUTTON_DIM
-            maximumSize = BUTTON_DIM
-
-            // Set background colors
-            background = C_BACKGR
-            isOpaque = true
-
-            // Add mouse listener for hover effects
-            addMouseListener(object : java.awt.event.MouseAdapter() {
-                override fun mouseEntered(e: java.awt.event.MouseEvent) {
-                    if (!tool.active) {
-                        background = C_BACKGR_HOVER
-                    }
-                }
-
-                override fun mouseExited(e: java.awt.event.MouseEvent) {
-                    if (!tool.active) {
-                        background = C_BACKGR
-                    }
-                }
-            })
-        }
+        val button = createStyledButton(
+            normalIcon = normalIcon,
+            hoverIcon = hoverIcon, 
+            toolTipText = tool.label,
+            selected = { tool.active }
+        )
 
         val view = object : ToggleToolView {
             override fun setState(selected: Boolean) {
-                if (selected) {
-                    button.background = C_BACKGR_SEL
-                    button.icon = selectedIcon
-                } else {
-                    button.background = C_BACKGR
-                    button.icon = normalIcon
-                }
+                button.icon = if (selected) selectedIcon else normalIcon
             }
 
             override fun onAction(handler: () -> Unit) {
@@ -127,41 +88,15 @@ internal class PlotPanelToolbar constructor(
     }
 
     private fun resetButton(): JButton {
-        val icon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE)
+        val normalIcon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE, backgroundColor = C_BACKGR)
+        val hoverIcon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE, backgroundColor = C_BACKGR_HOVER)
 
-        val button = JButton().apply {
-            // Remove all text and borders
-            text = ""
-            toolTipText = "Reset"
-
-            // Set icon
-            this.icon = icon
-
-            // Remove default button styling
-            isBorderPainted = false
-            isFocusPainted = false
-            isContentAreaFilled = false
-
-            // Set size
-            preferredSize = BUTTON_DIM
-            minimumSize = BUTTON_DIM
-            maximumSize = BUTTON_DIM
-
-            // Set background colors
-            background = C_BACKGR
-            isOpaque = true
-
-            // Add mouse listener for hover effects
-            addMouseListener(object : java.awt.event.MouseAdapter() {
-                override fun mouseEntered(e: java.awt.event.MouseEvent) {
-                    background = C_BACKGR_HOVER
-                }
-
-                override fun mouseExited(e: java.awt.event.MouseEvent) {
-                    background = C_BACKGR
-                }
-            })
-        }
+        val button = createStyledButton(
+            normalIcon = normalIcon,
+            hoverIcon = hoverIcon,
+            toolTipText = "Reset",
+            selected = { false }
+        )
 
         button.addActionListener {
             controller.resetFigure(deactiveTools = true)
@@ -169,34 +104,89 @@ internal class PlotPanelToolbar constructor(
         return button
     }
 
-    private fun createSvgIcon(svgString: String, size: Dimension = Dimension(16, 16), color: Color = C_STROKE): Icon? {
-        return try {
-            val loader = SVGLoader()
-            // Replace stroke and fill colors in SVG string
-            val coloredSvg = svgString.replace(
-                """stroke="none"""",
-                """stroke="none" fill="${colorToHex(color)}""""
-            )
-            val inputStream = coloredSvg.byteInputStream()
-            val document: SVGDocument = loader.load(inputStream) ?: return null
+    private fun createStyledButton(
+        normalIcon: Icon,
+        hoverIcon: Icon,
+        toolTipText: String,
+        selected: () -> Boolean
+    ): JButton {
+        return JButton().apply {
+            text = ""
+            this.toolTipText = toolTipText
+            icon = normalIcon
 
-            val bufferedImage = java.awt.image.BufferedImage(
-                size.width,
-                size.height,
-                java.awt.image.BufferedImage.TYPE_INT_ARGB
-            )
+            // Remove default button styling
+            isBorderPainted = false
+            isFocusPainted = false
+            isContentAreaFilled = false
+            isRolloverEnabled = false
 
-            val graphics = bufferedImage.createGraphics()
-            try {
-                document.render(null, graphics, null)
-            } finally {
-                graphics.dispose()
-            }
+            preferredSize = BUTTON_DIM
+            minimumSize = BUTTON_DIM
+            maximumSize = BUTTON_DIM
 
-            ImageIcon(bufferedImage)
-        } catch (e: Exception) {
-            null
+            isOpaque = false  // Transparent since the icon has a background
+
+            // Hover effects - swap icons
+            addMouseListener(object : java.awt.event.MouseAdapter() {
+                override fun mouseEntered(e: java.awt.event.MouseEvent) {
+                    if (!selected()) {
+                        icon = hoverIcon
+                    }
+                }
+
+                override fun mouseExited(e: java.awt.event.MouseEvent) {
+                    if (!selected()) {
+                        icon = normalIcon
+                    }
+                }
+            })
         }
+    }
+
+    private fun createSvgIcon(svgString: String?, size: Dimension = Dimension(16, 16), color: Color = C_STROKE, backgroundColor: Color? = null): Icon {
+        val bufferedImage = java.awt.image.BufferedImage(
+            BUTTON_DIM.width,  // Use button size for the full icon
+            BUTTON_DIM.height,
+            java.awt.image.BufferedImage.TYPE_INT_ARGB
+        )
+
+        val graphics = bufferedImage.createGraphics()
+        try {
+            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON)
+            
+            // Draw a rounded background
+            graphics.color = backgroundColor ?: C_BACKGR
+            graphics.fillRoundRect(0, 0, BUTTON_DIM.width, BUTTON_DIM.height, 8, 8)
+            
+            // Try to render the SVG icon if provided
+            svgString?.let { svg ->
+                try {
+                    val loader = SVGLoader()
+                    // Replace stroke and fill colors in SVG string
+                    val coloredSvg = svg.replace(
+                        """stroke="none"""",
+                        """stroke="none" fill="${colorToHex(color)}""""
+                    )
+                    val inputStream = coloredSvg.byteInputStream()
+                    val document: SVGDocument? = loader.load(inputStream)
+                    
+                    document?.let {
+                        // Center the SVG icon
+                        val iconX = (BUTTON_DIM.width - size.width) / 2
+                        val iconY = (BUTTON_DIM.height - size.height) / 2
+                        graphics.translate(iconX, iconY)
+                        it.render(null, graphics, null)
+                    }
+                } catch (e: Exception) {
+                    // SVG rendering failed, but we still have the background
+                }
+            }
+        } finally {
+            graphics.dispose()
+        }
+
+        return ImageIcon(bufferedImage)
     }
 
     private fun colorToHex(color: Color): String {
