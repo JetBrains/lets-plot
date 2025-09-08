@@ -39,10 +39,39 @@ internal class PlotPanelToolbar constructor(
     )
 
     init {
-        layout = FlowLayout(FlowLayout.CENTER)
-        preferredSize = java.awt.Dimension(preferredSize.width, TOOLBAR_HEIGHT)
-        minimumSize = java.awt.Dimension(minimumSize.width, TOOLBAR_HEIGHT)
-        maximumSize = java.awt.Dimension(maximumSize.width, TOOLBAR_HEIGHT)
+        layout = FlowLayout(FlowLayout.CENTER, 0, 2)  // 2px vertical gap to center the inner container
+
+        preferredSize = Dimension(preferredSize.width, TOOLBAR_HEIGHT)
+        minimumSize = Dimension(minimumSize.width, TOOLBAR_HEIGHT)
+        maximumSize = Dimension(maximumSize.width, TOOLBAR_HEIGHT)
+
+        isOpaque = false
+
+        // Create an inner container with a custom rounded background
+        val innerContainer = object : JPanel(FlowLayout(FlowLayout.CENTER, 6, 0)) {
+            override fun paintComponent(g: java.awt.Graphics) {
+                val g2 = g.create() as java.awt.Graphics2D
+                g2.setRenderingHint(
+                    java.awt.RenderingHints.KEY_ANTIALIASING,
+                    java.awt.RenderingHints.VALUE_ANTIALIAS_ON
+                )
+
+                // Fill rounded background
+                g2.color = C_BACKGR
+                g2.fillRoundRect(0, 0, width, height, 16, 16)
+
+                // Draw border
+                g2.color = Color(200, 200, 200)
+                g2.stroke = java.awt.BasicStroke(1f)
+                g2.drawRoundRect(0, 0, width - 1, height - 1, 16, 16)
+
+                g2.dispose()
+            }
+        }.apply {
+            isOpaque = false
+            // Add padding equivalent
+            border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
+        }
 
         listOf(
             PAN_TOOL_SPEC,
@@ -50,10 +79,13 @@ internal class PlotPanelToolbar constructor(
             CBOX_ZOOM_TOOL_SPEC,
         ).forEach {
             val button = createToolButton(it)
-            this.add(button)
+            innerContainer.add(button)
         }
 
-        this.add(resetButton())
+        innerContainer.add(resetButton())
+
+        // Add the inner container to the main toolbar
+        add(innerContainer)
 
         figureModel.onToolEvent { event ->
             controller.handleToolFeedback(event)
@@ -69,7 +101,7 @@ internal class PlotPanelToolbar constructor(
 
         val button = createStyledButton(
             normalIcon = normalIcon,
-            hoverIcon = hoverIcon, 
+            hoverIcon = hoverIcon,
             toolTipText = tool.label,
             selected = { tool.active }
         )
@@ -144,7 +176,12 @@ internal class PlotPanelToolbar constructor(
         }
     }
 
-    private fun createSvgIcon(svgString: String?, size: Dimension = Dimension(16, 16), color: Color = C_STROKE, backgroundColor: Color? = null): Icon {
+    private fun createSvgIcon(
+        svgString: String?,
+        size: Dimension = Dimension(16, 16),
+        color: Color = C_STROKE,
+        backgroundColor: Color? = null
+    ): Icon {
         val bufferedImage = java.awt.image.BufferedImage(
             BUTTON_DIM.width,  // Use button size for the full icon
             BUTTON_DIM.height,
@@ -153,12 +190,15 @@ internal class PlotPanelToolbar constructor(
 
         val graphics = bufferedImage.createGraphics()
         try {
-            graphics.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON)
-            
+            graphics.setRenderingHint(
+                java.awt.RenderingHints.KEY_ANTIALIASING,
+                java.awt.RenderingHints.VALUE_ANTIALIAS_ON
+            )
+
             // Draw a rounded background
             graphics.color = backgroundColor ?: C_BACKGR
             graphics.fillRoundRect(0, 0, BUTTON_DIM.width, BUTTON_DIM.height, 8, 8)
-            
+
             // Try to render the SVG icon if provided
             svgString?.let { svg ->
                 try {
@@ -170,7 +210,7 @@ internal class PlotPanelToolbar constructor(
                     )
                     val inputStream = coloredSvg.byteInputStream()
                     val document: SVGDocument? = loader.load(inputStream)
-                    
+
                     document?.let {
                         // Center the SVG icon
                         val iconX = (BUTTON_DIM.width - size.width) / 2
