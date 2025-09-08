@@ -6,22 +6,21 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.svg.RichTextTermTest.Companion.DEF_FONT
+import org.jetbrains.letsPlot.core.plot.base.render.svg.RichTextTermTest.Companion.toTestWidth
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import kotlin.math.roundToInt
 import kotlin.test.Test
 
 class RichTextLatexTest {
     @Test
     fun noLatex() {
         val text = "There are no formulas here"
-        val svg = RichText.toSvg(text, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(text, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(text, DEF_FONT).single()
+        val width = RichText.estimateWidth(text, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
@@ -29,14 +28,14 @@ class RichTextLatexTest {
             text,
             level = TestUtil.FormulaLevel()
         )
-        assertThat(width).isEqualTo(text.length * DEF_FONT_SIZE.toDouble())
+        assertThat(width).isEqualTo(toTestWidth("There are no formulas here"))
     }
 
     @Test
     fun emptyFormula() {
         val formula = """\(\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(0)
         assertThat(width).isEqualTo(0.0)
@@ -45,39 +44,39 @@ class RichTextLatexTest {
     @Test
     fun simpleFormulaWithSpace() {
         val formula = """\(A B\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(2)
         val (first, second) = svg.tspans()
         val level = TestUtil.FormulaLevel()
 
-        assertFormulaTSpan(first, "A", level = level.current())
-        assertFormulaTSpan(second, "B", level = level.current())
-        assertThat(width).isEqualTo(2 * DEF_FONT_SIZE.toDouble())
+        assertFormulaTSpan(first, "A")
+        assertFormulaTSpan(second, "B")
+        assertThat(width).isEqualTo(toTestWidth("AB"))
     }
 
     @Test
     fun simpleFormulaWithExplicitSpace() {
         val formula = """\(A \quad B\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(3)
         val (first, space, second) = svg.tspans()
         val level = TestUtil.FormulaLevel()
 
-        assertFormulaTSpan(first, "A", level = level.current())
-        assertFormulaTSpan(space, " ", level = level.current())
-        assertFormulaTSpan(second, "B", level = level.current())
-        assertThat(width).isEqualTo(3 * DEF_FONT_SIZE.toDouble())
+        assertFormulaTSpan(first, "A")
+        assertFormulaTSpan(space, " ")
+        assertFormulaTSpan(second, "B")
+        assertThat(width).isEqualTo(toTestWidth("A B"))
     }
 
     @Test
     fun simpleFormulaSpecialSymbol() {
         val formula = """\(\infty\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
@@ -85,14 +84,14 @@ class RichTextLatexTest {
             "∞",
             level = TestUtil.FormulaLevel()
         )
-        assertThat(width).isEqualTo(DEF_FONT_SIZE.toDouble())
+        assertThat(width).isEqualTo(toTestWidth("∞"))
     }
 
     @Test
     fun simpleFormulaLetter() {
         val formula = """\(\Omega\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(1)
         assertFormulaTSpan(
@@ -100,14 +99,14 @@ class RichTextLatexTest {
             "Ω",
             level = TestUtil.FormulaLevel()
         )
-        assertThat(width).isEqualTo(DEF_FONT_SIZE.toDouble())
+        assertThat(width).isEqualTo(toTestWidth("Ω"))
     }
 
     @Test
     fun simpleFormulaSuperscript() {
         val formula = """\(a^b\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
@@ -115,11 +114,11 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(pow, "b", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("b", level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -127,8 +126,8 @@ class RichTextLatexTest {
     @Test
     fun simpleFormulaSuperscriptWithBraces() {
         val formula = """\(a^{bc}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSup, pow, restoreShift) = svg.tspans()
@@ -136,11 +135,11 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(pow, "bc", level = level.current())
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth("bc", level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -148,8 +147,8 @@ class RichTextLatexTest {
     @Test
     fun simpleFormulaSubscript() {
         val formula = """\(a_b\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
@@ -157,11 +156,11 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(index, "b", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("b", level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -169,8 +168,8 @@ class RichTextLatexTest {
     @Test
     fun simpleFormulaSubscriptWithBraces() {
         val formula = """\(a_{bc}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreShift) = svg.tspans()
@@ -178,11 +177,11 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(index, "bc", level = level.current())
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth("bc", level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -190,8 +189,8 @@ class RichTextLatexTest {
     @Test
     fun formulaWithMultipleSuperscript() {
         val formula = """\(a^{b^c}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
@@ -200,15 +199,15 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(firstLevelPow, "b", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("b", level = level)
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(secondLevelPow, "c", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("c", level = level)
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
@@ -217,8 +216,8 @@ class RichTextLatexTest {
     @Test
     fun formulaWithMultipleSubscript() {
         val formula = """\(a_{i_1}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
@@ -227,15 +226,15 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(firstLevelIndex, "i", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("i", level = level)
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(secondLevelIndex, "1", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("1", level = level)
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
@@ -244,8 +243,8 @@ class RichTextLatexTest {
     @Test
     fun formulaWithMixedSupSub() {
         val formula = """\(a^{b_i}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
@@ -254,15 +253,15 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(firstLevelPow, "b", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("b", level = level)
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(secondLevelIndex, "i", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("i", level = level)
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
@@ -271,8 +270,8 @@ class RichTextLatexTest {
     @Test
     fun formulaWithMixedSubSup() {
         val formula = """\(a_{I^n}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(9)
         val (base, firstLevelSpace, firstLevelShiftSub, firstLevelIndex, secondLevelSpace) = svg.tspans()
@@ -281,15 +280,15 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(firstLevelIndex, "I", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("I", level = level)
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(secondLevelPow, "n", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("n", level = level)
         assertFormulaTSpan(secondLevelRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(firstLevelRestoreShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
@@ -298,26 +297,27 @@ class RichTextLatexTest {
     @Test
     fun simpleFormulaFraction() {
         val formula = """\(\frac{a}{b}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(4)
         val (num, denom, bar, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
 
-        val fracPosition = toTestWidth(1, level) / 2.0
+        val frac = listOf("a", "b")
+        val fracPosition = toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "a", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "b", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
-        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = toTestWidth(1, level), expectedAnchor = "start")
-        assertThat(width).isEqualTo(toTestWidth(1, level))
+        assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = toTestWidth(frac, level = level), expectedAnchor = "start")
+        assertThat(width).isEqualTo(toTestWidth(frac, level = level))
     }
 
     @Test
     fun sumOfFractions() {
         val formula = """\(\frac{a}{b} + \frac{c}{d}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(9)
         val (firstNum, firstDenom, firstBar, restoreFirstShift, sumSign) = svg.tspans()
@@ -325,19 +325,21 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         var expectedWidth = 0.0
 
-        val firstFracPosition = toTestWidth(1, level) / 2.0
+        val firstFrac = listOf("a", "b")
+        val firstFracPosition = toTestWidth(firstFrac, level = level) / 2.0
         assertFormulaTSpan(firstNum, "a", level = level.num(), expectedX = firstFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(firstDenom, "b", level = level.denom(), expectedX = firstFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(firstBar, null, level = level.bar(), expectedX = firstFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(firstFrac, level = level)
         assertFormulaTSpan(restoreFirstShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertFormulaTSpan(sumSign, "+", level = level.current())
-        expectedWidth += toTestWidth(1, level)
-        val secondFracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        expectedWidth += toTestWidth("+", level = level)
+        val secondFrac = listOf("c", "d")
+        val secondFracPosition = expectedWidth + toTestWidth(secondFrac, level = level) / 2.0
         assertFormulaTSpan(secondNum, "c", level = level.num(), expectedX = secondFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(secondDenom, "d", level = level.denom(), expectedX = secondFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(secondBar, null, level = level.bar(), expectedX = secondFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(secondFrac, level = level)
         assertFormulaTSpan(restoreSecondShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -345,8 +347,8 @@ class RichTextLatexTest {
     @Test
     fun superscriptInFraction() {
         val formula = """\(\frac{a^3}{b^2}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(12)
         val (numBase, numSpace, numShiftSup, numPow, numRestoreShift) = svg.tspans()
@@ -355,13 +357,13 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         var expectedWidth = 0.0
 
-        val fracPosition = (toTestWidth(1, level) + toTestWidth(1, level.copy().sup())) / 2.0
+        val fracPosition = (toTestWidth("a", level = level) + toTestWidth("3", level = level.copy().sup())) / 2.0
         assertFormulaTSpan(numBase, "a", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(numSpace, " ", level = level.pass())
         assertFormulaTSpan(numShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(numPow, "3", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("3", level = level)
         assertFormulaTSpan(numRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(denomBase, "b", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denomSpace, " ", level = level.pass())
@@ -376,8 +378,8 @@ class RichTextLatexTest {
     @Test
     fun fractionInSuperscript() {
         val formula = """\(a^{\frac{b}{c}}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(8)
         val (base, space, shiftSup, num, denom) = svg.tspans()
@@ -386,12 +388,13 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
-        val fracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        val frac = listOf("b", "c")
+        val fracPosition = expectedWidth + toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(frac, level = level)
         assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(restoreFracShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
@@ -402,8 +405,8 @@ class RichTextLatexTest {
     @Test
     fun fractionOnSecondLevel() {
         val formula = """\(a^{b_{\frac{c}{d}}}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(12)
         val (base, firstLevelSpace, firstLevelShiftSup, firstLevelPow, secondLevelSpace) = svg.tspans()
@@ -413,16 +416,17 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(firstLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(firstLevelShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(firstLevelPow, "b", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("b", level = level)
         assertFormulaTSpan(secondLevelSpace, " ", level = level.pass())
         assertFormulaTSpan(secondLevelShiftSub, "\u200B", level = level.sub())
-        val fracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        val frac = listOf("c", "d")
+        val fracPosition = expectedWidth + toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "c", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(frac, level = level)
         assertFormulaTSpan(denom, "d", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(restoreFracShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
@@ -434,8 +438,8 @@ class RichTextLatexTest {
     @Test
     fun textBeforeFormulaWithFraction() {
         val formula = """a+\(\frac{b}{c}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (text, num, denom, bar, restoreShift) = svg.tspans()
@@ -443,12 +447,13 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertTSpan(text, "a+")
-        expectedWidth += toTestWidth(2, level)
-        val fracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        expectedWidth += toTestWidth("a+", level = level)
+        val frac = listOf("b", "c")
+        val fracPosition = expectedWidth + toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(frac, level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -456,8 +461,8 @@ class RichTextLatexTest {
     @Test
     fun textBetweenTwoFormulasWithFractions() {
         val formula = """\(\frac{a}{b}\)XY\(\frac{c}{d}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(9)
         val (firstNum, firstDenom, firstBar, firstRestoreShift, text) = svg.tspans()
@@ -465,19 +470,21 @@ class RichTextLatexTest {
         val level = TestUtil.FormulaLevel()
         var expectedWidth = 0.0
 
-        val firstFracPosition = toTestWidth(1, level) / 2.0
+        val firstFrac = listOf("a", "b")
+        val firstFracPosition = toTestWidth(firstFrac, level = level) / 2.0
         assertFormulaTSpan(firstNum, "a", level = level.num(), expectedX = firstFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(firstDenom, "b", level = level.denom(), expectedX = firstFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(firstBar, null, level = level.bar(), expectedX = firstFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(firstFrac, level = level)
         assertFormulaTSpan(firstRestoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertTSpan(text, "XY")
-        expectedWidth += toTestWidth(2, level)
-        val secondFracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        expectedWidth += toTestWidth("XY", level = level)
+        val secondFrac = listOf("c", "d")
+        val secondFracPosition = expectedWidth + toTestWidth(secondFrac, level = level) / 2.0
         assertFormulaTSpan(secondNum, "c", level = level.num(), expectedX = secondFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(secondDenom, "d", level = level.denom(), expectedX = secondFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(secondBar, null, level = level.bar(), expectedX = secondFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(secondFrac, level = level)
         assertFormulaTSpan(secondRestoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -485,41 +492,43 @@ class RichTextLatexTest {
     @Test
     fun textAfterFormulaWithFraction() {
         val formula = """\(\frac{a}{b}\)+c"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (num, denom, bar, restoreShift, text) = svg.tspans()
         val level = TestUtil.FormulaLevel()
         var expectedWidth = 0.0
 
-        val fracPosition = toTestWidth(1, level) / 2.0
+        val frac = listOf("a", "b")
+        val fracPosition = toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "a", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "b", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(frac, level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertTSpan(text, "+c")
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth("+c", level = level)
         assertThat(width).isEqualTo(expectedWidth)
     }
 
     @Test
     fun twoLines() {
         val formula = "\\(\\frac{a}{b}\\)\n\\(c_i\\)"
-        val (firstSvg, secondSvg) = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator)
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val (firstSvg, secondSvg) = RichText.toSvg(formula, DEF_FONT)
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(firstSvg.tspans()).hasSize(4)
         val (num, denom, bar, restoreFracShift) = firstSvg.tspans()
         val firstLevel = TestUtil.FormulaLevel()
 
-        val fracPosition = toTestWidth(1, firstLevel) / 2.0
+        val frac = listOf("a", "b")
+        val fracPosition = toTestWidth(frac, level = firstLevel) / 2.0
         assertFormulaTSpan(num, "a", level = firstLevel.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "b", level = firstLevel.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = firstLevel.bar(), expectedX = fracPosition, expectedAnchor = "middle")
-        assertFormulaTSpan(restoreFracShift, "\u200B", level = firstLevel.revert(), expectedX = toTestWidth(1, firstLevel), expectedAnchor = "start")
-        assertThat(width).isGreaterThan(toTestWidth(1, firstLevel))
+        assertFormulaTSpan(restoreFracShift, "\u200B", level = firstLevel.revert(), expectedX = toTestWidth(frac, level = firstLevel), expectedAnchor = "start")
+        assertThat(width).isGreaterThan(toTestWidth(frac, level = firstLevel))
 
         assertThat(secondSvg.tspans()).hasSize(5)
         val (base, space, shiftSub, index, restoreIndexShift) = secondSvg.tspans()
@@ -527,11 +536,11 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(base, "c", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("c", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSub, "\u200B", level = level.sub())
         assertFormulaTSpan(index, "i", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("i", level = level)
         assertFormulaTSpan(restoreIndexShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -539,8 +548,8 @@ class RichTextLatexTest {
     @Test
     fun linkBeforeFormulaWithFraction() {
         val formula = """<a href="https://example.com">link</a>\(\frac{a}{b}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.children()).hasSize(5)
         val linkText = svg.children().first().children().single() as SvgTSpanElement
@@ -551,12 +560,13 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertTSpan(linkText, "link")
-        expectedWidth += toTestWidth(4, level)
-        val fracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        expectedWidth += toTestWidth("link", level = level)
+        val frac = listOf("a", "b")
+        val fracPosition = expectedWidth + toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "a", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "b", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(frac, level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -564,8 +574,8 @@ class RichTextLatexTest {
     @Test
     fun markdownBeforeFormulaWithFraction() {
         val formula = """<span style="color:blue">**text**</span>\(\frac{a}{b}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator, markdown = true).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator, markdown = true)
+        val svg = RichText.toSvg(formula, DEF_FONT, markdown = true).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT, markdown = true)
 
         assertThat(svg.tspans()).hasSize(5)
         val (markdown, num, denom, bar, restoreShift) = svg.tspans()
@@ -573,12 +583,13 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertTSpan(markdown, "text", bold = true, color = "blue")
-        expectedWidth += toTestWidth(4, level)
-        val fracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        expectedWidth += toTestWidth("text", level = level)
+        val frac = listOf("a", "b")
+        val fracPosition = expectedWidth + toTestWidth(frac, level = level) / 2.0
         assertFormulaTSpan(num, "a", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "b", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(frac, level = level)
         assertFormulaTSpan(restoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -586,16 +597,17 @@ class RichTextLatexTest {
     @Test
     fun formulaWithAnchorMiddle() {
         val formula = """a+\(\frac{b}{c}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator, anchor = Text.HorizontalAnchor.MIDDLE).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT, anchor = Text.HorizontalAnchor.MIDDLE).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (text, num, denom, bar, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        val expectedWidth = toTestWidth(3, level)
+        val frac = listOf("b", "c")
+        val expectedWidth = toTestWidth("a+", level = level) + toTestWidth(frac, level = level)
 
         assertTSpan(text, "a+", x = -expectedWidth / 2.0)
-        val fracPosition = 2.5 * toTestWidth(1, level) - expectedWidth / 2.0
+        val fracPosition = toTestWidth("a+", level = level) + toTestWidth(frac, level = level) / 2.0 - expectedWidth / 2.0
         assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
@@ -606,16 +618,17 @@ class RichTextLatexTest {
     @Test
     fun formulaWithAnchorRight() {
         val formula = """a+\(\frac{b}{c}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator, anchor = Text.HorizontalAnchor.RIGHT).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT, anchor = Text.HorizontalAnchor.RIGHT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(5)
         val (text, num, denom, bar, restoreShift) = svg.tspans()
         val level = TestUtil.FormulaLevel()
-        val expectedWidth = toTestWidth(3, level)
+        val frac = listOf("b", "c")
+        val expectedWidth = toTestWidth("a+", level = level) + toTestWidth(frac, level = level)
 
         assertTSpan(text, "a+", x = -expectedWidth)
-        val fracPosition = 2.5 * toTestWidth(1, level) - expectedWidth
+        val fracPosition = toTestWidth("a+", level = level) + toTestWidth(frac, level = level) / 2.0 - expectedWidth
         assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")
@@ -626,8 +639,8 @@ class RichTextLatexTest {
     @Test
     fun complexFormulaRegression1() {
         val formula = """\(a^{b+\frac{c}{d}}+\frac{e}{f}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(14)
         val (a, space, shiftSup, b, c) = svg.tspans()
@@ -637,25 +650,27 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(a, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(space, " ", level = level.pass())
         assertFormulaTSpan(shiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(b, "b+", level = level.current())
-        expectedWidth += toTestWidth(2, level)
-        val cdFracPosition = expectedWidth + toTestWidth(1, level) / 2.0
+        expectedWidth += toTestWidth("b+", level = level)
+        val cdFrac = listOf("c", "d")
+        val cdFracPosition = expectedWidth + toTestWidth(cdFrac, level = level) / 2.0
         assertFormulaTSpan(c, "c", level = level.num(), expectedX = cdFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(d, "d", level = level.denom(), expectedX = cdFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(cdBar, null, level = level.bar(), expectedX = cdFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth(cdFrac, level = level)
         assertFormulaTSpan(cdRestoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertFormulaTSpan(restoreShiftSup, "\u200B", level = level.revert())
         assertFormulaTSpan(plus, "+", level = level.current())
-        expectedWidth += toTestWidth(1, level)
-        val bigBCFracPosition = expectedWidth + toTestWidth(1, level) / 2.0
-        assertFormulaTSpan(e, "e", level = level.num(), expectedX = bigBCFracPosition, expectedAnchor = "middle")
-        assertFormulaTSpan(f, "f", level = level.denom(), expectedX = bigBCFracPosition, expectedAnchor = "middle")
-        assertFormulaTSpan(efBar, null, level = level.bar(), expectedX = bigBCFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("+", level = level)
+        val efFrac = listOf("e", "f")
+        val efFracPosition = expectedWidth + toTestWidth(efFrac, level = level) / 2.0
+        assertFormulaTSpan(e, "e", level = level.num(), expectedX = efFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(f, "f", level = level.denom(), expectedX = efFracPosition, expectedAnchor = "middle")
+        assertFormulaTSpan(efBar, null, level = level.bar(), expectedX = efFracPosition, expectedAnchor = "middle")
+        expectedWidth += toTestWidth(efFrac, level = level)
         assertFormulaTSpan(efRestoreShift, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertThat(width).isEqualTo(expectedWidth)
     }
@@ -663,8 +678,8 @@ class RichTextLatexTest {
     @Test
     fun complexFormulaRegression2() {
         val formula = """\(a^\frac{c+d}{e}+b_{\frac{f}{g+h}}\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(16)
         val (a, aSpace, aShiftSup, cd, e) = svg.tspans()
@@ -675,25 +690,25 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(a, "a", level = level.current())
-        expectedWidth += toTestWidth(1, level)
+        expectedWidth += toTestWidth("a", level = level)
         assertFormulaTSpan(aSpace, " ", level = level.pass())
         assertFormulaTSpan(aShiftSup, "\u200B", level = level.sup())
-        val cdeFracPosition = expectedWidth + toTestWidth(3, level) / 2.0
+        val cdeFracPosition = expectedWidth + toTestWidth("c+d", level = level) / 2.0
         assertFormulaTSpan(cd, "c+d", level = level.num(), expectedX = cdeFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(e, "e", level = level.denom(), expectedX = cdeFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(cdeBar, null, level = level.bar(), expectedX = cdeFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(3, level)
+        expectedWidth += toTestWidth("c+d", level = level)
         assertFormulaTSpan(cdeRestoreFrac, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertFormulaTSpan(restoreAShift, "\u200B", level = level.revert())
         assertFormulaTSpan(plusB, "+b", level = level.current())
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth("+b", level = level)
         assertFormulaTSpan(bSpace, " ", level = level.pass())
         assertFormulaTSpan(bShiftSub, "\u200B", level = level.sub())
-        val fghFracPosition = expectedWidth + toTestWidth(3, level) / 2.0
+        val fghFracPosition = expectedWidth + toTestWidth("g+h", level = level) / 2.0
         assertFormulaTSpan(f, "f", level = level.num(), expectedX = fghFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(gh, "g+h", level = level.denom(), expectedX = fghFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(fghBar, null, level = level.bar(), expectedX = fghFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(3, level)
+        expectedWidth += toTestWidth("g+h", level = level)
         assertFormulaTSpan(fghRestoreFrac, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertFormulaTSpan(restoreBShift, "\u200B", level = level.revert())
         assertThat(width).isEqualTo(expectedWidth)
@@ -702,8 +717,8 @@ class RichTextLatexTest {
     @Test
     fun complexFormulaRegression3() {
         val formula = """\(a1^{b1^{\frac{c1}{c2}+c3}+b2}+a2\)"""
-        val svg = RichText.toSvg(formula, DEF_FONT, ::testWidthCalculator).single()
-        val width = RichText.estimateWidth(formula, DEF_FONT, ::testWidthCalculator)
+        val svg = RichText.toSvg(formula, DEF_FONT).single()
+        val width = RichText.estimateWidth(formula, DEF_FONT)
 
         assertThat(svg.tspans()).hasSize(15)
         val (a1, aSpace, aShiftSup, b1, bSpace) = svg.tspans()
@@ -713,43 +728,28 @@ class RichTextLatexTest {
         var expectedWidth = 0.0
 
         assertFormulaTSpan(a1, "a1", level = level.current())
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth("a1", level = level)
         assertFormulaTSpan(aSpace, " ", level = level.pass())
         assertFormulaTSpan(aShiftSup, "\u200B", level = level.sup())
         assertFormulaTSpan(b1, "b1", level = level.current())
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth("b1", level = level)
         assertFormulaTSpan(bSpace, " ", level = level.pass())
         assertFormulaTSpan(bShiftSup, "\u200B", level = level.sup())
-        val cFracPosition = expectedWidth + toTestWidth(2, level) / 2.0
+        val cFrac = listOf("c1", "c2")
+        val cFracPosition = expectedWidth + toTestWidth(cFrac, level = level) / 2.0
         assertFormulaTSpan(c1, "c1", level = level.num(), expectedX = cFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(c2, "c2", level = level.denom(), expectedX = cFracPosition, expectedAnchor = "middle")
         assertFormulaTSpan(cBar, null, level = level.bar(), expectedX = cFracPosition, expectedAnchor = "middle")
-        expectedWidth += toTestWidth(2, level)
+        expectedWidth += toTestWidth(cFrac, level = level)
         assertFormulaTSpan(cRestoreFrac, "\u200B", level = level.revert(), expectedX = expectedWidth, expectedAnchor = "start")
         assertFormulaTSpan(c3, "+c3", level = level.current())
-        expectedWidth += toTestWidth(3, level)
+        expectedWidth += toTestWidth("+c3", level = level)
         assertFormulaTSpan(bRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(b2, "+b2", level = level.current())
-        expectedWidth += toTestWidth(3, level)
+        expectedWidth += toTestWidth("+b2", level = level)
         assertFormulaTSpan(aRestoreShift, "\u200B", level = level.revert())
         assertFormulaTSpan(a2, "+a2", level = level.current())
-        expectedWidth += toTestWidth(3, level)
+        expectedWidth += toTestWidth("+a2", level = level)
         assertThat(width).isEqualTo(expectedWidth)
-    }
-
-    companion object {
-        private const val DEF_FONT_SIZE = 12
-        private val DEF_FONT = Font(family = FontFamily.SERIF, size = DEF_FONT_SIZE, isBold = false, isItalic = false)
-
-        private fun testWidthCalculator(text: String, font: Font): Double {
-            return text.length * font.size.toDouble()
-        }
-
-        private fun toTestWidth(charsCount: Int, level: TestUtil.FormulaLevel): Double {
-            val fontSizeCoefficient = level.sizeValue()?.let { sizeValue ->
-                (DEF_FONT_SIZE * sizeValue).roundToInt()
-            } ?: DEF_FONT_SIZE
-            return charsCount * fontSizeCoefficient.toDouble()
-        }
     }
 }

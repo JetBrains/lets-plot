@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
@@ -24,29 +25,27 @@ object RichText {
     fun toSvg(
         text: String,
         font: Font,
-        widthCalculator: (String, Font) -> Double,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
         initialX: Double = 0.0
     ): List<SvgTextElement> {
-        val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
-        val svgLines = render(lines, font, widthCalculator, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
+        val svgLines = render(lines, font, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
         return svgLines
     }
 
     fun estimateWidth(
         text: String,
         font: Font,
-        widthCalculator: (String, Font) -> Double,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
     ): Double {
-        val lines = parse(text, font, widthCalculator, wrapLength, maxLinesCount, markdown)
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
         val widths = lines.map { line ->
-            line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font, widthCalculator) ?: 0.0 }
+            line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
         }
 
         return widths.maxOrNull() ?: 0.0
@@ -55,7 +54,6 @@ object RichText {
     private fun parse(
         text: String,
         font: Font,
-        widthCalculator: (String, Font) -> Double,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false
@@ -71,7 +69,7 @@ object RichText {
 
         val terms = listOf(RichTextNode.Text(text))
             .let { it.takeUnless { markdown } ?: parse(it, Markdown::parse) }
-            .let { parse(it, Latex(font, widthCalculator)::parse) }
+            .let { parse(it, Latex(font)::parse) }
             .let { parse(it, Hyperlink::parse) }
             .let { parseBreaks(it) }
 
@@ -225,7 +223,6 @@ object RichText {
     private fun render(
         lines: List<List<RichTextNode>>,
         font: Font,
-        widthCalculator: (String, Font) -> Double,
         anchorCoefficients: List<Double?>,
         initialX: Double
     ): List<SvgTextElement> {
@@ -233,7 +230,7 @@ object RichText {
         val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
             val svg = mutableListOf<SvgElement>()
             val prefix = mutableListOf<RichTextNode.RichSpan>()
-            val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font, widthCalculator) ?: 0.0 }
+            val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
             var isFirstRichSpanInLine = true
             line.forEach { term ->
                 when (term) {
@@ -279,7 +276,7 @@ object RichText {
         abstract class RichSpan : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
-            abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+            abstract fun estimateWidth(font: Font): Double
             abstract fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
@@ -322,7 +319,7 @@ object RichText {
         ) : RichSpan() {
             override val visualCharCount: Int = text.length
 
-            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            override fun estimateWidth(font: Font): Double {
                 return widthCalculator(text, font)
             }
 

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
@@ -20,7 +19,7 @@ import kotlin.test.Test
 class RichTextMarkdownTest {
     @Test
     fun noMarkdown() {
-        val richTextSvg = RichText.toSvg("Hello, world!", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("Hello, world!", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(1)
 
@@ -32,7 +31,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun simpleStrong() {
-        val richTextSvg = RichText.toSvg("**Hello, world!**", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("**Hello, world!**", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(1)
 
@@ -45,7 +44,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun emphasisAndStrong() {
-        val richTextSvg = RichText.toSvg("***Hello, world!***", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("***Hello, world!***", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(1)
 
@@ -59,7 +58,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun twoSpans() {
-        val richTextSvg = RichText.toSvg("Hello, **world!**", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("Hello, **world!**", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(2)
 
@@ -71,7 +70,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun emStrongAndColor() {
-        val richTextSvg = RichText.toSvg("*Hello*, <span style=\"color:orange\">**orange**</span> and <span style=\"color:red\">***red***</span>!", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("*Hello*, <span style=\"color:orange\">**orange**</span> and <span style=\"color:red\">***red***</span>!", DEF_FONT, markdown = true).single()
 
         val tspans = richTextSvg.tspans()
 
@@ -87,7 +86,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun stackOfStrong() {
-        val richTextSvg = RichText.toSvg("****Foo** bar**", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("****Foo** bar**", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(2)
 
@@ -99,7 +98,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun stackOfColors() {
-        val richTextSvg = RichText.toSvg("""Foo <span style="color:red">bar <span style="color:orange">baz</span> barbaz</span> spam""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("""Foo <span style="color:red">bar <span style="color:orange">baz</span> barbaz</span> spam""", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(5)
 
@@ -114,7 +113,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun latex() {
-        val richTextSvg = RichText.toSvg("""**foo** ***<span style="color:red">\\( bar^2 \\)</span>*** baz""", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true).single()
+        val richTextSvg = RichText.toSvg("""**foo** ***<span style="color:red">\\( bar^2 \\)</span>*** baz""", DEF_FONT, markdown = true).single()
 
         assertThat(richTextSvg.tspans()).hasSize(8)
 
@@ -134,7 +133,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun softBreak() {
-        val richTextLines = RichText.toSvg("*Hello*,\n**world**", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true)
+        val richTextLines = RichText.toSvg("*Hello*,\n**world**", DEF_FONT, markdown = true)
 
         assertThat(richTextLines).hasSize(1)
 
@@ -148,7 +147,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun lineBreakWithTag() {
-        val richTextLines = RichText.toSvg("*Hello*,<br/>**world**", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true)
+        val richTextLines = RichText.toSvg("*Hello*,<br/>**world**", DEF_FONT, markdown = true)
 
         assertThat(richTextLines).hasSize(2)
         assertThat(richTextLines[0].tspans()).hasSize(2)
@@ -164,7 +163,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun lineBreakWithSpaceSpaceNewLine() {
-        val richTextLines = RichText.toSvg("*Hello*,  \n**world**", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true)
+        val richTextLines = RichText.toSvg("*Hello*,  \n**world**", DEF_FONT, markdown = true)
 
         assertThat(richTextLines).hasSize(2)
         assertThat(richTextLines[0].tspans()).hasSize(2)
@@ -181,7 +180,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun spanStyleForMultilineText() {
-        val richTextLines = RichText.toSvg("***<span style='color:red'>foo  \nbar  \nbaz</span>***", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true)
+        val richTextLines = RichText.toSvg("***<span style='color:red'>foo  \nbar  \nbaz</span>***", DEF_FONT, markdown = true)
 
         assertThat(richTextLines).hasSize(3)
         assertThat(richTextLines[0].tspans()).hasSize(1)
@@ -199,7 +198,7 @@ class RichTextMarkdownTest {
 
     @Test
     fun spanWithHyperlink() {
-        val richTextLines = RichText.toSvg("<span style=\"color:grey\">Powered by <a href=\"https://github.com/lets-plot\">lets-plot</a>  \nSource code</span>", DEF_FONT, TextWidthEstimator::widthCalculator, markdown = true)
+        val richTextLines = RichText.toSvg("<span style=\"color:grey\">Powered by <a href=\"https://github.com/lets-plot\">lets-plot</a>  \nSource code</span>", DEF_FONT, markdown = true)
 
         assertThat(richTextLines).hasSize(2)
 

@@ -117,7 +117,6 @@ class MultilineLabel(
         val lines = RichText.toSvg(
             text,
             font,
-            TextWidthEstimator::widthCalculator,
             wrapWidth,
             markdown = markdown,
             anchor = myHorizontalAnchor,

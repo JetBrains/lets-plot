@@ -113,7 +113,6 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         val textElement = RichText.toSvg(
             text.replace("\n", " "), // TextLabel is a single-line text element
             font,
-            TextWidthEstimator::widthCalculator,
             markdown = markdown,
             anchor = myHorizontalAnchor
         ).firstOrNull() ?: SvgTextElement()

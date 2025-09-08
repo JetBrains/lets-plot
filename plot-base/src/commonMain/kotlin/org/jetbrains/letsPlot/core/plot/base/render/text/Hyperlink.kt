@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
@@ -30,7 +31,7 @@ internal object Hyperlink {
         private val href: String,
     ) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = text.length
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+        override fun estimateWidth(font: Font): Double {
             return widthCalculator(text, font)
         }
 
