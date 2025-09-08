@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 object ThemeUtil {
 
