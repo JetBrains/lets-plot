@@ -10,7 +10,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.6"
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 val artifactBaseName = "lets-plot-idea-plugin"

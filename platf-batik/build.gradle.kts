@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-val batikVersion = project.extra["batik_version"] as String
+val batikVersion = project.extra["batik.version"] as String
 val commonsIOVersion = project.extra["commons-io.version"] as String
 
 dependencies {

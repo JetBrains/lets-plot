@@ -35,7 +35,7 @@ internal class PlotPanelFigureModel constructor(
             value?.let { newDispatcher ->
                 newDispatcher.initToolEventCallback { event -> toolEventCallback?.invoke(event) }
 
-                // reactivate interactions in new plot component
+                // reactivate interactions in the new plot component
                 wereInteractions.forEach { (origin, interactionSpecList) ->
                     newDispatcher.activateInteractions(origin, interactionSpecList)
                 }

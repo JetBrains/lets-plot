@@ -14,7 +14,7 @@ kotlin {
 }
 
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 
 val artifactBaseName = "lets-plot-common"
 val artifactGroupId = project.group as String

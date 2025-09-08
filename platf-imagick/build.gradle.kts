@@ -18,7 +18,7 @@ if (!imagickDir.exists() || !imagickDir.isDirectory) {
 
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 
 kotlin {
     val target = when {
