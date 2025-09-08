@@ -143,6 +143,65 @@ class PlotTest {
     }
 
     @Test
+    fun `latex sup and sub`() {
+        val spec = """
+            {
+              "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+              "mapping": {},
+              "data_meta": {},
+              "kind": "plot",
+              "scales": [
+                {
+                  "aesthetic": "y",
+                  "limits": [
+                    -0.25,
+                    7.25
+                  ],
+                  "trans": "reverse"
+                }
+              ],
+              "layers": [
+                {
+                  "geom": "text",
+                  "mapping": {
+                    "y": [
+                      0.0,
+                      1.0,
+                      2.0,
+                      3.0,
+                      4.0,
+                      5.0,
+                      6.0,
+                      7.0
+                    ],
+                    "label": [
+                      "\\( a^b \\)",
+                      "\\( a^{bc} \\)",
+                      "\\( a_b \\)",
+                      "\\( a_{bc} \\)",
+                      "\\( a^{b^c} \\)",
+                      "\\( a_{i_1} \\)",
+                      "\\( a^{b_i} \\)",
+                      "\\( a_{I^n} \\)"
+                    ]
+                  },
+                  "data_meta": {},
+                  "x": 0.0,
+                  "family": "Noto Sans",
+                  "fontface": "italic",
+                  "size": 12.0
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_sup_sub_test.png", plotSpec)
+    }
+
+    @Test
     fun superscript() {
         val spec = """
             |{

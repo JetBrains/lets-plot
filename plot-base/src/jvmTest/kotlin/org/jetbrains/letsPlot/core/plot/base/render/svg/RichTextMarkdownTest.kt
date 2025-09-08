@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
@@ -112,18 +113,20 @@ class RichTextMarkdownTest {
     fun latex() {
         val richTextSvg = RichText.toSvg("""**foo** ***<span style="color:red">\\( bar^2 \\)</span>*** baz""", markdown = true).single()
 
-        assertThat(richTextSvg.tspans()).hasSize(7)
+        assertThat(richTextSvg.tspans()).hasSize(8)
 
-        val (foo, space, bar, pow, square) = richTextSvg.tspans()
-        val (lower, baz) = richTextSvg.tspans().drop(5)
+        val (foo, space, bar, pow, upper) = richTextSvg.tspans()
+        val (square, lower, baz) = richTextSvg.tspans().drop(5)
+        val level = TestUtil.FormulaLevel()
 
-        assertTSpan(foo, "foo", bold = true)
-        assertTSpan(space, " ")
-        assertTSpan(bar, "bar", bold = true, italic = true, color = "red")
-        assertTSpan(pow, " ", bold = true, italic = true, color = "red")
-        assertTSpan(square, "2", bold = true, italic = true, color = "red", sup = true)
-        assertTSpan(lower, "\u200B", bold = true, italic = true, color = "red", sub = true) // lower baseline
-        assertTSpan(baz, " baz", sup = false)
+        assertFormulaTSpan(foo, "foo", level = level.current(), bold = true)
+        assertFormulaTSpan(space, " ", level = level.pass())
+        assertFormulaTSpan(bar, "bar", level = level.current(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(pow, " ", level = level.pass(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(upper, "\u200B", level = level.sup(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(square, "2", level = level.current(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(lower, "\u200B", level = level.revert(), bold = true, italic = true, color = "red")
+        assertFormulaTSpan(baz, " baz", level = level.current())
     }
 
     @Test
