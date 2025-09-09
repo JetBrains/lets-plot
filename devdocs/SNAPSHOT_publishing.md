@@ -7,13 +7,13 @@
 > **Note**: make sure that **version** is set to "0.0.0-SNAPSHOT" in `build.gradle.kts`.
 
 ```shell
-./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository
-./gradlew publishLetsPlotJvmJfxPublicationToMavenLocalRepository
-./gradlew publishLetsPlotJvmBatikPublicationToMavenLocalRepository
-./gradlew publishLetsPlotImageExportPublicationToMavenLocalRepository
-./gradlew publishLetsPlotGISPublicationToMavenLocalRepository
-./gradlew publishLetsPlotCoreModulesToMavenLocalRepository
-./gradlew publishLetsPlotIdeaPluginPublicationToMavenLocalRepository
+./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository \
+          publishLetsPlotJvmJfxPublicationToMavenLocalRepository \
+          publishLetsPlotJvmBatikPublicationToMavenLocalRepository \
+          publishLetsPlotImageExportPublicationToMavenLocalRepository \
+          publishLetsPlotGISPublicationToMavenLocalRepository \
+          publishLetsPlotCoreModulesToMavenLocalRepository \
+          publishLetsPlotIdeaPluginPublicationToMavenLocalRepository
 
 ```
 
