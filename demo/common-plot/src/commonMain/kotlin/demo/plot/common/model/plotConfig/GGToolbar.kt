@@ -23,6 +23,14 @@ class GGToolbar {
         )
     }
 
+    fun plotSpecRejectList(): List<MutableMap<String, Any>> {
+        return listOf(
+            irisScatter(false).apply {
+                this["coord"] = mapOf("name" to "polar", "theta" to "y")
+            },
+        )
+    }
+
     fun irisScatter(
         dark: Boolean
     ): MutableMap<String, Any> {
