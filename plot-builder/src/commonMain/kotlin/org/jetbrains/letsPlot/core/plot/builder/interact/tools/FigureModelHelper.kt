@@ -76,9 +76,13 @@ object FigureModelHelper {
         newSpecs: Map<String, Any>
     ): Map<String, Any> {
         @Suppress("UNCHECKED_CAST")
-        val wasScaleRatio = wasSpecs[SCALE_RATIO] as List<Double>
+        val wasScaleRatio = wasSpecs[SCALE_RATIO] as List<Double>?
         @Suppress("UNCHECKED_CAST")
-        val newScaleRatio = newSpecs[SCALE_RATIO] as List<Double>
+        val newScaleRatio = newSpecs[SCALE_RATIO] as List<Double>?
+
+        if (wasScaleRatio == null || newScaleRatio == null) {
+            return mapOf(SCALE_RATIO to listOf(1.0, 1.0))
+        }
 
         return mapOf(
             SCALE_RATIO to listOf(wasScaleRatio[0] * newScaleRatio[0] , wasScaleRatio[1] * newScaleRatio[1])
