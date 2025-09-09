@@ -2,6 +2,8 @@
 
 ### Added
 
+- `ggtb()` support in Swing/Batik frontend.                
+
 ### Changed
 
 ### Fixed
