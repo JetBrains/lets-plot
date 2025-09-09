@@ -56,8 +56,7 @@ internal class PlotPanelToolbar constructor(
                     java.awt.RenderingHints.VALUE_ANTIALIAS_ON
                 )
 
-                // Fill rounded background
-                g2.color = C_BACKGR
+                g2.color = C_BACKGR_TRANSPARENT
                 g2.fillRoundRect(0, 0, width, height, 16, 16)
 
                 // Draw border
@@ -95,7 +94,10 @@ internal class PlotPanelToolbar constructor(
     private fun createToolButton(toolSpec: Map<String, Any>): JButton {
         val tool = ToggleTool(toolSpec)
         val iconSvg = toolSpec["icon"] as? String
-        val normalIcon = createSvgIcon(iconSvg, color = C_STROKE, backgroundColor = C_BACKGR)
+        val normalIcon = createSvgIcon(
+            iconSvg, color = C_STROKE,
+            backgroundColor = Color(0, 0, 0, 0) // Fully transparent
+        )
         val hoverIcon = createSvgIcon(iconSvg, color = C_STROKE, backgroundColor = C_BACKGR_HOVER)
         val selectedIcon = createSvgIcon(iconSvg, color = C_STROKE_SEL, backgroundColor = C_BACKGR_SEL)
 
@@ -120,7 +122,11 @@ internal class PlotPanelToolbar constructor(
     }
 
     private fun resetButton(): JButton {
-        val normalIcon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE, backgroundColor = C_BACKGR)
+        val normalIcon = createSvgIcon(
+            ToolbarIcons.RESET,
+            color = C_STROKE,
+            backgroundColor = Color(0, 0, 0, 0) // Fully transparent
+        )
         val hoverIcon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE, backgroundColor = C_BACKGR_HOVER)
 
         val button = createStyledButton(
@@ -242,5 +248,17 @@ internal class PlotPanelToolbar constructor(
         private val C_BACKGR_HOVER = Color(218, 219, 221)
         private val C_BACKGR_SEL = Color(69, 114, 232)
         private val C_STROKE_SEL = Color.WHITE
+
+        // Transparency settings
+        private const val ALPHA = (255 * 0.8).toInt()
+
+        // C_BACKGR with an alpha channel which on a white background looks the same as the solid C_BACKGR
+        // and slightly darkens any darker background.
+        private val C_BACKGR_TRANSPARENT = Color(
+            ((C_BACKGR.red - 255 * (255 - ALPHA) / 255.0) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
+            ((C_BACKGR.green - 255 * (255 - ALPHA) / 255.0) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
+            ((C_BACKGR.blue - 255 * (255 - ALPHA) / 255.0) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
+            ALPHA
+        )
     }
 }
