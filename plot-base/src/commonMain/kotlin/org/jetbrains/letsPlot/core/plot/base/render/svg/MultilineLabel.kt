@@ -15,8 +15,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
@@ -27,10 +27,8 @@ class MultilineLabel(
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false
 ) : SvgComponent() {
-    private var myLinesSize: Int = 0
-    private var myClassName: String? = null
+    private val myLines: List<SvgTextElement>
     private var myTextColor: Color? = null
-    private var myTextOpacity: Double? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
@@ -42,70 +40,81 @@ class MultilineLabel(
     private var yStart = 0.0
 
     init {
-        resetLines()
+        myLines = getLines()
+        myLines.forEach(rootGroup.children()::add)
     }
 
     override fun buildComponent() {
     }
 
-    override fun addClassName(className: String) = updateAndReset { myClassName = className }
+    override fun addClassName(className: String) {
+        myLines.forEach { it.addClass(className) }
+    }
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
-            override fun set(value: Color?) = updateAndReset {
+            override fun set(value: Color?) {
+                // set attribute for svg->canvas mapping to work
+                myLines.forEach(SvgTextElement::fillColor)
+
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
+                updateStyleAttribute()
             }
         }
     }
 
-    fun setHorizontalAnchor(anchor: HorizontalAnchor) = updateAndReset { myHorizontalAnchor = anchor }
+    fun setHorizontalAnchor(anchor: HorizontalAnchor) {
+        myHorizontalAnchor = anchor
+        horizontalRepositionLines()
+    }
 
-    fun setVerticalAnchor(anchor: VerticalAnchor) = updateAndReset { myVerticalAnchor = anchor }
+    fun setVerticalAnchor(anchor: VerticalAnchor) {
+        myVerticalAnchor = anchor
+        myLines.forEach {
+            it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+        }
+        verticalRepositionLines()
+    }
 
-    fun setFontSize(px: Double) = updateAndReset { myFontSize = px }
+    fun setFontSize(px: Double) {
+        myFontSize = px
+        updateStyleAttribute()
+        horizontalRepositionLines()
+    }
 
     /**
      * @param cssName : normal, bold, bolder, lighter
      */
-    fun setFontWeight(cssName: String?) = updateAndReset { myFontWeight = cssName }
+    fun setFontWeight(cssName: String?) {
+        myFontWeight = cssName
+        updateStyleAttribute()
+        horizontalRepositionLines()
+    }
 
     /**
      * @param cssName : normal, italic, oblique
      */
-    fun setFontStyle(cssName: String?) = updateAndReset { myFontStyle = cssName }
+    fun setFontStyle(cssName: String?) {
+        myFontStyle = cssName
+        updateStyleAttribute()
+        horizontalRepositionLines()
+    }
 
     /**
      * @param fontFamily : for example 'sans-serif' or 'Times New Roman'
      */
-    fun setFontFamily(fontFamily: String?) = updateAndReset { myFontFamily = fontFamily }
-
-    fun setTextOpacity(value: Double?) = updateAndReset { myTextOpacity = value }
-
-    fun setX(x: Double) = updateAndReset { xStart = x }
-
-    fun setY(y: Double) = updateAndReset { yStart = y }
-
-    fun setLineHeight(v: Double) = updateAndReset { myLineHeight = v }
-
-    private inline fun <T> updateAndReset(setter: () -> T) {
-        setter()
-        resetLines()
+    fun setFontFamily(fontFamily: String?) {
+        myFontFamily = fontFamily
+        updateStyleAttribute()
+        horizontalRepositionLines()
     }
 
-    // Each time a property is changed, the whole lines list is rebuilt and reset to the rootGroup
-    private fun resetLines() {
-        rootGroup.children().clear()
-        constructLines().forEach(rootGroup.children()::add)
+    fun setTextOpacity(value: Double?) {
+        myLines.forEach { it.fillOpacity().set(value) }
     }
 
-    private fun constructLines(): List<SvgTextElement> {
-        val font = Font(
-            family = DefaultFontFamilyRegistry().get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
-            size = myFontSize.roundToInt(),
-            isBold = myFontWeight == "bold",
-            isItalic = myFontStyle == "italic"
-        )
+    private fun updateStyleAttribute() {
         val styleAttr = Text.buildStyle(
             myTextColor,
             myFontSize,
@@ -113,55 +122,26 @@ class MultilineLabel(
             myFontFamily,
             myFontStyle
         )
-        val lines = RichText.toSvg(
-            text,
-            font,
-            wrapWidth,
-            markdown = markdown,
-            anchor = myHorizontalAnchor,
-            initialX = xStart ?: 0.0
-        )
-        myLinesSize = lines.size
-        val horizontalAnchors = horizontalAnchorByLine(lines)
-        return lines.map(updateLinesAttributes(styleAttr))
-            .mapIndexed(updateAnchors(horizontalAnchors))
-            .mapIndexed(::repositionLines)
+        myLines.forEach { it.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr) }
     }
 
-    // Determines the horizontal anchor for each line based on the first tspan child
-    // Anchor should always be LEFT if the first tspan has a defined x attribute
-    private fun horizontalAnchorByLine(lines: List<SvgTextElement>): List<HorizontalAnchor> {
-        return lines.map { line ->
-            getFirstTSpanChild(line)?.x()?.get() != null
-        }.map { firstNodeHasDefinedX ->
-            when (firstNodeHasDefinedX) {
-                true -> HorizontalAnchor.LEFT
-                false -> myHorizontalAnchor
-            }
-        }
+    fun setX(x: Double) {
+        xStart = x
+        horizontalRepositionLines()
     }
 
-    private fun updateLinesAttributes(styleAttr: String): (SvgTextElement) -> SvgTextElement {
-        return { line ->
-            line.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
-            myClassName?.let { line.addClass(it) }
-            myTextColor?.let { line.fillColor() } // set attribute for svg->canvas mapping to work
-            myTextOpacity?.let { line.fillOpacity().set(it) }
-            xStart?.let { line.x().set(it) }
-            line
-        }
+    fun setY(y: Double) {
+        yStart = y
+        verticalRepositionLines()
     }
 
-    private fun updateAnchors(horizontalAnchors: List<HorizontalAnchor>): (Int, SvgTextElement) -> SvgTextElement {
-        return { i, line ->
-            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(horizontalAnchors[i]))
-            myVerticalAnchor?.let { line.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
-            line
-        }
+    fun setLineHeight(v: Double) {
+        myLineHeight = v
+        verticalRepositionLines()
     }
 
-    private fun repositionLines(i: Int, line: SvgTextElement): SvgTextElement {
-        val totalHeightShift = myLineHeight * (linesCount() - 1)
+    private fun verticalRepositionLines() {
+        val totalHeightShift = myLineHeight * (myLines.size - 1)
 
         val adjustedYStart = yStart - when (myVerticalAnchor) {
             VerticalAnchor.TOP -> 0.0
@@ -170,23 +150,80 @@ class MultilineLabel(
             else -> 0.0
         }
 
-        line.y().set(adjustedYStart + myLineHeight * i)
-        return line
+        myLines.forEachIndexed { index, elem ->
+            elem.y().set(adjustedYStart + myLineHeight * index)
+        }
     }
 
-    fun linesCount() = myLinesSize
+    private fun horizontalRepositionLines() {
+        (myLines zip getLines()).forEach { (originalLine, recalculatedLine) ->
+            var firstTSpanHasExplicitX = false
+            forEachNodePair(originalLine.children(), recalculatedLine.children()) { original, recalculated, isFirstTSpan ->
+                if (original is SvgTSpanElement && recalculated is SvgTSpanElement) {
+                    if (isFirstTSpan && recalculated.x().get() != null) {
+                        firstTSpanHasExplicitX = true
+                    }
+
+                    original.x().set(recalculated.x().get())
+                }
+            }
+            val anchorAttr = when {
+                firstTSpanHasExplicitX -> toTextAnchor(HorizontalAnchor.LEFT)
+                else -> toTextAnchor(myHorizontalAnchor)
+            }
+
+            originalLine.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchorAttr)
+            xStart?.let { originalLine.x().set(it) }
+        }
+    }
+
+    fun linesCount() = myLines.size
+
+    private fun getLines(): List<SvgTextElement> {
+        val font = Font(
+            family = FONT_FAMILY_REGISTRY.get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
+            size = myFontSize.roundToInt(),
+            isBold = myFontWeight == "bold",
+            isItalic = myFontStyle == "italic"
+        )
+        return RichText.toSvg(
+            text,
+            font,
+            wrapWidth,
+            markdown = markdown,
+            anchor = myHorizontalAnchor,
+            initialX = xStart ?: 0.0
+        )
+    }
 
     companion object {
+        private val FONT_FAMILY_REGISTRY = DefaultFontFamilyRegistry()
+
         fun splitLines(text: String) = text.split('\n').map(String::trim)
 
-        internal fun getFirstTSpanChild(svgTextElement: SvgTextElement): SvgTSpanElement? {
-            val firstChild = svgTextElement.children().firstOrNull() ?: return null
-            return when (firstChild) {
-                is SvgTSpanElement -> firstChild
-                is SvgAElement -> firstChild.children().single() as SvgTSpanElement // First child can be a link element with a tspan inside
-                else -> throw IllegalStateException(
-                    "Expected SvgTSpanElement or SvgAElement, but got: ${firstChild::class.simpleName}."
-                )
+        private fun forEachNodePair(
+            nodes1: Iterable<SvgNode>,
+            nodes2: Iterable<SvgNode>,
+            action: (SvgNode, SvgNode, Boolean) -> Unit
+        ) {
+            val stack = ArrayDeque<Pair<Iterator<SvgNode>, Iterator<SvgNode>>>()
+            stack.addLast(nodes1.iterator() to nodes2.iterator())
+            var firstTSpanNotEmitted = true
+            while (stack.isNotEmpty()) {
+                val (it1, it2) = stack.last()
+                require(it1.hasNext() == it2.hasNext()) { "Node lists must have the same size." }
+                if (!it1.hasNext()) {
+                    stack.removeLast()
+                    continue
+                }
+                val node1 = it1.next()
+                val node2 = it2.next()
+                val isFirstTSpan = firstTSpanNotEmitted && (node1 is SvgTSpanElement || node2 is SvgTSpanElement)
+
+                action(node1, node2, isFirstTSpan)
+
+                if (isFirstTSpan) firstTSpanNotEmitted = false
+                stack.addLast(node1.children().iterator() to node2.children().iterator())
             }
         }
     }

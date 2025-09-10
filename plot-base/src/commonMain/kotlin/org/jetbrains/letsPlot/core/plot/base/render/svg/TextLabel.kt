@@ -15,8 +15,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
@@ -123,7 +125,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
 
     // Similar to MultilineLabel#getActualHorizontalAnchor()
     private fun determineHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
-        val x = MultilineLabel.getFirstTSpanChild(textElement)?.x()?.get()
+        val x = getFirstTSpanChild(textElement)?.x()?.get()
         return when (x) {
             null -> myHorizontalAnchor
             else -> HorizontalAnchor.LEFT
@@ -148,6 +150,19 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             //    myText.setAttribute("dominant-baseline", toDominantBaseline(anchor));
             myVerticalAnchor?.let { textElement.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(it)) }
             textElement
+        }
+    }
+
+    companion object {
+        private fun getFirstTSpanChild(svgTextElement: SvgTextElement): SvgTSpanElement? {
+            val firstChild = svgTextElement.children().firstOrNull() ?: return null
+            return when (firstChild) {
+                is SvgTSpanElement -> firstChild
+                is SvgAElement -> firstChild.children().single() as SvgTSpanElement // First child can be a link element with a tspan inside
+                else -> throw IllegalStateException(
+                    "Expected SvgTSpanElement or SvgAElement, but got: ${firstChild::class.simpleName}."
+                )
+            }
         }
     }
 }
