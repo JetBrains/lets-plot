@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
@@ -78,16 +78,16 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = TextLabel(plotLabel.first).rootGroup
+        val nameSpecElement = MultilineLabel(plotLabel.first).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
         titles
             .forEach { title ->
                 val spec = LabelTextAndSpec(title, plotLabel.second)
-                val textLabel = createTextLabel(spec, plotLabel.first)
+                val label = createLabel(spec, plotLabel.first)
 
-                val element = textLabel.rootGroup
+                val element = label.rootGroup
                 SvgUtils.transformTranslate(element, x, y)
                 groupComponent.add(element)
 
@@ -132,8 +132,8 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val plotLabelSpec: LabelSpec
         )
 
-        private fun createTextLabel(spec: LabelTextAndSpec, className: String): TextLabel {
-            val label = TextLabel(spec.text)
+        private fun createLabel(spec: LabelTextAndSpec, className: String): MultilineLabel {
+            val label = MultilineLabel(spec.text)
             label.addClassName(className)
             label.textColor().set(Color.DARK_BLUE)
             label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
