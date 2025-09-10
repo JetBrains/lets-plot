@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import kotlin.math.abs
 import kotlin.math.max
@@ -135,37 +134,6 @@ object TextUtil {
     }
 
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
-
-    fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
-        label.textColor().set(p.color())
-        if (applyAlpha) {
-            label.textOpacity().set(p.alpha())
-        }
-        label.setFontSize(fontSize(p, scale))
-
-        // family
-        label.setFontFamily(fontFamily(p))
-
-        // fontface
-        // ignore 'plain' / 'normal' as it is default values
-        with(FontFace.fromString(p.fontface())) {
-            if (bold) label.setFontWeight("bold")
-            if (italic) label.setFontStyle("italic")
-        }
-
-        // text justification
-        val hAnchor = hAnchor(p.hjust())
-        val vAnchor = vAnchor(p.vjust())
-
-        if (hAnchor !== Text.HorizontalAnchor.LEFT) {  // 'left' is default
-            label.setHorizontalAnchor(hAnchor)
-        }
-        if (vAnchor !== Text.VerticalAnchor.BOTTOM) {  // 'bottom' is default
-            label.setVerticalAnchor(vAnchor)
-        }
-
-        label.rotate(angle(p))
-    }
 
     fun decorate(label: MultilineLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         val color = p.color()!!
