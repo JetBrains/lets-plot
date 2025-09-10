@@ -160,7 +160,7 @@ object PlotConfigFrontendUtil {
             defaultCoordProvider
         ).let { coordProvider ->
             @Suppress("UNCHECKED_CAST")
-            config[Option.Plot.SPEC_OVERRIDE]?.let { specOverride ->
+            config[SPEC_OVERRIDE]?.let { specOverride ->
                 val accessor = over(specOverride as Map<String, Any>)
                 val xlimOverride = accessor.getNumQPairDef(SpecOverride.COORD_XLIM_TRANSFORMED, Pair(null, null))
                     .let { Pair(it.first?.toDouble(), it.second?.toDouble()) }
