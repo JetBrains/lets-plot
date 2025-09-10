@@ -6,12 +6,12 @@
 package demo.plot.batik.component
 
 import demo.common.utils.batik.SvgViewerDemoWindowBatik
-import demo.plot.shared.model.component.TextLabelSizeDemo
+import demo.plot.shared.model.component.LabelSizeDemo
 
 fun main() {
-    with(TextLabelSizeDemo()) {
+    with(LabelSizeDemo()) {
         SvgViewerDemoWindowBatik(
-            "Text label size and style",
+            "Label size and style",
             createSvgRoots(listOf(createModel()))
         ).open()
     }
