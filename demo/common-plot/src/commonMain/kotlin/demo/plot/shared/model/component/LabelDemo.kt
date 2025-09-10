@@ -9,14 +9,14 @@ import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
-open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
+open class LabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     override val cssStyle: String
         get() = ".$LABEL_CLASS_NAME { font-size: 18px; }"
@@ -83,16 +83,16 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             angle: Double
         ): SvgGElement {
             val axis = createAxis(dim)
-            val textLabel = createTextLabel(
+            val label = createLabel(
                 hAnchor,
                 vAnchor,
                 angle
             )
-            textLabel.moveTo(dim.x / 2, dim.y / 2)
+            label.moveTo(dim.x / 2, dim.y / 2)
 
             val g = SvgGElement()
             g.children().add(axis)
-            g.children().add(textLabel.rootGroup)
+            g.children().add(label.rootGroup)
             return g
         }
 
@@ -111,9 +111,9 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createTextLabel(hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): TextLabel {
+        private fun createLabel(hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): MultilineLabel {
             val text = "Anchor: " + hAnchor.name + "-" + vAnchor.name + " angle: " + angle + "°"
-            val label = TextLabel(text)
+            val label = MultilineLabel(text)
             label.addClassName(LABEL_CLASS_NAME)
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)
