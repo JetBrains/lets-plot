@@ -14,9 +14,9 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.with_X_Y
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import kotlin.math.abs
@@ -52,25 +52,20 @@ class RasterGeom : GeomBase() {
         val height = (round(boundsXY.dimension.y / stepY) + 1)
 
         if (width * height > 5000000) {
-            val center = boundsXY.center
-            val lines =
-                arrayOf("Raster image size", "[$width X $height]", "exceeds capability", "of", "your imaging device")
             val fontSize = 12.0
-            val lineHeight = fontSize + 4
-            var y = center.y + lineHeight * lines.size / 2.0
-            for (line in lines) {
-                val label = TextLabel(line)
-                label.textColor().set(Color.DARK_MAGENTA)
-                label.textOpacity().set(0.5)
-                label.setFontSize(fontSize)
-                label.setFontWeight("bold")
-                label.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
-                label.setVerticalAnchor(VerticalAnchor.CENTER)
-                val loc = helper.toClient(center.x, y, randomP)!!
-                label.moveTo(loc)
-                root.add(label.rootGroup)
-                y -= lineHeight
-            }
+            val center = boundsXY.center
+            val text = "Raster image size\n[$width X $height]\nexceeds capability\nof\nyour imaging device"
+            val label = MultilineLabel(text)
+            label.textColor().set(Color.DARK_MAGENTA)
+            label.setTextOpacity(0.5)
+            label.setFontSize(fontSize)
+            label.setLineHeight(fontSize + 4)
+            label.setFontWeight("bold")
+            label.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
+            label.setVerticalAnchor(VerticalAnchor.CENTER)
+            val loc = helper.toClient(center.x, center.y, randomP)!!
+            label.moveTo(loc)
+            root.add(label.rootGroup)
 
             return
         }
