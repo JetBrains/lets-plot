@@ -6,10 +6,10 @@
 package demo.plot.jfx.component
 
 import demo.common.utils.jfx.SvgViewerDemoWindowJfx
-import demo.plot.shared.model.component.TextLabelSizeDemo
+import demo.plot.shared.model.component.LabelSizeDemo
 
 fun main() {
-    with(TextLabelSizeDemo()) {
+    with(LabelSizeDemo()) {
 //        val demoModels = listOf(createModel())
 //        val svgRoots = createSvgRoots(demoModels)
 //        showSvg(
@@ -20,7 +20,7 @@ fun main() {
 //        )
 //
         SvgViewerDemoWindowJfx(
-            "Text label size and style",
+            "Label size and style",
             createSvgRoots(listOf(createModel())),
         ).open()
     }
