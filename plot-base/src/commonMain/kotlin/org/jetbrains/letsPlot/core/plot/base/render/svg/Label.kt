@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 
-class MultilineLabel(
+class Label(
     val text: String,
     wrapWidth: Int = -1,
     markdown: Boolean = false

@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
@@ -127,10 +127,10 @@ abstract class LegendBox : SvgComponent() {
         boundRect: DoubleRectangle,
         titleSize: DoubleVector,
         justification: TextJustification
-    ): MultilineLabel {
+    ): Label {
         val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height()
 
-        val label = MultilineLabel(title)
+        val label = Label(title)
         val (pos, hAnchor) = applyJustification(
             boundRect,
             textSize = titleSize,
