@@ -52,14 +52,13 @@ class RasterGeom : GeomBase() {
         val height = (round(boundsXY.dimension.y / stepY) + 1)
 
         if (width * height > 5000000) {
-            val fontSize = 12.0
             val center = boundsXY.center
             val text = "Raster image size\n[$width X $height]\nexceeds capability\nof\nyour imaging device"
             val label = MultilineLabel(text)
             label.textColor().set(Color.DARK_MAGENTA)
             label.setTextOpacity(0.5)
-            label.setFontSize(fontSize)
-            label.setLineHeight(fontSize + 4)
+            label.setFontSize(12.0)
+            label.setLineHeight(16.0)
             label.setFontWeight("bold")
             label.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
             label.setVerticalAnchor(VerticalAnchor.CENTER)
