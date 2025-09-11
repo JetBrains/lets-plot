@@ -480,4 +480,23 @@ object DataProcessing {
         val data: DataFrame,
         val groupMapper: (Int) -> Int  // data index --> group id
     )
+
+    fun applyStatTest(
+        data: DataFrame,
+        stat: Stat,
+        bindings: List<VarBinding>,
+        transformByAes: Map<Aes<*>, Transform>,
+        statCtx: StatContext
+    ): DataFrame {
+        return applyStat(
+            data = data,
+            stat = stat,
+            bindings = bindings,
+            transformByAes = transformByAes,
+            facetVariables = emptyList(),
+            statCtx = statCtx,
+            varsWithoutBinding = emptyList(),
+            compMessageConsumer = { _ -> }
+        )
+    }
 }

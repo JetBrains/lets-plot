@@ -5,10 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import demoAndTestShared.assertArrayEquals
 import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.intern.indicesOf
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
+import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.IdentityTransform
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -56,6 +63,35 @@ class SinaStatTest : BaseStatTest() {
         for (scale in BaseYDensityStat.Scale.entries) {
             compareWithYDensity(df, scale, scale)
         }
+    }
+
+    @Test
+    fun withIndices() {
+        val df = dataFrame(mapOf(
+            TransformVar.X to listOf(0.0, null, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+            TransformVar.Y to listOf(0.0, 1.0, 1.0, 2.0, 3.0, 0.0, 0.0, 1.0, null, 1.0),
+            TransformVar.COLOR to listOf(9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0, 0.0)
+        ))
+        val sinaStat = sinaStat()
+        val bindings = listOf(
+            VarBinding(TransformVar.X, Aes.X),
+            VarBinding(TransformVar.Y, Aes.Y),
+            VarBinding(TransformVar.COLOR, Aes.COLOR)
+        )
+        val transformByAes: Map<Aes<*>, Transform> = mapOf(
+            Aes.X to DiscreteTransform(df.distinctValues(TransformVar.X), emptyList()),
+            Aes.Y to IdentityTransform(),
+            Aes.COLOR to IdentityTransform()
+        )
+        val statCtx = statContext(df)
+        val statDf = sinaStat.normalize(DataProcessing.applyStatTest(
+            data = df,
+            stat = sinaStat,
+            bindings = bindings,
+            transformByAes = transformByAes,
+            statCtx = statCtx
+        ))
+        assertArrayEquals(arrayOf(9.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 0.0), statDf.getNumeric(TransformVar.COLOR).toTypedArray())
     }
 
     @Test
