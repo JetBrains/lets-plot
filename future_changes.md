@@ -2,6 +2,8 @@
 
 ### Added
 
+- `ggtb()` support in Swing/Batik frontend.                
+
 - Multiline support for axis labels in polar coordinates.
 
 ### Changed
