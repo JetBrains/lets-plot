@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
 
-class MultilineLabel(
+class Label(
     val text: String,
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false

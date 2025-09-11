@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -101,7 +101,7 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): SvgGElement {
-        val label = MultilineLabel(text)
+        val label = Label(text)
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         label.setHorizontalAnchor(hAnchor)

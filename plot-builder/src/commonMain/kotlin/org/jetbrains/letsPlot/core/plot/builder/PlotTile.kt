@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
@@ -218,7 +218,7 @@ internal class PlotTile constructor(
         val className = if (isColumnLabel) "x" else "y"
         val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
 
-        val lab = MultilineLabel(label)
+        val lab = Label(label)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
 
         val (pos, hAnchor) = applyJustification(

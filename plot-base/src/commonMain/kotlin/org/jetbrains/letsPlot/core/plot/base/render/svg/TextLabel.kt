@@ -89,14 +89,14 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         resetText()
     }
 
-    // Similar to MultilineLabel#resetLines()
+    // Similar to Label#resetLines()
     private fun resetText() {
         rootGroup.children().clear()
         updateText()
         rootGroup.children().add(myText)
     }
 
-    // Similar to MultilineLabel#constructLines()
+    // Similar to Label#constructLines()
     private fun updateText() {
         val font = Font(
             family = DefaultFontFamilyRegistry().get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
@@ -123,7 +123,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
             .let { updateAnchors(horizontalAnchor)(it) }
     }
 
-    // Similar to MultilineLabel#getActualHorizontalAnchor()
+    // Similar to Label#getActualHorizontalAnchor()
     private fun determineHorizontalAnchor(textElement: SvgTextElement): HorizontalAnchor {
         val x = getFirstTSpanChild(textElement)?.x()?.get()
         return when (x) {
@@ -132,7 +132,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         }
     }
 
-    // Similar to MultilineLabel#updateLinesAttributes()
+    // Similar to Label#updateLinesAttributes()
     private fun updateTextAttributes(styleAttr: String): (SvgTextElement) -> SvgTextElement {
         return { textElement ->
             textElement.setAttribute(SVG_STYLE_ATTRIBUTE, styleAttr)
@@ -142,7 +142,7 @@ class TextLabel(private val text: String, private val markdown: Boolean = false)
         }
     }
 
-    // Similar to MultilineLabel#updateAnchors()
+    // Similar to Label#updateAnchors()
     private fun updateAnchors(horizontalAnchor: HorizontalAnchor): (SvgTextElement) -> SvgTextElement {
         return { textElement ->
             textElement.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(horizontalAnchor))

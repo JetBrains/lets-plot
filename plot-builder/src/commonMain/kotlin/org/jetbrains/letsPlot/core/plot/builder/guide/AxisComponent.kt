@@ -7,12 +7,12 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.tickLabelBaseOffset
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -97,9 +97,9 @@ class AxisComponent(
             StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
         }
 
-        var tickLabel: MultilineLabel? = null
+        var tickLabel: Label? = null
         if (axisTheme.showLabels()) {
-            tickLabel = MultilineLabel(label)
+            tickLabel = Label(label)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
         }
 

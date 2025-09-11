@@ -112,7 +112,7 @@ class MultilineLabelTest {
             horizontalAnchor: Text.HorizontalAnchor,
             expectedAnchors: List<String?>
         ) {
-            val label = MultilineLabel(text)
+            val label = Label(text)
             label.setHorizontalAnchor(horizontalAnchor)
             @Suppress("UNCHECKED_CAST")
             val lines = label.rootGroup.children() as List<SvgTextElement>
@@ -129,7 +129,7 @@ class MultilineLabelTest {
         private fun widthCalculationForFractionWithPrefix(
             font: Font
         ) {
-            val label = MultilineLabel("""a+\(\frac{b}{c}\)""")
+            val label = Label("""a+\(\frac{b}{c}\)""")
             label.setFontFamily(font.family.toString())
             label.setFontSize(font.size.toDouble())
             label.setFontWeight(if (font.isBold) "bold" else null)
