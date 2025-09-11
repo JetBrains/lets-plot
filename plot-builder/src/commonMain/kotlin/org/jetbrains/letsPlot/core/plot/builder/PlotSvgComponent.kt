@@ -18,11 +18,11 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionElementAndTextBounds
@@ -101,29 +101,27 @@ class PlotSvgComponent constructor(
             LOG.error(e) { "buildPlot" }
 
             val rootCause = Throwables.getRootCause(e)
-            val messages = arrayOf(
-                "Error building plot: " + rootCause::class.simpleName, if (rootCause.message != null)
-                    "'" + rootCause.message + "'"
-                else
-                    "<no message>"
-            )
+            val causeMessage = if (rootCause.message != null)
+                "'" + rootCause.message + "'"
+            else
+                "<no message>"
+            val message = "Error building plot: ${rootCause::class.simpleName}\n$causeMessage"
 
-            var y = figureSize.y / 2 - 8
-            for (s in messages) {
-                val errorLabel = TextLabel(s)
-                val textColor = when {
-                    theme.plot().showBackground() -> theme.plot().textColor()
-                    else -> Defaults.TEXT_COLOR
-                }
-                errorLabel.textColor().set(textColor)
-                errorLabel.setFontWeight("normal")
-                errorLabel.setFontStyle("normal")
-                errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
-                errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-                errorLabel.moveTo(figureSize.x / 2, y)
-                rootGroup.children().add(errorLabel.rootGroup)
-                y += 16.0
+            val y = figureSize.y / 2
+            val errorLabel = MultilineLabel(message)
+            val textColor = when {
+                theme.plot().showBackground() -> theme.plot().textColor()
+                else -> Defaults.TEXT_COLOR
             }
+            errorLabel.textColor().set(textColor)
+            errorLabel.setFontSize(12.0)
+            errorLabel.setLineHeight(16.0)
+            errorLabel.setFontWeight("normal")
+            errorLabel.setFontStyle("normal")
+            errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
+            errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
+            errorLabel.moveTo(figureSize.x / 2, y)
+            rootGroup.children().add(errorLabel.rootGroup)
         }
     }
 
