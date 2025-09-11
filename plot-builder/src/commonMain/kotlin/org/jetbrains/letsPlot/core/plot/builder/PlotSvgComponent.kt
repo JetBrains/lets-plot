@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
@@ -108,7 +108,7 @@ class PlotSvgComponent constructor(
             val message = "Error building plot: ${rootCause::class.simpleName}\n$causeMessage"
 
             val y = figureSize.y / 2
-            val errorLabel = MultilineLabel(message)
+            val errorLabel = Label(message)
             val textColor = when {
                 theme.plot().showBackground() -> theme.plot().textColor()
                 else -> Defaults.TEXT_COLOR

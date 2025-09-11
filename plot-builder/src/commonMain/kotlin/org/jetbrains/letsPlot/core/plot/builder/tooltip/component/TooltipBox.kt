@@ -449,7 +449,7 @@ class TooltipBox(
                 }
         }
 
-        private fun getBBox(textLabel: MultilineLabel?): DoubleRectangle? {
+        private fun getBBox(textLabel: Label?): DoubleRectangle? {
             if (textLabel == null || textLabel.text.isBlank()) {
                 // also for blank string - Batik throws an exception for a text element with a blank string
                 return null
@@ -457,8 +457,8 @@ class TooltipBox(
             return textLabel.rootGroup.bBox
         }
 
-        private fun initTitleComponent(titleLine: String): MultilineLabel {
-            val titleComponent = MultilineLabel(titleLine)
+        private fun initTitleComponent(titleLine: String): Label {
+            val titleComponent = Label(titleLine)
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
@@ -471,7 +471,7 @@ class TooltipBox(
         private fun estimateLineHeight(line: String?, className: String): Double? {
             return line
                 ?.split("\n")
-                ?.map { MultilineLabel(it).apply { addClassName(className) } }
+                ?.map { Label(it).apply { addClassName(className) } }
                 ?.mapNotNull { lineTextLabel ->
                     with(myLinesContainer.children()) {
                         add(lineTextLabel.rootGroup)
@@ -484,7 +484,7 @@ class TooltipBox(
         }
 
         private fun layoutTitle(
-            titleComponent: MultilineLabel?,
+            titleComponent: Label?,
             totalTooltipWidth: Double,
             titleBBox: DoubleRectangle
         ): DoubleVector {
@@ -506,11 +506,11 @@ class TooltipBox(
             textClassName: String
         ): DoubleVector {
             // bBoxes
-            val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
+            val components: List<Pair<Label?, Label>> = lines
                 .map { line ->
                     Pair(
-                        line.label?.let(::MultilineLabel),
-                        MultilineLabel(line.value, wrapWidth = VALUE_LINE_MAX_LENGTH)
+                        line.label?.let(::Label),
+                        Label(line.value, wrapWidth = VALUE_LINE_MAX_LENGTH)
                     )
                 }
             // for labels

@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -78,7 +78,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = MultilineLabel(plotLabel.first).rootGroup
+        val nameSpecElement = Label(plotLabel.first).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
@@ -132,8 +132,8 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val plotLabelSpec: LabelSpec
         )
 
-        private fun createLabel(spec: LabelTextAndSpec, className: String): MultilineLabel {
-            val label = MultilineLabel(spec.text)
+        private fun createLabel(spec: LabelTextAndSpec, className: String): Label {
+            val label = Label(spec.text)
             label.addClassName(className)
             label.textColor().set(Color.DARK_BLUE)
             label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)

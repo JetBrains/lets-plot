@@ -9,7 +9,7 @@ import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
@@ -111,9 +111,9 @@ open class LabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createLabel(hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): MultilineLabel {
+        private fun createLabel(hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): Label {
             val text = "Anchor: " + hAnchor.name + "-" + vAnchor.name + " angle: " + angle + "°"
-            val label = MultilineLabel(text)
+            val label = Label(text)
             label.addClassName(LABEL_CLASS_NAME)
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)

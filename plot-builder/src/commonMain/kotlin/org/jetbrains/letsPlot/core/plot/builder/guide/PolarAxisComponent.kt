@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
@@ -92,7 +92,7 @@ class PolarAxisComponent(
         axisTheme: AxisTheme,
         breakCoord: DoubleVector,
         center: DoubleVector
-    ): Pair<MultilineLabel?, SvgLineElement?> {
+    ): Pair<Label?, SvgLineElement?> {
 
         val tickMark: SvgLineElement? = if (axisTheme.showTickMarks()) {
             val tickMark = SvgLineElement()
@@ -127,7 +127,7 @@ class PolarAxisComponent(
         }
 
         val tickLabel = if (axisTheme.showLabels()) {
-            val tickLabel = MultilineLabel(label, markdown = axisTheme.titleStyle().markdown)
+            val tickLabel = Label(label, markdown = axisTheme.titleStyle().markdown)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
 
             when (orientation.isHorizontal) {

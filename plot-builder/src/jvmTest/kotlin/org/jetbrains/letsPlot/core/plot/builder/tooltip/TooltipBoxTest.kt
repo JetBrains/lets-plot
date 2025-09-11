@@ -136,7 +136,6 @@ class TooltipBoxTest {
         }
 
         override fun getBBox(element: SvgLocatable): DoubleRectangle {
-            // MultilineLabel
             try {
                 return element
                     .run { (this as SvgGElement).children()[0] }

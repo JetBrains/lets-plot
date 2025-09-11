@@ -8,7 +8,7 @@ package demo.plot.shared.model.component
 import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
@@ -158,8 +158,8 @@ class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             fontSize: Double,
             fontStyle: String,
             fontWeight: String
-        ): MultilineLabel {
-            val label = MultilineLabel("$FORMULA ($exampleId)")
+        ): Label {
+            val label = Label("$FORMULA ($exampleId)")
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)
             label.rotate(angle)

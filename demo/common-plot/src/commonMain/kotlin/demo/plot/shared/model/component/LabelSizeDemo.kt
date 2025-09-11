@@ -9,7 +9,7 @@ import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 open class LabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
@@ -17,8 +17,8 @@ open class LabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     companion object {
         private val DEMO_BOX_SIZE = DoubleVector(1200.0, 800.0)
 
-        private fun createLabel(spec: LabelSpec): MultilineLabel {
-            val label = MultilineLabel(spec.label)
+        private fun createLabel(spec: LabelSpec): Label {
+            val label = Label(spec.label)
             label.addClassName("label")
             label.setFontSize(spec.size)
             label.setFontWeight(spec.fontWeight ?: "normal")

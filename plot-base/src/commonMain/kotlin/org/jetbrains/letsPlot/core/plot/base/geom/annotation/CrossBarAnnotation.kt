@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.BarAnnotation.contains
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 
 object CrossBarAnnotation {
     fun build(
@@ -61,7 +61,7 @@ object CrossBarAnnotation {
                 )
 
                 // separate label for each line
-                val labels = MultilineLabel.splitLines(text)
+                val labels = Label.splitLines(text)
 
                 // Adjust location to center the first line vertically
                 location = location.subtract(DoubleVector(0.0, annotation.textStyle.size * labels.size / 2))
