@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.3] - 2025-09-12
+
+### Changed
+
+- `ggsave()`: Large plot dimensions without units now require explicit unit specification. <br>
+  When plot size exceeds 20 without specifying units (e.g., `ggsave(p, 300, 400)`), <br>
+  we ask to specify units explicitly: <br>
+  `ggsave(p, 300, 400, unit='px')` or `ggsave(p, 3, 4, unit='in')`.
+
+### Fixed
+
+- `ggtb()` support in Swing/Batik frontend.
+- Multiline support for axis labels in polar coordinates.
+- When the plot size in `ggsave()` is specified in pixels, `dpi` now affects <br>
+  only the physical size, not the pixel dimensions as before.
+- Blocking `SwingUtilities.invokeAndWait()`  call in plot image export (AWT backend)
+
 ## [4.7.2] - 2025-09-01
 
 ### Added
