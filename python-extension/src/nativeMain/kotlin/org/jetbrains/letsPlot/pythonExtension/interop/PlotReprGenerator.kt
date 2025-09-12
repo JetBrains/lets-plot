@@ -7,6 +7,8 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
+import Python.PyErr_SetString
+import Python.PyExc_ValueError
 import Python.PyObject
 import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
@@ -151,7 +153,7 @@ object PlotReprGenerator {
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
-    ): Pair<Bitmap, Double>? {
+    ): Pair<Bitmap, Double> {
         var canvasReg: Registration? = null
         try {
             val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
@@ -160,9 +162,7 @@ object PlotReprGenerator {
             val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
                 rawSpec = plotSpec as MutableMap<String, Any>,
                 sizingPolicy = exportParameters.sizingPolicy,
-                computationMessagesHandler = {
-                    //println(it.joinToString("\n"))
-                }
+                computationMessagesHandler = { }
             )
 
             val canvasControl = MagickCanvasControl(
@@ -187,9 +187,6 @@ object PlotReprGenerator {
             canvasControl.dispose()
 
             return bitmap to exportParameters.dpi
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            return null
         } finally {
             canvasReg?.dispose()
         }
@@ -217,7 +214,7 @@ object PlotReprGenerator {
                 dpi = dpi,
                 scale = scaleFactor,
                 fontManager = defaultFontManager
-            ) ?: return Py_BuildValue("s", "Failed to generate image")
+            )
             // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
             // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
             // This happens because PyBytes_FromStringAndSize has the following signature:
@@ -229,7 +226,10 @@ object PlotReprGenerator {
             return Py_BuildValue("s", Base64.encode(png))
         } catch (e: Throwable) {
             e.printStackTrace()
-            return Py_BuildValue("s", "exportPng() - Exception: ${e.message}")
+            // Set a Python exception with the caught error message
+            PyErr_SetString(PyExc_ValueError, "${e.message}")
+            // Return null to signal that an exception was raised
+            return null
         }
     }
 }
