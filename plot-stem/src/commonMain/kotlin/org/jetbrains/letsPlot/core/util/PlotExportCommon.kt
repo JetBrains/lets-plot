@@ -11,6 +11,8 @@ object PlotExportCommon {
         val dpi: Double // output DPI
     )
 
+    private const val MAX_INCHES = 20.0
+
     enum class SizeUnit(val value: String, val isPhysicalUnit: Boolean) {
         PX("px", false),
         MM("mm", true),
@@ -50,6 +52,10 @@ object PlotExportCommon {
             exportScale = scaleFactor?.toDouble() ?: 1.0
         } else if (plotSize != null && unit == null) {
             // ggsave(png, w=3, h=2) - size given without unit; assume inches.
+
+            if (plotSize.x >= MAX_INCHES || plotSize.y >= MAX_INCHES) {
+                throw IllegalArgumentException("The image size was interpreted as inches, but it seems unusually large. Please specify the size unit explicitly (px, cm, mm, in).")
+            }
             exportUnit = SizeUnit.IN
             exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
         } else if (plotSize != null && unit != null) {
