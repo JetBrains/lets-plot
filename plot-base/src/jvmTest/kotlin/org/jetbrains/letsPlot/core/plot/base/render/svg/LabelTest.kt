@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.max
 import kotlin.test.Test
 
-class MultilineLabelTest {
+class LabelTest {
     @Test
     fun setHorizontalAnchorBasic() {
         val text = """text"""
