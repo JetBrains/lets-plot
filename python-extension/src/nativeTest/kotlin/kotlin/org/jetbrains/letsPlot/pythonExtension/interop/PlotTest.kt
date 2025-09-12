@@ -850,7 +850,7 @@ class PlotTest {
             scale = scale,
             fontManager = embeddedFontsManager
             //fontManager = MagickFontManager.default() // For manual testing
-        ) ?: error("Failed to export bitmap from plot spec")
+        )
 
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }
