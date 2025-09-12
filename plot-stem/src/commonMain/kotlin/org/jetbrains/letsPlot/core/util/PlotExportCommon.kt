@@ -89,7 +89,10 @@ object PlotExportCommon {
             }
         }
 
-        val finalScaleFactor = exportDpi / 96.0 * exportScale
+        val finalScaleFactor = when {
+            exportUnit == SizeUnit.PX && plotSize != null -> exportScale
+            else -> (exportDpi / 96.0) * exportScale
+        }
 
         return ExportParameters(sizingPolicy, finalScaleFactor, exportUnit, exportDpi)
     }

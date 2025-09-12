@@ -82,23 +82,23 @@ class PlotExportCommonTest {
     }
 
     @Test
-    fun `ggsave(p, w=300, h=200, unit=px, dpi=150) should output 300x200 pixels with 1_5625x scale`() {
+    fun `ggsave(p, w=300, h=200, unit=px, dpi=150) should output 300x200 pixels with 1x scale`() {
         // Output should have exactly the specified size in pixels
         PlotExportCommon.computeExportParameters(plotSize = DoubleVector(300, 200), unit = PX, dpi = 150)
             .let { (sizingPolicy, scale, unit) ->
                 assertThat(sizingPolicy).isEqualTo(SizingPolicy.fixed(300.0, 200.0))
-                assertThat(scale).isEqualTo(150.0 / 96.0) // = 1.5625
+                assertThat(scale).isEqualTo(1.0) // = 1.5625
                 assertThat(unit).isEqualTo(PX)
             }
     }
 
     @Test
-    fun `ggsave(p, w=300, h=200, unit=px, dpi=150, scale=2) should output 300x200 pixels with 1_5625x scale`() {
+    fun `ggsave(p, w=300, h=200, unit=px, dpi=150, scale=2) should output 300x200 pixels with 2x scale`() {
         // Output should have exactly the specified size in pixels
         PlotExportCommon.computeExportParameters(plotSize = DoubleVector(300, 200), unit = PX, dpi = 150, scaleFactor = 2)
             .let { (sizingPolicy, scale, unit) ->
                 assertThat(sizingPolicy).isEqualTo(SizingPolicy.fixed(300.0, 200.0))
-                assertThat(scale).isEqualTo(150.0 / 96.0 * 2.0) // = 3.125
+                assertThat(scale).isEqualTo(2.0)
                 assertThat(unit).isEqualTo(PX)
             }
     }
