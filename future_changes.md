@@ -14,5 +14,5 @@
 - `ggtb()` support in Swing/Batik frontend.
 - Multiline support for axis labels in polar coordinates.
 - When the plot size in `ggsave()` is specified in pixels, `dpi` now affects <br> 
-  only the physical size, not the pixel dimensions as before.
-
+  only the physical size, not the pixel dimensions as before.  
+- Blocking **invokeAndWait**  call in plot image export (AWT backend)
