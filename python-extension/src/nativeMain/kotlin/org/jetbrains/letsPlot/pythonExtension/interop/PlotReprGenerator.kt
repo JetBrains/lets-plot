@@ -75,8 +75,8 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
-            println(e.message)
-            e.printStackTrace()
+            //println(e.message)
+            //e.printStackTrace()
             Py_BuildValue("s", svgStr)
         }
     }
@@ -225,7 +225,8 @@ object PlotReprGenerator {
             val png: ByteArray = Png.encode(bitmap, bitmapDpi)
             return Py_BuildValue("s", Base64.encode(png))
         } catch (e: Throwable) {
-            e.printStackTrace()
+            //e.printStackTrace()
+
             // Set a Python exception with the caught error message
             PyErr_SetString(PyExc_ValueError, "${e.message}")
             // Return null to signal that an exception was raised
