@@ -98,24 +98,23 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                     "Vertical justification:" + justification.y + "\n" +
                     "Angle: " + rotation.toString()
 
-            val label = Label(text)
+            val labelHeight = FONT_SIZE
+            val label = Label(text, labelHeight)
             label.addClassName(LABEL_CLASS_NAME)
             label.textColor().set(Color.DARK_BLUE)
 
-            val lineHeight = FONT_SIZE
             val lineFont = Font(FontFamily(FONT_FAMILY_NORMAL, false), FONT_SIZE.toInt())
             val textSize = DoubleVector(
                 PlotLabelSpec(lineFont).width(text),
-                lineHeight * label.linesCount()
+                labelHeight * label.linesCount()
             )
             val (position, hAnchor) = applyJustification(
                 boundRect,
                 textSize,
-                lineHeight,
+                labelHeight,
                 justification,
                 rotation
             )
-            label.setLineHeight(lineHeight)
             label.setHorizontalAnchor(hAnchor)
             rotation?.angle?.let(label::rotate)
             label.moveTo(position)

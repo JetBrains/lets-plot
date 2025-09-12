@@ -458,12 +458,11 @@ class TooltipBox(
         }
 
         private fun initTitleComponent(titleLine: String): Label {
-            val titleComponent = Label(titleLine)
+            val titleComponent = Label(titleLine, styleSheet.getTextStyle(TOOLTIP_TITLE).size)
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
             titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
-            titleComponent.setFontSize(styleSheet.getTextStyle(TOOLTIP_TITLE).size)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
@@ -472,7 +471,7 @@ class TooltipBox(
         private fun estimateLineHeight(line: String?, className: String): Double? {
             return line
                 ?.split("\n")
-                ?.map { Label(it).apply { addClassName(className) } }
+                ?.map { Label(it, styleSheet.getTextStyle(className).size).apply { addClassName(className) } }
                 ?.mapNotNull { lineTextLabel ->
                     with(myLinesContainer.children()) {
                         add(lineTextLabel.rootGroup)
@@ -510,8 +509,8 @@ class TooltipBox(
             val components: List<Pair<Label?, Label>> = lines
                 .map { line ->
                     Pair(
-                        line.label?.let(::Label),
-                        Label(line.value, wrapWidth = VALUE_LINE_MAX_LENGTH)
+                        line.label?.let { Label(it, styleSheet.getTextStyle(TOOLTIP_LABEL).size) },
+                        Label(line.value, styleSheet.getTextStyle(textClassName).size, wrapWidth = VALUE_LINE_MAX_LENGTH)
                     )
                 }
             // for labels
@@ -541,9 +540,6 @@ class TooltipBox(
                 val (labelComponent, valueComponent) = component
                 labelComponent?.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
                 valueComponent.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
-                // set font size
-                labelComponent?.setFontSize(styleSheet.getTextStyle(TOOLTIP_LABEL).size)
-                valueComponent.setFontSize(styleSheet.getTextStyle(textClassName).size)
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }

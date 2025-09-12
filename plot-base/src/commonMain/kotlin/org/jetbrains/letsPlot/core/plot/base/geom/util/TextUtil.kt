@@ -147,7 +147,6 @@ object TextUtil {
         }
         label.setTextOpacity(alpha)
 
-        label.setFontSize(fontSize(p, scale))
         label.setLineHeight(lineheight(p, scale))
 
         // family

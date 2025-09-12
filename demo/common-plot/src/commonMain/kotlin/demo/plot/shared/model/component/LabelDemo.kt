@@ -113,7 +113,7 @@ open class LabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         private fun createLabel(hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): Label {
             val text = "Anchor: " + hAnchor.name + "-" + vAnchor.name + " angle: " + angle + "°"
-            val label = Label(text)
+            val label = Label(text, 0.0)
             label.addClassName(LABEL_CLASS_NAME)
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)

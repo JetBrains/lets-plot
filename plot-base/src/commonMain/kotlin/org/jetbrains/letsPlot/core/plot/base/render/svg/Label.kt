@@ -24,16 +24,16 @@ import kotlin.math.roundToInt
 
 class Label(
     val text: String,
+    val fontSize: Double,
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false
 ) : SvgComponent() {
     private val myLines: List<SvgTextElement>
     private var myTextColor: Color? = null
-    private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private var myLineHeight = 0.0
+    private var myLineHeight = fontSize
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
@@ -42,6 +42,9 @@ class Label(
     init {
         myLines = getLines()
         myLines.forEach(rootGroup.children()::add)
+        updateStyleAttribute()
+        verticalRepositionLines()
+        horizontalRepositionLines()
     }
 
     override fun buildComponent() {
@@ -75,12 +78,6 @@ class Label(
             it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
         }
         verticalRepositionLines()
-    }
-
-    fun setFontSize(px: Double) {
-        myFontSize = px
-        updateStyleAttribute()
-        horizontalRepositionLines()
     }
 
     /**
@@ -117,7 +114,7 @@ class Label(
     private fun updateStyleAttribute() {
         val styleAttr = Text.buildStyle(
             myTextColor,
-            myFontSize,
+            fontSize,
             myFontWeight,
             myFontFamily,
             myFontStyle
@@ -155,6 +152,21 @@ class Label(
         }
     }
 
+    /**
+     * Reposition lines horizontally without replacing DOM nodes.
+     *
+     * We cannot guarantee that elements in `myLines` won’t have event listeners or other external
+     * references attached later. Blindly removing/recreating them in `rootGroup` would drop those
+     * listeners and break references.
+     *
+     * At the same time, re-running `getLines()` is known to preserve the exact structure of the text
+     * (same number of lines and the same <tspan> layout); the only differences may be the x-coordinates
+     * of some tspans needed for alignment.
+     *
+     * Therefore this method computes fresh lines via `getLines()` and copies the relevant x-values
+     * into the already existing nodes in `myLines` instead of replacing them. This keeps listeners
+     * and references intact while updating horizontal positions.
+     */
     private fun horizontalRepositionLines() {
         (myLines zip getLines()).forEach { (originalLine, recalculatedLine) ->
             var firstTSpanHasExplicitX = false
@@ -182,7 +194,7 @@ class Label(
     private fun getLines(): List<SvgTextElement> {
         val font = Font(
             family = FONT_FAMILY_REGISTRY.get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
-            size = myFontSize.roundToInt(),
+            size = fontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )

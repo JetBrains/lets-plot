@@ -214,23 +214,21 @@ internal class PlotTile constructor(
 
         val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val lineHeight = labelSpec.height()
+        val labelHeight = labelSpec.height()
         val className = if (isColumnLabel) "x" else "y"
         val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
 
-        val lab = Label(label)
+        val lab = Label(label, labelHeight)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
 
         val (pos, hAnchor) = applyJustification(
             textBounds,
             textSize,
-            lineHeight,
+            labelHeight,
             theme.stripTextJustification(),
             rotation
         )
         lab.setHorizontalAnchor(hAnchor)
-        lab.setLineHeight(lineHeight)
-        lab.setFontSize(lineHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }
 

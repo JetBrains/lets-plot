@@ -63,11 +63,9 @@ class LegendComponent(
         breakComponent.add(createKeyElement(br, keySize))
 
         // add label at position as was layout
-        val label = Label(br.label)
-        val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
+        val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
+        val label = Label(br.label, labelHeight)
         label.addClassName(Style.LEGEND_ITEM)
-        label.setLineHeight(lineHeight)
-        label.setFontSize(lineHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin)

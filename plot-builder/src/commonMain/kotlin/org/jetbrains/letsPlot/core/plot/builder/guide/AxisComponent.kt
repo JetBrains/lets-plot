@@ -97,9 +97,10 @@ class AxisComponent(
             StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
         }
 
+        val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
         var tickLabel: Label? = null
         if (axisTheme.showLabels()) {
-            tickLabel = Label(label)
+            tickLabel = Label(label, tickHeight)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
         }
 
@@ -143,9 +144,6 @@ class AxisComponent(
             tickLabel.moveTo(labelOffset.x, labelOffset.y)
             tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
             tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
-            val lineHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
-            tickLabel.setLineHeight(lineHeight)
-            tickLabel.setFontSize(lineHeight) // Needed only for calculating correct x-shift for some LaTeX formulas
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)
         }

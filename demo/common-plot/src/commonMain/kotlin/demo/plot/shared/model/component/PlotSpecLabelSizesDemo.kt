@@ -78,7 +78,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = Label(plotLabel.first).rootGroup
+        val nameSpecElement = Label(plotLabel.first, 16.0).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
@@ -133,7 +133,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         )
 
         private fun createLabel(spec: LabelTextAndSpec, className: String): Label {
-            val label = Label(spec.text)
+            val label = Label(spec.text, 0.0)
             label.addClassName(className)
             label.textColor().set(Color.DARK_BLUE)
             label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)

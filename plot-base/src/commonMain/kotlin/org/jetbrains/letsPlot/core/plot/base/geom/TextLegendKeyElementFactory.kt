@@ -25,9 +25,8 @@ internal class TextLegendKeyElementFactory :
         val rect = SvgRectElement(0.0, 0.0, size.x, size.y)
         AestheticsUtil.updateFill(rect, p)
 
-        val label = Label("a")
+        val label = Label("a", fontSize(p, 1.0))
         TextUtil.decorate(label, p)
-        label.setLineHeight(fontSize(p, 1.0))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.rotate(angle(p))

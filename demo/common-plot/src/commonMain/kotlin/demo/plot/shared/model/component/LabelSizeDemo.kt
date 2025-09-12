@@ -18,9 +18,8 @@ open class LabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private val DEMO_BOX_SIZE = DoubleVector(1200.0, 800.0)
 
         private fun createLabel(spec: LabelSpec): Label {
-            val label = Label(spec.label)
+            val label = Label(spec.label, spec.size)
             label.addClassName("label")
-            label.setFontSize(spec.size)
             label.setFontWeight(spec.fontWeight ?: "normal")
             label.setFontStyle(spec.fontStyle ?: "normal")
             label.textColor().set(Color.DARK_BLUE)
