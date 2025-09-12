@@ -153,10 +153,12 @@ class Label(
     }
 
     private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
-        (myLines zip getLines()).forEach { (originalLine, recalculatedLine) ->
-            walkPair(originalLine, recalculatedLine) { original, recalculated ->
-                if (original is SvgTSpanElement && recalculated is SvgTSpanElement) {
-                    original.x().set(recalculated.x().get())
+        val recalculatedLines = getLines()
+        require(myLines.size == recalculatedLines.size) { "Line counts must be the same." }
+        (myLines zip recalculatedLines).forEach { (originalLine, recalculatedLine) ->
+            walkPair(originalLine, recalculatedLine) { originalNode, recalculatedNode ->
+                if (originalNode is SvgTSpanElement && recalculatedNode is SvgTSpanElement) {
+                    originalNode.x().set(recalculatedNode.x().get())
                 }
             }
             xStart?.let { originalLine.x().set(it) }
@@ -206,13 +208,14 @@ class Label(
             node2: SvgNode,
             action: (SvgNode, SvgNode) -> Unit
         ) {
-            action(node1, node2)
+            require(node1::class == node2::class) { "Node classes must be the same: ${node1::class} != ${node2::class}" }
             val children1 = node1.children()
             val children2 = node2.children()
             require(children1.size == children2.size) { "Node lists must have the same size." }
             (children1 zip children2).forEach { (child1, child2) ->
                 walkPair(child1, child2, action)
             }
+            action(node1, node2)
         }
 
         private fun findFirstTSpan(root: SvgNode): SvgTSpanElement? =
