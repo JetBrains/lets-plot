@@ -4,27 +4,23 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
-import org.jetbrains.letsPlot.core.spec.getString
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaDataUtil
-import org.jetbrains.letsPlot.core.spec.write
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
-import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 import javax.swing.undo.UndoManager
 
 fun main() {
     val specString = System.getenv("PLOT_SPEC")
         ?: loadSpecFromFile()
-        ?: """ 
+        ?: """
         {
             'kind': 'plot',
             'data': { 'time': ['Lunch','Lunch', 'Dinner', 'Dinner', 'Dinner'] },
@@ -77,7 +73,6 @@ private fun getSpecFile(): File {
     val appDir = File(homeDir, ".lets-plot-debugger")
     return File(appDir, "last_spec.json")
 }
-
 
 
 class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
@@ -144,6 +139,13 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         add(pixelDensitySpinner)
     }
 
+    // Favorites components
+    private val favorites = mutableMapOf<String, String>()
+    private val favoritesComboBox = JComboBox<String>()
+    private val saveFavoriteButton = JButton("Save")
+    private val loadFavoriteButton = JButton("Load")
+    private val removeFavoriteButton = JButton("Remove")
+
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         preferredSize = Dimension(1400, 600)
@@ -156,6 +158,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         setupUndoRedo()
         setupKeystrokes()
+        setupFavorites()
 
         val buttonPanel = JPanel(BorderLayout(5, 0)).apply {
             add(evaluateButton, BorderLayout.CENTER)
@@ -165,8 +168,34 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         val evalHeight = evaluateButton.preferredSize.height
         pasteAndEvaluateButton.preferredSize = Dimension(evalHeight, evalHeight)
 
+        // Panel for the buttons
+        val favoriteButtonsPanel = JPanel(GridLayout(1, 3, 5, 0)).apply { // 1 row, 3 cols, 5px horizontal gap
+            add(loadFavoriteButton)
+            add(saveFavoriteButton)
+            add(removeFavoriteButton)
+        }
+
+        // Main panel with a vertical layout
+        val favoritesPanel = JPanel().apply {
+            layout = BoxLayout(this, BoxLayout.Y_AXIS)
+            border = BorderFactory.createTitledBorder("Favorites")
+
+            // Align components to the left
+            favoritesComboBox.alignmentX = Component.LEFT_ALIGNMENT
+            favoriteButtonsPanel.alignmentX = Component.LEFT_ALIGNMENT
+
+            // Set max size to prevent vertical stretching of combobox
+            favoritesComboBox.maximumSize = Dimension(Integer.MAX_VALUE, favoritesComboBox.preferredSize.height)
+            favoriteButtonsPanel.maximumSize = Dimension(Integer.MAX_VALUE, favoriteButtonsPanel.preferredSize.height)
+
+            add(favoritesComboBox)
+            add(Box.createRigidArea(Dimension(0, 5))) // 5px vertical space
+            add(favoriteButtonsPanel)
+        }
+
         val controlPanel = JPanel(BorderLayout(0, 10)).apply {
             border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            add(favoritesPanel, BorderLayout.NORTH)
             add(specEditorPane, BorderLayout.CENTER)
             add(buttonPanel, BorderLayout.SOUTH)
         }
@@ -189,7 +218,157 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         pack()
         setLocationRelativeTo(null)
+
+        updateFavoritesComboBox()
+        updateSaveButtonState()
     }
+
+    private fun getFavoritesFile(): File {
+        val homeDir = System.getProperty("user.home")
+        val appDir = File(homeDir, ".lets-plot-debugger")
+        return File(appDir, "favorites.json")
+    }
+
+
+    private fun saveFavoritesToFile() {
+        val favoritesFile = getFavoritesFile()
+        try {
+            favoritesFile.parentFile.mkdirs()
+            val json = JsonSupport.formatJson(favorites)
+            favoritesFile.writeText(json)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            JOptionPane.showMessageDialog(
+                this,
+                "Error saving favorites: ${e.message}",
+                "Favorites Error",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+    }
+
+    private fun loadFavoritesFromFile() {
+        val favoritesFile = getFavoritesFile()
+        if (favoritesFile.exists()) {
+            try {
+                val jsonText = favoritesFile.readText()
+                if (jsonText.isNotBlank()) {
+                    val parsed = JsonSupport.parseJson(jsonText) as Map<*, *>
+                    favorites.clear()
+                    parsed.forEach { (key, value) ->
+                        if (key is String && value is String) {
+                            favorites[key] = value
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Error loading favorites: ${e.message}",
+                    "Favorites Error",
+                    JOptionPane.ERROR_MESSAGE
+                )
+            }
+        }
+    }
+
+    private fun updateFavoritesComboBox() {
+        val selected = favoritesComboBox.selectedItem
+        favoritesComboBox.removeAllItems()
+        favorites.keys.sorted().forEach { favoritesComboBox.addItem(it) }
+        favoritesComboBox.selectedItem = selected
+
+        val hasFavorites = favoritesComboBox.itemCount > 0
+        loadFavoriteButton.isEnabled = hasFavorites
+        removeFavoriteButton.isEnabled = hasFavorites
+    }
+
+    private fun updateSaveButtonState() {
+        val selectedName = favoritesComboBox.selectedItem as? String
+        if (selectedName == null) {
+            saveFavoriteButton.isEnabled = true // Can always save as a new favorite
+            return
+        }
+
+        val favoriteContent = favorites[selectedName]
+        val currentContent = plotSpecTextArea.text
+
+        // Disable if the selected favorite's content is the same as the current text
+        saveFavoriteButton.isEnabled = (favoriteContent != currentContent)
+    }
+
+    private fun setupFavorites() {
+        loadFavoritesFromFile()
+
+        saveFavoriteButton.addActionListener {
+            val name = JOptionPane.showInputDialog(this, "Enter a name for the favorite:", "Save Favorite", JOptionPane.PLAIN_MESSAGE)
+            if (!name.isNullOrBlank()) {
+                if (favorites.containsKey(name) && favorites[name] != plotSpecTextArea.text) {
+                    val overwrite = JOptionPane.showConfirmDialog(
+                        this,
+                        "Favorite '$name' already exists. Overwrite it?",
+                        "Confirm Overwrite",
+                        JOptionPane.YES_NO_OPTION
+                    )
+                    if (overwrite != JOptionPane.YES_OPTION) {
+                        return@addActionListener
+                    }
+                }
+                favorites[name] = plotSpecTextArea.text
+                saveFavoritesToFile()
+                updateFavoritesComboBox()
+                favoritesComboBox.selectedItem = name
+            }
+        }
+
+        loadFavoriteButton.addActionListener {
+            val selectedName = favoritesComboBox.selectedItem as? String
+            if (selectedName != null) {
+                val spec = favorites[selectedName]
+                if (spec != null) {
+                    setSpec(spec)
+                    evaluate()
+                }
+            }
+        }
+
+        removeFavoriteButton.addActionListener {
+            val selectedName = favoritesComboBox.selectedItem as? String
+            if (selectedName != null) {
+                val confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to remove '$selectedName'?",
+                    "Remove Favorite",
+                    JOptionPane.YES_NO_OPTION
+                )
+                if (confirm == JOptionPane.YES_OPTION) {
+                    favorites.remove(selectedName)
+                    saveFavoritesToFile()
+                    updateFavoritesComboBox()
+                }
+            }
+        }
+
+        favoritesComboBox.addItemListener { e ->
+            if (e.stateChange == ItemEvent.SELECTED) {
+                updateSaveButtonState()
+            }
+        }
+
+        plotSpecTextArea.document.addDocumentListener(object : DocumentListener {
+            override fun insertUpdate(e: DocumentEvent?) {
+                updateSaveButtonState()
+            }
+            override fun removeUpdate(e: DocumentEvent?) {
+                updateSaveButtonState()
+            }
+            override fun changedUpdate(e: DocumentEvent?) {
+                updateSaveButtonState()
+            }
+        })
+    }
+
 
     private fun saveSpecToFile() {
         val specFile = getSpecFile()
@@ -291,7 +470,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         saveSpecToFile()
 
-        val spec = parsePlotSpec(plotSpecTextArea.text).let(::fetchVegaLiteData)
+        val spec = parsePlotSpec(plotSpecTextArea.text)
         plotPanel.removeAll()
 
         try {
@@ -344,31 +523,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             plotPanel.revalidate()
             plotPanel.repaint()
         }
-    }
-
-    private fun fetchVegaLiteData(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-        val url = plotSpec.getString("data", "url")
-        if (url != null) {
-            try {
-                val urlObj = URL("https://vega.github.io/editor/$url")
-                val connection = urlObj.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.connectTimeout = 5000
-                connection.readTimeout = 5000
-                val content = connection.inputStream.bufferedReader().use(BufferedReader::readText)
-                plotSpec.remove("data")
-                plotSpec.write("data", "values") { VegaDataUtil.parseVegaDataset(content, url) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Failed to fetch data from URL: $url\nError: ${e.message}",
-                    "Data Fetch Error",
-                    JOptionPane.ERROR_MESSAGE
-                )
-            }
-        }
-        return plotSpec
     }
 
     private class PasteIcon(private val size: Int = 20) : Icon {

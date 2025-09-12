@@ -209,12 +209,12 @@ internal class TextLine : Region() {
 
 // Can't use javafx.scene.control.Hyperlink.
 // It has a different baseline, so, to align it with a Text the layoutY modification is needed.
-// But in this case MultiLineLabel (that uses TextLine internally) returns bounds larger than expected.
+// But in this case Label (that uses TextLine internally) returns bounds larger than expected.
 // Lots of extra styling required to make a Hyperlink look like a regular text.
 // Another problem is that Hyperlink requires an extra frame to layout it properly, without it bounds is 0x0.
 // This is not compatible with tooltips - they should get the bounds immediately.
 // As a workaround hyperlink.graphic.boundingRectInLocal can be used, but this doesn't solve problem with layoutY and
-// incorrect bounds of MultiLineLabel.
+// incorrect bounds of Label.
 internal class HyperlinkText(
     private var href: String? = null
 ) : Text() {

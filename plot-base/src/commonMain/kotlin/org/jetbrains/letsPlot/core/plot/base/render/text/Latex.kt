@@ -160,19 +160,24 @@ internal object Latex {
             "" to "-"
         }
 
-        val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
+        val indentTSpan = ctx.apply(SvgTSpanElement(INDENT_SYMBOL).apply {
             setAttribute(SvgTextContent.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-        }
+        })
         val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
-        val indexTSpanElements = content.render(ctx).mapIndexed { i, element ->
+        // It is an analog of restoreBaselineTSpan, but for the initial shifting
+        // This is necessary for more complex formulas in which the index starts from another shift
+        val setBaselineTSpan = ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+            // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
+            setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
+            setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
+        })
+        val indexTSpanElements = content.render(ctx).map { element ->
             element.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
                 }
-                if (i == 0) {
-                    setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
-                }
             }
+            element
         }
         // The following 'tspan' element is used to restore the baseline after the index
         // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
@@ -180,13 +185,13 @@ internal object Latex {
         // Attribute 'baseline-shift' is better suited for such use case -
         // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
         // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-        val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-            // Size of shift depends on the font size, and it should be equal to the superscript shift size
+        val restoreBaselineTSpan = ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+            // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
-        }
+        })
 
-        return listOf(ctx.apply(indentTSpan)) + indexTSpanElements + ctx.apply(restoreBaselineTSpan)
+        return listOf(indentTSpan, setBaselineTSpan) + indexTSpanElements + restoreBaselineTSpan
     }
 
     private fun estimateWidthForIndexNode(

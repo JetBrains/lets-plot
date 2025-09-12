@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 object AesScaling {
     const val POINT_UNIT_SIZE = 2.2
     const val PIE_UNIT_SIZE = 10.0
+    const val TEXT_UNIT_SIZE = 2.0
 
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
@@ -56,7 +57,7 @@ object AesScaling {
 
     fun textSize(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * 2
+        return p.size()!! * TEXT_UNIT_SIZE
     }
 
     private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {

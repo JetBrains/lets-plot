@@ -8,8 +8,8 @@ plugins {
     id ("org.openjfx.javafxplugin")
 }
 
-val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
-val jfxVersion = extra["jfx_version"] as String
+val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
+val jfxVersion = extra["jfx.version"] as String
 
 javafx {
     version = jfxVersion

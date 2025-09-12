@@ -17,6 +17,9 @@ import java.awt.GraphicsEnvironment
 import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
+import kotlin.random.Random
 import kotlin.test.Test
 
 
@@ -48,6 +51,49 @@ class PlotImageExportVisualTest {
     private val imageComparer by lazy { createImageComparer() }
 
     @Test
+    fun `with a long rendering time the race condition should not occur`() {
+        // Test potential race condition in image export
+        // Could be caused by unexpected use of EDT in the render process.
+        val dim = sqrt(40_000.0).roundToInt()
+        val rand = Random(12)
+        val xs = mutableListOf<String>()
+        val ys = mutableListOf<String>()
+        val cs = mutableListOf<String>()
+
+        (0..dim).map { x ->
+            (0..dim).map { y ->
+                xs.add(rand.nextDouble().toString())
+                ys.add(rand.nextDouble().toString())
+                cs.add(rand.nextDouble().toString())
+            }
+        }
+
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "y": "y", "color": "col" },
+            |      "size": 8.0,
+            |      "alpha": 0.3,
+            |      "sampling": "none",
+            |      "data": {
+            |        "x": [${xs.joinToString()}],
+            |        "y": [${ys.joinToString()}],
+            |        "col": [${cs.joinToString()}]
+            |      }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_race_condition_test.png", plotSpec)
+    }
+
+    @Test
     fun `latex formula`() {
         val spec = """
             |{
@@ -69,6 +115,56 @@ class PlotImageExportVisualTest {
         val plotSpec = parsePlotSpec(spec)
 
         assertPlot("plot_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun superscript() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Default limits" },
+            |      "theme": { "name": "classic", "exponent_format": "pow", "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Scientific notation for \\( x \\leq 10^{-3} \\) and \\( x \\geq 10^3 \\)" },
+            |      "theme": { "name": "classic", "exponent_format": [ "pow", -3.0, 3.0 ], "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_superscript_test.png", plotSpec)
     }
 
     @Test
@@ -255,6 +351,7 @@ class PlotImageExportVisualTest {
 
         assertPlot("plot_markdown2Xscale_test.png", plotSpec, scale = 2)
     }
+
     @Test
     fun markdown() {
         val spec = """

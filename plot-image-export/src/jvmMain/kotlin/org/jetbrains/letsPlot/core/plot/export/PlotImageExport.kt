@@ -72,14 +72,11 @@ object PlotImageExport {
             computationMessagesHandler = {}
         )
 
-        val canvasPane = CanvasPane(
-            figure = plotFigure,
-            pixelDensity = scaleFactor
-        )
+        val plotComponentSize = plotFigure.bounds().get().dimension
 
-        val buffer = BufferedImage(
-            (plotFigure.bounds().get().width * scaleFactor).roundToInt(),
-            (plotFigure.bounds().get().height * scaleFactor).roundToInt(),
+        val image = BufferedImage(
+            (plotComponentSize.x * scaleFactor).roundToInt(),
+            (plotComponentSize.y * scaleFactor).roundToInt(),
             when (format) {
                 is Format.PNG -> BufferedImage.TYPE_INT_ARGB
                 is Format.TIFF -> BufferedImage.TYPE_INT_ARGB
@@ -87,25 +84,24 @@ object PlotImageExport {
             }
         )
 
-        val graphics = buffer.createGraphics()
+        val graphics = image.createGraphics()
 
-        // TODO: investigate inconsistency in scaling factor.
-        // CanvasPane already accepts pixelDensity, which is used to scale the canvas.
-        // Yet, when exporting, we apply the scaling factor again - pixelDensity doesn't seem to work as expected.
         graphics.scale(scaleFactor, scaleFactor)
 
-        canvasPane.paint(graphics)
+        try {
+            CanvasPane.paint(plotFigure, scaleFactor, graphics)
+        } finally {
+            graphics.dispose()
+        }
 
-        graphics.dispose()
-
-        val img = ByteArrayOutputStream()
-        ImageIO.write(buffer, format.defFileExt, img)
+        val outputStream = ByteArrayOutputStream()
+        ImageIO.write(image, format.defFileExt, outputStream)
 
         return ImageData(
-            bytes = img.toByteArray(),
+            bytes = outputStream.toByteArray(),
             plotSize = DoubleVector(
-                x = buffer.width,
-                y = buffer.height
+                x = image.width.toDouble(),
+                y = image.height.toDouble()
             )
         )
     }

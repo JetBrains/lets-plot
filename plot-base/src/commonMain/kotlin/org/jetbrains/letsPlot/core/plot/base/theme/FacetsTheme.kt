@@ -5,7 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base.theme
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+
 interface FacetsTheme {
     fun horizontalFacetStrip(): FacetStripTheme
     fun verticalFacetStrip(): FacetStripTheme
+
+    fun panelSpacing(): DoubleVector
 }

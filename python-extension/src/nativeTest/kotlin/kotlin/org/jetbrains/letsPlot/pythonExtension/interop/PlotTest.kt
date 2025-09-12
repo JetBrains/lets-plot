@@ -75,6 +75,50 @@ class PlotTest {
     }
 
     @Test
+    fun markdown() {
+        val spec = """
+            |{
+            |  "theme": {
+            |    "title": { "markdown": true, "blank": false },
+            |    "plot_title": { "family": "Noto Sans Regular", "size": 30.0, "hjust": 0.5, "blank": false },
+            |    "plot_subtitle": { "family": "Noto Sans Regular", "hjust": 0.5, "blank": false }
+            |  },
+            |  "ggtitle": {
+            |    "text": "<span style=\"color:#66c2a5\">**Forward**</span>, <span style=\"color:#8da0cb\">**Rear**</span> and <span style=\"color:#fc8d62\">**4WD**</span> Drivetrain",
+            |    "subtitle": "**City milage** *vs* **displacement**"
+            |  },
+            |  "caption": {
+            |    "text": "<span style='color:grey'>Powered by <a href='https://lets-plot.org'>Lets-Plot</a>.  \nVisit the <a href='https://github.com/jetbrains/lets-plot/issues'>issue tracker</a> for feedback.</span>"
+            |  },
+            |  "guides": {
+            |    "x": { "title": "Displacement (***inches***)" },
+            |    "y": { "title": "Miles per gallon (***cty***)" }
+            |  },
+            |  "kind": "plot",
+            |  "scales": [
+            |    {
+            |      "aesthetic": "color",
+            |      "guide": "none",
+            |      "values": [ "#66c2a5", "#fc8d62", "#8da0cb" ]
+            |    }
+            |  ],
+            |  "layers": [
+            |    {
+            |      "geom": "blank",
+            |      "inherit_aes": false,
+            |      "tooltips": "none"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_markdown_test.png", plotSpec)
+    }
+
+
+    @Test
     fun `latex formula`() {
         val spec = """
             |{
@@ -96,6 +140,115 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         assertPlot("plot_latex_formula_test.png", plotSpec)
+    }
+
+    @Test
+    fun `latex sup and sub`() {
+        val spec = """
+            {
+              "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+              "mapping": {},
+              "data_meta": {},
+              "kind": "plot",
+              "scales": [
+                {
+                  "aesthetic": "y",
+                  "limits": [
+                    -0.25,
+                    7.25
+                  ],
+                  "trans": "reverse"
+                }
+              ],
+              "layers": [
+                {
+                  "geom": "text",
+                  "mapping": {
+                    "y": [
+                      0.0,
+                      1.0,
+                      2.0,
+                      3.0,
+                      4.0,
+                      5.0,
+                      6.0,
+                      7.0
+                    ],
+                    "label": [
+                      "\\( a^b \\)",
+                      "\\( a^{bc} \\)",
+                      "\\( a_b \\)",
+                      "\\( a_{bc} \\)",
+                      "\\( a^{b^c} \\)",
+                      "\\( a_{i_1} \\)",
+                      "\\( a^{b_i} \\)",
+                      "\\( a_{I^n} \\)"
+                    ]
+                  },
+                  "data_meta": {},
+                  "x": 0.0,
+                  "family": "Noto Sans",
+                  "fontface": "italic",
+                  "size": 12.0
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_sup_sub_test.png", plotSpec)
+    }
+
+    @Test
+    fun superscript() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Default limits" },
+            |      "theme": { "name": "classic", "exponent_format": "pow", "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "ggtitle": { "text": "Scientific notation for \\( x \\leq 10^{-3} \\) and \\( x \\geq 10^3 \\)" },
+            |      "theme": { "name": "classic", "exponent_format": [ "pow", -3.0, 3.0 ], "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
+            |      "layers": [
+            |        {
+            |          "geom": "text",
+            |          "mapping": {
+            |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
+            |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
+            |          },
+            |          "family": "Noto Sans",
+            |          "size": 10.0
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_superscript_test.png", plotSpec)
     }
 
     @Test
@@ -697,7 +850,7 @@ class PlotTest {
             scale = scale,
             fontManager = embeddedFontsManager
             //fontManager = MagickFontManager.default() // For manual testing
-        ) ?: error("Failed to export bitmap from plot spec")
+        )
 
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)
     }

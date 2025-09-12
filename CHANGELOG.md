@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.2] - 2025-09-01
+
+### Added
+
+- Plot Layout:
+
+  - New `strip_spacing`, `strip_spacing_x`, and `strip_spacing_y` parameters in `theme()` to control spacing between the facet strip (title bar) and the plot panel.
+  - New `panel_spacing`, `panel_spacing_x`, and `panel_spacing_y` parameters in `theme()` to control spacing between plot panels in faceted plots, [[#1380](https://github.com/JetBrains/lets-plot/issues/1380)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25d/facet_spacings.ipynb).
+
+- Image resolution is saved in the metadata of PNG files created with `ggsave()`.
+
+### Changed
+
+- plot-image-export: switched from Batik to Graphics2D API
+
+### Fixed
+
+- ggsave(): memory leak when using `geom_raster()`.
+- Incorrect physical image size when exporting PDF with `ggsave()` without specifying `dpi`.
+
 ## [4.7.1] - 2025-08-13
 
 ### Added

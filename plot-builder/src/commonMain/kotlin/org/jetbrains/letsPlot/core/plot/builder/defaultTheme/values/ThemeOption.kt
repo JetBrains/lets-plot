@@ -90,6 +90,12 @@ object ThemeOption {
     const val FACET_STRIP_TEXT = "strip_text"
     const val FACET_STRIP_TEXT_X = "strip_text_x"
     const val FACET_STRIP_TEXT_Y = "strip_text_y"
+    const val FACET_STRIP_SPACING = "strip_spacing"
+    const val FACET_STRIP_SPACING_X = "strip_spacing_x"
+    const val FACET_STRIP_SPACING_Y = "strip_spacing_y"
+    const val FACET_PANEL_SPACING = "panel_spacing"
+    const val FACET_PANEL_SPACING_X = "panel_spacing_x"
+    const val FACET_PANEL_SPACING_Y = "panel_spacing_y"
 
     // Legend
     const val LEGEND_BKGR_RECT = "legend_background"

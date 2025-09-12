@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.*
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
@@ -17,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.elemWithFontOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import kotlin.test.Test
 
 internal class ThemeOptionTest {

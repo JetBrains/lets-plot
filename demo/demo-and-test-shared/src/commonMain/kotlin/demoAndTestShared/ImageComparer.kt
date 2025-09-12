@@ -6,7 +6,6 @@
 
 package demoAndTestShared
 
-import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -51,14 +50,13 @@ class ImageComparer(
 
             bitmapIO.write(visualDiffBitmap, diffFilePath)
             bitmapIO.write(actualBitmap, actualFilePath)
-            val diffDataImage = Png.encodeDataImage(visualDiffBitmap)
 
             error(
                 """Image mismatch.
                 |    Diff: $diffFilePath
                 |    Actual: $actualFilePath
                 |    Expected: $expectedFilePath
-                |    Diff DataImage: $diffDataImage""".trimMargin()
+                |""".trimMargin()
             )
         } else {
             println("Image comparison passed: $expectedFilePath")

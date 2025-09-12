@@ -756,6 +756,38 @@ class AsDiscreteTest {
             .assertScale(Aes.COLOR, isDiscrete = true, name = "ndr")
             .assertVariable("color.cyl", isDiscrete = true)
     }
+
+    @Test
+    fun `plot with as_discrete on unused aesthetic should not fail`() {
+        // ggplot( {'n': ['a', 'b', 'c'] } ) + geom_pie(aes(fill='n', label=as_discrete('n')))
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "n": [ "a", "b", "c" ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [ 
+            |      { "type": "str", "column": "n" } 
+            |    ]
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "pie",
+            |      "mapping": { "fill": "n", "label": "n" },
+            |      "data_meta": {
+            |        "mapping_annotations": [
+            |          { "aes": "label", "annotation": "as_discrete", "parameters": { "label": "n" } }
+            |        ]
+            |      }
+            |    }
+            |  ]
+            |}       
+            """.trimMargin()
+
+        transformToClientPlotConfig(spec)
+
+    }
 }
 
 @Suppress("ComplexRedundantLet")

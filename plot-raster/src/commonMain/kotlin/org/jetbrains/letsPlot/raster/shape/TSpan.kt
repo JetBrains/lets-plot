@@ -60,10 +60,14 @@ internal class TSpan(
         )
     }
 
+    // TODO: replace with bbox as it reports the same size
     val dimension by computedProp(TSpan::text, TSpan::font) {
-        val width = textMeasurer.measureTextWidth(text, font)//textData?.width ?: 0.0
-        val height = fontSize
-        DoubleVector(width, height)
+        val textMeasure = textMeasurer.measureText(text, font)
+
+        DoubleVector(
+            textMeasure.bbox.width,
+            textMeasure.bbox.height
+        )
     }
 
     val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline) {
