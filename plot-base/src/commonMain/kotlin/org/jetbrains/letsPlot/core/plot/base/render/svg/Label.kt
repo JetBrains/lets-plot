@@ -124,7 +124,7 @@ class Label(
 
     fun setX(x: Double) {
         xStart = x
-        horizontalRepositionLines()
+        updateX()
     }
 
     fun setY(y: Double) {
@@ -161,12 +161,14 @@ class Label(
                     originalNode.x().set(recalculatedNode.x().get())
                 }
             }
-            xStart?.let { originalLine.x().set(it) }
         }
+        updateX()
         if (updateHorizontalAnchor) {
             updateHorizontalAnchor()
         }
     }
+
+    private fun updateX() = xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
 
     private fun updateHorizontalAnchor() {
         myLines.forEach { line ->
