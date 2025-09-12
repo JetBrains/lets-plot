@@ -83,13 +83,12 @@ class SinaStatTest : BaseStatTest() {
             Aes.Y to IdentityTransform(),
             Aes.COLOR to IdentityTransform()
         )
-        val statCtx = statContext(df)
         val statDf = sinaStat.normalize(DataProcessing.applyStatTest(
             data = df,
             stat = sinaStat,
             bindings = bindings,
             transformByAes = transformByAes,
-            statCtx = statCtx
+            statCtx = statContext(df)
         ))
         assertArrayEquals(arrayOf(9.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 0.0), statDf.getNumeric(TransformVar.COLOR).toTypedArray())
     }
