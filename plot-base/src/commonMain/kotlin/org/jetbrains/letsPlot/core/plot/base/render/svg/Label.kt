@@ -44,7 +44,7 @@ class Label(
         myLines.forEach(rootGroup.children()::add)
         updateStyleAttribute()
         verticalRepositionLines()
-        horizontalRepositionLines()
+        horizontalRepositionLines(updateHorizontalAnchor = true)
     }
 
     override fun buildComponent() {
@@ -69,7 +69,7 @@ class Label(
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
-        horizontalRepositionLines()
+        horizontalRepositionLines(updateHorizontalAnchor = true)
     }
 
     fun setVerticalAnchor(anchor: VerticalAnchor) {
@@ -152,40 +152,28 @@ class Label(
         }
     }
 
-    /**
-     * Reposition lines horizontally without replacing DOM nodes.
-     *
-     * We cannot guarantee that elements in `myLines` won’t have event listeners or other external
-     * references attached later. Blindly removing/recreating them in `rootGroup` would drop those
-     * listeners and break references.
-     *
-     * At the same time, re-running `getLines()` is known to preserve the exact structure of the text
-     * (same number of lines and the same <tspan> layout); the only differences may be the x-coordinates
-     * of some tspans needed for alignment.
-     *
-     * Therefore this method computes fresh lines via `getLines()` and copies the relevant x-values
-     * into the already existing nodes in `myLines` instead of replacing them. This keeps listeners
-     * and references intact while updating horizontal positions.
-     */
-    private fun horizontalRepositionLines() {
+    private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
         (myLines zip getLines()).forEach { (originalLine, recalculatedLine) ->
-            var firstTSpanHasExplicitX = false
-            forEachNodePair(originalLine.children(), recalculatedLine.children()) { original, recalculated, isFirstTSpan ->
+            walkPair(originalLine, recalculatedLine) { original, recalculated ->
                 if (original is SvgTSpanElement && recalculated is SvgTSpanElement) {
-                    if (isFirstTSpan && recalculated.x().get() != null) {
-                        firstTSpanHasExplicitX = true
-                    }
-
                     original.x().set(recalculated.x().get())
                 }
             }
+            xStart?.let { originalLine.x().set(it) }
+        }
+        if (updateHorizontalAnchor) {
+            updateHorizontalAnchor()
+        }
+    }
+
+    private fun updateHorizontalAnchor() {
+        myLines.forEach { line ->
+            val firstTSpanHasExplicitX = findFirstTSpan(line)?.x()?.get() != null
             val anchorAttr = when {
                 firstTSpanHasExplicitX -> toTextAnchor(HorizontalAnchor.LEFT)
                 else -> toTextAnchor(myHorizontalAnchor)
             }
-
-            originalLine.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchorAttr)
-            xStart?.let { originalLine.x().set(it) }
+            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchorAttr)
         }
     }
 
@@ -213,30 +201,24 @@ class Label(
 
         fun splitLines(text: String) = text.split('\n').map(String::trim)
 
-        private fun forEachNodePair(
-            nodes1: Iterable<SvgNode>,
-            nodes2: Iterable<SvgNode>,
-            action: (SvgNode, SvgNode, Boolean) -> Unit
+        private fun walkPair(
+            node1: SvgNode,
+            node2: SvgNode,
+            action: (SvgNode, SvgNode) -> Unit
         ) {
-            val stack = ArrayDeque<Pair<Iterator<SvgNode>, Iterator<SvgNode>>>()
-            stack.addLast(nodes1.iterator() to nodes2.iterator())
-            var firstTSpanNotEmitted = true
-            while (stack.isNotEmpty()) {
-                val (it1, it2) = stack.last()
-                require(it1.hasNext() == it2.hasNext()) { "Node lists must have the same size." }
-                if (!it1.hasNext()) {
-                    stack.removeLast()
-                    continue
-                }
-                val node1 = it1.next()
-                val node2 = it2.next()
-                val isFirstTSpan = firstTSpanNotEmitted && (node1 is SvgTSpanElement || node2 is SvgTSpanElement)
-
-                action(node1, node2, isFirstTSpan)
-
-                if (isFirstTSpan) firstTSpanNotEmitted = false
-                stack.addLast(node1.children().iterator() to node2.children().iterator())
+            action(node1, node2)
+            val children1 = node1.children()
+            val children2 = node2.children()
+            require(children1.size == children2.size) { "Node lists must have the same size." }
+            (children1 zip children2).forEach { (child1, child2) ->
+                walkPair(child1, child2, action)
             }
         }
+
+        private fun findFirstTSpan(root: SvgNode): SvgTSpanElement? =
+            when (root) {
+                is SvgTSpanElement -> root
+                else -> root.children().firstNotNullOfOrNull { findFirstTSpan(it) }
+            }
     }
 }
