@@ -22,7 +22,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     Export plot to a file.
     Supported formats: PNG, SVG, PDF, HTML.
 
-    The exported file is created in directory ${user.dir}/lets-plot-images
+    The exported file is created in the directory ${user.dir}/lets-plot-images
     if not specified otherwise (see the ``path`` parameter).
 
     Parameters
@@ -36,7 +36,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Path to a directory to save image files in.
         By default, it is ${user.dir}/lets-plot-images.
     iframe : bool, default=True
-        Whether to wrap HTML page into a iFrame.
+        Whether to wrap the HTML page into an iFrame.
         Only applicable when exporting to HTML.
         Some browsers may not display some UTF-8 characters correctly when setting iframe=True
     scale : float, default=2.0
@@ -66,30 +66,36 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     Notes
     -----
-    Output format is inferred from the filename extension.
+    Large plot dimensions without units require explicit unit specification.
+    When ``w`` or ``h`` value exceeds 20 without specifying units (e.g., `ggsave(p, 300, 400)`),
+    we ask to specify units explicitly:
+    `ggsave(p, 300, 400, unit='px')` or `ggsave(p, 3, 4, unit='in')`.
+
+
+    The output format is inferred from the filename extension.
 
     For PNG and PDF formats:
 
-    - If ``w``, ``h``, ``unit``, and ``dpi`` are all specified:
+    - If ``w``, ``h``, ``unit`` and ``dpi`` are all specified:
 
       - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
-      - The output size is calculated using the specified ``w``, ``h``, ``unit``, and ``dpi``.
+      - The output size is calculated using the specified ``w``, ``h``, ``unit`` and ``dpi``.
 
-        - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels, and other elements.
+        - The plot is resized to fit the specified ``w`` x ``h`` area, which may affect the layout, tick labels and other elements.
 
     - If only ``dpi`` is specified:
 
       - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is converted to inches using the standard display PPI of 96.
       - The output size is then calculated based on the specified DPI.
 
-        - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+        - The plot maintains its aspect ratio, preserving layout, tick labels and other visual elements.
         - Useful for printing - the plot will appear nearly the same size as on screen.
 
     - If ``w``, ``h`` are not specified:
 
       - The ``scale`` parameter is used to determine the output size.
 
-        - The plot maintains its aspect ratio, preserving layout, tick labels, and other visual elements.
+        - The plot maintains its aspect ratio, preserving layout, tick labels and other visual elements.
         - Useful for generating high-resolution images suitable for publication.
 
     For SVG format:
@@ -97,7 +103,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     - If ``w``, ``h`` and ``unit`` are specified:
 
       - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
-      - The output size is calculated using the specified ``w``, ``h``, and ``unit``.
+      - The output size is calculated using the specified ``w``, ``h`` and ``unit``.
 
 
     Examples
