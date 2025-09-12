@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.fontSize
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
@@ -102,7 +101,7 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): SvgGElement {
-        val label = Label(text, fontSize(p, sizeUnitRatio))
+        val label = Label(text, TextUtil.fontSize(p, sizeUnitRatio))
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         label.setHorizontalAnchor(hAnchor)

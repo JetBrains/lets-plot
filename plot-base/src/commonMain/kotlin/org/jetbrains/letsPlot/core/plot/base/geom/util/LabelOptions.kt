@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.fontSize
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -51,7 +50,7 @@ class LabelOptions {
             backgroundRect.strokeWidth().set(labelOptions.borderWidth)
 
             // Text element
-            val label = Label(text, fontSize(p, sizeUnitRatio))
+            val label = Label(text, TextUtil.fontSize(p, sizeUnitRatio))
             TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
 
             val padding = fontSize * labelOptions.paddingFactor
