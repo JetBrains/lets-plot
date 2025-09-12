@@ -3,16 +3,14 @@
 ### Added
 
 - `ggtb()` support in Swing/Batik frontend.                
-
 - Multiline support for axis labels in polar coordinates.
 
 ### Changed
 
-- Appearance of the raster size limit message in `geom_raster()`.
-
-- When the plot size in `ggsave()` is given without units and exceeds 20 inches, <br>
-  an error is now issued. To avoid this, explicitly specify the desired units.
-
+- `ggsave()`: Large plot dimensions without units now require explicit unit specification. <br>
+  When plot size exceeds 20 without specifying units (e.g., `ggsave(p, 300, 400)`), <br>
+  we ask to specify units explicitly: <br>
+  `ggsave(p, 300, 400, unit='px')` or `ggsave(p, 3, 4, unit='in')`.
 
 ### Fixed
 
