@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   only the physical size, not the pixel dimensions as before.
 - Blocking `SwingUtilities.invokeAndWait()`  call in plot image export (AWT backend)
 
+### Internal Memo
+
+Lets-Plot VL spec transformer removed—relocated to another repository
+
+
 ## [4.7.2] - 2025-09-01
 
 ### Added
