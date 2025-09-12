@@ -28,14 +28,14 @@ object RichText {
     fun estimateWidth(
         text: String,
         font: Font,
+        widthCalculator: (String, Font) -> Double,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-        widthEstimator: (String, Font) -> Double,
     ): Double {
         val lines = parse(text, wrapLength, maxLinesCount, markdown)
         val widths = lines.map { line ->
-            line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth(font, widthEstimator) ?: 0.0 }
+            line.sumOf { term -> (term as? RichTextNode.Span)?.estimateWidth(font, widthCalculator) ?: 0.0 }
         }
 
         return widths.maxOrNull() ?: 0.0

@@ -77,14 +77,10 @@ object DataMetaUtil {
         return getMappingAnnotationsSpec(plotOrLayerOptions, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             .mapNotNull { (aesName, parameters) ->
-                check(aesName in commonMappings) {
-                    "Aes '$aesName' not found in mappings: $commonMappings"
-                }
-                val variableName = (commonMappings[aesName] as String).let {
-                    if (isClientSide) asDiscreteName(aesName, it) else it
-                }
+                val variableName = commonMappings[aesName] as? String ?: return@mapNotNull null
+
                 OrderOptionUtil.OrderOption.create(
-                    variableName,
+                    if (isClientSide) asDiscreteName(aesName, variableName) else variableName,
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )

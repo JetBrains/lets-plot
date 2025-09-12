@@ -7,14 +7,14 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val slf4jVersion = project.extra["slf4j_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
-val hamcrestVersion = project.extra["hamcrest_version"] as String
-val mockitoVersion = project.extra["mockito_version"] as String
-val assertjVersion = project.extra["assertj_version"] as String
+val hamcrestVersion = project.extra["hamcrest.version"] as String
+val mockitoVersion = project.extra["mockito.version"] as String
+val assertjVersion = project.extra["assertj.version"] as String
 
 kotlin {
     jvm()

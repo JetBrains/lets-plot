@@ -7,7 +7,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val ktorVersion = project.extra["ktor_version"] as String
+val ktorVersion = project.extra["ktor.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {

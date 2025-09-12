@@ -43,12 +43,12 @@ internal class ResizeHook(
         if (plotScrollPane != null) {
             plotScrollPane?.preferredSize = e?.component?.size
             plotScrollPane?.size = e?.component?.size
-            // Do not actually re-build plot component inside scroll pane.
+            // Do not re-build the plot component inside the scroll pane.
             plotPanel.revalidate()
             return
         }
 
-        // Wait for timer event to rebuild the plot component.
+        // Wait for the timer event to rebuild the plot component.
         refreshTimer.restart()
     }
 
@@ -56,14 +56,14 @@ internal class ResizeHook(
         val containerSize = plotPanel.size
         if (containerSize == null) return
 
-        // We don't rebuild plot component on re-size if it's a scroll panel.
+        // We don't rebuild the plot component on re-size if it's a scroll panel.
         check(plotScrollPane == null) { "Unexpected JScrollPane" }
 
         // Either updating an existing plot or
-        // creating a new plot for a first time.
+        // creating a new plot for the first time.
         if (lastContainerSize != containerSize) {
 
-            // Rebuild plot if it actually has changed in size.
+            // Rebuild the plot if it actually has changed in size.
             applicationContext.runWriteAction(Runnable {
                 lastContainerSize = containerSize
             })
@@ -71,7 +71,7 @@ internal class ResizeHook(
             figureModel.rebuildPlotComponent(
 //                onComponentCreated = { comp -> plotScrollPane = comp },
                 expared = {
-                    // Other timer is running? Weird but let's wait for the next action.
+                    // Another timer is running? Weird, but let's wait for the next action.
                     refreshTimer.isRunning
                 }
             )

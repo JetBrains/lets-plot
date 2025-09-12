@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
@@ -151,7 +151,7 @@ internal object PlotSvgComponentHelper {
         if (text == null) return
 
         val lineHeight = labelSpec.height()
-        val textLabel = MultilineLabel(text, markdown = labelSpec.markdown)
+        val textLabel = Label(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
         val (position, hAnchor) = applyJustification(
             boundRect,

@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -32,7 +33,8 @@ import javax.swing.JLayeredPane
 
 class CanvasPane(
     figure: CanvasFigure? = null,
-    private val pixelDensity: Double = 1.0
+    private val pixelDensity: Double = 1.0,
+    private val disableAnimationTimer: Boolean = false
 ) : JLayeredPane() {
     private val canvasControl: CanvasControl = AwtCanvasControl()
     private var figureRegistration: Registration = Registration.EMPTY
@@ -110,6 +112,14 @@ class CanvasPane(
         }
 
         override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
+            if (disableAnimationTimer) {
+                // Timer is not needed - return a dummy implementation.
+                return object : AnimationTimer {
+                    override fun start() {}
+                    override fun stop() {}
+                }
+            }
+
             return object : AnimationTimer {
                 override fun start() {
                     animationTimerPeer.addHandler(::handle)
@@ -162,6 +172,16 @@ class CanvasPane(
         override fun <T> schedule(f: () -> T) {
 //        invokeLater { f() }
             animationTimerPeer.executor { f() }
+        }
+    }
+
+    companion object {
+        fun paint(figure: CanvasFigure, pixelDensity: Double, graphics: Graphics2D) {
+            val canvasPane = CanvasPane(figure, pixelDensity, disableAnimationTimer = true)
+            val plotComponentSize = figure.bounds().get().dimension
+            canvasPane.bounds = Rectangle(0, 0, plotComponentSize.x, plotComponentSize.y)
+            canvasPane.doLayout()
+            canvasPane.paint(graphics)
         }
     }
 }

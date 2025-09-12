@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.PathPoint
 import org.jetbrains.letsPlot.core.plot.base.geom.util.PolygonData
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import kotlin.math.PI
 import kotlin.math.abs
@@ -154,7 +154,7 @@ object BarAnnotation {
                         )
 
                         // separate label for each line
-                        val labels = MultilineLabel.splitLines(text).map { line ->
+                        val labels = Label.splitLines(text).map { line ->
                             AnnotationUtil.createLabelElement(
                                 line,
                                 location,
