@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -190,27 +189,16 @@ object PlotConfigFrontendUtil {
         )
     }
 
-    fun createPlotAssembler(
-        config: PlotConfigFrontend,
-        sharedContinuousDomainX: DoubleSpan? = null,
-        sharedContinuousDomainY: DoubleSpan? = null,
-    ): PlotAssembler {
-
-        val plotGeomTiles = createPlotGeomTiles(
-            config,
-            sharedContinuousDomainX,
-            sharedContinuousDomainY
-        )
-
-        val scale = config.getMap(GG_TOOLBAR).get(Option.GGToolbar.SCALE) as String? ?: "max"
-        val sizeZoomIn = config.getMap(GG_TOOLBAR).get(Option.GGToolbar.SIZE_ZOOMIN) as Double? ?: 0.0
+    private fun computeScaleFactor(config: PlotConfigFrontend): Double {
+        val scale = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SCALE] as String? ?: "max"
+        val sizeZoomIn = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_ZOOMIN] as Double? ?: 0.0
         val scaleLimits = when (sizeZoomIn) {
             0.0 -> 1.0..1.0
             -1.0 -> Double.MIN_VALUE ..Double.MAX_VALUE
             else -> (1.0 / sizeZoomIn)..sizeZoomIn
         }
 
-        val scaleFactor = config.getMap(SPEC_OVERRIDE).get(SCALE_RATIO).let { scaleRatio ->
+        return config.getMap(SPEC_OVERRIDE)[SCALE_RATIO].let { scaleRatio ->
             @Suppress("UNCHECKED_CAST")
             scaleRatio as List<Double>?
             val factor = scaleRatio?.let {
@@ -225,6 +213,21 @@ object PlotConfigFrontendUtil {
 
             factor.coerceIn(scaleLimits)
         }
+    }
+
+    fun createPlotAssembler(
+        config: PlotConfigFrontend,
+        sharedContinuousDomainX: DoubleSpan? = null,
+        sharedContinuousDomainY: DoubleSpan? = null,
+    ): PlotAssembler {
+
+        val plotGeomTiles = createPlotGeomTiles(
+            config,
+            sharedContinuousDomainX,
+            sharedContinuousDomainY
+        )
+
+        val scaleFactor = computeScaleFactor(config)
 
         return PlotAssembler(
             plotGeomTiles,
