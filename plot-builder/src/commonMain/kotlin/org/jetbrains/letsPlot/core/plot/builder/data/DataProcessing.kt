@@ -232,18 +232,17 @@ object DataProcessing {
             else -> facetVariables.associateWith { data[it][0].let { facetLevel -> List(statDataSize) { facetLevel } } }
         }
 
-        fun oldSerieForVariable(variable: Variable, indices: List<Int?>): List<Any?> {
-            val series = data[variable]
-            return indices.map { i ->
-                when (i) {
-                    null -> null
-                    else -> series[i]
+        // generate new series for input variables
+        fun newSerieForVariable(variable: Variable, indices: List<Int?>?): List<Any?> {
+            if (indices != null) {
+                val series = data[variable]
+                return indices.map { i ->
+                    when (i) {
+                        null -> null
+                        else -> series[i]
+                    }
                 }
             }
-        }
-
-        // generate new series for input variables
-        fun newSerieForVariable(variable: Variable): List<Any?> {
             val value = when (data.isNumeric(variable)) {
                 true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
                 false -> SeriesUtil.firstNotNull(data[variable], defaultValue = null)
@@ -252,6 +251,12 @@ object DataProcessing {
         }
 
         val newInputSeries = HashMap<Variable, List<Any?>>()
+        val indices = if (statData.has(Stats.INDEX)) {
+            @Suppress("UNCHECKED_CAST")
+            statData[Stats.INDEX] as? List<Int?>
+        } else {
+            null
+        }
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isStat || facetVariables.contains(variable)) {
@@ -259,22 +264,13 @@ object DataProcessing {
             }
 
             val aes = binding.aes
-            when {
-                stat.hasDefaultMapping(aes) -> {
-                    val defaultStatVar = stat.getDefaultMapping(aes)
-                    newInputSeries[variable] = statData.get(defaultStatVar)
-                }
-                statData.variables().contains(Stats.INDEX) -> {
-                    // Do not override series obtained via 'default stat var'
-                    if (!newInputSeries.containsKey(variable)) {
-                        newInputSeries[variable] = oldSerieForVariable(variable, statData[Stats.INDEX] as List<Int?>)
-                    }
-                }
-                else -> {
-                    // Do not override series obtained via 'default stat var' and 'original var'
-                    if (!newInputSeries.containsKey(variable)) {
-                        newInputSeries[variable] = newSerieForVariable(variable)
-                    }
+            if (stat.hasDefaultMapping(aes)) {
+                val defaultStatVar = stat.getDefaultMapping(aes)
+                newInputSeries[variable] = statData.get(defaultStatVar)
+            } else {
+                // Do not override series obtained via 'default stat var'
+                if (!newInputSeries.containsKey(variable)) {
+                    newInputSeries[variable] = newSerieForVariable(variable, indices)
                 }
             }
         }
@@ -283,7 +279,7 @@ object DataProcessing {
         for (varName in varsWithoutBinding.filterNot(Stats::isStatVar)) {
             val variable = DataFrameUtil.findVariableOrFail(data, varName)
             if (!newInputSeries.containsKey(variable)) {
-                newInputSeries[variable] = newSerieForVariable(variable)
+                newInputSeries[variable] = newSerieForVariable(variable, indices)
             }
         }
 
@@ -476,11 +472,6 @@ object DataProcessing {
         )
     }
 
-    class DataAndGroupMapper internal constructor(
-        val data: DataFrame,
-        val groupMapper: (Int) -> Int  // data index --> group id
-    )
-
     fun applyStatTest(
         data: DataFrame,
         stat: Stat,
@@ -499,4 +490,9 @@ object DataProcessing {
             compMessageConsumer = { _ -> }
         )
     }
+
+    class DataAndGroupMapper internal constructor(
+        val data: DataFrame,
+        val groupMapper: (Int) -> Int  // data index --> group id
+    )
 }
