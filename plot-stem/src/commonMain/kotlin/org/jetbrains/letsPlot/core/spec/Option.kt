@@ -1010,6 +1010,7 @@ object Option {
             const val SOLARIZED_DARK = ThemeOption.Flavor.SOLARIZED_DARK
             const val HIGH_CONTRAST_LIGHT = ThemeOption.Flavor.HIGH_CONTRAST_LIGHT
             const val HIGH_CONTRAST_DARK = ThemeOption.Flavor.HIGH_CONTRAST_DARK
+            const val STANDARD = ThemeOption.Flavor.STANDARD
         }
 
         object Geom {

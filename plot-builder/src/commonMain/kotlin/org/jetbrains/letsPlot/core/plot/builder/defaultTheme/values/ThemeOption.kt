@@ -196,6 +196,7 @@ object ThemeOption {
         const val SOLARIZED_DARK = "solarized_dark"
         const val HIGH_CONTRAST_LIGHT = "high_contrast_light"
         const val HIGH_CONTRAST_DARK = "high_contrast_dark"
+        const val STANDARD= "standard"
 
         // base theme flavors
         const val BASE = "base"

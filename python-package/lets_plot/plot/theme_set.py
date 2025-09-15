@@ -17,7 +17,8 @@ __all__ = [
     'flavor_solarized_light',
     'flavor_solarized_dark',
     'flavor_high_contrast_light',
-    'flavor_high_contrast_dark'
+    'flavor_high_contrast_dark',
+    'flavor_standard'
 ]
 
 
@@ -392,3 +393,17 @@ def flavor_high_contrast_dark():
 
     """
     return FeatureSpec('theme', name=None, flavor="high_contrast_dark")
+
+
+def flavor_standard():
+    """
+    A special flavor that overrides the previous flavor settings and restores
+    the theme’s default colors, without affecting any colors that were set manually.
+
+    Returns
+    -------
+    ``FeatureSpec``
+        Theme specification.
+
+    """
+    return FeatureSpec('theme', name=None, flavor="standard")
