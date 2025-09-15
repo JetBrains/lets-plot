@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 object FigureModelHelper {
-
     fun updateSpecOverrideList(
         specOverrideList: List<Map<String, Any>>,
         newSpecOverride: Map<String, Any>?

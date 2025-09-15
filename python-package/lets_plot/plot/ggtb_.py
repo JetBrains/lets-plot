@@ -33,14 +33,21 @@ def ggtb(scale=None, size_zoomin=None) -> FeatureSpec:
 
     Parameters
     ----------
-    scale: String, default "max" (x, y, min, max)
+    scale: String, default="max" {'x', 'y', 'min', 'max'}
+        Control how zooming of the map widget affects the scale of geometry objects on plot.
+        'x' - size changes only when zooming in/out along x-axis;
+        'y' - size changes only when zooming in/out along y-axis;
+        'min' - size changes when zooming in/out along any axis, but the change is determined by the axis
+               with the minimum zoom factor;
+        'max' - size changes when zooming in/out along any axis, but the change is determined by the axis
+               with the maximum zoom factor.
     size_zoomin : int, default=0
-        Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
+        Control how zooming-in of the map widget increases size of geometry objects on plot
         when the size is set by means of mapping between the data and the ``size`` aesthetic.
         0 - size never increases;
         -1 - size will be increasing without limits;
-        n - a number of zooming-in steps (counting from the initial state of the map widget)
-        when size of objects will be increasing. Farther zooming will no longer affect the size.
+        n - the number of times the size of objects will increase (relative to the initial state of the plot).
+        Farther zooming will no longer affect the size.
 
     Returns
     -------
