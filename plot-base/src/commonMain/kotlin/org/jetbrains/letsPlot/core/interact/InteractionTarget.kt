@@ -26,5 +26,5 @@ interface InteractionTarget {
         ctx: InteractionContext
     ): Pair<DoubleRectangle, Boolean>
 
-    fun dataBounds(): Pair<DoubleRectangle, Boolean>
+    fun dataBounds(): DoubleRectangle
 }

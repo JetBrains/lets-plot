@@ -66,7 +66,7 @@ class PanGeomFeedback(
             },
             onCompleted = {
                 val (target, _, _, dragDelta) = it
-                val (currentBounds, _) = target.dataBounds()
+                val currentBounds = target.dataBounds()
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 val (dataBounds, flipped) = target.applyViewport(viewport, ctx)
 

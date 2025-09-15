@@ -115,7 +115,7 @@ class DrawRectFeedback(
                 val selection = selector.getSelection(dragFrom, dragTo, target)
 
                 if (selector.isAcceptable(selection)) {
-                    val (currentBounds, _) = target.dataBounds()
+                    val currentBounds = target.dataBounds()
                     val (dataBounds, flipped) = target.applyViewport(selection, ctx)
 
                     val scaleFactor = listOf(

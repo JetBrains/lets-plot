@@ -42,11 +42,8 @@ internal class PlotTilesInteractionContext(
                 )
             }
 
-            override fun dataBounds(): Pair<DoubleRectangle, Boolean> {
-                return Pair(
-                    tile.transientState.dataBounds,
-                    tile.transientState.isCoordFlip,
-                )
+            override fun dataBounds(): DoubleRectangle {
+                return tile.transientState.dataBounds
             }
         }
     }
