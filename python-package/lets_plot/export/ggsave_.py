@@ -71,6 +71,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     we ask to specify units explicitly:
     ``ggsave(p, 300, 400, unit='px')`` or ``ggsave(p, 3, 4, unit='in')``.
 
+    ----
 
     The output format is inferred from the filename extension.
 
