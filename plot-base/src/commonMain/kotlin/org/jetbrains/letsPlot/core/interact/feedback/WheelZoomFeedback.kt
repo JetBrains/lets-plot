@@ -40,20 +40,15 @@ class WheelZoomFeedback(
 
                 val viewport = InteractionUtil.viewportFromScale(target.geomBounds, factor, zoomOrigin)
 
-                val currentBounds = target.dataBounds()
-
-                if (initialRange == null) {
-                    initialRange = currentBounds.dimension
-                }
+                val range = initialRange
+                    ?: (target.dataBounds().dimension).also { initialRange = it }
 
                 val (dataBounds, _) = target.applyViewport(viewport, ctx)
 
-                val scaleFactor = initialRange?.let {
-                    DoubleVector(
-                        it.x / dataBounds.dimension.x,
-                        it.y / dataBounds.dimension.y
-                    )
-                } ?: DoubleVector(1.0, 1.0)
+                val scaleFactor = DoubleVector(
+                    range.x / dataBounds.dimension.x,
+                    range.y / dataBounds.dimension.y
+                )
 
                 onCompleted(target.id, dataBounds, scaleFactor)
             }
