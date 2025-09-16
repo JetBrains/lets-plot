@@ -67,12 +67,11 @@ abstract class FigureToolsController {
                 event[EVENT_RESULT_DATA_BOUNDS]?.let { bounds ->
                     @Suppress("UNCHECKED_CAST")
                     bounds as List<Double?>
-                    specOverride.also { map ->
-                        map[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
-                        map[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
-                        event[EVENT_INTERACTION_TARGET]?.let { targetId ->
-                            map[TARGET_ID] = targetId
-                        }
+
+                    specOverride[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
+                    specOverride[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
+                    event[EVENT_INTERACTION_TARGET]?.let { targetId ->
+                        specOverride[TARGET_ID] = targetId
                     }
                 }
 
