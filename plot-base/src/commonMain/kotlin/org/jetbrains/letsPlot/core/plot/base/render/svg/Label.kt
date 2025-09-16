@@ -159,14 +159,16 @@ class Label(
         }
     }
 
+    // After changing some font properties, some SVG text attributes (like x) may change.
+    // So, we need to recalculate them and update the original elements.
     private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
         val recalculatedLines = getLines()
         require(myLines.size == recalculatedLines.size) { "Line counts must be the same." }
         (myLines zip recalculatedLines).forEach { (originalLine, recalculatedLine) ->
             walkPair(originalLine, recalculatedLine) { originalNode, recalculatedNode ->
                 if (originalNode is SvgTSpanElement && recalculatedNode is SvgTSpanElement) {
-                    originalNode.x().set(recalculatedNode.x().get())
-                    originalNode.copyText(recalculatedNode)
+                    originalNode.x().set(recalculatedNode.x().get()) // x-attribute of tspan's in fraction may change
+                    originalNode.copyText(recalculatedNode) // count of fraction bar symbols "–" may change
                 }
             }
         }
