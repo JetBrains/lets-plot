@@ -28,10 +28,8 @@ object FigureModelHelper {
             if (index < 0) {
                 specOverrideList.add(newSpecOverride)
             } else {
-                val lims = reconcile(specOverrideList[index], newSpecOverride)
-                val scale = calculate(specOverrideList[index], newSpecOverride)
-
-                specOverrideList.set(index, lims + scale)
+                val reconciled = reconcile(specOverrideList[index], newSpecOverride)
+                specOverrideList.set(index, reconciled)
             }
             specOverrideList
         }
@@ -49,6 +47,9 @@ object FigureModelHelper {
         reconcileLims(COORD_YLIM_TRANSFORMED, wasSpecs, newSpecs)?.let {
             specsUpdate[COORD_YLIM_TRANSFORMED] = it
         }
+
+        specsUpdate[SCALE_RATIO] = calculateScale(wasSpecs, newSpecs)
+
         return newSpecs + specsUpdate
     }
 
@@ -70,21 +71,19 @@ object FigureModelHelper {
         }
     }
 
-    private fun calculate(
+    private fun calculateScale(
         wasSpecs: Map<String, Any>,
         newSpecs: Map<String, Any>
-    ): Map<String, Any> {
+    ): List<Double> {
         @Suppress("UNCHECKED_CAST")
         val wasScaleRatio = wasSpecs[SCALE_RATIO] as List<Double>?
         @Suppress("UNCHECKED_CAST")
         val newScaleRatio = newSpecs[SCALE_RATIO] as List<Double>?
 
         if (wasScaleRatio == null || newScaleRatio == null) {
-            return mapOf(SCALE_RATIO to listOf(1.0, 1.0))
+            return listOf(1.0, 1.0)
         }
 
-        return mapOf(
-            SCALE_RATIO to listOf(wasScaleRatio[0] * newScaleRatio[0] , wasScaleRatio[1] * newScaleRatio[1])
-        )
+        return listOf(wasScaleRatio[0] * newScaleRatio[0] , wasScaleRatio[1] * newScaleRatio[1])
     }
 }
