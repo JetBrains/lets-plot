@@ -26,6 +26,11 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
             field = value
+            val width = value.width().get()
+            val height = value.height().get()
+            if (width != null && height != null) {
+                svgBounds.set(Rectangle(0, 0, width.toInt(), height.toInt()))
+            }
             needMapSvgSvgElement = true
             needResizeContentCanvas = true
         }

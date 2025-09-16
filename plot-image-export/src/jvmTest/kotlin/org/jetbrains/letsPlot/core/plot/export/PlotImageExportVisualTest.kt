@@ -17,6 +17,9 @@ import java.awt.GraphicsEnvironment
 import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
+import kotlin.random.Random
 import kotlin.test.Test
 
 
@@ -46,6 +49,49 @@ class PlotImageExportVisualTest {
     }
 
     private val imageComparer by lazy { createImageComparer() }
+
+    @Test
+    fun `with a long rendering time the race condition should not occur`() {
+        // Test potential race condition in image export
+        // Could be caused by unexpected use of EDT in the render process.
+        val dim = sqrt(40_000.0).roundToInt()
+        val rand = Random(12)
+        val xs = mutableListOf<String>()
+        val ys = mutableListOf<String>()
+        val cs = mutableListOf<String>()
+
+        (0..dim).map { x ->
+            (0..dim).map { y ->
+                xs.add(rand.nextDouble().toString())
+                ys.add(rand.nextDouble().toString())
+                cs.add(rand.nextDouble().toString())
+            }
+        }
+
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "y": "y", "color": "col" },
+            |      "size": 8.0,
+            |      "alpha": 0.3,
+            |      "sampling": "none",
+            |      "data": {
+            |        "x": [${xs.joinToString()}],
+            |        "y": [${ys.joinToString()}],
+            |        "col": [${cs.joinToString()}]
+            |      }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+
+        assertPlot("plot_race_condition_test.png", plotSpec)
+    }
 
     @Test
     fun `latex formula`() {
