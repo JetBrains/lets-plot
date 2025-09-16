@@ -81,8 +81,9 @@ class ColorBarComponent(
 
             // Label
             val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
-            val label = Label(brLabel, labelHeight)
+            val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
+            label.setFontSize(labelHeight)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
             val yOffset = when (brInfo.labelVerticalAnchor) {

@@ -159,11 +159,12 @@ class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             fontStyle: String,
             fontWeight: String
         ): Label {
-            val label = Label("$FORMULA ($exampleId)", fontSize)
+            val label = Label("$FORMULA ($exampleId)")
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)
             label.rotate(angle)
             label.setFontFamily(fontFamily)
+            label.setFontSize(fontSize)
             label.setFontStyle(fontStyle)
             label.setFontWeight(fontWeight)
             return label

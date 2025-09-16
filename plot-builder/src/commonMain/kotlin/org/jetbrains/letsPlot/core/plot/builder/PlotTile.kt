@@ -218,7 +218,7 @@ internal class PlotTile constructor(
         val className = if (isColumnLabel) "x" else "y"
         val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
 
-        val lab = Label(label, labelHeight)
+        val lab = Label(label)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
 
         val (pos, hAnchor) = applyJustification(
@@ -228,6 +228,7 @@ internal class PlotTile constructor(
             theme.stripTextJustification(),
             rotation
         )
+        lab.setFontSize(labelHeight)
         lab.setHorizontalAnchor(hAnchor)
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }

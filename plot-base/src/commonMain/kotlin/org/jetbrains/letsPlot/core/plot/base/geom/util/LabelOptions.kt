@@ -50,7 +50,7 @@ class LabelOptions {
             backgroundRect.strokeWidth().set(labelOptions.borderWidth)
 
             // Text element
-            val label = Label(text, TextUtil.fontSize(p, sizeUnitRatio))
+            val label = Label(text)
             TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
 
             val padding = fontSize * labelOptions.paddingFactor

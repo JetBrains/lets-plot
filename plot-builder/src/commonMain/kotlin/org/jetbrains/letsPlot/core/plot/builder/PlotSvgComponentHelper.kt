@@ -151,7 +151,7 @@ internal object PlotSvgComponentHelper {
         if (text == null) return
 
         val lineHeight = labelSpec.height()
-        val textLabel = Label(text, labelSpec.font.size.toDouble(), markdown = labelSpec.markdown)
+        val textLabel = Label(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
         val (position, hAnchor) = applyJustification(
             boundRect,
@@ -160,6 +160,7 @@ internal object PlotSvgComponentHelper {
             justification,
             rotation
         )
+        textLabel.setFontSize(labelSpec.font.size.toDouble())
         textLabel.setLineHeight(lineHeight)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)

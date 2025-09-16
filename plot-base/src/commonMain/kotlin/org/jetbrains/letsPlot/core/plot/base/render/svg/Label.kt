@@ -24,16 +24,16 @@ import kotlin.math.roundToInt
 
 class Label(
     val text: String,
-    val fontSize: Double,
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false
 ) : SvgComponent() {
     private val myLines: List<SvgTextElement>
     private var myTextColor: Color? = null
+    private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private var myLineHeight = fontSize
+    private var myLineHeight = 0.0
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
@@ -80,6 +80,12 @@ class Label(
         verticalRepositionLines()
     }
 
+    fun setFontSize(px: Double) {
+        myFontSize = px
+        updateStyleAttribute()
+        horizontalRepositionLines()
+    }
+
     /**
      * @param cssName : normal, bold, bolder, lighter
      */
@@ -114,7 +120,7 @@ class Label(
     private fun updateStyleAttribute() {
         val styleAttr = Text.buildStyle(
             myTextColor,
-            fontSize,
+            myFontSize,
             myFontWeight,
             myFontFamily,
             myFontStyle
@@ -186,7 +192,7 @@ class Label(
     private fun getLines(): List<SvgTextElement> {
         val font = Font(
             family = FONT_FAMILY_REGISTRY.get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
-            size = fontSize.roundToInt(),
+            size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )

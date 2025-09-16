@@ -101,7 +101,7 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): SvgGElement {
-        val label = Label(text, TextUtil.fontSize(p, sizeUnitRatio))
+        val label = Label(text)
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         label.setHorizontalAnchor(hAnchor)

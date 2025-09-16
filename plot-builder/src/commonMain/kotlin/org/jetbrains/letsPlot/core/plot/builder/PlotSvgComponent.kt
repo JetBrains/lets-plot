@@ -108,12 +108,13 @@ class PlotSvgComponent constructor(
             val message = "Error building plot: ${rootCause::class.simpleName}\n$causeMessage"
 
             val y = figureSize.y / 2
-            val errorLabel = Label(message, 12.0)
+            val errorLabel = Label(message)
             val textColor = when {
                 theme.plot().showBackground() -> theme.plot().textColor()
                 else -> Defaults.TEXT_COLOR
             }
             errorLabel.textColor().set(textColor)
+            errorLabel.setFontSize(12.0)
             errorLabel.setLineHeight(16.0)
             errorLabel.setFontWeight("normal")
             errorLabel.setFontStyle("normal")

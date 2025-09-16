@@ -97,10 +97,9 @@ class AxisComponent(
             StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
         }
 
-        val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
         var tickLabel: Label? = null
         if (axisTheme.showLabels()) {
-            tickLabel = Label(label, tickHeight)
+            tickLabel = Label(label)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
         }
 
@@ -141,6 +140,8 @@ class AxisComponent(
         }
 
         if (tickLabel != null) {
+            val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
+            tickLabel.setFontSize(tickHeight)
             tickLabel.moveTo(labelOffset.x, labelOffset.y)
             tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
             tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)

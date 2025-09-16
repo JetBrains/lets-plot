@@ -112,7 +112,7 @@ class LabelTest {
             horizontalAnchor: Text.HorizontalAnchor,
             expectedAnchors: List<String?>
         ) {
-            val label = Label(text, 0.0)
+            val label = Label(text)
             label.setHorizontalAnchor(horizontalAnchor)
             @Suppress("UNCHECKED_CAST")
             val lines = label.rootGroup.children() as List<SvgTextElement>
@@ -129,8 +129,9 @@ class LabelTest {
         private fun widthCalculationForFractionWithPrefix(
             font: Font
         ) {
-            val label = Label("""a+\(\frac{b}{c}\)""", font.size.toDouble())
+            val label = Label("""a+\(\frac{b}{c}\)""")
             label.setFontFamily(font.family.toString())
+            label.setFontSize(font.size.toDouble())
             label.setFontWeight(if (font.isBold) "bold" else null)
             label.setFontStyle(if (font.isItalic) "italic" else null)
 
