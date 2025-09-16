@@ -110,7 +110,7 @@ object Option {
 
     object GGToolbar {
         const val ZOOM_BASIS = "zoom_basis"
-        const val ZOOM_LIMITS = "zoom_limits"
+        const val ZOOM_LIMIT = "zoom_limit"
 
         object ZoomBasis {
             const val X = "x"

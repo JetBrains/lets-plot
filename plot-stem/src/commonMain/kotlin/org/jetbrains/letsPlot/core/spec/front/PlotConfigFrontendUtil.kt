@@ -192,11 +192,11 @@ object PlotConfigFrontendUtil {
 
     private fun computeScaleFactor(config: PlotConfigFrontend): Double {
         val zoomBasis = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_BASIS] as String? ?: ZoomBasis.MAX
-        val zoomLimits = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_LIMITS] as Double? ?: 0.0
-        val scaleLimits = when (zoomLimits) {
+        val zoomLimit = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_LIMIT] as Double? ?: 0.0
+        val scaleLimits = when (zoomLimit) {
             0.0 -> 1.0..1.0
             -1.0 -> Double.MIN_VALUE ..Double.MAX_VALUE
-            else -> (1.0 / zoomLimits)..zoomLimits
+            else -> (1.0 / zoomLimit)..zoomLimit
         }
 
         return config.getMap(SPEC_OVERRIDE)[SCALE_RATIO].let { scaleRatio ->
