@@ -75,11 +75,10 @@ abstract class FigureToolsController {
                     }
                 }
 
-                event[EVENT_RESULT_SCALE_FACTOR]?.let { factor ->
+                specOverride[SCALE_RATIO] = event[EVENT_RESULT_SCALE_FACTOR]?.let { factor ->
                     @Suppress("UNCHECKED_CAST")
                     factor as List<Double>
-                    specOverride[SCALE_RATIO] = factor
-                }
+                } ?: listOf(1.0, 1.0)
 
                 updateFigureView(specOverride)
             }

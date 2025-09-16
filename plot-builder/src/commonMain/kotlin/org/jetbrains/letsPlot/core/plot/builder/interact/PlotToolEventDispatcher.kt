@@ -91,7 +91,7 @@ internal class PlotToolEventDispatcher(
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
-                onCompleted = { targetId, dataBounds, flipped, panningMode, scaleFactor ->
+                onCompleted = { targetId, dataBounds, flipped, panningMode ->
                     // flip panning mode if coord flip
                     @Suppress("NAME_SHADOWING")
                     val panningMode = if (!flipped) {
@@ -108,7 +108,7 @@ internal class PlotToolEventDispatcher(
                             PanningMode.VERTICAL -> listOf(null, top, null, bottom)
                         }
                     }
-                    fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleFactor)
+                    fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
                 }
             )
 
@@ -183,7 +183,7 @@ internal class PlotToolEventDispatcher(
         interactionName: String,
         targetId: String?,
         dataBoundsLTRB: List<Double?>,
-        scaleFactor: List<Double>
+        scaleFactor: List<Double>? = null
     ) {
         toolEventCallback.invoke(
             mapOf(
