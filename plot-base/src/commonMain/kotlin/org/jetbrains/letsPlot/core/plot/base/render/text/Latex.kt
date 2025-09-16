@@ -105,7 +105,7 @@ internal class Latex(
         }
     }
 
-    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
+    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -123,7 +123,7 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
         }).wrap()
-        val indexTSpanElements = content.render(ctx, prefix).map { wrappedElement ->
+        val indexTSpanElements = content.render(ctx, prefixWidth).map { wrappedElement ->
             wrappedElement.svg.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
@@ -280,8 +280,8 @@ internal class Latex(
         override fun estimateWidth(font: Font): Double =
             node.estimateWidth(font)
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            return node.render(context, prefix)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            return node.render(context, prefixWidth)
         }
     }
 
@@ -291,7 +291,7 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).wrap())
         }
     }
@@ -302,12 +302,12 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font) }
         }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             val wrappedElements = mutableListOf<WrappedSvgElement<SvgElement>>()
-            val previousLatexNodes = mutableListOf<LatexNode>()
+            var previousLatexNodesWidth = 0.0
             for (child in children) {
-                wrappedElements.addAll(child.render(context, prefix + previousLatexNodes.toList()))
-                previousLatexNodes.add(child)
+                wrappedElements.addAll(child.render(context, prefixWidth + previousLatexNodesWidth))
+                previousLatexNodesWidth += child.estimateWidth(font)
             }
             return wrappedElements
         }
@@ -319,8 +319,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefix = prefix)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefixWidth = prefixWidth)
         }
     }
 
@@ -330,8 +330,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefix = prefix)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefixWidth = prefixWidth)
         }
     }
 
@@ -345,13 +345,12 @@ internal class Latex(
             return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
         }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            val prefixWidth = prefix.sumOf { it.estimateWidth(font) }
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             val fractionWidth = estimateWidth(font)
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
-            val numeratorTSpanElements = numerator.render(context, prefix).mapIndexed { i, wrappedElement ->
+            val numeratorTSpanElements = numerator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
@@ -359,7 +358,7 @@ internal class Latex(
                     }
                 }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
             }
-            val denominatorTSpanElements = denominator.render(context, prefix).mapIndexed { i, wrappedElement ->
+            val denominatorTSpanElements = denominator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)

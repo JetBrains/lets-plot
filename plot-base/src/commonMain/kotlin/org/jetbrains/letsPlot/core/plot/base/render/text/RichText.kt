@@ -229,8 +229,8 @@ object RichText {
         val stack = mutableListOf(RenderState())
         val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
             val svg = mutableListOf<SvgElement>()
-            val prefix = mutableListOf<RichTextNode.RichSpan>()
             val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
+            var prefixWidth = 0.0
             var isFirstRichSpanInLine = true
             line.forEach { term ->
                 when (term) {
@@ -247,8 +247,8 @@ object RichText {
                         // and then we need to add x attribute to the first tspan in the line with shift,
                         // that corresponds to the anchorCoefficient.
                         val x = anchorCoefficient?.let { initialX - it * lineWidth }
-                        svg += term.render(stack.last(), prefix.toList(), x, isFirstRichSpanInLine)
-                        prefix.add(term)
+                        svg += term.render(stack.last(), prefixWidth, x, isFirstRichSpanInLine)
+                        prefixWidth += term.estimateWidth(font)
                         isFirstRichSpanInLine = false
                     }
 
@@ -277,13 +277,13 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font): Double
-            abstract fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>>
+            abstract fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
             // and then each of them is rendered to SVG element, taking into account the additional x parameter;
             // each resulting SVG element is a span-like element (SvgTSpanElement or SvgAElement with SvgTSpanElement as a child)
-            fun render(context: RenderState, prefix: List<RichSpan>, x: Double?, isFirstRichSpanInLine: Boolean): List<SvgElement> {
-                return render(context, prefix).mapIndexed { i, wrappedElement ->
+            fun render(context: RenderState, prefixWidth: Double, x: Double?, isFirstRichSpanInLine: Boolean): List<SvgElement> {
+                return render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                     wrappedElement.x = when {
                         // If wrappedElement.x == null than x should be defined only for the first span in the line
                         wrappedElement.x == null -> if (isFirstRichSpanInLine && i == 0) x else null
@@ -323,7 +323,7 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun render(context: RenderState, prefix: List<RichSpan>): List<WrappedSvgElement<SvgElement>> {
+            override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
                 return SvgTSpanElement(text)
                     .apply(context::apply)
                     .wrap()
