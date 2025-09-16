@@ -233,7 +233,16 @@ object DataProcessing {
         }
 
         // generate new series for input variables
-        fun newSerieForVariable(variable: Variable): List<Any?> {
+        fun newSerieForVariable(variable: Variable, indices: List<Int?>?): List<Any?> {
+            if (indices != null) {
+                val series = data[variable]
+                return indices.map { i ->
+                    when (i) {
+                        null -> null
+                        else -> series[i]
+                    }
+                }
+            }
             val value = when (data.isNumeric(variable)) {
                 true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
                 false -> SeriesUtil.firstNotNull(data[variable], defaultValue = null)
@@ -242,6 +251,12 @@ object DataProcessing {
         }
 
         val newInputSeries = HashMap<Variable, List<Any?>>()
+        val indices = if (statData.has(Stats.INDEX)) {
+            @Suppress("UNCHECKED_CAST")
+            statData[Stats.INDEX] as? List<Int?>
+        } else {
+            null
+        }
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isStat || facetVariables.contains(variable)) {
@@ -255,7 +270,7 @@ object DataProcessing {
             } else {
                 // Do not override series obtained via 'default stat var'
                 if (!newInputSeries.containsKey(variable)) {
-                    newInputSeries[variable] = newSerieForVariable(variable)
+                    newInputSeries[variable] = newSerieForVariable(variable, indices)
                 }
             }
         }
@@ -264,7 +279,7 @@ object DataProcessing {
         for (varName in varsWithoutBinding.filterNot(Stats::isStatVar)) {
             val variable = DataFrameUtil.findVariableOrFail(data, varName)
             if (!newInputSeries.containsKey(variable)) {
-                newInputSeries[variable] = newSerieForVariable(variable)
+                newInputSeries[variable] = newSerieForVariable(variable, indices)
             }
         }
 
@@ -454,6 +469,25 @@ object DataProcessing {
         // 'origin' discrete vars (but not positional)
         return variable.isOrigin && !Aes.isPositional(aes) && data.isDiscrete(
             variable
+        )
+    }
+
+    fun applyStatTest(
+        data: DataFrame,
+        stat: Stat,
+        bindings: List<VarBinding>,
+        transformByAes: Map<Aes<*>, Transform>,
+        statCtx: StatContext
+    ): DataFrame {
+        return applyStat(
+            data = data,
+            stat = stat,
+            bindings = bindings,
+            transformByAes = transformByAes,
+            facetVariables = emptyList(),
+            statCtx = statCtx,
+            varsWithoutBinding = emptyList(),
+            compMessageConsumer = { _ -> }
         )
     }
 

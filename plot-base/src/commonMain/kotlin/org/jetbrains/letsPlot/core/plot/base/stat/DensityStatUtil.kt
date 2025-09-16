@@ -32,6 +32,7 @@ object DensityStatUtil {
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
+        indices: List<Int>,
         trim: Boolean,
         tailsCutoff: Double?,
         bandWidth: Double?,
@@ -52,7 +53,7 @@ object DensityStatUtil {
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
 
-        handleBinnedData(bins, values, weights) { bin, binValue, binWeight ->
+        handleBinnedData(bins, values, weights, indices) { bin, binValue, binWeight, _ ->
             val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
@@ -87,17 +88,18 @@ object DensityStatUtil {
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
-        binHandler: (Double, List<Double>, List<Double>) -> Unit,
+        indices: List<Int>,
+        binHandler: (Double, List<Double>, List<Double>, List<Int>) -> Unit,
     ) {
-        val binnedData = (bins.asSequence() zip (values.asSequence() zip weights.asSequence()))
-            .filter { (bin, _) -> bin?.isFinite() == true }
-            .groupBy({ (bin, _) -> bin!! }, { (_, binValues) -> binValues })
-            .mapValues { (_, binData) -> binData.unzip() }
+        val binnedData = bins.indices.mapNotNull { i ->
+            when (SeriesUtil.allFinite(bins[i], values[i], weights[i])) {
+                true -> BinnedDataRow(bins[i]!!, values[i]!!, weights[i]!!, indices[i])
+                else -> null
+            }
+        }.groupBy { it.bin }
         for ((bin, binData) in binnedData) {
-            val (binValue, binWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
-            if (binValue.isEmpty()) continue
-            val sortingIndices = binValue.indices.sortedBy { binValue[it] }
-            binHandler(bin, binValue.slice(sortingIndices), binWeight.slice(sortingIndices))
+            val sortedBinData = binData.sortedBy { it.value }
+            binHandler(bin, sortedBinData.map { it.value }, sortedBinData.map { it.weight }, sortedBinData.map { it.index })
         }
     }
 
@@ -369,4 +371,11 @@ object DensityStatUtil {
         }
         return result
     }
+
+    private data class BinnedDataRow(
+        val bin: Double,
+        val value: Double,
+        val weight: Double,
+        val index: Int
+    )
 }

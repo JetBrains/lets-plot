@@ -25,26 +25,22 @@ class QQStat(
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.SAMPLE))
-
-        return DataFrame.Builder()
-            .putNumeric(Stats.THEORETICAL, statData.getValue(Stats.THEORETICAL))
-            .putNumeric(Stats.SAMPLE, statData.getValue(Stats.SAMPLE))
-            .build()
-    }
-
-    private fun buildStat(
-        sampleSeries: List<Double?>
-    ): MutableMap<DataFrame.Variable, List<Double>> {
-        val statSample = sampleSeries.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
+        val sampleSeries = data.getNumeric(TransformVar.SAMPLE)
+        val (indices, statSample) = sampleSeries
+            .withIndex()
+            .filter { it.value?.isFinite() == true }
+            .sortedBy { it.value }
+            .map { it.index to it.value!! }
+            .unzip()
         val t = (1..statSample.size).map { (it - 0.5) / statSample.size }
         val quantileFunction = QQStatUtil.getQuantileFunction(distribution, distributionParameters)
         val statTheoretical = t.map(quantileFunction)
 
-        return mutableMapOf(
-            Stats.THEORETICAL to statTheoretical,
-            Stats.SAMPLE to statSample
-        )
+        return DataFrame.Builder()
+            .putNumeric(Stats.THEORETICAL, statTheoretical)
+            .putNumeric(Stats.SAMPLE, statSample)
+            .put(Stats.INDEX, indices)
+            .build()
     }
 
     enum class Distribution {
