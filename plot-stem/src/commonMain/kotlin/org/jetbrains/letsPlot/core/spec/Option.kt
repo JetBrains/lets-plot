@@ -109,8 +109,15 @@ object Option {
     }
 
     object GGToolbar {
-        const val SCALE = "scale"
-        const val SIZE_ZOOMIN = "size_zoomin"
+        const val ZOOM_BASIS = "zoom_basis"
+        const val ZOOM_LIMITS = "zoom_limits"
+
+        object ZoomBasis {
+            const val X = "x"
+            const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
+        }
     }
 
     // Unlisted supported features:

@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.GGToolbar.ZoomBasis
 import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
@@ -190,23 +191,23 @@ object PlotConfigFrontendUtil {
     }
 
     private fun computeScaleFactor(config: PlotConfigFrontend): Double {
-        val scale = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SCALE] as String? ?: "max"
-        val sizeZoomIn = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_ZOOMIN] as Double? ?: 0.0
-        val scaleLimits = when (sizeZoomIn) {
+        val zoomBasis = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_BASIS] as String? ?: ZoomBasis.MAX
+        val zoomLimits = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_LIMITS] as Double? ?: 0.0
+        val scaleLimits = when (zoomLimits) {
             0.0 -> 1.0..1.0
             -1.0 -> Double.MIN_VALUE ..Double.MAX_VALUE
-            else -> (1.0 / sizeZoomIn)..sizeZoomIn
+            else -> (1.0 / zoomLimits)..zoomLimits
         }
 
         return config.getMap(SPEC_OVERRIDE)[SCALE_RATIO].let { scaleRatio ->
             @Suppress("UNCHECKED_CAST")
             scaleRatio as List<Double>?
             val factor = scaleRatio?.let {
-                when (scale) {
-                    "x" -> it[0]
-                    "y" -> it[1]
-                    "max" -> maxOf(it[0], it[1])
-                    "min" -> minOf(it[0], it[1])
+                when (zoomBasis) {
+                    ZoomBasis.X -> it[0]
+                    ZoomBasis.Y -> it[1]
+                    ZoomBasis.MAX -> maxOf(it[0], it[1])
+                    ZoomBasis.MIN -> minOf(it[0], it[1])
                     else -> 1.0
                 }
             } ?: 1.0
