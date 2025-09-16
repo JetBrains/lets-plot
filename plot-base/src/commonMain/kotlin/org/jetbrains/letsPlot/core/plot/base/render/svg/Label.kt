@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import kotlin.math.roundToInt
 
 
@@ -165,6 +166,7 @@ class Label(
             walkPair(originalLine, recalculatedLine) { originalNode, recalculatedNode ->
                 if (originalNode is SvgTSpanElement && recalculatedNode is SvgTSpanElement) {
                     originalNode.x().set(recalculatedNode.x().get())
+                    originalNode.copyText(recalculatedNode)
                 }
             }
         }
@@ -231,5 +233,23 @@ class Label(
                 is SvgTSpanElement -> root
                 else -> root.children().firstNotNullOfOrNull { findFirstTSpan(it) }
             }
+
+        // Copy text content from another tspan element, or clear text if other has no text node.
+        // Does not copy any attributes, and does not change any attributes of this element.
+        // Uses the fact that tspan has either 0 or 1 text node of type SvgTextNode, see SvgTSpanElement.setText()/addText().
+        fun SvgTSpanElement.copyText(other: SvgTSpanElement) {
+            val otherTextNode = other.children().singleOrNull() as? SvgTextNode
+            if (otherTextNode == null) {
+                children().clear()
+                return
+            }
+            val text = otherTextNode.textContent().get()
+            val textNode = children().singleOrNull() as? SvgTextNode
+            if (textNode == null) {
+                setText(text)
+            } else {
+                textNode.textContent().set(text)
+            }
+        }
     }
 }
