@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.Option.GGToolbar.ZoomBasis
+import org.jetbrains.letsPlot.core.spec.Option.GGToolbar.SizeBasis
 import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
@@ -191,23 +191,23 @@ object PlotConfigFrontendUtil {
     }
 
     private fun computeScaleFactor(config: PlotConfigFrontend): Double {
-        val zoomBasis = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_BASIS] as String? ?: ZoomBasis.MAX
-        val zoomLimit = config.getMap(GG_TOOLBAR)[Option.GGToolbar.ZOOM_LIMIT] as Double? ?: 0.0
-        val scaleLimits = when (zoomLimit) {
+        val sizeBasis = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_BASIS] as String? ?: SizeBasis.MAX
+        val sizeZoomin = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_ZOOMIN] as Double? ?: 0.0
+        val scaleLimits = when (sizeZoomin) {
             0.0 -> 1.0..1.0
             -1.0 -> Double.MIN_VALUE ..Double.MAX_VALUE
-            else -> (1.0 / zoomLimit)..zoomLimit
+            else -> (1.0 / sizeZoomin)..sizeZoomin
         }
 
         return config.getMap(SPEC_OVERRIDE)[SCALE_RATIO].let { scaleRatio ->
             @Suppress("UNCHECKED_CAST")
             scaleRatio as List<Double>?
             val factor = scaleRatio?.let {
-                when (zoomBasis) {
-                    ZoomBasis.X -> it[0]
-                    ZoomBasis.Y -> it[1]
-                    ZoomBasis.MAX -> maxOf(it[0], it[1])
-                    ZoomBasis.MIN -> minOf(it[0], it[1])
+                when (sizeBasis) {
+                    SizeBasis.X -> it[0]
+                    SizeBasis.Y -> it[1]
+                    SizeBasis.MAX -> maxOf(it[0], it[1])
+                    SizeBasis.MIN -> minOf(it[0], it[1])
                     else -> 1.0
                 }
             } ?: 1.0
