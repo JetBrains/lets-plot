@@ -521,7 +521,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         } finally {
             plotPanel.revalidate()
-            plotPanel.repaint()
+            //plotPanel.repaint()
         }
     }
 

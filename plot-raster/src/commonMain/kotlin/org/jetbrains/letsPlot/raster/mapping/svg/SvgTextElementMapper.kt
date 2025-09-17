@@ -42,7 +42,7 @@ internal class SvgTextElementMapper(
         super.registerSynchronizers(conf)
 
         // Sync TextNodes, TextSpans
-        val sourceTextRunProperty = sourceTextRunProperty(source.children(), peer.styleSheet, peer.textMeasurer)
+        val sourceTextRunProperty = sourceTextRunProperty(source.children(), peer)
         val targetTextRunProperty = targetTextRunProperty(target)
         conf.add(
             Synchronizers.forPropsOneWay(
@@ -84,9 +84,7 @@ internal class SvgTextElementMapper(
     companion object {
         private fun sourceTextRunProperty(
             nodes: ObservableCollection<SvgNode>,
-            styleSheet: StyleSheet?,
-            textMeasurer: TextMeasurer
-            //fontManager: FontManager
+            svgCanvasPeer: SvgCanvasPeer
         ): ReadableProperty<List<TSpan>> {
             fun toTSpans(nodes: ObservableCollection<SvgNode>): List<TSpan> {
                 return nodes.flatMap { node ->
@@ -94,9 +92,9 @@ internal class SvgTextElementMapper(
                         //is SvgTextNode -> listOf(TSpan(fontManager).apply { text = node.textContent().get() })
                         //is SvgTSpanElement -> handleTSpanElement(node, styleSheet, fontManager)
                         //is SvgAElement -> handleAElement(node, styleSheet, fontManager)
-                        is SvgTextNode -> listOf(TSpan(textMeasurer).apply { text = node.textContent().get() })
-                        is SvgTSpanElement -> handleTSpanElement(node, styleSheet, textMeasurer)
-                        is SvgAElement -> handleAElement(node, styleSheet, textMeasurer)
+                        is SvgTextNode -> handleTextNode(node, svgCanvasPeer)
+                        is SvgTSpanElement -> handleTSpanElement(node, svgCanvasPeer)
+                        is SvgAElement -> handleAElement(node, svgCanvasPeer)
 
                         else -> error("Unexpected node type: ${node::class.simpleName}")
                     }
@@ -111,17 +109,26 @@ internal class SvgTextElementMapper(
             }
         }
 
+        private fun handleTextNode(node: SvgTextNode, svgCanvasPeer: SvgCanvasPeer): List<TSpan> {
+            val tspan = TSpan().apply {
+                peer = svgCanvasPeer
+                text = node.textContent().get()
+            }
+            return listOf(tspan)
+        }
+
 
         private fun handleTSpanElement(
             node: SvgTSpanElement,
-            styleSheet: StyleSheet?,
-            textMeasurer: TextMeasurer
+            svgCanvasPeer: SvgCanvasPeer
         ): List<TSpan> =
             node.children().map { child ->
                 require(child is SvgTextNode)
+                val styleSheet = svgCanvasPeer.styleSheet
                 val style = styleSheet?.getTextStyle(node.fullClass())
 
-                val tspan = TSpan(textMeasurer).apply {
+                val tspan = TSpan().apply {
+                    peer = svgCanvasPeer
                     text = child.textContent().get()
                     style?.safeColor?.let {
                         fill = it
@@ -155,11 +162,11 @@ internal class SvgTextElementMapper(
                 return@map tspan
             }
 
-        private fun handleAElement(node: SvgAElement, styleSheet: StyleSheet?, textMeasurer: TextMeasurer): List<TSpan> {
+        private fun handleAElement(node: SvgAElement, svgCanvasPeer: SvgCanvasPeer): List<TSpan> {
             val href = node.getAttribute("href").get() as String
             return node.children().flatMap { child ->
                 require(child is SvgTSpanElement)
-                handleTSpanElement(child, styleSheet, textMeasurer).onEach {
+                handleTSpanElement(child, svgCanvasPeer).onEach {
                     it.href = href
                 }
             }

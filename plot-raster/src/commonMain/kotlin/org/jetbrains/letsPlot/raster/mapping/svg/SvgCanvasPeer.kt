@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.TextMetrics
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLocatable
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -20,9 +22,7 @@ import org.jetbrains.letsPlot.raster.shape.Text
 import org.jetbrains.letsPlot.raster.shape.breadthFirstTraversal
 
 internal class SvgCanvasPeer(
-    val textMeasurer: TextMeasurer,
-    val canvasProvider: CanvasProvider,
-//    val fontManager: FontManager
+    val canvasPeer: CanvasPeer,
 ) : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Element>>()
     var styleSheet: StyleSheet? = null
@@ -31,37 +31,6 @@ internal class SvgCanvasPeer(
     fun applyStyleSheet(styleSheet: StyleSheet) {
         this.styleSheet = styleSheet
     }
-
-//    private fun ensureElementConsistency(source: SvgNode, target: Node) {
-//        if (source is SvgElement && target !is SVGOMElement) {
-//            throw IllegalStateException("Target of SvgElement must be SVGOMElement")
-//        }
-//    }
-
-//    private fun ensureLocatableConsistency(source: SvgNode, target: Node) {
-//        if (source is SvgLocatable && target !is SVGLocatable) {
-//            throw IllegalStateException("Target of SvgLocatable must be SVGLocatable")
-//        }
-//    }
-
-//    private fun ensureTextContentConsistency(source: SvgNode, target: Node) {
-//        if (source is SvgTextContent && target !is SVGOMTextContentElement) {
-//            throw IllegalStateException("Target of SvgTextContent must be SVGOMTextContentElement")
-//        }
-//    }
-
-//    private fun ensureTransformableConsistency(source: SvgNode, target: Node) {
-//        if (source is SvgTransformable && target !is SVGTransformable) {
-//            throw IllegalStateException("Target of SvgTransformable must be SVGTransformable")
-//        }
-//    }
-
-//    private fun ensureSourceTargetConsistency(source: SvgNode, target: Node) {
-//        ensureElementConsistency(source, target)
-//        ensureLocatableConsistency(source, target)
-//        ensureTextContentConsistency(source, target)
-//        ensureTransformableConsistency(source, target)
-//    }
 
     private fun ensureSourceRegistered(source: SvgNode) {
         if (!myMappingMap.containsKey(source)) {
@@ -106,5 +75,9 @@ internal class SvgCanvasPeer(
             }
         }
         return target.localBounds
+    }
+
+    fun measureText(text: String, font: Font): TextMetrics {
+        return canvasPeer.measureText(text, font)
     }
 }

@@ -11,13 +11,10 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
-import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
 import org.jetbrains.letsPlot.raster.shape.Text.BaselineShift
 import kotlin.reflect.KProperty
 
-internal class TSpan(
-    private val textMeasurer: TextMeasurer
-) : Figure() {
+internal class TSpan : Figure() {
     init {
         isMouseTransparent = false // see Element::isMouseTransparent for details
     }
@@ -61,8 +58,10 @@ internal class TSpan(
     }
 
     // TODO: replace with bbox as it reports the same size
-    val dimension by computedProp(TSpan::text, TSpan::font) {
-        val textMeasure = textMeasurer.measureText(text, font)
+    val dimension by computedProp(TSpan::text, TSpan::font, Node::peer) {
+        val peer = peer ?: return@computedProp DoubleVector(0.0, 0.0)
+
+        val textMeasure = peer.measureText(text, font)
 
         DoubleVector(
             textMeasure.bbox.width,
@@ -70,10 +69,11 @@ internal class TSpan(
         )
     }
 
-    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline) {
+    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline, Node::peer) {
+        val peer = peer ?: return@computedProp DoubleRectangle.ZERO
         if (text.isEmpty()) return@computedProp DoubleRectangle.XYWH(0.0, 0.0, 0.0, 0.0)
 
-        textMeasurer.measureText(text, font).let {
+        peer.measureText(text, font).let {
             DoubleRectangle.XYWH(
                 x = it.bbox.left,
                 y = it.bbox.top - baseline,

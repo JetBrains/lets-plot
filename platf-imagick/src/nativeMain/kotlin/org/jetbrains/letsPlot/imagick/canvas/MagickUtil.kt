@@ -45,11 +45,10 @@ object MagickUtil {
             refLog += "$str: $ptr"
 
             val address = ptr.toString()
-            val counter = refCounter[address] ?: error("Attempt to decrement reference count for untracked pointer: $ptr")
-            if (counter == 1) {
-                refCounter.remove(address)
-            } else {
-                refCounter[address] = counter - 1
+            when (val counter = refCounter[address]) {
+                null -> println("Warning: Reference count for pointer $ptr is not tracked")
+                1 -> refCounter.remove(address)
+                else -> refCounter[address] = counter - 1
             }
         }
     }

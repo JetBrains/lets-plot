@@ -24,7 +24,7 @@ internal class Image : Element() {
         val peer = peer ?: return@computedProp null
         val image = img ?: return@computedProp null
 
-        peer.canvasProvider.createSnapshot(image)
+        peer.canvasPeer.createSnapshot(image)
     }
 
     override fun render(ctx: Context2d) {

@@ -24,8 +24,7 @@ import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
@@ -165,26 +164,22 @@ object PlotReprGenerator {
                 computationMessagesHandler = { }
             )
 
-            val canvasControl = MagickCanvasControl(
-                w = plotCanvasFigure.bounds().get().width,
-                h = plotCanvasFigure.bounds().get().height,
+            val magickCanvasPeer = MagickCanvasPeer(
                 pixelDensity = exportParameters.scaleFactor,
                 fontManager = fontManager,
             )
 
-            canvasReg = plotCanvasFigure.mapToCanvas(canvasControl)
+            canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
-            // TODO: canvasControl can provide takeSnapshot() method
-            val plotCanvas = canvasControl.children.last() as MagickCanvas
-            require(plotCanvas.size.x > 0 && plotCanvas.size.y > 0) {
-                "Plot canvas size must be greater than zero"
-            }
+            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+            plotCanvasFigure.paint(canvas.context2d)
 
             // Save the image to a file
-            val snapshot = plotCanvas.takeSnapshot()
+            val snapshot = canvas.takeSnapshot()
             val bitmap = snapshot.bitmap
+            canvas.dispose()
             snapshot.dispose()
-            canvasControl.dispose()
+            magickCanvasPeer.dispose()
 
             return bitmap to exportParameters.dpi
         } finally {
