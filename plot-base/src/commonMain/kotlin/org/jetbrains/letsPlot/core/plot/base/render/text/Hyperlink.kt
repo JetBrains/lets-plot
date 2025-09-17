@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
@@ -27,13 +29,13 @@ internal object Hyperlink {
     class HyperlinkElement(
         private val text: String,
         private val href: String,
-    ) : RichTextNode.Span {
+    ) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = text.length
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+        override fun estimateWidth(font: Font): Double {
             return widthCalculator(text, font)
         }
 
-        override fun render(context: RenderState): List<SvgElement> {
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return listOf(
                 SvgAElement().apply {
                     href().set(href)
@@ -43,9 +45,8 @@ internal object Hyperlink {
                             addClass(RichText.HYPERLINK_ELEMENT_CLASS)
                         }
                     )
-                }
+                }.wrap()
             )
-
         }
     }
 }

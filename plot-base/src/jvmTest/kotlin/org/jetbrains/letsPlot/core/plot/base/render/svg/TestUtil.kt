@@ -74,7 +74,7 @@ object TestUtil {
     fun assertFormulaTSpan(
         tspan: SvgTSpanElement,
         text: String?,
-        level: FormulaLevel,
+        level: FormulaLevel = FormulaLevel(),
         expectedX: Double? = null,
         expectedAnchor: String? = null,
         bold: Boolean = false,

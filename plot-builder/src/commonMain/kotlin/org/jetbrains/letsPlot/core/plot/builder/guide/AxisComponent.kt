@@ -144,6 +144,7 @@ class AxisComponent(
             tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
             tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
             val lineHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
+            // Correct display of LaTeX fractions in axis labels will require tickLabel.setFontSize(lineHeight)
             tickLabel.setLineHeight(lineHeight)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)

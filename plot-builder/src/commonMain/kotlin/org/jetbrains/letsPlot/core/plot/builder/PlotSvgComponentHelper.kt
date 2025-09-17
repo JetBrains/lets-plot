@@ -160,6 +160,7 @@ internal object PlotSvgComponentHelper {
             justification,
             rotation
         )
+        textLabel.setFontSize(labelSpec.font.size.toDouble())
         textLabel.setLineHeight(lineHeight)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)

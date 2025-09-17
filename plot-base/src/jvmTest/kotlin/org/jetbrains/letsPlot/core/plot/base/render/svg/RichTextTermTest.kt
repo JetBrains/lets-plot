@@ -6,17 +6,21 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.lineParts
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.stringParts
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlin.test.Test
 
 class RichTextTermTest {
     @Test
     fun newLines() {
-        val richTextSvg = RichText.toSvg("Hello\nworld!")
+        val richTextSvg = toSvg("Hello\nworld!")
 
         val textLines = richTextSvg.lineParts()
 
@@ -28,7 +32,7 @@ class RichTextTermTest {
 
     @Test
     fun endsWithNewLine() {
-        val richTextSvg = RichText.toSvg("Hello\nworld!\n")
+        val richTextSvg = toSvg("Hello\nworld!\n")
 
         val textLines = richTextSvg.lineParts()
 
@@ -41,7 +45,7 @@ class RichTextTermTest {
 
     @Test
     fun blankLineInMiddle() {
-        val richTextSvg = RichText.toSvg("Hello\n\nworld!")
+        val richTextSvg = toSvg("Hello\n\nworld!")
 
         val textLines = richTextSvg.lineParts()
 
@@ -54,7 +58,7 @@ class RichTextTermTest {
 
     @Test
     fun wholeLineLink() {
-        val richTextSvg = RichText.toSvg("<a href=\"https://example.com\">link</a>\nnew line")
+        val richTextSvg = toSvg("<a href=\"https://example.com\">link</a>\nnew line")
 
         val textLines = richTextSvg.lineParts()
 
@@ -66,7 +70,7 @@ class RichTextTermTest {
 
     @Test
     fun linkInMiddleOfLine() {
-        val richTextSvg = RichText.toSvg("A <a href=\"https://example.com\">link</a> with\nnew\nline")
+        val richTextSvg = toSvg("A <a href=\"https://example.com\">link</a> with\nnew\nline")
 
         val textLines = richTextSvg.lineParts()
 
@@ -79,7 +83,7 @@ class RichTextTermTest {
 
     @Test
     fun multilineWithLink() {
-        val richTextSvg = RichText.toSvg("Hello\nworld\nwith a <a href=\"https://example.com\">link</a>!\nhey")
+        val richTextSvg = toSvg("Hello\nworld\nwith a <a href=\"https://example.com\">link</a>!\nhey")
 
         val textLines = richTextSvg.lineParts()
 
@@ -93,7 +97,7 @@ class RichTextTermTest {
 
     @Test
     fun multilineWithTwoLinks() {
-        val richTextSvg = RichText.toSvg("Hello\nworld\nwith a <a href=\"https://example.com\">link</a> and <a href=\"https://example.com\">link2</a> !\nhey")
+        val richTextSvg = toSvg("Hello\nworld\nwith a <a href=\"https://example.com\">link</a> and <a href=\"https://example.com\">link2</a> !\nhey")
 
         val textLines = richTextSvg.lineParts()
 
@@ -107,38 +111,37 @@ class RichTextTermTest {
 
     @Test
     fun singleTextLine() {
-        val richTextSvg = RichText.toSvg("Hello, world!")
+        val richTextSvg = toSvg("Hello, world!")
         assertThat(richTextSvg.single().stringParts()).containsExactly("Hello, world!")
     }
 
     @Test
     fun link() {
-        val richTextSvg = RichText.toSvg("Hello, <a href=\"https://example.com\">world</a>!")
+        val richTextSvg = toSvg("Hello, <a href=\"https://example.com\">world</a>!")
         assertThat(richTextSvg.single().stringParts()).containsExactly("Hello, ", "world", "!")
     }
 
     @Test
     fun consecutiveLinks() {
-        val richTextSvg = RichText.toSvg("<a href=\"https://example.com\">A</a><a href=\"https://example.com\">B</a>")
+        val richTextSvg = toSvg("<a href=\"https://example.com\">A</a><a href=\"https://example.com\">B</a>")
         assertThat(richTextSvg.single().stringParts()).containsExactly("A", "B")
     }
 
     @Test
     fun emptyLink() {
-        val richTextSvg = RichText.toSvg("<a href=\"https://example.com\"></a>")
+        val richTextSvg = toSvg("<a href=\"https://example.com\"></a>")
         assertThat(richTextSvg.single().stringParts()).containsExactly("")
     }
 
     @Test
     fun emptyText() {
-        val richTextSvg = RichText.toSvg("")
+        val richTextSvg = toSvg("")
         assertThat(richTextSvg).isEmpty()
     }
 
     @Test
     fun shouldFitInOneLineAsLinkNotCountedByWrapper() {
-        RichText
-            .toSvg("Hello, <a href=\"https://example.com\">world</a>!", wrapLength = 20)
+        toSvg("Hello, <a href=\"https://example.com\">world</a>!", wrapLength = 20)
             .let {
                 assertThat(it).hasSize(1)
                 assertThat(it.single().stringParts()).containsExactly("Hello, ", "world", "!")
@@ -148,21 +151,66 @@ class RichTextTermTest {
     @Test
     fun estimateWidth() {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
-        val width = RichText.estimateWidth("Hello, world!", arial, widthCalculator = { text, _ -> text.length * 5.5 })
-        assertThat(width).isEqualTo(5.5 * "Hello, world!".length)
+        val width = estimateWidth("Hello, world!", arial)
+        assertThat(width).isEqualTo(toTestWidth("Hello, world!", arial))
     }
 
     @Test
     fun estimateWidthWithWrap() {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
-        val width = RichText.estimateWidth("Hello, world!", arial, widthCalculator = { text, _ -> text.length * 5.5 }, wrapLength = 6)
-        assertThat(width).isEqualTo(5.5 * 6)
+        val width = estimateWidth("Hello, world!", arial, wrapLength = 6)
+        assertThat(width).isEqualTo(toTestWidth(listOf("Hello,", " world", "!"), arial))
     }
 
     @Test
     fun estimateWithLink() {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
-        val width = RichText.estimateWidth("Hello, <a href=\"https://example.com\">world</a>!", arial, widthCalculator = { text, _ -> text.length * 5.5 })
-        assertThat(width).isEqualTo(5.5 * "Hello, world!".length)
+        val width = estimateWidth("Hello, <a href=\"https://example.com\">world</a>!", arial)
+        assertThat(width).isEqualTo(toTestWidth("Hello, world!", arial))
+    }
+
+    companion object {
+        private val DEF_FONT = Font(family = FontFamily.SERIF, size = 16, isBold = false, isItalic = false)
+
+        internal fun toSvg(
+            text: String,
+            wrapLength: Int = -1,
+            markdown: Boolean = false,
+            anchor: Text.HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
+        ): List<SvgTextElement> {
+            return RichText.toSvg(
+                text = text,
+                font = DEF_FONT,
+                wrapLength = wrapLength,
+                markdown = markdown,
+                anchor = anchor
+            )
+        }
+
+        internal fun estimateWidth(
+            text: String,
+            font: Font = DEF_FONT,
+            wrapLength: Int = -1,
+            markdown: Boolean = false,
+        ): Double {
+            return RichText.estimateWidth(
+                text = text,
+                font = font,
+                wrapLength = wrapLength,
+                markdown = markdown
+            )
+        }
+
+        internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT, level: TestUtil.FormulaLevel = TestUtil.FormulaLevel()): Double {
+            val font = level.sizeValue()?.let { levelSizeScale ->
+                val levelFontSize = max(1, (baseFont.size * levelSizeScale).roundToInt())
+                Font(baseFont.family, levelFontSize, baseFont.isBold, baseFont.isItalic)
+            } ?: baseFont
+            return TextWidthEstimator.widthCalculator(text, font)
+        }
+
+        internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT, level: TestUtil.FormulaLevel = TestUtil.FormulaLevel()): Double {
+            return texts.maxOf { toTestWidth(it, baseFont, level) }
+        }
     }
 }

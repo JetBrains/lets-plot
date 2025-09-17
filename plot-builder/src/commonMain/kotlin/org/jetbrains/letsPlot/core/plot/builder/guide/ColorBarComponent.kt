@@ -84,6 +84,7 @@ class ColorBarComponent(
             val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
+            // Correct display of LaTeX fractions in color bar breaks will require label.setFontSize(lineHeight)
             label.setLineHeight(lineHeight)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
             val yOffset = when (brInfo.labelVerticalAnchor) {
