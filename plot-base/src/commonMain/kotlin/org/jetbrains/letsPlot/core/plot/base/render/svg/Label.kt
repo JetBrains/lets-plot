@@ -131,7 +131,7 @@ class Label(
 
     fun setX(x: Double) {
         xStart = x
-        updateX()
+        horizontalRepositionLines()
     }
 
     fun setY(y: Double) {
@@ -162,6 +162,7 @@ class Label(
     // After changing some font properties, some SVG text attributes (like x) may change.
     // So, we need to recalculate them and update the original elements.
     private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
+        // Update tspan elements in lines
         val recalculatedLines = getLines()
         require(myLines.size == recalculatedLines.size) { "Line counts must be the same." }
         (myLines zip recalculatedLines).forEach { (originalLine, recalculatedLine) ->
@@ -172,13 +173,13 @@ class Label(
                 }
             }
         }
-        updateX()
+        // Update x-attribute of lines
+        xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
+        // Update text-anchor attribute of lines
         if (updateHorizontalAnchor) {
             updateHorizontalAnchor()
         }
     }
-
-    private fun updateX() = xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
 
     private fun updateHorizontalAnchor() {
         myLines.forEach { line ->
