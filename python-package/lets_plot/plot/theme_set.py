@@ -24,7 +24,7 @@ __all__ = [
 
 def theme_grey():
     """
-    Grey background and white gridlines.
+    Set grey background and white gridlines.
 
     Returns
     -------
@@ -51,7 +51,7 @@ def theme_grey():
 
 def theme_light():
     """
-    Light grey lines of various widths on white background.
+    Set light grey lines of various widths on white background.
 
     Returns
     -------
@@ -78,7 +78,7 @@ def theme_light():
 
 def theme_classic():
     """
-    Dark grey axes and no gridlines.
+    Set dark grey axes and no gridlines on white background.
 
     Returns
     -------
@@ -105,7 +105,7 @@ def theme_classic():
 
 def theme_minimal():
     """
-    A minimalistic theme without axes lines.
+    Set a minimalistic theme without axes lines.
 
     Returns
     -------
@@ -132,8 +132,8 @@ def theme_minimal():
 
 def theme_minimal2():
     """
-    Default theme similar to `theme_minimal() <https://lets-plot.org/python/pages/api/lets_plot.theme_minimal.html>`__
-    but with x axis line and only major grid lines.
+    Set default theme similar to `theme_minimal() <https://lets-plot.org/python/pages/api/lets_plot.theme_minimal.html>`__
+    adding an x-axis line and only major gridlines.
 
     Returns
     -------
@@ -160,7 +160,7 @@ def theme_minimal2():
 
 def theme_none():
     """
-    Basic settings are applied.
+    Set basic blue-accented scheme.
 
     Returns
     -------
@@ -187,7 +187,7 @@ def theme_none():
 
 def theme_bw():
     """
-    Grey lines on white background with dark grey plot border.
+    Set grey gridlines and a dark grey plot border on white background.
 
     Returns
     -------
@@ -214,7 +214,8 @@ def theme_bw():
 
 def theme_void():
     """
-    A completely blank (or "void") background theme: no borders, axes, or gridlines.
+    Set a completely blank (or "void") background theme by removing all
+    non-data elements: no borders, axes, or gridlines.
 
     Returns
     -------
@@ -242,7 +243,7 @@ def theme_void():
 
 def flavor_darcula():
     """
-    Darcula color scheme.
+    Set Darcula color scheme.
 
     Returns
     -------
@@ -273,7 +274,7 @@ def flavor_darcula():
 
 def flavor_solarized_light():
     """
-    Solarized light color scheme.
+    Set Solarized Light color scheme.
 
     Returns
     -------
@@ -304,7 +305,7 @@ def flavor_solarized_light():
 
 def flavor_solarized_dark():
     """
-    Solarized dark color scheme.
+    Set Solarized Dark color scheme.
 
     Returns
     -------
@@ -335,7 +336,7 @@ def flavor_solarized_dark():
 
 def flavor_high_contrast_light():
     """
-    High contrast light color scheme.
+    Set high-contrast light color scheme.
 
     Returns
     -------
@@ -366,7 +367,7 @@ def flavor_high_contrast_light():
 
 def flavor_high_contrast_dark():
     """
-    High contrast dark color scheme.
+    Set high-contrast dark color scheme.
 
     Returns
     -------
@@ -397,8 +398,8 @@ def flavor_high_contrast_dark():
 
 def flavor_standard():
     """
-    A special flavor that overrides the previous flavor settings and restores
-    the theme’s default colors, without affecting any colors that were set manually.
+    Set the theme’s default color scheme.
+    Use to override other flavors or make defaults explicit.
 
     Returns
     -------
