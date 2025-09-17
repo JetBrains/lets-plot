@@ -517,7 +517,7 @@ class TooltipBox(
             val components: List<Pair<Label?, Label>> = lines
                 .map { line ->
                     Pair(
-                        line.label?.let { Label(it) },
+                        line.label?.let(::Label),
                         Label(line.value, wrapWidth = VALUE_LINE_MAX_LENGTH)
                     )
                 }
