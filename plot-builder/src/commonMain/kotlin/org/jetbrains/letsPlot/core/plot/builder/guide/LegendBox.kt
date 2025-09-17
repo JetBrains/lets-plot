@@ -128,17 +128,18 @@ abstract class LegendBox : SvgComponent() {
         titleSize: DoubleVector,
         justification: TextJustification
     ): Label {
-        val labelHeight = PlotLabelSpecFactory.legendTitle(theme).height()
+        val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height()
         val label = Label(title)
         val (pos, hAnchor) = applyJustification(
             boundRect,
             textSize = titleSize,
-            labelHeight,
+            lineHeight,
             justification
         )
         label.addClassName(Style.LEGEND_TITLE)
-        label.setFontSize(labelHeight)
         label.setHorizontalAnchor(hAnchor)
+        label.setFontSize(lineHeight)
+        label.setLineHeight(lineHeight)
         label.moveTo(pos)
         return label
     }

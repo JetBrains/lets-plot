@@ -214,7 +214,7 @@ internal class PlotTile constructor(
 
         val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val labelHeight = labelSpec.height()
+        val lineHeight = labelSpec.height()
         val className = if (isColumnLabel) "x" else "y"
         val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
 
@@ -224,12 +224,13 @@ internal class PlotTile constructor(
         val (pos, hAnchor) = applyJustification(
             textBounds,
             textSize,
-            labelHeight,
+            lineHeight,
             theme.stripTextJustification(),
             rotation
         )
-        lab.setFontSize(labelHeight)
         lab.setHorizontalAnchor(hAnchor)
+        lab.setFontSize(lineHeight)
+        lab.setLineHeight(lineHeight)
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }
 

@@ -63,10 +63,11 @@ class LegendComponent(
         breakComponent.add(createKeyElement(br, keySize))
 
         // add label at position as was layout
-        val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
         val label = Label(br.label)
+        val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
         label.addClassName(Style.LEGEND_ITEM)
-        label.setFontSize(labelHeight)
+        // Correct display of LaTeX fractions in legend breaks will require label.setFontSize(lineHeight)
+        label.setLineHeight(lineHeight)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin)
