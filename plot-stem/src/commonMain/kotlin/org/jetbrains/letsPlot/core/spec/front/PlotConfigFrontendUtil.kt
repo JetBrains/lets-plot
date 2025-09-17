@@ -193,10 +193,9 @@ object PlotConfigFrontendUtil {
     private fun computeScaleFactor(config: PlotConfigFrontend): Double {
         val sizeBasis = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_BASIS] as String? ?: SizeBasis.MAX
         val sizeZoomin = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_ZOOMIN] as Double? ?: 0.0
-        val scaleLimits = when (sizeZoomin) {
-            0.0 -> 1.0..1.0
-            -1.0 -> Double.MIN_VALUE ..Double.MAX_VALUE
-            else -> (1.0 / sizeZoomin)..sizeZoomin
+
+        require(sizeZoomin >= 0.0 || sizeZoomin == -1.0) {
+            "Illegal ${Option.GGToolbar.SIZE_ZOOMIN} value: $sizeZoomin. Expected: value ≥ 0.0 or value = −1.0 (no limit)."
         }
 
         return config.getMap(SPEC_OVERRIDE)[SCALE_RATIO].let { scaleRatio ->
@@ -212,7 +211,13 @@ object PlotConfigFrontendUtil {
                 }
             } ?: 1.0
 
-            factor.coerceIn(scaleLimits)
+            val maxLimit = when (sizeZoomin) {
+                0.0 -> 1.0
+                -1.0 -> Double.MAX_VALUE
+                else -> sizeZoomin
+            }
+
+            factor.coerceIn(1.0..maxLimit)
         }
     }
 
