@@ -39,6 +39,7 @@ class ThemeOptions : Options() {
         SOLARIZED_DARK(ThemeOption.Flavor.SOLARIZED_DARK),
         HIGH_CONTRAST_LIGHT(ThemeOption.Flavor.HIGH_CONTRAST_LIGHT),
         HIGH_CONTRAST_DARK(ThemeOption.Flavor.HIGH_CONTRAST_DARK),
+        STANDARD(ThemeOption.Flavor.STANDARD)
     }
 
     class Element : Options() {
