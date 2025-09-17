@@ -47,15 +47,20 @@ open class PointGeom : GeomBase() {
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
             // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
             // but Shape.size() can't be used because it takes DataPointAesthetics as param
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
+
+            val scaleFactor = if (sizeUnit.isNullOrBlank()) {
+                ctx.getScaleFactor()
+            } else {
+                AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
+            }
 
             targetCollector.addPoint(
-                i, location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
+                i, location, (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
                 GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(p)
                 )
             )
-            val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
+            val o = PointShapeSvg.create(shape, location, p, scaleFactor)
             o.appendTo(slimGroup)
         }
         root.add(wrap(slimGroup))

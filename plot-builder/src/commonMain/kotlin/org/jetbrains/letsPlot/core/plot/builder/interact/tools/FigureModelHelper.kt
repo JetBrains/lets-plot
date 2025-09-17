@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 object FigureModelHelper {
@@ -23,6 +24,7 @@ object FigureModelHelper {
             @Suppress("NAME_SHADOWING")
             val specOverrideList = ArrayList(specOverrideList)
             val index = specOverrideList.indexOfFirst { it[TARGET_ID] == targetId }
+
             if (index < 0) {
                 specOverrideList.add(newSpecOverride)
             } else {
@@ -45,6 +47,9 @@ object FigureModelHelper {
         reconcileLims(COORD_YLIM_TRANSFORMED, wasSpecs, newSpecs)?.let {
             specsUpdate[COORD_YLIM_TRANSFORMED] = it
         }
+
+        specsUpdate[SCALE_RATIO] = calculateScale(wasSpecs, newSpecs)
+
         return newSpecs + specsUpdate
     }
 
@@ -64,5 +69,21 @@ object FigureModelHelper {
         return newLims.zip(wasLims).map { (newLim, wasLim) ->
             newLim ?: wasLim
         }
+    }
+
+    private fun calculateScale(
+        wasSpecs: Map<String, Any>,
+        newSpecs: Map<String, Any>
+    ): List<Double> {
+        @Suppress("UNCHECKED_CAST")
+        val wasScaleRatio = wasSpecs[SCALE_RATIO] as List<Double>?
+        @Suppress("UNCHECKED_CAST")
+        val newScaleRatio = newSpecs[SCALE_RATIO] as List<Double>?
+
+        if (wasScaleRatio == null || newScaleRatio == null) {
+            return listOf(1.0, 1.0)
+        }
+
+        return listOf(wasScaleRatio[0] * newScaleRatio[0] , wasScaleRatio[1] * newScaleRatio[1])
     }
 }

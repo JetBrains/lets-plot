@@ -108,6 +108,18 @@ object Option {
         }
     }
 
+    object GGToolbar {
+        const val SIZE_BASIS = "size_basis"
+        const val SIZE_ZOOMIN = "size_zoomin"
+
+        object SizeBasis {
+            const val X = "x"
+            const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
+        }
+    }
+
     // Unlisted supported features:
     // - Plot.SIZE (a.k.a. "ggsize")
     // - Plot.THEME
@@ -206,6 +218,8 @@ object Option {
 
         const val COLOR_BY = "color_by"
         const val FILL_BY = "fill_by"
+
+        const val SCALE_FACTOR = "scale_factor"
 
         object Marginal {
             const val SIZE = "margin_size"

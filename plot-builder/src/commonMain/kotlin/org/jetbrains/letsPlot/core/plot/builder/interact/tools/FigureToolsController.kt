@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTIO
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_SCALE_FACTOR
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
@@ -17,6 +18,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHA
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 abstract class FigureToolsController {
@@ -60,18 +62,25 @@ abstract class FigureToolsController {
             }
 
             SELECTION_CHANGED -> {
+                val specOverride = HashMap<String, Any>()
+
                 event[EVENT_RESULT_DATA_BOUNDS]?.let { bounds ->
                     @Suppress("UNCHECKED_CAST")
                     bounds as List<Double?>
-                    val specOverride = HashMap<String, Any>().also { map ->
-                        map[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
-                        map[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
-                        event[EVENT_INTERACTION_TARGET]?.let { targetId ->
-                            map[TARGET_ID] = targetId
-                        }
+
+                    specOverride[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
+                    specOverride[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
+                    event[EVENT_INTERACTION_TARGET]?.let { targetId ->
+                        specOverride[TARGET_ID] = targetId
                     }
-                    updateFigureView(specOverride)
                 }
+
+                specOverride[SCALE_RATIO] = event[EVENT_RESULT_SCALE_FACTOR]?.let { factor ->
+                    @Suppress("UNCHECKED_CAST")
+                    factor as List<Double>
+                } ?: listOf(1.0, 1.0)
+
+                updateFigureView(specOverride)
             }
 
             ROLLBACK_ALL_CHANGES -> {

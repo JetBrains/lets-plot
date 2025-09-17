@@ -7,7 +7,7 @@ from .core import FeatureSpec
 __all__ = ['ggtb']
 
 
-def ggtb() -> FeatureSpec:
+def ggtb(size_basis=None, size_zoomin=None) -> FeatureSpec:
     """
     Add a toolbar to a chart.
 
@@ -31,6 +31,24 @@ def ggtb() -> FeatureSpec:
     - The toolbar does not work with interactive maps.
     - The toolbar cannot be used with plots using a polar coordinate system.
 
+    Parameters
+    ----------
+    size_basis: String, default="max" {'x', 'y', 'min', 'max'}
+        Control how zooming of the map widget affects the scale of geometry objects on plot.
+        'x' - size changes only when zooming in/out along x-axis;
+        'y' - size changes only when zooming in/out along y-axis;
+        'min' - size changes when zooming in/out along any axis, but the change is determined by the axis
+               with the minimum zoom factor;
+        'max' - size changes when zooming in/out along any axis, but the change is determined by the axis
+               with the maximum zoom factor.
+    size_zoomin : int, default=0
+        Control how zooming-in of the map widget increases size of geometry objects on plot
+        when the size is set by means of mapping between the data and the ``size`` aesthetic.
+        0 - size never increases;
+        -1 - size will be increasing without limits;
+        n - the number of times the size of objects will increase (relative to the initial state of the plot).
+        Farther zooming will no longer affect the size.
+
     Returns
     -------
     ``FeatureSpec``
@@ -52,4 +70,4 @@ def ggtb() -> FeatureSpec:
             ggtb()
 
     """
-    return FeatureSpec(kind='ggtoolbar', name=None)
+    return FeatureSpec(kind='ggtoolbar', name=None, size_basis=size_basis, size_zoomin=size_zoomin)

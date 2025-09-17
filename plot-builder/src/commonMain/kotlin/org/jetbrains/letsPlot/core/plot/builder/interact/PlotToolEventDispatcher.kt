@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
@@ -20,6 +21,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTIO
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_SCALE_FACTOR
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
@@ -80,12 +82,13 @@ internal class PlotToolEventDispatcher(
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
         val fireSelectionChangedDebounced =
-            debounce<Pair<String?, DoubleRectangle>>(
+            debounce<Triple<String?, DoubleRectangle, DoubleVector>>(
                 DEBOUNCE_DELAY_MS,
                 CoroutineScope(Dispatchers.Default)
-            ) { (targetId, dataBounds) ->
+            ) { (targetId, dataBounds, scaleFactor) ->
                 val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-                fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
+                val scaleFactorList = listOf(scaleFactor.x, scaleFactor.y)
+                fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleFactorList)
             }
 
         val feedback = when (interactionName) {
@@ -115,7 +118,7 @@ internal class PlotToolEventDispatcher(
                 val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
                 DrawRectFeedback(
                     centerStart,
-                    onCompleted = { targetId, dataBounds, flipped, selectionMode ->
+                    onCompleted = { targetId, dataBounds, flipped, selectionMode, scaleFactor ->
                         // flip selection mode if coord flip
                         @Suppress("NAME_SHADOWING")
                         val selectionMode = if (!flipped) {
@@ -132,13 +135,14 @@ internal class PlotToolEventDispatcher(
                                 SelectionMode.HORIZONTAL_BAND -> listOf(null, top, null, bottom)
                             }
                         }
-                        fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
+                        val scaleFactorList = listOf(scaleFactor.x, scaleFactor.y)
+                        fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleFactorList)
                     })
             }
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
-                onCompleted = { targetId, dataBounds ->
-                    fireSelectionChangedDebounced(Pair(targetId, dataBounds))
+                onCompleted = { targetId, dataBounds, scaleFactor ->
+                    fireSelectionChangedDebounced(Triple(targetId, dataBounds, scaleFactor))
                 }
             )
 
@@ -181,7 +185,8 @@ internal class PlotToolEventDispatcher(
         origin: String,
         interactionName: String,
         targetId: String?,
-        dataBoundsLTRB: List<Double?>
+        dataBoundsLTRB: List<Double?>,
+        scaleFactor: List<Double>? = null
     ) {
         toolEventCallback.invoke(
             mapOf(
@@ -189,6 +194,7 @@ internal class PlotToolEventDispatcher(
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName,
                 EVENT_RESULT_DATA_BOUNDS to dataBoundsLTRB,
+                EVENT_RESULT_SCALE_FACTOR to scaleFactor,
                 EVENT_INTERACTION_TARGET to targetId,
             ).filterNotNullValues()
         )
