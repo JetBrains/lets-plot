@@ -6,6 +6,7 @@ from .core import FeatureSpec
 
 __all__ = [
     'theme_grey',
+    'theme_gray',
     'theme_light',
     'theme_classic',
     'theme_minimal',
@@ -47,6 +48,13 @@ def theme_grey():
 
     """
     return FeatureSpec('theme', name="grey")
+
+
+def theme_gray():
+    """
+    Set the gray background with white gridlines. It is an alias for `theme_grey() <https://lets-plot.org/python/pages/api/lets_plot.theme_grey.html>`__
+    """
+    return FeatureSpec('theme', name="gray")
 
 
 def theme_light():

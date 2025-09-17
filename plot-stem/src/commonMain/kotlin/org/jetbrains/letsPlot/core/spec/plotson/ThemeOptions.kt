@@ -25,6 +25,7 @@ class ThemeOptions : Options() {
 
     enum class ThemeName(val value: String) {
         GREY(ThemeOption.Name.R_GREY),
+        GRAY(ThemeOption.Name.R_GRAY),
         LIGHT(ThemeOption.Name.R_LIGHT),
         CLASSIC(ThemeOption.Name.R_CLASSIC),
         MINIMAL(ThemeOption.Name.R_MINIMAL),

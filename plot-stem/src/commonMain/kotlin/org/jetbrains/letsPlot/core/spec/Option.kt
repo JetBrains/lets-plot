@@ -988,6 +988,7 @@ object Option {
         object Name {
             // ggplot2 themes
             const val R_GREY = ThemeOption.Name.R_GREY
+            const val R_GRAY = ThemeOption.Name.R_GRAY
             const val R_LIGHT = ThemeOption.Name.R_LIGHT
             const val R_CLASSIC = ThemeOption.Name.R_CLASSIC
             const val R_MINIMAL = ThemeOption.Name.R_MINIMAL
