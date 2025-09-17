@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -32,7 +32,7 @@ object PlotLayoutUtil {
     }
 
     private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
-        return MultilineLabel.splitLines(text).map { line -> labelDimensions(line, labelSpec) }
+        return Label.splitLines(text).map { line -> labelDimensions(line, labelSpec) }
     }
 
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {

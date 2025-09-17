@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFamily.Companion.DEF_FAMILY_NAME
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
@@ -124,7 +125,7 @@ object AesInitValue {
         VALUE_MAP[XEND] = Double.NaN
         VALUE_MAP[YEND] = Double.NaN
         VALUE_MAP[LABEL] = ""
-        VALUE_MAP[FAMILY] = "sans-serif"
+        VALUE_MAP[FAMILY] = DEF_FAMILY_NAME
         VALUE_MAP[FONTFACE] = "plain"
         VALUE_MAP[LINEHEIGHT] = 1.0
         VALUE_MAP[HJUST] = 0.5  // 'middle'

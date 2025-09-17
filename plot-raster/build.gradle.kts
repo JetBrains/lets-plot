@@ -9,8 +9,8 @@ plugins {
     signing
 }
 
-val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
-val assertjVersion = extra["assertj_version"] as String
+val kotlinLoggingVersion = extra["kotlinLogging.version"] as String
+val assertjVersion = extra["assertj.version"] as String
 
 kotlin {
     jvm()

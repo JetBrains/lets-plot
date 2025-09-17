@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -81,9 +81,10 @@ class ColorBarComponent(
 
             // Label
             val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
-            val label = MultilineLabel(brLabel)
+            val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
+            // Correct display of LaTeX fractions in color bar breaks will require label.setFontSize(lineHeight)
             label.setLineHeight(lineHeight)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
             val yOffset = when (brInfo.labelVerticalAnchor) {

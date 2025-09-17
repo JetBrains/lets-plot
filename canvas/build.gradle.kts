@@ -7,8 +7,8 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val assertjVersion = project.extra["assertj_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val assertjVersion = project.extra["assertj.version"] as String
 
 kotlin {
     js {

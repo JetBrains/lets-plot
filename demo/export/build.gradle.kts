@@ -7,8 +7,8 @@ plugins {
     kotlin("jvm")
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
 
 dependencies {
     implementation(kotlin("stdlib-common"))
@@ -22,5 +22,5 @@ dependencies {
 
     compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
-    implementation("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
+    implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
 }

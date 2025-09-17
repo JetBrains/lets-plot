@@ -121,6 +121,19 @@ def test_ggsave_png_wh():
     assert_png(out_path, 1500, 900)  #  5*300, 3*300
 
 
+def test_ggsave_png_600x400():
+    # Should ask for explicit size unit
+    p = gg.ggplot() + gg.geom_blank()
+
+    try:
+        gg.ggsave(p, filename=temp_file('test_ggsave_png_600x400.png'), w=600, h=400)
+    except ValueError as e:
+        assert str(e) == "The image size was interpreted as inches, but it seems unusually large. Please specify the size unit explicitly (px, cm, mm, in)."
+        return
+
+    assert False, "Expected ValueError for missing unit"
+
+
 def test_ggsave_png_wh_inch():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_inch.png'), w=5, h=3, unit='in')
@@ -167,7 +180,7 @@ def test_ggsave_png_wh_px_150dpi():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_150dpi.png'), w=300, h=200, unit='px', dpi=150)
     print("Output path:", out_path)
-    assert_png(out_path, 468, 312)  #
+    assert_png(out_path, 300, 200)  #
 
 
 def test_filelike_ggsave_png():

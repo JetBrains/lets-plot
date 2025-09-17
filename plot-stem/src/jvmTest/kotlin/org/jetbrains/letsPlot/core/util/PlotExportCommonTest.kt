@@ -5,13 +5,20 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.RecursiveComparisonAssert
 import org.assertj.core.util.DoubleComparator
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.CM
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.IN
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.PX
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.*
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.test.Test
 
 class PlotExportCommonTest {
+    @Test
+    fun `ggsave(p, w=600, h=400) should ask for explicit unit`() {
+        val res = runCatching { PlotExportCommon.computeExportParameters(plotSize = DoubleVector(600, 400), unit = null) }
+
+        assertThat(res.isFailure).isTrue()
+        assertThat(res.exceptionOrNull()!!)
+            .hasMessage("The image size was interpreted as inches, but it seems unusually large. Please specify the size unit explicitly (px, cm, mm, in).")
+    }
+
     @Test
     fun `ggsave(p) should scale output to 2x for better quality`() {
         PlotExportCommon.computeExportParameters().let { (sizingPolicy, scale, unit) ->
@@ -82,23 +89,23 @@ class PlotExportCommonTest {
     }
 
     @Test
-    fun `ggsave(p, w=300, h=200, unit=px, dpi=150) should output 300x200 pixels with 1_5625x scale`() {
+    fun `ggsave(p, w=300, h=200, unit=px, dpi=150) should output 300x200 pixels with 1x scale`() {
         // Output should have exactly the specified size in pixels
         PlotExportCommon.computeExportParameters(plotSize = DoubleVector(300, 200), unit = PX, dpi = 150)
             .let { (sizingPolicy, scale, unit) ->
                 assertThat(sizingPolicy).isEqualTo(SizingPolicy.fixed(300.0, 200.0))
-                assertThat(scale).isEqualTo(150.0 / 96.0) // = 1.5625
+                assertThat(scale).isEqualTo(1.0) // = 1.5625
                 assertThat(unit).isEqualTo(PX)
             }
     }
 
     @Test
-    fun `ggsave(p, w=300, h=200, unit=px, dpi=150, scale=2) should output 300x200 pixels with 1_5625x scale`() {
+    fun `ggsave(p, w=300, h=200, unit=px, dpi=150, scale=2) should output 300x200 pixels with 2x scale`() {
         // Output should have exactly the specified size in pixels
         PlotExportCommon.computeExportParameters(plotSize = DoubleVector(300, 200), unit = PX, dpi = 150, scaleFactor = 2)
             .let { (sizingPolicy, scale, unit) ->
                 assertThat(sizingPolicy).isEqualTo(SizingPolicy.fixed(300.0, 200.0))
-                assertThat(scale).isEqualTo(150.0 / 96.0 * 2.0) // = 3.125
+                assertThat(scale).isEqualTo(2.0)
                 assertThat(unit).isEqualTo(PX)
             }
     }

@@ -10,9 +10,11 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.angle
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.fontSize
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
@@ -23,10 +25,12 @@ internal class TextLegendKeyElementFactory :
         val rect = SvgRectElement(0.0, 0.0, size.x, size.y)
         AestheticsUtil.updateFill(rect, p)
 
-        val label = TextLabel("a")
+        val label = Label("a")
         TextUtil.decorate(label, p)
+        label.setLineHeight(fontSize(p, 1.0))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+        label.rotate(angle(p))
         label.moveTo(size.x / 2, size.y / 2)
 
         val g = SvgGElement()

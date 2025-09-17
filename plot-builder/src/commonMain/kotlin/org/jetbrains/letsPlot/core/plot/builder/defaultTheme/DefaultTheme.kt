@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
@@ -16,7 +17,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.LINETYPE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.SIZE
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 
 class DefaultTheme internal constructor(
     private val options: Map<String, Any>,

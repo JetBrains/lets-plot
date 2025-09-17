@@ -11,9 +11,9 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
 /**

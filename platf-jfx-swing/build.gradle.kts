@@ -6,8 +6,8 @@ plugins {
     id ("org.openjfx.javafxplugin")
 }
 
-val jfxVersion = extra["jfx_version"] as String
-val assertjVersion = project.extra["assertj_version"] as String
+val jfxVersion = extra["jfx.version"] as String
+val assertjVersion = project.extra["assertj.version"] as String
 
 javafx {
     version = jfxVersion

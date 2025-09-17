@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
@@ -39,7 +40,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.PointDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupingContext
 import org.jetbrains.letsPlot.core.plot.builder.data.StatInput
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 
 class GeomLayerBuilder(

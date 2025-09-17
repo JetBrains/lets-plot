@@ -9,16 +9,16 @@ import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
-open class TextLabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
+open class LabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     companion object {
         private val DEMO_BOX_SIZE = DoubleVector(1200.0, 800.0)
 
-        private fun createTextLabel(spec: LabelSpec): TextLabel {
-            val label = TextLabel(spec.label)
+        private fun createLabel(spec: LabelSpec): Label {
+            val label = Label(spec.label)
             label.addClassName("label")
             label.setFontSize(spec.size)
             label.setFontWeight(spec.fontWeight ?: "normal")
@@ -50,9 +50,9 @@ open class TextLabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val labelSize = DoubleVector(200.0, 50.0)
         var y = 50.0
         for (spec in specs) {
-            val textLabel =
-                createTextLabel(spec)
-            val element = textLabel.rootGroup
+            val label =
+                createLabel(spec)
+            val element = label.rootGroup
             SvgUtils.transformTranslate(element, 100.0, y)
             groupComponent.add(element)
 

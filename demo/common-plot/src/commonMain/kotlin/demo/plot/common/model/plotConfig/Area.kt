@@ -22,7 +22,6 @@ class Area {
         val spec = """
             {
               'kind': 'plot',
-              'ggtoolbar': {},
               'mapping': {
                 'x': 'sepal length (cm)',
                 'group': 'target',

@@ -7,15 +7,16 @@ package demo.plot.batik.defaultViewer
 
 import demo.plot.common.model.plotConfig.Area
 import org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
+import java.awt.Dimension
 
 @Suppress("UNUSED_PARAMETER")
 fun main(args: Array<String>) {
     with(Area()) {
         PlotViewerWindowBatik(
             "Area plot",
-            null,
-            plotSpecList().first(),
-//                    Dimension(900, 700),
+            windowSize = Dimension(640, 480),
+//            windowSize = null,
+            rawSpec = plotSpecList().first(),
             preserveAspectRatio = false
         ).open()
     }

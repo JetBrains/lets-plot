@@ -14,12 +14,12 @@ plugins {
 val artifactBaseName = "lets-plot-image-export"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val assertjVersion = project.extra["assertj_version"]
+val assertjVersion = project.extra["assertj.version"]
 
-val hamcrestVersion = project.extra["hamcrest_version"]
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"]
+val hamcrestVersion = project.extra["hamcrest.version"]
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"]
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
-val mockitoVersion = project.extra["mockito_version"]
+val mockitoVersion = project.extra["mockito.version"]
 
 kotlin {
     jvm()

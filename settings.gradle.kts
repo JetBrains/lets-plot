@@ -7,7 +7,7 @@ import java.util.*
 
 pluginManagement {
     plugins {
-        val kotlinVersion = extra["kotlin_version"] as String
+        val kotlinVersion = extra["kotlin.version"] as String
 
         kotlin("multiplatform").version(kotlinVersion)
         kotlin("js").version(kotlinVersion)

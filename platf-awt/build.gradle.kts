@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+val jsvgVersion = project.extra["weisj.jsvg.version"] as String
+
 dependencies {
     compileOnly(project(":commons"))
     compileOnly(project(":datamodel"))
@@ -11,6 +13,9 @@ dependencies {
     compileOnly(project(":plot-base"))
     compileOnly(project(":plot-builder"))
     compileOnly(project(":plot-stem"))
+
+    compileOnly("com.github.weisj:jsvg:${jsvgVersion}")
+
     testImplementation(project(":demo-and-test-shared"))
     testImplementation(project(":demo-common-svg"))
     testImplementation(kotlin("test-junit"))

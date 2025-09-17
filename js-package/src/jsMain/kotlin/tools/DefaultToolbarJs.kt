@@ -51,7 +51,7 @@ class DefaultToolbarJs() {
                 alignItems = "center"
                 boxSizing = "border-box"
                 padding = "2px 5px"
-                backgroundColor = "$C_BACKGR"
+                backgroundColor = C_BACKGR_TRANSPARENT
                 border = "1px solid rgb(200, 200, 200)"
                 borderRadius = "8px"
             }
@@ -134,7 +134,7 @@ class DefaultToolbarJs() {
         button.setAttribute(
             "onmouseout", """
             if (!this.classList.contains('$SELECTED')) {
-                this.style.backgroundColor = '$C_BACKGR';
+                this.style.backgroundColor = 'transparent';
             }
         """.trimIndent()
         )
@@ -152,7 +152,7 @@ class DefaultToolbarJs() {
             }
         } else {
             button.classList.remove(SELECTED)
-            button.style.backgroundColor = "$C_BACKGR"
+            button.style.backgroundColor = "transparent"
 
             button.querySelector("svg")?.apply {
                 this as SVGSVGElement
@@ -188,5 +188,19 @@ class DefaultToolbarJs() {
         private const val C_BACKGR_HOVER = "rgb(218, 219, 221)"
         private const val C_BACKGR_SEL = "rgb(69, 114, 232)"
         private const val C_STROKE_SEL = "white"
+
+        // Transparency settings
+        private const val ALPHA = 0.8
+
+        // C_BACKGR with an alpha channel which on a white background looks the same as the solid C_BACKGR
+        // and slightly darkens any darker background.
+        // On a white bkgr: adjustedColor * alpha + white * (1-alpha) = C_BACKGR
+        // adjustedColor = (C_BACKGR - white * (1-alpha)) / alpha
+        private val C_BACKGR_TRANSPARENT = run {
+            val r = ((247 - 255 * (1 - ALPHA)) / ALPHA).toInt().coerceIn(0, 255)
+            val g = ((248 - 255 * (1 - ALPHA)) / ALPHA).toInt().coerceIn(0, 255)
+            val b = ((250 - 255 * (1 - ALPHA)) / ALPHA).toInt().coerceIn(0, 255)
+            "rgba($r, $g, $b, $ALPHA)"
+        }
     }
 }

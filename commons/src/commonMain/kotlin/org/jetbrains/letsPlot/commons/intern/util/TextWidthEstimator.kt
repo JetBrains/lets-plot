@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.presentation
+package org.jetbrains.letsPlot.commons.intern.util
 
 import org.jetbrains.letsPlot.commons.values.Font
 
@@ -13,8 +13,12 @@ object TextWidthEstimator {
     private const val DEFAULT_FAMILY = "Lucida Grande"
     private const val DEFAULT_FONT_SIZE = 14
 
+    private const val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 0.6
+    private const val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
+    private const val FONT_WIDTH_SCALE_FACTOR = 0.85026 // See explanation here: font_width_scale_factor.md
+
     // Symbols '-', '/', '\' and '|' were classified by our model as the Cluster-0 symbols (most narrow).
-    // However, they appear to be substantially wider than it was expected on MacOS.
+    // However, they appear to be substantially wider than it was expected on macOS.
     // Wherefore, as a temporary workaround, they were moved to the Cluster-1 - i.e. to the cluster of slightly wider symbols.
     private val MISCLASSIFIED = listOf('-', '/', '\\', '|')
 
@@ -909,8 +913,30 @@ object TextWidthEstimator {
                 ) * getSizeCoefficient(font)
     }
 
-    fun textWidth(text: String, font: Font): Double {
+    private fun proportionalWidthCalculator(text: String, font: Font): Double {
         if (text.isEmpty()) return 0.0
         return correctPrediction(text.map(this::getCharWidth).sum(), text.length, font)
+    }
+
+    private fun monospacedWidthCalculator(textLength: Int, font: Font): Double {
+        val ratio = FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED
+        val width = textLength.toDouble() * font.size * ratio
+        return if (font.isBold) {
+            // ToDo: switch to new ratios.
+            width * FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
+        } else {
+            width
+        }
+    }
+
+    fun widthCalculator(text: String, font: Font): Double {
+        return if (font.isMonospased) {
+            // ToDo: should take in account font family adjustment parameters.
+            monospacedWidthCalculator(text.length, font)
+        } else {
+            FONT_WIDTH_SCALE_FACTOR * proportionalWidthCalculator(text, font)
+        }.let {
+            it * font.family.widthFactor
+        }
     }
 }

@@ -63,3 +63,7 @@ Licensed under the FreeType License (FTL): https://www.freetype.org/license.html
 
 Copyright © 1998-2025 Thai Open Source Software Center Ltd, Clark Cooper, and Expat maintainers.
 Licensed under MIT License.
+
+### WeisJ/jsvg Java SVG Renderer
+
+Copyright © 2021-2024, Jannis Weis. Licensed under MIT License.

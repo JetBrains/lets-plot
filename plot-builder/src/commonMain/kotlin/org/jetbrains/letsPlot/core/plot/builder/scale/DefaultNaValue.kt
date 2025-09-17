@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFamily.Companion.DEF_FAMILY_NAME
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -121,7 +122,7 @@ object DefaultNaValue {
         VALUE_MAP.put(XEND, 0.0)
         VALUE_MAP.put(YEND, 0.0)
         VALUE_MAP.put(LABEL, "-")
-        VALUE_MAP.put(FAMILY, "sans-serif")
+        VALUE_MAP.put(FAMILY, DEF_FAMILY_NAME)
         VALUE_MAP.put(FONTFACE, "plain")
         VALUE_MAP.put(LINEHEIGHT, 1.0)
         VALUE_MAP.put(HJUST, 0.5)  // 'middle'

@@ -17,8 +17,9 @@ val artifactBaseName = "lets-plot-batik"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 
-val batikVersion = project.extra["batik_version"] as String
+val batikVersion = project.extra["batik.version"] as String
 val commonsIOVersion = project.extra["commons-io.version"] as String
+val jsvgVersion = project.extra["weisj.jsvg.version"] as String
 
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
 
@@ -42,7 +43,9 @@ val pomDependencies = listOf(
     // Batik.
     listOf("org.apache.xmlgraphics", "batik-codec", batikVersion),
     // commons-io: a newer version than the one in Batik transitive dependency.
-    listOf("commons-io", "commons-io", commonsIOVersion)
+    listOf("commons-io", "commons-io", commonsIOVersion),
+    // Java SVG Renderer (used for toolbar icons in Swing application).
+    listOf("com.github.weisj", "jsvg", jsvgVersion),
 )
 
 publishing {

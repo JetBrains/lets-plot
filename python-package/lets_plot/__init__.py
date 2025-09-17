@@ -49,7 +49,7 @@ class LetsPlot:
         Parameters
         ----------
         isolated_frame : bool
-            True - generate HTLM which can be used in iframe or in a standalone HTML document.
+            True - generate HTML which can be used in iframe or in a standalone HTML document.
             False - pre-load Lets-Plot JS library. Notebook cell output will only consist
             of HTML for the plot rendering. Default: None - auto-detect.
         offline : bool

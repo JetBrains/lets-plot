@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
-import javax.swing.SwingUtilities
 import kotlin.math.roundToInt
 
 object PlotImageExport {
@@ -73,34 +72,25 @@ object PlotImageExport {
             computationMessagesHandler = {}
         )
 
-        // The value will be either assigned in Swing thread or never used in case of exception.
-        lateinit var image: BufferedImage
+        val plotComponentSize = plotFigure.bounds().get().dimension
 
-        // TODO: just paint to BufferedImage without creating CanvasPane
-        SwingUtilities.invokeAndWait {
-            val canvasPane = CanvasPane(
-                figure = plotFigure,
-                pixelDensity = scaleFactor
-            )
+        val image = BufferedImage(
+            (plotComponentSize.x * scaleFactor).roundToInt(),
+            (plotComponentSize.y * scaleFactor).roundToInt(),
+            when (format) {
+                is Format.PNG -> BufferedImage.TYPE_INT_ARGB
+                is Format.TIFF -> BufferedImage.TYPE_INT_ARGB
+                is Format.JPEG -> BufferedImage.TYPE_INT_RGB
+            }
+        )
 
-            image = BufferedImage(
-                (canvasPane.width * scaleFactor).roundToInt(),
-                (canvasPane.height * scaleFactor).roundToInt(),
-                when (format) {
-                    is Format.PNG -> BufferedImage.TYPE_INT_ARGB
-                    is Format.TIFF -> BufferedImage.TYPE_INT_ARGB
-                    is Format.JPEG -> BufferedImage.TYPE_INT_RGB
-                }
-            )
+        val graphics = image.createGraphics()
 
-            val graphics = image.createGraphics()
+        graphics.scale(scaleFactor, scaleFactor)
 
-            // TODO: investigate inconsistency in scaling factor.
-            // CanvasPane already accepts pixelDensity, which is used to scale the canvas.
-            // Yet, when exporting, we apply the scaling factor again - pixelDensity doesn't seem to work as expected.
-            graphics.scale(scaleFactor, scaleFactor)
-
-            canvasPane.paint(graphics)
+        try {
+            CanvasPane.paint(plotFigure, scaleFactor, graphics)
+        } finally {
             graphics.dispose()
         }
 
@@ -110,8 +100,8 @@ object PlotImageExport {
         return ImageData(
             bytes = outputStream.toByteArray(),
             plotSize = DoubleVector(
-                x = image.width,
-                y = image.height
+                x = image.width.toDouble(),
+                y = image.height.toDouble()
             )
         )
     }

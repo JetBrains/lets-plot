@@ -6,12 +6,12 @@
 package demo.plot.jfx.component
 
 import demo.common.utils.jfx.SvgViewerDemoWindowJfx
-import demo.plot.shared.model.component.TextLabelDemo
+import demo.plot.shared.model.component.LabelDemo
 
 fun main() {
-    with(TextLabelDemo()) {
+    with(LabelDemo()) {
         SvgViewerDemoWindowJfx(
-            "Text label anchor and rotation",
+            "Label anchor and rotation",
             createSvgRoots(listOf(createModel()))
         ).open()
     }

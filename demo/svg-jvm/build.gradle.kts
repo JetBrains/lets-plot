@@ -8,9 +8,9 @@ plugins {
     id ("org.openjfx.javafxplugin")
 }
 
-val batikVersion = project.extra["batik_version"] as String
+val batikVersion = project.extra["batik.version"] as String
 val commonsIOVersion = project.extra["commons-io.version"] as String
-val jfxVersion = extra["jfx_version"] as String
+val jfxVersion = extra["jfx.version"] as String
 
 javafx {
     version = jfxVersion
