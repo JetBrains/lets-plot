@@ -25,7 +25,7 @@ __all__ = [
 
 def theme_grey():
     """
-    Set grey background and white gridlines.
+    Set the grey background with white gridlines.
 
     Returns
     -------
@@ -59,7 +59,7 @@ def theme_gray():
 
 def theme_light():
     """
-    Set light grey lines of various widths on white background.
+    Set the light grey lines of various widths on the white background.
 
     Returns
     -------
@@ -86,7 +86,7 @@ def theme_light():
 
 def theme_classic():
     """
-    Set dark grey axes and no gridlines on white background.
+    Set the dark grey axes and no gridlines on the white background.
 
     Returns
     -------
@@ -140,7 +140,7 @@ def theme_minimal():
 
 def theme_minimal2():
     """
-    Set default theme similar to `theme_minimal() <https://lets-plot.org/python/pages/api/lets_plot.theme_minimal.html>`__
+    Set the default theme similar to `theme_minimal() <https://lets-plot.org/python/pages/api/lets_plot.theme_minimal.html>`__
     adding an x-axis line and only major gridlines.
 
     Returns
@@ -168,7 +168,7 @@ def theme_minimal2():
 
 def theme_none():
     """
-    Set basic blue-accented scheme.
+    Set a basic blue-accented scheme with the light blue background.
 
     Returns
     -------
@@ -195,7 +195,7 @@ def theme_none():
 
 def theme_bw():
     """
-    Set grey gridlines and a dark grey plot border on white background.
+    Set a dark grey plot border and grey gridlines on the white background.
 
     Returns
     -------
@@ -251,7 +251,7 @@ def theme_void():
 
 def flavor_darcula():
     """
-    Set Darcula color scheme.
+    Set the Darcula color scheme.
 
     Returns
     -------
@@ -282,7 +282,7 @@ def flavor_darcula():
 
 def flavor_solarized_light():
     """
-    Set Solarized Light color scheme.
+    Set the Solarized Light color scheme.
 
     Returns
     -------
@@ -313,7 +313,7 @@ def flavor_solarized_light():
 
 def flavor_solarized_dark():
     """
-    Set Solarized Dark color scheme.
+    Set the Solarized Dark color scheme.
 
     Returns
     -------
@@ -344,7 +344,7 @@ def flavor_solarized_dark():
 
 def flavor_high_contrast_light():
     """
-    Set high-contrast light color scheme.
+    Set a high-contrast light color scheme.
 
     Returns
     -------
@@ -375,7 +375,7 @@ def flavor_high_contrast_light():
 
 def flavor_high_contrast_dark():
     """
-    Set high-contrast dark color scheme.
+    Set a high-contrast dark color scheme.
 
     Returns
     -------
