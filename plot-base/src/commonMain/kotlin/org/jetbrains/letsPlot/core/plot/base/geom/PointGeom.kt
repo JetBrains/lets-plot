@@ -49,7 +49,8 @@ open class PointGeom : GeomBase() {
             // but Shape.size() can't be used because it takes DataPointAesthetics as param
 
             val scaleFactor = if (sizeUnit.isNullOrBlank()) {
-                ctx.getScaleFactor()
+                val factor = ctx.getScaleFactor()
+                if (factor >= 1) factor else 1.0 // do not enlarge points if scaleFactor < 1
             } else {
                 AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
             }
