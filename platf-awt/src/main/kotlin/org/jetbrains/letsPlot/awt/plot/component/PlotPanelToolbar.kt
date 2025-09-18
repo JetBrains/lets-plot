@@ -7,13 +7,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 
 import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.parser.SVGLoader
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolView
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.BBOX_ZOOM_TOOL_SPEC
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.CBOX_ZOOM_TOOL_SPEC
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.PAN_TOOL_SPEC
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.*
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
 import java.awt.Color
 import java.awt.Dimension
@@ -24,19 +18,30 @@ internal class PlotPanelToolbar constructor(
     figureModel: FigureModel
 ) : JPanel() {
 
-    private val controller = DefaultFigureToolsController(
-        figure = figureModel,
-        errorMessageHandler = { msg ->
+    private val toolbarSupport = object : FigureToolbarSupport(
+        figureModel = figureModel
+    ) {
+        override fun addToggleTool(tool: ToggleTool): ToggleToolView {
+            return addSwingToolButton(tool)
+        }
+
+        override fun addResetButton(): ActionToolView {
+            return addSwingResetButton()
+        }
+
+        override fun errorMessageHandler(message: String) {
             SwingUtilities.invokeLater {
                 JOptionPane.showMessageDialog(
                     null,
-                    msg,
+                    message,
                     "Situation",
                     JOptionPane.ERROR_MESSAGE
                 )
             }
         }
-    )
+    }
+
+    private val innerContainer: JPanel
 
     init {
         layout = FlowLayout(FlowLayout.CENTER, 0, 2)  // 2px vertical gap to center the inner container
@@ -48,7 +53,7 @@ internal class PlotPanelToolbar constructor(
         isOpaque = false
 
         // Create an inner container with a custom rounded background
-        val innerContainer = object : JPanel(FlowLayout(FlowLayout.CENTER, 6, 0)) {
+        innerContainer = object : JPanel(FlowLayout(FlowLayout.CENTER, 6, 0)) {
             override fun paintComponent(g: java.awt.Graphics) {
                 val g2 = g.create() as java.awt.Graphics2D
                 g2.setRenderingHint(
@@ -72,28 +77,15 @@ internal class PlotPanelToolbar constructor(
             border = BorderFactory.createEmptyBorder(3, 3, 3, 3)
         }
 
-        listOf(
-            PAN_TOOL_SPEC,
-            BBOX_ZOOM_TOOL_SPEC,
-            CBOX_ZOOM_TOOL_SPEC,
-        ).forEach {
-            val button = createToolButton(it)
-            innerContainer.add(button)
-        }
-
-        innerContainer.add(resetButton())
-
         // Add the inner container to the main toolbar
         add(innerContainer)
 
-        figureModel.onToolEvent { event ->
-            controller.handleToolFeedback(event)
-        }
+        // Add standard buttons
+        toolbarSupport.initialize()
     }
 
-    private fun createToolButton(toolSpec: Map<String, Any>): JButton {
-        val tool = ToggleTool(toolSpec)
-        val iconSvg = toolSpec["icon"] as? String
+    private fun addSwingToolButton(tool: ToggleTool): ToggleToolView {
+        val iconSvg = tool.spec["icon"] as? String
         val normalIcon = createSvgIcon(
             iconSvg, color = C_STROKE,
             backgroundColor = Color(0, 0, 0, 0) // Fully transparent
@@ -101,6 +93,7 @@ internal class PlotPanelToolbar constructor(
         val hoverIcon = createSvgIcon(iconSvg, color = C_STROKE, backgroundColor = C_BACKGR_HOVER)
         val selectedIcon = createSvgIcon(iconSvg, color = C_STROKE_SEL, backgroundColor = C_BACKGR_SEL)
 
+        // Create JButton and add it to the container
         val button = createStyledButton(
             normalIcon = normalIcon,
             hoverIcon = hoverIcon,
@@ -108,7 +101,9 @@ internal class PlotPanelToolbar constructor(
             selected = { tool.active }
         )
 
-        val view = object : ToggleToolView {
+        innerContainer.add(button)
+
+        return object : ToggleToolView {
             override fun setState(selected: Boolean) {
                 button.icon = if (selected) selectedIcon else normalIcon
             }
@@ -117,11 +112,9 @@ internal class PlotPanelToolbar constructor(
                 button.addActionListener { handler() }
             }
         }
-        controller.registerTool(tool, view)
-        return button
     }
 
-    private fun resetButton(): JButton {
+    private fun addSwingResetButton(): ActionToolView {
         val normalIcon = createSvgIcon(
             ToolbarIcons.RESET,
             color = C_STROKE,
@@ -129,6 +122,7 @@ internal class PlotPanelToolbar constructor(
         )
         val hoverIcon = createSvgIcon(ToolbarIcons.RESET, color = C_STROKE, backgroundColor = C_BACKGR_HOVER)
 
+        // Create JButton and add it to the container
         val button = createStyledButton(
             normalIcon = normalIcon,
             hoverIcon = hoverIcon,
@@ -136,10 +130,13 @@ internal class PlotPanelToolbar constructor(
             selected = { false }
         )
 
-        button.addActionListener {
-            controller.resetFigure(deactiveTools = true)
+        innerContainer.add(button)
+
+        return object : ActionToolView {
+            override fun onAction(handler: () -> Unit) {
+                button.addActionListener { handler() }
+            }
         }
-        return button
     }
 
     private fun createStyledButton(
