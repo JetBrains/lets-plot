@@ -13,6 +13,7 @@ class PointDensity {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            withParameters(method = "kde2d"),
             withParameters(adjust = 10.0),
             withParameters(adjust = 0.1),
         )
@@ -44,7 +45,8 @@ class PointDensity {
     }
 
     private fun withParameters(
-        adjust: Double
+        adjust: Double = 1.0,
+        method: String = "neighbours"
     ): MutableMap<String, Any> {
         val spec = """
             {
@@ -54,12 +56,13 @@ class PointDensity {
                 'y': 'sepal length (cm)'
               },
               'ggtitle': {
-                'text': 'With parameters:\nadjust = $adjust'
+                'text': 'With parameters:\nadjust = $adjust\nmethod = $method'
               },
               'layers': [
                 {
                   'geom': 'pointdensity',
-                  'adjust': $adjust
+                  'adjust': $adjust,
+                  'method': '$method'
                 }
               ]
             }

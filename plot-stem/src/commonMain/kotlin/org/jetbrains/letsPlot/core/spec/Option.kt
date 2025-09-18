@@ -554,6 +554,7 @@ object Option {
 
         object PointDensity {
             const val ADJUST = "adjust"
+            const val METHOD = "method"
         }
 
         object Sina {

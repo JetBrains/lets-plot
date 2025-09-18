@@ -5,14 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
 class PointDensityStat(
-    private val adjust: Double
+    private val adjust: Double,
+    private val method: Method
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -29,16 +32,12 @@ class PointDensityStat(
         }
 
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
-        val adjustedXRange = xRange.length * adjust
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
-        val adjustedYRange = yRange.length * adjust
-
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val r2 = (adjustedXRange + adjustedYRange) / 70.0
-        val xy = adjustedXRange / adjustedYRange
+        val (xValues, yValues) = SeriesUtil.filterFinite(xs, ys)
 
-        val statData = buildStat(xs, ys, r2, xy)
+        val statData = buildStat(xValues, yValues, xRange, yRange)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -48,27 +47,69 @@ class PointDensityStat(
     }
 
     private fun buildStat(
-        xs: List<Double?>,
-        ys: List<Double?>,
-        r2: Double,
-        xy: Double
+        xValues: List<Double>,
+        yValues: List<Double>,
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
-        val (statX, statY) = SeriesUtil.filterFinite(xs, ys)
-        val statCount = countNeighbours(statX, statY, r2, xy).map { it.toDouble() }
+        return when (method) {
+            Method.NEIGHBOURS -> buildNeighboursStat(xValues, yValues, xRange, yRange)
+            Method.KDE2D -> {
+                // TODO
+                mapOf(
+                    Stats.X to emptyList(),
+                    Stats.Y to emptyList(),
+                    Stats.COUNT to emptyList(),
+                    Stats.DENSITY to emptyList(),
+                    Stats.SCALED to emptyList()
+                )
+            }
+        }
+    }
+
+    private fun buildNeighboursStat(
+        xValues: List<Double>,
+        yValues: List<Double>,
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
+    ): Map<DataFrame.Variable, List<Double>> {
+        val adjustedXRange = xRange.length * adjust
+        val adjustedYRange = yRange.length * adjust
+        val r2 = (adjustedXRange + adjustedYRange) / 70.0
+        val xy = adjustedXRange / adjustedYRange
+        val statCount = countNeighbours(xValues, yValues, r2, xy).map { it.toDouble() }
         val statDensity = statCount.map { it / statCount.size } // Never divide by zero - no mapping if no points
         val maxCount = statCount.maxOrNull() ?: 0.0 // null only if there are no points (each point counts itself)
         val statScaled = statCount.map { it / maxCount } // Never divide by zero - no mapping if no points
         return mapOf(
-            Stats.X to statX,
-            Stats.Y to statY,
+            Stats.X to xValues,
+            Stats.Y to yValues,
             Stats.COUNT to statCount,
             Stats.DENSITY to statDensity,
             Stats.SCALED to statScaled
         )
     }
 
+    enum class Method {
+        NEIGHBOURS, KDE2D;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Method>()
+
+            fun safeValueOf(v: String): Method {
+                return ENUM_INFO.safeValueOf(v) ?:
+                throw IllegalArgumentException(
+                    "Unsupported method: '$v'\n" +
+                    "Use one of: neighbours, kde2d."
+                )
+            }
+        }
+    }
+
     companion object {
         const val DEF_ADJUST = 1.0
+        val DEF_METHOD = Method.NEIGHBOURS
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

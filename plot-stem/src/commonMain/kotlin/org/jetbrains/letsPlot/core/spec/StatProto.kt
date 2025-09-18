@@ -21,10 +21,10 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
 import org.jetbrains.letsPlot.core.spec.Option.Stat.PointDensity
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
+import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
-import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
@@ -146,7 +146,10 @@ object StatProto {
             DENSITY2DF -> configureDensity2dStat(options, true)
             POINTDENSITY -> {
                 PointDensityStat(
-                    adjust = options.getDoubleDef(PointDensity.ADJUST, PointDensityStat.DEF_ADJUST)
+                    adjust = options.getDoubleDef(PointDensity.ADJUST, PointDensityStat.DEF_ADJUST),
+                    method = options.getString(PointDensity.METHOD)?.let {
+                        PointDensityStat.Method.safeValueOf(it)
+                    } ?: PointDensityStat.DEF_METHOD
                 )
             }
             StatKind.QQ -> configureQQStat(options)
