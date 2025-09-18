@@ -11,24 +11,49 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools
  * Platform-specific toolbar implementations can use this class and provide
  * concrete implementations for creating and adding UI components.
  */
-abstract class FigureToolbarSupport(
-    protected val figureModel: FigureModel
-) {
+abstract class FigureToolbarSupport {
 
-    private val controller = DefaultFigureToolsController(
-        figure = figureModel,
-        errorMessageHandler = ::errorMessageHandler
-    )
+    private var figureModel: FigureModel? = null
+    private var controller: DefaultFigureToolsController? = null
+    private val tools = mutableListOf<Pair<ToggleTool, ToggleToolView>>()
+    private var resetButton: ActionToolView? = null
 
-    fun initialize() {
+    fun initializeUI() {
         TOOL_SPECS.forEach { toolSpec ->
             val tool = ToggleTool(toolSpec)
             val toolButton = addToggleTool(tool)
+            tools.add(tool to toolButton)
+        }
+
+        resetButton = addResetButton()
+    }
+
+    fun attach(figureModel: FigureModel) {
+        check(this.figureModel == null) { "Toolbar is already attached to a figure model" }
+
+        this.figureModel = figureModel
+        this.controller = DefaultFigureToolsController(
+            figure = figureModel,
+            errorMessageHandler = ::errorMessageHandler
+        )
+
+        registerWithController()
+    }
+
+    fun detach() {
+        this.figureModel = null
+        this.controller = null
+    }
+
+    private fun registerWithController() {
+        val controller = this.controller ?: return
+        val figureModel = this.figureModel ?: return
+
+        tools.forEach { (tool, toolButton) ->
             controller.registerTool(tool, toolButton)
         }
 
-        val resetButton = addResetButton()
-        resetButton.onAction {
+        resetButton?.onAction {
             controller.resetFigure(deactiveTools = true)
         }
 

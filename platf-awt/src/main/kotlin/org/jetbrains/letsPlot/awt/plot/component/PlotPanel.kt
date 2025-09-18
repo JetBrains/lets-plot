@@ -127,7 +127,7 @@ open class PlotPanel constructor(
         )
 
         if (showToolbar) {
-            add(PlotPanelToolbar(figureModel), BorderLayout.NORTH)
+            add(PlotPanelToolbar().also { it.attach(figureModel) }, BorderLayout.NORTH)
             add(plotComponentContainer, BorderLayout.CENTER)
         }
     }

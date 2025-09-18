@@ -11,13 +11,9 @@ import javax.swing.JOptionPane
 import javax.swing.JPanel
 import javax.swing.SwingUtilities
 
-internal class SandboxToolbar(
-    figureModel: FigureModel
-) : JPanel() {
+internal class SandboxToolbar : JPanel() {
 
-    private val toolbarSupport = object : FigureToolbarSupport(
-        figureModel = figureModel
-    ) {
+    private val toolbarSupport = object : FigureToolbarSupport() {
         override fun addToggleTool(tool: ToggleTool): ToggleToolView {
             return addSwingToolButton(tool)
         }
@@ -39,7 +35,15 @@ internal class SandboxToolbar(
     }
 
     init {
-        toolbarSupport.initialize()
+        toolbarSupport.initializeUI()
+    }
+
+    fun attach(figureModel: FigureModel) {
+        toolbarSupport.attach(figureModel)
+    }
+
+    fun detach() {
+        toolbarSupport.detach()
     }
 
     private fun addSwingToolButton(tool: ToggleTool): ToggleToolView {

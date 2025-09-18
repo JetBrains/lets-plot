@@ -14,13 +14,9 @@ import java.awt.Dimension
 import java.awt.FlowLayout
 import javax.swing.*
 
-internal class PlotPanelToolbar constructor(
-    figureModel: FigureModel
-) : JPanel() {
+internal class PlotPanelToolbar : JPanel() {
 
-    private val toolbarSupport = object : FigureToolbarSupport(
-        figureModel = figureModel
-    ) {
+    private val toolbarSupport = object : FigureToolbarSupport() {
         override fun addToggleTool(tool: ToggleTool): ToggleToolView {
             return addSwingToolButton(tool)
         }
@@ -80,8 +76,15 @@ internal class PlotPanelToolbar constructor(
         // Add the inner container to the main toolbar
         add(innerContainer)
 
-        // Add standard buttons
-        toolbarSupport.initialize()
+        toolbarSupport.initializeUI()
+    }
+
+    fun attach(figureModel: FigureModel) {
+        toolbarSupport.attach(figureModel)
+    }
+
+    fun detach() {
+        toolbarSupport.detach()
     }
 
     private fun addSwingToolButton(tool: ToggleTool): ToggleToolView {

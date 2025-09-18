@@ -49,7 +49,9 @@ fun plotWithToolbar(rawSpec: MutableMap<String, Any>): JComponent {
     }
 
     val contentPanel = JPanel(BorderLayout())
-    val toolbar = SandboxToolbar(figureComponent.getClientProperty(FigureModel::class) as FigureModel)
+    val figureModel = figureComponent.getClientProperty(FigureModel::class) as FigureModel
+    val toolbar = SandboxToolbar()
+    toolbar.attach(figureModel)
 
     contentPanel.add(toolbar, BorderLayout.NORTH)
     contentPanel.add(figureComponent, BorderLayout.CENTER)
