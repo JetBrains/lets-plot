@@ -32,6 +32,16 @@ class ThemeConfigTest {
     }
 
     @Test
+    fun withFlavorStandard() {
+        val spec = plotSpec(themeName = "classic", flavorName = "standard")
+        val colors = transformToClientPlotConfig(spec).theme.colors()
+
+        assertEquals(Color.parseHex("#474747"), colors.pen())
+        assertEquals(Color.WHITE, colors.paper())
+        assertEquals(Color.PACIFIC_BLUE, colors.brush())
+    }
+
+    @Test
     fun withThemeNone() {
         val spec = plotSpec(themeName = "none")
         val colors = transformToClientPlotConfig(spec).theme.colors()

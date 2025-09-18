@@ -55,10 +55,17 @@ class ThemeColorOptionsTest(
             val noneTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_NONE)
             val classicTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.R_CLASSIC)
             val flavorOption = mapOf(FLAVOR to ThemeOption.Flavor.DARCULA)
+            val flavorStandardOption = mapOf(FLAVOR to ThemeOption.Flavor.STANDARD)
 
             return listOf(
                 test(
                     themeOptions = minimalTheme,
+                    expected = yAxisColor(null) +
+                            plotBackground(Color.WHITE) +
+                            panelBackgroundRect(null, null)
+                ),
+                test(
+                    themeOptions = minimalTheme + flavorStandardOption,
                     expected = yAxisColor(null) +
                             plotBackground(Color.WHITE) +
                             panelBackgroundRect(null, null)
@@ -184,6 +191,16 @@ class ThemeColorOptionsTest(
                 // The 'classic' theme: facet rect fill = plot background
                 test(
                     themeOptions = classicTheme,
+                    expected = yAxisColor(DARK_GREY) +
+                            panelBackgroundRect(null, null) +
+                            plotBackground(Color.WHITE) +
+                            facetStripBackgroundRect(
+                                expectedColor = DARK_GREY,
+                                expectedFill = Color.WHITE
+                            )
+                ),
+                test(
+                    themeOptions = classicTheme + flavorStandardOption,
                     expected = yAxisColor(DARK_GREY) +
                             panelBackgroundRect(null, null) +
                             plotBackground(Color.WHITE) +
