@@ -5660,6 +5660,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
                       manual_key=None, sampling=None,
                       tooltips=None,
                       adjust=None,
+                      method=None,
                       color_by=None, fill_by=None,
                       **other_args):
     return _geom('pointdensity',
@@ -5673,6 +5674,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
                  sampling=sampling,
                  tooltips=tooltips,
                  adjust=adjust,
+                 method=method,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
