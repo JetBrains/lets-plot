@@ -1,12 +1,12 @@
 package demo.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
@@ -181,8 +181,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             border = BorderFactory.createTitledBorder("Favorites")
 
             // Align components to the left
-            favoritesComboBox.alignmentX = Component.LEFT_ALIGNMENT
-            favoriteButtonsPanel.alignmentX = Component.LEFT_ALIGNMENT
+            favoritesComboBox.alignmentX = LEFT_ALIGNMENT
+            favoriteButtonsPanel.alignmentX = LEFT_ALIGNMENT
 
             // Set max size to prevent vertical stretching of combobox
             favoritesComboBox.maximumSize = Dimension(Integer.MAX_VALUE, favoritesComboBox.preferredSize.height)
@@ -490,8 +490,9 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 }
 
                 "canvas" -> {
-                    val plotFig = MonolithicCanvas.buildPlotFigureFromRawSpec(
-                        rawSpec = spec,
+                    val plotFig = PlotCanvasFigure2()
+                    plotFig.update(
+                        MonolithicCommon.processRawSpecs(spec),
                         sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
                         computationMessagesHandler = { messages ->
                             for (message in messages) {
@@ -499,7 +500,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                             }
                         }
                     )
-                    CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                    CanvasPane2(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
                 }
                 else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
             }
@@ -521,7 +522,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         } finally {
             plotPanel.revalidate()
-            //plotPanel.repaint()
         }
     }
 

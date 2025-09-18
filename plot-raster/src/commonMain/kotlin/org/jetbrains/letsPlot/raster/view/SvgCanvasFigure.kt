@@ -5,11 +5,14 @@
 
 package org.jetbrains.letsPlot.raster.view
 
-import org.jetbrains.letsPlot.commons.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
@@ -22,41 +25,95 @@ import org.jetbrains.letsPlot.raster.shape.Element
 import kotlin.math.ceil
 
 class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
-    override val size: Vector get() {
-        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
-        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
-        return Vector(contentWidth, contentHeight)
-    }
-
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
             field = value
-            mapSvgSvgElement()
-            requestRedraw()
+            val width = value.width().get()
+            val height = value.height().get()
+            if (width != null && height != null) {
+                svgBounds.set(Rectangle(0, 0, width.toInt(), height.toInt()))
+            }
+            needMapSvgSvgElement = true
+            needResizeContentCanvas = true
         }
 
+    private var needMapSvgSvgElement: Boolean = true // The whole svgSvgElement was replaced
+    private var needRedraw: Boolean = true // Some svg elements may change their appearance (e.g., text) and require redraw.
+    private var needResizeContentCanvas: Boolean = true // The size of svgSvgElement was changed, so we need to resize contentCanvas.
+
+    private var canvasPeer: CanvasPeer? = null
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
+    private var contentCanvas: Canvas? = null // Should have the same size as Figure
+    private var canvasControl: CanvasControl? = null
+    private var textMeasureCanvas: Canvas? = null
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-    private val repaintRequestListeners = mutableListOf<() -> Unit>()
+    private val svgBounds = ValueProperty(Rectangle(0, 0, 0, 0))
 
-    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
-        svgCanvasPeer = SvgCanvasPeer(canvasPeer)
-
-        mapSvgSvgElement()
-        return object : Registration() {
-            override fun doRemove() {
-                rootMapper.detachRoot()
-                svgCanvasPeer = null
-            }
-        }
+    override fun bounds(): ReadableProperty<Rectangle> {
+        return svgBounds
     }
 
-    override val eventPeer: MouseEventPeer = MouseEventPeer()
+    override fun mapToCanvas(canvasControl: CanvasControl): Registration {
+        val textMeasureCanvas = canvasControl.createCanvas(0, 0)
+        val canvasPeer = object : CanvasPeer {
+            override fun createCanvas(size: Vector): Canvas {
+                return canvasControl.createCanvas(size.x, size.y)
+            }
 
-    override fun paint(context2d: Context2d) {
-        renderElement(rootMapper.target, context2d)
+            override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+                return canvasControl.createSnapshot(bitmap)
+            }
+
+            override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
+                return canvasControl.decodeDataImageUrl(dataUrl)
+            }
+
+            override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+                return canvasControl.decodePng(png)
+            }
+
+            override fun measureText(
+                text: String,
+                font: Font
+            ): TextMetrics {
+                val textMeasureCanvas = textMeasureCanvas
+                val ctx = textMeasureCanvas.context2d
+                ctx.save()
+                ctx.setFont(font)
+                val textMetrics = ctx.measureText(text)
+                ctx.restore()
+
+                return textMetrics
+            }
+
+            override fun dispose() {
+                // nothing to dispose
+            }
+        }
+
+        canvasControl.addChild(textMeasureCanvas)
+        this.canvasControl = canvasControl
+        this.textMeasureCanvas = textMeasureCanvas
+        this.canvasPeer = canvasPeer
+        svgCanvasPeer = SvgCanvasPeer(canvasPeer)
+
+        // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
+        onAnimationFrame()
+
+        val anim = canvasControl.createAnimationTimer(AnimationProvider.AnimationEventHandler.toHandler { onAnimationFrame() })
+        anim.start()
+
+        return object : Registration() {
+            override fun doRemove() {
+                contentCanvas?.let(canvasControl::removeChild)
+                textMeasureCanvas.let(canvasControl::removeChild)
+                rootMapper.detachRoot()
+                anim.stop()
+                this@SvgCanvasFigure.canvasControl = null
+            }
+        }
     }
 
     private fun mapSvgSvgElement() {
@@ -70,17 +127,55 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         })
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
         rootMapper.attachRoot(MappingContext())
+
+        needMapSvgSvgElement = false
     }
 
-    override fun onRepaintRequested(listener: () -> Unit): Registration {
-        repaintRequestListeners.add(listener)
-        return Registration.onRemove {
-            repaintRequestListeners.remove(listener)
+    private fun resizeContentCanvas() {
+        //println("SvgCanvasFigure.resizeContentCanvas: width=$width, height=$height")
+        val canvasControl = canvasControl ?: return
+
+        contentCanvas?.let {
+            canvasControl.removeChild(it)
         }
+
+        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
+        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+
+        val newContentCanvas = canvasControl.createCanvas(contentWidth, contentHeight)
+        canvasControl.addChild(newContentCanvas)
+        contentCanvas = newContentCanvas
+
+        needResizeContentCanvas = false
+        svgBounds.set(Rectangle(0, 0, contentWidth, contentHeight))
+
+        //println("SvgCanvasFigure.resizeContentCanvas: done")
+        return
     }
 
-    override fun resize(width: Number, height: Number) {
-        // nothing to do - size is defined by svgSvgElement width/height attributes
+    private fun onAnimationFrame(): Boolean {
+        if (needMapSvgSvgElement) {
+            mapSvgSvgElement()
+            needRedraw = true
+        }
+
+        if (needResizeContentCanvas) {
+            resizeContentCanvas()
+            needRedraw = true
+        }
+
+        if (!needRedraw) {
+            return false
+        }
+
+        val canvas = contentCanvas ?: return false
+
+        canvas.context2d.clearRect(DoubleRectangle.XYWH(0.0, 0.0, canvas.size.x, canvas.size.y))
+
+        renderElement(rootMapper.target, canvas.context2d)
+
+        needRedraw = false
+        return true
     }
 
     private fun render(elements: List<Element>, ctx: Context2d) {
@@ -123,16 +218,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     private fun requestRedraw() {
-        repaintRequestListeners.forEach { it() }
+        needRedraw = true
     }
-
-    override fun bounds(): ReadableProperty<Rectangle> {
-        TODO("bounds() is not supported in SvgCanvasFigure. Use size property instead.")
-    }
-
-    override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        TODO("mapToCanvas(CanvasControl) is not supported in SvgCanvasFigure. Use mapToCanvas(CanvasPeer) instead.")
-    }
-
-
 }
