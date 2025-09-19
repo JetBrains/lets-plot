@@ -16,7 +16,7 @@ The library design is heavily influenced by Leland Wilkinson's work [The Grammar
 ## Grammar of Graphics for Python [![Latest Release](https://badge.fury.io/py/lets-plot.svg)](https://pypi.org/project/lets-plot)
 
 A bridge between R (ggplot2) and Python data visualization. \
-To learn more, see the documentation site at **[lets-plot.org](https://lets-plot.org)**.          
+To learn more, see the documentation site at **[lets-plot.org/python](https://lets-plot.org/python)**.          
 
 
 ## Grammar of Graphics for Kotlin [![Latest Release](https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin)](https://github.com/JetBrains/lets-plot-kotlin/releases/latest)
@@ -34,6 +34,10 @@ To learn more, see the **[Lets-Plot Compose Frontend](https://github.com/JetBrai
 ### JVM and Kotlin/JS
 Embed Lets-Plot charts in JVM (Swing, JavaFX) and Kotlin/JS applications. <br>
 To learn more, see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
+        
+### Documentation
+
+Kotlin API documentation site: [lets-plot.org/kotlin](https://lets-plot.org/kotlin).
 
 ## "Lets-Plot in SciView" plugin
 
