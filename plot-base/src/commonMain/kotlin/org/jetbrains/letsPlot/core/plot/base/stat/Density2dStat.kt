@@ -24,6 +24,7 @@ class Density2dStat constructor(
     binCount: Int,
     binWidth: Double
 ) : AbstractDensity2dStat(
+    defaultMappings = DEF_MAPPING,
     bandWidthX = bandWidthX,
     bandWidthY = bandWidthY,
     bandWidthMethod = bandWidthMethod,
@@ -61,7 +62,7 @@ class Density2dStat constructor(
         val xRange = statCtx.overallXRange()!!
         val yRange = statCtx.overallYRange()!!
 
-        val statData = density2dGrid(xVector, yVector, groupWeight, xRange, yRange)
+        val statData = getStatData(xVector, yVector, groupWeight, xRange, yRange)
 
         if (isContour) {
             val zRange = DoubleSpan.encloseAllQ(statData.getValue(Stats.DENSITY))
@@ -85,5 +86,12 @@ class Density2dStat constructor(
             }
             return builder.build()
         }
+    }
+
+    companion object {
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
+        )
     }
 }

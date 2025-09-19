@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 
 abstract class AbstractDensity2dStat(
+    defaultMappings: Map<Aes<*>, DataFrame.Variable>,
     private val bandWidthX: Double?,
     private val bandWidthY: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,  // Used is `bandWidth` is not set.
@@ -24,7 +25,7 @@ abstract class AbstractDensity2dStat(
     private val binCount: Int,
     private val binWidth: Double
 
-) : BaseStat(DEF_MAPPING) {
+) : BaseStat(defaultMappings) {
 
     //    var adjust = DEF_ADJUST
 //    var nx = DEF_N
@@ -108,7 +109,7 @@ abstract class AbstractDensity2dStat(
         throw IllegalStateException("'density2d' statistic can't be executed on the client side")
     }
 
-    protected fun density2dGrid(
+    protected fun getStatData(
         xVector: List<Double?>,
         yVector: List<Double?>,
         groupWeight: List<Double?>,
@@ -121,6 +122,41 @@ abstract class AbstractDensity2dStat(
         val statDensity = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
 
+        val (stepsX, stepsY, densityMatrix) = density2dGrid(xVector, yVector, groupWeight, xRange, yRange)
+
+        val weightsSum = SeriesUtil.sum(groupWeight)
+        for (row in 0 until nY) {
+            for (col in 0 until nX) {
+                statX.add(stepsX[col])
+                statY.add(stepsY[row])
+                val count = densityMatrix.getEntry(row, col)
+                statCount.add(count)
+                statDensity.add(count / weightsSum)
+            }
+        }
+
+        statCount.maxOrNull()?.let { maxCount ->
+            for (d in statCount) {
+                statScaled.add(d / maxCount)
+            }
+        }
+
+        return mapOf(
+            Stats.X to statX,
+            Stats.Y to statY,
+            Stats.COUNT to statCount,
+            Stats.DENSITY to statDensity,
+            Stats.SCALED to statScaled
+        )
+    }
+
+    protected fun density2dGrid(
+        xVector: List<Double?>,
+        yVector: List<Double?>,
+        groupWeight: List<Double?>,
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
+    ): Triple<List<Double>, List<Double>, BlockRealMatrix> {
         val bandWidth = DoubleArray(2)
         bandWidth[0] = getBandWidthX(xVector)
         bandWidth[1] = getBandWidthY(yVector)
@@ -148,30 +184,11 @@ abstract class AbstractDensity2dStat(
                 groupWeight
             )
         )
-        val matrixFinal = matrixY.multiply(matrixX.transpose())
 
-        for (row in 0 until nY) {
-            for (col in 0 until nX) {
-                statX.add(stepsX[col])
-                statY.add(stepsY[row])
-                val count = matrixFinal.getEntry(row, col)
-                statCount.add(count)
-                statDensity.add(count / SeriesUtil.sum(groupWeight))
-            }
-        }
-
-        statCount.maxOrNull()?.let { maxCount ->
-            for (d in statCount) {
-                statScaled.add(d / maxCount)
-            }
-        }
-
-        return mapOf(
-            Stats.X to statX,
-            Stats.Y to statY,
-            Stats.COUNT to statCount,
-            Stats.DENSITY to statDensity,
-            Stats.SCALED to statScaled
+        return Triple(
+            stepsX,
+            stepsY,
+            matrixY.multiply(matrixX.transpose())
         )
     }
 
@@ -187,10 +204,6 @@ abstract class AbstractDensity2dStat(
         const val DEF_BIN_COUNT = 10
         const val DEF_BIN_WIDTH = 0.0
 
-        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-            Aes.X to Stats.X,
-            Aes.Y to Stats.Y
-        )
         private const val MAX_N = 999
     }
 }
