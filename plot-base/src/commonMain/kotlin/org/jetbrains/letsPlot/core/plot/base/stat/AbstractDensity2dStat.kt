@@ -5,9 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
+import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 
 abstract class AbstractDensity2dStat(
     private val bandWidthX: Double?,
@@ -103,6 +106,73 @@ abstract class AbstractDensity2dStat(
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         // ToDo: ???
         throw IllegalStateException("'density2d' statistic can't be executed on the client side")
+    }
+
+    protected fun density2dGrid(
+        xVector: List<Double?>,
+        yVector: List<Double?>,
+        groupWeight: List<Double?>,
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
+    ): Map<DataFrame.Variable, List<Double>> {
+        val statX = ArrayList<Double>()
+        val statY = ArrayList<Double>()
+        val statCount = ArrayList<Double>()
+        val statDensity = ArrayList<Double>()
+        val statScaled = ArrayList<Double>()
+
+        val bandWidth = DoubleArray(2)
+        bandWidth[0] = getBandWidthX(xVector)
+        bandWidth[1] = getBandWidthY(yVector)
+
+        val stepsX = DensityStatUtil.createStepValues(xRange, nX)
+        val stepsY = DensityStatUtil.createStepValues(yRange, nY)
+
+        val matrixX = BlockRealMatrix(
+            DensityStatUtil.createRawMatrix(
+                xVector,
+                stepsX,
+                kernelFun,
+                bandWidth[0],
+                adjust,
+                groupWeight
+            )
+        )
+        val matrixY = BlockRealMatrix(
+            DensityStatUtil.createRawMatrix(
+                yVector,
+                stepsY,
+                kernelFun,
+                bandWidth[1],
+                adjust,
+                groupWeight
+            )
+        )
+        val matrixFinal = matrixY.multiply(matrixX.transpose())
+
+        for (row in 0 until nY) {
+            for (col in 0 until nX) {
+                statX.add(stepsX[col])
+                statY.add(stepsY[row])
+                val count = matrixFinal.getEntry(row, col)
+                statCount.add(count)
+                statDensity.add(count / SeriesUtil.sum(groupWeight))
+            }
+        }
+
+        statCount.maxOrNull()?.let { maxCount ->
+            for (d in statCount) {
+                statScaled.add(d / maxCount)
+            }
+        }
+
+        return mapOf(
+            Stats.X to statX,
+            Stats.Y to statY,
+            Stats.COUNT to statCount,
+            Stats.DENSITY to statDensity,
+            Stats.SCALED to statScaled
+        )
     }
 
     companion object {
