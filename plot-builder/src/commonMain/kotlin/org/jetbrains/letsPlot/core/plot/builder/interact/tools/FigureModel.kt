@@ -11,4 +11,5 @@ interface FigureModel {
     fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
     fun deactivateInteractions(origin: String)
     fun updateView(specOverride: Map<String, Any>? = null)
+    fun dispose()
 }

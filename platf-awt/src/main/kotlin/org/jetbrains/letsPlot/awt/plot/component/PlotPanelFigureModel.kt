@@ -79,6 +79,11 @@ internal class PlotPanelFigureModel constructor(
         rebuildPlotComponent()
     }
 
+    override fun dispose() {
+        toolEventCallback = null
+        toolEventDispatcher = null // this also deactivates all ongoing interactions
+    }
+
     internal fun rebuildPlotComponent(
         onComponentCreated: (JComponent) -> Unit = {},
         expared: () -> Boolean = { false }

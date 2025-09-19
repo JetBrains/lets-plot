@@ -6,7 +6,7 @@
 package demo.plot.batik.tools
 
 import org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -26,7 +26,7 @@ class SandboxViewerWithToolsBatik(
         val contentPanel = JPanel(BorderLayout())
         val figureComponent = super.createWindowContent(preferredSizeFromPlot)
 
-        val figureModel = figureComponent.getClientProperty(FigureModel::class) as FigureModel
+        val figureModel = (figureComponent as WithFigureModel).figureModel
         val toolbar = SandboxToolbar()
         toolbar.attach(figureModel)
 

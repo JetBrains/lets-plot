@@ -15,12 +15,13 @@ javafx {
 }
 
 dependencies {
-    compileOnly(project("::platf-awt"))
     compileOnly(project(":commons"))
     compileOnly(project(":datamodel"))
     compileOnly(project(":canvas"))
+    compileOnly(project(":plot-builder"))
     compileOnly(project(":plot-stem"))
     compileOnly(project(":platf-awt"))
+
     testImplementation(project(":demo-and-test-shared"))
     testImplementation(project(":platf-awt"))
     testImplementation(kotlin("test"))

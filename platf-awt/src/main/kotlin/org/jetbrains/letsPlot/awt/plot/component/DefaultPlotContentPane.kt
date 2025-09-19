@@ -5,8 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import java.awt.Color
 import java.awt.Component
 import javax.swing.BorderFactory
@@ -25,20 +26,20 @@ abstract class DefaultPlotContentPane(
     private val repaintDelay: Int,  // ms
     private val applicationContext: ApplicationContext
 
-) : Disposable, JPanel() {
+) : Disposable, WithFigureModel, JPanel() {
+
+    final override val figureModel: FigureModel
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        val figureModel: FigureModel = createContent(processedSpec)
-        putClientProperty(FigureModel::class, figureModel)
+        figureModel = createContent(processedSpec)
     }
 
     /**
      * In IDEA plugin: override and check for 'com.intellij.openapi.Disposable'.
      */
     override fun dispose() {
-        // ToDo: deactivate all ongoing interactions?
-        putClientProperty(FigureModel::class, null)
+        figureModel.dispose()
 
         for (component in components) {
             when (component) {

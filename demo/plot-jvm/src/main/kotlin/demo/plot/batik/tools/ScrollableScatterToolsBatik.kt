@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotContentPane
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.batik.plot.component.DefaultSwingContextBatik
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.BorderLayout
 import java.awt.Color
@@ -49,7 +48,7 @@ fun plotWithToolbar(rawSpec: MutableMap<String, Any>): JComponent {
     }
 
     val contentPanel = JPanel(BorderLayout())
-    val figureModel = figureComponent.getClientProperty(FigureModel::class) as FigureModel
+    val figureModel = figureComponent.figureModel
     val toolbar = SandboxToolbar()
     toolbar.attach(figureModel)
 
