@@ -64,7 +64,9 @@ class Density2dStat constructor(
 
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
+        val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
+        val statScaled = ArrayList<Double>()
 
         val bandWidth = DoubleArray(2)
 //        bandWidth[0] = if (bandWidths != null) bandWidths!![0] else DensityStatUtil.bandWidth(
@@ -111,8 +113,16 @@ class Density2dStat constructor(
             for (col in 0 until nX) {
                 statX.add(stepsX[col])
                 statY.add(stepsY[row])
-                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight))
+                val count = matrixFinal.getEntry(row, col)
+                statCount.add(count)
+                statDensity.add(count / SeriesUtil.sum(groupWeight))
                 //newGroups.add((double) (int) group);
+            }
+        }
+
+        statCount.maxOrNull()?.let { maxCount ->
+            for (d in statCount) {
+                statScaled.add(d / maxCount)
             }
         }
 
@@ -136,6 +146,8 @@ class Density2dStat constructor(
                 .putNumeric(Stats.X, statX)
                 .putNumeric(Stats.Y, statY)
                 .putNumeric(Stats.DENSITY, statDensity)
+                .putNumeric(Stats.COUNT, statCount)
+                .putNumeric(Stats.SCALED, statScaled)
                 .build()
         }
     }
