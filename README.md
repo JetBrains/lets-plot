@@ -7,7 +7,7 @@
 
 **Lets-Plot** is a multiplatform plotting library built on the principles of the Grammar of Graphics. 
 
-The library' design is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
+The library design is heavily influenced by Leland Wilkinson's work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
 > This grammar [...] is made up of a set of independent components that can be composed in many different ways. This makes [it] very powerful because you are not limited to a set of pre-specified graphics, but you can create new graphics that are precisely tailored for your problem.
 > - Hadley Wickham, "[ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html)"
@@ -16,7 +16,7 @@ The library' design is heavily influenced by Leland Wilkinson work [The Grammar 
 ## Grammar of Graphics for Python [![Latest Release](https://badge.fury.io/py/lets-plot.svg)](https://pypi.org/project/lets-plot)
 
 A bridge between R (ggplot2) and Python data visualization. \
-To learn more see the documentation site at **[lets-plot.org](https://lets-plot.org)**.          
+To learn more, see the documentation site at **[lets-plot.org](https://lets-plot.org)**.          
 
 
 ## Grammar of Graphics for Kotlin [![Latest Release](https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin)](https://github.com/JetBrains/lets-plot-kotlin/releases/latest)
@@ -25,15 +25,15 @@ To learn more see the documentation site at **[lets-plot.org](https://lets-plot.
 Create plots in [Kotlin Notebook](https://plugins.jetbrains.com/plugin/16340-kotlin-notebook),
 [Datalore](https://datalore.jetbrains.com/report/static/HZqq77cegYd.E7get_WnChZ/aTA9lQnPkRwdCzT6uy95GZ), [Jupyter with Kotlin Kernel](https://github.com/Kotlin/kotlin-jupyter#readme) \
 or any other notebook that supports `Kotlin Kernel`. \
-To learn more see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
+To learn more, see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
 
 ### Compose Multiplatform
 Embed Lets-Plot charts in [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) applications. \
-To learn more see the **[Lets-Plot Skia Frontend](https://github.com/JetBrains/lets-plot-skia)** project at GitHub.
+To learn more, see the **[Lets-Plot Compose Frontend](https://github.com/JetBrains/lets-plot-compose)** project at GitHub.
 
 ### JVM and Kotlin/JS
 Embed Lets-Plot charts in JVM (Swing, JavaFX) and Kotlin/JS applications. <br>
-To learn more see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
+To learn more, see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
 
 ## "Lets-Plot in SciView" plugin
 
