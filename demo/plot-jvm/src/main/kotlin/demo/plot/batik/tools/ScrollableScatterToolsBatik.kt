@@ -9,6 +9,7 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
 import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotContentPane
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.batik.plot.component.DefaultSwingContextBatik
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
@@ -49,7 +50,7 @@ fun plotWithToolbar(rawSpec: MutableMap<String, Any>): JComponent {
 
     val contentPanel = JPanel(BorderLayout())
     val figureModel = figureComponent.figureModel
-    val toolbar = SandboxToolbar()
+    val toolbar = SandboxToolbarAwt()
     toolbar.attach(figureModel)
 
     contentPanel.add(toolbar, BorderLayout.NORTH)
