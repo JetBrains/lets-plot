@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
+import org.jetbrains.letsPlot.commons.registration.Registration
+
 // See: PlotPanel.ResizeHook
 interface FigureModel {
-    fun onToolEvent(callback: (Map<String, Any>) -> Unit)
+    fun addToolEventCallback(callback: (Map<String, Any>) -> Unit) : Registration
     fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
     fun deactivateInteractions(origin: String)
     fun updateView(specOverride: Map<String, Any>? = null)

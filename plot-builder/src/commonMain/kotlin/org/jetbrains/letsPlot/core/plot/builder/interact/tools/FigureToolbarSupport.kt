@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
+import org.jetbrains.letsPlot.commons.registration.Registration
+
 /**
  * This class manages the business logic of toolbar functionality
  *
@@ -12,11 +14,9 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools
  * concrete implementations for creating and adding UI components.
  */
 abstract class FigureToolbarSupport {
-
-    private var figureModel: FigureModel? = null
-    private var controller: DefaultFigureToolsController? = null
     private val tools = mutableListOf<Pair<ToggleTool, ToggleToolView>>()
     private var resetButton: ActionToolView? = null
+    private var toolEventCallbackRegistrations: Registration? = null
 
     fun initializeUI() {
         TOOL_SPECS.forEach { toolSpec ->
@@ -29,26 +29,14 @@ abstract class FigureToolbarSupport {
     }
 
     fun attach(figureModel: FigureModel) {
-        check(this.figureModel == null) { "Toolbar is already attached to a figure model" }
+        check(toolEventCallbackRegistrations == null) { "Toolbar is already attached." }
 
-        this.figureModel = figureModel
-        this.controller = DefaultFigureToolsController(
+        val controller = DefaultFigureToolsController(
             figure = figureModel,
             errorMessageHandler = ::errorMessageHandler
         )
 
-        registerWithController()
-    }
-
-    fun detach() {
-        this.figureModel = null
-        this.controller = null
-    }
-
-    private fun registerWithController() {
-        val controller = this.controller ?: return
-        val figureModel = this.figureModel ?: return
-
+        // Register tools and 'reset' button with the controller
         tools.forEach { (tool, toolButton) ->
             controller.registerTool(tool, toolButton)
         }
@@ -57,9 +45,15 @@ abstract class FigureToolbarSupport {
             controller.resetFigure(deactiveTools = true)
         }
 
-        figureModel.onToolEvent { event ->
+        // Listen to tool events from the figure model
+        toolEventCallbackRegistrations = figureModel.addToolEventCallback({ event: Map<String, Any> ->
             controller.handleToolFeedback(event)
-        }
+        })
+    }
+
+    fun detach() {
+        toolEventCallbackRegistrations?.remove()
+        toolEventCallbackRegistrations = null
     }
 
     /**

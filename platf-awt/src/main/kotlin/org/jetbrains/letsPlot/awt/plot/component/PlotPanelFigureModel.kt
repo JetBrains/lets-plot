@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
@@ -23,7 +24,7 @@ internal class PlotPanelFigureModel constructor(
     private val applicationContext: ApplicationContext,
 ) : FigureModel {
 
-    private var toolEventCallback: ((Map<String, Any>) -> Unit)? = null
+    private val toolEventCallbacks = mutableListOf<(Map<String, Any>) -> Unit>()
 
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
 
@@ -33,7 +34,9 @@ internal class PlotPanelFigureModel constructor(
             val wereInteractions = field?.deactivateAllSilently() ?: emptyMap()
             field = value
             value?.let { newDispatcher ->
-                newDispatcher.initToolEventCallback { event -> toolEventCallback?.invoke(event) }
+                newDispatcher.initToolEventCallback { event ->
+                    toolEventCallbacks.forEach { it(event) }
+                }
 
                 // reactivate interactions in the new plot component
                 wereInteractions.forEach { (origin, interactionSpecList) ->
@@ -53,13 +56,11 @@ internal class PlotPanelFigureModel constructor(
         toolEventDispatcher = toolEventDispatcherFromProvidedComponent(providedComponent)
     }
 
-    /**
-     * Register a callback to receive tool events.
-     * Note: this happens only once per FigureModel lifecycle.
-     * TODO: refactoring needed: need to be able to attach/detach multiple callbacks.
-     */
-    override fun onToolEvent(callback: (Map<String, Any>) -> Unit) {
-        toolEventCallback = callback
+    override fun addToolEventCallback(callback: (Map<String, Any>) -> Unit): Registration {
+        toolEventCallbacks.add(callback)
+        return Registration.onRemove {
+            toolEventCallbacks.remove(callback)
+        }
     }
 
     override fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
@@ -80,7 +81,7 @@ internal class PlotPanelFigureModel constructor(
     }
 
     override fun dispose() {
-        toolEventCallback = null
+        toolEventCallbacks.clear()
         toolEventDispatcher = null // this also deactivates all ongoing interactions
     }
 
