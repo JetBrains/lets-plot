@@ -138,7 +138,11 @@ class PointDensityStat(
             private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Method>()
 
             fun safeValueOf(v: String): Method {
-                return ENUM_INFO.safeValueOf(v) ?:
+                val methodName = when (v.lowercase()) {
+                    "neighbors" -> "neighbours" // Support American spelling
+                    else -> v
+                }
+                return ENUM_INFO.safeValueOf(methodName) ?:
                 throw IllegalArgumentException(
                     "Unsupported method: '$v'\n" +
                     "Use one of: neighbours, kde2d."
