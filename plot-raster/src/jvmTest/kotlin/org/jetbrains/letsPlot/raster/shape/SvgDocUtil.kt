@@ -5,7 +5,10 @@
 
 package org.jetbrains.letsPlot.raster.shape
 
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
@@ -19,7 +22,15 @@ internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
     // attach root
     SvgNodeContainer(svgDocument)
 
-    val canvasPeer = AwtCanvasPeer()
+    val canvasPeer = object : CanvasPeer {
+        override fun createCanvas(size: Vector) = TODO("Not yet implemented")
+        override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
+        override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
+        override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
+        override fun measureText(text: String, font: Font) = TODO("Not yet implemented")
+        override fun dispose() = TODO("Not yet implemented")
+    }
+
     val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
 
     //val rootMapper = SvgSvgElementMapper(svgDocument, SvgSkiaPeer(fontManager))

@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":plot-base"))
     compileOnly(project(":plot-builder"))
     compileOnly(project(":plot-stem"))
+    compileOnly(project(":plot-raster"))
 
     compileOnly("com.github.weisj:jsvg:${jsvgVersion}")
 
