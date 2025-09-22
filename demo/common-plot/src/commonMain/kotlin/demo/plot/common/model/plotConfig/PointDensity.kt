@@ -13,9 +13,11 @@ class PointDensity {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            withParameters(method = "kde2d"),
-            withParameters(adjust = 10.0),
-            withParameters(adjust = 0.1),
+            withParametersSmall(method = "neighbours"),
+            withParametersSmall(method = "kde2d"),
+            withParametersIris(method = "kde2d"),
+            withParametersIris(adjust = 10.0),
+            withParametersIris(adjust = 0.1),
         )
     }
 
@@ -44,7 +46,38 @@ class PointDensity {
 
     }
 
-    private fun withParameters(
+    private fun withParametersSmall(
+        adjust: Double = 1.0,
+        method: String = "neighbours"
+    ): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'x',
+                'y': 'y'
+              },
+              'data': {
+                'x': [0, 0, 0, 1],
+                'y': [0, 0, 1, 0]
+              },
+              'ggtitle': {
+                'text': 'With parameters (small dataset):\nadjust = $adjust\nmethod = $method'
+              },
+              'layers': [
+                {
+                  'geom': 'pointdensity',
+                  'adjust': $adjust,
+                  'method': '$method'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun withParametersIris(
         adjust: Double = 1.0,
         method: String = "neighbours"
     ): MutableMap<String, Any> {
@@ -56,7 +89,7 @@ class PointDensity {
                 'y': 'sepal length (cm)'
               },
               'ggtitle': {
-                'text': 'With parameters:\nadjust = $adjust\nmethod = $method'
+                'text': 'With parameters (iris dataset):\nadjust = $adjust\nmethod = $method'
               },
               'layers': [
                 {
