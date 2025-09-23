@@ -20,3 +20,6 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
 
 ### Fixed
+
+- Markdown: links open only inside the iframe
+  [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
