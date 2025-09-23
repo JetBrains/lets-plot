@@ -354,11 +354,18 @@ object GeomInteractionUtil {
         aesListForTooltip
             .forEach { aes ->
                 val variable = layerConfig.getVariableForAes(aes)!!
+                val originalVariable = layerConfig.getOriginalVariableName(aes)!!
                 val mappingToShow = mappingsToShow[variable]
                 when {
-                    mappingToShow == null -> {
+                    scaleMap.getValue(aes).name != originalVariable -> {
+                        // Use variable which is shown by the scale with its name
                         mappingsToShow[variable] = aes
                     }
+
+                    // do nothing - mapping for the same original variable is already added
+                    mappingsToShow.any { (_, aes) ->layerConfig.getOriginalVariableName(aes) == originalVariable } -> { }
+
+                    mappingToShow == null -> mappingsToShow[variable] = aes
 
                     !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
                         // If the same variable is mapped twice as continuous and discrete - use the continuous value
@@ -366,10 +373,6 @@ object GeomInteractionUtil {
                         mappingsToShow[variable] = aes
                     }
 
-                    scaleMap.getValue(aes).name != variable.label -> {
-                        // Use variable which is shown by the scale with its name
-                        mappingsToShow[variable] = aes
-                    }
                 }
             }
         return mappingsToShow.values.toList()

@@ -23,3 +23,4 @@
 
 - Markdown: links open only inside the iframe
   [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
+- Tooltip shows duplicate lines when as_discrete is applied twice to the same var [[#1400](https://github.com/JetBrains/lets-plot/issues/1400)].
