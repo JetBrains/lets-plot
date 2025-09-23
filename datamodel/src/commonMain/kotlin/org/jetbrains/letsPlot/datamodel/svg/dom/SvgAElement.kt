@@ -12,6 +12,7 @@ class SvgAElement : SvgElement() {
     companion object {
         val HREF = SvgAttributeSpec.createSpec<String>("href")
         val XLINK_HREF = SvgAttributeSpec.createSpecNS<String>("href", "xlink", XmlNamespace.XLINK_NAMESPACE_URI)
+        val TARGET = SvgAttributeSpec.createSpec<String>("target")
     }
 
     override val elementName: String
@@ -23,5 +24,9 @@ class SvgAElement : SvgElement() {
 
     fun xlinkHref(): Property<String?> {
         return getAttribute(XLINK_HREF)
+    }
+
+    fun target(): Property<String?> {
+        return getAttribute(TARGET)
     }
 }

@@ -26,6 +26,11 @@ internal class Lexer(
         nextToken()
     }
 
+    fun remainingInput(): String {
+        if (pos >= input.length) return input
+        return input.substring(pos)
+    }
+
     fun nextToken(): Token {
         tokenPos = pos
         token = nextTokenImpl()

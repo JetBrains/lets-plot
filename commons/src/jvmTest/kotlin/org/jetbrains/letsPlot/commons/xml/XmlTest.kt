@@ -273,6 +273,16 @@ class XmlTest {
         )
     }
 
+    @Test
+    fun `malformed - special symbols`() {
+        val xml = """<p>< & ' \" \\ / > ®</p>"""
+        val parsed = parse(xml)
+        assertEquals(
+            expected = XmlNode.Text("""<p>< & ' \" \\ / > ®</p>"""),
+            actual = parsed
+        )
+    }
+
     internal fun parse(xml: String): XmlNode? {
         return Xml.parse(xml)
     }

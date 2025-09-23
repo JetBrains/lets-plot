@@ -18,9 +18,9 @@ object Xml {
         val parser = Parser(lexer)
         val doc = parser.parse()
 
-        return when (Token.EOF) {
-            lexer.nextToken() -> doc to ""
-            else -> doc to lexer.input.substring(lexer.tokenPos)
+        return when (lexer.token) {
+            Token.EOF -> doc to ""
+            else -> doc to lexer.remainingInput()
         }
     }
 

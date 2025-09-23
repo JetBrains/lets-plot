@@ -53,7 +53,11 @@ internal class Parser(
 
             return XmlNode.Element(name, attributes, children)
         } catch (_: Throwable) {
-            return XmlNode.Text(lexer.input.substring(pos, lexer.tokenPos))
+            return if (lexer.token == Token.EOF) {
+                XmlNode.Text(lexer.input.substring(pos))
+            } else {
+                XmlNode.Text(lexer.input.substring(pos, lexer.tokenPos))
+            }
         }
     }
 

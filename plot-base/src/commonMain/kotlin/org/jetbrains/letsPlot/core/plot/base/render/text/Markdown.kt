@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
-import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.parseAsXml
 
 internal object Markdown {
     fun parse(text: String): List<RichTextNode> {
@@ -18,16 +18,7 @@ internal object Markdown {
         }
 
         val html = Markdown.mdToHtml(text)
-        val doc = Xml.parseSafe("<p>$html</p>") // wrap in <p> to make it a valid XML with a single root element
-            .let { (doc, unparsed) ->
-                if (unparsed.isEmpty()) return@let doc
-
-                // Failed to parse. Add the unparsed text as a text node to the document for better user experience.
-                when (doc) {
-                    is XmlNode.Element -> doc.copy(children = doc.children + XmlNode.Text(unparsed))
-                    is XmlNode.Text -> doc.copy(content = doc.content + unparsed)
-                }
-            }
+        val doc = parseAsXml(html)
 
         return renderRichText(doc)
     }
@@ -39,9 +30,7 @@ internal object Markdown {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
                 if (node.name == "a") {
-                    val href = node.attributes["href"] ?: ""
-                    val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
-                    output += Hyperlink.HyperlinkElement(text, href)
+                    output += Hyperlink.render(node)
                     return output
                 }
 
