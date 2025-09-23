@@ -161,9 +161,9 @@ class PolarAxisComponent(
                 }
             }
 
-            val lineHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
-            // Correct display of LaTeX fractions in axis labels will require tickLabel.setFontSize(lineHeight)
-            tickLabel.setLineHeight(lineHeight)
+            val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
+            tickLabel.setFontSize(tickHeight)
+            tickLabel.setLineHeight(tickHeight)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             tickLabel
         } else {

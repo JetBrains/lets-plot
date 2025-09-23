@@ -80,17 +80,17 @@ class ColorBarComponent(
             }
 
             // Label
-            val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
+            val brHeight = PlotLabelSpecFactory.legendItem(theme).height()
             val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
-            // Correct display of LaTeX fractions in color bar breaks will require label.setFontSize(lineHeight)
-            label.setLineHeight(lineHeight)
+            label.setFontSize(brHeight)
+            label.setLineHeight(brHeight)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
             val yOffset = when (brInfo.labelVerticalAnchor) {
-                Text.VerticalAnchor.TOP -> lineHeight * 0.7
-                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeight
-                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeight * 0.85
+                Text.VerticalAnchor.TOP -> brHeight * 0.7
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + brHeight
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + brHeight * 0.85
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
