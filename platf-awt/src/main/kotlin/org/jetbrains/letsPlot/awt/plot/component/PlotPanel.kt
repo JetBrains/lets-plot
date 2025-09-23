@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanelToolbar.Companion.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.awt.BorderLayout
 import java.awt.Component
@@ -25,7 +26,7 @@ open class PlotPanel constructor(
     repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
     private val showToolbar: Boolean = false,
-) : JPanel(), Disposable {
+) : JPanel(), WithFigureModel, Disposable {
 
     @Deprecated(
         message = "Removed API: use constructor with sizingPolicy parameter",
@@ -49,7 +50,7 @@ open class PlotPanel constructor(
         false
     )
 
-    val figureModel: FigureModel
+    final override val figureModel: FigureModel
 
     // The panel that contains the plot component when a toolbar is shown.
     private lateinit var plotComponentContainer: JPanel
