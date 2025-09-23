@@ -553,6 +553,9 @@ object Option {
         }
 
         object PointDensity {
+            const val N = "n"
+            const val KERNEL = "kernel"
+            const val BAND_WIDTH = "bw"
             const val ADJUST = "adjust"
             const val METHOD = "method"
         }

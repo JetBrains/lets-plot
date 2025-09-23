@@ -144,14 +144,7 @@ object StatProto {
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
             DENSITY2DF -> configureDensity2dStat(options, true)
-            POINTDENSITY -> {
-                PointDensityStat(
-                    adjust = options.getDoubleDef(PointDensity.ADJUST, PointDensityStat.DEF_ADJUST),
-                    method = options.getString(PointDensity.METHOD)?.let {
-                        PointDensityStat.Method.safeValueOf(it)
-                    } ?: PointDensityStat.DEF_METHOD
-                )
-            }
+            POINTDENSITY -> configurePointDensityStat(options)
             StatKind.QQ -> configureQQStat(options)
             QQ2 -> Stats.qq2()
             QQ_LINE -> configureQQLineStat(options)
@@ -404,6 +397,62 @@ object StatProto {
                 binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
             )
         }
+    }
+
+    private fun configurePointDensityStat(options: OptionsAccessor): AbstractDensity2dStat {
+        var bwValueX: Double? = null
+        var bwValueY: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod? = null
+        options[PointDensity.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValueX = this.toDouble()
+                bwValueY = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            } else if (this is List<*>) {
+                for ((i, v) in this.withIndex()) {
+                    when (i) {
+                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
+                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
+                        else -> break
+                    }
+                }
+            }
+        }
+
+        val kernel = options.getString(PointDensity.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+
+        var nX: Int? = null
+        var nY: Int? = null
+        options[PointDensity.N]?.run {
+            if (this is Number) {
+                nX = this.toInt()
+                nY = this.toInt()
+            } else if (this is List<*>) {
+                for ((i, v) in this.withIndex()) {
+                    when (i) {
+                        0 -> nX = v?.let { (v as Number).toInt() }
+                        1 -> nY = v?.let { (v as Number).toInt() }
+                        else -> break
+                    }
+                }
+            }
+        }
+
+        return PointDensityStat(
+            bandWidthX = bwValueX,
+            bandWidthY = bwValueY,
+            bandWidthMethod = bwMethod ?: PointDensityStat.DEF_BW,
+            adjust = options.getDoubleDef(PointDensity.ADJUST, PointDensityStat.DEF_ADJUST),
+            kernel = kernel ?: PointDensityStat.DEF_KERNEL,
+            nX = nX ?: PointDensityStat.DEF_N,
+            nY = nY ?: PointDensityStat.DEF_N,
+            method = options.getString(PointDensity.METHOD)?.let {
+                PointDensityStat.Method.safeValueOf(it)
+            } ?: PointDensityStat.DEF_METHOD
+        )
     }
 
     private fun configureQQStat(options: OptionsAccessor): QQStat {

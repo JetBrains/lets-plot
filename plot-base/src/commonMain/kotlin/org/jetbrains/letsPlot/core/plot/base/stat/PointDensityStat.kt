@@ -14,20 +14,26 @@ import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
 class PointDensityStat(
+    bandWidthX: Double?,
+    bandWidthY: Double?,
+    bandWidthMethod: DensityStat.BandWidthMethod,
     adjust: Double,
+    kernel: DensityStat.Kernel,
+    nX: Int,
+    nY: Int,
     private val method: Method
 ) : AbstractDensity2dStat(
     defaultMappings = DEF_MAPPING,
-    bandWidthX = null, // TODO
-    bandWidthY = null, // TODO
-    bandWidthMethod = DensityStat.BandWidthMethod.NRD, // TODO
+    bandWidthX = bandWidthX,
+    bandWidthY = bandWidthY,
+    bandWidthMethod = bandWidthMethod,
     adjust = adjust,
-    kernel = DensityStat.Kernel.GAUSSIAN, // TODO
-    nX = DEF_N, // TODO
-    nY = DEF_N, // TODO
+    kernel = kernel,
+    nX = nX,
+    nY = nY,
     isContour = false,
-    binCount = DEF_BIN_COUNT,
-    binWidth = DEF_BIN_WIDTH
+    binCount = 0,
+    binWidth = 0.0
 ) {
 
     override fun consumes(): List<Aes<*>> {
@@ -47,9 +53,10 @@ class PointDensityStat(
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val (xValues, yValues) = SeriesUtil.filterFinite(xs, ys)
+        val (xVector, yVector) = SeriesUtil.filterFinite(xs, ys)
+        val weightVector = BinStatUtil.weightVector(xVector.size, data)
 
-        val statData = buildStat(xValues, yValues, xRange, yRange)
+        val statData = buildStat(xVector, yVector, weightVector, xRange, yRange)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -59,20 +66,22 @@ class PointDensityStat(
     }
 
     private fun buildStat(
-        xValues: List<Double>,
-        yValues: List<Double>,
+        xVector: List<Double>,
+        yVector: List<Double>,
+        weightVector: List<Double?>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
         return when (method) {
-            Method.NEIGHBOURS -> buildNeighboursStat(xValues, yValues, xRange, yRange)
-            Method.KDE2D -> buildKde2dStat(xValues, yValues, xRange, yRange)
+            Method.NEIGHBOURS -> buildNeighboursStat(xVector, yVector, weightVector, xRange, yRange)
+            Method.KDE2D -> buildKde2dStat(xVector, yVector, weightVector, xRange, yRange)
         }
     }
 
     private fun buildNeighboursStat(
-        xValues: List<Double>,
-        yValues: List<Double>,
+        xVector: List<Double>,
+        yVector: List<Double>,
+        weightVector: List<Double?>, // TODO: use weights
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
@@ -80,13 +89,13 @@ class PointDensityStat(
         val adjustedYRange = yRange.length * adjust
         val r2 = (adjustedXRange + adjustedYRange) / 70.0
         val xy = adjustedXRange / adjustedYRange
-        val statCount = countNeighbours(xValues, yValues, r2, xy).map { it.toDouble() }
+        val statCount = countNeighbours(xVector, yVector, r2, xy).map { it.toDouble() }
         val statDensity = statCount.map { it / statCount.size } // Never divide by zero - no mapping if no points
         val maxCount = statCount.maxOrNull() ?: 0.0 // null only if there are no points (each point counts itself)
         val statScaled = statCount.map { it / maxCount } // Never divide by zero - no mapping if no points
         return mapOf(
-            Stats.X to xValues,
-            Stats.Y to yValues,
+            Stats.X to xVector,
+            Stats.Y to yVector,
             Stats.COUNT to statCount,
             Stats.DENSITY to statDensity,
             Stats.SCALED to statScaled
@@ -96,19 +105,18 @@ class PointDensityStat(
     private fun buildKde2dStat(
         xValues: List<Double>,
         yValues: List<Double>,
+        weightVector: List<Double?>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
-        val weights = List(xValues.size) { 1.0 } // TODO
-
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
 
-        val (stepsX, stepsY, densityMatrix) = density2dGrid(xValues, yValues, weights, xRange, yRange)
+        val (stepsX, stepsY, densityMatrix) = density2dGrid(xValues, yValues, weightVector, xRange, yRange)
 
         val indices = findInterval(yValues, stepsY) zip findInterval(xValues, stepsX)
-        val weightsSum = SeriesUtil.sum(weights)
+        val weightsSum = SeriesUtil.sum(weightVector)
         for ((row, col) in indices) {
             val count = densityMatrix.getEntry(row, col)
             statCount.add(count)
@@ -152,7 +160,10 @@ class PointDensityStat(
     }
 
     companion object {
+        val DEF_BW = DensityStat.BandWidthMethod.NRD
         const val DEF_ADJUST = 1.0
+        val DEF_KERNEL = DensityStat.Kernel.GAUSSIAN
+        const val DEF_N = 100
         val DEF_METHOD = Method.NEIGHBOURS
 
         // It's assumed that breaks are sorted and contain at least one value
