@@ -213,6 +213,11 @@ internal class PlotToolEventDispatcher(
         }
     }
 
+    override fun deactivateAll() {
+        val origins = ArrayList(interactionsByOrigin.keys)
+        origins.forEach { origin -> deactivateInteractions(origin) }
+    }
+
     override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> {
         val deactivatedInteractions = interactionsByOrigin.mapValues { (_, interactionInfoList) ->
             interactionInfoList.map {

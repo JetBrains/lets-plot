@@ -2,8 +2,10 @@ package demo.plot
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
+import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
@@ -97,8 +99,18 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         }
     }
 
+    private val sharedToolbar = SandboxToolbarAwt()
     private val plotPanel = JPanel(BorderLayout()).apply {
         border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
+
+        // Extra cleanup removing child components.
+        addContainerListener(object : ContainerAdapter() {
+            override fun componentRemoved(e: ContainerEvent) {
+                if (e.child is Disposable) {   // the actual plot panel is disposible.
+                    (e.child as Disposable).dispose()
+                }
+            }
+        })
     }
 
     private val undoManager = UndoManager()
@@ -107,7 +119,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
     // New components for frontend selection and pixel density
     private val frontendComboBox = JComboBox(arrayOf("batik", "canvas")).apply {
-        addItemListener {
+        addActionListener {
             pixelDensityLabel.isVisible = selectedItem == "canvas"
             pixelDensitySpinner.isVisible = selectedItem == "canvas"
             evaluate() // Re-render on frontend change
@@ -205,6 +217,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         val mainPanel = JPanel(BorderLayout())  // Panel to hold plot and frontend panel
 
+        mainPanel.add(sharedToolbar, BorderLayout.NORTH)
         mainPanel.add(plotPanel, BorderLayout.CENTER) // Plot occupies center
         mainPanel.add(frontendPanel, BorderLayout.SOUTH) // Frontend panel under the plot
 
@@ -302,7 +315,12 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         loadFavoritesFromFile()
 
         saveFavoriteButton.addActionListener {
-            val name = JOptionPane.showInputDialog(this, "Enter a name for the favorite:", "Save Favorite", JOptionPane.PLAIN_MESSAGE)
+            val name = JOptionPane.showInputDialog(
+                this,
+                "Enter a name for the favorite:",
+                "Save Favorite",
+                JOptionPane.PLAIN_MESSAGE
+            )
             if (!name.isNullOrBlank()) {
                 if (favorites.containsKey(name) && favorites[name] != plotSpecTextArea.text) {
                     val overwrite = JOptionPane.showConfirmDialog(
@@ -360,9 +378,11 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             override fun insertUpdate(e: DocumentEvent?) {
                 updateSaveButtonState()
             }
+
             override fun removeUpdate(e: DocumentEvent?) {
                 updateSaveButtonState()
             }
+
             override fun changedUpdate(e: DocumentEvent?) {
                 updateSaveButtonState()
             }
@@ -502,7 +522,13 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     )
                     CanvasPane2(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
                 }
+
                 else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
+            }
+
+//            if (newPlotComponent is WithFigureModel) {
+            if (newPlotComponent is DefaultPlotPanelBatik) {
+                sharedToolbar.attach(newPlotComponent.figureModel)
             }
 
             plotPanel.add(newPlotComponent, BorderLayout.CENTER)

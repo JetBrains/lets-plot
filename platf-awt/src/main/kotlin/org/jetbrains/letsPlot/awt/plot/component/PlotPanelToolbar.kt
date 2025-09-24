@@ -17,11 +17,11 @@ import javax.swing.*
 internal class PlotPanelToolbar : JPanel() {
 
     private val toolbarSupport = object : FigureToolbarSupport() {
-        override fun addToggleTool(tool: ToggleTool): ToggleToolView {
+        override fun addToggleTool(tool: ToggleTool): ToggleToolModel {
             return addSwingToolButton(tool)
         }
 
-        override fun addResetButton(): ActionToolView {
+        override fun addResetButton(): ActionToolModel {
             return addSwingResetButton()
         }
 
@@ -87,7 +87,7 @@ internal class PlotPanelToolbar : JPanel() {
         toolbarSupport.detach()
     }
 
-    private fun addSwingToolButton(tool: ToggleTool): ToggleToolView {
+    private fun addSwingToolButton(tool: ToggleTool): ToggleToolModel {
         val iconSvg = tool.spec["icon"] as? String
         val normalIcon = createSvgIcon(
             iconSvg, color = C_STROKE,
@@ -106,18 +106,18 @@ internal class PlotPanelToolbar : JPanel() {
 
         innerContainer.add(button)
 
-        return object : ToggleToolView {
+        return object : ToggleToolModel() {
             override fun setState(selected: Boolean) {
                 button.icon = if (selected) selectedIcon else normalIcon
             }
-
-            override fun onAction(handler: () -> Unit) {
-                button.addActionListener { handler() }
+        }.also { toolModel ->
+            button.addActionListener {
+                toolModel.action()
             }
         }
     }
 
-    private fun addSwingResetButton(): ActionToolView {
+    private fun addSwingResetButton(): ActionToolModel {
         val normalIcon = createSvgIcon(
             ToolbarIcons.RESET,
             color = C_STROKE,
@@ -135,10 +135,8 @@ internal class PlotPanelToolbar : JPanel() {
 
         innerContainer.add(button)
 
-        return object : ActionToolView {
-            override fun onAction(handler: () -> Unit) {
-                button.addActionListener { handler() }
-            }
+        return ActionToolModel().also { toolModel ->
+            button.addActionListener { toolModel.action() }
         }
     }
 

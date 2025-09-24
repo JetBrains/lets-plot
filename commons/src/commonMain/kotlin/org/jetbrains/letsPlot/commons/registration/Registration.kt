@@ -7,28 +7,27 @@ package org.jetbrains.letsPlot.commons.registration
 
 abstract class Registration : Disposable {
 
-    private var myRemoved: Boolean = false
+    private var isRemoved: Boolean = false
 
-    protected abstract fun doRemove()
+    final override fun dispose() = remove()
 
-    //this method should never be overridden except in Registration.EMPTY
-    open fun remove() {
-        if (myRemoved) {
-            throw IllegalStateException("Registration already removed")
-        }
-        myRemoved = true
+    fun remove() {
+        setRemoved()
         doRemove()
     }
 
-    final override fun dispose() {
-        remove()
+    protected open fun setRemoved() {
+        check(!isRemoved) { "Registration already removed" }
+        isRemoved = true
     }
+
+    protected abstract fun doRemove()
 
     private class EmptyRegistration : Registration() {
 
         override fun doRemove() {}
 
-        override fun remove() {}
+        override fun setRemoved() {}
     }
 
     companion object {

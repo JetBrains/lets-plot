@@ -28,18 +28,23 @@ abstract class DefaultPlotContentPane(
 
 ) : Disposable, WithFigureModel, JPanel() {
 
-    final override val figureModel: FigureModel
+    private val plotPanel: PlotPanel
+    final override val figureModel: FigureModel get() = plotPanel.figureModel
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        figureModel = createContent(processedSpec)
+        createUI(processedSpec).let { (plotPanel, messagesArea) ->
+            this.plotPanel = plotPanel
+            this.add(plotPanel)
+            this.add(messagesArea)
+        }
     }
 
     /**
      * In IDEA plugin: override and check for 'com.intellij.openapi.Disposable'.
      */
     override fun dispose() {
-        figureModel.dispose()
+//        figureModel.dispose()
 
         for (component in components) {
             when (component) {
@@ -49,7 +54,7 @@ abstract class DefaultPlotContentPane(
         removeAll()
     }
 
-    private fun createContent(processedSpec: MutableMap<String, Any>): FigureModel {
+    private fun createUI(processedSpec: MutableMap<String, Any>): Pair<PlotPanel, JLabel> {
         var shownMessages = HashSet<String>()
         val messagesArea: JLabel = JLabel().apply {
             foreground = Color.BLUE
@@ -82,9 +87,7 @@ abstract class DefaultPlotContentPane(
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT
         messagesArea.alignmentX = Component.CENTER_ALIGNMENT
 
-        this.add(plotPanel)
-        this.add(messagesArea)
-        return plotPanel.figureModel
+        return Pair(plotPanel, messagesArea)
     }
 
     protected abstract fun createPlotPanel(

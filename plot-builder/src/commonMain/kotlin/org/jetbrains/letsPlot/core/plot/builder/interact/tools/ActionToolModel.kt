@@ -5,6 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
-interface ActionToolView {
-    fun onAction(handler: () -> Unit)
+class ActionToolModel {
+    private var actionHandler: () -> Unit = {}
+
+    fun onAction(handler: () -> Unit) {
+        actionHandler = handler
+    }
+
+    fun action() {
+        actionHandler()
+    }
 }

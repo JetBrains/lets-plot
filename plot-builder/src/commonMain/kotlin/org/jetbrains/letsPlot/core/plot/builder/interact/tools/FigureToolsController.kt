@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_TARGET
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
@@ -22,22 +23,24 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 abstract class FigureToolsController {
-    private val tools: MutableList<ToolAndView> = ArrayList()
+    private val tools: MutableList<ToolAndModel> = ArrayList()
 
-    fun registerTool(tool: ToggleTool, view: ToggleToolView) {
-        tools.add(ToolAndView(tool, view))
+    fun registerTool(tool: ToggleTool, toolModel: ToggleToolModel): Registration {
+        val toolEntry = ToolAndModel(tool, toolModel)
+        tools.add(toolEntry)
 
-        view.onAction {
+        toolModel.onAction {
             when (tool.active) {
                 true -> deactivateFigureTool(tool)
                 false -> activateFigureTool(tool)
             }
         }
-    }
 
-    fun deactivateAllTools() {
-        tools.filter { it.tool.active }.forEach {
-            deactivateFigureTool(it.tool)
+        return object : Registration() {
+            override fun doRemove() {
+                toolEntry.model.onAction {} // no-op
+                tools.remove(toolEntry)
+            }
         }
     }
 
@@ -57,7 +60,7 @@ abstract class FigureToolsController {
                 val activated = event[EVENT_NAME] == INTERACTION_ACTIVATED
                 tools.find { it.tool.name == toolName }?.let {
                     it.tool.active = activated
-                    it.view.setState(activated)
+                    it.model.setState(activated)
                 }
             }
 
@@ -106,8 +109,8 @@ abstract class FigureToolsController {
     protected abstract fun updateFigureView(specOverride: Map<String, Any>? = null)
     protected abstract fun showFigureError(msg: String)
 
-    private data class ToolAndView(
+    private data class ToolAndModel(
         val tool: ToggleTool,
-        val view: ToggleToolView
+        val model: ToggleToolModel
     )
 }

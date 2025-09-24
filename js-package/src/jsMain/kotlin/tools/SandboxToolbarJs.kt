@@ -8,7 +8,7 @@ package tools
 import FigureModelJs
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolView
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
@@ -62,18 +62,17 @@ class SandboxToolbarJs() {
         button.textContent = "${tool.label} off"
         button.style.margin = "0 5px"
 
-        val view = object : ToggleToolView {
+        val toolModel = object : ToggleToolModel() {
             override fun setState(selected: Boolean) {
                 button.textContent = "${tool.label} ${if (selected) "on" else "off"}"
             }
-
-            override fun onAction(handler: () -> Unit) {
-                button.addEventListener("click", {
-                    handler()
-                })
-            }
         }
-        controller.registerTool(tool, view)
+
+        button.addEventListener("click", {
+            toolModel.action()
+        })
+
+        controller.registerTool(tool, toolModel)
         return button
     }
 

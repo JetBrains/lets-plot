@@ -47,11 +47,11 @@ import javax.swing.SwingUtilities
 class SandboxToolbarAwt : JPanel() {
 
     private val toolbarSupport = object : FigureToolbarSupport() {
-        override fun addToggleTool(tool: ToggleTool): ToggleToolView {
+        override fun addToggleTool(tool: ToggleTool): ToggleToolModel {
             return addSwingToolButton(tool)
         }
 
-        override fun addResetButton(): ActionToolView {
+        override fun addResetButton(): ActionToolModel {
             return addSwingResetButton()
         }
 
@@ -103,27 +103,28 @@ class SandboxToolbarAwt : JPanel() {
         toolbarSupport.detach()
     }
 
-    private fun addSwingToolButton(tool: ToggleTool): ToggleToolView {
+    private fun addSwingToolButton(tool: ToggleTool): ToggleToolModel {
         val buttonText = tool.label
-        val button = JButton("$buttonText off")
+        val button = JButton(buttonText)
         this.add(button)
-        return object : ToggleToolView {
+        return object : ToggleToolModel() {
             override fun setState(selected: Boolean) {
-                button.text = "$buttonText ${if (selected) "on" else "off"}"
+                button.text = if (selected) "< $buttonText >" else buttonText
             }
 
-            override fun onAction(handler: () -> Unit) {
-                button.addActionListener { handler() }
+        }.also { toolModel ->
+            button.addActionListener {
+                toolModel.action()
             }
         }
     }
 
-    private fun addSwingResetButton(): ActionToolView {
+    private fun addSwingResetButton(): ActionToolModel {
         val button = JButton("Reset")
         this.add(button)
-        return object : ActionToolView {
-            override fun onAction(handler: () -> Unit) {
-                button.addActionListener { handler() }
+        return ActionToolModel().also { toolModel ->
+            button.addActionListener {
+                toolModel.action()
             }
         }
     }

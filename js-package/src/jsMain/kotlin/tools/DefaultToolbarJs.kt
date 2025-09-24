@@ -8,7 +8,7 @@ package tools
 import FigureModelJs
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolView
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setFill
@@ -94,18 +94,17 @@ class DefaultToolbarJs() {
 
         updateButtonState(button, selected = false)
 
-        val view = object : ToggleToolView {
+        val toolModel = object : ToggleToolModel() {
             override fun setState(selected: Boolean) {
                 updateButtonState(button, selected)
             }
-
-            override fun onAction(handler: () -> Unit) {
-                button.addEventListener("click", {
-                    handler()
-                })
-            }
         }
-        controller.registerTool(tool, view)
+
+        button.addEventListener("click", {
+            toolModel.action()
+        })
+
+        controller.registerTool(tool, toolModel)
         return button
     }
 

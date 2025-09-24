@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
@@ -25,7 +26,7 @@ internal class PlotPanelFigureModel constructor(
 ) : FigureModel {
 
     private val toolEventCallbacks = mutableListOf<(Map<String, Any>) -> Unit>()
-
+    private val disposibleTools = mutableListOf<Disposable>()
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
 
     private var toolEventDispatcher: ToolEventDispatcher? = null
@@ -80,9 +81,18 @@ internal class PlotPanelFigureModel constructor(
         rebuildPlotComponent()
     }
 
+    override fun addDisposible(disposable: Disposable) {
+        disposibleTools.add(disposable)
+    }
+
     override fun dispose() {
+        toolEventDispatcher?.deactivateAll()
+        toolEventDispatcher = null
         toolEventCallbacks.clear()
-        toolEventDispatcher = null // this also deactivates all ongoing interactions
+
+        val disposibles = ArrayList(disposibleTools)
+        disposibleTools.clear()
+        disposibles.forEach { it.dispose() }
     }
 
     internal fun rebuildPlotComponent(
