@@ -134,7 +134,6 @@ open class PlotPanel constructor(
     }
 
     override fun dispose() {
-        println("PlotPanel.dispose(): ${this::class.simpleName}")
         figureModel.dispose()
         if (showToolbar) {
             plotComponentContainer.removeAll()
