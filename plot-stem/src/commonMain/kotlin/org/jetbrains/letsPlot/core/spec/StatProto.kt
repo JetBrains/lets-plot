@@ -329,46 +329,11 @@ object StatProto {
     }
 
     private fun configureDensity2dStat(options: OptionsAccessor, filled: Boolean): AbstractDensity2dStat {
-        var bwValueX: Double? = null
-        var bwValueY: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod? = null
-        options[Density2d.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValueX = this.toDouble()
-                bwValueY = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
-                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
-                        else -> break
-                    }
-                }
-            }
-        }
-
+        val (bwValueX, bwValueY, bwMethod) = getBandWidth2d(options)
         val kernel = options.getString(Density2d.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
-        var nX: Int? = null
-        var nY: Int? = null
-        options[Density2d.N]?.run {
-            if (this is Number) {
-                nX = this.toInt()
-                nY = this.toInt()
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> nX = v?.let { (v as Number).toInt() }
-                        1 -> nY = v?.let { (v as Number).toInt() }
-                        else -> break
-                    }
-                }
-            }
-        }
+        val (nX, nY) = getDensity2dN(options)
 
         return if (filled) {
             Density2dfStat(
@@ -400,52 +365,17 @@ object StatProto {
     }
 
     private fun configurePointDensityStat(options: OptionsAccessor): AbstractDensity2dStat {
-        var bwValueX: Double? = null
-        var bwValueY: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod? = null
-        options[PointDensity.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValueX = this.toDouble()
-                bwValueY = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
-                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
-                        else -> break
-                    }
-                }
-            }
-        }
-
-        val kernel = options.getString(PointDensity.KERNEL)?.let {
+        val (bwValueX, bwValueY, bwMethod) = getBandWidth2d(options)
+        val kernel = options.getString(Density.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
-        var nX: Int? = null
-        var nY: Int? = null
-        options[PointDensity.N]?.run {
-            if (this is Number) {
-                nX = this.toInt()
-                nY = this.toInt()
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> nX = v?.let { (v as Number).toInt() }
-                        1 -> nY = v?.let { (v as Number).toInt() }
-                        else -> break
-                    }
-                }
-            }
-        }
+        val (nX, nY) = getDensity2dN(options)
 
         return PointDensityStat(
             bandWidthX = bwValueX,
             bandWidthY = bwValueY,
             bandWidthMethod = bwMethod ?: PointDensityStat.DEF_BW,
-            adjust = options.getDoubleDef(PointDensity.ADJUST, PointDensityStat.DEF_ADJUST),
+            adjust = options.getDoubleDef(Density.ADJUST, PointDensityStat.DEF_ADJUST),
             kernel = kernel ?: PointDensityStat.DEF_KERNEL,
             nX = nX ?: PointDensityStat.DEF_N,
             nY = nY ?: PointDensityStat.DEF_N,
@@ -525,6 +455,49 @@ object StatProto {
             }
         }
         return Pair(bwValue, bwMethod)
+    }
+
+    private fun getBandWidth2d(options: OptionsAccessor): Triple<Double?, Double?, DensityStat.BandWidthMethod?> {
+        var bwValueX: Double? = null
+        var bwValueY: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod? = null
+        options[Density2d.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValueX = this.toDouble()
+                bwValueY = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            } else if (this is List<*>) {
+                for ((i, v) in this.withIndex()) {
+                    when (i) {
+                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
+                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
+                        else -> break
+                    }
+                }
+            }
+        }
+        return Triple(bwValueX, bwValueY, bwMethod)
+    }
+
+    private fun getDensity2dN(options: OptionsAccessor): Pair<Int?, Int?> {
+        var nX: Int? = null
+        var nY: Int? = null
+        options[Density2d.N]?.run {
+            if (this is Number) {
+                nX = this.toInt()
+                nY = this.toInt()
+            } else if (this is List<*>) {
+                for ((i, v) in this.withIndex()) {
+                    when (i) {
+                        0 -> nX = v?.let { (v as Number).toInt() }
+                        1 -> nY = v?.let { (v as Number).toInt() }
+                        else -> break
+                    }
+                }
+            }
+        }
+        return Pair(nX, nY)
     }
 
     private fun getYDensityScale(options: OptionsAccessor): BaseYDensityStat.Scale? {
