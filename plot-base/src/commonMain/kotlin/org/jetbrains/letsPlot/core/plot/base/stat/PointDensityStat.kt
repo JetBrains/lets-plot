@@ -37,7 +37,7 @@ class PointDensityStat(
 ) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(
@@ -83,7 +83,7 @@ class PointDensityStat(
     private fun buildNeighboursStat(
         xVector: List<Double>,
         yVector: List<Double>,
-        weightVector: List<Double>, // TODO: use weights
+        weightVector: List<Double>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
@@ -91,7 +91,7 @@ class PointDensityStat(
         val adjustedYRange = yRange.length * adjust
         val r2 = (adjustedXRange + adjustedYRange) / 70.0
         val xy = adjustedXRange / adjustedYRange
-        val statCount = countNeighbours(xVector, yVector, r2, xy).map { it.toDouble() }
+        val statCount = countNeighbours(xVector, yVector, weightVector, r2, xy)
         val statDensity = statCount.map { it / statCount.size } // Never divide by zero - no mapping if no points
         val maxCount = statCount.maxOrNull() ?: 0.0 // null only if there are no points (each point counts itself)
         val statScaled = statCount.map { it / maxCount } // Never divide by zero - no mapping if no points
@@ -196,16 +196,17 @@ class PointDensityStat(
         private fun countNeighbours(
             x: List<Double>,
             y: List<Double>,
+            w: List<Double>,
             r2: Double,
             xy: Double
-        ): List<Int> {
-            val counts: MutableList<Int> = mutableListOf()
+        ): List<Double> {
+            val counts: MutableList<Double> = mutableListOf()
             val n = x.size
             for (i in 0 until n) {
-                var count = 0
+                var count = 0.0
                 for (j in 0 until n) {
                     if (i == j || scaledDistanceSquared(x[i], y[i], x[j], y[j], xy) < r2) {
-                        count += 1
+                        count += w[i]
                     }
                 }
                 counts.add(count)
