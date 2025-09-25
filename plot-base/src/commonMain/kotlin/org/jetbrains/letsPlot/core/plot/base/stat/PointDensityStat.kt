@@ -92,9 +92,9 @@ class PointDensityStat(
         val r2 = (adjustedXRange + adjustedYRange) / 70.0
         val xy = adjustedXRange / adjustedYRange
         val statCount = countNeighbours(xVector, yVector, weightVector, r2, xy)
-        val statDensity = statCount.map { it / statCount.size } // Never divide by zero - no mapping if no points
-        val maxCount = statCount.maxOrNull() ?: 0.0 // null only if there are no points (each point counts itself)
-        val statScaled = statCount.map { it / maxCount } // Never divide by zero - no mapping if no points
+        val statDensity = statCount.map { it / statCount.size }
+        val maxCount = statCount.maxOrNull() ?: 0.0
+        val statScaled = statCount.map { it / maxCount }
         return mapOf(
             Stats.X to xVector,
             Stats.Y to yVector,
