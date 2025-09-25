@@ -110,9 +110,9 @@ abstract class AbstractDensity2dStat(
     }
 
     protected fun getStatData(
-        xVector: List<Double?>,
-        yVector: List<Double?>,
-        groupWeight: List<Double?>,
+        xVector: List<Double>,
+        yVector: List<Double>,
+        groupWeight: List<Double>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
@@ -151,9 +151,9 @@ abstract class AbstractDensity2dStat(
     }
 
     protected fun density2dGrid(
-        xVector: List<Double?>,
-        yVector: List<Double?>,
-        groupWeight: List<Double?>,
+        xVector: List<Double>,
+        yVector: List<Double>,
+        groupWeight: List<Double>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Triple<List<Double>, List<Double>, BlockRealMatrix> {

@@ -51,10 +51,12 @@ class PointDensityStat(
 
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
-        val xs = data.getNumeric(TransformVar.X)
-        val ys = data.getNumeric(TransformVar.Y)
-        val (xVector, yVector) = SeriesUtil.filterFinite(xs, ys)
-        val weightVector = BinStatUtil.weightVector(xVector.size, data)
+
+        val (xVector, yVector, weightVector) = SeriesUtil.filterFinite(
+            data.getNumeric(TransformVar.X),
+            data.getNumeric(TransformVar.Y),
+            BinStatUtil.weightVector(data.rowCount(), data)
+        )
 
         val statData = buildStat(xVector, yVector, weightVector, xRange, yRange)
 
@@ -68,7 +70,7 @@ class PointDensityStat(
     private fun buildStat(
         xVector: List<Double>,
         yVector: List<Double>,
-        weightVector: List<Double?>,
+        weightVector: List<Double>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
@@ -81,7 +83,7 @@ class PointDensityStat(
     private fun buildNeighboursStat(
         xVector: List<Double>,
         yVector: List<Double>,
-        weightVector: List<Double?>, // TODO: use weights
+        weightVector: List<Double>, // TODO: use weights
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
@@ -105,7 +107,7 @@ class PointDensityStat(
     private fun buildKde2dStat(
         xValues: List<Double>,
         yValues: List<Double>,
-        weightVector: List<Double?>,
+        weightVector: List<Double>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
