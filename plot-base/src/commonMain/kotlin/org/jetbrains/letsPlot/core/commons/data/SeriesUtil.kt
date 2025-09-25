@@ -113,6 +113,45 @@ object SeriesUtil {
         }
     }
 
+    fun filterFinite(l0: List<Double?>, l1: List<Double?>, l2: List<Double?>): List<List<Double>> {
+        check(l0.size == l1.size)
+        check(l0.size == l2.size)
+
+        val l0Copy = ArrayList<Double>()
+        val l1Copy = ArrayList<Double>()
+        val l2Copy = ArrayList<Double>()
+        var copy = false
+        for ((i, v0) in l0.withIndex()) {
+            val v1 = l1[i]
+            val v2 = l2[i]
+            if (!allFinite(v0, v1, v2)) {
+                if (!copy) {
+                    // copy already checked elements
+                    @Suppress("UNCHECKED_CAST")
+                    l0Copy.addAll(l0.take(i).toList() as List<Double>)
+                    @Suppress("UNCHECKED_CAST")
+                    l1Copy.addAll(l1.take(i).toList() as List<Double>)
+                    @Suppress("UNCHECKED_CAST")
+                    l2Copy.addAll(l2.take(i).toList() as List<Double>)
+                    copy = true
+                }
+                continue
+            }
+
+            if (copy) {
+                l0Copy.add(v0 as Double)
+                l1Copy.add(v1 as Double)
+                l2Copy.add(v2 as Double)
+            }
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return when (copy) {
+            true -> listOf(l0Copy, l1Copy, l2Copy)
+            false -> listOf(l0 as List<Double>, l1 as List<Double>, l2 as List<Double>)
+        }
+    }
+
     fun resolution(values: Iterable<Double?>, naValue: Double): Double {
 
         // check if this is a row of a regular grid
