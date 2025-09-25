@@ -49,4 +49,6 @@ interface GeomContext {
     fun getCoordinateSystem(): CoordinateSystem?
 
     fun getContentBounds(): DoubleRectangle
+
+    fun getScaleFactor(): Double
 }

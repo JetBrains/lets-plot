@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.lineParts
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.stringParts
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -131,6 +132,45 @@ class RichTextTermTest {
     fun emptyLink() {
         val richTextSvg = toSvg("<a href=\"https://example.com\"></a>")
         assertThat(richTextSvg.single().stringParts()).containsExactly("")
+    }
+
+    @Test
+    fun onlyLink() {
+        val richTextSvg = toSvg("<a href=\"https://example.com\">world</a>")
+        assertThat(richTextSvg.single().stringParts()).containsExactly("world")
+    }
+
+    @Test
+    fun forHyperlinkDefaultTargetIsBlank() {
+        val richTextSvg = toSvg("<a href=\"https://example.com\">world</a>")
+        assertThat(richTextSvg.single().stringParts()).containsExactly("world")
+
+        val a = richTextSvg.single().children().first() as SvgAElement
+        assertThat(a.href().get()).isEqualTo("https://example.com")
+        assertThat(a.target().get()).isEqualTo("_blank")
+    }
+
+    @Test
+    fun userDefinedTarget() {
+        val richTextSvg = toSvg("<a href=\"https://example.com\" target=\"_parent\">world</a>")
+        assertThat(richTextSvg.single().stringParts()).containsExactly("world")
+
+        val a = richTextSvg.single().children().first() as SvgAElement
+        assertThat(a.href().get()).isEqualTo("https://example.com")
+        assertThat(a.target().get()).isEqualTo("_parent")
+    }
+
+    // The Result is incorrect, but at least it works without exceptions.
+    // Expected containsExactly("Hello, ", "wor", "ld", "!")
+    @Test
+    fun nestedLinks() {
+        val richTextSvg = toSvg("Hello, <a href=\"https://example.com\">wor<a href=\"https://example.com\">ld</a></a>!")
+
+        // Current incorrect result:
+        assertThat(richTextSvg.single().stringParts()).containsExactly("Hello, ", "wor", "!")
+
+        // Correct result (not implemented):
+        //assertThat(richTextSvg.single().stringParts()).containsExactly("Hello, ", "wor", "ld", "!")
     }
 
     @Test

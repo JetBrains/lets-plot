@@ -42,11 +42,11 @@ class Density2dfStat(
             return withEmptyStatValues()
         }
 
-        val xs = data.getNumeric(TransformVar.X)
-        val ys = data.getNumeric(TransformVar.Y)
-        val (xVector, yVector) = (xs zip ys)
-            .filter { SeriesUtil.allFinite(it.first, it.second) }
-            .unzip()
+        val (xVector, yVector, groupWeight) = SeriesUtil.filterFinite(
+            data.getNumeric(TransformVar.X),
+            data.getNumeric(TransformVar.Y),
+            BinStatUtil.weightVector(data.rowCount(), data)
+        )
 
         // if no data, return empty
         if (xVector.isEmpty()) {
@@ -58,7 +58,6 @@ class Density2dfStat(
             throw RuntimeException("len(x)= " + xVector.size + " and len(y)= " + yVector.size + " doesn't match!")
         }
 
-        val groupWeight = BinStatUtil.weightVector(xVector.size, data)
         val xRange = statCtx.overallXRange()!!
         val yRange = statCtx.overallYRange()!!
 

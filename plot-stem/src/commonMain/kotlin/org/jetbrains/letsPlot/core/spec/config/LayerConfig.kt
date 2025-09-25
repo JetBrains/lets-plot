@@ -165,6 +165,8 @@ class LayerConfig constructor(
     val tooltips: TooltipSpecification
     val annotations: AnnotationSpecification
 
+    private val combinedDiscreteMappings: Map<String, String>
+
     internal var ownData: DataFrame
         private set
 
@@ -186,7 +188,7 @@ class LayerConfig constructor(
         }
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 
-        val combinedDiscreteMappings = combinedDiscreteMapping(
+        combinedDiscreteMappings = combinedDiscreteMapping(
             commonMappings = plotMappings,
             ownMappings = layerMappings,
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
@@ -442,6 +444,12 @@ class LayerConfig constructor(
 
     fun getVariableForAes(aes: Aes<*>): DataFrame.Variable? {
         return varBindings.find { it.aes == aes }?.variable
+    }
+
+    // Returns the original variable name for meta-variables
+    // (e.g., "category" instead of "color.category" for color=as_discrete("category") mapping).
+    fun getOriginalVariableName(aes: Aes<*>): String? {
+        return combinedDiscreteMappings[aes.name] ?: getVariableForAes(aes)?.name
     }
 
     fun getMapJoin(): Pair<List<*>, List<*>>? {

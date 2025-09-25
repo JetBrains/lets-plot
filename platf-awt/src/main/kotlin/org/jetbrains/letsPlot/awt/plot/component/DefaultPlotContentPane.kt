@@ -5,8 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import java.awt.Color
 import java.awt.Component
 import javax.swing.BorderFactory
@@ -25,20 +26,25 @@ abstract class DefaultPlotContentPane(
     private val repaintDelay: Int,  // ms
     private val applicationContext: ApplicationContext
 
-) : Disposable, JPanel() {
+) : Disposable, WithFigureModel, JPanel() {
+
+    private val plotPanel: PlotPanel
+    final override val figureModel: FigureModel get() = plotPanel.figureModel
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        val figureModel: FigureModel = createContent(processedSpec)
-        putClientProperty(FigureModel::class, figureModel)
+        createUI(processedSpec).let { (plotPanel, messagesArea) ->
+            this.plotPanel = plotPanel
+            this.add(plotPanel)
+            this.add(messagesArea)
+        }
     }
 
     /**
      * In IDEA plugin: override and check for 'com.intellij.openapi.Disposable'.
      */
     override fun dispose() {
-        // ToDo: deactivate all ongoing interactions?
-        putClientProperty(FigureModel::class, null)
+//        figureModel.dispose()
 
         for (component in components) {
             when (component) {
@@ -48,7 +54,7 @@ abstract class DefaultPlotContentPane(
         removeAll()
     }
 
-    private fun createContent(processedSpec: MutableMap<String, Any>): FigureModel {
+    private fun createUI(processedSpec: MutableMap<String, Any>): Pair<PlotPanel, JLabel> {
         var shownMessages = HashSet<String>()
         val messagesArea: JLabel = JLabel().apply {
             foreground = Color.BLUE
@@ -81,9 +87,7 @@ abstract class DefaultPlotContentPane(
         plotPanel.alignmentX = Component.CENTER_ALIGNMENT
         messagesArea.alignmentX = Component.CENTER_ALIGNMENT
 
-        this.add(plotPanel)
-        this.add(messagesArea)
-        return plotPanel.figureModel
+        return Pair(plotPanel, messagesArea)
     }
 
     protected abstract fun createPlotPanel(

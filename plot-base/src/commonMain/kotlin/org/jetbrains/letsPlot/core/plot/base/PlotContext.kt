@@ -16,6 +16,7 @@ interface PlotContext {
 
     fun hasScale(aes: Aes<*>): Boolean
     fun getScale(aes: Aes<*>): Scale
+    fun getScaleFactor(): Double
     fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
 
     fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String
@@ -27,6 +28,7 @@ object NullPlotContext : PlotContext {
 
     override fun hasScale(aes: Aes<*>): Boolean = false
     override fun getScale(aes: Aes<*>): Scale = error("No scale for aesthetic $aes")
+    override fun getScaleFactor(): Double = 1.0
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan = error("No domain for aesthetic $aes")
     override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String = Any?::toString
 }

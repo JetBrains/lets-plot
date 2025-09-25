@@ -180,6 +180,7 @@ object ThemeOption {
     object Name {
         // ggplot2 themes
         const val R_GREY = "grey"
+        const val R_GRAY = "gray"
         const val R_LIGHT = "light"
         const val R_CLASSIC = "classic"
         const val R_MINIMAL = "minimal"
@@ -196,6 +197,7 @@ object ThemeOption {
         const val SOLARIZED_DARK = "solarized_dark"
         const val HIGH_CONTRAST_LIGHT = "high_contrast_light"
         const val HIGH_CONTRAST_DARK = "high_contrast_dark"
+        const val STANDARD= "standard"
 
         // base theme flavors
         const val BASE = "base"
@@ -214,6 +216,7 @@ object ThemeOption {
     internal object ForTest {
         val themeNames = listOf(
             Name.R_GREY,
+            Name.R_GRAY,
             Name.R_LIGHT,
             Name.R_CLASSIC,
             Name.R_MINIMAL,

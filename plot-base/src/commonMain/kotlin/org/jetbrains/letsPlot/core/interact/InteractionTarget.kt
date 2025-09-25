@@ -25,4 +25,6 @@ interface InteractionTarget {
         screenViewport: DoubleRectangle,
         ctx: InteractionContext
     ): Pair<DoubleRectangle, Boolean>
+
+    fun dataBounds(): DoubleRectangle
 }

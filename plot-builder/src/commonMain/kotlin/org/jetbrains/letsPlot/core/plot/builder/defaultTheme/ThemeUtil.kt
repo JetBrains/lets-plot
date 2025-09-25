@@ -34,7 +34,14 @@ object ThemeUtil {
             return effectiveOptions
         }
 
-        val flavorName = effectiveOptions[ThemeOption.FLAVOR] as? String ?: error("Flavor name should be specified")
+        val requestedFlavorName = effectiveOptions[ThemeOption.FLAVOR] as? String ?: error("Flavor name should be specified")
+        val flavorName =
+            if (requestedFlavorName == ThemeOption.Flavor.STANDARD) {
+                (baselineValues.values[ThemeOption.FLAVOR] as? String)
+                    ?: error("Default flavor is not defined for theme '$themeName'")
+            } else {
+                requestedFlavorName
+            }
         val flavor = ThemeFlavor.forName(flavorName)
 
         val geomThemeOptions = mapOf(

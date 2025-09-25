@@ -39,6 +39,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
         graphics.background = Color.TRANSPARENT.toAwtColor()
         setLineCap(LineCap.BUTT)
+        state.transform = graphics.transform
     }
 
     internal data class ContextState(

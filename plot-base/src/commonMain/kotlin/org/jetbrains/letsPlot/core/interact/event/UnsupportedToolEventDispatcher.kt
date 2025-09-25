@@ -18,5 +18,7 @@ class UnsupportedToolEventDispatcher : ToolEventDispatcher {
 
     override fun deactivateInteractions(origin: String) {}
 
+    override fun deactivateAll() {}
+
     override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> = emptyMap()
 }

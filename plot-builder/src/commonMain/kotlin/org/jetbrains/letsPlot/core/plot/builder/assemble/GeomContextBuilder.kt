@@ -30,6 +30,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var plotContext: PlotContext = NullPlotContext
     private var coordinateSystem: CoordinateSystem? = null
     private var contentBounds: DoubleRectangle? = null
+    private var scaleFactor: Double = 1.0
 
     constructor()
 
@@ -106,6 +107,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun scaleFactor(scaleFactor: Double): ImmutableGeomContext.Builder {
+        this.scaleFactor = scaleFactor
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -118,6 +124,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val defaultFormatters = b.defaultFormatters
         val _coordinateSystem = b.coordinateSystem
         val _contentBounds = b.contentBounds
+        val _scaleFactor = b.scaleFactor
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -183,6 +190,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override fun getAesBounds(): DoubleRectangle {
             check(_aesBounds != null) { "GeomContext: aesthetics bounds are not defined." }
             return _aesBounds
+        }
+
+        override fun getScaleFactor(): Double {
+            return _scaleFactor
         }
 
         override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {

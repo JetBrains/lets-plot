@@ -10,6 +10,7 @@ interface ToolEventDispatcher {
 
     fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
     fun deactivateInteractions(origin: String)
+    fun deactivateAll()
 
     /**
      * @return List of deactivated interaction specs by "origin"

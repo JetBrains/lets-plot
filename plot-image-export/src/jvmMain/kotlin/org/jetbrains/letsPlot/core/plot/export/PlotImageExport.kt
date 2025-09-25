@@ -5,15 +5,15 @@
 
 package org.jetbrains.letsPlot.core.plot.export
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
-import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
-import kotlin.math.roundToInt
 
 object PlotImageExport {
     sealed class Format {
@@ -66,42 +66,37 @@ object PlotImageExport {
 
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
-        val plotFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
-            rawSpec = plotSpec,
+        val plotFigure = PlotCanvasFigure2()
+        plotFigure.update(
+            processedSpec = MonolithicCommon.processRawSpecs(plotSpec = plotSpec, frontendOnly = false),
             sizingPolicy = sizingPolicy,
             computationMessagesHandler = {}
         )
 
-        val plotComponentSize = plotFigure.bounds().get().dimension
+        val awtCanvasPeer = AwtCanvasPeer(scaleFactor)
+        plotFigure.mapToCanvas(awtCanvasPeer)
 
-        val image = BufferedImage(
-            (plotComponentSize.x * scaleFactor).roundToInt(),
-            (plotComponentSize.y * scaleFactor).roundToInt(),
-            when (format) {
-                is Format.PNG -> BufferedImage.TYPE_INT_ARGB
-                is Format.TIFF -> BufferedImage.TYPE_INT_ARGB
-                is Format.JPEG -> BufferedImage.TYPE_INT_RGB
-            }
-        )
-
-        val graphics = image.createGraphics()
-
-        graphics.scale(scaleFactor, scaleFactor)
-
-        try {
-            CanvasPane.paint(plotFigure, scaleFactor, graphics)
-        } finally {
-            graphics.dispose()
-        }
+        val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
+        plotFigure.paint(canvas.context2d)
 
         val outputStream = ByteArrayOutputStream()
-        ImageIO.write(image, format.defFileExt, outputStream)
+
+        if (format.defFileExt == "jpg") {
+            // JPEG does not support transparency. We need to fill the background with white color.
+            val rgbBufferedImage = BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
+            val g = rgbBufferedImage.createGraphics()
+            g.drawImage(canvas.image, 0, 0, java.awt.Color.WHITE, null)
+            g.dispose()
+            ImageIO.write(rgbBufferedImage, format.defFileExt, outputStream)
+        } else {
+            ImageIO.write(canvas.image, format.defFileExt, outputStream)
+        }
 
         return ImageData(
             bytes = outputStream.toByteArray(),
             plotSize = DoubleVector(
-                x = image.width.toDouble(),
-                y = image.height.toDouble()
+                x = plotFigure.size.x.toDouble(),
+                y = plotFigure.size.y.toDouble()
             )
         )
     }

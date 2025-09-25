@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGr
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
@@ -78,9 +79,15 @@ class CompositeFigureConfig constructor(
             if (spec is Map<*, *>) {
                 @Suppress("UNCHECKED_CAST")
                 spec as Map<String, Any>
-                when (PlotConfig.figSpecKind(spec)) {
-                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(spec, theme) { computationMessages.addAll(it) }
-                    FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(spec, theme) { computationMessages.addAll(it) }
+
+                // Add 'ggtoolbar' option to each sub-figure:
+                val extendedSpec = opts[GG_TOOLBAR]?.let { ggToolbar ->
+                     spec + (GG_TOOLBAR to ggToolbar)
+                } ?: spec
+
+                when (PlotConfig.figSpecKind(extendedSpec)) {
+                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(extendedSpec, theme) { computationMessages.addAll(it) }
+                    FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(extendedSpec, theme) { computationMessages.addAll(it) }
                     FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
                 }
             } else {

@@ -108,6 +108,18 @@ object Option {
         }
     }
 
+    object GGToolbar {
+        const val SIZE_BASIS = "size_basis"
+        const val SIZE_ZOOMIN = "size_zoomin"
+
+        object SizeBasis {
+            const val X = "x"
+            const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
+        }
+    }
+
     // Unlisted supported features:
     // - Plot.SIZE (a.k.a. "ggsize")
     // - Plot.THEME
@@ -206,6 +218,8 @@ object Option {
 
         const val COLOR_BY = "color_by"
         const val FILL_BY = "fill_by"
+
+        const val SCALE_FACTOR = "scale_factor"
 
         object Marginal {
             const val SIZE = "margin_size"
@@ -978,6 +992,7 @@ object Option {
         object Name {
             // ggplot2 themes
             const val R_GREY = ThemeOption.Name.R_GREY
+            const val R_GRAY = ThemeOption.Name.R_GRAY
             const val R_LIGHT = ThemeOption.Name.R_LIGHT
             const val R_CLASSIC = ThemeOption.Name.R_CLASSIC
             const val R_MINIMAL = ThemeOption.Name.R_MINIMAL
@@ -1014,6 +1029,7 @@ object Option {
             const val SOLARIZED_DARK = ThemeOption.Flavor.SOLARIZED_DARK
             const val HIGH_CONTRAST_LIGHT = ThemeOption.Flavor.HIGH_CONTRAST_LIGHT
             const val HIGH_CONTRAST_DARK = ThemeOption.Flavor.HIGH_CONTRAST_DARK
+            const val STANDARD = ThemeOption.Flavor.STANDARD
         }
 
         object Geom {

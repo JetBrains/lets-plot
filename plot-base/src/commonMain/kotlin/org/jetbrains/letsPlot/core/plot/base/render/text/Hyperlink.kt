@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.parseAsXml
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
@@ -15,21 +17,38 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 
 internal object Hyperlink {
     fun parse(text: String): List<RichTextNode> {
-        val links = anchorTagRegex.findAll(text)
-            .map { match ->
-                val (href, label) = match.destructured
-                HyperlinkElement(label, href) to match.range
-            }.toList()
-
-        return RichText.fillTextTermGaps(text, links)
+        val doc = parseAsXml(text)
+        return render(doc)
     }
 
-    private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
+    fun render(node: XmlNode): List<RichTextNode> {
+        val output = mutableListOf<RichTextNode>()
+
+        when (node) {
+            is XmlNode.Text -> output += RichTextNode.Text(node.content)
+            is XmlNode.Element -> {
+                if (node.name == "a") {
+                    val href = node.attributes["href"] ?: ""
+                    val target = node.attributes["target"]
+                    val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
+                    output += HyperlinkElement(text, href, target)
+                    return output
+                }
+
+                output += node.children.flatMap(::render)
+            }
+        }
+
+        return output
+    }
 
     class HyperlinkElement(
         private val text: String,
         private val href: String,
+        target: String?
     ) : RichTextNode.RichSpan() {
+        private val target = target ?: "_blank"
+
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font): Double {
             return widthCalculator(text, font)
@@ -40,6 +59,8 @@ internal object Hyperlink {
                 SvgAElement().apply {
                     href().set(href)
                     xlinkHref().set(href)
+                    target().set(target)
+
                     children().add(
                         SvgTSpanElement(text).apply {
                             addClass(RichText.HYPERLINK_ELEMENT_CLASS)

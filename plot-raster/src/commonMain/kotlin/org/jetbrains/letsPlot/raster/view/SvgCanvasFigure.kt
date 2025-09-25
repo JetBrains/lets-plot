@@ -7,9 +7,12 @@ package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
@@ -17,7 +20,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
-import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
 import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
 import kotlin.math.ceil
@@ -39,8 +41,9 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     private var needRedraw: Boolean = true // Some svg elements may change their appearance (e.g., text) and require redraw.
     private var needResizeContentCanvas: Boolean = true // The size of svgSvgElement was changed, so we need to resize contentCanvas.
 
+    private var canvasPeer: CanvasPeer? = null
     private var nodeContainer: SvgNodeContainer? = null
-    private var canvasPeer: SvgCanvasPeer? = null
+    private var svgCanvasPeer: SvgCanvasPeer? = null
     private var contentCanvas: Canvas? = null // Should have the same size as Figure
     private var canvasControl: CanvasControl? = null
     private var textMeasureCanvas: Canvas? = null
@@ -53,13 +56,48 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
+        val textMeasureCanvas = canvasControl.createCanvas(0, 0)
+        val canvasPeer = object : CanvasPeer {
+            override fun createCanvas(size: Vector): Canvas {
+                return canvasControl.createCanvas(size.x, size.y)
+            }
+
+            override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+                return canvasControl.createSnapshot(bitmap)
+            }
+
+            override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
+                return canvasControl.decodeDataImageUrl(dataUrl)
+            }
+
+            override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+                return canvasControl.decodePng(png)
+            }
+
+            override fun measureText(
+                text: String,
+                font: Font
+            ): TextMetrics {
+                val textMeasureCanvas = textMeasureCanvas
+                val ctx = textMeasureCanvas.context2d
+                ctx.save()
+                ctx.setFont(font)
+                val textMetrics = ctx.measureText(text)
+                ctx.restore()
+
+                return textMetrics
+            }
+
+            override fun dispose() {
+                // nothing to dispose
+            }
+        }
+
+        canvasControl.addChild(textMeasureCanvas)
         this.canvasControl = canvasControl
-
-        textMeasureCanvas = canvasControl.createCanvas(0, 0)
-        canvasControl.addChild(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
-
-        val textMeasurer = TextMeasurer.create(textMeasureCanvas ?: error("Should not happen - textMeasureCanvas is null"))
-        canvasPeer = SvgCanvasPeer(textMeasurer, canvasControl)
+        this.textMeasureCanvas = textMeasureCanvas
+        this.canvasPeer = canvasPeer
+        svgCanvasPeer = SvgCanvasPeer(canvasPeer)
 
         // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
         onAnimationFrame()
@@ -70,7 +108,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         return object : Registration() {
             override fun doRemove() {
                 contentCanvas?.let(canvasControl::removeChild)
-                textMeasureCanvas?.let(canvasControl::removeChild)
+                textMeasureCanvas.let(canvasControl::removeChild)
                 rootMapper.detachRoot()
                 anim.stop()
                 this@SvgCanvasFigure.canvasControl = null
@@ -79,7 +117,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     private fun mapSvgSvgElement() {
-        val canvasPeer = canvasPeer ?: return // not yet attached
+        val canvasPeer = svgCanvasPeer ?: return // not yet attached
 
         nodeContainer = SvgNodeContainer(svgSvgElement)  // attach root
         nodeContainer!!.addListener(object : SvgNodeContainerListener {

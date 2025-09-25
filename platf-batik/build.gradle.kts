@@ -9,6 +9,7 @@ val commonsIOVersion = project.extra["commons-io.version"] as String
 dependencies {
     compileOnly(project(":commons"))
     compileOnly(project(":datamodel"))
+    compileOnly(project(":plot-builder"))
     compileOnly(project(":plot-stem"))
     compileOnly(project(":platf-awt"))
     compileOnly("org.apache.xmlgraphics:batik-codec:$batikVersion")

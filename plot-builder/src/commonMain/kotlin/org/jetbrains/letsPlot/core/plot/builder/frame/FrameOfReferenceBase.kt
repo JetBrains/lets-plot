@@ -210,6 +210,7 @@ internal abstract class FrameOfReferenceBase(
                 .plotContext(plotContext)
                 .coordinateSystem(coord)
                 .contentBounds(bounds)
+                .scaleFactor(plotContext.getScaleFactor())
                 .build()
 
             val pos = rendererData.pos

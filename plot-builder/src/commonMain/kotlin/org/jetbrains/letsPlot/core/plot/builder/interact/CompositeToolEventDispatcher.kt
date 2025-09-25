@@ -30,10 +30,16 @@ class CompositeToolEventDispatcher(
         }
     }
 
+    override fun deactivateAll() {
+        elements.forEach {
+            it.deactivateAll()
+        }
+    }
+
     override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> {
         return elements.map {
             it.deactivateAllSilently()
-        }.lastOrNull() // Expected all elements are same.
+        }.lastOrNull() // Expected all elements are the same.
             ?: emptyMap()
     }
 }

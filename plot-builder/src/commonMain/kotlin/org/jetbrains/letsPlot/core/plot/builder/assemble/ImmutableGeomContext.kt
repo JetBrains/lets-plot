@@ -41,6 +41,8 @@ interface ImmutableGeomContext : GeomContext {
 
         fun contentBounds(contentBounds: DoubleRectangle): Builder
 
+        fun scaleFactor(scaleFactor: Double): Builder
+
         fun build(): ImmutableGeomContext
     }
 }

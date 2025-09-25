@@ -18,7 +18,11 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.GGToolbar.SizeBasis
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import org.jetbrains.letsPlot.core.spec.StatProto
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
@@ -156,7 +160,7 @@ object PlotConfigFrontendUtil {
             defaultCoordProvider
         ).let { coordProvider ->
             @Suppress("UNCHECKED_CAST")
-            config[Option.Plot.SPEC_OVERRIDE]?.let { specOverride ->
+            config[SPEC_OVERRIDE]?.let { specOverride ->
                 val accessor = over(specOverride as Map<String, Any>)
                 val xlimOverride = accessor.getNumQPairDef(SpecOverride.COORD_XLIM_TRANSFORMED, Pair(null, null))
                     .let { Pair(it.first?.toDouble(), it.second?.toDouble()) }
@@ -186,6 +190,37 @@ object PlotConfigFrontendUtil {
         )
     }
 
+    private fun computeScaleFactor(config: PlotConfigFrontend): Double {
+        val sizeBasis = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_BASIS] as String? ?: SizeBasis.MAX
+        val sizeZoomin = config.getMap(GG_TOOLBAR)[Option.GGToolbar.SIZE_ZOOMIN] as Double? ?: 0.0
+
+        require(sizeZoomin >= 0.0 || sizeZoomin == -1.0) {
+            "Illegal ${Option.GGToolbar.SIZE_ZOOMIN} value: $sizeZoomin. Expected: value ≥ 0.0 or value = −1.0 (no limit)."
+        }
+
+        return config.getMap(SPEC_OVERRIDE)[SCALE_RATIO].let { scaleRatio ->
+            @Suppress("UNCHECKED_CAST")
+            scaleRatio as List<Double>?
+            val factor = scaleRatio?.let {
+                when (sizeBasis) {
+                    SizeBasis.X -> it[0]
+                    SizeBasis.Y -> it[1]
+                    SizeBasis.MAX -> maxOf(it[0], it[1])
+                    SizeBasis.MIN -> minOf(it[0], it[1])
+                    else -> 1.0
+                }
+            } ?: 1.0
+
+            val maxLimit = when (sizeZoomin) {
+                0.0 -> 1.0
+                -1.0 -> Double.MAX_VALUE
+                else -> sizeZoomin
+            }
+
+            factor.coerceIn(1.0..maxLimit)
+        }
+    }
+
     fun createPlotAssembler(
         config: PlotConfigFrontend,
         sharedContinuousDomainX: DoubleSpan? = null,
@@ -197,6 +232,9 @@ object PlotConfigFrontendUtil {
             sharedContinuousDomainX,
             sharedContinuousDomainY
         )
+
+        val scaleFactor = computeScaleFactor(config)
+
         return PlotAssembler(
             plotGeomTiles,
             config.facets,
@@ -209,6 +247,7 @@ object PlotConfigFrontendUtil {
             guideOptionsMap = config.guideOptionsMap,
             plotSpecId = config.specId,
             tz = config.tz,
+            scaleFactor
         )
     }
 }

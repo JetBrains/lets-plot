@@ -55,6 +55,10 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
+    override fun getScaleFactor(): Double {
+        return 1.0
+    }
+
     override fun isMappedAes(aes: Aes<*>): Boolean = false
     override fun estimateTextSize(
         text: String,

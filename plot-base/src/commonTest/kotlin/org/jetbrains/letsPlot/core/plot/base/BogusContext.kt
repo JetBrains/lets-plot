@@ -55,6 +55,10 @@ object BogusContext : GeomContext {
         error("Not available in a bogus geom context")
     }
 
+    override fun getScaleFactor(): Double {
+        return 1.0
+    }
+
     override fun estimateTextSize(
         text: String,
         family: String,

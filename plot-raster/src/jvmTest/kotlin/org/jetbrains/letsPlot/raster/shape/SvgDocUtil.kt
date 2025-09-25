@@ -5,19 +5,14 @@
 
 package org.jetbrains.letsPlot.raster.shape
 
-import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
-import org.jetbrains.letsPlot.commons.event.MouseEvent
-import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
-import org.jetbrains.letsPlot.raster.mapping.svg.TextMeasurer
 
 
 internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
@@ -26,25 +21,20 @@ internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
 
     // attach root
     SvgNodeContainer(svgDocument)
-    val canvasControl = AwtCanvasControl(
-        Vector(100, 100),
-        animationTimerPeer = AwtAnimationTimerPeer(),
-        mouseEventSource = object : MouseEventSource {
-            override fun addEventHandler(
-                eventSpec: MouseEventSpec,
-                eventHandler: EventHandler<MouseEvent>
-            ): Registration {
-                TODO("Not yet implemented")
-            }
-        }
-    )
 
-    val canvasPeer = SvgCanvasPeer(
-        textMeasurer = TextMeasurer.create(canvasControl), canvasControl
-    )
+    val canvasPeer = object : CanvasPeer {
+        override fun createCanvas(size: Vector) = TODO("Not yet implemented")
+        override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
+        override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
+        override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
+        override fun measureText(text: String, font: Font) = TODO("Not yet implemented")
+        override fun dispose() = TODO("Not yet implemented")
+    }
+
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
 
     //val rootMapper = SvgSvgElementMapper(svgDocument, SvgSkiaPeer(fontManager))
-    val rootMapper = SvgSvgElementMapper(svgDocument, canvasPeer)
+    val rootMapper = SvgSvgElementMapper(svgDocument, svgCanvasPeer)
     rootMapper.attachRoot(MappingContext())
     return rootMapper.target
 }
