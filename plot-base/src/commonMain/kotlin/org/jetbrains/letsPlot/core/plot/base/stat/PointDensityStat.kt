@@ -52,17 +52,23 @@ class PointDensityStat(
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
 
-        val (xVector, yVector, weightVector) = SeriesUtil.filterFinite(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y),
-            BinStatUtil.weightVector(data.rowCount(), data)
-        )
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        val weights = BinStatUtil.weightVector(data.rowCount(), data)
+        val indices = indicesOfFinite(xs, ys, weights)
+        val xVector = indices.map { xs[it]!! }
+        val yVector = indices.map { ys[it]!! }
+        val weightVector = indices.map { weights[it]!! }
 
-        val statData = buildStat(xVector, yVector, weightVector, xRange, yRange)
+        val statData = buildStat(xVector, yVector, weightVector, indices, xRange, yRange)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
-            builder.putNumeric(variable, series)
+            @Suppress("UNCHECKED_CAST")
+            when (variable) {
+                Stats.INDEX -> builder.put(variable, series)
+                else -> builder.putNumeric(variable, series as List<Double>)
+            }
         }
         return builder.build()
     }
@@ -71,12 +77,13 @@ class PointDensityStat(
         xVector: List<Double>,
         yVector: List<Double>,
         weightVector: List<Double>,
+        indices: List<Int>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
-    ): Map<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Number>> {
         return when (method) {
-            Method.NEIGHBOURS -> buildNeighboursStat(xVector, yVector, weightVector, xRange, yRange)
-            Method.KDE2D -> buildKde2dStat(xVector, yVector, weightVector, xRange, yRange)
+            Method.NEIGHBOURS -> buildNeighboursStat(xVector, yVector, weightVector, indices, xRange, yRange)
+            Method.KDE2D -> buildKde2dStat(xVector, yVector, weightVector, indices, xRange, yRange)
         }
     }
 
@@ -84,9 +91,10 @@ class PointDensityStat(
         xVector: List<Double>,
         yVector: List<Double>,
         weightVector: List<Double>,
+        indices: List<Int>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
-    ): Map<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Number>> {
         val adjustedXRange = xRange.length * adjust
         val adjustedYRange = yRange.length * adjust
         val r2 = (adjustedXRange + adjustedYRange) / 70.0
@@ -100,7 +108,8 @@ class PointDensityStat(
             Stats.Y to yVector,
             Stats.COUNT to statCount,
             Stats.DENSITY to statDensity,
-            Stats.SCALED to statScaled
+            Stats.SCALED to statScaled,
+            Stats.INDEX to indices
         )
     }
 
@@ -108,18 +117,19 @@ class PointDensityStat(
         xValues: List<Double>,
         yValues: List<Double>,
         weightVector: List<Double>,
+        indices: List<Int>,
         xRange: DoubleSpan,
         yRange: DoubleSpan
-    ): Map<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Number>> {
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
 
         val (stepsX, stepsY, densityMatrix) = density2dGrid(xValues, yValues, weightVector, xRange, yRange)
 
-        val indices = findInterval(yValues, stepsY) zip findInterval(xValues, stepsX)
+        val multiIndex = findInterval(yValues, stepsY) zip findInterval(xValues, stepsX)
         val weightsSum = SeriesUtil.sum(weightVector)
-        for ((row, col) in indices) {
+        for ((row, col) in multiIndex) {
             val count = densityMatrix.getEntry(row, col)
             statCount.add(count)
             statDensity.add(count / weightsSum)
@@ -136,7 +146,8 @@ class PointDensityStat(
             Stats.Y to yValues,
             Stats.COUNT to statCount,
             Stats.DENSITY to statDensity,
-            Stats.SCALED to statScaled
+            Stats.SCALED to statScaled,
+            Stats.INDEX to indices
         )
     }
 
@@ -220,6 +231,12 @@ class PointDensityStat(
 
         private fun findInterval(values: List<Double>, breaks: List<Double>): List<Int> {
             return values.map { findInterval(it, breaks) }
+        }
+
+        private fun indicesOfFinite(l0: List<Double?>, l1: List<Double?>, l2: List<Double?>): List<Int> {
+            return l0.mapIndexedNotNull { i, v0 ->
+                if (SeriesUtil.allFinite(v0, l1[i], l2[i])) i else null
+            }
         }
     }
 }
