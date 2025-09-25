@@ -6,9 +6,7 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
-import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.commons.registration.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -17,10 +15,11 @@ import javax.swing.JComponent
 class CanvasPane2(
     figure: CanvasFigure2? = null,
     private val pixelDensity: Double = 1.0
-) : JComponent() {
-    private val canvasPeer: CanvasPeer = AwtCanvasPeer(pixelDensity)
+) : DisposingHub, Disposable, JComponent() {
+    private val registrations = CompositeRegistration()
     private var figureRegistration: Registration = Registration.EMPTY
-    val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    private val canvasPeer: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
+    private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
     var figure: CanvasFigure2? = null
         set(canvasFigure) {
@@ -67,5 +66,14 @@ class CanvasPane2(
         if (figure != null) {
             figure!!.paint(AwtContext2d(g2d))
         }
+    }
+
+    override fun registerDisposable(disposable: Disposable) {
+        registrations.add(DisposableRegistration(disposable))
+    }
+
+    override fun dispose() {
+        registrations.dispose()
+        figureRegistration.dispose()
     }
 }

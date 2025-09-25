@@ -2,6 +2,7 @@ package demo.plot
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
+import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotPanelCanvas
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
@@ -118,10 +119,10 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private lateinit var redoAction: AbstractAction
 
     // New components for frontend selection and pixel density
-    private val frontendComboBox = JComboBox(arrayOf("batik", "canvas")).apply {
+    private val frontendComboBox = JComboBox(arrayOf("batik", "DefaultPlotPanelCanvas", "CanvasPane")).apply {
         addActionListener {
-            pixelDensityLabel.isVisible = selectedItem == "canvas"
-            pixelDensitySpinner.isVisible = selectedItem == "canvas"
+            pixelDensityLabel.isVisible = selectedItem == "CanvasPane"
+            pixelDensitySpinner.isVisible = selectedItem == "CanvasPane"
             evaluate() // Re-render on frontend change
         }
     }
@@ -509,7 +510,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     }
                 }
 
-                "canvas" -> {
+                "CanvasPane" -> {
                     val plotFig = PlotCanvasFigure2()
                     plotFig.update(
                         MonolithicCommon.processRawSpecs(spec),
@@ -523,11 +524,27 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     CanvasPane2(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
                 }
 
+                "DefaultPlotPanelCanvas" -> {
+                    val processedSpec = MonolithicCommon.processRawSpecs(spec)
+                    DefaultPlotPanelCanvas(
+                        processedSpec = processedSpec,
+                        preferredSizeFromPlot = false,
+                        repaintDelay = 300,
+                        preserveAspectRatio = false,
+                    ) { messages ->
+                        for (message in messages) {
+                            println("[Demo Plot Viewer] $message")
+                        }
+                    }
+                }
+
                 else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
             }
 
 //            if (newPlotComponent is WithFigureModel) {
             if (newPlotComponent is DefaultPlotPanelBatik) {
+                sharedToolbar.attach(newPlotComponent.figureModel)
+            } else if (newPlotComponent is DefaultPlotPanelCanvas) {
                 sharedToolbar.attach(newPlotComponent.figureModel)
             }
 
