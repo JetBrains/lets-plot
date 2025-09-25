@@ -1,5 +1,6 @@
 package org.jetbrains.letsPlot.awt.plot.component
 
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 class DefaultPlotPanelCanvas(
@@ -17,5 +18,6 @@ class DefaultPlotPanelCanvas(
     preferredSizeFromPlot = preferredSizeFromPlot,
     sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio),
     repaintDelay = repaintDelay,
-    applicationContext = DefaultSwingContextCanvas()
+    applicationContext = DefaultSwingContextCanvas(),
+    showToolbar = processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
 )
