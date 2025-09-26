@@ -45,8 +45,7 @@ class DrawRectFeedback(
     }
 
     private val selectionSvg = SvgPathElement().apply {
-        fillColor().set(Color.LIGHT_GRAY)
-        opacity().set(0.5)
+        fillColor().set(Color.LIGHT_GRAY.changeAlpha(127))
         fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
     }
 
