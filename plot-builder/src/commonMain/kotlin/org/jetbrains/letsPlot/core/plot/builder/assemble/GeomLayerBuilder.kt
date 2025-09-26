@@ -223,11 +223,6 @@ class GeomLayerBuilder(
             replacementBindings[binding.aes] = binding
         }
 
-        // (!) Positional aes scales have undefined `mapper` at this time because
-        // dimensions of plot are not yet known.
-        // Data Access shouldn't use aes mapper (!)
-//        val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
-
         val groupingVariables = DataProcessing.defaultGroupingVariables(
             data,
             myBindings,

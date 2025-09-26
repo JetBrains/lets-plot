@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing.findOptionalVariable
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupMapperHelper.SINGLE_GROUP
 
-class GroupingContext(
+class GroupingContext constructor(
     private val data: DataFrame,
     defaultGroupingVariables: List<Variable>,
     explicitGroupingVarName: String?,
@@ -21,8 +21,8 @@ class GroupingContext(
     private val groupingVariables: List<Variable> = when (optionalGroupingVar) {
         null -> defaultGroupingVariables
         else -> {
-            // The explicit grouping var was 1-st in list before so we just keep this invariant.
-            (linkedSetOf(optionalGroupingVar) + defaultGroupingVariables).toList()
+            // Explicit group aesthetic should override default grouping.
+            listOf(optionalGroupingVar)
         }
     }
 

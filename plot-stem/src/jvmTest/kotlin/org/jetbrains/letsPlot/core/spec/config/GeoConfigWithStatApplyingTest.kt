@@ -58,10 +58,16 @@ class GeoConfigWithStatApplyingTest {
             |}
             """.trimMargin()
         )
-            .assertValues("Name", listOf("A", "A", "B", "B"))
-            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
-            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
+            // New expectation: grouping by "Name" only (see https://github.com/JetBrains/lets-plot/issues/1401)
+            // ToDo: recreate this test when the 'group' aesthetic will suppot multiple values
+//            .assertValues("Name", listOf("A", "A", "B", "B"))
+//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
+//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
+//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
+            .assertValues("Name", listOf("A", "B"))
+            .assertValues("transform.X", listOf(-80.0, 80.0)) // gdf coordinates
+            .assertValues("transform.Y", listOf(-40.0, 40.0))
+            .assertValues("..sum..", listOf(250.0, 250.0))   // sum by all records
     }
 
     @Test
@@ -103,10 +109,16 @@ class GeoConfigWithStatApplyingTest {
             |}
             """.trimMargin()
         )
-            .assertValues("Name", listOf("A", "A", "B", "B"))
-            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
-            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
+            // New expectation: grouping by "Name" only (see https://github.com/JetBrains/lets-plot/issues/1401)
+            // ToDo: recreate this test when the 'group' aesthetic will suppot multiple values
+//            .assertValues("Name", listOf("A", "A", "B", "B"))
+//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
+//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
+//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
+            .assertValues("Name", listOf("A", "B"))
+            .assertValues("transform.X", listOf(-80.0, 80.0))
+            .assertValues("transform.Y", listOf(-40.0, 40.0))
+            .assertValues("..sum..", listOf(250.0, 250.0))
     }
 
     @Test
@@ -167,9 +179,14 @@ class GeoConfigWithStatApplyingTest {
             |}
             """.trimMargin()
         )
-            .assertValues("Name", listOf("A", "A", "B", "B"))
-            .assertValues("Registered", listOf(165.0, 165.0, 111.0, 111.0))
-            .assertValues("Full name", listOf("City A", "City A", "City B", "City B"))
+            // New expectation: grouping by "Name" only (see https://github.com/JetBrains/lets-plot/issues/1401)
+            // ToDo: recreate this test when the 'group' aesthetic will suppot multiple values
+//            .assertValues("Name", listOf("A", "A", "B", "B"))
+//            .assertValues("Registered", listOf(165.0, 165.0, 111.0, 111.0))
+//            .assertValues("Full name", listOf("City A", "City A", "City B", "City B"))
+            .assertValues("Name", listOf("A", "B"))
+            .assertValues("Registered", listOf(165.0, 111.0))
+            .assertValues("Full name", listOf("City A", "City B"))
     }
 
     private fun GeomLayer.assertValues(variable: String, values: List<*>): GeomLayer {
