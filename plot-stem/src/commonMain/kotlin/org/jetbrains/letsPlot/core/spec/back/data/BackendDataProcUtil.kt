@@ -22,17 +22,17 @@ internal object BackendDataProcUtil {
         data: DataFrame,
         layerConfig: LayerConfig,
     ): GroupingContext {
-        val groupingVariables = DataProcessing.defaultGroupingVariables(
-            data,
-            layerConfig.varBindings,
-            pathIdVarName = null // only on client side
-        )
-        return GroupingContext(
-            data,
-            groupingVariables,
-            explicitGroupingVarName = layerConfig.explicitGroupingVarName,
-            expectMultiple = true // ?
-        )
+        val layerStatHandlesGroups = true  // TODO: determine if goups are needed.
+        return if (layerStatHandlesGroups) {
+            GroupingContext.create(
+                data = data,
+                explicitGroupingVarNames = layerConfig.explicitGroupingVarNames,
+                varBindings = layerConfig.varBindings,
+                pathIdVarName = null // only needed on the front end
+            )
+        } else {
+            GroupingContext.singleGroup()
+        }
     }
 
     fun applyStatisticTransform(

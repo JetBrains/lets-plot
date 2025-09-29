@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
@@ -140,10 +141,15 @@ abstract class PlotConfig(
             @Suppress("UNCHECKED_CAST")
             layerOptions as Map<String, Any>
 
+            val aesMapping = getMap(MAPPING).filterNot { (aes, _) -> aes == Mapping.GROUP }
+            val groupingVars = OptionsAccessor
+                .over(getMap(MAPPING))
+                .getAsStringListQ(Mapping.GROUP)
             val layerConfig = createLayerConfig(
                 layerOptions,
                 sharedData,
-                plotMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
+                plotMappings = aesMapping.mapValues { (_, variable) -> variable as String },
+                plotExplicitGroupingVars = groupingVars,
                 plotDataMeta = getMap(DATA_META),
                 plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING), isClientSide),
                 isClientSide,
@@ -158,6 +164,7 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<String, String>,
+        plotExplicitGroupingVars: List<String>?,
         plotDataMeta: Map<String, Any>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
         isClientSide: Boolean,
@@ -171,6 +178,7 @@ abstract class PlotConfig(
             layerOptions,
             sharedData,
             plotMappings,
+            plotExplicitGroupingVars,
             plotDataMeta,
             plotOrderOptions,
             geomProto,

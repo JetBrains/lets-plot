@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform
 
+import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.back.transform.NumericDataVectorChangeUtil.containsNumbersToConvert
 import org.jetbrains.letsPlot.core.spec.back.transform.NumericDataVectorChangeUtil.convertNumbersToDouble
 
@@ -49,7 +50,8 @@ internal object ReplaceDataVectorsInAesMappingChangeUtil {
 
             val replacementAesMapping = HashMap<String, Any>()
             val addedDataVectors = HashMap<String, List<*>>()
-            for (aesKey in aesMapping.keys) {
+            // Check all aes (except 'group') for data vectors.
+            for (aesKey in aesMapping.keys.filterNot { it == Mapping.GROUP }) {
                 val value = aesMapping[aesKey]
                 if (value is List<*>) {
                     val varName = genVarName(

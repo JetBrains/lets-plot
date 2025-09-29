@@ -179,8 +179,8 @@ internal object PlotGeomTilesUtil {
             layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
         }
 
-        if (layerConfig.hasExplicitGrouping()) {
-            layerBuilder.groupingVarName(layerConfig.explicitGroupingVarName!!)
+        if (layerConfig.explicitGroupingVarNames != null) {
+            layerBuilder.groupingVarNames(layerConfig.explicitGroupingVarNames)
         }
 
         // no map_join, data=gdf or map=gdf - group values and geometries by GEO_ID

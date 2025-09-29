@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.spec.has
 open class LineSpecConfigParser(
     opts: Map<String, Any>,
     private val constantsMap: Map<Aes<*>, Any>,
-    private val groupingVarName: String?,
+    private val groupingVarNames: List<String>?,
     private val varBindings: List<VarBinding>,
 ) : OptionsAccessor(opts) {
 
@@ -101,8 +101,11 @@ open class LineSpecConfigParser(
         private fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
             return when {
                 isAes && fieldName == Option.Mapping.GROUP -> {
-                    requireNotNull(groupingVarName) { "Variable name for 'group' is not specified" }
-                    DataFrameField(groupingVarName, format)
+                    require(groupingVarNames != null) { "Variable name for 'group' is not specified" }
+                    require(groupingVarNames.isNotEmpty()) { "Variable name for 'group' is not specified" }
+                    require(groupingVarNames.size == 1) { "Multiple variable names for 'group' is specified: $groupingVarNames" }
+
+                    DataFrameField(groupingVarNames[0], format)
                 }
 
                 isAes -> {

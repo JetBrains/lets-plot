@@ -167,8 +167,8 @@ open class PlotConfigBackend(
             for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
                 val layerData = layerConfig.ownData
                 if (DataFrameUtil.variables(layerData).containsKey(plotVar)) {
-                    // This variable not needed for this layer
-                    // because there is same variable in the plot's data.
+                    // This variable isn't needed for this layer
+                    // because there is the same variable in the plot's data.
                     continue
                 }
                 if (layerVarsToKeep.contains(plotVar)) {
@@ -188,7 +188,7 @@ open class PlotConfigBackend(
             replaceSharedData(plotDataCleaned)
         }
 
-        // Clean-up data in layers.
+        // Cleanup data in layers.
         for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
             val layerData = layerConfig.ownData
             val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep)
@@ -270,7 +270,7 @@ open class PlotConfigBackend(
                 }
             } else {
                 // Have to skip to not fail on mergedSerieByVarName.getValue(statVar)
-                // Empty stat data contains all existing stat variables and mergedSerieByVarName doesn't
+                // Empty stat data contains all existing stat variables, and mergedSerieByVarName doesn't
                 if (tileDataAfterStat.rowCount() > 0) {
                     for (variable in variables) {
                         mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
@@ -330,7 +330,7 @@ open class PlotConfigBackend(
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
                     facets.variables +
-                    listOfNotNull(layerConfig.explicitGroupingVarName) +
+                    (layerConfig.explicitGroupingVarNames ?: emptyList()) +
                     (layerConfig.tooltips.valueSources + layerConfig.annotations.valueSources)
                         .filterIsInstance<DataFrameField>()
                         .map(DataFrameField::getVariableName) +

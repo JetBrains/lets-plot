@@ -54,7 +54,7 @@ class BarPlotResizeDemo private constructor(
         )
 
         val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, PosProvider.dodge())
-            .groupingVar(varCat)
+            .groupingVarNames(listOf(varCat.name))
             .addBinding(VarBinding(varX, Aes.X))
             .addBinding(
                 VarBinding(

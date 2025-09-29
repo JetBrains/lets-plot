@@ -15,8 +15,8 @@ class AnnotationConfig(
     opts: Map<String, Any>,
     varBindings: List<VarBinding>,
     constantsMap: Map<Aes<*>, Any>,
-    groupingVarName: String?
-) : LineSpecConfigParser(opts, constantsMap, groupingVarName, varBindings) {
+    groupingVarNames: List<String>?
+) : LineSpecConfigParser(opts, constantsMap, groupingVarNames, varBindings) {
 
     fun createAnnotations(): AnnotationSpecification {
         return create().run {

@@ -289,6 +289,7 @@ object Option {
 
         object Choropleth {
             const val GEO_POSITIONS = "map"
+            const val POLYGON_GROUP = "group"
         }
 
         object ErrorBar {
@@ -380,7 +381,7 @@ object Option {
             const val HREF = "href"
 
             // Parameters in GeomImage.
-            // It's "rendered" aesthetics at the same time but "geom image" doesn't use aes to actually render image.
+            // It's "rendered" aesthetics at the same time, but "geom image" doesn't use aes to actually render image.
             // The constants are used to compute limits on x/y-axis and the image bbox.
             val XMIN = Aes.XMIN.name
             val XMAX = Aes.XMAX.name
@@ -778,6 +779,7 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
+
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 

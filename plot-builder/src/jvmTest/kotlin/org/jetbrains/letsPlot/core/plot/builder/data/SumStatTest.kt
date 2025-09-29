@@ -86,21 +86,21 @@ class SumStatTest {
         dataProcessor.putVariable(name = "y", values = listOf("0", "0", "0"), mappingAes = Aes.Y)
 
         // No grouping
-        dataProcessor.groupingVarName = null
+        dataProcessor.explicitGroupingVarNames = null
         dataProcessor.applyStat(Stats.sum()).let { statDf ->
             assertThat(statDf[Stats.N]).containsExactly(2.0, 1.0)
             assertThat(statDf[Stats.PROP]).containsExactly(0.6666666666666666, 0.3333333333333333)
         }
 
         // Group columns
-        dataProcessor.groupingVarName = "x"
+        dataProcessor.explicitGroupingVarNames = listOf("x")
         dataProcessor.applyStat(Stats.sum()).let { statDf ->
             assertThat(statDf[Stats.N]).containsExactly(2.0, 1.0)
             assertThat(statDf[Stats.PROP]).containsExactly(1.0, 1.0)
         }
 
         // Group rows
-        dataProcessor.groupingVarName = "y"
+        dataProcessor.explicitGroupingVarNames = listOf("y")
         dataProcessor.applyStat(Stats.sum()).let { statDf ->
             assertThat(statDf[Stats.N]).containsExactly(2.0, 1.0)
             assertThat(statDf[Stats.PROP]).containsExactly(0.6666666666666666, 0.3333333333333333)

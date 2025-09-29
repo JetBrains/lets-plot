@@ -96,8 +96,8 @@ object DataProcessing {
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
-                // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                 if (statData.has(Stats.GROUP)) {
+                    // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                     val range = statData.range(Stats.GROUP)
                     if (range != null) {
                         val start = lastStatGroupEnd + 1
@@ -112,12 +112,15 @@ object DataProcessing {
                         }
                     }
                 } else {
-                    // If stat has ..group.. then groupingVar won't be checked, so no need to update.
-                    val groupingVar = groupingContext.optionalGroupingVar
-                    if (groupingVar != null) {
-                        val size = statData[statData.variables().first()].size
-                        val v = d[groupingVar][0]
-                        statData = statData.builder().put(groupingVar, List(size) { v }).build()
+                    // Just recreate grouping vars.
+                    if (groupingContext.groupingVariables.isNotEmpty()) {
+                        val size = statData.rowCount()
+                        val builder = statData.builder()
+                        groupingContext.groupingVariables.forEach { groupingVar ->
+                            val v = d[groupingVar][0]
+                            builder.put(groupingVar, List(size) { v })
+                        }
+                        statData = builder.build()
                     }
                 }
 

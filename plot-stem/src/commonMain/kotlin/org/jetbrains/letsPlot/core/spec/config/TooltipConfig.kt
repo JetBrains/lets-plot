@@ -14,9 +14,9 @@ import org.jetbrains.letsPlot.core.spec.Option
 class TooltipConfig(
     opts: Map<String, Any>,
     constantsMap: Map<Aes<*>, Any>,
-    groupingVarName: String?,
+    groupingVarNames: List<String>?,
     varBindings: List<VarBinding>
-) : LineSpecConfigParser(opts, constantsMap, groupingVarName, varBindings) {
+) : LineSpecConfigParser(opts, constantsMap, groupingVarNames, varBindings) {
 
     fun createTooltips(): TooltipSpecification {
         return create().run {

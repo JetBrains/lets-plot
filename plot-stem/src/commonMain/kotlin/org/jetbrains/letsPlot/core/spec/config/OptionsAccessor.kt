@@ -125,16 +125,21 @@ open class OptionsAccessor(
     }
 
     fun getAsList(option: String): List<Any?> {
-        val v = get(option) ?: emptyList<Any>()
-        return if (v is List<*>) {
-            v
-        } else {
-            listOf(v)
-        }
+        return getAsListQ(option) ?: emptyList<Any>()
+    }
+
+    fun getAsListQ(option: String): List<Any?>? {
+        val v = get(option) ?: return null
+        return if (v is List<*>) v
+        else listOf(v)
     }
 
     fun getAsStringList(option: String): List<String> {
-        return getAsList(option).filterNotNull().map { it.toString() }
+        return getAsStringListQ(option) ?: emptyList<String>()
+    }
+
+    fun getAsStringListQ(option: String): List<String>? {
+        return getAsListQ(option)?.filterNotNull()?.map { it.toString() }
     }
 
     fun getOrderedBoundedDoubleDistinctPair(

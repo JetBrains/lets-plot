@@ -52,7 +52,7 @@ class GeomLayerBuilder(
     private var myDefaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
-    private var myGroupingVarName: String? = null
+    private var explicitGroupingVarNames: List<String>? = null
     private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
 
@@ -80,13 +80,8 @@ class GeomLayerBuilder(
         return this
     }
 
-    fun groupingVar(v: DataFrame.Variable): GeomLayerBuilder {
-        myGroupingVarName = v.name
-        return this
-    }
-
-    fun groupingVarName(v: String): GeomLayerBuilder {
-        myGroupingVarName = v
+    fun groupingVarNames(v: List<String>): GeomLayerBuilder {
+        explicitGroupingVarNames = v
         return this
     }
 
@@ -147,7 +142,13 @@ class GeomLayerBuilder(
         useCustomColor: Boolean
     ): GeomLayerBuilder {
         myAnnotationProvider = { dataAccess, dataFrame ->
-            AnnotationProviderUtil.createAnnotation(annotationSpec, dataAccess, dataFrame, themeTextStyle, useCustomColor)
+            AnnotationProviderUtil.createAnnotation(
+                annotationSpec,
+                dataAccess,
+                dataFrame,
+                themeTextStyle,
+                useCustomColor
+            )
         }
         return this
     }
@@ -223,13 +224,18 @@ class GeomLayerBuilder(
             replacementBindings[binding.aes] = binding
         }
 
-        val groupingVariables = DataProcessing.defaultGroupingVariables(
-            data,
-            myBindings,
-            myPathIdVarName
-        )
+//        val groupingVariables = DataProcessing.defaultGroupingVariables(
+//            data,
+//            myBindings,
+//            myPathIdVarName
+//        )
+//        val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
 
-        val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
+        val groupingContext = if (handlesGroups()) {
+            GroupingContext.create(data, explicitGroupingVarNames, myBindings, myPathIdVarName)
+        } else {
+            GroupingContext.singleGroup()
+        }
         return MyGeomLayer(
             data,
             geomProvider,
@@ -293,18 +299,19 @@ class GeomLayerBuilder(
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme).let { aestheticsDefaults ->
-            // Default y must be NaN or 0 depending on the orientation to avoid drawing the midline/midpoint when it is not specified
-            if (isYOrientation && geomKind in listOf(GeomKind.CROSS_BAR, GeomKind.POINT_RANGE)) {
-                val defaultX = aestheticsDefaults.defaultValue(Aes.X)
-                val defaultY = aestheticsDefaults.defaultValue(Aes.Y)
-                aestheticsDefaults
-                    .with(Aes.Y, defaultX)
-                    .with(Aes.X, defaultY)
-            } else {
-                aestheticsDefaults
+        override val aestheticsDefaults: AestheticsDefaults =
+            AestheticsDefaults.create(geomKind, geomTheme).let { aestheticsDefaults ->
+                // Default y must be NaN or 0 depending on the orientation to avoid drawing the midline/midpoint when it is not specified
+                if (isYOrientation && geomKind in listOf(GeomKind.CROSS_BAR, GeomKind.POINT_RANGE)) {
+                    val defaultX = aestheticsDefaults.defaultValue(Aes.X)
+                    val defaultY = aestheticsDefaults.defaultValue(Aes.Y)
+                    aestheticsDefaults
+                        .with(Aes.Y, defaultX)
+                        .with(Aes.X, defaultY)
+                } else {
+                    aestheticsDefaults
+                }
             }
-        }
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,
@@ -394,16 +401,23 @@ class GeomLayerBuilder(
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-                        val groupingVariables = DataProcessing.defaultGroupingVariables(
-                            data,
-                            builder.myBindings,
-                            builder.myPathIdVarName
-                        )
-                        val groupingCtx = GroupingContext(
-                            transformedData,
-                            groupingVariables,
-                            builder.myGroupingVarName,
-                            expectMultiple = true
+//                        val groupingVariables = DataProcessing.defaultGroupingVariables(
+//                            data,
+//                            builder.myBindings,
+//                            builder.myPathIdVarName
+//                        )
+//                        val groupingCtx = GroupingContext(
+//                            transformedData,
+//                            groupingVariables,
+//                            builder.myGroupingVarName,
+//                            expectMultiple = true
+//                        )
+
+                        val groupingCtx = GroupingContext.create(
+                            data = transformedData,
+                            explicitGroupingVarNames = builder.explicitGroupingVarNames,
+                            varBindings = builder.myBindings,
+                            pathIdVarName = builder.myPathIdVarName
                         )
                         val statInput = StatInput(
                             transformedData,

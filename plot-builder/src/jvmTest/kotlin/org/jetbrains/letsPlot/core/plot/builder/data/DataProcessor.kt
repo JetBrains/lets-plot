@@ -13,13 +13,14 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales.DemoAndTest.pureDiscre
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 
+// TODO: rename to TestingDataProcessor?
 class DataProcessor {
-    private val dataFrame =  DataFrame.Builder()
+    private val dataFrame = DataFrame.Builder()
     private val mappings = mutableMapOf<Aes<*>, DataFrame.Variable>()
 
-    var groupingVarName: String? = null
+    var explicitGroupingVarNames: List<String>? = null
 
-    fun putVariable(name: String, values: List<Any?>, mappingAes: Aes<*>? = null) : DataFrame.Variable {
+    fun putVariable(name: String, values: List<Any?>, mappingAes: Aes<*>? = null): DataFrame.Variable {
         val variable = DataFrame.Variable(name)
         dataFrame.put(variable, values)
         mappingAes?.let { mappings[it] = variable }
@@ -30,7 +31,7 @@ class DataProcessor {
         val data = dataFrame.build()
         val bindings = mappings.map { (aes, variable) -> VarBinding(variable, aes) }
 
-        val transformByAes = mappings.mapValues {(aes, variable) ->
+        val transformByAes = mappings.mapValues { (aes, variable) ->
             val scale = when (data.isNumeric(variable)) {
                 true -> continuousDomain(variable.name, aes)
                 false -> pureDiscrete(variable.name, data.distinctValues(variable).toList())
@@ -45,11 +46,9 @@ class DataProcessor {
             transformByAes = transformByAes
         )
 
-        val groupingContext = GroupingContext(
+        val groupingContext = GroupingContext.create(
             data = transformedData,
-            defaultGroupingVariables = emptyList(),
-            explicitGroupingVarName = groupingVarName,
-            expectMultiple = true
+            groupingVarNames = explicitGroupingVarNames ?: emptyList(),
         )
         val statContext = SimpleStatContext(
             myDataFrame = transformedData

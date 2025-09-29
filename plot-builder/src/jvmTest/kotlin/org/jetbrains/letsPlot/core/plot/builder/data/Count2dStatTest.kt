@@ -20,7 +20,18 @@ class Count2dStatTest {
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
+            .containsExactlyInAnyOrder(
+                x,
+                y,
+                Stats.X,
+                Stats.Y,
+                Stats.SUM,
+                Stats.COUNT,
+                Stats.PROP,
+                Stats.PROPPCT,
+                Stats.SUMPROP,
+                Stats.SUMPCT
+            )
 
         assertThat(statDf.rowCount()).isZero()
     }
@@ -34,7 +45,18 @@ class Count2dStatTest {
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
+            .containsExactlyInAnyOrder(
+                x,
+                y,
+                Stats.X,
+                Stats.Y,
+                Stats.SUM,
+                Stats.COUNT,
+                Stats.PROP,
+                Stats.PROPPCT,
+                Stats.SUMPROP,
+                Stats.SUMPCT
+            )
 
         assertThat(statDf[Stats.X]).containsExactly("0")
         assertThat(statDf[Stats.Y]).containsExactly("0")
@@ -97,7 +119,7 @@ class Count2dStatTest {
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0), mappingAes = Aes.WEIGHT)
         dataProcessor.putVariable(name = "g", values = listOf("A", "B"))
 
-        dataProcessor.groupingVarName = "g"
+        dataProcessor.explicitGroupingVarNames = listOf("g")
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf[Stats.SUM]).containsExactly(4.0, 4.0)
@@ -114,7 +136,7 @@ class Count2dStatTest {
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0, 5.0), mappingAes = Aes.WEIGHT)
         dataProcessor.putVariable(name = "g", values = listOf("A", "B", "B"))
 
-        dataProcessor.groupingVarName = null
+        dataProcessor.explicitGroupingVarNames = null
         dataProcessor.applyStat(Stats.count2d()).let { statDf ->
             assertThat(statDf[Stats.SUM]).containsExactly(4.0)
             assertThat(statDf[Stats.COUNT]).containsExactly(4.0)
@@ -122,7 +144,7 @@ class Count2dStatTest {
             assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0)
         }
 
-        dataProcessor.groupingVarName = "g"
+        dataProcessor.explicitGroupingVarNames = listOf("g")
         dataProcessor.applyStat(Stats.count2d()).let { statDf ->
             assertThat(statDf[Stats.SUM]).containsExactly(4.0, 4.0)
             assertThat(statDf[Stats.COUNT]).containsExactly(1.0, 3.0)

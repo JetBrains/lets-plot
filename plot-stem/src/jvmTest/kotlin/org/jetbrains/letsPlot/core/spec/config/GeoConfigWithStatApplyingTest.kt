@@ -27,7 +27,9 @@ class GeoConfigWithStatApplyingTest {
     private val coordA = """{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}"""
     private val coordB = """{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"""
     private val commonMapping = """ "fill": "Vote", "weight": "Number" """
-    private val groupMapping = """ "group": "Name" """
+    private val groupAB = """ "group": "Name" """
+    private val groupYesANoAYesBNoB = """ "group": ["Vote", "Name"] """
+    private val groupNone = """ "group": [] """  // to cancel default grouping
     private val xMapping = """ "x": "Name" """
 
     // Add variables to tooltips just to keep them
@@ -46,28 +48,62 @@ class GeoConfigWithStatApplyingTest {
 
     @Test
     fun `not map plot and no positional mapping - the sum will be calculated for all records`() {
+        // "group" mapping cancels default grouping (see https://github.com/JetBrains/lets-plot/issues/1401)
+
+        // Two grops: A, B
         getGeomLayer(
             """
             |{
             |    "kind": "plot",
             |    "layers": [
             |       {
-            |           ${pieLayer("$commonMapping, $groupMapping")}
+            |           ${pieLayer("$commonMapping, $groupAB")}
             |       }
             |    ]
             |}
             """.trimMargin()
         )
-            // New expectation: grouping by "Name" only (see https://github.com/JetBrains/lets-plot/issues/1401)
-            // ToDo: recreate this test when the 'group' aesthetic will suppot multiple values
-//            .assertValues("Name", listOf("A", "A", "B", "B"))
-//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
-//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
             .assertValues("Name", listOf("A", "B"))
             .assertValues("transform.X", listOf(-80.0, 80.0)) // gdf coordinates
             .assertValues("transform.Y", listOf(-40.0, 40.0))
             .assertValues("..sum..", listOf(250.0, 250.0))   // sum by all records
+
+        // Four groups: Yes.A, No.A, Yes.B, No.B
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       {
+            |           ${pieLayer("$commonMapping, $groupYesANoAYesBNoB")}
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        )
+            .assertValues("Name", listOf("A", "A", "B", "B"))
+            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
+            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
+            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
+
+        // TODO: expectations?
+//        // No groups
+//        getGeomLayer(
+//            """
+//            |{
+//            |    "kind": "plot",
+//            |    "layers": [
+//            |       {
+//            |           ${pieLayer("$commonMapping, $groupNone")}
+//            |       }
+//            |    ]
+//            |}
+//            """.trimMargin()
+//        )
+//            .assertValues("Name", listOf("A", "A", "B", "B"))
+//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
+//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
+//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
     }
 
     @Test
@@ -94,6 +130,9 @@ class GeoConfigWithStatApplyingTest {
 
     @Test
     fun `map plot and no positional mapping - the sum will be calculated for all records`() {
+        // "group" mapping cancels default grouping (see https://github.com/JetBrains/lets-plot/issues/1401)
+
+        // Two grops: A, B
         getGeomLayer(
             """
             |{
@@ -103,22 +142,59 @@ class GeoConfigWithStatApplyingTest {
             |          "geom": "livemap"
             |       },
             |       {
-            |            ${pieLayer("$commonMapping, $groupMapping")}
+            |            ${pieLayer("$commonMapping, $groupAB")}
             |       }
             |    ]
             |}
             """.trimMargin()
         )
-            // New expectation: grouping by "Name" only (see https://github.com/JetBrains/lets-plot/issues/1401)
-            // ToDo: recreate this test when the 'group' aesthetic will suppot multiple values
-//            .assertValues("Name", listOf("A", "A", "B", "B"))
-//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
-//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
             .assertValues("Name", listOf("A", "B"))
             .assertValues("transform.X", listOf(-80.0, 80.0))
             .assertValues("transform.Y", listOf(-40.0, 40.0))
             .assertValues("..sum..", listOf(250.0, 250.0))
+
+        // Four groups: Yes.A, No.A, Yes.B, No.B
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       {
+            |          "geom": "livemap"
+            |       },
+            |       {
+            |            ${pieLayer("$commonMapping, $groupYesANoAYesBNoB")}
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        )
+            .assertValues("Name", listOf("A", "A", "B", "B"))
+            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
+            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
+            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
+
+        // TODO: expectations?
+//        // No groups
+//        getGeomLayer(
+//            """
+//            |{
+//            |    "kind": "plot",
+//            |    "layers": [
+//            |       {
+//            |          "geom": "livemap"
+//            |       },
+//            |       {
+//            |            ${pieLayer("$commonMapping, $groupNone")}
+//            |       }
+//            |    ]
+//            |}
+//            """.trimMargin()
+//        )
+//            .assertValues("Name", listOf("A", "A", "B", "B"))
+//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
+//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
+//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
     }
 
     @Test
@@ -167,26 +243,59 @@ class GeoConfigWithStatApplyingTest {
             .assertValues("Full name", listOf("City A", "City A", "City A", "City A"))
 
         // Add grouping by Name - the result values will be corresponded to 'Name' values
+        // "group" mapping cancels default grouping (see https://github.com/JetBrains/lets-plot/issues/1401)
+
+        // Two grops: A, B
         getGeomLayer(
             """
             |{
             |    "kind": "plot",
             |    "layers": [
             |       { 
-            |           ${pieLayer("$commonMapping, $groupMapping")} 
+            |           ${pieLayer("$commonMapping, $groupAB")} 
             |       }
             |    ]
             |}
             """.trimMargin()
         )
-            // New expectation: grouping by "Name" only (see https://github.com/JetBrains/lets-plot/issues/1401)
-            // ToDo: recreate this test when the 'group' aesthetic will suppot multiple values
-//            .assertValues("Name", listOf("A", "A", "B", "B"))
-//            .assertValues("Registered", listOf(165.0, 165.0, 111.0, 111.0))
-//            .assertValues("Full name", listOf("City A", "City A", "City B", "City B"))
             .assertValues("Name", listOf("A", "B"))
             .assertValues("Registered", listOf(165.0, 111.0))
             .assertValues("Full name", listOf("City A", "City B"))
+
+        // Four groups: Yes.A, No.A, Yes.B, No.B
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       { 
+            |           ${pieLayer("$commonMapping, $groupYesANoAYesBNoB")} 
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        )
+            .assertValues("Name", listOf("A", "A", "B", "B"))
+            .assertValues("Registered", listOf(165.0, 165.0, 111.0, 111.0))
+            .assertValues("Full name", listOf("City A", "City A", "City B", "City B"))
+
+        // TODO: expectations?
+//        // No groups
+//        getGeomLayer(
+//            """
+//            |{
+//            |    "kind": "plot",
+//            |    "layers": [
+//            |       {
+//            |           ${pieLayer("$commonMapping, $groupNone")}
+//            |       }
+//            |    ]
+//            |}
+//            """.trimMargin()
+//        )
+//            .assertValues("Name", listOf("A", "A", "B", "B"))
+//            .assertValues("Registered", listOf(165.0, 165.0, 111.0, 111.0))
+//            .assertValues("Full name", listOf("City A", "City A", "City B", "City B"))
     }
 
     private fun GeomLayer.assertValues(variable: String, values: List<*>): GeomLayer {
