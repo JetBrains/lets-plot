@@ -34,7 +34,8 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
     }
 
     fun opacity(): Property<Double?> {
-        return getAttribute(OPACITY)
+        error("OPACITY is not supported") // missing support in plot-raster
+        //return getAttribute(OPACITY)
     }
 
     fun visibility(): Property<Visibility?> {
