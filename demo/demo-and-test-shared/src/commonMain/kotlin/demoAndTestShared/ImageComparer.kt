@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import kotlin.math.abs
 
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
@@ -80,10 +81,10 @@ class ImageComparer(
                 val actualPixel = actual.getPixel(x, y)
 
                 if (expectedPixel != null && actualPixel != null) {
-                    if (expectedPixel.green - actualPixel.green > tolerance ||
-                        expectedPixel.red - actualPixel.red > tolerance ||
-                        expectedPixel.blue - actualPixel.blue > tolerance ||
-                        expectedPixel.alpha - actualPixel.alpha > tolerance
+                    if (abs(expectedPixel.green - actualPixel.green) > tolerance ||
+                        abs(expectedPixel.red - actualPixel.red) > tolerance ||
+                        abs(expectedPixel.blue - actualPixel.blue) > tolerance ||
+                        abs(expectedPixel.alpha - actualPixel.alpha) > tolerance
                     ) {
                         match = false
                         diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)

@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
-class ScaledContext2d private constructor(
+class ScaledContext2d(
     private val ctx: Context2d,
     private val myScale: Double
 ) : Context2d {
