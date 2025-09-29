@@ -19,8 +19,12 @@ def aes(x=None, y=None, **kwargs):
     Parameters
     ----------
     x, y, ... :
-        List of name value pairs giving aesthetics to map to variables.
+        Aesthetic mappings. Name-value pairs specifying which data variables to use for each aesthetic.
         The names for x and y aesthetics are typically omitted because they are so common; all other aesthetics must be named.
+        The specific list of supported aesthetics differs by geometry type.
+    group : str or list, optional
+        Data grouping control (not a true aesthetic). Use a variable name to group by that variable,
+        a list of variables to group by their interaction, or an empty list to disable all grouping.
 
     Returns
     -------
@@ -33,10 +37,29 @@ def aes(x=None, y=None, **kwargs):
     (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
     colour to color.
 
-    Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
-    some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
+    Aesthetic mappings are not to be confused with aesthetic settings; the latter is used to set aesthetics to
+    some constant values, e.g., make all points red in the plot. If one wants to make the color of a point
     depend on the value of a variable, he/she should project this variable to the color aesthetic via
     aesthetic mapping.
+
+    **Data Grouping**
+
+    The ``group`` parameter is not a true aesthetic but controls how data is grouped for visualization:
+
+    Default Grouping Behavior:
+        Lets-Plot automatically groups data by discrete variables mapped to aesthetics like ``color``, ``shape``,
+        ``linetype``, etc. This creates separate visual elements (lines, paths, polygons) for each unique
+        combination of these variables.
+
+    Explicit Group Control:
+        - Use ``group='variable_name'`` to group only by that specific variable, overriding default grouping
+        - Use ``group=['var1', 'var2', ...]`` to group by the interaction of multiple variables
+        - Use ``group=[]`` to disable all the grouping completely
+
+    When This Matters:
+        Line plots: Controls which points get connected; Path plots: Determines separate paths vs. single
+        continuous path; Statistical layers: Affects how statistics are computed per group.
+
 
     Examples
     --------
