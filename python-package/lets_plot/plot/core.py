@@ -56,10 +56,6 @@ def aes(x=None, y=None, **kwargs):
         - Use ``group=['var1', 'var2', ...]`` to group by the interaction of multiple variables
         - Use ``group=[]`` to disable all the grouping completely
 
-    When This Matters:
-        Line plots: Controls which points get connected; Path plots: Determines separate paths vs. single
-        continuous path; Statistical layers: Affects how statistics are computed per group.
-
 
     Examples
     --------

@@ -224,13 +224,6 @@ class GeomLayerBuilder(
             replacementBindings[binding.aes] = binding
         }
 
-//        val groupingVariables = DataProcessing.defaultGroupingVariables(
-//            data,
-//            myBindings,
-//            myPathIdVarName
-//        )
-//        val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
-
         val groupingContext = if (handlesGroups()) {
             GroupingContext.create(data, explicitGroupingVarNames, myBindings, myPathIdVarName)
         } else {
@@ -401,18 +394,6 @@ class GeomLayerBuilder(
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-//                        val groupingVariables = DataProcessing.defaultGroupingVariables(
-//                            data,
-//                            builder.myBindings,
-//                            builder.myPathIdVarName
-//                        )
-//                        val groupingCtx = GroupingContext(
-//                            transformedData,
-//                            groupingVariables,
-//                            builder.myGroupingVarName,
-//                            expectMultiple = true
-//                        )
-
                         val groupingCtx = GroupingContext.create(
                             data = transformedData,
                             explicitGroupingVarNames = builder.explicitGroupingVarNames,
