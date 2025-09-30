@@ -13,7 +13,7 @@ import org.junit.Test
 class Count2dStatTest {
     @Test
     fun emptyDataFrame() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         val x = dataProcessor.putVariable(name = "x", values = emptyList(), mappingAes = Aes.X)
         val y = dataProcessor.putVariable(name = "y", values = emptyList(), mappingAes = Aes.Y)
 
@@ -38,7 +38,7 @@ class Count2dStatTest {
 
     @Test
     fun checkStatVars() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         val x = dataProcessor.putVariable(name = "x", values = listOf("0"), mappingAes = Aes.X)
         val y = dataProcessor.putVariable(name = "y", values = listOf("0"), mappingAes = Aes.Y)
 
@@ -70,7 +70,7 @@ class Count2dStatTest {
 
     @Test
     fun simple() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "1"), mappingAes = Aes.Y)
 
@@ -84,7 +84,7 @@ class Count2dStatTest {
 
     @Test
     fun overlapped() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
 
@@ -98,7 +98,7 @@ class Count2dStatTest {
 
     @Test
     fun `overlapped weighted`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0), mappingAes = Aes.WEIGHT)
@@ -113,7 +113,7 @@ class Count2dStatTest {
 
     @Test
     fun `overlapped weighted grouped`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0), mappingAes = Aes.WEIGHT)
@@ -130,7 +130,7 @@ class Count2dStatTest {
 
     @Test
     fun `nulls completely ignored`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0", null), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0", "0"), mappingAes = Aes.Y)
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0, 5.0), mappingAes = Aes.WEIGHT)

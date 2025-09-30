@@ -13,8 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales.DemoAndTest.pureDiscre
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 
-// TODO: rename to TestingDataProcessor?
-class DataProcessor {
+class TestingDataProcessor {
     private val dataFrame = DataFrame.Builder()
     private val mappings = mutableMapOf<Aes<*>, DataFrame.Variable>()
 
