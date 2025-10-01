@@ -13,6 +13,10 @@
   
 - `theme_gray()` as an alias for `theme_grey()`.
 
+- `legend_justification` parameter of `theme()` accepts additional string values: `'top'`, `'right'`, `'bottom'`, and `'left'`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_justification.ipynb).
+
 ### Changed
 
 - [**BREAKING**] Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it [[#1401](https://github.com/JetBrains/lets-plot/issues/1401)].
