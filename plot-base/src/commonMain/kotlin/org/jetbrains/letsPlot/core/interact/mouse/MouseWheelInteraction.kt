@@ -51,7 +51,7 @@ class MouseWheelInteraction(
         check(_target == null) { "Mouse wheel zoom has already started." }
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_WHEEL_ROTATED) { _, e ->
+            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_WHEEL_ROTATED) { e ->
                 @Suppress("NAME_SHADOWING")
                 val e = e as MouseWheelEvent
                 e.preventDefault = true

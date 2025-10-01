@@ -38,7 +38,7 @@ internal class MouseDoubleClickInteraction(
         check(!disposed) { "Disposed." }
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DOUBLE_CLICKED) { _, e ->
+            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DOUBLE_CLICKED) { e ->
                 // Coordinate relative to the entire plot.
                 val plotCoord = e.location.toDoubleVector()
                 ctx.findTarget(plotCoord)?.let {

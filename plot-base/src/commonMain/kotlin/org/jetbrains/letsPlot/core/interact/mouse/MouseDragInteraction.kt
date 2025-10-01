@@ -73,7 +73,7 @@ internal class MouseDragInteraction(
         check(!started) { "Mouse drag has already started." }
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_RELEASED) { _, e ->
+            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_RELEASED) { e ->
                 if (started && !(completed || aborted)) {
                     val absCoord = e.location.toDoubleVector()
                     completed = true
@@ -84,7 +84,7 @@ internal class MouseDragInteraction(
         )
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DRAGGED) { _, e ->
+            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DRAGGED) { e ->
                 if (!(completed || aborted)) {
                     val plotCoord = e.location.toDoubleVector()
                     if (!started) {
