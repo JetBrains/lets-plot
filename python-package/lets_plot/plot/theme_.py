@@ -186,7 +186,7 @@ def theme(*,
         Anchor point for positioning legend. If parameter is a list, then
         it should be a two-element numeric vector. The pair [0, 0] corresponds to the
         bottom left corner, the pair [1, 1] corresponds to the top right.
-        For string parameter the only possible value is 'center'.
+        For string parameter the possible value are: 'center', 'left', 'right', 'top', and 'bottom'.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
     legend_margin : number or list of numbers
