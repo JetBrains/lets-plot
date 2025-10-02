@@ -11,9 +11,11 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionTarget
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 
 internal class MouseDragInteraction(
-    private val ctx: InteractionContext
+    private val ctx: InteractionContext,
+    private val modifiersMatcher: ModifiersMatcher
 ) : Disposable {
     operator fun component1() = target
     operator fun component2() = dragFrom
@@ -73,7 +75,10 @@ internal class MouseDragInteraction(
         check(!started) { "Mouse drag has already started." }
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_RELEASED) { e ->
+            ctx.eventsManager.onMouseEvent(
+                eventKind = MouseEventSpec.MOUSE_RELEASED,
+                modifiersMatcher = ModifiersMatcher.ANY_MODIFIERS
+            ) { e ->
                 if (started && !(completed || aborted)) {
                     val absCoord = e.location.toDoubleVector()
                     completed = true
@@ -84,7 +89,10 @@ internal class MouseDragInteraction(
         )
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DRAGGED) { e ->
+            ctx.eventsManager.onMouseEvent(
+                eventKind = MouseEventSpec.MOUSE_DRAGGED,
+                modifiersMatcher = modifiersMatcher
+            ) { e ->
                 if (!(completed || aborted)) {
                     val plotCoord = e.location.toDoubleVector()
                     if (!started) {
@@ -104,6 +112,7 @@ internal class MouseDragInteraction(
         )
 
         // ToDo: abort event?
+        // ToDo: mouse drag is in progress and the modifiers don't match - abort?
     }
 
     fun reset() {

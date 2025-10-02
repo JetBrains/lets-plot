@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_IMPLICIT
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
@@ -81,6 +82,13 @@ internal class PlotToolEventDispatcher(
     private fun activateInteractionIntern(origin: String, interactionSpec: Map<String, Any>) {
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
+        val modifiersMatcher = when(val keyModifiers = interactionSpec[ToolInteractionSpec.KEY_MODIFIERS]) {
+            null -> ModifiersMatcher.NO_MODIFIERS
+            is String -> ModifiersMatcher.create(listOf(keyModifiers))
+            is List<*> -> ModifiersMatcher.create(keyModifiers.map { it.toString() })
+            else -> throw IllegalArgumentException("Invalid modifiers specification: $keyModifiers")
+        }
+
         val fireSelectionChangedDebounced =
             debounce<Triple<String?, DoubleRectangle, DoubleVector>>(
                 DEBOUNCE_DELAY_MS,
@@ -93,6 +101,7 @@ internal class PlotToolEventDispatcher(
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
+                modifiersMatcher = modifiersMatcher,
                 onCompleted = { targetId, dataBounds, flipped, panningMode ->
                     // flip panning mode if coord flip
                     @Suppress("NAME_SHADOWING")
@@ -118,6 +127,7 @@ internal class PlotToolEventDispatcher(
                 val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
                 DrawRectFeedback(
                     centerStart,
+                    modifiersMatcher = modifiersMatcher,
                     onCompleted = { targetId, dataBounds, flipped, selectionMode, scaleFactor ->
                         // flip selection mode if coord flip
                         @Suppress("NAME_SHADOWING")
@@ -141,12 +151,14 @@ internal class PlotToolEventDispatcher(
             }
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
+                modifiersMatcher = modifiersMatcher,
                 onCompleted = { targetId, dataBounds, scaleFactor ->
                     fireSelectionChangedDebounced(Triple(targetId, dataBounds, scaleFactor))
                 }
             )
 
             ToolInteractionSpec.ROLLBACK_ALL_CHANGES -> RollbackAllChangesFeedback(
+                modifiersMatcher = modifiersMatcher,
                 onAction = { targetId: String? ->
                     toolEventCallback.invoke(
                         mapOf(

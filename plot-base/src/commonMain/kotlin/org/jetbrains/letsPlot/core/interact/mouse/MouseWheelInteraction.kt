@@ -12,9 +12,11 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionTarget
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 
 class MouseWheelInteraction(
-    private val ctx: InteractionContext
+    private val ctx: InteractionContext,
+    private val modifiersMatcher: ModifiersMatcher
 ) : Disposable {
     operator fun component1() = target
     operator fun component2() = zoomOrigin
@@ -51,7 +53,10 @@ class MouseWheelInteraction(
         check(_target == null) { "Mouse wheel zoom has already started." }
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_WHEEL_ROTATED) { e ->
+            ctx.eventsManager.onMouseEvent(
+                eventKind = MouseEventSpec.MOUSE_WHEEL_ROTATED,
+                modifiersMatcher = modifiersMatcher
+            ) { e ->
                 @Suppress("NAME_SHADOWING")
                 val e = e as MouseWheelEvent
                 e.preventDefault = true
@@ -72,6 +77,5 @@ class MouseWheelInteraction(
             _target = null
             reg.dispose()
         }
-
     }
 }

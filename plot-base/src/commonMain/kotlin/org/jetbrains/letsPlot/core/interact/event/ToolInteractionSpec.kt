@@ -6,16 +6,14 @@
 package org.jetbrains.letsPlot.core.interact.event
 
 object ToolInteractionSpec {
-    // key
-
+    // keys
     const val NAME = "name"
     const val ZOOM_DIRECTION = "direction"
     const val DRAG_DIRECTION = "direction"
     const val ZOOM_BOX_MODE = "zoom-box-mode"
+    const val KEY_MODIFIERS = "key-modifiers" // i.e, "key-modifiers": ["ctrl", "shift"]
 
-    // value
-
-    // name
+    // names
     const val WHEEL_ZOOM = "wheel-zoom"
     const val BOX_ZOOM = "box-zoom"
     const val DRAG_PAN = "drag-pan"
@@ -24,5 +22,12 @@ object ToolInteractionSpec {
     object ZoomBoxMode {
         const val CORNER_START = "corner_start"
         const val CENTER_START = "center_start"
+    }
+
+    object KeyModifier {
+        const val CTRL = "ctrl"
+        const val ALT = "alt"
+        const val SHIFT = "shift"
+        const val META = "meta"
     }
 }

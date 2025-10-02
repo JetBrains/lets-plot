@@ -8,14 +8,16 @@ package org.jetbrains.letsPlot.core.interact.feedback
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.ToolFeedback
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.mouse.MouseDoubleClickInteraction
 
 class RollbackAllChangesFeedback(
+    private val modifiersMatcher: ModifiersMatcher,
     private val onAction: ((targetId: String?) -> Unit)
 ) : ToolFeedback {
 
     override fun start(ctx: InteractionContext): Disposable {
-        val interaction = MouseDoubleClickInteraction(ctx)
+        val interaction = MouseDoubleClickInteraction(ctx, modifiersMatcher)
 
         interaction.loop(
             onAction = {

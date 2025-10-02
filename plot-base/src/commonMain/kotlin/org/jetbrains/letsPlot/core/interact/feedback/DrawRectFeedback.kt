@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionTarget
 import org.jetbrains.letsPlot.core.interact.ToolFeedback
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.mouse.MouseDragInteraction
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
@@ -22,6 +23,7 @@ import kotlin.math.abs
 
 class DrawRectFeedback(
     private val centerStart: Boolean,
+    private val modifiersMatcher: ModifiersMatcher,
     private val onCompleted: (
         targetId: String?,
         dataBounds: DoubleRectangle,
@@ -81,7 +83,7 @@ class DrawRectFeedback(
 
     override fun start(ctx: InteractionContext): Disposable {
         val decorationsLayer = ctx.decorationsLayer
-        val interaction = MouseDragInteraction(ctx)
+        val interaction = MouseDragInteraction(ctx, modifiersMatcher)
 
         interaction.loop(
             onStarted = { (target, dragFrom, dragTo, _) ->

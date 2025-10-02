@@ -11,14 +11,16 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.core.interact.ToolFeedback
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.mouse.MouseWheelInteraction
 import kotlin.math.abs
 
 class WheelZoomFeedback(
+    private val modifiersMatcher: ModifiersMatcher,
     private val onCompleted: (targetId: String?, dataBounds: DoubleRectangle, scaleFactor: DoubleVector) -> Unit
 ) : ToolFeedback {
     override fun start(ctx: InteractionContext): Disposable {
-        val interaction = MouseWheelInteraction(ctx)
+        val interaction = MouseWheelInteraction(ctx, modifiersMatcher)
         var initialRange: DoubleVector? = null
 
         interaction.loop(

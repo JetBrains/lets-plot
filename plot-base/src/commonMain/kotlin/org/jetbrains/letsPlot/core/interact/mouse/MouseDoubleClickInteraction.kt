@@ -10,9 +10,11 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionTarget
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 
 internal class MouseDoubleClickInteraction(
-    private val ctx: InteractionContext
+    private val ctx: InteractionContext,
+    private val modifiersMatcher: ModifiersMatcher
 ) : Disposable {
 
     private var _target: InteractionTarget? = null
@@ -38,7 +40,10 @@ internal class MouseDoubleClickInteraction(
         check(!disposed) { "Disposed." }
 
         reg.add(
-            ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_DOUBLE_CLICKED) { e ->
+            ctx.eventsManager.onMouseEvent(
+                eventKind = MouseEventSpec.MOUSE_DOUBLE_CLICKED,
+                modifiersMatcher = modifiersMatcher
+            ) { e ->
                 // Coordinate relative to the entire plot.
                 val plotCoord = e.location.toDoubleVector()
                 ctx.findTarget(plotCoord)?.let {

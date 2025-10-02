@@ -13,9 +13,10 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 
 class EventsManager : Disposable {
-    private val globalMouseEventHandlers = mutableMapOf<MouseEventSpec, MutableList<(MouseEvent) -> Unit>>()
+    private val globalMouseEventHandlers = mutableMapOf<MouseEventSpec, MutableList<ModifiersMatcherAndEventHandler>>()
 
     private val mouseEventPeer = MouseEventPeer()
     private val regs = CompositeRegistration()
@@ -87,20 +88,38 @@ class EventsManager : Disposable {
         mouseEventPeer.addEventSource(s)
     }
 
-    fun onMouseEvent(e: MouseEventSpec, handler: (MouseEvent) -> Unit): Registration {
-        globalMouseEventHandlers.getOrPut(e, { mutableListOf() }).add(handler)
+    fun onMouseEvent(
+        eventKind: MouseEventSpec,
+        modifiersMatcher: ModifiersMatcher,
+        handler: (MouseEvent) -> Unit
+    ): Registration {
+        val eventHandler = ModifiersMatcherAndEventHandler(modifiersMatcher, handler)
+        globalMouseEventHandlers.getOrPut(eventKind, { mutableListOf() })
+            .add(eventHandler)
         return object : Registration() {
             override fun doRemove() {
-                globalMouseEventHandlers.getValue(e).remove(handler)
+                globalMouseEventHandlers.getValue(eventKind).remove(eventHandler)
             }
         }
     }
 
-    private fun dispatchGlobalEvent(e: MouseEventSpec, event: MouseEvent) {
-        globalMouseEventHandlers[e]?.forEach { it(event) }
+    private fun dispatchGlobalEvent(eventKind: MouseEventSpec, event: MouseEvent) {
+        globalMouseEventHandlers[eventKind]?.forEach {
+            if (it.modifiersMatcher.match(event)) {
+                if (debugTrace) {
+                    println("Event: $eventKind, modifiers: ${event.modifiers}")
+                }
+                it.handler.invoke(event)
+            }
+        }
     }
 
     override fun dispose() {
         regs.dispose()
     }
+
+    private class ModifiersMatcherAndEventHandler(
+        val modifiersMatcher: ModifiersMatcher,
+        val handler: (MouseEvent) -> Unit
+    )
 }
