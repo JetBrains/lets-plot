@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
@@ -90,8 +89,8 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             helper.setAlphaEnabled(false)
             root.appendNodes(helper.createLines(points, boundTransform))
 
-            val pathData = helper.createPathDataByGroup(points, boundTransform)
-            targetCollectorHelper.addPaths(pathData)
+            val pathDataList = helper.createPathDataByGroup(points, boundTransform).values.flatten()
+            targetCollectorHelper.addPaths(pathDataList)
         }
 
         if (quantileLines) {

@@ -22,7 +22,7 @@ open class PathGeom : GeomBase() {
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
     protected open fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.with_X_Y(aesthetics.dataPoints())
+        return aesthetics.dataPoints()
     }
 
     override fun buildIntern(

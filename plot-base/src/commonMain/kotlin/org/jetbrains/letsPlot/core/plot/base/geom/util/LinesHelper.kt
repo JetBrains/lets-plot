@@ -55,7 +55,7 @@ open class LinesHelper(
     ): List<LinePath> {
         // draw line for each group
         val pathDataByGroup = createPathDataByGroup(dataPoints, toLocation)
-        return renderPaths(pathDataByGroup.values, filled = false)
+        return renderPaths(pathDataByGroup, filled = false)
     }
 
     // TODO: filled parameter is always false
@@ -94,7 +94,7 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
     ): List<Pair<SvgNode, PolygonData>> {
-        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = false).values
+        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = false).values.flatten()
 
         return createPolygon(domainPathData)
     }
@@ -183,15 +183,15 @@ open class LinesHelper(
     fun createPathDataByGroup(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
-    ): Map<Int, PathData> {
+    ): Map<Int, List<PathData>> {
         return createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
     }
 
-    fun createSteps(paths: Map<Int, PathData>, horizontalThenVertical: Boolean): List<LinePath> {
+    fun createSteps(paths: Collection<PathData>, horizontalThenVertical: Boolean): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
 
         // draw step for each group
-        paths.values.forEach { subPath ->
+        paths.forEach { subPath ->
             val points = subPath.coordinates
             if (points.isNotEmpty()) {
                 val newPoints = ArrayList<DoubleVector>()
@@ -232,8 +232,8 @@ open class LinesHelper(
         simplifyBorders: Boolean,
         closePath: Boolean
     ): List<LinePath> {
-        val domainUpperPathData = preparePathData(dataPoints, toLocationUpper, closePath)
-        val domainLowerPathData = preparePathData(dataPoints, toLocationLower, closePath)
+        val domainUpperPathData = createPathGroups(dataPoints, toLocationUpper, sorted = true, closePath)
+        val domainLowerPathData = createPathGroups(dataPoints, toLocationLower, sorted = true, closePath)
 
         val domainBandsPathData = domainUpperPathData.mapValues { (group, upperPathData) ->
             val lowerPathData = domainLowerPathData[group] ?: return@mapValues emptyList<PathData>()
@@ -306,16 +306,14 @@ open class LinesHelper(
         locationTransform: (DataPointAesthetics) -> DoubleVector?,
         closePath: Boolean
     ): Map<Int, List<PathData>> {
-        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = closePath)
-        return domainPathData.mapValues { (_, pathData) -> listOf(pathData) }
+        return createPathGroups(dataPoints, locationTransform, sorted = true, closePath = closePath)
     }
 
     private fun toClient(domainPathData: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
         return when (myResamplingEnabled) {
             true -> {
                 domainPathData
-                    .mapValues { (_, groupPath) -> groupPath.flatMap(::splitByStyle) }
-                    .let { interpolatePathData(it) }
+                    .mapValues { (_, groupPath) -> groupPath.flatMap { splitByStyle(it).let(::midPointsPathInterpolator) } }
                     .mapValues { (_, paths) -> paths.mapNotNull { PathData.create(resample(it.points)) } }
             }
 
@@ -331,9 +329,8 @@ open class LinesHelper(
                     }
                 }
 
-                val clientVariadicPathData =
-                    clientPathData.mapValues { (_, pathData) -> pathData.flatMap(::splitByStyle) }
-                interpolatePathData(clientVariadicPathData)
+                clientPathData
+                    .mapValues { (_, groupPath) -> groupPath.flatMap { splitByStyle(it).let(::midPointsPathInterpolator) } }
             }
         }
     }
@@ -366,7 +363,7 @@ open class LinesHelper(
                 .mapNotNull { PathData.create(it)}
         }
 
-        private fun midPointsPathInterpolator(path: List<PathData>): List<PathData> {
+        fun midPointsPathInterpolator(path: List<PathData>): List<PathData> {
             if (path.size == 1) {
                 return path
             }

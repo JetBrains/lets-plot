@@ -32,7 +32,7 @@ class StepGeom : LineGeom() {
         val dataPoints = GeomUtil.ordered_X(aesthetics.dataPoints())
         val linesHelper = LinesHelper(pos, coord, ctx)
 
-        val pathDataList = linesHelper.createPathDataByGroup(dataPoints, toLocationFor(overallAesBounds(ctx)))
+        val pathDataList = linesHelper.createPathDataByGroup(dataPoints, toLocationFor(overallAesBounds(ctx))).values.flatten()
         val horizontalThenVertical = when {
             !ctx.flipped && myDirection == Direction.HV -> true
             ctx.flipped && myDirection == Direction.VH -> true

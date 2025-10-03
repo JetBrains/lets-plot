@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -174,12 +173,13 @@ object GeomUtil {
             }
     }
 
+    // Builds a list of PathData per group, splitting into segments at null points.
     fun createPathGroups(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?),
         sorted: Boolean,
         closePath: Boolean = false
-    ): Map<Int, PathData> {
+    ): Map<Int, List<PathData>> {
         val groups = createGroups(dataPoints, sorted).let { groups ->
             if (closePath) {
                 groups.mapValues { (_, group) -> group + group.first() }
@@ -189,12 +189,27 @@ object GeomUtil {
         }
 
         return groups.mapValues { (_, aesthetics) ->
-            val points = aesthetics.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
-            when (points.isEmpty()) {
-                true -> null
-                false -> PathData.create(points)
+            val points = aesthetics.map { aes ->
+                pointTransform(aes)?.let { p -> PathPoint(aes, p) }
             }
-        }.filterNotNullValues()
+
+            points.splitOnNulls().mapNotNull { PathData.create(it) }
+        }
+    }
+
+    private fun <T> Iterable<T?>.splitOnNulls(): List<List<T>> {
+        val out = mutableListOf<MutableList<T>>()
+        var current = mutableListOf<T>()
+        for (e in this) {
+            if (e == null) {
+                if (current.size >= 1) out += current
+                current = mutableListOf()
+            } else {
+                current += e
+            }
+        }
+        if (current.size >= 1) out += current
+        return out
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {
