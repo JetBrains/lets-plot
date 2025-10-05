@@ -15,7 +15,7 @@ import javax.swing.JComponent
 
 class CanvasPane2(
     figure: CanvasFigure2? = null,
-    private val pixelDensity: Double = 1.0
+    pixelDensity: Double = 1.0
 ) : DisposingHub, Disposable, JComponent() {
     private val registrations = CompositeRegistration()
     private var figureRegistration: Registration = Registration.EMPTY
@@ -30,6 +30,7 @@ class CanvasPane2(
 
             figureRegistration.remove()
             if (canvasFigure != null) {
+                canvasFigure.resize(width, height)
                 canvasFigure.eventPeer.addEventSource(mouseEventSource)
                 figureRegistration = CompositeRegistration(
                     canvasFigure.mapToCanvas(canvasPeer),

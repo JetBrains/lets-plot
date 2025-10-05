@@ -40,6 +40,11 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.background = Color.TRANSPARENT.toAwtColor()
         setLineCap(LineCap.BUTT)
         state.transform = graphics.transform
+        graphics.clip?.let { initialClip ->
+            val clip = GeneralPath(graphics.transform.createTransformedShape(initialClip))
+            clipStack.add(clip)
+            state.numClipPath = clipStack.size
+        }
     }
 
     internal data class ContextState(
@@ -147,7 +152,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
         val currentTransform = graphics.transform
         graphics.transform = AffineTransform()
-        graphics.clip = currentPath
+        graphics.clip(currentPath)
         graphics.transform = currentTransform
     }
 
