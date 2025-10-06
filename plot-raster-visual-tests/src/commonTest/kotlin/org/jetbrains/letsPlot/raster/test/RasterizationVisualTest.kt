@@ -252,7 +252,7 @@ class RasterizationVisualTest : VisualTestBase() {
             |}
             |""".trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
         assertPlot("plot_bar_test.png", plotSpec)
     }
 
@@ -289,7 +289,7 @@ class RasterizationVisualTest : VisualTestBase() {
                 |}               
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
         assertPlot("plot_polar_test.png", plotSpec)
     }
 

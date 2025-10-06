@@ -15,10 +15,8 @@ open class VisualTestBase {
         dpi: Number? = null,
         scale: Number? = null
     ) {
-        val imageComparer = createImageComparer(fonts)
-
         assertPlot(
-            imageComparer = imageComparer,
+            fonts = fonts,
             expectedFileName = expectedFileName,
             plotSpec = plotSpec,
             width = width,

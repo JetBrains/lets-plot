@@ -25,6 +25,25 @@ kotlin {
             os.isWindows -> mingwX64()
             else -> throw Exception("Unsupported platform! Check project settings.")
         }
+
+        val imageMagickLibPath = rootProject.project.extra["imagemagick_lib_path"].toString()
+        target.binaries.forEach {
+            it.linkerOpts += listOf(
+                "-L${imageMagickLibPath}/lib",
+                "-lMagickWand-7.Q16HDRI",
+                "-lMagickCore-7.Q16HDRI",
+                "-lfontconfig",
+                "-lfreetype",
+                "-lexpat",
+                "-lz"
+            )
+            if (os.isWindows) {
+                it.linkerOpts += listOf(
+                    "-lurlmon",
+                    "-lgdi32"
+                )
+            }
+        }
     }
 
 

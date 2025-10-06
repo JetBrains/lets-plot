@@ -19,42 +19,60 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.imagick.canvas.MagickSnapshot
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
+import org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator
+
+val fontsDir = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/"
+
+fun newEmbeddedFontsManager() = MagickFontManager.configured(
+    "sans" to MagickFontManager.FontSet(embedded = true, "NotoSans",
+        regularFontPath = "$fontsDir/NotoSans-Regular.ttf",
+        boldFontPath = "$fontsDir/NotoSans-Bold.ttf",
+        italicFontPath = "$fontsDir/NotoSans-Italic.ttf",
+        boldItalicFontPath = "$fontsDir/NotoSans-BoldItalic.ttf"
+    ),
+    "sans-serif" to MagickFontManager.FontSet(embedded = true, "NotoSans",
+        regularFontPath = "$fontsDir/NotoSans-Regular.ttf",
+        boldFontPath = "$fontsDir/NotoSans-Bold.ttf",
+        italicFontPath = "$fontsDir/NotoSans-Italic.ttf",
+        boldItalicFontPath = "$fontsDir/NotoSans-BoldItalic.ttf"
+    ),
+    "serif" to MagickFontManager.FontSet(embedded = true, "NotoSerif",
+        regularFontPath = "$fontsDir/NotoSerif-Regular.ttf",
+        boldFontPath = "$fontsDir/NotoSerif-Bold.ttf",
+        italicFontPath = "$fontsDir/NotoSerif-Italic.ttf",
+        boldItalicFontPath = "$fontsDir/NotoSerif-BoldItalic.ttf"
+    ),
+    "mono" to MagickFontManager.FontSet(embedded = true, "NotoSansMono",
+        regularFontPath = "$fontsDir/NotoSansMono-Regular.ttf",
+        boldFontPath = "$fontsDir/NotoSansMono-Bold.ttf"
+    ),
+    "regular_mono" to MagickFontManager.FontSet(embedded = true, "NotoSansMono",
+        regularFontPath = "$fontsDir/NotoSansMono-Regular.ttf"
+    ),
+    "oblique_bold" to MagickFontManager.FontSet(embedded = true, "Noto",
+        regularFontPath = "$fontsDir/NotoSans-Regular.ttf",
+        boldFontPath = "$fontsDir/NotoSans-Bold.ttf",
+        obliqueFontPath = "$fontsDir/NotoSans-Italic.ttf",
+        boldObliqueFontPath = "$fontsDir/NotoSans-BoldItalic.ttf"
+    ),
+    "oblique" to MagickFontManager.FontSet(embedded = true, "Noto",
+        regularFontPath = "$fontsDir/NotoSans-Regular.ttf",
+        obliqueFontPath = "$fontsDir/NotoSans-Italic.ttf"
+    ),
+)
 
 
-actual fun createImageComparer(fonts: List<String>): ImageComparer {
+fun createImageComparer(): ImageComparer {
     return ImageComparer(
-        canvasProvider = MagickCanvasProvider(fontManager),
+        canvasProvider = MagickCanvasProvider(MagickFontManager.default()),
         bitmapIO = NativeBitmapIO,
         expectedDir = Native.getCurrentDir() + "/src/nativeTest/resources/expected/",
         outDir = Native.getCurrentDir() + "/build/reports/",
     )
 }
 
-
-actual fun registerFont(resourceName: String) {
-    val fontStream: InputStream? = ExportVisualTest::class.java.getClassLoader().getResourceAsStream(resourceName)
-    try {
-        val customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream)
-        val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
-        ge.registerFont(customFont)
-    } catch (e: FontFormatException) {
-        e.printStackTrace()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } finally {
-        if (fontStream != null) {
-            try {
-                fontStream.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-}
-
-
 actual fun assertPlot(
-    imageComparer: ImageComparer,
+    fonts: List<String>,
     expectedFileName: String,
     plotSpec: MutableMap<String, Any>,
     width: Number?,
@@ -65,18 +83,17 @@ actual fun assertPlot(
 ) {
     val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
-    val imageData = PlotImageExport.buildImageFromRawSpecs(
+    val (bitmap, _) = PlotReprGenerator.exportBitmap(
         plotSpec = plotSpec,
-        format = PlotImageExport.Format.PNG,
-        scalingFactor = scale ?: 1.0,
-        targetDPI = dpi,
         plotSize = plotSize,
-        unit = unit
+        sizeUnit = unit,
+        dpi = dpi,
+        scale = scale,
+        fontManager = newEmbeddedFontsManager()
+        //fontManager = MagickFontManager.default() // For manual testing
     )
-    val image = ImageIO.read(imageData.bytes.inputStream())
-    val bitmap = BitmapUtil.fromBufferedImage(image)
 
-
+    val imageComparer: ImageComparer = createImageComparer()
     imageComparer.assertBitmapEquals(expectedFileName, bitmap)
 }
 

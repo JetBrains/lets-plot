@@ -14,7 +14,7 @@ import java.io.IOException
 import java.io.InputStream
 import javax.imageio.ImageIO
 
-actual fun createImageComparer(fonts: List<String>): ImageComparer {
+fun createImageComparer(fonts: List<String>): ImageComparer {
     fonts.forEach(::registerFont)
     return ImageComparer(
         canvasProvider = AwtTestCanvasProvider(),
@@ -48,7 +48,7 @@ fun registerFont(resourceName: String) {
 
 
 actual fun assertPlot(
-    imageComparer: ImageComparer,
+    fonts: List<String>,
     expectedFileName: String,
     plotSpec: MutableMap<String, Any>,
     width: Number?,
@@ -57,6 +57,8 @@ actual fun assertPlot(
     dpi: Number?,
     scale: Number?
 ) {
+    val imageComparer: ImageComparer = createImageComparer(fonts)
+
     val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
     val imageData = PlotImageExport.buildImageFromRawSpecs(

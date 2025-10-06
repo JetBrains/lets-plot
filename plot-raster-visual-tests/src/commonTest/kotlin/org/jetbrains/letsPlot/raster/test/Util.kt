@@ -1,14 +1,11 @@
 package org.jetbrains.letsPlot.raster.test
 
-import demoAndTestShared.ImageComparer
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.util.PlotExportCommon
 
-expect fun createImageComparer(fonts: List<String>): ImageComparer
-
 expect fun assertPlot(
-    imageComparer: ImageComparer,
+    fonts: List<String>,
     expectedFileName: String,
     plotSpec: MutableMap<String, Any>,
     width: Number? = null,
