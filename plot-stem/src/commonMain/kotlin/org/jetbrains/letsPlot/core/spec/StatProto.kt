@@ -398,7 +398,7 @@ object StatProto {
         }
     }
 
-    private fun configurePointDensityStat(options: OptionsAccessor): AbstractDensity2dStat {
+    private fun configurePointDensityStat(options: OptionsAccessor): PointDensityStat {
         var bwValueX: Double? = null
         var bwValueY: Double? = null
         var bwMethod: DensityStat.BandWidthMethod? = null
@@ -440,17 +440,14 @@ object StatProto {
             }
         }
 
-        return Density2dStat(
+        return PointDensityStat(
             bandWidthX = bwValueX,
             bandWidthY = bwValueY,
             bandWidthMethod = bwMethod ?: AbstractDensity2dStat.DEF_BW,
             adjust = options.getDoubleDef(Density2d.ADJUST, AbstractDensity2dStat.DEF_ADJUST),
             kernel = kernel ?: AbstractDensity2dStat.DEF_KERNEL,
             nX = nX ?: AbstractDensity2dStat.DEF_N,
-            nY = nY ?: AbstractDensity2dStat.DEF_N,
-            isContour = options.getBoolean(Density2d.IS_CONTOUR, AbstractDensity2dStat.DEF_CONTOUR),
-            binCount = options.getIntegerDef(Density2d.BINS, AbstractDensity2dStat.DEF_BIN_COUNT),
-            binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
+            nY = nY ?: AbstractDensity2dStat.DEF_N
         )
     }
 
