@@ -47,15 +47,25 @@ class PointDensityStat(
             return withEmptyStatValues()
         }
 
-        val statX = ArrayList<Double>()
-        val statY = ArrayList<Double>()
-        val statDensity = ArrayList<Double>()
+        val statData = buildStat(xVector, yVector, groupWeight)
 
-        return DataFrame.Builder()
-            .putNumeric(Stats.X, statX)
-            .putNumeric(Stats.Y, statY)
-            .putNumeric(Stats.DENSITY, statDensity)
-            .build()
+        val builder = DataFrame.Builder()
+        for ((variable, series) in statData) {
+            builder.putNumeric(variable, series)
+        }
+        return builder.build()
+    }
+
+    private fun buildStat(
+        xs: List<Double>,
+        ys: List<Double>,
+        weights: List<Double>
+    ): Map<DataFrame.Variable, List<Double>> {
+        return mapOf(
+            Stats.X to xs,
+            Stats.Y to ys,
+            Stats.DENSITY to countNeighbors(xs, ys, weights, 1.0, 1.0)
+        )
     }
 
     companion object {
@@ -64,5 +74,21 @@ class PointDensityStat(
             Aes.Y to Stats.Y,
             Aes.COLOR to Stats.DENSITY
         )
+
+        internal fun countNeighbors(xs: List<Double>, ys: List<Double>, weights: List<Double>, r2: Double, xy: Double): List<Double> {
+            return xs.indices.map { i ->
+                xs.indices.sumOf { j ->
+                    if (i != j && scaledDistanceSquared(xs[i], ys[i], xs[j], ys[j], xy) < r2) {
+                        weights[i]
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        }
+
+        private fun scaledDistanceSquared(x1: Double, y1: Double, x2: Double, y2: Double, xy: Double): Double {
+            return (x1 - x2) * (x1 - x2) / xy + (y1 - y2) * (y1 - y2) * xy
+        }
     }
 }
