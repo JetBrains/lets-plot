@@ -11,9 +11,11 @@ import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
-import java.awt.Graphics2D
-import java.awt.Rectangle
+import org.junit.BeforeClass
+import java.awt.*
 import java.awt.image.BufferedImage
+import java.io.IOException
+import java.io.InputStream
 import kotlin.test.Test
 
 class CanvasPaneTest {
@@ -190,4 +192,38 @@ class CanvasPaneTest {
             |}            
         """.trimMargin()
     ).themeTextNotoSans()
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            registerFont("fonts/NotoSans-Regular.ttf")
+            registerFont("fonts/NotoSans-Bold.ttf")
+            registerFont("fonts/NotoSans-Italic.ttf")
+            registerFont("fonts/NotoSans-BoldItalic.ttf")
+            registerFont("fonts/NotoSerif-Regular.ttf")
+        }
+
+        private fun registerFont(resourceName: String) {
+            val fontStream: InputStream = CanvasPaneTest::class.java.getClassLoader().getResourceAsStream(resourceName) ?: error("Font resource not found: $resourceName")
+            try {
+                val customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream)
+                val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                ge.registerFont(customFont)
+            } catch (e: FontFormatException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                if (fontStream != null) {
+                    try {
+                        fontStream.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+    }
+
 }
