@@ -88,3 +88,5 @@ if (localProperties.exists()) {
 }
 
 include("platf-imagick")
+
+include("plot-raster-visual-tests")
