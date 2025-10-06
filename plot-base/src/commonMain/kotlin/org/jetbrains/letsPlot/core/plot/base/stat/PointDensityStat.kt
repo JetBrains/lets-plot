@@ -47,7 +47,12 @@ class PointDensityStat(
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(xVector, yVector, groupWeight)
+        val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
+        val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
+        val xy = xRange.length / yRange.length
+        val rX = xRange.length / 6.0
+        val r2 = rX * rX / xy
+        val statData = buildStat(xVector, yVector, groupWeight, r2, xy)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -59,12 +64,14 @@ class PointDensityStat(
     private fun buildStat(
         xs: List<Double>,
         ys: List<Double>,
-        weights: List<Double>
+        weights: List<Double>,
+        r2: Double,
+        xy: Double,
     ): Map<DataFrame.Variable, List<Double>> {
         return mapOf(
             Stats.X to xs,
             Stats.Y to ys,
-            Stats.DENSITY to countNeighbors(xs, ys, weights, 1.0, 1.0)
+            Stats.DENSITY to countNeighbors(xs, ys, weights, r2, xy)
         )
     }
 
