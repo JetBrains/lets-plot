@@ -68,10 +68,16 @@ class PointDensityStat(
         r2: Double,
         xy: Double,
     ): Map<DataFrame.Variable, List<Double>> {
+        val statCount = countNeighbors(xs, ys, weights, r2, xy)
+        val statDensity = statCount.map { it / statCount.size }
+        val maxCount = statCount.maxOrNull() ?: 0.0
+        val statScaled = statCount.map { it / maxCount }
         return mapOf(
             Stats.X to xs,
             Stats.Y to ys,
-            Stats.DENSITY to countNeighbors(xs, ys, weights, r2, xy)
+            Stats.COUNT to statCount,
+            Stats.DENSITY to statDensity,
+            Stats.SCALED to statScaled
         )
     }
 
