@@ -192,6 +192,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.CONTOURF,
                 GeomKind.DENSITY2D,
                 GeomKind.DENSITY2DF,
+                GeomKind.POINT_DENSITY,
                 GeomKind.Q_Q_LINE,
                 GeomKind.Q_Q_2_LINE,
                 GeomKind.FREQPOLY,

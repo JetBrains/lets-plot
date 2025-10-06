@@ -97,6 +97,7 @@ class GeomProto(val geomKind: GeomKind) {
             DENSITY -> DefaultSampling.DENSITY
             DENSITY2D -> DefaultSampling.DENSITY2D
             DENSITY2DF -> DefaultSampling.DENSITY2DF
+            POINT_DENSITY -> DefaultSampling.POINT_DENSITY
             JITTER -> DefaultSampling.JITTER
             Q_Q -> DefaultSampling.Q_Q
             Q_Q_2 -> DefaultSampling.Q_Q
@@ -210,6 +211,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[DENSITY] = densityDefaults()
             DEFAULTS[DENSITY2D] = density2dDefaults()
             DEFAULTS[DENSITY2DF] = density2dfDefaults()
+            DEFAULTS[POINT_DENSITY] = pointDensityDefaults()
             DEFAULTS[Q_Q] = qqDefaults()
             DEFAULTS[Q_Q_2] = qq2Defaults()
             DEFAULTS[Q_Q_LINE] = qqLineDefaults()
@@ -339,6 +341,12 @@ class GeomProto(val geomKind: GeomKind) {
         private fun density2dfDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "density2df"
+            return defaults
+        }
+
+        private fun pointDensityDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "identity" // TODO: pointdensity
             return defaults
         }
 
