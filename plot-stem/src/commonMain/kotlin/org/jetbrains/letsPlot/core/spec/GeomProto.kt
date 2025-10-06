@@ -346,7 +346,7 @@ class GeomProto(val geomKind: GeomKind) {
 
         private fun pointDensityDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
-            defaults[Layer.STAT] = "identity" // TODO: pointdensity
+            defaults[Layer.STAT] = "pointdensity"
             return defaults
         }
 

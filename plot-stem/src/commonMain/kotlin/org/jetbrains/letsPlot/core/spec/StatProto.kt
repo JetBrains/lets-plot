@@ -20,10 +20,10 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
 import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
+import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
-import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
@@ -143,6 +143,7 @@ object StatProto {
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
             DENSITY2DF -> configureDensity2dStat(options, true)
+            POINTDENSITY -> configurePointDensityStat(options)
             StatKind.QQ -> configureQQStat(options)
             QQ2 -> Stats.qq2()
             QQ_LINE -> configureQQLineStat(options)
@@ -395,6 +396,62 @@ object StatProto {
                 binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
             )
         }
+    }
+
+    private fun configurePointDensityStat(options: OptionsAccessor): AbstractDensity2dStat {
+        var bwValueX: Double? = null
+        var bwValueY: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod? = null
+        options[Density2d.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValueX = this.toDouble()
+                bwValueY = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            } else if (this is List<*>) {
+                for ((i, v) in this.withIndex()) {
+                    when (i) {
+                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
+                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
+                        else -> break
+                    }
+                }
+            }
+        }
+
+        val kernel = options.getString(Density2d.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+
+        var nX: Int? = null
+        var nY: Int? = null
+        options[Density2d.N]?.run {
+            if (this is Number) {
+                nX = this.toInt()
+                nY = this.toInt()
+            } else if (this is List<*>) {
+                for ((i, v) in this.withIndex()) {
+                    when (i) {
+                        0 -> nX = v?.let { (v as Number).toInt() }
+                        1 -> nY = v?.let { (v as Number).toInt() }
+                        else -> break
+                    }
+                }
+            }
+        }
+
+        return Density2dStat(
+            bandWidthX = bwValueX,
+            bandWidthY = bwValueY,
+            bandWidthMethod = bwMethod ?: AbstractDensity2dStat.DEF_BW,
+            adjust = options.getDoubleDef(Density2d.ADJUST, AbstractDensity2dStat.DEF_ADJUST),
+            kernel = kernel ?: AbstractDensity2dStat.DEF_KERNEL,
+            nX = nX ?: AbstractDensity2dStat.DEF_N,
+            nY = nY ?: AbstractDensity2dStat.DEF_N,
+            isContour = options.getBoolean(Density2d.IS_CONTOUR, AbstractDensity2dStat.DEF_CONTOUR),
+            binCount = options.getIntegerDef(Density2d.BINS, AbstractDensity2dStat.DEF_BIN_COUNT),
+            binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
+        )
     }
 
     private fun configureQQStat(options: OptionsAccessor): QQStat {
