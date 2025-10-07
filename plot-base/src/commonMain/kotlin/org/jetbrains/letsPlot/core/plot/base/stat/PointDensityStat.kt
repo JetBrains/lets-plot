@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -63,10 +64,7 @@ class PointDensityStat(
 
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
-        val xy = xRange.length / yRange.length
-        val rX = xRange.length / 6.0
-        val r2 = rX * rX / xy
-        val statData = buildStat(xVector, yVector, groupWeight, r2, xy)
+        val statData = buildStat(xVector, yVector, groupWeight, xRange, yRange)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -79,12 +77,12 @@ class PointDensityStat(
         xs: List<Double>,
         ys: List<Double>,
         weights: List<Double>,
-        r2: Double,
-        xy: Double
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
         return when (method) {
-            Method.NEIGHBOURS -> buildNeighboursStat(xs, ys, weights, r2, xy)
-            Method.KDE2D -> buildKde2dStat(xs, ys, weights, r2, xy)
+            Method.NEIGHBOURS -> buildNeighboursStat(xs, ys, weights, xRange, yRange)
+            Method.KDE2D -> buildKde2dStat(xs, ys, weights, xRange, yRange)
         }
     }
 
@@ -92,9 +90,12 @@ class PointDensityStat(
         xs: List<Double>,
         ys: List<Double>,
         weights: List<Double>,
-        r2: Double,
-        xy: Double
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
+        val xy = xRange.length / yRange.length
+        val rX = xRange.length / 6.0
+        val r2 = rX * rX / xy
         val statCount = countNeighbors(xs, ys, weights, r2, xy)
         val statDensity = statCount.map { it / statCount.size }
         val maxCount = statCount.maxOrNull() ?: 0.0
@@ -112,15 +113,32 @@ class PointDensityStat(
         xs: List<Double>,
         ys: List<Double>,
         weights: List<Double>,
-        r2: Double,
-        xy: Double
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
+        val (stepsX, stepsY, densityMatrix) = density2dGrid(xs, ys, weights, xRange, yRange)
+
+        val statX = ArrayList<Double>()
+        val statY = ArrayList<Double>()
+        val statCount = ArrayList<Double>()
+
+        val totalWeights = SeriesUtil.sum(weights)
+        for (row in 0 until nY) {
+            for (col in 0 until nX) {
+                statX.add(stepsX[col])
+                statY.add(stepsY[row])
+                val count = densityMatrix.getEntry(row, col)
+                statCount.add(count)
+            }
+        }
+        val maxCount = statCount.maxOrNull() ?: 0.0
+
         return mapOf(
-            Stats.X to xs,
-            Stats.Y to ys,
-            Stats.COUNT to List(xs.size) { 0.0 },
-            Stats.DENSITY to List(xs.size) { 0.0 },
-            Stats.SCALED to List(xs.size) { 0.0 }
+            Stats.X to statX,
+            Stats.Y to statY,
+            Stats.COUNT to statCount,
+            Stats.DENSITY to statCount.map { it / totalWeights },
+            Stats.SCALED to statCount.map { it / maxCount }
         )
     }
 
