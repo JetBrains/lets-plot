@@ -22,7 +22,19 @@ class PointDensityStat(
     kernel: DensityStat.Kernel,
     nX: Int,
     nY: Int
-) : BaseStat(DEF_MAPPING) {
+) : AbstractDensity2dStat(
+    bandWidthX = bandWidthX,
+    bandWidthY = bandWidthY,
+    bandWidthMethod = bandWidthMethod,
+    adjust = adjust,
+    kernel = kernel,
+    nX = nX,
+    nY = nY,
+    isContour = false,
+    binCount = 0,
+    binWidth = 0.0,
+    defaultMappings = DEF_MAPPING
+) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)

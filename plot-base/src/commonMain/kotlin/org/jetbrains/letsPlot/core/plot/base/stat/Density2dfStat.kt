@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 
 class Density2dfStat(
     bandWidthX: Double?,
@@ -35,7 +34,8 @@ class Density2dfStat(
     nY = nY,
     isContour = isContour,
     binCount = binCount,
-    binWidth = binWidth
+    binWidth = binWidth,
+    defaultMappings = DEF_MAPPING
 ) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -62,48 +62,11 @@ class Density2dfStat(
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
 
+        val (stepsX, stepsY, matrixFinal) = density2dGrid(xVector, yVector, groupWeight, xRange!!, yRange!!)
+
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
-
-        val bandWidth = DoubleArray(2)
-//        bandWidth[0] = if (bandWidths != null) bandWidths!![0] else DensityStatUtil.bandWidth(
-//            bandWidthMethod,
-//            xVector
-//        )
-        bandWidth[0] = getBandWidthX(xVector)
-
-//        bandWidth[1] = if (bandWidths != null) bandWidths!![1] else DensityStatUtil.bandWidth(
-//            bandWidthMethod,
-//            yVector
-//        )
-        bandWidth[1] = getBandWidthY(yVector)
-
-        val stepsX = DensityStatUtil.createStepValues(xRange!!, nX)
-        val stepsY = DensityStatUtil.createStepValues(yRange!!, nY)
-
-        val matrixX = BlockRealMatrix(
-            DensityStatUtil.createRawMatrix(
-                xVector,
-                stepsX,
-                kernelFun,
-                bandWidth[0],
-                adjust,
-                groupWeight
-            )
-        )
-        val matrixY = BlockRealMatrix(
-            DensityStatUtil.createRawMatrix(
-                yVector,
-                stepsY,
-                kernelFun,
-                bandWidth[1],
-                adjust,
-                groupWeight
-            )
-        )
-        // size: nY * nX
-        val matrixFinal = matrixY.multiply(matrixX.transpose())
 
         for (row in 0 until nY) {
             for (col in 0 until nX) {
@@ -145,5 +108,12 @@ class Density2dfStat(
                 .putNumeric(Stats.DENSITY, statDensity)
                 .build()
         }
+    }
+
+    companion object {
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
+        )
     }
 }

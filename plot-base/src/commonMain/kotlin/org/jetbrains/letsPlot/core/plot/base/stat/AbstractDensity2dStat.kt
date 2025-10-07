@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
+import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 
 abstract class AbstractDensity2dStat(
     private val bandWidthX: Double?,
@@ -19,9 +21,9 @@ abstract class AbstractDensity2dStat(
     protected val nY: Int,
     protected val isContour: Boolean,
     private val binCount: Int,
-    private val binWidth: Double
-
-) : BaseStat(DEF_MAPPING) {
+    private val binWidth: Double,
+    defaultMappings: Map<Aes<*>, DataFrame.Variable>
+) : BaseStat(defaultMappings) {
 
     //    var adjust = DEF_ADJUST
 //    var nx = DEF_N
@@ -105,6 +107,48 @@ abstract class AbstractDensity2dStat(
         throw IllegalStateException("'density2d' statistic can't be executed on the client side")
     }
 
+    protected fun density2dGrid(
+        xVector: List<Double>,
+        yVector: List<Double>,
+        groupWeight: List<Double>,
+        xRange: DoubleSpan,
+        yRange: DoubleSpan
+    ): Triple<List<Double>, List<Double>, BlockRealMatrix> {
+        val bandWidth = DoubleArray(2)
+        bandWidth[0] = getBandWidthX(xVector)
+        bandWidth[1] = getBandWidthY(yVector)
+
+        val stepsX = DensityStatUtil.createStepValues(xRange, nX)
+        val stepsY = DensityStatUtil.createStepValues(yRange, nY)
+
+        val matrixX = BlockRealMatrix(
+            DensityStatUtil.createRawMatrix(
+                xVector,
+                stepsX,
+                kernelFun,
+                bandWidth[0],
+                adjust,
+                groupWeight
+            )
+        )
+        val matrixY = BlockRealMatrix(
+            DensityStatUtil.createRawMatrix(
+                yVector,
+                stepsY,
+                kernelFun,
+                bandWidth[1],
+                adjust,
+                groupWeight
+            )
+        )
+
+        return Triple(
+            stepsX,
+            stepsY,
+            matrixY.multiply(matrixX.transpose())
+        )
+    }
+
     companion object {
         //        const val DEF_KERNEL = "gaussian"
         val DEF_KERNEL = DensityStat.Kernel.GAUSSIAN
@@ -117,10 +161,6 @@ abstract class AbstractDensity2dStat(
         const val DEF_BIN_COUNT = 10
         const val DEF_BIN_WIDTH = 0.0
 
-        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-            Aes.X to Stats.X,
-            Aes.Y to Stats.Y
-        )
         private const val MAX_N = 999
     }
 }
