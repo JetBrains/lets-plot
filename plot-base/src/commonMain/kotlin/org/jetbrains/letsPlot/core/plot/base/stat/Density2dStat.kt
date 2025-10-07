@@ -62,7 +62,7 @@ class Density2dStat constructor(
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
 
-        val (stepsX, stepsY, matrixFinal) = density2dGrid(xVector, yVector, groupWeight, xRange!!, yRange!!)
+        val (stepsX, stepsY, densityMatrix) = density2dGrid(xVector, yVector, groupWeight, xRange!!, yRange!!)
 
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
@@ -72,7 +72,7 @@ class Density2dStat constructor(
             for (col in 0 until nX) {
                 statX.add(stepsX[col])
                 statY.add(stepsY[row])
-                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight))
+                statDensity.add(densityMatrix.getEntry(row, col) / SeriesUtil.sum(groupWeight))
                 //newGroups.add((double) (int) group);
             }
         }
