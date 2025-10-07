@@ -554,6 +554,10 @@ object Option {
             const val BINWIDTH = "binwidth"
         }
 
+        object PointDensity {
+            const val METHOD = "method"
+        }
+
         object DensityRidges {
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"

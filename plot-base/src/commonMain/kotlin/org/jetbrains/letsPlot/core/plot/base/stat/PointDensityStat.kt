@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -21,7 +22,8 @@ class PointDensityStat(
     adjust: Double,
     kernel: DensityStat.Kernel,
     nX: Int,
-    nY: Int
+    nY: Int,
+    private val method: Method
 ) : AbstractDensity2dStat(
     bandWidthX = bandWidthX,
     bandWidthY = bandWidthY,
@@ -78,7 +80,20 @@ class PointDensityStat(
         ys: List<Double>,
         weights: List<Double>,
         r2: Double,
-        xy: Double,
+        xy: Double
+    ): Map<DataFrame.Variable, List<Double>> {
+        return when (method) {
+            Method.NEIGHBOURS -> buildNeighboursStat(xs, ys, weights, r2, xy)
+            Method.KDE2D -> buildKde2dStat(xs, ys, weights, r2, xy)
+        }
+    }
+
+    private fun buildNeighboursStat(
+        xs: List<Double>,
+        ys: List<Double>,
+        weights: List<Double>,
+        r2: Double,
+        xy: Double
     ): Map<DataFrame.Variable, List<Double>> {
         val statCount = countNeighbors(xs, ys, weights, r2, xy)
         val statDensity = statCount.map { it / statCount.size }
@@ -93,7 +108,46 @@ class PointDensityStat(
         )
     }
 
+    private fun buildKde2dStat(
+        xs: List<Double>,
+        ys: List<Double>,
+        weights: List<Double>,
+        r2: Double,
+        xy: Double
+    ): Map<DataFrame.Variable, List<Double>> {
+        return mapOf(
+            Stats.X to xs,
+            Stats.Y to ys,
+            Stats.COUNT to List(xs.size) { 0.0 },
+            Stats.DENSITY to List(xs.size) { 0.0 },
+            Stats.SCALED to List(xs.size) { 0.0 }
+        )
+    }
+
+    enum class Method {
+        NEIGHBOURS, KDE2D;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Method>()
+
+            fun safeValueOf(v: String): Method {
+                val methodName = when (v.lowercase()) {
+                    "neighbors" -> "neighbours" // Support American spelling
+                    else -> v
+                }
+                return ENUM_INFO.safeValueOf(methodName) ?:
+                    throw IllegalArgumentException(
+                        "Unsupported method: '$v'\n" +
+                        "Use one of: neighbours, kde2d."
+                    )
+            }
+        }
+    }
+
     companion object {
+        val DEF_METHOD: Method = Method.NEIGHBOURS
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,

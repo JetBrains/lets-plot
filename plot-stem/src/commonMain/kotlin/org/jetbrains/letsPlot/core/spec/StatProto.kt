@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Density
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density2d
 import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
 import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
+import org.jetbrains.letsPlot.core.spec.Option.Stat.PointDensity
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
@@ -447,7 +448,10 @@ object StatProto {
             adjust = options.getDoubleDef(Density2d.ADJUST, AbstractDensity2dStat.DEF_ADJUST),
             kernel = kernel ?: AbstractDensity2dStat.DEF_KERNEL,
             nX = nX ?: AbstractDensity2dStat.DEF_N,
-            nY = nY ?: AbstractDensity2dStat.DEF_N
+            nY = nY ?: AbstractDensity2dStat.DEF_N,
+            method = options.getString(PointDensity.METHOD)?.let {
+                PointDensityStat.Method.safeValueOf(it)
+            } ?: PointDensityStat.DEF_METHOD
         )
     }
 
