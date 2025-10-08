@@ -98,7 +98,7 @@ class PointDensityStat(
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
         val xy = xRange.length / yRange.length
-        val rX = xRange.length / 6.0
+        val rX = xRange.length / 12.0 // For standard bivariate normal distribution and ~1000 points, the rX is about 0.5
         val r2 = rX * rX / xy
         val statCount = countNeighbors(xs, ys, weights, r2, xy)
         val statDensity = statCount.map { it / statCount.size }
@@ -174,6 +174,10 @@ class PointDensityStat(
             }
         }
 
+        /**
+         * Approximate count from density matrix.
+         * Find rectangle in which (x, y) is located and return value of the closest corner.
+         */
         internal fun approxCount(
             x: Double,
             y: Double,
