@@ -143,7 +143,7 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
-    fun createGroups(
+    private fun createGroups(
         dataPoints: Iterable<DataPointAesthetics>,
         sorted: Boolean = false
     ): Map<Int, List<DataPointAesthetics>> {
@@ -173,13 +173,13 @@ object GeomUtil {
             }
     }
 
-    // Builds a list of PathData per group, splitting into segments at null points.
-    fun createPathGroups(
+    // Builds a list of PathData splitting by group and null points.
+    fun createPaths(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?),
         sorted: Boolean,
         closePath: Boolean = false
-    ): Map<Int, List<PathData>> {
+    ): List<PathData> {
         val groups = createGroups(dataPoints, sorted).let { groups ->
             if (closePath) {
                 groups.mapValues { (_, group) -> group + group.first() }
@@ -188,7 +188,7 @@ object GeomUtil {
             }
         }
 
-        return groups.mapValues { (_, aesthetics) ->
+        return groups.flatMap { (_, aesthetics) ->
             val points = aesthetics.map { aes ->
                 pointTransform(aes)?.let { p -> PathPoint(aes, p) }
             }

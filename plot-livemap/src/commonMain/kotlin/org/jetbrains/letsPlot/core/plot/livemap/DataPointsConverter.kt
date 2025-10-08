@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPaths
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper.Companion.midPointsPathInterpolator
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper.Companion.splitByStyle
@@ -161,18 +161,17 @@ internal class DataPointsConverter(
                 setGeodesic(geom.geodesic)
             }
 
-            val pathData = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
+            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
 
-            val interpolatedPathData = pathData.mapValues { (_, pathDataList) -> pathDataList.flatMap {
-                    splitByStyle(it).let(::midPointsPathInterpolator)
-                }
+            val interpolatedPathData = paths.flatMap {
+                splitByStyle(it).let(::midPointsPathInterpolator)
             }
 
-            return process(paths = interpolatedPathData.values.flatten(), isClosed = false)
+            return process(paths = interpolatedPathData, isClosed = false)
         }
 
         fun polygon(): List<DataPointLiveMapAesthetics> {
-            val paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true).values.flatten()
+            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
             return process(paths = paths, isClosed = true)
         }
 

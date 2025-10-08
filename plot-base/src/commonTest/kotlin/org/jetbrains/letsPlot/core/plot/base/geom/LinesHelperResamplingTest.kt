@@ -113,8 +113,10 @@ class LinesHelperResamplingTest {
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
                 quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
-                    val m = linesHelper.createPathData(points, TO_LOCATION_X_Y, true)
-                    m.map { (group, pathData) ->
+                    val paths = linesHelper.createPathData(points, TO_LOCATION_X_Y, true)
+                    val m = paths.groupBy { it.group!! }
+
+                    m.mapNotNull { (group, pathData) ->
                         actual.put(group, pathData.flatMap { it.coordinates })
                     }
                 }

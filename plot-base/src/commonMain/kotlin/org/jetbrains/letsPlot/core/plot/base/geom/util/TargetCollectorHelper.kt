@@ -37,8 +37,9 @@ class TargetCollectorHelper(
         }
     }
 
-    fun addVariadicPaths(paths: Map<Int, List<PathData>>) {
-        for (subPaths in paths.values) {
+    fun addVariadicPaths(paths: List<PathData>) {
+        val grouped = paths.groupBy { path -> path.group!! }
+        for (subPaths in grouped.values) {
             val simplifiedSubPaths = subPaths.mapNotNull(::reduce)
 
             // build a subpaths aes index so later we would fetch a proper tooltip marker.

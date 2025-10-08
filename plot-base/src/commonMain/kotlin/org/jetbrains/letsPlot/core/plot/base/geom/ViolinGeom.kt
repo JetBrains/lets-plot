@@ -111,7 +111,7 @@ class ViolinGeom : GeomBase() {
         helper: LinesHelper,
         boundTransform: (p: DataPointAesthetics) -> DoubleVector
     ) {
-        val pathDataList = helper.createPathDataByGroup(dataPoints, boundTransform).values.flatten()
+        val pathDataList = helper.createPaths(dataPoints, boundTransform)
         val targetCollectorHelper = TargetCollectorHelper(GeomKind.VIOLIN, ctx)
         targetCollectorHelper.addPaths(pathDataList)
     }

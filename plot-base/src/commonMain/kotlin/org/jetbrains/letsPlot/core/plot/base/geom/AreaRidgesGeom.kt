@@ -89,7 +89,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             helper.setAlphaEnabled(false)
             root.appendNodes(helper.createLines(points, boundTransform))
 
-            val pathDataList = helper.createPathDataByGroup(points, boundTransform).values.flatten()
+            val pathDataList = helper.createPaths(points, boundTransform)
             targetCollectorHelper.addPaths(pathDataList)
         }
 

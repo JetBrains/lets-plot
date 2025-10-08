@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathDataFromRectangle
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPaths
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
@@ -53,18 +53,12 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
     ): List<LinePath> {
-        // draw line for each group
-        val pathDataByGroup = createPathDataByGroup(dataPoints, toLocation)
-        return renderPaths(pathDataByGroup, filled = false)
+        val paths = createPaths(dataPoints, toLocation)
+        return renderPaths(paths, filled = false)
     }
 
     // TODO: filled parameter is always false
-    fun renderPaths(paths: Map<Int, List<PathData>>, filled: Boolean): List<LinePath> {
-        return renderPaths(paths.values.flatten(), filled)
-    }
-
-    // TODO: filled parameter is always false
-    private fun renderPaths(paths: Collection<PathData>, filled: Boolean): List<LinePath> {
+    fun renderPaths(paths: Collection<PathData>, filled: Boolean): List<LinePath> {
         return paths.map { path ->
             val visualPath = when (myResamplingEnabled) {
                 true -> douglasPeucker(path.coordinates, DOUGLAS_PEUCKER_PIXEL_THRESHOLD)
@@ -85,16 +79,16 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
         closePath: Boolean = false,
-    ): Map<Int, List<PathData>> {
-        val domainData = preparePathData(dataPoints, locationTransform, closePath)
-        return toClient(domainData)
+    ): List<PathData> {
+        val domainData = createPaths(dataPoints, locationTransform, sorted = true, closePath = closePath)
+        return toClientPaths(domainData)
     }
 
     fun createPolygon(
         dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
     ): List<Pair<SvgNode, PolygonData>> {
-        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = false).values.flatten()
+        val domainPathData = createPaths(dataPoints, locationTransform, sorted = true, closePath = false)
 
         return createPolygon(domainPathData)
     }
@@ -179,12 +173,11 @@ open class LinesHelper(
         }
     }
 
-    // TODO: return list of PathData for consistency
-    fun createPathDataByGroup(
+    fun createPaths(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
-    ): Map<Int, List<PathData>> {
-        return createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
+    ): List<PathData> {
+        return createPaths(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
     }
 
     fun createSteps(paths: Collection<PathData>, horizontalThenVertical: Boolean): List<LinePath> {
@@ -232,28 +225,24 @@ open class LinesHelper(
         simplifyBorders: Boolean,
         closePath: Boolean
     ): List<LinePath> {
-        val domainUpperPathData = createPathGroups(dataPoints, toLocationUpper, sorted = true, closePath)
-        val domainLowerPathData = createPathGroups(dataPoints, toLocationLower, sorted = true, closePath)
+        val domainUpperPathData = createPaths(dataPoints, toLocationUpper, sorted = true, closePath)
+        val domainLowerPathData = createPaths(dataPoints, toLocationLower, sorted = true, closePath)
 
-        val domainBandsPathData = domainUpperPathData.mapValues { (group, upperPathData) ->
-            val lowerPathData = domainLowerPathData[group] ?: return@mapValues emptyList<PathData>()
-
-            if (upperPathData.isEmpty() || lowerPathData.isEmpty()) {
-                return@mapValues emptyList<PathData>()
-            }
-
-            require(upperPathData.size == lowerPathData.size) {
-                "Upper and lower path data should contain the same number of paths"
-            }
-
-            upperPathData
-                .zip(lowerPathData)
-                .mapNotNull { (upperPath, lowerPath) -> PathData.create(upperPath.points + lowerPath.points.reversed()) }
+        if (domainUpperPathData.isEmpty() || domainLowerPathData.isEmpty()) {
+            return emptyList()
         }
 
-        val clientBandsPathData = toClient(domainBandsPathData)
+        require(domainUpperPathData.size == domainLowerPathData.size) {
+            "Upper and lower path data should contain the same number of paths"
+        }
 
-        return clientBandsPathData.values.flatten().mapNotNull { pathData ->
+        val domainBandsPathData = domainUpperPathData
+            .zip(domainLowerPathData)
+            .mapNotNull { (upperPath, lowerPath) -> PathData.create(upperPath.points + lowerPath.points.reversed()) }
+
+        val clientBandsPathData: List<PathData> = toClientPaths(domainBandsPathData)
+
+        return clientBandsPathData.mapNotNull { pathData ->
             val points = pathData.coordinates
 
             if (points.isNotEmpty()) {
@@ -301,36 +290,27 @@ open class LinesHelper(
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 
-    private fun preparePathData(
-        dataPoints: Iterable<DataPointAesthetics>,
-        locationTransform: (DataPointAesthetics) -> DoubleVector?,
-        closePath: Boolean
-    ): Map<Int, List<PathData>> {
-        return createPathGroups(dataPoints, locationTransform, sorted = true, closePath = closePath)
-    }
-
-    private fun toClient(domainPathData: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
+    private fun toClientPaths(domainPathData: List<PathData>): List<PathData> {
         return when (myResamplingEnabled) {
             true -> {
                 domainPathData
-                    .mapValues { (_, groupPath) -> groupPath.flatMap { splitByStyle(it).let(::midPointsPathInterpolator) } }
-                    .mapValues { (_, paths) -> paths.mapNotNull { PathData.create(resample(it.points)) } }
+                    .map { path -> splitByStyle(path).let(::midPointsPathInterpolator) }
+                    .flatMap { paths -> paths.mapNotNull { PathData.create(resample(it.points)) } }
             }
 
             false -> {
-                val clientPathData = domainPathData.mapValues { (_, groupPath) ->
-                    groupPath.mapNotNull { segment ->
-                        // Note that PathPoint have to be recreated with the point aes, not with a segment aes
-                        val points = segment.points.mapNotNull { p ->
-                            toClient(p.coord, p.aes)
-                                ?.let { PathPoint(p.aes, coord = it) }
-                        }
-                        PathData.create(points)
+                val clientPathData = domainPathData.mapNotNull { segment ->
+                    // Note that PathPoint have to be recreated with the point aes, not with a segment aes
+                    val points = segment.points.mapNotNull { p ->
+                        toClient(p.coord, p.aes)
+                            ?.let { PathPoint(p.aes, coord = it) }
                     }
+                    PathData.create(points)
                 }
 
                 clientPathData
-                    .mapValues { (_, groupPath) -> groupPath.flatMap { splitByStyle(it).let(::midPointsPathInterpolator) } }
+                    .map { splitByStyle(it).let(::midPointsPathInterpolator) }
+                    .flatten()
             }
         }
     }
@@ -402,10 +382,6 @@ open class LinesHelper(
         private fun lerp(p1: DoubleVector, p2: DoubleVector, progress: Double): DoubleVector {
             return p1.add(p2.subtract(p1).mul(progress))
         }
-
-        fun interpolatePathData(variadicPath: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
-            return variadicPath.mapValues { (_, pathSegments) -> midPointsPathInterpolator(pathSegments) }
-        }
     }
 }
 
@@ -429,6 +405,7 @@ class PathData private constructor(
     val aes: DataPointAesthetics by lazy(points.first()::aes) // decoration aes (only for color, fill, size, stroke)
     val aesthetics by lazy { points.map(PathPoint::aes) }
     val coordinates by lazy { points.map(PathPoint::coord) } // may contain duplicates, don't work well for polygon
+    val group: Int? by lazy { points.first().aes.group() }
 }
 
 class PolygonData private constructor(
