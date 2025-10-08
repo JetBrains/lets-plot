@@ -13,10 +13,11 @@ class PointDensity {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            basic("kde2d"),
         )
     }
 
-    private fun basic(): MutableMap<String, Any> {
+    private fun basic(method: String = "neighbours"): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
@@ -25,11 +26,20 @@ class PointDensity {
                 'y': 'sepal length (cm)'
               },
               'ggtitle': {
-                'text': 'Default pointdensity'
+                'text': 'Basic pointdensity\nmethod: $method'
               },
               'layers': [
                 {
-                  'geom': 'pointdensity'
+                  'geom': 'pointdensity',
+                  'method': '$method',
+                  'tooltips': {
+                    'lines': [
+                      '@target',
+                      'count|@..count..',
+                      'density|@..density..',
+                      'scaled|@..scaled..'
+                    ]
+                  }
                 }
               ]
             }
