@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.component3
 
 class PointDensityStat(
     bandWidthX: Double?,
@@ -53,21 +52,25 @@ class PointDensityStat(
             return withEmptyStatValues()
         }
 
-        val (xVector, yVector, groupWeight) = SeriesUtil.filterFinite(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y),
-            BinStatUtil.weightVector(data.rowCount(), data)
-        )
-
-        if (xVector.isEmpty()) {
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        val weights = BinStatUtil.weightVector(data.rowCount(), data)
+        val indices = indicesOfFinite(xs, ys, weights)
+        if (indices.isEmpty()) {
             return withEmptyStatValues()
         }
+        val xVector = indices.map { xs[it]!! }
+        val yVector = indices.map { ys[it]!! }
+        val groupWeight = indices.map { weights[it]!! }
 
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
         val statData = buildStat(xVector, yVector, groupWeight, xRange, yRange)
 
         val builder = DataFrame.Builder()
+            .putNumeric(Stats.X, xs)
+            .putNumeric(Stats.Y, ys)
+            .put(Stats.INDEX, indices)
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
         }
@@ -102,8 +105,6 @@ class PointDensityStat(
         val maxCount = statCount.maxOrNull() ?: 0.0
         val statScaled = statCount.map { it / maxCount }
         return mapOf(
-            Stats.X to xs,
-            Stats.Y to ys,
             Stats.COUNT to statCount,
             Stats.DENSITY to statDensity,
             Stats.SCALED to statScaled
@@ -125,8 +126,6 @@ class PointDensityStat(
         val totalWeights = SeriesUtil.sum(weights)
         val maxCount = statCount.maxOrNull() ?: 0.0
         return mapOf(
-            Stats.X to xs,
-            Stats.Y to ys,
             Stats.COUNT to statCount,
             Stats.DENSITY to statCount.map { it / totalWeights },
             Stats.SCALED to statCount.map { it / maxCount }
@@ -194,6 +193,12 @@ class PointDensityStat(
                 alphaRow < 0.5 && alphaCol >= 0.5 -> densityMatrix.getEntry(rowLow, colHigh)
                 alphaRow >= 0.5 && alphaCol < 0.5 -> densityMatrix.getEntry(rowHigh, colLow)
                 else -> densityMatrix.getEntry(rowHigh, colHigh)
+            }
+        }
+
+        private fun indicesOfFinite(l0: List<Double?>, l1: List<Double?>, l2: List<Double?>): List<Int> {
+            return l0.mapIndexedNotNull { i, v0 ->
+                if (SeriesUtil.allFinite(v0, l1[i], l2[i])) i else null
             }
         }
 
