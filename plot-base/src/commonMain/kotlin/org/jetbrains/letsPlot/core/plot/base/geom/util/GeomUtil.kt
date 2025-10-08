@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.intern.splitByNull
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -188,28 +189,20 @@ object GeomUtil {
             }
         }
 
-        return groups.flatMap { (_, aesthetics) ->
-            val points = aesthetics.map { aes ->
-                pointTransform(aes)?.let { p -> PathPoint(aes, p) }
-            }
-
-            points.splitOnNulls().mapNotNull { PathData.create(it) }
-        }
+        return groups.values
+            .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
+            .map { pathPoints -> pathPoints.splitByNull() }
+            .flatten()
+            .mapNotNull { PathData.create(it) }
     }
 
-    private fun <T> Iterable<T?>.splitOnNulls(): List<List<T>> {
-        val out = mutableListOf<MutableList<T>>()
-        var current = mutableListOf<T>()
-        for (e in this) {
-            if (e == null) {
-                if (current.size >= 1) out += current
-                current = mutableListOf()
-            } else {
-                current += e
-            }
+    private fun toPathPoints(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointTransform: ((DataPointAesthetics) -> DoubleVector?)
+    ): List<PathPoint?> {
+        return dataPoints.map { aes ->
+            pointTransform(aes)?.let { p -> PathPoint(aes, p) }
         }
-        if (current.size >= 1) out += current
-        return out
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {
