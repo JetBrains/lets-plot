@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.component3
@@ -117,25 +118,15 @@ class PointDensityStat(
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
         val (stepsX, stepsY, densityMatrix) = density2dGrid(xs, ys, weights, xRange, yRange)
-
-        val statX = ArrayList<Double>()
-        val statY = ArrayList<Double>()
         val statCount = ArrayList<Double>()
-
-        val totalWeights = SeriesUtil.sum(weights)
-        for (row in 0 until nY) {
-            for (col in 0 until nX) {
-                statX.add(stepsX[col])
-                statY.add(stepsY[row])
-                val count = densityMatrix.getEntry(row, col)
-                statCount.add(count)
-            }
+        xs.forEachIndexed { i, x ->
+            statCount.add(approxCount(x, ys[i], stepsX, stepsY, densityMatrix))
         }
+        val totalWeights = SeriesUtil.sum(weights)
         val maxCount = statCount.maxOrNull() ?: 0.0
-
         return mapOf(
-            Stats.X to statX,
-            Stats.Y to statY,
+            Stats.X to xs,
+            Stats.Y to ys,
             Stats.COUNT to statCount,
             Stats.DENSITY to statCount.map { it / totalWeights },
             Stats.SCALED to statCount.map { it / maxCount }
@@ -184,8 +175,51 @@ class PointDensityStat(
             }
         }
 
+        internal fun approxCount(
+            x: Double,
+            y: Double,
+            stepsX: List<Double>,
+            stepsY: List<Double>,
+            densityMatrix: BlockRealMatrix
+        ): Double {
+            val (colLow, colHigh) = binarySearchOfLimits(x, stepsX)
+            val (rowLow, rowHigh) = binarySearchOfLimits(y, stepsY)
+            if (colLow == colHigh && rowLow == rowHigh) {
+                return densityMatrix.getEntry(rowLow, colLow)
+            }
+            val alphaRow = if (rowLow == rowHigh) 0.0 else (y - stepsY[rowLow]) / (stepsY[rowHigh] - stepsY[rowLow])
+            val alphaCol = if (colLow == colHigh) 0.0 else (x - stepsX[colLow]) / (stepsX[colHigh] - stepsX[colLow])
+            return when {
+                alphaRow < 0.5 && alphaCol < 0.5 -> densityMatrix.getEntry(rowLow, colLow)
+                alphaRow < 0.5 && alphaCol >= 0.5 -> densityMatrix.getEntry(rowLow, colHigh)
+                alphaRow >= 0.5 && alphaCol < 0.5 -> densityMatrix.getEntry(rowHigh, colLow)
+                else -> densityMatrix.getEntry(rowHigh, colHigh)
+            }
+        }
+
         private fun scaledDistanceSquared(x1: Double, y1: Double, x2: Double, y2: Double, xy: Double): Double {
             return (x1 - x2) * (x1 - x2) / xy + (y1 - y2) * (y1 - y2) * xy
+        }
+
+        private fun binarySearchOfLimits(v: Double, steps: List<Double>): Pair<Int, Int> {
+            var low = 0
+            var high = steps.size - 1
+            if (v < steps[low]) {
+                return Pair(low, low)
+            }
+            if (v > steps[high]) {
+                return Pair(high, high)
+            }
+            while (low <= high) {
+                val mid = (low + high) / 2
+                val midVal = steps[mid]
+                when {
+                    midVal < v -> low = mid + 1
+                    midVal > v -> high = mid - 1
+                    else -> return Pair(mid, mid)
+                }
+            }
+            return Pair(high, low)
         }
     }
 }
