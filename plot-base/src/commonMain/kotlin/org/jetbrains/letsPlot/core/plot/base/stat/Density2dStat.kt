@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -45,8 +46,8 @@ class Density2dStat constructor(
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val finiteXIndices = SeriesUtil.indicesOfFinite(xs)
-        val finiteYIndices = SeriesUtil.indicesOfFinite(ys)
+        val finiteXIndices = xs.indicesOf(SeriesUtil::isFinite)
+        val finiteYIndices = ys.indicesOf(SeriesUtil::isFinite)
         val finiteIndices = finiteXIndices.intersect(finiteYIndices)
 
         // if no data, return empty

@@ -113,16 +113,6 @@ object SeriesUtil {
         }
     }
 
-    fun indicesOfFinite(values: List<Double?>): Set<Int> {
-        val result: MutableSet<Int> = mutableSetOf()
-        for (i in values.indices) {
-            if (isFinite(values[i])) {
-                result.add(i)
-            }
-        }
-        return result
-    }
-
     fun resolution(values: Iterable<Double?>, naValue: Double): Double {
 
         // check if this is a row of a regular grid
