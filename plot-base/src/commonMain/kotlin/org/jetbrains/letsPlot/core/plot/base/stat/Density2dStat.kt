@@ -55,10 +55,8 @@ class Density2dStat constructor(
             return withEmptyStatValues()
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val xVector = xs.slice(finiteIndices) as List<Double>
-        @Suppress("UNCHECKED_CAST")
-        val yVector = ys.slice(finiteIndices) as List<Double>
+        val xVector = xs.slice(finiteIndices).requireNoNulls()
+        val yVector = ys.slice(finiteIndices).requireNoNulls()
         val groupWeight = BinStatUtil.weightVector(data)
             .slice(finiteIndices)
             .map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
