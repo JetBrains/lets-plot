@@ -68,8 +68,8 @@ class PointDensityStat(
         val statData = buildStat(xVector, yVector, groupWeight, xRange, yRange)
 
         val builder = DataFrame.Builder()
-            .putNumeric(Stats.X, xs)
-            .putNumeric(Stats.Y, ys)
+            .putNumeric(Stats.X, xVector)
+            .putNumeric(Stats.Y, yVector)
             .put(Stats.INDEX, indices)
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
