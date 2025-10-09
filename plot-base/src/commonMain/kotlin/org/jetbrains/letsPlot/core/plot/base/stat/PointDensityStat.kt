@@ -99,7 +99,7 @@ class PointDensityStat(
     ): Map<DataFrame.Variable, List<Double>> {
         val xy = xRange.length / yRange.length
         val rX = xRange.length / 12.0 // For standard bivariate normal distribution and ~1000 points, the rX is about 0.5
-        val r2 = rX * rX / xy
+        val r2 = adjust * rX * rX / xy
         val statCount = countNeighbors(xs, ys, weights, r2, xy)
         val statDensity = statCount.map { it / statCount.size }
         val maxCount = statCount.maxOrNull() ?: 0.0
