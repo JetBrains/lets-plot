@@ -28,6 +28,7 @@ internal class PlotPanelFigureModel constructor(
     private val toolEventCallbacks = mutableListOf<(Map<String, Any>) -> Unit>()
     private val disposibleTools = mutableListOf<Disposable>()
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
+    private var defaultInteractions: List<Map<String, Any>> = emptyList()
 
     private var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
@@ -39,17 +40,23 @@ internal class PlotPanelFigureModel constructor(
                     toolEventCallbacks.forEach { it(event) }
                 }
 
-                // reactivate interactions in the new plot component
-                wereInteractions.forEach { (origin, interactionSpecList) ->
-                    newDispatcher.activateInteractions(origin, interactionSpecList)
-                }
-
                 // Make sure that 'implicit' interactions are activated.
                 newDispatcher.deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
                 newDispatcher.activateInteractions(
                     origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
                     interactionSpecList = FigureImplicitInteractionSpecs.LIST
                 )
+
+                // Set default interactions if any were configured
+                defaultInteractions.let { defaultInteractionSpecs ->
+                    newDispatcher.setDefaultInteractions(defaultInteractionSpecs)
+                }
+
+                // Reactivate explicit interactions in the new plot component
+                ToolEventDispatcher.filterExplicitOrigins(wereInteractions)
+                    .forEach { (origin, interactionSpecList) ->
+                        newDispatcher.activateInteractions(origin, interactionSpecList)
+                    }
             }
         }
 
@@ -70,6 +77,11 @@ internal class PlotPanelFigureModel constructor(
 
     override fun deactivateInteractions(origin: String) {
         toolEventDispatcher?.deactivateInteractions(origin)
+    }
+
+    override fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>) {
+        defaultInteractions = interactionSpecList
+        toolEventDispatcher?.setDefaultInteractions(interactionSpecList)
     }
 
     override fun updateView(specOverride: Map<String, Any>?) {

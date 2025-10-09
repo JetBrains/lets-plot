@@ -24,15 +24,22 @@ class CompositeToolEventDispatcher(
         }
     }
 
-    override fun deactivateInteractions(origin: String) {
-        elements.forEach {
+    override fun deactivateInteractions(origin: String): List<Map<String, Any>> {
+        return elements.map {
             it.deactivateInteractions(origin)
-        }
+        }.lastOrNull() // Expected all elements are the same.
+            ?: emptyList()
     }
 
     override fun deactivateAll() {
         elements.forEach {
             it.deactivateAll()
+        }
+    }
+
+    override fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>) {
+        elements.forEach {
+            it.setDefaultInteractions(interactionSpecList)
         }
     }
 

@@ -15,7 +15,10 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_CLIENT_DEFAULT
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_IMPLICIT
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.filterExplicitOrigins
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.isExplicitOrigin
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_TARGET
@@ -46,6 +49,9 @@ internal class PlotToolEventDispatcher(
     private val interactionsByOrigin: MutableMap<
             String,                 // origin
             MutableList<InteractionInfo>> = HashMap()
+
+    // Suspended ORIGIN_FIGURE_CLIENT_DEFAULT interactions (will be reactivated when explicit interactions deactivate)
+    private var suspendedDefaultInteractions: List<Map<String, Any>> = emptyList()
 
     private lateinit var toolEventCallback: (Map<String, Any>) -> Unit
 
@@ -82,7 +88,7 @@ internal class PlotToolEventDispatcher(
     private fun activateInteractionIntern(origin: String, interactionSpec: Map<String, Any>) {
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
-        val modifiersMatcher = when(val keyModifiers = interactionSpec[ToolInteractionSpec.KEY_MODIFIERS]) {
+        val modifiersMatcher = when (val keyModifiers = interactionSpec[ToolInteractionSpec.KEY_MODIFIERS]) {
             null -> ModifiersMatcher.NO_MODIFIERS
             is String -> ModifiersMatcher.create(listOf(keyModifiers))
             is List<*> -> ModifiersMatcher.create(keyModifiers.map { it.toString() })
@@ -212,9 +218,11 @@ internal class PlotToolEventDispatcher(
         )
     }
 
-    override fun deactivateInteractions(origin: String) {
+    override fun deactivateInteractions(origin: String): List<Map<String, Any>> {
+        val deactivatedSpecs = mutableListOf<Map<String, Any>>()
         interactionsByOrigin.remove(origin)?.forEach { interactionInfo ->
             interactionInfo.feedbackReg.dispose()
+            deactivatedSpecs.add(interactionInfo.interactionSpec)
             toolEventCallback.invoke(
                 mapOf(
                     EVENT_NAME to INTERACTION_DEACTIVATED,
@@ -223,11 +231,48 @@ internal class PlotToolEventDispatcher(
                 )
             )
         }
+
+        // Reactivate suspended default interactions if no explicit interactions remain
+        if (isExplicitOrigin(origin)) {
+            reactivateSuspendedDefaultInteractionsIfNeeded()
+        }
+
+        return deactivatedSpecs
+    }
+
+    private fun reactivateSuspendedDefaultInteractionsIfNeeded() {
+        // Check if there are any explicit interactions still active
+        val hasActiveExplicitInteractions = filterExplicitOrigins(interactionsByOrigin).isNotEmpty()
+
+        // If no explicit interactions remain and we have suspended default interactions, reactivate them
+        if (!hasActiveExplicitInteractions && suspendedDefaultInteractions.isNotEmpty()) {
+            val toReactivate = suspendedDefaultInteractions
+            suspendedDefaultInteractions = emptyList()
+            activateInteractions(ORIGIN_FIGURE_CLIENT_DEFAULT, toReactivate)
+        }
     }
 
     override fun deactivateAll() {
         val origins = ArrayList(interactionsByOrigin.keys)
         origins.forEach { origin -> deactivateInteractions(origin) }
+        suspendedDefaultInteractions = emptyList()
+    }
+
+    override fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>) {
+        // Deactivate any existing default interactions (active or suspended)
+        deactivateInteractions(ORIGIN_FIGURE_CLIENT_DEFAULT)
+        suspendedDefaultInteractions = emptyList()
+
+        // Check if there are any explicit interactions active
+        val hasActiveExplicitInteractions = filterExplicitOrigins(interactionsByOrigin).isNotEmpty()
+
+        if (hasActiveExplicitInteractions) {
+            // Explicit interactions are active - suspend default interactions
+            suspendedDefaultInteractions = interactionSpecList
+        } else {
+            // No explicit interactions - activate default interactions immediately
+            activateInteractions(ORIGIN_FIGURE_CLIENT_DEFAULT, interactionSpecList)
+        }
     }
 
     override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> {
@@ -236,8 +281,16 @@ internal class PlotToolEventDispatcher(
                 it.feedbackReg.dispose()
                 it.interactionSpec
             }
+        }.toMutableMap()
+
+        // Include suspended default interactions
+        if (suspendedDefaultInteractions.isNotEmpty()) {
+            deactivatedInteractions[ORIGIN_FIGURE_CLIENT_DEFAULT] = suspendedDefaultInteractions
         }
+
         interactionsByOrigin.clear()
+        suspendedDefaultInteractions = emptyList()
+
         return deactivatedInteractions
     }
 
@@ -245,16 +298,28 @@ internal class PlotToolEventDispatcher(
         originBeingActivated: String,
         interactionSpecBeingActivated: Map<String, Any>
     ) {
-        // Special case
+        // Special cases
         if (originBeingActivated == ORIGIN_FIGURE_IMPLICIT) {
             // 'implicit' interactions are always compatible
             return
         }
 
-        // For now just deactivate all active interactions
-        ArrayList(interactionsByOrigin.keys)
-            .filterNot { origin -> origin == originBeingActivated }
-            .filterNot { origin -> origin == ORIGIN_FIGURE_IMPLICIT } // 'implicit' interactions are always compatible
+        if (originBeingActivated == ORIGIN_FIGURE_CLIENT_DEFAULT) {
+            // 'default' interactions are compatible with 'implicit' interactions
+            // but incompatible with other origins
+            filterExplicitOrigins(interactionsByOrigin)
+                .keys
+                .forEach { origin -> deactivateInteractions(origin) }
+            return
+        }
+
+        // Explicit interaction being activated - suspend default interactions
+        suspendedDefaultInteractions += deactivateInteractions(ORIGIN_FIGURE_CLIENT_DEFAULT)
+
+        // Deactivate all other active interactions (except implicit and default)
+        filterExplicitOrigins(interactionsByOrigin)
+            .keys
+            .filter { origin -> origin != originBeingActivated }
             .forEach { origin -> deactivateInteractions(origin) }
     }
 
