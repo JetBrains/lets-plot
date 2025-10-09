@@ -45,19 +45,18 @@ class Density2dfStat(
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val (xVector, yVector) = (xs zip ys)
-            .filter { SeriesUtil.allFinite(it.first, it.second) }
-            .unzip()
+        val finiteXIndices = SeriesUtil.indicesOfFinite(xs)
+        val finiteYIndices = SeriesUtil.indicesOfFinite(ys)
+        val finiteIndices = finiteXIndices.intersect(finiteYIndices)
 
         // if no data, return empty
-        if (xVector.isEmpty()) {
+        if (finiteIndices.isEmpty()) {
             return withEmptyStatValues()
         }
 
-        // if length of x and y doesn't match, throw error
-        if (xVector.size != yVector.size) {
-            throw RuntimeException("len(x)= " + xVector.size + " and len(y)= " + yVector.size + " doesn't match!")
-        }
+        val xVector = finiteIndices.map { xs[it]!! }
+        val yVector = finiteIndices.map { ys[it]!! }
+        val groupWeight = BinStatUtil.weightVector(data, finiteIndices)
 
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
@@ -81,9 +80,6 @@ class Density2dfStat(
 
         val stepsX = DensityStatUtil.createStepValues(xRange!!, nX)
         val stepsY = DensityStatUtil.createStepValues(yRange!!, nY)
-
-        // weight aesthetics
-        val groupWeight = BinStatUtil.weightVector(xVector.size, data).map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
 
         val matrixX = BlockRealMatrix(
             DensityStatUtil.createRawMatrix(

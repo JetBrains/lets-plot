@@ -24,7 +24,7 @@ abstract class AbstractCountStat(
             false -> List(data.rowCount()) { 0.0 }
         }
 
-        val weights = BinStatUtil.weightVector(data.rowCount(), data)
+        val weights = BinStatUtil.weightVector(data)
         val locations = if (count2d) {
             val xs = getPositional(data, TransformVar.X)
             val ys = getPositional(data, TransformVar.Y)
@@ -97,11 +97,11 @@ abstract class AbstractCountStat(
     }
 
     companion object {
-        private fun groupAndSum(groups: List<Any?>, values: List<Double?>): Map<Any, Double> {
+        private fun groupAndSum(groups: List<Any?>, values: List<Double>): Map<Any, Double> {
             return groups.zip(values)
                 .groupBy { (g, _) -> g }
                 .filterNotNullKeys()
-                .mapValues { (_, groupValues) -> groupValues.sumOf { (_, v) -> SeriesUtil.finiteOrNull(v) ?: 0.0 } }
+                .mapValues { (_, groupValues) -> groupValues.sumOf { it.second } }
         }
     }
 }
