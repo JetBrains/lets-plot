@@ -97,11 +97,11 @@ abstract class AbstractCountStat(
     }
 
     companion object {
-        private fun groupAndSum(groups: List<Any?>, values: List<Double>): Map<Any, Double> {
+        private fun groupAndSum(groups: List<Any?>, values: List<Double?>): Map<Any, Double> {
             return groups.zip(values)
                 .groupBy { (g, _) -> g }
                 .filterNotNullKeys()
-                .mapValues { (_, groupValues) -> groupValues.sumOf { it.second } }
+                .mapValues { (_, groupValues) -> groupValues.sumOf { (_, v) -> SeriesUtil.finiteOrNull(v) ?: 0.0 } }
         }
     }
 }

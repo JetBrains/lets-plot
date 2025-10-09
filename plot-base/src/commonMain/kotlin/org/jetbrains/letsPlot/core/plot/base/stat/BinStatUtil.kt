@@ -23,17 +23,10 @@ object BinStatUtil {
         return { 1.0 }
     }
 
-    // finiteIndices - indices of data points with finite x (and y for 2d)
-    // if weight is not finite, it is replaced with 0.0
-    fun weightVector(data: DataFrame, finiteIndices: Set<Int>? = null): List<Double> {
+    fun weightVector(data: DataFrame): List<Double?> {
         return if (data.has(TransformVar.WEIGHT)) {
-            val weights = data.getNumeric(TransformVar.WEIGHT)
-            val filteredWeights = if (finiteIndices != null) weights.slice(finiteIndices) else weights
-            filteredWeights.map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
-        } else {
-            val size = finiteIndices?.size ?: data.rowCount()
-            List(size) { 1.0 }
-        }
+            data.getNumeric(TransformVar.WEIGHT)
+        } else List(data.rowCount()) { 1.0 }
     }
 
     fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, countToWidth: (Double, Int) -> Double = ::defaultBinWidthCalculator): CountAndWidth {
