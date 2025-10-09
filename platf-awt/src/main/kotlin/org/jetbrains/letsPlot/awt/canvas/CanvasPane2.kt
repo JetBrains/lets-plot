@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.registration.*
 import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.JComponent
@@ -41,8 +42,12 @@ class CanvasPane2(
         }
 
     init {
-        isOpaque = true
+        isOpaque = false
         this.figure = figure
+    }
+
+    override fun getPreferredSize(): Dimension? {
+        return figure?.size?.let { s -> Dimension(s.x, s.y) }
     }
 
     override fun setBounds(x: Int, y: Int, width: Int, height: Int) {
