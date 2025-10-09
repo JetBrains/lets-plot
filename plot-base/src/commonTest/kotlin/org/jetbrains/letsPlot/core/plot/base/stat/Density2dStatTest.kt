@@ -90,12 +90,20 @@ class Density2dStatTest : BaseStatTest() {
     }
 
     private fun check(df: DataFrame, expectedDf: DataFrame) {
-        val stat = Stats.density2d(isContour = false)
-        val statDf = stat.apply(df, statContext(df))
-        val expectedStatDf = stat.apply(expectedDf, statContext(expectedDf))
+        for (stat in STATS) {
+            val statDf = stat.apply(df, statContext(df))
+            val expectedStatDf = stat.apply(expectedDf, statContext(expectedDf))
 
-        checkStatVarValues(statDf, Stats.X, expectedStatDf.getNumeric(Stats.X))
-        checkStatVarValues(statDf, Stats.Y, expectedStatDf.getNumeric(Stats.Y))
-        checkStatVarValues(statDf, Stats.DENSITY, expectedStatDf.getNumeric(Stats.DENSITY))
+            checkStatVarValues(statDf, Stats.X, expectedStatDf.getNumeric(Stats.X))
+            checkStatVarValues(statDf, Stats.Y, expectedStatDf.getNumeric(Stats.Y))
+            checkStatVarValues(statDf, Stats.DENSITY, expectedStatDf.getNumeric(Stats.DENSITY))
+        }
+    }
+
+    companion object {
+        val STATS = listOf(
+            Stats.density2d(isContour = false),
+            Stats.density2df(bandWidthMethod = AbstractDensity2dStat.DEF_BW, isContour = false)
+        )
     }
 }
