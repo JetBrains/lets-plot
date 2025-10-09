@@ -46,9 +46,7 @@ class Density2dfStat(
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val finiteXIndices = xs.indicesOf(SeriesUtil::isFinite)
-        val finiteYIndices = ys.indicesOf(SeriesUtil::isFinite)
-        val finiteIndices = finiteXIndices.intersect(finiteYIndices)
+        val finiteIndices = xs.indicesOf(SeriesUtil::isFinite) intersect ys.indicesOf(SeriesUtil::isFinite)
 
         // if no data, return empty
         if (finiteIndices.isEmpty()) {
