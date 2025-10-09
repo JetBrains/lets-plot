@@ -125,7 +125,7 @@ class AreaGeomTest {
     }
 
     @Test
-    fun `#1 example from documentation`() {
+    fun `#1 example from documentation geom_area`() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -167,7 +167,7 @@ class AreaGeomTest {
     }
 
     @Test
-    fun `#2 example from documentation`() {
+    fun `#2 example from documentation geom_area`() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
