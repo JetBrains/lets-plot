@@ -20,6 +20,10 @@ fun <K, V> Map<K, V?>.filterNotNullValues(): Map<K, V> {
 }
 
 fun <T> Collection<T>.splitBy(comp: Comparator<T>): List<List<T>> {
+    if (isEmpty()) {
+        return emptyList()
+    }
+
     val result = mutableListOf<List<T>>()
     var chunk = mutableListOf<T>()
     forEach {
@@ -34,6 +38,12 @@ fun <T> Collection<T>.splitBy(comp: Comparator<T>): List<List<T>> {
     }
     result += chunk
     return result
+}
+
+@Suppress("UNCHECKED_CAST")
+fun <T> Collection<T?>.splitByNull(): List<List<T>> {
+    return splitBy(compareBy { it == null })
+        .filter { null !in it } as List<List<T>>
 }
 
 fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
