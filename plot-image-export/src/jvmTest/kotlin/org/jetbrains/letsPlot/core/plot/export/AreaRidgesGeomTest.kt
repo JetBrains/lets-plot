@@ -1,0 +1,324 @@
+/*
+ * Copyright (c) 2025. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.export
+
+import demoAndTestShared.AwtBitmapIO
+import demoAndTestShared.AwtTestCanvasProvider
+import demoAndTestShared.ImageComparer
+import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.getMap
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.junit.BeforeClass
+import java.awt.Font
+import java.awt.FontFormatException
+import java.awt.GraphicsEnvironment
+import java.io.IOException
+import java.io.InputStream
+import javax.imageio.ImageIO
+import kotlin.test.Test
+
+class AreaRidgesGeomTest {
+
+    private fun MutableMap<String, Any>.themeTextNotoSans(): MutableMap<String, Any> {
+        val theme = getMap("theme") ?: emptyMap()
+        this[Option.Plot.THEME] =  theme + mapOf(
+            "text" to mapOf(
+                "blank" to false,
+                "family" to "Noto Sans"
+            ),
+            "axis_title_y" to mapOf(
+                "blank" to true // hide rotated text - antialiasing may cause image differences
+            )
+        )
+        return this
+    }
+
+    private fun createImageComparer(): ImageComparer {
+        return ImageComparer(
+            canvasProvider = AwtTestCanvasProvider(),
+            bitmapIO = AwtBitmapIO,
+            expectedDir = System.getProperty("user.dir") + "/src/jvmTest/resources/expected/",
+            outDir = System.getProperty("user.dir") + "/build/reports/"
+        )
+    }
+
+    private val imageComparer by lazy { createImageComparer() }
+
+    private fun assertPlot(
+        expectedFileName: String,
+        plotSpec: MutableMap<String, Any>,
+        width: Number? = null,
+        height: Number? = null,
+        unit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null
+    ) {
+        val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
+
+        val imageData = PlotImageExport.buildImageFromRawSpecs(
+            plotSpec = plotSpec,
+            format = PlotImageExport.Format.PNG,
+            scalingFactor = scale ?: 1.0,
+            targetDPI = dpi,
+            plotSize = plotSize,
+            unit = unit
+        )
+        val image = ImageIO.read(imageData.bytes.inputStream())
+        val bitmap = BitmapUtil.fromBufferedImage(image)
+
+
+        imageComparer.assertBitmapEquals(expectedFileName, bitmap)
+    }
+
+    @Test
+    fun `example from #674 Area ridges fill overlaps geometry borders when colors are repeated`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "data": {
+            |    "x": [ 0.0, 0.0, 1.0, 1.0, 2.0, 2.0, 3.0, 3.0, 4.0 ],
+            |    "y": [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ],
+            |    "h": [ 1.0, 1.0, 0.8, 0.8, 0.2, 0.2, 0.8, 0.8, 1.0 ],
+            |    "q": [ 0.0, 0.0, 0.0, 0.5, 0.5, 0.8, 0.8, 1.0, 1.0 ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "int",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "int",
+            |        "column": "y"
+            |      },
+            |      {
+            |        "type": "float",
+            |        "column": "h"
+            |      },
+            |      {
+            |        "type": "float",
+            |        "column": "q"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [
+            |    {
+            |      "aesthetic": "fill",
+            |      "option": "twilight",
+            |      "scale_mapper_kind": "color_cmap"
+            |    }
+            |  ],
+            |  "layers": [
+            |    {
+            |      "geom": "area_ridges",
+            |      "stat": "identity",
+            |      "mapping": {
+            |        "height": "h",
+            |        "quantile": "q",
+            |        "fill": "q"
+            |      },
+            |      "data_meta": {}
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("area_ridges_geom_1.png", plotSpec)
+    }
+
+    @Test
+    fun `#1 example from documentation geom_area_ridges`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "data": {
+            |    "x": [ 0.4967141530112327, -0.13826430117118466, 0.6476885381006925, 1.5230298564080254, -0.23415337472333597, -0.23413695694918055, 1.5792128155073915, 0.7674347291529088, -0.4694743859349521, 0.5425600435859647, -0.46341769281246226, -0.46572975357025687, 0.24196227156603412, -1.913280244657798, -1.7249178325130328, -0.5622875292409727, -1.0128311203344238, 0.3142473325952739, -0.9080240755212109, -1.4123037013352915, 1.465648768921554, -0.22577630048653566, 0.06752820468792384, -1.4247481862134568, -0.5443827245251827, 0.11092258970986608, -1.1509935774223028, 0.37569801834567196, -0.600638689918805, -0.2916937497932768 ],
+            |    "y": [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "float",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "int",
+            |        "column": "y"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "area_ridges",
+            |      "mapping": {},
+            |      "data_meta": {}
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("area_ridges_geom_2.png", plotSpec)
+    }
+
+    @Test
+    fun `#2 example from documentation geom_area_ridges`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "data": {
+            |    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ],
+            |    "y": [ "a", "a", "a", "a", "a", "a" ],
+            |    "h": [ 1.0, -2.0, 3.0, -4.0, 5.0, 4.0 ]
+            |  },
+            |  "mapping": {},
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "int",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "str",
+            |        "column": "y"
+            |      },
+            |      {
+            |        "type": "int",
+            |        "column": "h"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "area_ridges",
+            |      "stat": "identity",
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y",
+            |        "height": "h"
+            |      },
+            |      "data_meta": {},
+            |      "min_height": -2.0,
+            |      "color": "#756bb1",
+            |      "fill": "#bcbddc"
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("area_ridges_geom_3.png", plotSpec)
+    }
+
+    @Test
+    fun `#3 example from documentation geom_area_ridges`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "data": {
+            |    "x": [ 0.4967141530112327, -0.13826430117118466, 0.6476885381006925, 1.5230298564080254, -0.23415337472333597, -0.23413695694918055, 1.5792128155073915, 0.7674347291529088, -0.4694743859349521, 0.5425600435859647, -0.46341769281246226, -0.46572975357025687, 0.24196227156603412, -1.913280244657798, -1.7249178325130328, -0.5622875292409727, -1.0128311203344238, 0.3142473325952739, -0.9080240755212109, -1.4123037013352915, 1.465648768921554, -0.22577630048653566, 0.06752820468792384, -1.4247481862134568, -0.5443827245251827, 0.11092258970986608, -1.1509935774223028, 0.37569801834567196, -0.600638689918805, -0.2916937497932768, -0.6017066122293969, 1.8522781845089378, -0.013497224737933921, -1.0577109289559004, 0.822544912103189, -1.2208436499710222, 0.2088635950047554, -1.9596701238797756, -1.3281860488984305, 0.19686123586912352, 0.7384665799954104, 0.1713682811899705, -0.11564828238824053, -0.3011036955892888, -1.4785219903674274, -0.7198442083947086, -0.4606387709597875, 1.0571222262189157, 0.3436182895684614, -1.763040155362734, 0.324083969394795, -0.38508228041631654, -0.6769220003059587, 0.6116762888408679, 1.030999522495951, 0.9312801191161986, -0.8392175232226385, -0.3092123758512146, 0.33126343140356396, 0.9755451271223592, -0.47917423784528995, -0.18565897666381712, -1.1063349740060282, -1.1962066240806708, 0.812525822394198, 1.356240028570823, -0.07201012158033385, 1.0035328978920242, 0.36163602504763415, -0.6451197546051243, 0.36139560550841393, 1.5380365664659692, -0.03582603910995154, 1.5646436558140062, -2.6197451040897444, 0.8219025043752238, 0.08704706823817122, -0.29900735046586746, 0.0917607765355023, -1.9875689146008928, -0.21967188783751193, 0.3571125715117464, 1.477894044741516, -0.5182702182736474, -0.8084936028931876, -0.5017570435845365, 0.9154021177020741, 0.32875110965968446, -0.5297602037670388, 0.5132674331133561, 0.09707754934804039, 0.9686449905328892, -0.7020530938773524, -0.3276621465977682, -0.39210815313215763, -1.4635149481321186, 0.29612027706457605, 0.26105527217988933, 0.00511345664246089, -0.23458713337514692, -1.4153707420504142, -0.42064532276535904, -0.3427145165267695, -0.8022772692216189, -0.16128571166600914, 0.4040508568145384, 1.8861859012105302, 0.17457781283183896, 0.25755039072276437, -0.07444591576616721, -1.9187712152990415, -0.026513875449216878, 0.06023020994102644, 2.463242112485286, -0.19236096478112252, 0.30154734233361247, -0.03471176970524331, -1.168678037619532, 1.1428228145150205, 0.7519330326867741, 0.7910319470430469, -0.9093874547947389, 1.4027943109360992, -1.4018510627922809, 0.5868570938002703, 2.1904556258099785, -0.9905363251306883, -0.5662977296027719, 0.09965136508764122, -0.5034756541161992, -1.5506634310661327, 0.06856297480602733, -1.0623037137261049, 0.4735924306351816, -0.9194242342338032, 1.5499344050175394, -0.7832532923362371, -0.3220615162056756, 0.8135172173696698, -1.2308643164339552, 0.22745993460412942, 1.307142754282428, -1.6074832345612275, 0.1846338585323042, 0.25988279424842353, 0.7818228717773104, -1.236950710878082, -1.3204566130842763, 0.5219415656168976, 0.29698467323318606 ],
+            |    "y": [ "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "a", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c", "c" ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "float",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "str",
+            |        "column": "y"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "area_ridges",
+            |      "mapping": {
+            |        "fill": "..quantile.."
+            |      },
+            |      "data_meta": {},
+            |      "kernel": "triangular",
+            |      "scale": 1.5,
+            |      "quantiles": [
+            |        0.05,
+            |        0.25,
+            |        0.5,
+            |        0.75,
+            |        0.95
+            |      ],
+            |      "quantile_lines": true,
+            |      "color": "black"
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("area_ridges_geom_4.png", plotSpec)
+    }
+
+
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun setUp() {
+            registerFont("NotoSans-Regular.ttf")
+            registerFont("NotoSans-Bold.ttf")
+            registerFont("NotoSans-Italic.ttf")
+            registerFont("NotoSans-BoldItalic.ttf")
+            registerFont("NotoSerif-Regular.ttf")
+        }
+
+        private fun registerFont(resourceName: String) {
+            val fontStream: InputStream? = PlotImageExportVisualTest::class.java.getClassLoader().getResourceAsStream(resourceName)
+            try {
+                val customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream)
+                val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                ge.registerFont(customFont)
+            } catch (e: FontFormatException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                if (fontStream != null) {
+                    try {
+                        fontStream.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        }
+    }
+}
