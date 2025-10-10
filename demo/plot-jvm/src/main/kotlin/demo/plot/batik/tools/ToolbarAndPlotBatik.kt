@@ -7,6 +7,7 @@ package demo.plot.batik.tools
 
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.BorderLayout
@@ -34,9 +35,30 @@ private fun createAndShowGui() {
     val figureModel = (plotPanel as WithFigureModel).figureModel
     toolbar.attach(figureModel)
 
+    // Figure default interactions
+    val defaultInteractions = listOf(
+        mapOf(
+            ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM,
+            ToolInteractionSpec.KEY_MODIFIERS to listOf(
+                ToolInteractionSpec.KeyModifier.CTRL,
+                ToolInteractionSpec.KeyModifier.SHIFT
+            )
+        ),
+        mapOf(
+            ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN,
+            ToolInteractionSpec.KEY_MODIFIERS to listOf(
+                ToolInteractionSpec.KeyModifier.CTRL,
+                ToolInteractionSpec.KeyModifier.SHIFT
+            )
+        )
+    )
+
+    figureModel.setDefaultInteractions(defaultInteractions)
+
     frame.add(plotPanel, BorderLayout.CENTER)
 
-    frame.add(JLabel("The footer"), BorderLayout.SOUTH)
+    // Instructions
+    frame.add(JLabel("Use Ctrl+Shift+Wheel to zoom, Ctrl+Shift+Drag to pan"), BorderLayout.SOUTH)
 
     frame.apply {
 //        setSize(400, 400)

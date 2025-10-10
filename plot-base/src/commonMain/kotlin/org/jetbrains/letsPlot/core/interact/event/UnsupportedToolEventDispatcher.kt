@@ -16,9 +16,11 @@ class UnsupportedToolEventDispatcher : ToolEventDispatcher {
         throw IllegalStateException("Unsupported: activateInteractions")
     }
 
-    override fun deactivateInteractions(origin: String) {}
+    override fun deactivateInteractions(origin: String): List<Map<String, Any>> = emptyList()
 
     override fun deactivateAll() {}
+
+    override fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>) {}
 
     override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> = emptyMap()
 }

@@ -64,6 +64,26 @@ class ContextStateDelegate(
         return currentState.font
     }
 
+    fun getStrokeColor(): Color {
+        return currentState.strokeColor
+    }
+
+    fun getFillColor(): Color {
+        return currentState.fillColor
+    }
+
+    fun getColor(fill: Boolean): Color {
+        return if (fill) getFillColor() else getStrokeColor()
+    }
+
+    fun getTextAlign(): TextAlign {
+        return currentState.fontTextAlign
+    }
+
+    fun getTextBaseline(): TextBaseline {
+        return currentState.fontBaseline
+    }
+
     override fun beginPath() {
         currentPath = Path2d()
     }

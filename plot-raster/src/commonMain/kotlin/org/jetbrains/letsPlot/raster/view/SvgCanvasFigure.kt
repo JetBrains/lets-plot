@@ -78,7 +78,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
                 text: String,
                 font: Font
             ): TextMetrics {
-                val textMeasureCanvas = textMeasureCanvas
                 val ctx = textMeasureCanvas.context2d
                 ctx.save()
                 ctx.setFont(font)

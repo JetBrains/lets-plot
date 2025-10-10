@@ -16,9 +16,17 @@ import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.builder.ViewModel
+import kotlin.math.ceil
 
 class PlotCanvasFigure2 : CanvasFigure2 {
-    override val size: Vector get() = plotSvgFigure.size
+    override val size: Vector get() {
+        val (w, h) = sizingPolicy.resize(
+            figureSizeDefault = plotSvgFigure.size.toDoubleVector(),
+            containerSize = containerSize
+        )
+
+        return Vector(ceil(w).toInt(), ceil(h).toInt())
+    }
     private val plotSvgFigure: SvgCanvasFigure2 = SvgCanvasFigure2()
 
     private var eventReg: Registration = Registration.EMPTY

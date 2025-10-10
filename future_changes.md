@@ -16,6 +16,8 @@
 - `legend_justification` parameter of `theme()` accepts additional string values: `'left'`, `'right'`, `'top'`, and `'bottom'`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_justification.ipynb).
+- markdown: `target` attribute for links.
+
 
 ### Changed
 
@@ -32,9 +34,9 @@
 - Geoms with 1-to-1 statistics (`geom_qq()`, `geom_sina()`) now keep bijection with original data for aesthetics.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
+- markdown: links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
 
 ### Fixed
 
-- Markdown: links open only inside the iframe [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
 - geom_density2d: NullPointerException when weight aesthetic contains None values [[#1399](https://github.com/JetBrains/lets-plot/issues/1399)].
 - Tooltip shows duplicate lines when as_discrete is applied twice to the same var [[#1400](https://github.com/JetBrains/lets-plot/issues/1400)].

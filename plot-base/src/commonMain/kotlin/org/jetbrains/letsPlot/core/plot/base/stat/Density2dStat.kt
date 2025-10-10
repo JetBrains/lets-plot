@@ -43,11 +43,11 @@ class Density2dStat constructor(
             return withEmptyStatValues()
         }
 
-        val (xVector, yVector, groupWeight) = SeriesUtil.filterFinite(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y),
-            BinStatUtil.weightVector(data.rowCount(), data)
-        )
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        val (xVector, yVector) = (xs zip ys)
+            .filter { SeriesUtil.allFinite(it.first, it.second) }
+            .unzip()
 
         // if no data, return empty
         if (xVector.isEmpty()) {
@@ -80,6 +80,9 @@ class Density2dStat constructor(
 
         val stepsX = DensityStatUtil.createStepValues(xRange!!, nX)
         val stepsY = DensityStatUtil.createStepValues(yRange!!, nY)
+
+        // weight aesthetics
+        val groupWeight = BinStatUtil.weightVector(xVector.size, data).map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
 
         val matrixX = BlockRealMatrix(
             DensityStatUtil.createRawMatrix(

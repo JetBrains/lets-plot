@@ -13,6 +13,7 @@ interface FigureModel {
     fun addToolEventCallback(callback: (Map<String, Any>) -> Unit): Registration
     fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
     fun deactivateInteractions(origin: String)
+    fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>)
     fun updateView(specOverride: Map<String, Any>? = null)
     fun addDisposible(disposable: Disposable)
     fun dispose()
