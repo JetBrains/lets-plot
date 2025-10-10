@@ -71,15 +71,20 @@ class CanvasPane2(
         val g2d = g!!.create() as Graphics2D
 
         if (figure != null) {
-            val scale = g2d.transform.scaleX
-            val ctx = if (scale != 1.0) {
-                // TODO: proper fix needed - just remove ScaledContext2d
-                g2d.scale(1 / scale, 1 / scale)
-                ScaledContext2d(AwtContext2d(g2d), scale)
+            if (true) {
+                val scale = g2d.transform.scaleX
+                val ctx = if (scale != 1.0) {
+                    // TODO: proper fix needed - just remove ScaledContext2d
+                    g2d.scale(1 / scale, 1 / scale)
+                    ScaledContext2d(AwtContext2d(g2d), scale)
+                } else {
+                    AwtContext2d(g2d)
+                }
+                figure!!.paint(ctx)
             } else {
-                AwtContext2d(g2d)
+                val ctx = AwtContext2d2(g2d)
+                figure!!.paint(ctx)
             }
-            figure!!.paint(ctx)
         }
     }
 
