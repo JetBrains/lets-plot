@@ -15,6 +15,8 @@ internal class CanvasComponent(
     init {
         bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
         isOpaque = false
+
+        println("Create CanvasComponent: size= ${canvas.size}")
     }
 
     override fun paintComponent(g: Graphics?) {

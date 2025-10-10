@@ -113,7 +113,8 @@ class DomCanvasControl(
 
     private fun onLoad(image: Image, consumer: (Canvas.Snapshot) -> Unit) = { _: Event ->
         val imageSize = Vector(image.width, image.height)
-        val snapshot = DomCanvas.DomSnapshot(image, imageSize, pixelDensity)
+        val snapshot = DomCanvas.DomSnapshot(image, imageSize)
+
         consumer(snapshot)
     }
 
