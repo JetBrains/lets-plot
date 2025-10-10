@@ -30,15 +30,8 @@ class TargetCollectorHelper(
         }
     }
 
-    fun addPaths(paths: Map<Int, PathData>) {
-        for (path in paths) {
-            val simplifiedPath = reduce(path.value) ?: continue
-            addPath(simplifiedPath, TooltipParams(markerColors = colorMarkerMapper(simplifiedPath.aes)))
-        }
-    }
-
     fun addVariadicPaths(paths: List<PathData>) {
-        val grouped = paths.groupBy { path -> path.group!! }
+        val grouped = paths.groupBy { path -> path.aes.group() }
         for (subPaths in grouped.values) {
             val simplifiedSubPaths = subPaths.mapNotNull(::reduce)
 

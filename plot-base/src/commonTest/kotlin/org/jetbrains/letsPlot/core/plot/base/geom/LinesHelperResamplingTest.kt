@@ -24,6 +24,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class LinesHelperResamplingTest {
     private fun colorMapper(values: Iterable<Double>): (Double?) -> Color {
@@ -108,13 +109,13 @@ class LinesHelperResamplingTest {
 
         val dataPoints = GeomUtil.withDefined(GeomUtil.ordered_X(aes.dataPoints()), Aes.X, Aes.Y)
 
-        val actual = HashMap<Int, List<DoubleVector>>()
+        val actual = HashMap<Int?, List<DoubleVector>>()
 
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
                 quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
                     val paths = linesHelper.createPathData(points, TO_LOCATION_X_Y, true)
-                    val m = paths.groupBy { it.group!! }
+                    val m = paths.groupBy { it.aes.group() }
 
                     m.mapNotNull { (group, pathData) ->
                         actual.put(group, pathData.flatMap { it.coordinates })
@@ -146,6 +147,7 @@ class LinesHelperResamplingTest {
             DoubleVector(100.3345270291754, 75.00223826686175)
         )
 
+        assertEquals(actual.size, 2)
         assertContentEquals(expected0, actual[0])
         assertContentEquals(expected1, actual[1])
     }

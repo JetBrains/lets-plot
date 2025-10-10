@@ -405,7 +405,6 @@ class PathData private constructor(
     val aes: DataPointAesthetics by lazy(points.first()::aes) // decoration aes (only for color, fill, size, stroke)
     val aesthetics by lazy { points.map(PathPoint::aes) }
     val coordinates by lazy { points.map(PathPoint::coord) } // may contain duplicates, don't work well for polygon
-    val group: Int? by lazy { points.first().aes.group() }
 }
 
 class PolygonData private constructor(
