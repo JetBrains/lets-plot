@@ -6,8 +6,8 @@
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingOption
@@ -40,7 +40,7 @@ class FigureModelJs internal constructor(
         deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
         activateInteractions(
             origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
-            interactionSpecListJs = dynamicFromAnyQ(FigureImplicitInteractionSpecs.LIST)
+            interactionSpecListJs = dynamicFromAnyQ(FIGURE_IMPLICIT_INTERACTIONS)
         )
     }
 
@@ -100,10 +100,13 @@ class FigureModelJs internal constructor(
     }
 
     fun activateInteractions(origin: String, interactionSpecListJs: dynamic) {
-        val interactionSpecList = dynamicToAnyQ(interactionSpecListJs)
-        require(interactionSpecList is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
-        @Suppress("UNCHECKED_CAST")
-        interactionSpecList as List<Map<String, Any>>
+        val interactionSpecListRaw = dynamicToAnyQ(interactionSpecListJs)
+        require(interactionSpecListRaw is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
+
+        val interactionSpecList = interactionSpecListRaw.map { spec ->
+            require(spec is Map<*, *>) { "Interaction spec (Map) expected but was: $spec" }
+            InteractionSpec.fromMap(spec)
+        }
         toolEventDispatcher.activateInteractions(origin, interactionSpecList)
     }
 
@@ -117,5 +120,11 @@ class FigureModelJs internal constructor(
 
     companion object {
         private val LOG = PortableLogging.logger("FigureModelJs")
+
+        private val FIGURE_IMPLICIT_INTERACTIONS = listOf(
+            mapOf(
+                InteractionSpec.Name.PROPERTY_NAME to InteractionSpec.Name.ROLLBACK_ALL_CHANGES.value
+            )
+        )
     }
 }

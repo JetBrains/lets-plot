@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
+import org.jetbrains.letsPlot.core.interact.InteractionSpec.ZoomBoxMode
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -31,8 +33,6 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEAC
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
 import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback.SelectionMode
 import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback
@@ -51,7 +51,7 @@ internal class PlotToolEventDispatcher(
             MutableList<InteractionInfo>> = HashMap()
 
     // Suspended ORIGIN_FIGURE_CLIENT_DEFAULT interactions (will be reactivated when explicit interactions deactivate)
-    private var suspendedDefaultInteractions: List<Map<String, Any>> = emptyList()
+    private var suspendedDefaultInteractions: List<InteractionSpec> = emptyList()
 
     private lateinit var toolEventCallback: (Map<String, Any>) -> Unit
 
@@ -60,13 +60,13 @@ internal class PlotToolEventDispatcher(
         toolEventCallback = callback
     }
 
-    override fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
+    override fun activateInteractions(origin: String, interactionSpecList: List<InteractionSpec>) {
         interactionSpecList.forEach { interactionSpec ->
             activateInteraction(origin, interactionSpec)
         }
     }
 
-    private fun activateInteraction(origin: String, interactionSpec: Map<String, Any>) {
+    private fun activateInteraction(origin: String, interactionSpec: InteractionSpec) {
         deactivateOverlappingInteractions(origin, interactionSpec)
 
         try {
@@ -77,7 +77,7 @@ internal class PlotToolEventDispatcher(
                     mapOf(
                         EVENT_NAME to INTERACTION_UNSUPPORTED,
                         EVENT_INTERACTION_ORIGIN to origin,
-                        EVENT_INTERACTION_NAME to interactionSpec.getValue(ToolInteractionSpec.NAME) as String,
+                        EVENT_INTERACTION_NAME to interactionSpec.name.value,
                         EVENT_RESULT_ERROR_MSG to "Not supported: ${e.message}"
                     )
                 )
@@ -85,15 +85,10 @@ internal class PlotToolEventDispatcher(
         }
     }
 
-    private fun activateInteractionIntern(origin: String, interactionSpec: Map<String, Any>) {
+    private fun activateInteractionIntern(origin: String, interactionSpec: InteractionSpec) {
 
-        val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
-        val modifiersMatcher = when (val keyModifiers = interactionSpec[ToolInteractionSpec.KEY_MODIFIERS]) {
-            null -> ModifiersMatcher.NO_MODIFIERS
-            is String -> ModifiersMatcher.create(listOf(keyModifiers))
-            is List<*> -> ModifiersMatcher.create(keyModifiers.map { it.toString() })
-            else -> throw IllegalArgumentException("Invalid modifiers specification: $keyModifiers")
-        }
+        val modifiersMatcher = ModifiersMatcher.create(interactionSpec.keyModifiers)
+        val interactionName: String = interactionSpec.name.value
 
         val fireSelectionChangedDebounced =
             debounce<Triple<String?, DoubleRectangle, DoubleVector>>(
@@ -105,8 +100,8 @@ internal class PlotToolEventDispatcher(
                 fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleFactorList)
             }
 
-        val feedback = when (interactionName) {
-            ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
+        val feedback = when (interactionSpec.name) {
+            InteractionSpec.Name.DRAG_PAN -> PanGeomFeedback(
                 modifiersMatcher = modifiersMatcher,
                 onCompleted = { targetId, dataBounds, flipped, panningMode ->
                     // flip panning mode if coord flip
@@ -129,13 +124,13 @@ internal class PlotToolEventDispatcher(
                 }
             )
 
-            ToolInteractionSpec.BOX_ZOOM -> {
-                val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
+            InteractionSpec.Name.BOX_ZOOM -> {
+                val centerStart = interactionSpec.zoomBoxMode == ZoomBoxMode.CENTER_START
                 DrawRectFeedback(
                     centerStart,
                     modifiersMatcher = modifiersMatcher,
                     onCompleted = { targetId, dataBounds, flipped, selectionMode, scaleFactor ->
-                        // flip selection mode if coord flip
+                        // flip selection mode if the coord flips
                         @Suppress("NAME_SHADOWING")
                         val selectionMode = if (!flipped) {
                             selectionMode
@@ -156,14 +151,14 @@ internal class PlotToolEventDispatcher(
                     })
             }
 
-            ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
+            InteractionSpec.Name.WHEEL_ZOOM -> WheelZoomFeedback(
                 modifiersMatcher = modifiersMatcher,
                 onCompleted = { targetId, dataBounds, scaleFactor ->
                     fireSelectionChangedDebounced(Triple(targetId, dataBounds, scaleFactor))
                 }
             )
 
-            ToolInteractionSpec.ROLLBACK_ALL_CHANGES -> RollbackAllChangesFeedback(
+            InteractionSpec.Name.ROLLBACK_ALL_CHANGES -> RollbackAllChangesFeedback(
                 modifiersMatcher = modifiersMatcher,
                 onAction = { targetId: String? ->
                     toolEventCallback.invoke(
@@ -176,10 +171,6 @@ internal class PlotToolEventDispatcher(
                     )
                 }
             )
-
-            else -> {
-                throw UnsupportedInteractionException("Interaction '$interactionName'")
-            }
         }
 
         val feedbackRegistration = plotInteractor.startToolFeedback(feedback)
@@ -218,8 +209,8 @@ internal class PlotToolEventDispatcher(
         )
     }
 
-    override fun deactivateInteractions(origin: String): List<Map<String, Any>> {
-        val deactivatedSpecs = mutableListOf<Map<String, Any>>()
+    override fun deactivateInteractions(origin: String): List<InteractionSpec> {
+        val deactivatedSpecs = mutableListOf<InteractionSpec>()
         interactionsByOrigin.remove(origin)?.forEach { interactionInfo ->
             interactionInfo.feedbackReg.dispose()
             deactivatedSpecs.add(interactionInfo.interactionSpec)
@@ -244,7 +235,7 @@ internal class PlotToolEventDispatcher(
         // Check if there are any explicit interactions still active
         val hasActiveExplicitInteractions = filterExplicitOrigins(interactionsByOrigin).isNotEmpty()
 
-        // If no explicit interactions remain and we have suspended default interactions, reactivate them
+        // If no explicit interactions remain, and we have suspended default interactions, reactivate them
         if (!hasActiveExplicitInteractions && suspendedDefaultInteractions.isNotEmpty()) {
             val toReactivate = suspendedDefaultInteractions
             suspendedDefaultInteractions = emptyList()
@@ -258,7 +249,7 @@ internal class PlotToolEventDispatcher(
         suspendedDefaultInteractions = emptyList()
     }
 
-    override fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>) {
+    override fun setDefaultInteractions(interactionSpecList: List<InteractionSpec>) {
         // Deactivate any existing default interactions (active or suspended)
         deactivateInteractions(ORIGIN_FIGURE_CLIENT_DEFAULT)
         suspendedDefaultInteractions = emptyList()
@@ -275,7 +266,7 @@ internal class PlotToolEventDispatcher(
         }
     }
 
-    override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> {
+    override fun deactivateAllSilently(): Map<String, List<InteractionSpec>> {
         val deactivatedInteractions = interactionsByOrigin.mapValues { (_, interactionInfoList) ->
             interactionInfoList.map {
                 it.feedbackReg.dispose()
@@ -296,7 +287,7 @@ internal class PlotToolEventDispatcher(
 
     private fun deactivateOverlappingInteractions(
         originBeingActivated: String,
-        interactionSpecBeingActivated: Map<String, Any>
+        interactionSpecBeingActivated: InteractionSpec
     ) {
         // Special cases
         if (originBeingActivated == ORIGIN_FIGURE_IMPLICIT) {
@@ -324,10 +315,10 @@ internal class PlotToolEventDispatcher(
     }
 
     private class InteractionInfo(
-        val interactionSpec: Map<String, Any>,
+        val interactionSpec: InteractionSpec,
         val feedbackReg: Registration
     ) {
-        val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
+        val interactionName: String = interactionSpec.name.value
     }
 
     companion object {

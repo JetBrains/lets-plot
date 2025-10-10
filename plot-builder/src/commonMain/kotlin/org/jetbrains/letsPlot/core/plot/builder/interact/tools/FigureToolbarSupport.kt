@@ -22,7 +22,11 @@ abstract class FigureToolbarSupport {
     private var toolRegistrations = CompositeRegistration()
 
     fun initializeUI() {
-        TOOL_SPECS.forEach { toolSpec ->
+        listOf(
+            ToolSpecs.PAN_TOOL_SPEC,
+            ToolSpecs.BBOX_ZOOM_TOOL_SPEC,
+            ToolSpecs.CBOX_ZOOM_TOOL_SPEC,
+        ).forEach { toolSpec ->
             val tool = ToggleTool(toolSpec)
             val toolButton = addToggleTool(tool)
             tools.add(tool to toolButton)
@@ -85,12 +89,4 @@ abstract class FigureToolbarSupport {
      * Handle error messages from tools.
      */
     protected abstract fun errorMessageHandler(message: String)
-
-    companion object {
-        private val TOOL_SPECS = listOf(
-            ToolSpecs.PAN_TOOL_SPEC,
-            ToolSpecs.BBOX_ZOOM_TOOL_SPEC,
-            ToolSpecs.CBOX_ZOOM_TOOL_SPEC,
-        )
-    }
 }
