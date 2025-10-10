@@ -247,6 +247,61 @@ object BinStatUtil {
         return HistBinsData(x, counts, densities, sumProps, sumProps.map { it * 100 }, List(x.size) { binWidth })
     }
 
+    private fun computeHistogramBins(
+        valuesX: List<Double?>,
+        breaks: List<Double>,
+        weightAtIndex: (Int) -> Double
+    ): HistBinsData {
+        require(breaks.size >= 2) { "At least two breaks are required" }
+
+        var totalCount = 0.0
+        val countByBinIndex = HashMap<Int, MutableDouble>()
+
+        for (dataIndex in valuesX.indices) {
+            val x = valuesX[dataIndex]
+            if (!SeriesUtil.isFinite(x)) {
+                continue
+            }
+            val weight = weightAtIndex(dataIndex)
+            totalCount += weight
+            val breakIndex = breaks.dropLast(1).reversed().indexOfFirst { b -> x!! >= b }
+            if (!countByBinIndex.containsKey(breakIndex)) {
+                countByBinIndex[breakIndex] = MutableDouble(0.0)
+            }
+            countByBinIndex[breakIndex]!!.getAndAdd(weight)
+        }
+
+        val x = ArrayList<Double>()
+        val counts = ArrayList<Double>()
+        val sumProps = ArrayList<Double>()
+        val binWidths = ArrayList<Double>()
+
+        var densityNormalizingFactor = 0.0
+        for (i in 0 until breaks.size - 1) {
+            val binWidth = (breaks[i + 1] - breaks[i])
+            binWidths.add(binWidth)
+            x.add(breaks[i] + binWidth / 2.0)
+            var count = 0.0
+            // some bins are left empty (not excluded from map)
+            if (countByBinIndex.containsKey(i)) {
+                count = countByBinIndex[i]!!.get()
+            }
+            counts.add(count)
+            val sumProp = count / totalCount
+            sumProps.add(sumProp)
+            densityNormalizingFactor += sumProp / binWidth
+        }
+
+        return HistBinsData(
+            x = x,
+            count = counts,
+            density = counts.map { it / densityNormalizingFactor },
+            sumProp = sumProps,
+            sumPct = sumProps.map { it * 100 },
+            binWidth = binWidths
+        )
+    }
+
     private fun computeDotdensityBins(
         valuesX: List<Double?>,
         binWidth: Double
