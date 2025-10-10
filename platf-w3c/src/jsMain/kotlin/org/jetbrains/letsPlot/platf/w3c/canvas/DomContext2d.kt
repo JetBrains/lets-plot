@@ -20,6 +20,13 @@ import kotlin.math.PI
 internal class DomContext2d(
     private val ctx: CanvasRenderingContext2D
 ) : Context2d {
+
+    private val logEnabled = false
+    private fun log(msg: () -> String) {
+        if (logEnabled)
+            println(msg())
+    }
+
     private fun convertLineJoin(lineJoin: LineJoin): CssLineJoin {
         return when (lineJoin) {
             LineJoin.BEVEL -> CssLineJoin.BEVEL
@@ -54,15 +61,18 @@ internal class DomContext2d(
     }
 
     override fun drawImage(snapshot: Snapshot) {
+        log { "DomContext2d.drawImage(snapshot) size=${snapshot.size}, transform=${ctx.getTransform()}" }
         drawImage(snapshot, 0.0, 0.0)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
+        log { "DomContext2d.drawImage(snapshot) x=$x, y=$y, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
         ctx.drawImage(domSnapshot.canvasElement, x, y)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        log { "DomContext2d.drawImage(snapshot) x=$x, y=$y, dw=$dw, dh=$dh, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
         ctx.drawImage(domSnapshot.canvasElement, x, y, dw, dh)
     }
@@ -78,6 +88,7 @@ internal class DomContext2d(
         dw: Double,
         dh: Double
     ) {
+        log { "DomContext2d.drawImage(snapshot) sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
         ctx.drawImage(domSnapshot.canvasElement, sx, sy, sw, sh, dx, dy, dw, dh)
     }
