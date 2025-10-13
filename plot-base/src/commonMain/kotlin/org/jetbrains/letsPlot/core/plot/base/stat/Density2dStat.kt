@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -45,19 +46,18 @@ class Density2dStat constructor(
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val (xVector, yVector) = (xs zip ys)
-            .filter { SeriesUtil.allFinite(it.first, it.second) }
-            .unzip()
+        val finiteIndices = xs.indicesOf(SeriesUtil::isFinite) intersect ys.indicesOf(SeriesUtil::isFinite)
 
         // if no data, return empty
-        if (xVector.isEmpty()) {
+        if (finiteIndices.isEmpty()) {
             return withEmptyStatValues()
         }
 
-        // if length of x and y doesn't match, throw error
-        if (xVector.size != yVector.size) {
-            throw RuntimeException("len(x)= " + xVector.size + " and len(y)= " + yVector.size + " doesn't match!")
-        }
+        val xVector = xs.slice(finiteIndices).requireNoNulls()
+        val yVector = ys.slice(finiteIndices).requireNoNulls()
+        val groupWeight = BinStatUtil.weightVector(data)
+            .slice(finiteIndices)
+            .map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
 
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
@@ -80,9 +80,6 @@ class Density2dStat constructor(
 
         val stepsX = DensityStatUtil.createStepValues(xRange!!, nX)
         val stepsY = DensityStatUtil.createStepValues(yRange!!, nY)
-
-        // weight aesthetics
-        val groupWeight = BinStatUtil.weightVector(xVector.size, data).map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
 
         val matrixX = BlockRealMatrix(
             DensityStatUtil.createRawMatrix(

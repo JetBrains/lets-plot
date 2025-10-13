@@ -352,12 +352,12 @@ object DensityStatUtil {
     }
 
     fun createRawMatrix(
-        values: List<Double?>,
+        values: List<Double>,
         list: List<Double>,
         ker: (Double) -> Double,
         bw: Double,
         ad: Double,
-        weight: List<Double?>
+        weight: List<Double>
     ): Array<DoubleArray> {
         val a = bw * ad
         val n = values.size
@@ -366,7 +366,7 @@ object DensityStatUtil {
 
         for (row in 0 until x) {
             for (col in 0 until n) {
-                result[row][col] = ker((list[row] - values[col]!!) / a) * sqrt(weight[col]!!) / a
+                result[row][col] = ker((list[row] - values[col]) / a) * sqrt(weight[col]) / a
             }
         }
         return result

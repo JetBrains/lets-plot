@@ -23,11 +23,10 @@ object BinStatUtil {
         return { 1.0 }
     }
 
-    // ToDo: need to deal fith n/a values (see DensityStat)
-    fun weightVector(dataLength: Int, data: DataFrame): List<Double?> {
+    fun weightVector(data: DataFrame): List<Double?> {
         return if (data.has(TransformVar.WEIGHT)) {
             data.getNumeric(TransformVar.WEIGHT)
-        } else List(dataLength) { 1.0 }
+        } else List(data.rowCount()) { 1.0 }
     }
 
     fun binCountAndWidth(dataRange: Double, binOptions: BinOptions, countToWidth: (Double, Int) -> Double = ::defaultBinWidthCalculator): CountAndWidth {
