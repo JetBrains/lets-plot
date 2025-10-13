@@ -215,12 +215,10 @@ class CanvasPaneTest {
             } catch (e: IOException) {
                 e.printStackTrace()
             } finally {
-                if (fontStream != null) {
-                    try {
-                        fontStream.close()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
+                try {
+                    fontStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
             }
         }

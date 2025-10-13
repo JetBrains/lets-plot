@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.pos
 
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import kotlin.math.abs
@@ -37,27 +37,34 @@ abstract class StackablePos : PositionAdjustment {
         val offsetByIndex = HashMap<Int, StackOffset>()
         val indexedDataPoints = aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
-            .filter { SeriesUtil.allFinite(it.second.x(), it.second.y()) }
 
         indexedDataPoints.groupBy { it.second.group() }
             .toList() // a list of pairs (group, indexedDataPoints)
             .sortedBy { it.first } // Sort by group to ensure a consistent stacking order (see issue #1367)
             .forEach { (_, indexedDataPoints) ->
                 for ((i, dataPoint) in indexedDataPoints) {
-                    val x = dataPoint.x()!!
-                    val y = dataPoint.y()!!
-                    val offset = stackingContext.getTotalOffset(x, y)
-                    offsetByIndex[i] = StackOffset(offset - y * (1 - vjust), 0.0)
+                    val p = dataPoint.finiteVectorOrNull(Aes.X, Aes.Y)
+
+                    if (p == null) {
+                        offsetByIndex[i] = StackOffset(0.0, 0.0)
+                    } else {
+                        val offset = stackingContext.getTotalOffset(p.x, p.y)
+                        offsetByIndex[i] = StackOffset(offset - p.y * (1 - vjust), 0.0)
+                    }
                 }
                 stackingContext.computeStackOffset()
             }
         indexedDataPoints.forEach { (i, dataPoint) ->
-            val x = dataPoint.x()!!
-            val y = dataPoint.y()!!
-            offsetByIndex[i] = StackOffset(
-                offsetByIndex.getOrElse(i) { StackOffset(0.0, 0.0) }.value,
-                abs(stackingContext.getFixedTotalOffset(x, y))
-            )
+            val p = dataPoint.finiteVectorOrNull(Aes.X, Aes.Y)
+
+            if (p == null) {
+                offsetByIndex[i] = StackOffset(0.0, 0.0)
+            } else {
+                offsetByIndex[i] = StackOffset(
+                    offsetByIndex.getOrElse(i) { StackOffset(0.0, 0.0) }.value,
+                    abs(stackingContext.getFixedTotalOffset(p.x, p.y))
+                )
+            }
         }
         return offsetByIndex
     }

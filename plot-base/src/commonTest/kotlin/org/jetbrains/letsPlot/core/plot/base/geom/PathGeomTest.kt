@@ -44,7 +44,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -82,7 +82,7 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -120,7 +120,7 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -158,7 +158,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK, BLACK)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -199,7 +199,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -249,7 +249,7 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE, WHITE)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -295,7 +295,7 @@ class PathGeomTest {
         val aes = AestheticsBuilder(0)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         assertTrue(visualPath.isEmpty())
     }
@@ -309,7 +309,7 @@ class PathGeomTest {
             .color(listOf(BLACK)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -331,7 +331,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         visualPath[0].let {
             assertEquals(
@@ -356,7 +356,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK)::get)
             .build()
 
-        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints())
 
         assertEquals(1, visualPath.size)
         assertEquals(

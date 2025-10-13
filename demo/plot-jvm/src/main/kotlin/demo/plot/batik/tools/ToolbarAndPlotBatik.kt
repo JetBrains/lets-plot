@@ -7,7 +7,7 @@ package demo.plot.batik.tools
 
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.BorderLayout
@@ -37,18 +37,18 @@ private fun createAndShowGui() {
 
     // Figure default interactions
     val defaultInteractions = listOf(
-        mapOf(
-            ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM,
-            ToolInteractionSpec.KEY_MODIFIERS to listOf(
-                ToolInteractionSpec.KeyModifier.CTRL,
-                ToolInteractionSpec.KeyModifier.SHIFT
+        InteractionSpec(
+            InteractionSpec.Name.WHEEL_ZOOM,
+            keyModifiers = listOf(
+                InteractionSpec.KeyModifier.CTRL,
+                InteractionSpec.KeyModifier.SHIFT
             )
         ),
-        mapOf(
-            ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN,
-            ToolInteractionSpec.KEY_MODIFIERS to listOf(
-                ToolInteractionSpec.KeyModifier.CTRL,
-                ToolInteractionSpec.KeyModifier.SHIFT
+        InteractionSpec(
+            InteractionSpec.Name.DRAG_PAN,
+            keyModifiers = listOf(
+                InteractionSpec.KeyModifier.CTRL,
+                InteractionSpec.KeyModifier.SHIFT
             )
         )
     )

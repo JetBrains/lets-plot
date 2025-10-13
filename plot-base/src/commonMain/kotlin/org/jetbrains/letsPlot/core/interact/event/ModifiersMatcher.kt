@@ -6,22 +6,24 @@
 package org.jetbrains.letsPlot.core.interact.event
 
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.core.interact.InteractionSpec.KeyModifier
 
 abstract class ModifiersMatcher internal constructor() {
     abstract fun match(e: MouseEvent): Boolean
 
     companion object {
-        private val MATCHER_BY_MODIFIER: Map<String, (MouseEvent) -> Boolean> = mapOf(
-            ToolInteractionSpec.KeyModifier.ALT to { e -> e.modifiers.isAlt },
-            ToolInteractionSpec.KeyModifier.CTRL to { e -> e.modifiers.isCtrl },
-            ToolInteractionSpec.KeyModifier.META to { e -> e.modifiers.isMeta },
-            ToolInteractionSpec.KeyModifier.SHIFT to { e -> e.modifiers.isShift }
+        private val MATCHER_BY_MODIFIER: Map<KeyModifier, (MouseEvent) -> Boolean> = mapOf(
+            KeyModifier.ALT to { e -> e.modifiers.isAlt },
+            KeyModifier.CTRL to { e -> e.modifiers.isCtrl },
+            KeyModifier.META to { e -> e.modifiers.isMeta },
+            KeyModifier.SHIFT to { e -> e.modifiers.isShift }
         )
-        private val MATCHER_NOT_BY_MODIFIER: Map<String, (MouseEvent) -> Boolean> = mapOf(
-            ToolInteractionSpec.KeyModifier.ALT to { e -> !e.modifiers.isAlt },
-            ToolInteractionSpec.KeyModifier.CTRL to { e -> !e.modifiers.isCtrl },
-            ToolInteractionSpec.KeyModifier.META to { e -> !e.modifiers.isMeta },
-            ToolInteractionSpec.KeyModifier.SHIFT to { e -> !e.modifiers.isShift }
+
+        private val MATCHER_BY_MODIFIER_NOT: Map<KeyModifier, (MouseEvent) -> Boolean> = mapOf(
+            KeyModifier.ALT to { e -> !e.modifiers.isAlt },
+            KeyModifier.CTRL to { e -> !e.modifiers.isCtrl },
+            KeyModifier.META to { e -> !e.modifiers.isMeta },
+            KeyModifier.SHIFT to { e -> !e.modifiers.isShift }
         )
 
         val ANY_MODIFIERS = object : ModifiersMatcher() {
@@ -37,31 +39,17 @@ abstract class ModifiersMatcher internal constructor() {
             }
         }
 
-        fun create(modifiers: List<String>): ModifiersMatcher {
-            if (modifiers.isEmpty()) {
+        fun create(modifiers: List<KeyModifier>?): ModifiersMatcher {
+            if (modifiers.isNullOrEmpty()) {
                 return NO_MODIFIERS
             }
 
-            val allModifiers = setOf(
-                ToolInteractionSpec.KeyModifier.ALT,
-                ToolInteractionSpec.KeyModifier.CTRL,
-                ToolInteractionSpec.KeyModifier.META,
-                ToolInteractionSpec.KeyModifier.SHIFT
-            )
-
-            modifiers.forEach {
-                check(it in allModifiers) {
-                    "Unknown modifier: $it. Expected one of: $allModifiers"
-                }
+            val matchers = KeyModifier.entries.toTypedArray().map {
+                if (it in modifiers) MATCHER_BY_MODIFIER.getValue(it)
+                else MATCHER_BY_MODIFIER_NOT.getValue(it)
             }
 
-            val matchers = modifiers.map { MATCHER_BY_MODIFIER.getValue(it) } +
-                    @Suppress("ConvertArgumentToSet")
-                    (allModifiers - modifiers).map { MATCHER_NOT_BY_MODIFIER.getValue(it) }
-
-
             return object : ModifiersMatcher() {
-
                 override fun match(e: MouseEvent): Boolean {
                     return matchers.all { it(e) }
                 }

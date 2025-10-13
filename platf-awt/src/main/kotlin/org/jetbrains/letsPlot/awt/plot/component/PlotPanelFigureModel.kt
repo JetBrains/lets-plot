@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.awt.plot.component
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import java.awt.Dimension
@@ -28,7 +28,7 @@ internal class PlotPanelFigureModel constructor(
     private val toolEventCallbacks = mutableListOf<(Map<String, Any>) -> Unit>()
     private val disposibleTools = mutableListOf<Disposable>()
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
-    private var defaultInteractions: List<Map<String, Any>> = emptyList()
+    private var defaultInteractions: List<InteractionSpec> = emptyList()
 
     private var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
@@ -44,7 +44,7 @@ internal class PlotPanelFigureModel constructor(
                 newDispatcher.deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
                 newDispatcher.activateInteractions(
                     origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
-                    interactionSpecList = FigureImplicitInteractionSpecs.LIST
+                    interactionSpecList = FIGURE_IMPLICIT_INTERACTIONS
                 )
 
                 // Set default interactions if any were configured
@@ -71,7 +71,7 @@ internal class PlotPanelFigureModel constructor(
         }
     }
 
-    override fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
+    override fun activateInteractions(origin: String, interactionSpecList: List<InteractionSpec>) {
         toolEventDispatcher?.activateInteractions(origin, interactionSpecList)
     }
 
@@ -79,7 +79,7 @@ internal class PlotPanelFigureModel constructor(
         toolEventDispatcher?.deactivateInteractions(origin)
     }
 
-    override fun setDefaultInteractions(interactionSpecList: List<Map<String, Any>>) {
+    override fun setDefaultInteractions(interactionSpecList: List<InteractionSpec>) {
         defaultInteractions = interactionSpecList
         toolEventDispatcher?.setDefaultInteractions(interactionSpecList)
     }
@@ -129,6 +129,8 @@ internal class PlotPanelFigureModel constructor(
     }
 
     companion object {
+        private val FIGURE_IMPLICIT_INTERACTIONS = listOf(InteractionSpec(InteractionSpec.Name.ROLLBACK_ALL_CHANGES))
+
         fun toolEventDispatcherFromProvidedComponent(providedComponent: JComponent?): ToolEventDispatcher? {
             if (providedComponent == null) return null
             val actualPlotComponent = actualPlotComponentFromProvidedComponent(providedComponent)
