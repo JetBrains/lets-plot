@@ -21,32 +21,34 @@ import org.w3c.dom.CanvasImageSource
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil
-import kotlin.math.roundToInt
 
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
     override val size: Vector,
-    private val pixelRatio: Double
+    pixelRatio: Double
 ) : Canvas {
     override val context2d: Context2d = ScaledContext2d.wrap(DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D), pixelRatio)
 
-    override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size, pixelRatio)
+    override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size)
 
     internal class DomSnapshot(
         val canvasElement: CanvasImageSource,
-        size: Vector,
-        private val pixelRatio: Double
+        override val size: Vector
     ) : Canvas.Snapshot {
-        override val size: Vector = Vector((size.x * pixelRatio).roundToInt(), (size.y * pixelRatio).roundToInt())
+
+        init {
+            println("Create DomSnapshot: size= $size")
+        }
+
         override val bitmap: Bitmap
             get() {
                 TODO("DomSnapshot.toBitmap() is not implemented yet")
             }
 
         override fun copy(): Canvas.Snapshot {
-            val canvasCopy = createNativeCanvas(size, pixelRatio)
+            val canvasCopy = createNativeCanvas(size, pixelRatio = 1.0)
             canvasCopy.context2d.drawImage(canvasElement, 0.0, 0.0)
-            return DomSnapshot(canvasCopy, size, pixelRatio)
+            return DomSnapshot(canvasCopy, size)
         }
     }
 

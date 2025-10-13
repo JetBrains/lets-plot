@@ -15,7 +15,7 @@ import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 
 class AwtCanvasPeer(
-    val pixelDensity: Double = 1.0
+    private val pixelDensity: Double = 1.0
 ) : CanvasPeer {
     private val measureCanvas = AwtCanvas.create(Vector(1, 1), pixelDensity)
 

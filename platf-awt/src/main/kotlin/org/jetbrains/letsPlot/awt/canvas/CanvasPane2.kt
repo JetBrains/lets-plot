@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.registration.*
-import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.JComponent
@@ -41,8 +41,12 @@ class CanvasPane2(
         }
 
     init {
-        isOpaque = true
+        isOpaque = false
         this.figure = figure
+    }
+
+    override fun getPreferredSize(): Dimension? {
+        return figure?.size?.let { s -> Dimension(s.x, s.y) }
     }
 
     override fun setBounds(x: Int, y: Int, width: Int, height: Int) {
@@ -66,14 +70,7 @@ class CanvasPane2(
         val g2d = g!!.create() as Graphics2D
 
         if (figure != null) {
-            val scale = g2d.transform.scaleX
-            val ctx = if (scale != 1.0) {
-                // TODO: proper fix needed - just remove ScaledContext2d
-                g2d.scale(1 / scale, 1 / scale)
-                ScaledContext2d(AwtContext2d(g2d), scale)
-            } else {
-                AwtContext2d(g2d)
-            }
+            val ctx = AwtContext2d(g2d)
             figure!!.paint(ctx)
         }
     }

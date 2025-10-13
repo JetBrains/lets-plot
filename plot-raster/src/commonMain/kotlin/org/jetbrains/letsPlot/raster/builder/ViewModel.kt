@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
@@ -23,7 +24,7 @@ internal sealed class ViewModel(
     internal abstract val bounds: Rectangle
 
     @Suppress("unused")
-    fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
+    fun activateInteractions(origin: String, interactionSpecList: List<InteractionSpec>) {
         toolEventDispatcher.activateInteractions(origin, interactionSpecList)
     }
 

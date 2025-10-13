@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
@@ -19,18 +18,18 @@ import kotlin.math.roundToInt
 
 class AwtCanvas private constructor(
     val image: BufferedImage,
-    override val size: Vector,
-    pixelDensity: Double,
+    override val size: Vector
 ) : Canvas {
-    override val context2d: Context2d = ScaledContext2d.wrap(AwtContext2d(image.createGraphics() as Graphics2D), pixelDensity)
+    override val context2d: Context2d = AwtContext2d(image.createGraphics() as Graphics2D)
 
     companion object {
         fun create(size: Vector, pixelDensity: Double): AwtCanvas {
+            println("Create AwtCanvas: size= $size, pixelDensity= $pixelDensity")
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s, pixelDensity)
+            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s)
         }
     }
 

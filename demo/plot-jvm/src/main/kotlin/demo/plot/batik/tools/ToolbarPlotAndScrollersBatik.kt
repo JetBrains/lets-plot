@@ -7,6 +7,7 @@ package demo.plot.batik.tools
 
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.BorderLayout
@@ -41,6 +42,26 @@ private fun createAndShowGui() {
         val figureModel = (plotPanel as WithFigureModel).figureModel
         toolbar.attach(figureModel)
 
+        // Figure default interactions
+        val defaultInteractions = listOf(
+            InteractionSpec(
+                InteractionSpec.Name.WHEEL_ZOOM,
+                keyModifiers = listOf(
+                    InteractionSpec.KeyModifier.CTRL,
+                    InteractionSpec.KeyModifier.SHIFT
+                )
+            ),
+            InteractionSpec(
+                InteractionSpec.Name.DRAG_PAN,
+                keyModifiers = listOf(
+                    InteractionSpec.KeyModifier.CTRL,
+                    InteractionSpec.KeyModifier.SHIFT
+                )
+            )
+        )
+
+        figureModel.setDefaultInteractions(defaultInteractions)
+
         val fixedHeight = 500
         val plotWrapper = JPanel(BorderLayout()).apply {
             add(plotPanel, BorderLayout.CENTER)
@@ -54,7 +75,9 @@ private fun createAndShowGui() {
         add(JPanel().apply {
             alignmentX = JComponent.LEFT_ALIGNMENT
         })
-        add(JLabel("The footer"))
+
+        // Instructions
+        add(JLabel("Use Ctrl+Shift+Wheel to zoom, Ctrl+Shift+Drag to pan"), BorderLayout.SOUTH)
     }
 
     // Make the column scrollable vertically
