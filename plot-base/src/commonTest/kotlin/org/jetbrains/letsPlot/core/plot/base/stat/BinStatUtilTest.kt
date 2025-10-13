@@ -155,6 +155,15 @@ class BinStatUtilTest {
     }
 
     @Test
+    fun checkComputeHistogramBinsBeyondTheBorder() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(2.0, 3.0),
+            valuesX = listOf(-1.0, 1.0, 1.0, 3.0, 4.0, 5.0, 7.0),
+            breaks = listOf(0.0, 2.0, 6.0)
+        )
+    }
+
+    @Test
     fun checkComputeHistogramBinsWithNegativeValues() {
         computeHistogramBinsFor(
             expectedCounts = listOf(1.0, 1.0),
