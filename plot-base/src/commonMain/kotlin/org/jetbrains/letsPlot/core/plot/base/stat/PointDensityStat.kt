@@ -57,11 +57,6 @@ class PointDensityStat(
         val ys = data.getNumeric(TransformVar.Y)
         val finiteIndices = (xs zip ys).indicesOf { (x, y) -> SeriesUtil.allFinite(x, y) }
 
-        // if no data, return empty
-        if (finiteIndices.isEmpty()) {
-            return withEmptyStatValues()
-        }
-
         val xVector = xs.slice(finiteIndices).requireNoNulls()
         val yVector = ys.slice(finiteIndices).requireNoNulls()
         val groupWeight = BinStatUtil.weightVector(data)
@@ -123,10 +118,13 @@ class PointDensityStat(
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
-        val (stepsX, stepsY, densityMatrix) = density2dGrid(xs, ys, weights, xRange, yRange)
-        val statCount = ArrayList<Double>()
-        xs.forEachIndexed { i, x ->
-            statCount.add(approxCount(x, ys[i], stepsX, stepsY, densityMatrix))
+        val statCount = if (xs.any()) {
+            val (stepsX, stepsY, densityMatrix) = density2dGrid(xs, ys, weights, xRange, yRange)
+            xs.mapIndexed { i, x ->
+                approxCount(x, ys[i], stepsX, stepsY, densityMatrix)
+            }
+        } else {
+            emptyList()
         }
         val totalWeights = SeriesUtil.sum(weights)
         val maxCount = statCount.maxOrNull() ?: 0.0
