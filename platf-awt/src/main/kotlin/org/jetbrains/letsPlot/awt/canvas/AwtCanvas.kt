@@ -24,7 +24,6 @@ class AwtCanvas private constructor(
 
     companion object {
         fun create(size: Vector, pixelDensity: Double): AwtCanvas {
-            println("Create AwtCanvas: size= $size, pixelDensity= $pixelDensity")
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
