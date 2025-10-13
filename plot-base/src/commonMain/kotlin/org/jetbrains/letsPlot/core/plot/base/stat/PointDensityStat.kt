@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
@@ -54,14 +55,18 @@ class PointDensityStat(
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val weights = BinStatUtil.weightVector(data.rowCount(), data)
-        val indices = indicesOfFinite(xs, ys, weights)
-        if (indices.isEmpty()) {
+        val finiteIndices = (xs zip ys).indicesOf { (x, y) -> SeriesUtil.allFinite(x, y) }
+
+        // if no data, return empty
+        if (finiteIndices.isEmpty()) {
             return withEmptyStatValues()
         }
-        val xVector = indices.map { xs[it]!! }
-        val yVector = indices.map { ys[it]!! }
-        val groupWeight = indices.map { weights[it]!! }
+
+        val xVector = xs.slice(finiteIndices).requireNoNulls()
+        val yVector = ys.slice(finiteIndices).requireNoNulls()
+        val groupWeight = BinStatUtil.weightVector(data)
+            .slice(finiteIndices)
+            .map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
 
         val xRange = statCtx.overallXRange() ?: return withEmptyStatValues()
         val yRange = statCtx.overallYRange() ?: return withEmptyStatValues()
@@ -70,7 +75,7 @@ class PointDensityStat(
         val builder = DataFrame.Builder()
             .putNumeric(Stats.X, xVector)
             .putNumeric(Stats.Y, yVector)
-            .put(Stats.INDEX, indices)
+            .put(Stats.INDEX, finiteIndices)
         for ((variable, series) in statData) {
             builder.putNumeric(variable, series)
         }
@@ -197,12 +202,6 @@ class PointDensityStat(
                 alphaRow < 0.5 && alphaCol >= 0.5 -> densityMatrix.getEntry(rowLow, colHigh)
                 alphaRow >= 0.5 && alphaCol < 0.5 -> densityMatrix.getEntry(rowHigh, colLow)
                 else -> densityMatrix.getEntry(rowHigh, colHigh)
-            }
-        }
-
-        private fun indicesOfFinite(l0: List<Double?>, l1: List<Double?>, l2: List<Double?>): List<Int> {
-            return l0.mapIndexedNotNull { i, v0 ->
-                if (SeriesUtil.allFinite(v0, l1[i], l2[i])) i else null
             }
         }
 
