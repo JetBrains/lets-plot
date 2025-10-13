@@ -246,7 +246,7 @@ object BinStatUtil {
         return HistBinsData(x, counts, densities, sumProps, sumProps.map { it * 100 }, List(x.size) { binWidth })
     }
 
-    private fun computeHistogramBins(
+    internal fun computeHistogramBins(
         valuesX: List<Double?>,
         breaks: List<Double>,
         weightAtIndex: (Int) -> Double
@@ -263,7 +263,7 @@ object BinStatUtil {
             }
             val weight = weightAtIndex(dataIndex)
             totalCount += weight
-            val breakIndex = breaks.dropLast(1).reversed().indexOfFirst { b -> x!! >= b }
+            val breakIndex = (breaks.size - 2 downTo 0).first { i -> x!! >= breaks[i] }
             if (!countByBinIndex.containsKey(breakIndex)) {
                 countByBinIndex[breakIndex] = MutableDouble(0.0)
             }
@@ -288,7 +288,7 @@ object BinStatUtil {
             counts.add(count)
             val sumProp = count / totalCount
             sumProps.add(sumProp)
-            densityNormalizingFactor += sumProp / binWidth
+            densityNormalizingFactor += abs(count) * binWidth
         }
 
         return HistBinsData(
