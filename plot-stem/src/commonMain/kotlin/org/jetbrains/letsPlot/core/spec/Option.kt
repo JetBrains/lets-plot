@@ -497,6 +497,7 @@ object Option {
             const val METHOD = "method"
             const val CENTER = "center"
             const val BOUNDARY = "boundary"
+            const val BREAKS = "breaks"
         }
 
         object Bin2d {
