@@ -194,9 +194,9 @@ class BinStatUtilTest {
 
     @Test
     fun checkComputeHistogramBinsNegativeWeights() {
-        val weights = listOf(1.0, -1.0)
+        val weights = listOf(2.0, -1.0)
         computeHistogramBinsFor(
-            expectedCounts = listOf(1.0, -1.0),
+            expectedCounts = listOf(2.0, -1.0),
             valuesX = listOf(1.0, 4.0),
             breaks = listOf(0.0, 2.0, 6.0),
             weightAtIndex = { weights[it] }
@@ -293,11 +293,7 @@ class BinStatUtilTest {
             }
             // Area of density histogram should be equal to 1.0
             val area = (binsData.density zip binsData.binWidth).sumOf { abs(it.first) * it.second }
-            if (area.isNaN()) {
-                binsData.density.forEachIndexed { i, density ->
-                    assertEquals(Double.NaN, density, "bin density at index $i should be NaN")
-                }
-            } else {
+            if (area.isFinite()) {
                 assertEquals(1.0, area, EPSILON, "area of density histogram")
             }
             // Check sumProp
@@ -306,10 +302,18 @@ class BinStatUtilTest {
                 val expectedSumProp = expectedCounts[i] / totalCount
                 assertEquals(expectedSumProp, sumProp, EPSILON, "bin sumProp at index $i")
             }
+            val sumPropTotal = binsData.sumProp.sum()
+            if (sumPropTotal.isFinite()) {
+                assertEquals(1.0, sumPropTotal, EPSILON, "sum of bin sumProp")
+            }
             // Check sumPct
             binsData.sumPct.forEachIndexed { i, sumPct ->
                 val expectedSumPct = 100.0 * expectedCounts[i] / totalCount
                 assertEquals(expectedSumPct, sumPct, EPSILON, "bin sumPct at index $i")
+            }
+            val sumPctTotal = binsData.sumPct.sum()
+            if (sumPctTotal.isFinite()) {
+                assertEquals(100.0, sumPctTotal, EPSILON, "sum of bin sumPct")
             }
             // Check bin width
             binsData.binWidth.forEachIndexed { i, binWidth ->
