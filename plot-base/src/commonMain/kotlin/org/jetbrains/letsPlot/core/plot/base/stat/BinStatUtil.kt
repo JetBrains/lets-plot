@@ -261,9 +261,13 @@ object BinStatUtil {
             if (!SeriesUtil.isFinite(x)) {
                 continue
             }
+            if (x!! < breaks.first() || x > breaks.last()) {
+                // out of range
+                continue
+            }
             val weight = weightAtIndex(dataIndex)
             totalCount += weight
-            val breakIndex = (breaks.size - 2 downTo 0).first { i -> x!! >= breaks[i] }
+            val breakIndex = (breaks.size - 2 downTo 0).first { i -> x >= breaks[i] }
             if (!countByBinIndex.containsKey(breakIndex)) {
                 countByBinIndex[breakIndex] = MutableDouble(0.0)
             }
