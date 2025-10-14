@@ -62,18 +62,12 @@ open class BarGeom : GeomBase() {
         }
     }
 
-    private fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
-        val useBinWidth = aesthetics.dataPoints().map(DataPointAesthetics::binwidth).distinct().size > 1
+    protected open fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
         val resolution = ctx.getResolution(Aes.X)
 
         fun widthCalculator(p: DataPointAesthetics): Double? {
             val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-            val scale = if (useBinWidth) {
-                p.finiteOrNull(Aes.BINWIDTH) ?: return null
-            } else {
-                resolution
-            }
-            return scale * width
+            return resolution * width
         }
 
         return ::widthCalculator
