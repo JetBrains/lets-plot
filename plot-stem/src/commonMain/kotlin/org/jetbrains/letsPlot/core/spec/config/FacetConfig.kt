@@ -15,8 +15,8 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_LAB_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.varNameAndLevelPairsByTile
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.dataIndicesByTile
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.varNameAndLevelPairsByTile
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetGrid
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetWrap
@@ -50,6 +50,7 @@ internal class FacetConfig(
         val levelsX = LinkedHashSet<Any>()
         if (has(Facet.X)) {
             nameX = getStringSafe(Facet.X)
+            requireVariableExistsInData(nameX, dataByLayer)
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, nameX)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameX)
@@ -62,6 +63,7 @@ internal class FacetConfig(
         val levelsY = LinkedHashSet<Any>()
         if (has(Facet.Y)) {
             nameY = getStringSafe(Facet.Y)
+            requireVariableExistsInData(nameY, dataByLayer)
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, nameY)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameY)
@@ -99,6 +101,7 @@ internal class FacetConfig(
 
         val facetLevels = ArrayList<List<Any>>()
         for (name in facets) {
+            requireVariableExistsInData(name, dataByLayer)
             val levels = LinkedHashSet<Any>()
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, name)) {
@@ -274,6 +277,16 @@ internal class FacetConfig(
 
             return varNameAndLevelPairsByTileRaw.filterIndexed { index, _ ->
                 dataSizeByTile[index] > 0
+            }
+        }
+
+        fun requireVariableExistsInData(varName: String, dataFrames: List<DataFrame>) {
+            require(dataFrames.isEmpty() || dataFrames.any { data ->
+                DataFrameUtil.hasVariable(data, varName)
+            }) {
+                dataFrames.joinToString(separator = "\n") {
+                    it.undefinedVariableErrorMessage(varName)
+                }
             }
         }
     }
