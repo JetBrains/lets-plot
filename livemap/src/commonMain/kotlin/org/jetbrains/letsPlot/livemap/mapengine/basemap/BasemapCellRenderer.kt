@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.livemap.mapengine.basemap
 import org.jetbrains.letsPlot.commons.intern.spatial.projectRect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.newScaling
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
@@ -64,31 +63,17 @@ class BasemapCellRenderer : Renderer {
     private fun renderSnapshotTile(tile: SnapshotTile, srcCell: CellKey, dstCell: CellKey) {
         val srcRect = srcCell.projectRect(myCellRect)
         val dstRect = dstCell.projectRect(myCellRect)
-        if (newScaling) {
-            myCtx.drawImage(
-                tile.snapshot,
-                srcRect.left * tile.scale,
-                srcRect.top * tile.scale,
-                srcRect.width * tile.scale,
-                srcRect.height * tile.scale,
-                dstRect.left,
-                dstRect.top,
-                dstRect.width,// + 1.0, // fix lines between tiles, BUT TEXT WILL GET BLURED
-                dstRect.height// + 1.0 // fix lines between tiles, BUT TEXT WILL GET BLURED
-            )
-        } else {
-            myCtx.drawImage(
-                tile.snapshot,
-                srcRect.left,
-                srcRect.top,
-                srcRect.width,
-                srcRect.height,
-                dstRect.left,
-                dstRect.top,
-                dstRect.width,// + 1.0, // fix lines between tiles, BUT TEXT WILL GET BLURED
-                dstRect.height// + 1.0 // fix lines between tiles, BUT TEXT WILL GET BLURED
-            )
-        }
+        myCtx.drawImage(
+            tile.snapshot,
+            srcRect.left * tile.scale,
+            srcRect.top * tile.scale,
+            srcRect.width * tile.scale,
+            srcRect.height * tile.scale,
+            dstRect.left,
+            dstRect.top,
+            dstRect.width,// + 1.0, // fix lines between tiles, BUT TEXT WILL GET BLURED
+            dstRect.height// + 1.0 // fix lines between tiles, BUT TEXT WILL GET BLURED
+        )
     }
 
 }
