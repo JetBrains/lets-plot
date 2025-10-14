@@ -36,6 +36,10 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
 - markdown: links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
 
+- Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
+  
+  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
+
 ### Fixed
 
 - geom_density2d: NullPointerException when weight aesthetic contains None values [[#1399](https://github.com/JetBrains/lets-plot/issues/1399)].
