@@ -30,7 +30,7 @@ class AwtCanvasControl(
     override val size: Vector,
     private val animationTimerPeer: AwtAnimationTimerPeer,
     private val mouseEventSource: MouseEventSource,
-    override val pixelDensity: Double = 2.0
+    override val pixelDensity: Double = 1.0
 ) : CanvasControl {
 
     private val myComponent = CanvasContainerPanel(size)

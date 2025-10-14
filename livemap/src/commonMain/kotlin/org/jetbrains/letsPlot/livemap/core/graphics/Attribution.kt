@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.core.graphics
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
@@ -86,29 +87,20 @@ class Attribution : RenderBox() {
         }
     }
 
-    protected override fun renderInternal(ctx: Context2d) {
-        ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-
-        ctx.save()
-        ctx.setFillStyle(background)
-        ctx.fillRect(
-            origin.x,
-            origin.y,
-            dimension.x,
-            dimension.y
-        )
-        ctx.restore()
-
+    override fun renderInternal(ctx: Context2d) {
+        ctx.clearRect(DoubleRectangle.XYWH(0, 0, dimension.x, dimension.y))
         texts.forEach {
             renderPrimitive(ctx, it)
         }
     }
 
-    private fun renderPrimitive(ctx: Context2d, primitive: RenderBox) {
+    private fun renderPrimitive(ctx: Context2d, tspan: Text) {
         ctx.save()
-        val origin = primitive.origin
-        ctx.setTransform(1.0, 0.0, 0.0, 1.0, origin.x, origin.y)
-        primitive.render(ctx)
+        // translate to the origin of the tspan
+        // Both attribution and tspan have absolute origins,
+        // but attribution is a container for tspan, and context is already translated to attribution origin.
+        ctx.translate(tspan.origin.x - origin.x, tspan.origin.y - origin.y)
+        tspan.render(ctx)
         ctx.restore()
     }
 
