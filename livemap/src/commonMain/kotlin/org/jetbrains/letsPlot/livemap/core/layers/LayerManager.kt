@@ -9,7 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
-import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.SingleCanvasControl
+import org.jetbrains.letsPlot.core.canvas.drawImage
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.layers.LayerKind.UI
 
@@ -66,11 +69,7 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
         singleCanvasControl.context.clearRect(rect)
         layers.forEach {
             myBackingStore[it]?.let { s ->
-                if (newScaling) {
-                    singleCanvasControl.context.drawImage(s, 0.0, 0.0, rect.width, rect.height)
-                } else {
-                    singleCanvasControl.context.drawImage(s)
-                }
+                singleCanvasControl.context.drawImage(s, 0.0, 0.0, rect.width, rect.height)
             }
         }
     }
@@ -81,11 +80,7 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
             else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
         }.let { p ->
             myBackingStore[layer]?.let { snapshot ->
-                if (newScaling) {
-                    singleCanvasControl.context.drawImage(snapshot, p.x, p.y, rect.width, rect.height)
-                } else {
-                    singleCanvasControl.context.drawImage(snapshot, p)
-                }
+                singleCanvasControl.context.drawImage(snapshot, p.x, p.y, rect.width, rect.height)
             }
         }
     }

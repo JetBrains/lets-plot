@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import kotlin.math.roundToInt
 
 internal class JavafxCanvas private constructor(
@@ -22,7 +21,8 @@ internal class JavafxCanvas private constructor(
     override val size: Vector,
     pixelRatio: Double
 ) : Canvas {
-    override val context2d: Context2d = ScaledContext2d.wrap(JavafxContext2d(nativeCanvas.graphicsContext2D), pixelRatio)
+    override val context2d: Context2d = JavafxContext2d(nativeCanvas.graphicsContext2D)
+        .also { ctx -> ctx.scale(pixelRatio, pixelRatio) }
 
     companion object {
         fun create(size: Vector, pixelRatio: Double): JavafxCanvas {
