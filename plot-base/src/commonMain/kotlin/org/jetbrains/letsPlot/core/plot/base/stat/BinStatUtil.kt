@@ -267,7 +267,7 @@ object BinStatUtil {
             }
             val weight = weightAtIndex(dataIndex)
             totalCount += weight
-            val breakIndex = (breaks.size - 2 downTo 0).first { i -> x >= breaks[i] }
+            val breakIndex = (breaks.size - 2 downTo 0).firstOrNull { i -> x > breaks[i] } ?: 0
             if (!countByBinIndex.containsKey(breakIndex)) {
                 countByBinIndex[breakIndex] = MutableDouble(0.0)
             }

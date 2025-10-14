@@ -149,7 +149,7 @@ class BinStatUtilTest {
     fun checkComputeHistogramBinsBorderValues() {
         computeHistogramBinsFor(
             expectedCounts = listOf(3.0, 3.0),
-            valuesX = listOf(0.0, 0.0, 0.0, 2.0, 2.0, 6.0),
+            valuesX = listOf(0.0, 2.0, 2.0, 6.0, 6.0, 6.0),
             breaks = listOf(0.0, 2.0, 6.0)
         )
     }
