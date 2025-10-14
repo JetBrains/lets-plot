@@ -488,6 +488,7 @@ class GeoConfigTest {
             |      "geom": "histogram",
             |      "data": {
             |        "..count..": [1, 2, 3],
+            |        "..binwidth..": [1, 1, 1],
             |        "id": ["A", "B", "C"],
             |        "price": [123, 22, 44],
             |        "coord": [

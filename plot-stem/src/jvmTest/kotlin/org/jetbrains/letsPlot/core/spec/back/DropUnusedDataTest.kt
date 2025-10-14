@@ -130,12 +130,13 @@ class DropUnusedDataTest {
         val statSize = bins * 2 // two groups
         val droppedVars = listOf("..x..", "..density..", "..group..")
         checkSingleLayerData(
-            opts, 4,
+            opts, 5,
             mapOf(
                 "x" to statSize,
                 "group" to statSize,
                 "facetX" to statSize,
                 "..count.." to statSize,
+                "..binwidth.." to statSize,
             ),
             droppedVars
         )
@@ -514,11 +515,12 @@ class DropUnusedDataTest {
         val statSize = bins * 2 // two groups
         val droppedVars = listOf("..x..", "..count..", "..group..")
         checkSingleLayerData(
-            opts, 3,
+            opts, 4,
             mapOf(
                 "x" to statSize,
                 "group" to statSize,
                 "..density.." to statSize,
+                "..binwidth.." to statSize,
             ),
             droppedVars
         )

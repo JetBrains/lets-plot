@@ -47,13 +47,13 @@ class GGBunchTest {
         val geom0Exp = mapOf(
             Option.Layer.GEOM to Option.GeomName.HISTOGRAM,
             Option.PlotBase.MAPPING to mapOf(Aes.X.name to "x"),
-            Option.PlotBase.DATA to mapOf("..count.." to listOf(50.0), "x" to listOf(1.0)),
+            Option.PlotBase.DATA to mapOf("..count.." to listOf(50.0), "..binwidth.." to listOf(0.0), "x" to listOf(1.0)),
             "bins" to 1
         )
         val geom1Exp = mapOf(
             Option.Layer.GEOM to Option.GeomName.HISTOGRAM,
             Option.PlotBase.MAPPING to mapOf(Aes.X.name to "x"),
-            Option.PlotBase.DATA to mapOf("..count.." to listOf(100.0), "x" to listOf(1.0)),
+            Option.PlotBase.DATA to mapOf("..count.." to listOf(100.0), "..binwidth.." to listOf(0.0), "x" to listOf(1.0)),
             "bins" to 1
         )
         val ggBunchExp = simpleBunch(
