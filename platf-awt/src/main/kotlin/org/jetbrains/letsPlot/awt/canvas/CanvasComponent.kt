@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.core.canvas.newScaling
 import java.awt.Graphics
+import java.awt.Graphics2D
 import java.awt.Rectangle
 import javax.swing.JComponent
 
@@ -21,6 +23,17 @@ internal class CanvasComponent(
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
-        g!!.drawImage(canvas.image, 0, 0, canvas.size.x, canvas.size.y, this)
+        val g2d = g as Graphics2D
+
+        if (newScaling) {
+            g2d.drawImage(
+                canvas.image,
+                0, 0, canvas.size.x, canvas.size.y,
+                0, 0, canvas.image.width, canvas.image.height,
+                this
+            )
+        } else {
+            g.drawImage(canvas.image, 0, 0, canvas.size.x, canvas.size.y, this)
+        }
     }
 }

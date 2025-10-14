@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapTileComponent
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.RequestTilesComponent
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.Tile
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
-import kotlin.random.Random
 
 class SolidColorTileSystem(
     private val tileFactory: (CellKey, CanvasProvider) -> Canvas.Snapshot,
@@ -34,7 +33,7 @@ class SolidColorTileSystem(
                     val snapshot = tileFactory(cellKey, context.mapRenderContext.canvasProvider)
                     runLaterBySystem(entity) {
                         it.get<BasemapTileComponent>().apply {
-                            tile = Tile.SnapshotTile(snapshot)
+                            tile = Tile.SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
                             nonCacheable = false
                         }
                         ParentLayerComponent.tagDirtyParentLayer(it)
@@ -49,7 +48,7 @@ private fun drawSolidColorTile(color: Color, canvasProvider: CanvasProvider): Ca
     val tileCanvas = canvasProvider.createCanvas(Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt()))
     tileCanvas.context2d.apply {
         setFillStyle(color)
-        fillRect(0.0, 0.0, TILE_PIXEL_SIZE.toDouble(), TILE_PIXEL_SIZE.toDouble())
+        fillRect(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
     }
 
     return tileCanvas.takeSnapshot()
@@ -59,6 +58,7 @@ fun fixed(color: Color): (CellKey, CanvasProvider) -> Canvas.Snapshot {
     var tile: Canvas.Snapshot? = null
     return { _: CellKey, canvasProvider: CanvasProvider ->
         tile = tile ?: drawSolidColorTile(color, canvasProvider)
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // compiler reports error here
         tile!!
     }
 }
@@ -86,13 +86,8 @@ fun chessBoard(black: Color, white: Color): (CellKey, CanvasProvider) -> Canvas.
 
     return { _: CellKey, canvasProvider: CanvasProvider ->
         tile = tile ?: drawChessQuad(canvasProvider)
+        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // compiler reports error here
         tile!!
     }
 }
 
-fun random(): (CellKey, CanvasProvider) -> Canvas.Snapshot {
-    return { _: CellKey, canvasProvider: CanvasProvider ->
-        val color = Color(Random.nextInt(0, 256), Random.nextInt(0, 256), Random.nextInt(0, 256))
-        drawSolidColorTile(color, canvasProvider)
-    }
-}
