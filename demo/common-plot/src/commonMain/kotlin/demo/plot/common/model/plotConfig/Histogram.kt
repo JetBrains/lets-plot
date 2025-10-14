@@ -140,7 +140,6 @@ open class Histogram {
         }
 
         fun withBreaks(): MutableMap<String, Any> {
-            // TODO: Remove xlim when auto-calculation of xlim is fixed
             val spec = """
                 {
                   'kind': 'plot',
@@ -156,11 +155,7 @@ open class Histogram {
                       'breaks': [0, 3, 4],
                       'color': 'white'
                     }
-                  ],
-                  'coord': {
-                    'name': 'cartesian',
-                    'xlim': [-0.5, 4.5]
-                  }
+                  ]
                 }
             """.trimIndent()
 

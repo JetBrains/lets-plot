@@ -265,6 +265,10 @@ object Option {
 
     object Geom {
 
+        object Histogram {
+            const val BREAKS = "breaks"
+        }
+
         object Density {
             const val QUANTILE_LINES = "quantile_lines"
         }
