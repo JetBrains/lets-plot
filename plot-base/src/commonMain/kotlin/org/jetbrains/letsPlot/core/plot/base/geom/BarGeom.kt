@@ -26,7 +26,8 @@ open class BarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, visualRectByDataPoint(ctx))
+        val widthCalculator = getWidthCalculator(aesthetics, ctx)
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, visualRectByDataPoint(widthCalculator))
         val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
         val rectangles = mutableListOf<SvgNode>()
         if (coord.isLinear) {
@@ -48,12 +49,12 @@ open class BarGeom : GeomBase() {
             val dataPoints = aesthetics.dataPoints()
             val linesHelper = LinesHelper(pos, coord, ctx)
             linesHelper.setResamplingEnabled(!coord.isLinear)
-            val polygons = linesHelper.createRectPolygon(dataPoints, polygonByDataPoint(ctx))
+            val polygons = linesHelper.createRectPolygon(dataPoints, polygonByDataPoint(widthCalculator))
 
             BarAnnotation.build(
                 root,
                 polygons.map { (_, polygonData) -> polygonData },
-                ::rectByDataPoint,
+                { p -> rectByDataPoint(p, widthCalculator) },
                 linesHelper,
                 coord,
                 ctx
@@ -61,21 +62,39 @@ open class BarGeom : GeomBase() {
         }
     }
 
+    private fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
+        val useBinWidth = aesthetics.dataPoints().map(DataPointAesthetics::binwidth).distinct().size > 1
+        val resolution = ctx.getResolution(Aes.X)
+
+        fun widthCalculator(p: DataPointAesthetics): Double? {
+            val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+            val scale = if (useBinWidth) {
+                p.finiteOrNull(Aes.BINWIDTH) ?: return null
+            } else {
+                resolution
+            }
+            return scale * width
+        }
+
+        return ::widthCalculator
+    }
+
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun polygonByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> List<DoubleVector>? {
+        private fun polygonByDataPoint(widthCalculator: (DataPointAesthetics) -> Double?): (DataPointAesthetics) -> List<DoubleVector>? {
             fun factory(p: DataPointAesthetics): List<DoubleVector>? {
-                return rectByDataPoint(p, ctx)?.points
+                return rectByDataPoint(p, widthCalculator)?.points
             }
 
             return ::factory
         }
 
         // May return rect with negative height to make the tooltip snap to the bottom side.
+        // TODO: Use widthCalculator
         private fun hintRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val (x, y, width ) = p.finiteOrNull(Aes.X, Aes.Y, Aes.WIDTH) ?: return null
+                val (x, y, width) = p.finiteOrNull(Aes.X, Aes.Y, Aes.WIDTH) ?: return null
 
                 val w = width * ctx.getResolution(Aes.X)
                 val origin = DoubleVector(x - w / 2, y)
@@ -86,18 +105,18 @@ open class BarGeom : GeomBase() {
             return ::factory
         }
 
-        private fun visualRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun visualRectByDataPoint(widthCalculator: (DataPointAesthetics) -> Double?): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                return rectByDataPoint(p, ctx)
+                return rectByDataPoint(p, widthCalculator)
             }
 
             return ::factory
         }
 
-        private fun rectByDataPoint(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle? {
-            val (x, y, width) = p.finiteOrNull(Aes.X, Aes.Y, Aes.WIDTH) ?: return null
+        private fun rectByDataPoint(p: DataPointAesthetics, widthCalculator: (DataPointAesthetics) -> Double?): DoubleRectangle? {
+            val (x, y) = p.finiteOrNull(Aes.X, Aes.Y) ?: return null
 
-            val w = width * ctx.getResolution(Aes.X)
+            val w = widthCalculator(p) ?: return null
 
             val origin: DoubleVector
             val dimension: DoubleVector
