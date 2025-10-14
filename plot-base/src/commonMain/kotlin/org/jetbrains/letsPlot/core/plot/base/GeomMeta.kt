@@ -100,6 +100,7 @@ object GeomMeta {
 
             GeomKind.HISTOGRAM -> listOf(
                 Aes.X, Aes.Y,
+                Aes.BINWIDTH,
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
