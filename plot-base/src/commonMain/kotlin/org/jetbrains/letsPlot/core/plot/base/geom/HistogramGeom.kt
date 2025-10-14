@@ -20,7 +20,9 @@ class HistogramGeom : BarGeom(), WithWidth {
     }
 
     override fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
-        val useBinWidth = aesthetics.dataPoints().map(DataPointAesthetics::binwidth).distinct().size > 1
+        val useBinWidth = aesthetics.dataPoints()
+            .map(DataPointAesthetics::binwidth)
+            .firstOrNull { SeriesUtil.isFinite(it) && it!! > 0.0 && it != 1.0 } != null // There is finite nontrivial binwidth, otherwise we can use resolution
         val resolution = ctx.getResolution(Aes.X)
 
         fun widthCalculator(p: DataPointAesthetics): Double? {
@@ -42,7 +44,7 @@ class HistogramGeom : BarGeom(), WithWidth {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return if (this.breaks.any()) {
+        return if (breaks.isNotEmpty()) {
             DoubleSpan(breaks.first(), breaks.last())
         } else {
             DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, DimensionUnit.RESOLUTION)
