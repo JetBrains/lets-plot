@@ -18,7 +18,8 @@ open class Histogram {
             basic(),
             basicWithVLine(),
             withWeights(),
-            densityMapping()
+            densityMapping(),
+            withBreaks()
         )
     }
 
@@ -136,6 +137,34 @@ open class Histogram {
             val plotSpec1 = HashMap(parsePlotSpec(spec))
             plotSpec1["data"] = DATA
             return plotSpec1
+        }
+
+        fun withBreaks(): MutableMap<String, Any> {
+            // TODO: Remove xlim when auto-calculation of xlim is fixed
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'data': {
+                    'x': [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4]
+                  },
+                  'mapping': {
+                    'x': 'x'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'histogram',
+                      'breaks': [0, 3, 4],
+                      'color': 'white'
+                    }
+                  ],
+                  'coord': {
+                    'name': 'cartesian',
+                    'xlim': [-0.5, 4.5]
+                  }
+                }
+            """.trimIndent()
+
+            return HashMap(parsePlotSpec(spec))
         }
     }
 }
