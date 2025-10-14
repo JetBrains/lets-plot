@@ -124,7 +124,7 @@ object Stats {
         binWidth: Double? = null,
         center: Double? = null,
         boundary: Double? = null,
-        breaks: List<Double>? = null,
+        breaks: List<Double> = emptyList(),
         threshold: Double? = null
     ): BinStat {
         var xPosKind = BinStat.XPosKind.NONE

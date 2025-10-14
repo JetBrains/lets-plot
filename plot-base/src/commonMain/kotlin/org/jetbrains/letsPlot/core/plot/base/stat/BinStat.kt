@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -32,7 +33,7 @@ open class BinStat(
     binWidth: Double?,
     private val xPosKind: XPosKind,
     private val xPos: Double,
-    private val breaks: List<Double>?,
+    private val breaks: List<Double>,
     private val threshold: Double?,
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
@@ -53,11 +54,12 @@ open class BinStat(
         val statSumPct = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
+        val finiteSortedBreaks = breaks.filter { SeriesUtil.isFinite(it) }.sorted()
         when {
-            breaks != null -> {
+            finiteSortedBreaks.any() -> {
                 BinStatUtil.computeHistogramBins(
                     data.getNumeric(TransformVar.X),
-                    breaks,
+                    finiteSortedBreaks,
                     BinStatUtil.weightAtIndex(data)
                 )
             }

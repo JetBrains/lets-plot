@@ -15,7 +15,7 @@ import kotlin.test.Test
 
 class BinStatTest {
 
-    private fun applyBinStat(df: DataFrame, binCount: Int, breaks: List<Double>? = null): DataFrame {
+    private fun applyBinStat(df: DataFrame, binCount: Int, breaks: List<Double> = emptyList()): DataFrame {
         val stat = BinStat(
             binCount,
             null,
