@@ -34,7 +34,7 @@ open class BarGeom : GeomBase() {
             helper.createRectangles { _, svgNode, _ -> rectangles.add(svgNode) }
 
             // Snap tooltips to the proper side (e.g. bottom for negative values, right for coord_flip)
-            val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, hintRectByDataPoint(ctx))
+            val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, hintRectByDataPoint(widthCalculator))
             hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
         } else {
             helper.createNonLinearRectangles { aes, svgNode, polygon ->
@@ -91,12 +91,11 @@ open class BarGeom : GeomBase() {
         }
 
         // May return rect with negative height to make the tooltip snap to the bottom side.
-        // TODO: Use widthCalculator
-        private fun hintRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun hintRectByDataPoint(widthCalculator: (DataPointAesthetics) -> Double?): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val (x, y, width) = p.finiteOrNull(Aes.X, Aes.Y, Aes.WIDTH) ?: return null
+                val (x, y) = p.finiteOrNull(Aes.X, Aes.Y) ?: return null
 
-                val w = width * ctx.getResolution(Aes.X)
+                val w = widthCalculator(p) ?: return null
                 val origin = DoubleVector(x - w / 2, y)
                 val dimension = DoubleVector(w, 0.0)
                 return DoubleRectangle(origin, dimension)
