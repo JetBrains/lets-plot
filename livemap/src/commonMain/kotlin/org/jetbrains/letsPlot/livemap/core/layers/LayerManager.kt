@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.SingleCanvasControl
-import org.jetbrains.letsPlot.core.canvas.drawImage
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.layers.LayerKind.UI
 
@@ -30,7 +27,7 @@ abstract class LayerManager {
     protected fun add(kind: LayerKind, layer: CanvasLayer) {
         children.getOrPut(kind, ::ArrayList).add(layer)
         layers.clear()
-        layers.addAll(LayerKind.values().flatMap { children[it] ?: emptyList() })
+        layers.addAll(LayerKind.entries.flatMap { children[it] ?: emptyList() })
     }
 
     protected fun remove(layer: CanvasLayer) {
@@ -68,7 +65,13 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
 
         singleCanvasControl.context.clearRect(rect)
         layers.forEach {
-            myBackingStore[it]?.let(singleCanvasControl.context::drawImage)
+            myBackingStore[it]?.let { s ->
+                if (newScaling) {
+                    singleCanvasControl.context.drawImage(s, 0.0, 0.0, rect.width, rect.height)
+                } else {
+                    singleCanvasControl.context.drawImage(s)
+                }
+            }
         }
     }
 
@@ -78,7 +81,11 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
             else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
         }.let { p ->
             myBackingStore[layer]?.let { snapshot ->
-                singleCanvasControl.context.drawImage(snapshot, p)
+                if (newScaling) {
+                    singleCanvasControl.context.drawImage(snapshot, p.x, p.y, rect.width, rect.height)
+                } else {
+                    singleCanvasControl.context.drawImage(snapshot, p)
+                }
             }
         }
     }

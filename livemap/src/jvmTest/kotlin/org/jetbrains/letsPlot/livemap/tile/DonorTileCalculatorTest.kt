@@ -146,15 +146,15 @@ class DonorTileCalculatorTest {
 //    }
 
     private inner class CalculatorBuilder {
-        internal fun addTiles(vararg keys: String): CalculatorBuilder {
+        fun addTiles(vararg keys: String): CalculatorBuilder {
             for (key in keys) {
                 val snapshot = Mockito.mock(Canvas.Snapshot::class.java)
-                mySnapshotMap[key] = Tile.SnapshotTile(snapshot)
+                mySnapshotMap[key] = Tile.SnapshotTile(snapshot, 1.0)
             }
             return this
         }
 
-        internal fun calculateTile(vararg keys: String): CalculatorBuilder {
+        fun calculateTile(vararg keys: String): CalculatorBuilder {
             val calculator = build()
             for (key in keys) {
                 mySnapshotMap[key] = calculator.createDonorTile(CellKey(key))
@@ -162,7 +162,7 @@ class DonorTileCalculatorTest {
             return this
         }
 
-        internal fun build(): DonorTileCalculator {
+        fun build(): DonorTileCalculator {
             val tileMap = HashMap<CellKey, Tile>()
             mySnapshotMap.forEach { (key, tile) -> tileMap[CellKey(key)] = tile }
             return DonorTileCalculator(tileMap)
