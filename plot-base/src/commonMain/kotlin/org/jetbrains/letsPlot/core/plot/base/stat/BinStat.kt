@@ -52,6 +52,7 @@ open class BinStat(
         val statDensity = ArrayList<Double>()
         val statSumProp = ArrayList<Double>()
         val statSumPct = ArrayList<Double>()
+        val statBinWidth = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
         val finiteSortedBreaks = breaks.filter { SeriesUtil.isFinite(it) }.sorted()
@@ -78,6 +79,7 @@ open class BinStat(
             statDensity.addAll(binsData.density)
             statSumProp.addAll(binsData.sumProp)
             statSumPct.addAll(binsData.sumPct)
+            statBinWidth.addAll(binsData.binWidth)
         }
 
         if (threshold != null) {
@@ -91,6 +93,7 @@ open class BinStat(
                 statDensity[it] = Double.NaN
                 statSumProp[it] = Double.NaN
                 statSumPct[it] = Double.NaN
+                statBinWidth[it] = Double.NaN
             }
 
             // resolution hack - need at least two consecutive X values, or width of the bin will be incorrect
@@ -108,6 +111,7 @@ open class BinStat(
             .putNumeric(Stats.DENSITY, statDensity)
             .putNumeric(Stats.SUMPROP, statSumProp)
             .putNumeric(Stats.SUMPCT, statSumPct)
+            .putNumeric(Stats.BIN_WIDTH, statBinWidth)
             .build()
     }
 
@@ -120,7 +124,8 @@ open class BinStat(
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.COUNT
+            Aes.Y to Stats.COUNT,
+            Aes.BINWIDTH to Stats.BIN_WIDTH
         )
     }
 }
