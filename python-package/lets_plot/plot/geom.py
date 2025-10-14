@@ -906,6 +906,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    binwidth=None,
                    center=None,
                    boundary=None,
+                   breaks=None,
                    color_by=None, fill_by=None,
                    **other_args):
     """
@@ -1070,6 +1071,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  binwidth=binwidth,
                  center=center,
                  boundary=boundary,
+                 breaks=breaks,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
