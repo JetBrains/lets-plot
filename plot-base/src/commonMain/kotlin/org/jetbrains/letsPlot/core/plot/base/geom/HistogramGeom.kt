@@ -6,23 +6,15 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 
 class HistogramGeom : BarGeom(), WithWidth {
-    private var breaks: List<Double> = emptyList()
-
-    fun setBreaks(breaks: List<Double>) {
-        this.breaks = breaks.filter { SeriesUtil.isFinite(it) }.sorted().takeIf { it.size >= 2 } ?: emptyList()
-    }
+    var useBinWidth: Boolean = false
 
     override fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
-        val useBinWidth = aesthetics.dataPoints()
-            .map(DataPointAesthetics::binwidth)
-            .firstOrNull { SeriesUtil.isFinite(it) && it!! > 0.0 && it != 1.0 } != null // There is finite nontrivial binwidth, otherwise we can use resolution
         val resolution = ctx.getResolution(Aes.X)
 
         fun widthCalculator(p: DataPointAesthetics): Double? {
@@ -44,8 +36,8 @@ class HistogramGeom : BarGeom(), WithWidth {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return if (breaks.isNotEmpty()) {
-            DoubleSpan(breaks.first(), breaks.last())
+        return if (useBinWidth) {
+            DimensionsUtil.dimensionSpan(p, coordAes, Aes.BINWIDTH, resolution, DimensionUnit.IDENTITY)
         } else {
             DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, DimensionUnit.RESOLUTION)
         }

@@ -148,7 +148,8 @@ object PositionalScalesUtil {
                     it == Aes.HEIGHT ||
                     it == Aes.WIDTH ||
                     it == Aes.ANGLE ||
-                    it == Aes.RADIUS
+                    it == Aes.RADIUS ||
+                    it == Aes.BINWIDTH
         }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
