@@ -7,12 +7,14 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.commons.data.DataType.UNKNOWN
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil.byDataType
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_LAB_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.dataIndicesByTile
@@ -22,10 +24,8 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetWrap
 import org.jetbrains.letsPlot.core.spec.Option.Facet
 import org.jetbrains.letsPlot.core.spec.Option.Facet.FACETS_FILL_DIR
-import org.jetbrains.letsPlot.core.spec.Option.Facet.X_FORMAT
 import org.jetbrains.letsPlot.core.spec.Option.Facet.X_LABWIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Facet.X_ORDER
-import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_FORMAT
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_LABWIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
@@ -33,6 +33,7 @@ internal class FacetConfig(
     options: Map<String, Any>,
     private val expFormat: ExponentFormat,
     private val tz: TimeZone?,
+    private val dtypeByVarName: Map<String, DataType>,
 ) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
@@ -78,12 +79,30 @@ internal class FacetConfig(
         val yOrder = getOrderOption(Y_ORDER)
         val xLevels: List<Any> = reorderVarLevels(nameX, levelsX.toList(), xOrder)
         val yLevels: List<Any> = reorderVarLevels(nameY, levelsY.toList(), yOrder)
+        val expFormat = PlotAssembler.extractExponentFormat(expFormat)
+        val xFormatter = if (nameX == null) PlotFacets.NO_FORMATTER else {
+            createFormatter(
+                varName = nameX,
+                dataType = dtypeByVarName[nameX] ?: UNKNOWN,
+                providedFormat = getString(Facet.X_FORMAT),
+                expFormat = expFormat,
+                tz = tz
+            )
+        }
+        val yFormatter = if (nameY == null) PlotFacets.NO_FORMATTER else {
+            createFormatter(
+                varName = nameY,
+                dataType = dtypeByVarName[nameY] ?: UNKNOWN,
+                providedFormat = getString(Facet.Y_FORMAT),
+                expFormat = expFormat,
+                tz = tz
+            )
+        }
 
         return FacetGrid(
             nameX, nameY,
             xLevels, yLevels,
-            getFormatterOption(X_FORMAT),
-            getFormatterOption(Y_FORMAT),
+            xFormatter, yFormatter,
             scales,
             getLabWidthOption(X_LABWIDTH),
             getLabWidthOption(Y_LABWIDTH)
@@ -120,11 +139,27 @@ internal class FacetConfig(
         val facetOrdering = (orderOption + List(facets.size) { DEF_ORDER_DIR }).take(facets.size)
 
         // facet formatting
-        val formatterOption = getAsList(Facet.FACETS_FORMAT).map {
-            toFormatterVal(it)
+        val formatsProvided = (getAsListQQ(Facet.FACETS_FORMAT)?.map {
+            when (it) {
+                is String -> it
+                else -> null
+            }
+        } ?: emptyList())
+            .let {
+                // Pad with nulls to match the number of facet variables
+                it + List(facets.size) { null }.take(facets.size)
+            }
+
+        val expFormat = PlotAssembler.extractExponentFormat(expFormat)
+        val formatters = facets.zip(formatsProvided).map { (varName, providedFormat) ->
+            createFormatter(
+                varName = varName,
+                dataType = dtypeByVarName[varName] ?: UNKNOWN,
+                providedFormat = providedFormat,
+                expFormat = expFormat,
+                tz = tz
+            )
         }
-        // Num of formatters must be same as num of factes.
-        val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
 
         // Label length limit
         val labWidthOption = getAsList(Facet.FACETS_LABWIDTH).map { (it as? Number)?.toInt() ?: DEF_LAB_WIDTH }
@@ -184,24 +219,6 @@ internal class FacetConfig(
                 )
             }
         }
-    }
-
-    private fun toFormatterVal(optionVal: Any?): (Any) -> String {
-        return when (optionVal) {
-            null -> DEF_FORMATTER
-            else -> {
-                val fmt = StringFormat.forOneArg(
-                    optionVal.toString(),
-                    expFormat = PlotAssembler.extractExponentFormat(expFormat),
-                    tz = tz
-                )
-                return { value: Any -> fmt.format(value) }
-            }
-        }
-    }
-
-    private fun getFormatterOption(optionName: String): (Any) -> String {
-        return toFormatterVal(get(optionName))
     }
 
     private fun getLabWidthOption(optionName: String) = getIntegerDef(optionName, DEF_LAB_WIDTH)
@@ -286,6 +303,32 @@ internal class FacetConfig(
             }) {
                 dataFrames.joinToString(separator = "\n") {
                     it.undefinedVariableErrorMessage(varName)
+                }
+            }
+        }
+
+        fun createFormatter(
+            varName: String,
+            dataType: DataType,
+            providedFormat: String?,
+            expFormat: StringFormat.ExponentFormat,
+            tz: TimeZone?,
+        ): (Any) -> String {
+            return when (providedFormat) {
+                null -> {
+                    byDataType(dataType, expFormat, tz)
+                }
+
+                else -> {
+                    val sf = StringFormat.forOneArg(
+                        pattern = providedFormat,
+                        type = null, // ?
+                        formatFor = varName,
+                        expFormat = expFormat,
+                        tz = tz
+                    );
+
+                    { value: Any -> sf.format(value) }
                 }
             }
         }
