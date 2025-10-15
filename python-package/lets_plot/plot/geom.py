@@ -966,6 +966,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Specify x-value to align bin centers to.
     boundary : float
         Specify x-value to align bin boundary (i.e., point between bins) to.
+    breaks : list of float
+        Specify exact positions of bin boundaries.
+        Overrides ``bins``, ``binwidth``, ``center`` and ``boundary``.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1003,6 +1006,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
+    - binwidth : bin width.
 
     ----
 
