@@ -282,6 +282,8 @@ object BinStatUtil {
         var densityNormalizingFactor = 0.0
         for (i in 0 until breaks.size - 1) {
             val binWidth = (breaks[i + 1] - breaks[i])
+            require(binWidth != 0.0) { "Breaks should be distinct: $breaks" }
+            require(binWidth > 0) { "Breaks should be sorted in ascending order: $breaks" }
             binWidths.add(binWidth)
             x.add(breaks[i] + binWidth / 2.0)
             var count = 0.0
