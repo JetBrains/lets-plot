@@ -215,6 +215,44 @@ class BinStatUtilTest {
     }
 
     @Test
+    fun checkComputeHistogramBinsRequiresEnoughBreaks() {
+        val exception = assertFailsWith<IllegalArgumentException> {
+            computeHistogramBinsFor(
+                expectedCounts = listOf(0.0),
+                valuesX = listOf(1.0, 4.0),
+                breaks = listOf(0.0)
+            )
+        }
+        assertEquals("At least two breaks are required", exception.message)
+    }
+
+    @Test
+    fun checkComputeHistogramBinsRequiresDistinctBreaks() {
+        val breaks = listOf(0.0, 2.0, 2.0, 6.0)
+        val exception = assertFailsWith<IllegalArgumentException> {
+            computeHistogramBinsFor(
+                expectedCounts = listOf(2.0, 4.0),
+                valuesX = listOf(3.0, 1.0, 5.0, 1.0, 5.0, 4.0),
+                breaks = breaks
+            )
+        }
+        assertEquals("Breaks should be distinct: $breaks", exception.message)
+    }
+
+    @Test
+    fun checkComputeHistogramBinsRequiresOrderedBreaks() {
+        val breaks = listOf(0.0, 2.0, 6.0, 2.0)
+        val exception = assertFailsWith<IllegalArgumentException> {
+            computeHistogramBinsFor(
+                expectedCounts = listOf(2.0, 4.0),
+                valuesX = listOf(3.0, 1.0, 5.0, 1.0, 5.0, 4.0),
+                breaks = breaks
+            )
+        }
+        assertEquals("Breaks should be sorted in ascending order: $breaks", exception.message)
+    }
+
+    @Test
     fun checkComputeHistogramStatSeries() {
         val valuesX = listOf(-0.5, 0.0, 0.0, 1.5)
         val data = DataFrame.Builder()
