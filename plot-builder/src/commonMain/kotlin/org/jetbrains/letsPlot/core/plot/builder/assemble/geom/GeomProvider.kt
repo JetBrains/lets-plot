@@ -63,12 +63,11 @@ class GeomProvider internal constructor(
             ) { BarGeom() }
         }
 
-        fun histogram(supplier: (Context) -> Geom): GeomProvider {
+        fun histogram(): GeomProvider {
             return GeomProvider(
                 GeomKind.HISTOGRAM,
-                HistogramGeom.HANDLES_GROUPS,
-                supplier
-            )
+                HistogramGeom.HANDLES_GROUPS
+            ) { HistogramGeom() }
         }
 
         fun dotplot(supplier: (Context) -> Geom): GeomProvider {
