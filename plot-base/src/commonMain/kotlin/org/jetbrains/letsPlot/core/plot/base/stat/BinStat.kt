@@ -55,12 +55,12 @@ open class BinStat(
         val statBinWidth = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
-        val finiteSortedBreaks = breaks.filter { SeriesUtil.isFinite(it) }.sorted()
+        val filteredBreaks = breaks.filter { SeriesUtil.isFinite(it) }
         when {
-            finiteSortedBreaks.any() -> {
+            filteredBreaks.isNotEmpty() -> {
                 BinStatUtil.computeHistogramBins(
                     data.getNumeric(TransformVar.X),
-                    finiteSortedBreaks,
+                    filteredBreaks,
                     BinStatUtil.weightAtIndex(data)
                 )
             }
