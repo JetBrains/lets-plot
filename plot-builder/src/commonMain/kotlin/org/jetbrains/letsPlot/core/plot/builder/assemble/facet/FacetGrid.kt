@@ -17,8 +17,8 @@ class FacetGrid constructor(
     private val yVar: String?,
     private val xLevels: List<Any>,
     private val yLevels: List<Any>,
-    private val xFormatter: (Any) -> String = DEF_FORMATTER,
-    private val yFormatter: (Any) -> String = DEF_FORMATTER,
+    private val xFormatter: (Any) -> String,
+    private val yFormatter: (Any) -> String,
     scales: FacetScales = FacetScales.FIXED,
     private val xLabWidth: Int = DEF_LAB_WIDTH,
     private val yLabWidth: Int = DEF_LAB_WIDTH

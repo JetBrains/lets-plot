@@ -115,7 +115,15 @@ abstract class PlotConfig(
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
-            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat, tz = tz)
+            val dtypeByVarName: Map<String, DataType> = layerConfigs
+                .flatMap { it.dtypeByVarName.entries }
+                .associate { it.key to it.value }
+            val facetConfig = FacetConfig(
+                facetOptions,
+                expFormat = theme.exponentFormat,
+                tz = tz,
+                dtypeByVarName = dtypeByVarName
+            )
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {
                 dataByLayer.add(layerConfig.combinedData)
@@ -241,7 +249,7 @@ abstract class PlotConfig(
                 .mapValues { (_, bindings) -> bindings.singleOrNull { binding -> aes == binding.aes }?.variable?.name }
                 .filterNotNullValues()
 
-            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypesByVarName[varName] }
+            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypeByVarName[varName] }
 
             // Multiple layers with different data types for the same aes.
             // Don't use any (e.g., INTEGER) - may crash if another layer uses a different incompatible data type.

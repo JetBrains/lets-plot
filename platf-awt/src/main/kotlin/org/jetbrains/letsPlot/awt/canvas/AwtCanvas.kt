@@ -24,12 +24,15 @@ class AwtCanvas private constructor(
 
     companion object {
         fun create(size: Vector, pixelDensity: Double): AwtCanvas {
-            println("Create AwtCanvas: size= $size, pixelDensity= $pixelDensity")
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s)
+            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s).also {
+                if (pixelDensity != 1.0) {
+                    it.context2d.scale(pixelDensity, pixelDensity)
+                }
+            }
         }
     }
 

@@ -13,7 +13,8 @@ import org.jetbrains.letsPlot.livemap.mapengine.viewport.Viewport
 
 open class MapRenderContext internal constructor(
     open val viewport: Viewport,
-    val canvasProvider: CanvasProvider
+    val canvasProvider: CanvasProvider,
+    val pixelDensity: Double
 ) {
     fun draw(context: Context2d, origin: DoubleVector, renderObject: RenderObject) {
         draw(context, origin.x, origin.y, renderObject)
