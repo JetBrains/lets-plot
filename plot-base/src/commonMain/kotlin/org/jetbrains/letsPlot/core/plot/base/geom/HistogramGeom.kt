@@ -12,11 +12,19 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 
 class HistogramGeom : BarGeom(), WithWidth {
+    var useBinWidth: Boolean = false
+
     override fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
+        val resolution = ctx.getResolution(Aes.X)
+
         fun widthCalculator(p: DataPointAesthetics): Double? {
             val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-            val binWidth = p.finiteOrNull(Aes.BINWIDTH) ?: return null
-            return binWidth * width
+            val scale = if (useBinWidth) {
+                p.finiteOrNull(Aes.BINWIDTH) ?: return null
+            } else {
+                resolution
+            }
+            return scale * width
         }
 
         return ::widthCalculator
@@ -28,8 +36,12 @@ class HistogramGeom : BarGeom(), WithWidth {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-        return DimensionsUtil.dimensionSpan(p, coordAes, Aes.BINWIDTH, width, DimensionUnit.RESOLUTION)
+        return if (useBinWidth) {
+            val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+            DimensionsUtil.dimensionSpan(p, coordAes, Aes.BINWIDTH, width, DimensionUnit.RESOLUTION)
+        } else {
+            DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, DimensionUnit.RESOLUTION)
+        }
     }
 
     companion object {
