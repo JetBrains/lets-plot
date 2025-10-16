@@ -37,7 +37,8 @@ class HistogramGeom : BarGeom(), WithWidth {
         isDiscrete: Boolean
     ): DoubleSpan? {
         return if (useBinWidth) {
-            DimensionsUtil.dimensionSpan(p, coordAes, Aes.BINWIDTH, resolution, DimensionUnit.IDENTITY)
+            val width = p.finiteOrNull(Aes.WIDTH) ?: return null
+            DimensionsUtil.dimensionSpan(p, coordAes, Aes.BINWIDTH, width, DimensionUnit.RESOLUTION)
         } else {
             DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, DimensionUnit.RESOLUTION)
         }
