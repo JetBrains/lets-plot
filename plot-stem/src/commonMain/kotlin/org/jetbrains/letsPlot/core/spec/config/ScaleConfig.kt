@@ -335,20 +335,19 @@ class ScaleConfig<T> constructor(
             naValue: T,
             aopConversion: AesOptionConversion
         ): MapperProvider<T> {
-            // There is an option value converter for every AES (which can be used as discrete identity mapper)
-            val discreteMapperProvider =
-                IdentityDiscreteMapperProvider(aopConversion.getConverter(aes))
+            // There is an option value converter for every AES (which can be used as a discrete identity mapper)
+            val discreteMapperProvider = IdentityDiscreteMapperProvider(aopConversion.getConverter(aes))
 
             // For some AES there is also a continuous identity mapper
-            if (TypedContinuousIdentityMappers.contain(aes)) {
+            return if (TypedContinuousIdentityMappers.contain(aes)) {
                 val continuousMapper = TypedContinuousIdentityMappers[aes]
-                return IdentityMapperProvider(
-                    discreteMapperProvider,
-                    ScaleMapper.wrap(continuousMapper, naValue)
+                IdentityMapperProvider(
+                    discreteMapperProvider = discreteMapperProvider,
+                    continuousMapper = ScaleMapper.wrap(continuousMapper, naValue)
                 )
+            } else {
+                discreteMapperProvider
             }
-
-            return discreteMapperProvider
         }
     }
 }
