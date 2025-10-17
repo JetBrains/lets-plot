@@ -12,10 +12,10 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import kotlin.math.abs
 
 class YDotplotGeom : DotplotGeom(), WithHeight {
@@ -167,7 +167,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
             coordAes,
             sizeAes = Aes.BINWIDTH,
             resolution,
-            DimensionUnit.RESOLUTION
+            DimensionUnit.IDENTITY
         )
     }
 
