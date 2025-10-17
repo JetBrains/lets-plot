@@ -29,7 +29,7 @@ class StepGeom : LineGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = GeomUtil.ordered_X(aesthetics.dataPoints())
+        val dataPoints = dataPoints(aesthetics)
         val linesHelper = LinesHelper(pos, coord, ctx)
 
         val pathDataList = linesHelper.createPaths(dataPoints, toLocationFor(overallAesBounds(ctx)))
