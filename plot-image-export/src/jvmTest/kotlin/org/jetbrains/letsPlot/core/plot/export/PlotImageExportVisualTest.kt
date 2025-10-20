@@ -54,6 +54,41 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     }
 
     @Test
+    fun `italic from theme`() {
+        // See the issue https://github.com/JetBrains/lets-plot/issues/1391
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ "foo", "bar", "baz" ],
+            |    "y": [ 1.0, 2.0, 3.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "str", "column": "x" },
+            |      { "type": "int", "column": "y" }
+            |    ]
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "y": "y" }
+            |    }
+            |  ],
+            |  "theme": {
+            |    "axis_title_x": { "face": "italic", "blank": false },
+            |    "axis_title_y": { "face": "italic", "blank": false },
+            |    "axis_text_x": { "face": "bold_italic", "blank": false },
+            |    "axis_text_y": { "face": "bold_italic", "blank": false }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        assertPlot("plot_italic_from_theme_test.png", plotSpec)
+    }
+
+    @Test
     fun `latex formula`() {
         val spec = """
             |{
