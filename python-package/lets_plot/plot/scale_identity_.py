@@ -304,9 +304,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limit
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
-                          format=format,
-                          #
-                          solid=None)
+                          format=format)
 
 
 def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
