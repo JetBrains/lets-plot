@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.parsePlotSpec
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.junit.Test
 
@@ -56,7 +56,7 @@ class SeriesAnnotationTypeTest {
 
         PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
-            rgbEncoder = UnsupportedRGBEncoder,
+            rgbEncoder = RGBEncoder.DEFAULT,
             useCssPixelatedImageRendering = false
         ).let { svg ->
             assertThat(svg).contains("<tspan>54,321.1</tspan>")
@@ -102,7 +102,7 @@ class SeriesAnnotationTypeTest {
 
         PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
-            rgbEncoder = UnsupportedRGBEncoder,
+            rgbEncoder = RGBEncoder.DEFAULT,
             useCssPixelatedImageRendering = false
         ).let { svg ->
             assertThat(svg).contains("<tspan>54,321.1</tspan>")
