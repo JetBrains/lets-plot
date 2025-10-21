@@ -48,3 +48,14 @@ fun <T> Collection<T?>.splitByNull(): List<List<T>> {
 
 fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
     mapIndexedNotNull{ i, elem -> i.takeIf{ predicate(elem) } }
+
+fun <T : Comparable<T>> List<T?>.predecessorIndexOrNull(element: T?): Int? =
+    binarySearch(element).let { i ->
+        when {
+            i > 0 -> i - 1 // element is in the list, return predecessor index
+            i == 0 -> 0 // element is first in the list, return its index
+            i == -1 -> null // element is less than the first element, no predecessor
+            i <= -(size + 1) -> null // element is greater than the last element, no predecessor
+            else -> -i - 2 // element is between two elements, return predecessor index
+        }
+    }
