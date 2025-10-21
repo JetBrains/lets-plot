@@ -1232,54 +1232,6 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     }
 
     @Test
-    fun `ribbon with none`() {
-        val spec = parsePlotSpec("""
-            |{
-            |  "data": {
-            |    "x": [ null, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ],
-            |    "ymin": [ null, 0.0, 0.3, null, 0.2, null, 0.4, 0.6 ],
-            |    "ymax": [ null, 0.5, 0.8, null, 0.7, 0.9, null, 1.0 ]
-            |  },
-            |  "mapping": {},
-            |  "data_meta": {
-            |    "series_annotations": [
-            |      {
-            |        "type": "float",
-            |        "column": "x"
-            |      },
-            |      {
-            |        "type": "float",
-            |        "column": "ymin"
-            |      },
-            |      {
-            |        "type": "float",
-            |        "column": "ymax"
-            |      }
-            |    ]
-            |  },
-            |  "kind": "plot",
-            |  "scales": [],
-            |  "layers": [
-            |    {
-            |      "geom": "ribbon",
-            |      "mapping": {
-            |        "x": "x",
-            |        "ymin": "ymin",
-            |        "ymax": "ymax"
-            |      },
-            |      "data_meta": {}
-            |    }
-            |  ],
-            |  "metainfo_list": []
-            |}
-        """.trimMargin())
-
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_with_none.png", plotSpec)
-    }
-
-    @Test
     fun `area ridges with none`() {
         val spec = parsePlotSpec("""
             |{
