@@ -7,27 +7,19 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 
 class HistogramGeom : BarGeom(), WithWidth {
-    var useBinWidth: Boolean = false
+    private var breaks: List<Double> = emptyList()
 
-    override fun getWidthCalculator(aesthetics: Aesthetics, ctx: GeomContext): (DataPointAesthetics) -> Double? {
+    fun setBreaks(breaks: List<Double>) {
+        this.breaks = breaks.filter(Double::isFinite)
+    }
+
+    override fun getBinSpanCalculator(ctx: GeomContext): (DataPointAesthetics) -> DoubleSpan? {
         val resolution = ctx.getResolution(Aes.X)
-
-        fun widthCalculator(p: DataPointAesthetics): Double? {
-            val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-            val scale = if (useBinWidth) {
-                p.finiteOrNull(Aes.BINWIDTH) ?: return null
-            } else {
-                resolution
-            }
-            return scale * width
-        }
-
-        return ::widthCalculator
+        return { p -> binSpan(p, breaks, resolution) }
     }
 
     override fun widthSpan(
@@ -36,15 +28,23 @@ class HistogramGeom : BarGeom(), WithWidth {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return if (useBinWidth) {
-            val width = p.finiteOrNull(Aes.WIDTH) ?: return null
-            DimensionsUtil.dimensionSpan(p, coordAes, Aes.BINWIDTH, width, DimensionUnit.RESOLUTION)
-        } else {
-            DimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution, DimensionUnit.RESOLUTION)
-        }
+        return binSpan(p, breaks, resolution)
     }
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        fun binSpan(p: DataPointAesthetics, breaks: List<Double>, resolution: Double): DoubleSpan? {
+            val (x, width) = p.finiteOrNull(Aes.X, Aes.WIDTH) ?: return null
+            val span = if (breaks.isEmpty()) {
+                DoubleSpan(x - resolution / 2.0, x + resolution / 2.0)
+            } else {
+                val breakIndex = (breaks.size - 2 downTo 0).firstOrNull { i -> x > breaks[i] } ?: 0
+                val lowerEnd = breaks.getOrNull(breakIndex) ?: return null
+                val upperEnd = breaks.getOrNull(breakIndex + 1) ?: return null
+                DoubleSpan(lowerEnd, upperEnd)
+            }
+            return span.multiplied(width)
+        }
     }
 }

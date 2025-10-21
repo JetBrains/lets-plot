@@ -74,6 +74,12 @@ class DoubleSpan(
         return DoubleSpan(lowerEnd - expand, upperEnd + expand)
     }
 
+    fun multiplied(factor: Double): DoubleSpan {
+        require(factor >= 0.0) { "The factor must be non-negative: factor=$factor" }
+        val center = (lowerEnd + upperEnd) / 2.0
+        return DoubleSpan(center - factor * length / 2.0, center + factor * length / 2.0)
+    }
+
     fun toPair(): Pair<Double, Double> {
         return lowerEnd to upperEnd
     }

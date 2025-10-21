@@ -278,7 +278,6 @@ object GeomInteractionUtil {
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
-            GeomKind.HISTOGRAM -> listOf(Aes.BINWIDTH)
             GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.HEX -> listOf(Aes.WIDTH, Aes.HEIGHT)

@@ -167,7 +167,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
             coordAes,
             sizeAes = Aes.BINWIDTH,
             resolution,
-            DimensionUnit.IDENTITY
+            DimensionUnit.RESOLUTION
         )
     }
 

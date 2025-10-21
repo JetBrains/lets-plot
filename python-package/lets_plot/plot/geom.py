@@ -995,7 +995,6 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - ..density.. : normalized number of points so that plot area is 1.
     - ..sumprop.. : normalized number of points so that sum of y-values is 1.
     - ..sumpct.. : normalized number of points so that sum of y-values is 100.
-    - ..binwidth.. : width of each bin.
 
     ``geom_histogram()`` understands the following aesthetics mappings:
 
@@ -1006,7 +1005,6 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - fill : fill color. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
-    - binwidth : bin width.
 
     ----
 

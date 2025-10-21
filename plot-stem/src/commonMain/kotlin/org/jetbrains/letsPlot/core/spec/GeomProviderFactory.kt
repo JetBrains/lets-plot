@@ -66,9 +66,9 @@ internal object GeomProviderFactory {
         return when (geomKind) {
             GeomKind.HISTOGRAM -> GeomProvider.histogram { ctx ->
                 val geom = HistogramGeom()
-                val breaksAreDefined = layerConfig.hasOwn(Option.Geom.Histogram.BREAKS)
-                val binWidthIsMapped = ctx.hasBinding(Aes.BINWIDTH) || ctx.hasConstant(Aes.BINWIDTH)
-                geom.useBinWidth = breaksAreDefined || binWidthIsMapped
+                if (layerConfig.hasOwn(Option.Geom.Histogram.BREAKS)) {
+                    geom.setBreaks(layerConfig.getDoubleList(Option.Geom.Histogram.BREAKS))
+                }
                 geom
             }
 

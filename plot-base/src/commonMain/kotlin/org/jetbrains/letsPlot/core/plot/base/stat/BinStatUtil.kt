@@ -70,19 +70,7 @@ object BinStatUtil {
         xPos: Double,
         binOptions: BinOptions
     ): HistBinsData {
-        val (binCount, binWidth, startX) = if (rangeX.length > 0) {
-            getBinningParameters(rangeX, xPosKind, xPos, binOptions)
-        } else {
-            // Special case: there is no variation in x (all values are the same),
-            // so getBinningParameters() returns binWidth=0, but we know that we need one bin with some width;
-            // we can use the binWidth from the options or just set it to 1.0
-            val binWidth = if (binOptions.hasBinWidth()) {
-                binOptions.binWidth!!
-            } else {
-                1.0
-            }
-            Triple(1, binWidth, rangeX.lowerEnd - binWidth / 2)
-        }
+        val (binCount, binWidth, startX) = getBinningParameters(rangeX, xPosKind, xPos, binOptions)
 
         // density plot area should be == 1
         val densityNormalizingFactor = if (binWidth > 0)
