@@ -178,15 +178,16 @@ def theme(*,
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
         Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify legend title parameters, inherited from ``title``.
     legend_position : {'none', 'left', 'right', 'bottom', 'top'} or list
-        The position of legends. To remove the plot legend, use the 'none' value.
-        If parameter is a list, then it should be a two-element numeric vector,
-        specifying the position inside the plotting area,
-        each value of float type between 0 and 1.
-    legend_justification : str or list
-        Anchor point for positioning legend. If parameter is a list, then
-        it should be a two-element numeric vector. The pair [0, 0] corresponds to the
-        bottom left corner, the pair [1, 1] corresponds to the top right.
-        For string parameter the possible value are: 'center', 'left', 'right', 'top', and 'bottom'.
+        The position of legends.
+        To remove the plot legend, use the 'none' value.
+        If parameter is a list, then it should be a two-element numeric vector [x, y], where each value is between 0 and 1.
+        These coordinates position the legend inside the plotting area, where [0, 0] is the bottom left corner and [1, 1] is the top right corner.
+        The anchor point of the legend box can be controlled with `legend_justification`.
+    legend_justification : {'center', 'left', 'right', 'top', 'bottom'} or list
+        Anchor point of the legend box for positioning.
+        Determines which point of the legend box is placed at the coordinates specified by `legend_position`.
+        If parameter is a list, then it should be a two-element numeric vector [x, y], where each value is between 0 and 1.
+        The pair [0, 0] corresponds to the bottom left corner of the legend box, and [1, 1] corresponds to the top right corner.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
     legend_margin : number or list of numbers

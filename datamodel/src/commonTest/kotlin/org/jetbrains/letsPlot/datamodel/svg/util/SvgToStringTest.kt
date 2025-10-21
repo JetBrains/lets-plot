@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.util
 
-import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +24,7 @@ class SvgToStringTest {
             )
         }
 
-        val svgString = SvgToString(UnsupportedRGBEncoder).render(svg)
+        val svgString = SvgToString().render(svg)
 
         // There should be no spaces between <tspan> elements
         assertEquals(
@@ -78,7 +77,7 @@ class SvgToStringTest {
             )
         }
 
-        val svgString = SvgToString(UnsupportedRGBEncoder).render(svg)
+        val svgString = SvgToString().render(svg)
 
         // There should be no spaces between <tspan> elements
         assertTrue(svgString.contains("<tspan>1</tspan><tspan>2</tspan><tspan>3</tspan>"))

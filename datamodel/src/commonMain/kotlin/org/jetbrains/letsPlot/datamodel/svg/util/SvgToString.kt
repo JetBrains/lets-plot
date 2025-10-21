@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_PREFIX
 
 class SvgToString(
-    private val rgbEncoder: RGBEncoder,
+    private val rgbEncoder: RGBEncoder = RGBEncoder.DEFAULT,
     private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder
 ) {
     fun render(svg: SvgSvgElement): String {

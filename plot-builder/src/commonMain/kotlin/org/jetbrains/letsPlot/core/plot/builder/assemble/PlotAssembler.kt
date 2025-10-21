@@ -52,7 +52,6 @@ class PlotAssembler constructor(
     private val plotSubtitle = subtitle?.takeIf { theme.plot().showSubtitle() }
     private val plotCaption = caption?.takeIf { theme.plot().showCaption() }
 
-    private var legendsEnabled = true
     private var interactionsEnabled = true
 
     private val frameProviderByTile: List<FrameOfReferenceProvider>
@@ -68,15 +67,18 @@ class PlotAssembler constructor(
             scaleFactor
         )
 
-        val legendBoxInfos: List<LegendBoxInfo> = when {
-            legendsEnabled -> PlotAssemblerUtil.createLegends(
-                plotContext,
-                geomTiles,
-                geomTiles.mappersNP,
-                guideOptionsMap,
-                theme.legend(),
-                theme.panel()
-            )
+        val legendTheme = theme.legend()
+        val legendBoxInfos: List<LegendBoxInfo> = when (legendTheme.position().isHidden) {
+            false -> {
+                PlotAssemblerUtil.createLegends(
+                    plotContext,
+                    geomTiles,
+                    geomTiles.mappersNP,
+                    guideOptionsMap,
+                    legendTheme,
+                    theme.panel()
+                )
+            }
 
             else -> emptyList()
         }
@@ -167,10 +169,6 @@ class PlotAssembler constructor(
             styleSheet = styleSheet,
             plotContext = plotContext
         )
-    }
-
-    fun disableLegends() {
-        legendsEnabled = false
     }
 
     fun disableInteractions() {

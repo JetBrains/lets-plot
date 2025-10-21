@@ -2,7 +2,6 @@ package org.jetbrains.letsPlot.core.util
 
 import demoAndTestShared.parsePlotSpec
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
@@ -37,7 +36,7 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpecWithGgSize,
             plotSize = null,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            svgToString = SvgToString()
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
@@ -58,7 +57,7 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpecWithGgSize,
             plotSize = DoubleVector(400, 200),
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            svgToString = SvgToString()
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
@@ -72,7 +71,7 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = null,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            svgToString = SvgToString()
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
@@ -86,7 +85,7 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(500, 300),
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            svgToString = SvgToString()
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
@@ -101,7 +100,7 @@ class PlotSvgExportTest {
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
             sizeUnit = SizeUnit.IN,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            svgToString = SvgToString()
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element
@@ -116,7 +115,7 @@ class PlotSvgExportTest {
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
             sizeUnit = null,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            svgToString = SvgToString()
         ) { _ -> }
 
         val root = Xml.parse(svg) as XmlNode.Element

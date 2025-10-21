@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import org.jetbrains.letsPlot.awt.util.RGBEncoderAwt
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
@@ -27,7 +27,7 @@ object PlotSvgExport {
         return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
-            rgbEncoder = RGBEncoderAwt(),
+            rgbEncoder = RGBEncoder.DEFAULT,
             useCssPixelatedImageRendering = useCssPixelatedImageRendering,
             sizeUnit = sizeUnit
         )

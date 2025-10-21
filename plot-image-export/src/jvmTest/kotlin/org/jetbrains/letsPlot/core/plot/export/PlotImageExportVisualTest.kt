@@ -54,6 +54,41 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     }
 
     @Test
+    fun `italic from theme`() {
+        // See the issue https://github.com/JetBrains/lets-plot/issues/1391
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ "foo", "bar", "baz" ],
+            |    "y": [ 1.0, 2.0, 3.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "str", "column": "x" },
+            |      { "type": "int", "column": "y" }
+            |    ]
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "y": "y" }
+            |    }
+            |  ],
+            |  "theme": {
+            |    "axis_title_x": { "face": "italic", "blank": false },
+            |    "axis_title_y": { "face": "italic", "blank": false },
+            |    "axis_text_x": { "face": "bold_italic", "blank": false },
+            |    "axis_text_y": { "face": "bold_italic", "blank": false }
+            |  }
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        assertPlot("plot_italic_from_theme_test.png", plotSpec)
+    }
+
+    @Test
     fun `latex formula`() {
         val spec = """
             |{
@@ -707,41 +742,164 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     fun `path with none`() {
         val spec = parsePlotSpec("""
             |{
-            |  "data": {
-            |    "x": [ null, null, 0.0, null, 1.0, 2.0, null, 4.0, 5.0, 6.0 ],
-            |    "y": [ null, 0.0, 0.5, 0.0, 0.0, 1.0, null, null, 0.5, 1.0 ],
-            |    "c": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 ]
+            |  "kind": "subplots",
+            |  "layout": {
+            |    "ncol": 3.0,
+            |    "nrow": 1.0,
+            |    "name": "grid"
             |  },
-            |  "mapping": {
-            |    "x": "x",
-            |    "y": "y"
-            |  },
-            |  "data_meta": {
-            |    "series_annotations": [
-            |      {
-            |        "type": "float",
-            |        "column": "x"
-            |      },
-            |      {
-            |        "type": "float",
-            |        "column": "y"
-            |      },
-            |      {
-            |        "type": "int",
-            |        "column": "c"
-            |      }
-            |    ]
-            |  },
-            |  "kind": "plot",
-            |  "scales": [],
-            |  "layers": [
+            |  "figures": [
             |    {
-            |      "geom": "line",
-            |      "mapping": {},
-            |      "data_meta": {}
+            |      "data": {
+            |        "x": [ 0.0, 4.0, 1.0, 5.0, 2.0, 6.0, 3.0, 7.0 ],
+            |        "y": [ 4.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0 ],                    
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_path"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "path",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {                    
+            |        "y": [ 4.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0 ],
+            |        "x_na": [ null, 4.0, 1.0, 5.0, 2.0, null, 3.0, 7.0 ],
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x_na",
+            |        "y": "y",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_path NA in x"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "path",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 0.0, 4.0, 1.0, 5.0, 2.0, 6.0, 3.0, 7.0 ],
+            |        "y_na": [ null, 4.0, 3.0, 3.0, 2.0, null, 1.0, 1.0 ],
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y_na",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_path NA in y"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "path",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
             |    }
-            |  ],
-            |  "metainfo_list": []
+            |  ]
             |}
         """.trimMargin())
 
@@ -786,7 +944,7 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  "scales": [],
             |  "layers": [
             |    {
-            |      "geom": "line",
+            |      "geom": "path",
             |      "mapping": {},
             |      "data_meta": {}
             |    }
@@ -907,41 +1065,164 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     fun `line with none`() {
         val spec = parsePlotSpec("""
             |{
-            |  "data": {
-            |    "x": [ null, null, 0.0, null, 1.0, 2.0, null, 4.0, 5.0, 6.0 ],
-            |    "y": [ null, 0.0, 0.5, 0.0, 0.0, 1.0, null, null, 0.5, 1.0 ],
-            |    "c": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 ]
+            |  "kind": "subplots",
+            |  "layout": {
+            |    "ncol": 3.0,
+            |    "nrow": 1.0,
+            |    "name": "grid"
             |  },
-            |  "mapping": {
-            |    "x": "x",
-            |    "y": "y"
-            |  },
-            |  "data_meta": {
-            |    "series_annotations": [
-            |      {
-            |        "type": "float",
-            |        "column": "x"
-            |      },
-            |      {
-            |        "type": "float",
-            |        "column": "y"
-            |      },
-            |      {
-            |        "type": "int",
-            |        "column": "c"
-            |      }
-            |    ]
-            |  },
-            |  "kind": "plot",
-            |  "scales": [],
-            |  "layers": [
+            |  "figures": [
             |    {
-            |      "geom": "line",
-            |      "mapping": {},
-            |      "data_meta": {}
+            |      "data": {
+            |        "x": [ 0.0, 4.0, 1.0, 5.0, 2.0, 6.0, 3.0, 7.0 ],
+            |        "y": [ 4.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0 ],                    
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_line"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "line",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {                    
+            |        "y": [ 4.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0 ],
+            |        "x_na": [ null, 4.0, 1.0, 5.0, 2.0, null, 3.0, 7.0 ],
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x_na",
+            |        "y": "y",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_line NA in x"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "line",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 0.0, 4.0, 1.0, 5.0, 2.0, 6.0, 3.0, 7.0 ],
+            |        "y_na": [ null, 4.0, 3.0, 3.0, 2.0, null, 1.0, 1.0 ],
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y_na",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_line NA in y"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "line",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
             |    }
-            |  ],
-            |  "metainfo_list": []
+            |  ]
             |}
         """.trimMargin())
 
@@ -1138,52 +1419,173 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     }
 
     @Test
-    fun `variadic step with none`() {
+    fun `step with none`() {
         val spec = parsePlotSpec("""
             |{
-            |  "data": {
-            |    "x": [ null, 0.0, 1.0, null, 2.0, 3.0, 4.0, null, 5.0, 6.0 ],
-            |    "y": [ null, 0.0, 1.0, null, null, 0.6, null, 0.9, 0.9, 1.0 ],
-            |    "c": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 ]
+            |  "kind": "subplots",
+            |  "layout": {
+            |    "ncol": 3.0,
+            |    "nrow": 1.0,
+            |    "name": "grid"
             |  },
-            |  "mapping": {
-            |    "x": "x",
-            |    "y": "y",
-            |    "color": "c"
-            |  },
-            |  "data_meta": {
-            |    "series_annotations": [
-            |      {
-            |        "type": "int",
-            |        "column": "x"
-            |      },
-            |      {
-            |        "type": "float",
-            |        "column": "y"
-            |      },
-            |      {
-            |        "type": "int",
-            |        "column": "c"
-            |      }
-            |    ]
-            |  },
-            |  "kind": "plot",
-            |  "scales": [],
-            |  "layers": [
+            |  "figures": [
             |    {
-            |      "geom": "step",
-            |      "mapping": {},
-            |      "data_meta": {},
-            |      "size": 3.0
+            |      "data": {
+            |        "x": [ 0.0, 4.0, 1.0, 5.0, 2.0, 6.0, 3.0, 7.0 ],
+            |        "y": [ 4.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0 ],                    
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_step"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "step",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {                    
+            |        "y": [ 4.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0 ],
+            |        "x_na": [ null, 4.0, 1.0, 5.0, 2.0, null, 3.0, 7.0 ],
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x_na",
+            |        "y": "y",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_step NA in x"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "step",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 0.0, 4.0, 1.0, 5.0, 2.0, 6.0, 3.0, 7.0 ],
+            |        "y_na": [ null, 4.0, 3.0, 3.0, 2.0, null, 1.0, 1.0 ],
+            |        "c": [ "a", "a", "a", "a", "b", "b", "b", "b" ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y_na",
+            |        "color": "c"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "x_na"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y_na"
+            |          },
+            |          {
+            |            "type": "str",
+            |            "column": "c"
+            |          }
+            |        ]
+            |      },
+            |      "ggtitle": {
+            |        "text": "geom_step NA in y"
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "step",
+            |          "mapping": {},
+            |          "data_meta": {},
+            |          "linewidth": 1.0
+            |        }
+            |      ],
+            |      "metainfo_list": []
             |    }
-            |  ],
-            |  "metainfo_list": []
+            |  ]
             |}
         """.trimMargin())
 
         val plotSpec = spec.themeTextNotoSans()
 
-        assertPlot("variadic_step_with_none.png", plotSpec)
+        assertPlot("step_with_none.png", plotSpec)
     }
 
     @Test

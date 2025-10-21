@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.nat.util
 
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
-import org.jetbrains.letsPlot.nat.encoding.RGBEncoderNative
 
 
 actual object PlotSvgExportNative {
@@ -28,7 +28,7 @@ actual object PlotSvgExportNative {
         return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
-            rgbEncoder = RGBEncoderNative(),
+            rgbEncoder = RGBEncoder.DEFAULT,
             useCssPixelatedImageRendering = useCssPixelatedImageRendering,
             sizeUnit = sizeUnit
         )

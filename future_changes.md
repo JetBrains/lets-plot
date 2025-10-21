@@ -47,3 +47,5 @@
 - geom_density2d: Incorrect processing of weighted statistics when None value occurs in the x or y column.
 - facet_wrap: indescriptive error when the specified facet variable is not present in the dataset [[#1409](https://github.com/JetBrains/lets-plot/issues/1409)].
 - Integer numbers in facet strip titles are displayed as float [[#1386](https://github.com/JetBrains/lets-plot/issues/1386)].
+- Error when using scale_identity(aesthetic="shape") [[#1212](https://github.com/JetBrains/lets-plot/issues/1212)].
+- ggsave: theme option face="italic" doesn't work [[#1391](https://github.com/JetBrains/lets-plot/issues/1391)].
