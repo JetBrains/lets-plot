@@ -18,7 +18,7 @@ class LegendPosition(val x: Double, val y: Double) {
         get() = this === NONE
 
     val isOverlay: Boolean
-        get() = !(isFixed || isHidden)
+        get() = !isFixed
 
     companion object {
         val RIGHT = LegendPosition(1.0, 0.5)

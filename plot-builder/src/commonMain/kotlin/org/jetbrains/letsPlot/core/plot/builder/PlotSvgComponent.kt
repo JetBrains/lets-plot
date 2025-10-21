@@ -373,18 +373,16 @@ class PlotSvgComponent constructor(
         // add legends
         val legendTheme = theme.legend()
         val legendsBlockInfo = figureLayoutInfo.legendsBlockInfo
-        if (!legendTheme.position().isHidden) {
-            val legendsBlockInfoLayouted = LegendBoxesLayout(
-                outerBounds = plotOuterBoundsWithoutTitleAndCaption,
-                innerBounds = geomAreaBounds,
-                legendTheme
-            ).doLayout(legendsBlockInfo)
+        val legendsBlockInfoLayouted = LegendBoxesLayout(
+            outerBounds = plotOuterBoundsWithoutTitleAndCaption,
+            innerBounds = geomAreaBounds,
+            legendTheme
+        ).doLayout(legendsBlockInfo)
 
-            for (boxWithLocation in legendsBlockInfoLayouted.boxWithLocationList) {
-                val legendBox = boxWithLocation.legendBox.createLegendBox()
-                legendBox.moveTo(boxWithLocation.location)
-                add(legendBox)
-            }
+        for (boxWithLocation in legendsBlockInfoLayouted.boxWithLocationList) {
+            val legendBox = boxWithLocation.legendBox.createLegendBox()
+            legendBox.moveTo(boxWithLocation.location)
+            add(legendBox)
         }
 
         // add caption
