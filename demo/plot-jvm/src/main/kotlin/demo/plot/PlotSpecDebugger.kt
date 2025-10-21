@@ -81,7 +81,6 @@ private fun getSpecFile(): File {
 class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val plotSpecTextArea = JTextArea().apply {
         wrapStyleWord = true
-        lineWrap = true
         autoscrolls = true
     }
     private val specEditorPane = JScrollPane(plotSpecTextArea)
