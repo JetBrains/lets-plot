@@ -135,7 +135,7 @@ class DropUnusedDataTest {
                 "x" to statSize,
                 "group" to statSize,
                 "facetX" to statSize,
-                "..count.." to statSize
+                "..count.." to statSize,
             ),
             droppedVars
         )
@@ -518,7 +518,7 @@ class DropUnusedDataTest {
             mapOf(
                 "x" to statSize,
                 "group" to statSize,
-                "..density.." to statSize
+                "..density.." to statSize,
             ),
             droppedVars
         )
