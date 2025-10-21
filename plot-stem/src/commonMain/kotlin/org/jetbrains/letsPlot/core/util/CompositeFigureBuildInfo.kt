@@ -8,12 +8,16 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.core.FeatureSwitch.GGGRID_COLLECT_LEGENDS
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
@@ -86,14 +90,23 @@ internal class CompositeFigureBuildInfo constructor(
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
         val plotTheme = theme.plot()
 
-        // Layout inner positions relative to left-top of the figure.
+        // Lay out inner positions relative to the left-top of the figure.
         val contextBounds = DoubleRectangle(DoubleVector.ZERO, bounds.dimension)
         val withoutMargins = plotTheme.layoutMargins().shrinkRect(contextBounds)
         val withoutTitles = PlotLayoutUtil.boundsWithoutTitleAndCaption(
             outerBounds = withoutMargins,
             title, subtitle, caption, theme
         )
-        val elementsAreaBounds = plotTheme.plotInset().shrinkRect(withoutTitles)
+
+        // NEW: Subtract legend space if collecting legends
+        val withoutPlotInset = plotTheme.plotInset().shrinkRect(withoutTitles)
+        val elementsAreaBounds = if (GGGRID_COLLECT_LEGENDS) {
+            // TODO: Perform a preliminary layout to collect legend sizes
+            // For now, just use the bounds without legend space
+            withoutPlotInset
+        } else {
+            withoutPlotInset
+        }
 
         val layoutedElements = layout.doLayout(elementsAreaBounds, elements)
         val layoutedElementsAreaBounds = layoutedElements.filterNotNull()
@@ -113,6 +126,80 @@ internal class CompositeFigureBuildInfo constructor(
                 figureSize = contextBounds.dimension,
                 geomAreaBounds = layoutedElementsAreaBounds
             )
+        }
+    }
+
+    /**
+     * Collect legends from individual plot elements that have fixed positions (LEFT, RIGHT, TOP, BOTTOM).
+     * Returns a map of position to merged LegendsBlockInfo.
+     */
+    private fun collectFixedPositionLegends(elements: List<FigureBuildInfo?>): Map<LegendPosition, LegendsBlockInfo> {
+        val collectedByPosition = mutableMapOf<LegendPosition, MutableList<LegendsBlockInfo>>()
+
+        for (element in elements.filterNotNull()) {
+            // Only collect from individual plots, not nested composites
+            if (element.isComposite) continue
+
+            val plotElement = element as? PlotFigureBuildInfo ?: continue
+
+            // Access layout info to get legends
+            val layoutInfo = plotElement.layoutInfo as? PlotFigureLayoutInfo ?: continue
+            val legendsBlockInfo = layoutInfo.legendsBlockInfo
+
+            if (legendsBlockInfo.boxWithLocationList.isEmpty()) continue
+
+            // Determine legend position from theme
+            // TODO: Need access to theme from PlotFigureBuildInfo
+            // For now, skip - this will be implemented in next step
+        }
+
+        return emptyMap()
+    }
+
+    /**
+     * Calculate space needed for collected legends and subtract from bounds.
+     * Similar to legendBlockDelta in PlotLayoutUtil.kt:247
+     */
+    private fun subtractLegendSpace(
+        bounds: DoubleRectangle,
+        legendsInfo: LegendsBlockInfo,
+        position: LegendPosition
+    ): DoubleRectangle {
+        if (legendsInfo.boxWithLocationList.isEmpty()) return bounds
+
+        val size = legendsInfo.size()
+        val spacing = theme.legend().boxSpacing()
+
+        return when (position) {
+            LegendPosition.LEFT -> {
+                // Legends on left: shift right and reduce width
+                DoubleRectangle(
+                    origin = bounds.origin.add(DoubleVector(size.x + spacing, 0.0)),
+                    dimension = bounds.dimension.subtract(DoubleVector(size.x + spacing, 0.0))
+                )
+            }
+            LegendPosition.RIGHT -> {
+                // Legends on right: reduce width
+                DoubleRectangle(
+                    origin = bounds.origin,
+                    dimension = bounds.dimension.subtract(DoubleVector(size.x + spacing, 0.0))
+                )
+            }
+            LegendPosition.TOP -> {
+                // Legends on top: shift down and reduce height
+                DoubleRectangle(
+                    origin = bounds.origin.add(DoubleVector(0.0, size.y + spacing)),
+                    dimension = bounds.dimension.subtract(DoubleVector(0.0, size.y + spacing))
+                )
+            }
+            LegendPosition.BOTTOM -> {
+                // Legends on bottom: reduce height
+                DoubleRectangle(
+                    origin = bounds.origin,
+                    dimension = bounds.dimension.subtract(DoubleVector(0.0, size.y + spacing))
+                )
+            }
+            else -> bounds // Overlay or hidden positions don't affect bounds
         }
     }
 

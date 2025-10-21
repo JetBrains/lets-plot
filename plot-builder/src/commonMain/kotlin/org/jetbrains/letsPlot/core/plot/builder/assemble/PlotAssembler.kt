@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.BogusFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.PolarFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReferenceProvider
+import org.jetbrains.letsPlot.core.plot.builder.layout.DetachedLegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
@@ -44,6 +45,7 @@ class PlotAssembler constructor(
     private val plotSpecId: String?,
     private val tz: TimeZone?,
     scaleFactor: Double = 1.0,
+    private val detachedLegendsCollector: DetachedLegendsCollector?,
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -59,6 +61,12 @@ class PlotAssembler constructor(
     private val plotContext: PlotContext
     private val layouter: PlotFigureLayouter
 
+    // Legends that can be detached from this plot and collected by a composite figure.
+    // Contains legends with fixed positions (LEFT, RIGHT, TOP, BOTTOM) and optionally
+    // overlay legends.
+    // Each legend includes its position and justification information.
+    val detachedLegends: List<DetachedLegendBoxInfo>
+
     init {
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
@@ -68,8 +76,11 @@ class PlotAssembler constructor(
         )
 
         val legendTheme = theme.legend()
+        val legendPosition = legendTheme.position()
+
         val legendBoxInfos: List<LegendBoxInfo> = when (legendTheme.position().isHidden) {
-            false -> {
+            true -> emptyList()
+            else -> {
                 PlotAssemblerUtil.createLegends(
                     plotContext,
                     geomTiles,
@@ -79,8 +90,32 @@ class PlotAssembler constructor(
                     theme.panel()
                 )
             }
+        }
 
-            else -> emptyList()
+        val shouldDetachLegends = detachedLegendsCollector != null &&
+                (legendPosition.isFixed || (legendPosition.isOverlay && detachedLegendsCollector.detachOverlayLegends))
+
+        detachedLegends = if (shouldDetachLegends) {
+            // Wrap each legend box with its position and justification
+            val legendJustification = legendTheme.justification()
+            val detached = legendBoxInfos.map { legendBoxInfo ->
+                DetachedLegendBoxInfo(
+                    legendBoxInfo = legendBoxInfo,
+                    position = legendPosition,
+                    justification = legendJustification
+                )
+            }
+            // Add to collector
+            detachedLegendsCollector!!.collect(detached)
+            detached
+        } else {
+            emptyList()
+        }
+
+        val legendBoxInfosForLayout = if (shouldDetachLegends) {
+            emptyList()  // Detached legends should not be laidout by this plot
+        } else {
+            legendBoxInfos
         }
 
         val flipAxis = geomTiles.coordProvider.flipped
@@ -124,7 +159,7 @@ class PlotAssembler constructor(
             coordProvider = geomTiles.coordProvider,
             containsLiveMap = geomTiles.containsLiveMap,
             theme = theme,
-            legendBoxInfos = legendBoxInfos,
+            legendBoxInfos = legendBoxInfosForLayout,
             title = plotTitle,
             subtitle = plotSubtitle,
             caption = plotCaption
@@ -190,7 +225,8 @@ class PlotAssembler constructor(
                 yAxisPosition = yAxisPosition,
                 theme = theme,
                 plotSpecId = null,
-                tz = null
+                tz = null,
+                detachedLegendsCollector = null,
             )
         }
 
