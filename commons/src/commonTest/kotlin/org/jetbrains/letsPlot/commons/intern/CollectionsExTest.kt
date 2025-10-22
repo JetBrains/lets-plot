@@ -55,41 +55,9 @@ class CollectionsExTest {
 
     @Test
     fun testBracketingIndicesTooSmallList() {
-        val bracketingIndices = listOf(1.0).bracketingIndicesOrNull(2.0)
-        assertNull(bracketingIndices)
-    }
-
-    @Test
-    fun testBracketingIndicesDuplicatesAtStart() {
-        val bracketingIndices = listOf(1.0, 1.0, 3.0, 5.0).bracketingIndicesOrNull(1.0)
-        assertNotNull(bracketingIndices)
-        val (i, j) = bracketingIndices
-        assertEquals(1, i)
-        assertEquals(2, j)
-    }
-
-    @Test
-    fun testBracketingIndicesDuplicatesAtEnd() {
-        val bracketingIndices = listOf(1.0, 3.0, 5.0, 5.0).bracketingIndicesOrNull(5.0)
-        assertNotNull(bracketingIndices)
-        val (i, j) = bracketingIndices
-        assertEquals(1, i)
-        assertEquals(2, j)
-    }
-
-    @Test
-    fun testBracketingIndicesDuplicatesAtCenter() {
-        val bracketingIndices = listOf(1.0, 3.0, 3.0, 5.0).bracketingIndicesOrNull(3.0)
-        assertNotNull(bracketingIndices)
-        val (i, j) = bracketingIndices
-        assertEquals(0, i)
-        assertEquals(1, j)
-    }
-
-    @Test
-    fun testBracketingIndicesAllValuesAreEqual() {
-        val bracketingIndices = listOf(3.0, 3.0, 3.0).bracketingIndicesOrNull(3.0)
-        assertNull(bracketingIndices)
+        assertFailsWith<IllegalArgumentException> {
+            listOf(1.0).bracketingIndicesOrNull(2.0)
+        }
     }
 
     @Test

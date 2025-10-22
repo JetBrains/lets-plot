@@ -49,16 +49,20 @@ fun <T> Collection<T?>.splitByNull(): List<List<T>> {
 fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
     mapIndexedNotNull{ i, elem -> i.takeIf{ predicate(elem) } }
 
-// Returns indices (i, j) such as list[i] < element <= list[j];
-// or (0, 1) if element is equal to the first element and less than the second element.
-// List is expected to be sorted in ascending order, can contain duplicate elements and should have at least two elements.
+// Returns indices (i, j) such as list[i] < element <= list[j]; or (0, 1) if element == list.first().
+// List is expected to be sorted in ascending order, doesn't contain duplicates and should have at least two elements.
 fun <T : Comparable<T>> List<T>.bracketingIndicesOrNull(element: T): Pair<Int, Int>? {
-    if (size < 2) return null
-    val j = -binarySearch { if (it < element) -1 else 1 } - 1 // first index with list[j] >= element
-    if (j == size) return null // element is greater than all list elements
-    if (j > 0) return (j - 1) to j // list[j-1] < element == list[j]
-    return if (this[0] == element) {
-        val k = -binarySearch { if (it <= element) -1 else 1 } - 1 // first index with list[k] > element
-        if (k < size) (k - 1) to k else null // list[k-1] < element < list[k], or (0, 1) if k == 1
-    } else null
+    require(size >= 2) { "List should have at least two elements" }
+    return binarySearch(element).let { i ->
+        val upperIndex = when {
+            i == 0 -> 1 // special case: element == list.first()
+            i > 0 -> i // element found in the list
+            else -> -i - 1 // element not found; insertion point
+        }
+        when (upperIndex) {
+            0 -> null // element < list.first()
+            size -> null // element > list.last()
+            else -> Pair(upperIndex - 1, upperIndex)
+        }
+    }
 }
