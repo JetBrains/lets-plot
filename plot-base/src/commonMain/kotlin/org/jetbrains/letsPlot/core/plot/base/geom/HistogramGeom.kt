@@ -37,13 +37,13 @@ class HistogramGeom : BarGeom(), WithWidth {
 
         fun binSpan(p: DataPointAesthetics, coordAes: Aes<Double>, breaks: List<Double>, resolution: Double): DoubleSpan? {
             val (loc, width) = p.finiteOrNull(coordAes, Aes.WIDTH) ?: return null
-            val span = if (breaks.isEmpty()) {
-                DoubleSpan(loc - resolution / 2.0, loc + resolution / 2.0)
+            val (leftSpan, rightSpan) = if (breaks.isEmpty()) {
+                Pair(resolution / 2.0, resolution / 2.0)
             } else {
                 val (i, j) = breaks.bracketingIndicesOrNull(loc) ?: return null
-                DoubleSpan(breaks[i], breaks[j])
+                Pair(loc - breaks[i], breaks[j] - loc)
             }
-            return span.multiplied(width)
+            return DoubleSpan(loc - width * leftSpan, loc + width * rightSpan)
         }
     }
 }
