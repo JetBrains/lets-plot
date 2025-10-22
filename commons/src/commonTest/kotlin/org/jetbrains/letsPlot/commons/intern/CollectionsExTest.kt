@@ -55,9 +55,8 @@ class CollectionsExTest {
 
     @Test
     fun testBracketingIndicesTooSmallList() {
-        assertFailsWith<IllegalArgumentException> {
-            listOf(1.0).bracketingIndicesOrNull(2.0)
-        }
+        val bracketingIndices = listOf(1.0).bracketingIndicesOrNull(5.0)
+        assertNull(bracketingIndices)
     }
 
     @Test
