@@ -28,7 +28,7 @@ object BarAnnotation {
     fun build(
         root: SvgRoot,
         polygons: List<PolygonData>,
-        transform: (p: DataPointAesthetics, ctx: GeomContext) -> DoubleRectangle?,
+        transform: (p: DataPointAesthetics) -> DoubleRectangle?,
         helper: GeomHelper,
         coord: CoordinateSystem,
         ctx: GeomContext
@@ -43,7 +43,7 @@ object BarAnnotation {
     private fun nonLinearAnnotations(
         root: SvgRoot,
         polygons: List<PolygonData>,
-        transform: (p: DataPointAesthetics, ctx: GeomContext) -> DoubleRectangle?,
+        transform: (p: DataPointAesthetics) -> DoubleRectangle?,
         helper: GeomHelper,
         ctx: GeomContext
     ) {
@@ -51,7 +51,7 @@ object BarAnnotation {
 
         polygons.forEach { polygon ->
             val p = polygon.rings[0][0].aes
-            val rect = transform(p, ctx) ?: return@forEach
+            val rect = transform(p) ?: return@forEach
             val centroid = helper.toClient(rect.center, p) ?: return@forEach
             val zero = helper.toClient(0.0, 0.0, p) ?: return@forEach
 

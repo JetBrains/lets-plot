@@ -906,6 +906,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    binwidth=None,
                    center=None,
                    boundary=None,
+                   breaks=None,
                    color_by=None, fill_by=None,
                    **other_args):
     """
@@ -965,6 +966,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Specify x-value to align bin centers to.
     boundary : float
         Specify x-value to align bin boundary (i.e., point between bins) to.
+    breaks : list of float
+        Specify exact positions of bin boundaries.
+        Overrides ``bins``, ``binwidth``, ``center`` and ``boundary``.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -991,7 +995,6 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - ..density.. : normalized number of points so that plot area is 1.
     - ..sumprop.. : normalized number of points so that sum of y-values is 1.
     - ..sumpct.. : normalized number of points so that sum of y-values is 100.
-    - ..binwidth.. : width of each bin.
 
     ``geom_histogram()`` understands the following aesthetics mappings:
 
@@ -1039,6 +1042,21 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'age': np.random.gamma(4.0, size=1000, scale=10.0)}
+        age_breaks = [0, 12, 17, 64, 100]
+        ggplot(data) + geom_histogram(aes(x='age'), breaks=age_breaks,
+                                      color="black", fill="gray80")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8-10
 
         import numpy as np
@@ -1070,6 +1088,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  binwidth=binwidth,
                  center=center,
                  boundary=boundary,
+                 breaks=breaks,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 

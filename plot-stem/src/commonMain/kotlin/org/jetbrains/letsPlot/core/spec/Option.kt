@@ -265,6 +265,10 @@ object Option {
 
     object Geom {
 
+        object Histogram {
+            const val BREAKS = "breaks"
+        }
+
         object Density {
             const val QUANTILE_LINES = "quantile_lines"
         }
@@ -497,6 +501,7 @@ object Option {
             const val METHOD = "method"
             const val CENTER = "center"
             const val BOUNDARY = "boundary"
+            const val BREAKS = "breaks"
         }
 
         object Bin2d {

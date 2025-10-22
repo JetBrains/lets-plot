@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.bracketingIndicesOrNull
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
@@ -244,6 +245,67 @@ object BinStatUtil {
 
 //        return BinsData(x, counts, densities, dataIndicesByBinIndex)
         return HistBinsData(x, counts, densities, sumProps, sumProps.map { it * 100 }, List(x.size) { binWidth })
+    }
+
+    internal fun computeHistogramBins(
+        valuesX: List<Double?>,
+        breaks: List<Double>,
+        weightAtIndex: (Int) -> Double
+    ): HistBinsData {
+        require(breaks.size >= 2) { "At least two breaks are required" }
+
+        var totalCount = 0.0
+        val countByBinIndex = HashMap<Int, MutableDouble>()
+
+        for (dataIndex in valuesX.indices) {
+            val x = valuesX[dataIndex]
+            if (!SeriesUtil.isFinite(x)) {
+                continue
+            }
+            if (x!! < breaks.first() || x > breaks.last()) {
+                // out of range
+                continue
+            }
+            val weight = weightAtIndex(dataIndex)
+            totalCount += weight
+            val (breakIndex, _) = breaks.bracketingIndicesOrNull(x) ?: continue
+            if (!countByBinIndex.containsKey(breakIndex)) {
+                countByBinIndex[breakIndex] = MutableDouble(0.0)
+            }
+            countByBinIndex[breakIndex]!!.getAndAdd(weight)
+        }
+
+        val x = ArrayList<Double>()
+        val counts = ArrayList<Double>()
+        val sumProps = ArrayList<Double>()
+        val binWidths = ArrayList<Double>()
+
+        var densityNormalizingFactor = 0.0
+        for (i in 0 until breaks.size - 1) {
+            val binWidth = (breaks[i + 1] - breaks[i])
+            require(binWidth != 0.0) { "Breaks should be distinct: $breaks" }
+            require(binWidth > 0) { "Breaks should be sorted in ascending order: $breaks" }
+            binWidths.add(binWidth)
+            x.add(breaks[i] + binWidth / 2.0)
+            var count = 0.0
+            // some bins are left empty (not excluded from map)
+            if (countByBinIndex.containsKey(i)) {
+                count = countByBinIndex[i]!!.get()
+            }
+            counts.add(count)
+            val sumProp = count / totalCount
+            sumProps.add(sumProp)
+            densityNormalizingFactor += abs(count) * binWidth
+        }
+
+        return HistBinsData(
+            x = x,
+            count = counts,
+            density = counts.map { it / densityNormalizingFactor },
+            sumProp = sumProps,
+            sumPct = sumProps.map { it * 100 },
+            binWidth = binWidths
+        )
     }
 
     private fun computeDotdensityBins(
