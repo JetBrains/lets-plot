@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.assemble.DetachedLegendsCollector
+import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -280,6 +281,19 @@ object MonolithicCommon {
             }
         }
 
+        // Create legend blocks from collected legends
+        val legendBlocks = detachedLegendsCollector?.collectedLegends?.let { collectedLegends ->
+            // Group legends by position and justification
+            val legendsByPositionAndJustification = collectedLegends.groupBy {
+                it.position to it.justification
+            }
+
+            // Create a CompositeLegendBlockInfo for each group
+            legendsByPositionAndJustification.values.map { legendsInGroup ->
+                CompositeLegendBlockInfo.create(legendsInGroup, theme = config.theme.legend())
+            }
+        } ?: emptyList()
+
         return CompositeFigureBuildInfo(
             elements = elements,
             layout = compositeFigureLayout,
@@ -288,7 +302,8 @@ object MonolithicCommon {
             subtitle = config.subtitle,
             caption = config.caption,
             theme = config.theme,
-            computationMessages
+            computationMessages,
+            legendBlocks = legendBlocks
         )
     }
 

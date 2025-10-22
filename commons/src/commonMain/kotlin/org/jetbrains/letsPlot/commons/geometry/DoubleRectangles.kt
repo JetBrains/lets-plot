@@ -11,7 +11,7 @@ import kotlin.math.min
 object DoubleRectangles {
 
     /*
-    Returns null if point collection is empty
+    Returns null if the point collection is empty
     */
     fun boundingBox(points: Iterable<DoubleVector>): DoubleRectangle? {
         return calculateBoundingBox(points, DoubleVector::x, DoubleVector::y)
@@ -46,5 +46,23 @@ object DoubleRectangles {
         }
 
         return factory(minLon, minLat, maxLon, maxLat)
+    }
+
+    fun extendUp(r: DoubleRectangle, delta: Double): DoubleRectangle {
+        val change = DoubleVector(0.0, delta)
+        return DoubleRectangle(r.origin.subtract(change), r.dimension.add(change))
+    }
+
+    fun extendDown(r: DoubleRectangle, delta: Double): DoubleRectangle {
+        return DoubleRectangle(r.origin, r.dimension.add(DoubleVector(0.0, delta)))
+    }
+
+    fun extendLeft(r: DoubleRectangle, delta: Double): DoubleRectangle {
+        val change = DoubleVector(delta, 0.0)
+        return DoubleRectangle(r.origin.subtract(change), r.dimension.add(change))
+    }
+
+    fun extendRight(r: DoubleRectangle, delta: Double): DoubleRectangle {
+        return DoubleRectangle(r.origin, r.dimension.add(DoubleVector(delta, 0.0)))
     }
 }

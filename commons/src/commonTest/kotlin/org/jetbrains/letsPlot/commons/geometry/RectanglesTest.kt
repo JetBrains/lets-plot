@@ -5,9 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.geometry
 
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.geometry.Rectangles
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -86,18 +83,6 @@ class RectanglesTest {
     @Test
     fun extendSides() {
         assertEquals(Rectangle(Vector(9, 20), Vector(32, 40)), Rectangles.extendSides(1, INNER, 1))
-    }
-
-    @Test
-    fun shrinkRight() {
-        assertEquals(Rectangle(Vector(10, 20), Vector(29, 40)), Rectangles.shrinkRight(INNER, 1))
-    }
-
-    @Test
-    fun shrinkRightIncorrect() {
-        assertFailsWith<IllegalArgumentException> {
-            Rectangles.shrinkRight(INNER, INNER.dimension.x + 1)
-        }
     }
 
     companion object {

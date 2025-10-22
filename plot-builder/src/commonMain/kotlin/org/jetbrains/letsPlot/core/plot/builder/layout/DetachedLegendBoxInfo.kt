@@ -13,9 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
  * This allows legend boxes to be "detached" from individual plots and collected at the
  * composite figure level, while preserving their positioning metadata.
  *
- * @param legendBoxInfo The actual legend box (content and rendering)
- * @param position Where the legend should be positioned (LEFT, RIGHT, TOP, BOTTOM)
- * @param justification How the legend should be aligned at that position
+ * TODO: merge with regular LegendBoxInfo.
  */
 class DetachedLegendBoxInfo(
     val legendBoxInfo: LegendBoxInfo,
