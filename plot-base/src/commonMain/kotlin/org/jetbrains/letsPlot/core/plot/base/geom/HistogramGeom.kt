@@ -20,7 +20,7 @@ class HistogramGeom : BarGeom(), WithWidth {
 
     override fun getBinSpanCalculator(ctx: GeomContext): (DataPointAesthetics) -> DoubleSpan? {
         val resolution = ctx.getResolution(Aes.X)
-        return { p -> binSpan(p, breaks, resolution) }
+        return { p -> binSpan(p, Aes.X, breaks, resolution) }
     }
 
     override fun widthSpan(
@@ -29,18 +29,18 @@ class HistogramGeom : BarGeom(), WithWidth {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return binSpan(p, breaks, resolution)
+        return binSpan(p, coordAes, breaks, resolution)
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        fun binSpan(p: DataPointAesthetics, breaks: List<Double>, resolution: Double): DoubleSpan? {
-            val (x, width) = p.finiteOrNull(Aes.X, Aes.WIDTH) ?: return null
+        fun binSpan(p: DataPointAesthetics, coordAes: Aes<Double>, breaks: List<Double>, resolution: Double): DoubleSpan? {
+            val (loc, width) = p.finiteOrNull(coordAes, Aes.WIDTH) ?: return null
             val span = if (breaks.isEmpty()) {
-                DoubleSpan(x - resolution / 2.0, x + resolution / 2.0)
+                DoubleSpan(loc - resolution / 2.0, loc + resolution / 2.0)
             } else {
-                val (i, j) = breaks.bracketingIndicesOrNull(x) ?: return null
+                val (i, j) = breaks.bracketingIndicesOrNull(loc) ?: return null
                 DoubleSpan(breaks[i], breaks[j])
             }
             return span.multiplied(width)
