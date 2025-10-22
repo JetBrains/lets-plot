@@ -43,17 +43,20 @@ class GeoConfig(
 ) {
     val dataAndCoordinates: DataFrame
     val mappings: Map<Aes<*>, Variable>
+    val geoMappings: Map<Aes<*>, Variable>
 
     init {
         if (layerOptions.has(MAP_DATA_META, GDF) || layerOptions.has(DATA_META, GDF)) {
             GeoDataFrameProcessor(geomKind, dataFrame, layerOptions, mappingOptions).let {
                 dataAndCoordinates = it.dataAndCoordinates
                 mappings = it.mappings
+                geoMappings = it.geoMappings
             }
         } else if (layerOptions.has(MAP_DATA_META, GEOREFERENCE)) {
             GeoReferenceProcessor(dataFrame, layerOptions, mappingOptions).let {
                 dataAndCoordinates = it.processedDataFrame
                 mappings = it.processedMappings
+                geoMappings = it.geoMappings
             }
         } else {
             throw IllegalStateException()
@@ -107,6 +110,7 @@ class GeoReferenceProcessor(
     layerOptions: Map<*, *>,
     mappingOptions: Map<*, *>
 ) {
+    val geoMappings: Map<Aes<*>, Variable>
     val processedDataFrame: DataFrame
     val processedMappings: Map<Aes<*>, Variable>
 
@@ -174,8 +178,8 @@ class GeoReferenceProcessor(
             .put(idVar, mapids)
             .build()
 
-        processedMappings =
-            createAesMapping(processedDataFrame, mappingOptions + mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
+        geoMappings = createAesMapping(processedDataFrame, mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
+        processedMappings = createAesMapping(processedDataFrame, mappingOptions) + geoMappings
     }
 }
 
@@ -187,6 +191,7 @@ class GeoDataFrameProcessor(
 ) {
     val dataAndCoordinates: DataFrame
     val mappings: Map<Aes<*>, Variable>
+    val geoMappings: Map<Aes<*>, Variable>
 
     init {
 
@@ -257,7 +262,8 @@ class GeoDataFrameProcessor(
         }
 
         dataAndCoordinates = coordinatesCollector.buildDataFrame()
-        mappings = createAesMapping(dataAndCoordinates, mappingOptions + coordinatesCollector.mappings)
+        geoMappings = createAesMapping(dataAndCoordinates, coordinatesCollector.mappings)
+        mappings = createAesMapping(dataAndCoordinates, mappingOptions) + geoMappings
     }
 
 }

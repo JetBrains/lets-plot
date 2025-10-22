@@ -25,17 +25,16 @@ import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
-import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
-import org.jetbrains.letsPlot.core.spec.config.LayerConfig
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
+import org.jetbrains.letsPlot.core.spec.config.*
 import org.jetbrains.letsPlot.core.spec.getString
 
 open class PlotConfigBackend(
@@ -120,9 +119,21 @@ open class PlotConfigBackend(
         // replace layer data with data after stat
         layerConfigs.withIndex().forEach { (layerIndex, layerConfig) ->
             // optimization: only replace layer's data if 'combined' data was changed (because of stat or sampling occurred)
-            if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
+            if (
+                layerConfig.stat !== Stats.IDENTITY
+                || layerIndexWhereSamplingOccurred.contains(layerIndex)
+                || layerConfig.geoMappings.isNotEmpty() // geo mappings may add coordinates - need to update data
+            ) {
                 val layerStatData = dataByLayerAfterStat[layerIndex]
                 layerConfig.replaceOwnData(layerStatData)
+            }
+        }
+
+        // update geo mappings
+        layerConfigs.forEach { layerConfig ->
+            if (layerConfig.geoMappings.isNotEmpty()) {
+                val geoMappings = layerConfig.geoMappings.map { (aes, variable) -> toOption(aes) to variable.name }
+                layerConfig.update(MAPPING, layerConfig.getMap(MAPPING) + geoMappings)
             }
         }
 
@@ -329,6 +340,7 @@ open class PlotConfigBackend(
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
+                    GeoConfig.GEO_ID +
                     facets.variables +
                     (layerConfig.explicitGroupingVarNames ?: emptyList()) +
                     (layerConfig.tooltips.valueSources + layerConfig.annotations.valueSources)

@@ -30,16 +30,14 @@ fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigFr
 }
 
 fun failedTransformToClientPlotConfig(spec: String): String {
-    return parsePlotSpec(spec)
-        .let(BackendTestUtil::backendSpecTransform)
-        .let {
-            try {
-                PlotConfigFrontend.create(it) {}
-            } catch (e: Throwable) {
-                return@let e.localizedMessage as String
-            }
-            fail("Error expected")
-        }
+    val s = parsePlotSpec(spec)
+    val transformed = BackendTestUtil.backendSpecTransform(s)
+
+    if (PlotConfig.isFailure(transformed)) {
+        return PlotConfig.getErrorMessage(transformed)
+    }
+
+    fail("Error expected")
 }
 
 fun PlotConfigFrontend.assertValue(variable: String, values: List<*>): PlotConfigFrontend {
