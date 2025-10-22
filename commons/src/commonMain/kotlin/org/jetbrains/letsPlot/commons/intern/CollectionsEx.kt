@@ -49,13 +49,16 @@ fun <T> Collection<T?>.splitByNull(): List<List<T>> {
 fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
     mapIndexedNotNull{ i, elem -> i.takeIf{ predicate(elem) } }
 
-fun <T : Comparable<T>> List<T?>.predecessorIndexOrNull(element: T?): Int? =
-    binarySearch(element).let { i ->
-        when {
-            i > 0 -> i - 1 // element is in the list, return predecessor index
-            i == 0 -> 0 // element is first in the list, return its index
-            i == -1 -> null // element is less than the first element, no predecessor
-            i <= -(size + 1) -> null // element is greater than the last element, no predecessor
-            else -> -i - 2 // element is between two elements, return predecessor index
-        }
-    }
+// Returns indices (i, j) such as list[i] < element <= list[j];
+// or (0, 1) if element is equal to the first element and less than the second element.
+// List is expected to be sorted in ascending order, can contain duplicate elements and should have at least two elements.
+fun <T : Comparable<T>> List<T>.bracketingIndicesOrNull(element: T): Pair<Int, Int>? {
+    if (size < 2) return null
+    val j = -binarySearch { if (it < element) -1 else 1 } - 1 // first index with list[j] >= element
+    if (j == size) return null // element is greater than all list elements
+    if (j > 0) return (j - 1) to j // list[j-1] < element == list[j]
+    return if (this[0] == element) {
+        val k = -binarySearch { if (it <= element) -1 else 1 } - 1 // first index with list[k] > element
+        if (k < size) (k - 1) to k else null // list[k-1] < element < list[k], or (0, 1) if k == 1
+    } else null
+}

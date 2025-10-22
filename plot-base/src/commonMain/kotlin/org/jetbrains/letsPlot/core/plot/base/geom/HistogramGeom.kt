@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.intern.predecessorIndexOrNull
+import org.jetbrains.letsPlot.commons.intern.bracketingIndicesOrNull
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -40,10 +40,8 @@ class HistogramGeom : BarGeom(), WithWidth {
             val span = if (breaks.isEmpty()) {
                 DoubleSpan(x - resolution / 2.0, x + resolution / 2.0)
             } else {
-                val breakIndex = breaks.predecessorIndexOrNull(x) ?: return null
-                val lowerEnd = breaks[breakIndex]
-                val upperEnd = breaks[breakIndex + 1]
-                DoubleSpan(lowerEnd, upperEnd)
+                val (i, j) = breaks.bracketingIndicesOrNull(x) ?: return null
+                DoubleSpan(breaks[i], breaks[j])
             }
             return span.multiplied(width)
         }

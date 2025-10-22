@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
-import org.jetbrains.letsPlot.commons.intern.predecessorIndexOrNull
+import org.jetbrains.letsPlot.commons.intern.bracketingIndicesOrNull
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
@@ -268,7 +268,7 @@ object BinStatUtil {
             }
             val weight = weightAtIndex(dataIndex)
             totalCount += weight
-            val breakIndex = breaks.predecessorIndexOrNull(x) ?: continue
+            val (breakIndex, _) = breaks.bracketingIndicesOrNull(x) ?: continue
             if (!countByBinIndex.containsKey(breakIndex)) {
                 countByBinIndex[breakIndex] = MutableDouble(0.0)
             }
