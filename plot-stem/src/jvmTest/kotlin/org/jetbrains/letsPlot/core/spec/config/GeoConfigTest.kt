@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_XMIN
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMAX
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMIN
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotAssembler
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotGeomTiles
 import org.junit.Ignore
 import kotlin.test.Test
