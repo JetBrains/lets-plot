@@ -1042,6 +1042,21 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'age': np.random.gamma(4.0, size=1000, scale=10.0)}
+        age_breaks = [0, 12, 17, 64, 100]
+        ggplot(data) + geom_histogram(aes(x='age'), breaks=age_breaks,
+                                      color="black", fill="gray80")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 8-10
 
         import numpy as np
