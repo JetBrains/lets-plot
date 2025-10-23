@@ -88,7 +88,7 @@ class LegendAssembler(
         )
     }
 
-    fun createLegend(): LegendBoxInfo {
+    fun createLegend(): LegendBoxInfo? {
         val includeMarginalLayers = legendLayers.all { it.isMarginal } // Yes, if there are no 'core' layers.
         val legendLayers = legendLayers
             .filter { includeMarginalLayers || !it.isMarginal }
@@ -107,7 +107,7 @@ class LegendAssembler(
 
         val legendBreaks = legendBreaksByLabel.values.filterNot { it.isEmpty }
         if (legendBreaks.isEmpty()) {
-            return LegendBoxInfo.EMPTY
+            return null
         }
 
         // legend options
@@ -119,7 +119,11 @@ class LegendAssembler(
 
         val spec = createLegendSpec(legendTitle, legendBreaks, legendTheme, combinedLegendOptions)
 
-        return object : LegendBoxInfo(spec.size) {
+        return object : LegendBoxInfo(
+            size = spec.size,
+            position = legendTheme.position(),
+            justification = legendTheme.justification()
+        ) {
             override fun createLegendBox(): LegendBox {
                 val c = LegendComponent(spec, panelTheme)
                 c.debug = DEBUG_DRAWING
@@ -336,7 +340,7 @@ internal fun applyOverrideAesLists(
     overrideAesValueLists: Map<Aes<*>, List<Any?>>,
     labelsValuesByAes: MutableMap<Aes<*>, Pair<List<String>, List<Any?>>>
 ): Pair<List<String>, List<Map<Aes<*>, Any>>> {
-    val labelsLists = labelsValuesByAes.values.map{ it.first }
+    val labelsLists = labelsValuesByAes.values.map { it.first }
 
     labelsLists.forEach { labels ->
         overrideAesValueLists.forEach { (aesToOverride, valueList) ->

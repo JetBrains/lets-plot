@@ -159,7 +159,12 @@ internal class PlotFigureLayouter(
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
             val plotOuterOrigin = figurePreferredBounds.origin
                 .add(deltaApplied)
-                .add(DoubleVector(plotLayoutMargins.left, plotLayoutMargins.top)) // apply margins inside the overall rect
+                .add(
+                    DoubleVector(
+                        plotLayoutMargins.left,
+                        plotLayoutMargins.top
+                    )
+                ) // apply margins inside the overall rect
 
             DoubleRectangle(
                 plotOuterOrigin,

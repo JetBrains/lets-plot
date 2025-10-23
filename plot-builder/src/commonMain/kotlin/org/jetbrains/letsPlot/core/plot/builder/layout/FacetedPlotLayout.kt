@@ -132,8 +132,10 @@ internal class FacetedPlotLayout(
         // Align geom areas of tiles.
 
         // absolute offsets of tile geom areas.
-        val geomOffsetByCol = geomOffsetsByCol(layoutInfos, facetTiles,
-            facetsTheme.panelSpacing().x, facets.colCount)
+        val geomOffsetByCol = geomOffsetsByCol(
+            layoutInfos, facetTiles,
+            facetsTheme.panelSpacing().x, facets.colCount
+        )
 
         val geomOffsetByRow = geomOffsetsByRow(
             layoutInfos, facetTiles,

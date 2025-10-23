@@ -33,7 +33,7 @@ class ColorBarAssembler constructor(
     private val theme: LegendTheme,
     private var colorBarOptions: ColorBarOptions?
 ) {
-    fun createColorBar(): LegendBoxInfo {
+    fun createColorBar(): LegendBoxInfo? {
         var scale = scale
         if (!scale.hasBreaks()) {
             scale = ScaleBreaksUtil.withBreaks(scale, transformedDomain, 5)
@@ -41,7 +41,7 @@ class ColorBarAssembler constructor(
 
         val scaleBreaks = scale.getScaleBreaks()
         if (scaleBreaks.isEmpty) {
-            return LegendBoxInfo.EMPTY
+            return null
         }
 
         val spec = createColorBarSpec(
@@ -53,7 +53,11 @@ class ColorBarAssembler constructor(
             colorBarOptions
         )
 
-        return object : LegendBoxInfo(spec.size) {
+        return object : LegendBoxInfo(
+            size = spec.size,
+            position = theme.position(),
+            justification = theme.justification()
+        ) {
             override fun createLegendBox(): LegendBox {
                 val c = ColorBarComponent(spec)
                 c.debug = DEBUG_DRAWING

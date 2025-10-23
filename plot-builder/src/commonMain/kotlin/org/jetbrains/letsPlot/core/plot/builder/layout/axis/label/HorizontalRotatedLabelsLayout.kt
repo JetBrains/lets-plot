@@ -7,14 +7,16 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 internal class HorizontalRotatedLabelsLayout(
     orientation: Orientation,
@@ -113,7 +115,8 @@ internal class HorizontalRotatedLabelsLayout(
             else -> Text.VerticalAnchor.CENTER
         }
 
-        val yOffsetSpecial = orientationSign * maxLabelHeight * yOffsetCoefficient(isLabelDirectedFromTick, horizontalAnchor)
+        val yOffsetSpecial =
+            orientationSign * maxLabelHeight * yOffsetCoefficient(isLabelDirectedFromTick, horizontalAnchor)
 
         val yOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
             when {
@@ -139,7 +142,10 @@ internal class HorizontalRotatedLabelsLayout(
 
         val adjustedLabelBoundsList = labelBoundsList.map {
             val origin =
-                DoubleVector(xBBoxOffset(it) + it.origin.x, yBBoxOffset(it) + it.origin.y - orientationSign * it.height / 2)
+                DoubleVector(
+                    xBBoxOffset(it) + it.origin.x,
+                    yBBoxOffset(it) + it.origin.y - orientationSign * it.height / 2
+                )
             DoubleRectangle(origin, it.dimension)
         }
 

@@ -23,7 +23,6 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.BogusFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.PolarFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReferenceProvider
-import org.jetbrains.letsPlot.core.plot.builder.layout.DetachedLegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
@@ -61,7 +60,7 @@ class PlotAssembler constructor(
     // Contains legends with fixed positions (LEFT, RIGHT, TOP, BOTTOM) and optionally
     // overlay legends.
     // Each legend includes its position and justification information.
-    val detachedLegends: List<DetachedLegendBoxInfo>
+    val detachedLegends: List<LegendBoxInfo>
 
     init {
         plotContext = PlotAssemblerPlotContext(
@@ -92,18 +91,8 @@ class PlotAssembler constructor(
                 (legendPosition.isFixed || (legendPosition.isOverlay && detachedLegendsCollector.detachOverlayLegends))
 
         detachedLegends = if (shouldDetachLegends) {
-            // Wrap each legend box with its position and justification
-            val legendJustification = legendTheme.justification()
-            val detached = legendBoxInfos.map { legendBoxInfo ->
-                DetachedLegendBoxInfo(
-                    legendBoxInfo = legendBoxInfo,
-                    position = legendPosition,
-                    justification = legendJustification
-                )
-            }
-            // Add to collector
-            detachedLegendsCollector!!.collect(detached)
-            detached
+            detachedLegendsCollector!!.collect(legendBoxInfos)
+            legendBoxInfos
         } else {
             emptyList()
         }

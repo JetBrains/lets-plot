@@ -25,15 +25,14 @@ class CompositeLegendBlockInfo private constructor(
 
     companion object {
         fun create(
-            legendsInBlock: List<DetachedLegendBoxInfo>,
+            legendsInBlock: List<LegendBoxInfo>,
             theme: LegendTheme,
         ): CompositeLegendBlockInfo {
             check(legendsInBlock.isNotEmpty()) { "Legends block list is empty" }
             val position: LegendPosition = legendsInBlock[0].position
             val justification: LegendJustification = legendsInBlock[0].justification
-            val infos = legendsInBlock.map { it.legendBoxInfo }
             val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-                infos,
+                legendsInBlock,
                 theme
             )
             return CompositeLegendBlockInfo(legendsBlockInfo, position, justification)
