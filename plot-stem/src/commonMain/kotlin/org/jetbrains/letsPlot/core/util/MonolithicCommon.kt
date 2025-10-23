@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.assemble.DetachedLegendsCollector
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.CompositeFigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
@@ -296,14 +296,19 @@ object MonolithicCommon {
             }
         } ?: emptyList()
 
+        val theme = config.theme
+        val title: String? = config.title?.takeIf { theme.plot().showTitle() }
+        val subtitle: String? = config.subtitle?.takeIf { theme.plot().showSubtitle() }
+        val caption: String? = config.caption?.takeIf { theme.plot().showCaption() }
+
         return CompositeFigureBuildInfo(
             elements = elements,
             layout = compositeFigureLayout,
             bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
-            title = config.title,
-            subtitle = config.subtitle,
-            caption = config.caption,
-            theme = config.theme,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            theme = theme,
             computationMessages,
             legendBlocks = legendBlocks
         )

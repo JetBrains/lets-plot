@@ -38,9 +38,9 @@ class PlotAssembler constructor(
     private val xAxisPosition: AxisPosition,
     private val yAxisPosition: AxisPosition,
     private val theme: Theme,
-    title: String? = null,
-    subtitle: String? = null,
-    caption: String? = null,
+    private val title: String? = null,
+    private val subtitle: String? = null,
+    private val caption: String? = null,
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
     private val plotSpecId: String?,
     private val tz: TimeZone?,
@@ -49,10 +49,6 @@ class PlotAssembler constructor(
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
-
-    private val plotTitle = title?.takeIf { theme.plot().showTitle() }
-    private val plotSubtitle = subtitle?.takeIf { theme.plot().showSubtitle() }
-    private val plotCaption = caption?.takeIf { theme.plot().showCaption() }
 
     private var interactionsEnabled = true
 
@@ -160,9 +156,9 @@ class PlotAssembler constructor(
             containsLiveMap = geomTiles.containsLiveMap,
             theme = theme,
             legendBoxInfos = legendBoxInfosForLayout,
-            title = plotTitle,
-            subtitle = plotSubtitle,
-            caption = plotCaption
+            title = title,
+            subtitle = subtitle,
+            caption = caption
         )
     }
 
@@ -190,9 +186,9 @@ class PlotAssembler constructor(
         plotContext: PlotContext
     ): PlotSvgComponent {
         return PlotSvgComponent(
-            title = plotTitle,
-            subtitle = plotSubtitle,
-            caption = plotCaption,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
             coreLayersByTile = geomTiles.coreLayersByTile(),
             marginalLayersByTile = geomTiles.marginalLayersByTile(),
             figureLayoutInfo = figureLayoutInfo,

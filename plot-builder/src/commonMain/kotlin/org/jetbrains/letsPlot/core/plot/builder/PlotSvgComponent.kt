@@ -87,7 +87,7 @@ class PlotSvgComponent constructor(
 
     override fun clear() {
         // Effectivly disposes the plot component
-        // because "interactor" is likely got disposed too,
+        // because "interactor" have likely been disposed too,
         // and "interactor" can't be reused.
         isDisposed = true
         super.clear()

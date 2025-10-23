@@ -233,15 +233,20 @@ object PlotConfigFrontendUtil {
 
         val scaleFactor = computeScaleFactor(config)
 
+        val theme = config.theme
+        val title = config.title?.takeIf { theme.plot().showTitle() }
+        val subtitle = config.subtitle?.takeIf { theme.plot().showSubtitle() }
+        val caption = config.caption?.takeIf { theme.plot().showCaption() }
+
         return PlotAssembler(
             plotGeomTiles,
             config.facets,
             config.xAxisPosition,
             config.yAxisPosition,
-            config.theme,
-            title = config.title,
-            subtitle = config.subtitle,
-            caption = config.caption,
+            theme,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
             guideOptionsMap = config.guideOptionsMap,
             plotSpecId = config.specId,
             tz = config.tz,

@@ -31,17 +31,13 @@ import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class CompositeFigureSvgComponent constructor(
     internal val elements: List<FigureSvgRoot>,
-    title: String?,
-    subtitle: String?,
-    caption: String?,
+    private val title: String?,
+    private val subtitle: String?,
+    private val caption: String?,
     private val layoutInfo: CompositeFigureLayoutInfo,
     val theme: Theme,
     val styleSheet: StyleSheet,
 ) : SvgComponent() {
-
-    private val title: String? = title?.takeIf { theme.plot().showTitle() }
-    private val subtitle: String? = subtitle?.takeIf { theme.plot().showSubtitle() }
-    private val caption: String? = caption?.takeIf { theme.plot().showCaption() }
 
     override fun buildComponent() {
 
@@ -68,9 +64,6 @@ class CompositeFigureSvgComponent constructor(
             drawDebugRect(outerBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-//        // Exclude plot border and margin
-//        val plotLayoutMargins = theme.plot().layoutMargins()
-//        val contentAreaBounds = plotLayoutMargins.shrinkRect(outerBounds)
         val contentAreaBounds = layoutInfo.contentAreaBounds
         if (DEBUG_DRAWING) {
             drawDebugRect(outerBounds, Color.BLUE, "BLUE: contentAreaBounds")
