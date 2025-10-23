@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalcul
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.stringParts
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.wholeText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
@@ -18,12 +19,21 @@ import kotlin.test.Test
 
 class LabelTest {
     @Test
-    fun nonMarkdownLabelShouldNotProcessUnsupportedTags() {
+    fun nonMarkdownLabelWithUnsupportedTag() {
         val text = """Hello, <b>cruel</b> world!"""
         val label = Label(text)
         val svg = label.rootGroup.children().single() as SvgTextElement
         val textContent = svg.tspans().single().wholeText()
         assertThat(textContent).isEqualTo(text)
+    }
+
+    @Test
+    fun nonMarkdownLabelWithUnsupportedTagAndHyperlink() {
+        val text = """Hello, <b>cruel</b> world from <a href="https://lets-plot.org">lets-plot</a>!"""
+        val label = Label(text)
+        val svg = label.rootGroup.children().single() as SvgTextElement
+
+        assertThat(svg.stringParts()).containsExactly("Hello, <b>cruel</b> world from ", "lets-plot", "!")
     }
 
     @Test

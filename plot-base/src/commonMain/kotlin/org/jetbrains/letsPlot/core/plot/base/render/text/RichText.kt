@@ -128,7 +128,16 @@ object RichText {
             if (term is RichTextNode.LineBreak) {
                 startNewLine = true
             } else {
-                lines.last().add(term)
+                val lastTerm = lines.last().lastOrNull()
+
+                if (lastTerm is RichTextNode.Text && term is RichTextNode.Text) {
+                    // merge adjacent text nodes
+                    lines.last().removeLast()
+                    lines.last().add(RichTextNode.Text(lastTerm.text + term.text))
+                    return@forEach
+                } else {
+                    lines.last().add(term)
+                }
             }
         }
 

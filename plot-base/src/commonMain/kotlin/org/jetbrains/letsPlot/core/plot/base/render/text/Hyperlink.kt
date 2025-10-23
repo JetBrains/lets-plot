@@ -36,7 +36,7 @@ internal object Hyperlink {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
                 if (node.name == "p") {
-                    // Synthetic root node for the text
+                    output += node.children.flatMap { render(it, nodeMap, input) }
                 } else if (node.name == "a") {
                     val href = node.attributes["href"] ?: ""
                     val target = node.attributes["target"]
@@ -45,11 +45,8 @@ internal object Hyperlink {
                     return output
                 } else {
                     val content = input.substring(nodeMap[node]!!)
-                    println("Unsupported tag: <${node.name}>, range: ${nodeMap[node]}")
                     output += RichTextNode.Text(content)
                 }
-
-                output += node.children.flatMap { node -> render(node, nodeMap, input) }
             }
         }
 
