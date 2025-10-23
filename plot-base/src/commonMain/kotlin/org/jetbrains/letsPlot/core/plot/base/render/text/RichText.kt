@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.commons.xml.Xml
-import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -74,20 +72,6 @@ object RichText {
         val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
 
         return wrappedLines
-    }
-
-    internal fun parseAsXml(text: String): XmlNode {
-        // wrap in <p> to make it a valid XML with a single root element
-        return Xml.parseSafe("<p>$text</p>")
-            .let { (doc, unparsed) ->
-                if (unparsed.isEmpty()) return@let doc
-
-                // Failed to parse. Add the unparsed text as a text node to the document for better user experience.
-                when (doc) {
-                    is XmlNode.Element -> doc.copy(children = doc.children + XmlNode.Text(unparsed))
-                    is XmlNode.Text -> doc.copy(content = doc.content + unparsed)
-                }
-            }
     }
 
     private fun wrap(lines: List<List<RichTextNode>>, wrapLength: Int, maxLinesCount: Int): List<List<RichTextNode>> {

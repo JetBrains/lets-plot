@@ -10,8 +10,17 @@ import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 internal class Parser(
     val lexer: Lexer
 ) {
-    fun parse(): XmlNode {
-        return parseElement()
+    private val nodeMap = mutableMapOf<XmlNode, IntRange>()
+
+    fun parse(): Xml.ParsingResult {
+        nodeMap.clear()
+        val element = parseElement()
+        
+        return Xml.ParsingResult(
+            root = element,
+            nodeMap = nodeMap,
+            unparsedRemainder = lexer.remainingInput()
+        )
     }
 
     private fun skipSpaces() {
@@ -40,7 +49,11 @@ internal class Parser(
             skipSpaces()
 
             when (consumeToken()) {
-                Token.SLASH_GT -> return XmlNode.Element(name, attributes)
+                Token.SLASH_GT -> {
+                    val element = XmlNode.Element(name, attributes)
+                    nodeMap[element] = IntRange(pos, lexer.tokenPos)
+                    return element
+                }
                 Token.GT -> {}
                 else -> error("Expected '>' or '/>'")
             }
@@ -51,12 +64,18 @@ internal class Parser(
             consumeToken(TokenType.TEXT, skipSpaces = true)
             consumeToken(TokenType.GT)
 
-            return XmlNode.Element(name, attributes, children)
+            val element = XmlNode.Element(name, attributes, children)
+            nodeMap[element] = IntRange(pos, lexer.tokenPos)
+            return element
         } catch (_: Throwable) {
             return if (lexer.token == Token.EOF) {
-                XmlNode.Text(lexer.input.substring(pos))
+                val text = XmlNode.Text(lexer.input.substring(pos))
+                nodeMap[text] = IntRange(pos, lexer.input.length)
+                text
             } else {
-                XmlNode.Text(lexer.input.substring(pos, lexer.tokenPos))
+                val text = XmlNode.Text(lexer.input.substring(pos, lexer.tokenPos))
+                nodeMap[text] = IntRange(pos, lexer.tokenPos)
+                text
             }
         }
     }
@@ -91,6 +110,7 @@ internal class Parser(
 
     // <tag>this is a content</tag>
     private fun parseContent(): XmlNode.Text {
+        val startPos = lexer.tokenPos
         val buffer = StringBuilder()
         while (token() != Token.EOF) {
             when (token().type) {
@@ -102,7 +122,10 @@ internal class Parser(
             }
             consumeToken()
         }
-        return XmlNode.Text(buffer.toString())
+        val text = XmlNode.Text(buffer.toString())
+        nodeMap[text] = IntRange(startPos, lexer.tokenPos)
+
+        return text
     }
 
     private fun token() = lexer.token

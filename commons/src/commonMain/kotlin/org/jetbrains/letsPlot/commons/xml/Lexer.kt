@@ -27,7 +27,7 @@ internal class Lexer(
     }
 
     fun remainingInput(): String {
-        if (pos >= input.length) return input
+        if (pos >= input.length) return ""
         return input.substring(pos)
     }
 

@@ -18,11 +18,20 @@ import kotlin.test.Test
 
 class LabelTest {
     @Test
+    fun nonMarkdownLabelShouldNotProcessUnsupportedTags() {
+        val text = """Hello, <b>cruel</b> world!"""
+        val label = Label(text)
+        val svg = label.rootGroup.children().single() as SvgTextElement
+        val textContent = svg.tspans().single().wholeText()
+        assertThat(textContent).isEqualTo(text)
+    }
+
+    @Test
     fun labelWithQuotes() {
         val text = """Hello, 'cruel' "world"!"""
         val label = Label(text)
         val svg = label.rootGroup.children().single() as SvgTextElement
-        val textContent = svg.tspans()[0].wholeText()
+        val textContent = svg.tspans().single().wholeText()
         assertThat(textContent).isEqualTo(text)
     }
 

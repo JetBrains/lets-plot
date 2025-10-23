@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.parseAsXml
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
@@ -17,25 +17,39 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 
 internal object Hyperlink {
     fun parse(text: String): List<RichTextNode> {
-        val doc = parseAsXml(text)
-        return render(doc)
+        val xmlStr = "<p>$text</p>"
+        val (node, nodeMap, unparsed) = Xml.parseSafe(xmlStr)
+
+        val svg = render(node, nodeMap, xmlStr)
+
+        return if (unparsed.isNotEmpty()) {
+            svg + RichTextNode.Text(unparsed)
+        } else {
+            svg
+        }
     }
 
-    fun render(node: XmlNode): List<RichTextNode> {
+    fun render(node: XmlNode, nodeMap: Map<XmlNode, IntRange>, input: String): List<RichTextNode> {
         val output = mutableListOf<RichTextNode>()
 
         when (node) {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
-                if (node.name == "a") {
+                if (node.name == "p") {
+                    // Synthetic root node for the text
+                } else if (node.name == "a") {
                     val href = node.attributes["href"] ?: ""
                     val target = node.attributes["target"]
                     val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
                     output += HyperlinkElement(text, href, target)
                     return output
+                } else {
+                    val content = input.substring(nodeMap[node]!!)
+                    println("Unsupported tag: <${node.name}>, range: ${nodeMap[node]}")
+                    output += RichTextNode.Text(content)
                 }
 
-                output += node.children.flatMap(::render)
+                output += node.children.flatMap { node -> render(node, nodeMap, input) }
             }
         }
 

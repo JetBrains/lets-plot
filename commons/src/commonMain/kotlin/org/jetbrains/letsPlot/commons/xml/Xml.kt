@@ -5,23 +5,25 @@
 
 package org.jetbrains.letsPlot.commons.xml
 
+
 object Xml {
-    fun parse(xml: String): XmlNode {
+    data class ParsingResult(
+        val root: XmlNode,
+        val nodeMap: Map<XmlNode, IntRange>,
+        val unparsedRemainder: String
+    )
+
+    fun parse(xml: String): ParsingResult {
         val lexer = Lexer(xml)
         val parser = Parser(lexer)
         return parser.parse()
     }
 
     // Parse XML and return the parsed node and the rest of the input if parsing was not complete
-    fun parseSafe(xml: String): Pair<XmlNode, String> {
+    fun parseSafe(xml: String): ParsingResult {
         val lexer = Lexer(xml)
         val parser = Parser(lexer)
-        val doc = parser.parse()
-
-        return when (lexer.token) {
-            Token.EOF -> doc to ""
-            else -> doc to lexer.remainingInput()
-        }
+        return parser.parse()
     }
 
     sealed class XmlNode {
