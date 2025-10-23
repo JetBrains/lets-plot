@@ -199,6 +199,20 @@ class XmlTest {
     }
 
     @Test
+    fun quotesInText() {
+        val xml = """<p>He said: 'Hello' and then "Goodbye"</p>"""
+
+        val parsed = parse(xml)
+        assertEquals(
+            expected = XmlNode.Element(
+                name = "p",
+                children = listOf(XmlNode.Text("""He said: 'Hello' and then "Goodbye""""))
+            ),
+            actual = parsed
+        )
+    }
+
+    @Test
     fun nested() {
         val xml = """<p>press <button>send<img src="send.png"/></button> button</p>"""
 

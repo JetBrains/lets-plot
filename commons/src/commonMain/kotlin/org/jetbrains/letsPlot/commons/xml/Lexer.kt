@@ -62,14 +62,14 @@ internal class Lexer(
             '=' -> Token.EQUALS.also { advance() }
             '"' -> {
                 advance() // consume opening quote
-                val token = Token(QUOTED_STRING, readUntil(listOf(eq('"'))))
+                val token = Token(TokenType.DOUBLE_QUOTED_STRING, readUntil(listOf(eq('"'))))
                 advance() // consume closing quote
 
                 token
             }
             '\'' -> {
                 advance() // consume opening quote
-                val token = Token(QUOTED_STRING, readUntil(listOf(eq('\''))))
+                val token = Token(SINGLE_QUOTED_STRING, readUntil(listOf(eq('\''))))
                 advance() // consume closing quote
 
                 token

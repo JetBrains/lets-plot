@@ -81,7 +81,7 @@ internal class Parser(
 
             consumeToken(TokenType.EQUALS, skipSpaces = true)
 
-            check(token().type in listOf(TokenType.TEXT, TokenType.QUOTED_STRING))
+            check(token().type in listOf(TokenType.TEXT, TokenType.SINGLE_QUOTED_STRING, TokenType.DOUBLE_QUOTED_STRING)) {}
             attributes[key] = token().value
             consumeToken(skipSpaces = true)
         }
@@ -93,8 +93,11 @@ internal class Parser(
     private fun parseContent(): XmlNode.Text {
         val buffer = StringBuilder()
         while (token() != Token.EOF) {
-            when (token()) {
-                Token.LT_SLASH, Token.LT, Token.EOF -> break
+            when (token().type) {
+                TokenType.LT_SLASH, TokenType.LT, TokenType.EOF -> break
+                TokenType.SINGLE_QUOTED_STRING -> buffer.append("'${token().value}'")
+                TokenType.DOUBLE_QUOTED_STRING -> buffer.append("\"${token().value}\"")
+
                 else -> buffer.append(token().value)
             }
             consumeToken()
