@@ -7,8 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.geometry.Rectangles
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
@@ -18,51 +16,59 @@ object PlotLayoutUtilNew {
         legendBlocks: List<CompositeLegendBlockInfo>,
         theme: LegendTheme,
     ): DoubleRectangle {
-        var adjustedBounds = bounds
-        for (legendBlock in legendBlocks) {
-            adjustedBounds = subtractLegendSpace(adjustedBounds, legendBlock, theme)
+        // Only process fixed-position legends
+        val fixedPositionBlocks = legendBlocks.filter { it.position.isFixed }
+
+        if (fixedPositionBlocks.isEmpty()) {
+            return bounds
         }
-        return adjustedBounds
-    }
 
-    /**
-     * Calculate space needed for collected legends and subtract from bounds.
-     * Similar to legendBlockDelta in PlotLayoutUtil.kt:247
-     */
-    private fun subtractLegendSpace(
-        bounds: DoubleRectangle,
-        legendBlock: CompositeLegendBlockInfo,
-        theme: LegendTheme,
-    ): DoubleRectangle {
-        val legendsInfo = legendBlock.legendsBlockInfo
-        val position = legendBlock.position
-
-        val size = legendsInfo.size()
         val spacing = theme.boxSpacing()
 
-        return when (position) {
-            LegendPosition.LEFT -> {
-                val delta = size.x + spacing
-                DoubleRectangles.extendLeft(bounds, -delta)
-            }
+        var leftSpace = 0.0
+        var rightSpace = 0.0
+        var topSpace = 0.0
+        var bottomSpace = 0.0
 
-            LegendPosition.RIGHT -> {
-                val delta = size.x + spacing
-                DoubleRectangles.extendRight(bounds, -delta)
-            }
+        // Multiple blocks at the same position have different justifications,
+        // so they can be placed side-by-side - we take the max, not sum
+        for (legendBlock in fixedPositionBlocks) {
+            val size = legendBlock.legendsBlockInfo.size()
+            when (legendBlock.position) {
+                LegendPosition.LEFT -> {
+                    leftSpace = maxOf(leftSpace, size.x + spacing)
+                }
 
-            LegendPosition.TOP -> {
-                val delta = size.y + spacing
-                DoubleRectangles.extendUp(bounds, -delta)
-            }
+                LegendPosition.RIGHT -> {
+                    rightSpace = maxOf(rightSpace, size.x + spacing)
+                }
 
-            LegendPosition.BOTTOM -> {
-                val delta = size.y + spacing
-                DoubleRectangles.extendDown(bounds, -delta)
-            }
+                LegendPosition.TOP -> {
+                    topSpace = maxOf(topSpace, size.y + spacing)
+                }
 
-            else -> bounds // Overlay or hidden positions don't affect bounds
+                LegendPosition.BOTTOM -> {
+                    bottomSpace = maxOf(bottomSpace, size.y + spacing)
+                }
+
+                else -> {} // Never mind
+            }
         }
-    }
 
+        var adjustedBounds = bounds
+        if (leftSpace > 0) {
+            adjustedBounds = DoubleRectangles.extendLeft(adjustedBounds, -leftSpace)
+        }
+        if (rightSpace > 0) {
+            adjustedBounds = DoubleRectangles.extendRight(adjustedBounds, -rightSpace)
+        }
+        if (topSpace > 0) {
+            adjustedBounds = DoubleRectangles.extendUp(adjustedBounds, -topSpace)
+        }
+        if (bottomSpace > 0) {
+            adjustedBounds = DoubleRectangles.extendDown(adjustedBounds, -bottomSpace)
+        }
+
+        return adjustedBounds
+    }
 }

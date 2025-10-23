@@ -8,8 +8,10 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.assemble.DetachedLegendsCollector
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.CompositeFigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.FigKind
