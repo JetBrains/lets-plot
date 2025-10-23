@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.bracketingIndicesOrNull
 import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
@@ -188,8 +189,8 @@ class PointDensityStat(
             stepsY: List<Double>,
             densityMatrix: BlockRealMatrix
         ): Double {
-            val (colLow, colHigh) = binarySearchOfLimits(x, stepsX)
-            val (rowLow, rowHigh) = binarySearchOfLimits(y, stepsY)
+            val (colLow, colHigh) = stepsX.bracketingIndicesOrNull(x)!!
+            val (rowLow, rowHigh) = stepsY.bracketingIndicesOrNull(y)!!
             if (colLow == colHigh && rowLow == rowHigh) {
                 return densityMatrix.getEntry(rowLow, colLow)
             }
@@ -205,27 +206,6 @@ class PointDensityStat(
 
         private fun scaledDistanceSquared(x1: Double, y1: Double, x2: Double, y2: Double, xy: Double): Double {
             return (x1 - x2) * (x1 - x2) / xy + (y1 - y2) * (y1 - y2) * xy
-        }
-
-        private fun binarySearchOfLimits(v: Double, steps: List<Double>): Pair<Int, Int> {
-            var low = 0
-            var high = steps.size - 1
-            if (v < steps[low]) {
-                return Pair(low, low)
-            }
-            if (v > steps[high]) {
-                return Pair(high, high)
-            }
-            while (low <= high) {
-                val mid = (low + high) / 2
-                val midVal = steps[mid]
-                when {
-                    midVal < v -> low = mid + 1
-                    midVal > v -> high = mid - 1
-                    else -> return Pair(mid, mid)
-                }
-            }
-            return Pair(high, low)
         }
     }
 }
