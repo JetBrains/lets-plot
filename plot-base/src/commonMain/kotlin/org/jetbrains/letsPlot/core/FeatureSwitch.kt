@@ -9,6 +9,8 @@ object FeatureSwitch {
 
     const val PLOT_VIEW_TOOLBOX_HTML = false
 
+    const val GGGRID_COLLECT_LEGENDS = false
+
     const val PLOT_DEBUG_DRAWING = false
     const val LEGEND_DEBUG_DRAWING = false
 }

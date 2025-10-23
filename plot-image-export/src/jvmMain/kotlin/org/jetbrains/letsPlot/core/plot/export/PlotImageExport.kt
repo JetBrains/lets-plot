@@ -77,7 +77,10 @@ object PlotImageExport {
         plotFigure.mapToCanvas(awtCanvasPeer)
 
         val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
-        canvas.context2d.scale(scaleFactor, scaleFactor)
+
+        // Note: the scale is already applied in AwtCanvas constructor
+        //canvas.context2d.scale(scaleFactor, scaleFactor)
+
         plotFigure.paint(canvas.context2d)
 
         val outputStream = ByteArrayOutputStream()

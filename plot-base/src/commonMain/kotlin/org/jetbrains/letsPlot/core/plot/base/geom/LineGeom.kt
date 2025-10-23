@@ -12,7 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 open class LineGeom : PathGeom() {
 
     override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.ordered_X(super.dataPoints(aesthetics))
+        val data = GeomUtil.with_X(super.dataPoints(aesthetics))
+        return GeomUtil.ordered_X(data)
     }
 
     companion object {

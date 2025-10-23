@@ -9,6 +9,11 @@ class FontFace(
     val bold: Boolean = false,
     val italic: Boolean = false
 ) {
+    val weight: String
+        get() = if (bold) "bold" else "normal"
+    val style: String
+        get() = if (italic) "italic" else "normal"
+
     operator fun plus(other: FontFace): FontFace {
         return FontFace(bold || other.bold, italic || other.italic)
     }

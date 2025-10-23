@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
+
 interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, Dispatcher {
     val pixelDensity: Double
 

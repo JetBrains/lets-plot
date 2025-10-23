@@ -21,6 +21,12 @@ internal class CanvasComponent(
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
-        g!!.drawImage(canvas.image, 0, 0, canvas.size.x, canvas.size.y, this)
+
+        g!!.drawImage(
+            canvas.image,
+            0, 0, canvas.size.x, canvas.size.y,
+            0, 0, canvas.image.width, canvas.image.height,
+            this
+        )
     }
 }

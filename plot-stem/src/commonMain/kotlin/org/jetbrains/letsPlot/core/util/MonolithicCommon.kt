@@ -9,6 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.assemble.DetachedLegendsCollector
+import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -160,7 +162,8 @@ object MonolithicCommon {
             sizingPolicy,
             sharedContinuousDomainX = null,  // only applicable to "composite figures"
             sharedContinuousDomainY = null,
-            computationMessages
+            computationMessages,
+            detachedLegendsCollector = null,
         )
     }
 
@@ -170,7 +173,8 @@ object MonolithicCommon {
         sizingPolicy: SizingPolicy,
         sharedContinuousDomainX: DoubleSpan?,
         sharedContinuousDomainY: DoubleSpan?,
-        computationMessages: List<String>
+        computationMessages: List<String>,
+        detachedLegendsCollector: DetachedLegendsCollector?,
     ): PlotFigureBuildInfo {
 
         val preferredSize = PlotSizeHelper.singlePlotSize(
@@ -185,6 +189,7 @@ object MonolithicCommon {
             config,
             sharedContinuousDomainX,
             sharedContinuousDomainY,
+            detachedLegendsCollector
         )
         return PlotFigureBuildInfo(
             assembler,
@@ -225,6 +230,14 @@ object MonolithicCommon {
 
         val compositeFigureLayout = config.layout
 
+        val detachedLegendsCollector = if (config.collectLegends) {
+            DetachedLegendsCollector(
+                detachOverlayLegends = config.collectOverlayLegends
+            )
+        } else {
+            null
+        }
+
         val sharedXDomains: List<DoubleSpan?>?
         val sharedYDomains: List<DoubleSpan?>?
         if (compositeFigureLayout is CompositeFigureGridLayoutBase &&
@@ -246,18 +259,19 @@ object MonolithicCommon {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
-                        // Sizing doesn't matter - will be updateed by sub-plots layout.
+                        // Sizing doesn't matter - will be updateed by subplots' layout.
                         containerSize = null,
                         sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                         sharedContinuousDomainX = sharedXDomains?.get(index),
                         sharedContinuousDomainY = sharedYDomains?.get(index),
-                        computationMessages = emptyList()  // No "own messages" when a part of a composite.
+                        computationMessages = emptyList(),  // No "own messages" when a part of a composite.
+                        detachedLegendsCollector = detachedLegendsCollector
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
                         buildCompositeFigure(
                             config = it as CompositeFigureConfig,
-                            preferredSize = DoubleVector.ZERO, // Will be updateed by sub-plots layout.
+                            preferredSize = DoubleVector.ZERO, // Will be updateed by subplots' layout.
                             computationMessages
                         )
                     }
@@ -267,6 +281,19 @@ object MonolithicCommon {
             }
         }
 
+        // Create legend blocks from collected legends
+        val legendBlocks = detachedLegendsCollector?.collectedLegends?.let { collectedLegends ->
+            // Group legends by position and justification
+            val legendsByPositionAndJustification = collectedLegends.groupBy {
+                it.position to it.justification
+            }
+
+            // Create a CompositeLegendBlockInfo for each group
+            legendsByPositionAndJustification.values.map { legendsInGroup ->
+                CompositeLegendBlockInfo.create(legendsInGroup, theme = config.theme.legend())
+            }
+        } ?: emptyList()
+
         return CompositeFigureBuildInfo(
             elements = elements,
             layout = compositeFigureLayout,
@@ -275,7 +302,8 @@ object MonolithicCommon {
             subtitle = config.subtitle,
             caption = config.caption,
             theme = config.theme,
-            computationMessages
+            computationMessages,
+            legendBlocks = legendBlocks
         )
     }
 

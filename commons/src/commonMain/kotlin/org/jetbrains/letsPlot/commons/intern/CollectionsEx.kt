@@ -48,3 +48,23 @@ fun <T> Collection<T?>.splitByNull(): List<List<T>> {
 
 fun <T> Iterable<T>.indicesOf(predicate: (T) -> Boolean) =
     mapIndexedNotNull{ i, elem -> i.takeIf{ predicate(elem) } }
+
+// Returns indices (i, j) such as list[i] < element <= list[j]; or (0, 1) if element == list.first().
+// List is expected to be sorted in ascending order, doesn't contain duplicates and should have at least two elements.
+fun <T : Comparable<T>> List<T>.bracketingIndicesOrNull(element: T): Pair<Int, Int>? {
+    if (size < 2) return null
+    return binarySearch(element).let { i ->
+        val upperIndex = when {
+            i == 0 -> 1 // special case: element == list.first()
+            i > 0 -> i // element found in the list
+            i < 0 -> -i - 1 // element not found; insertion point
+            else -> error("Unexpected index $i") // should never happen
+        }
+        when {
+            upperIndex in 1 until size -> Pair(upperIndex - 1, upperIndex)
+            upperIndex <= 0 -> null // element < list.first()
+            upperIndex >= size -> null // element > list.last()
+            else -> error("Unexpected index $upperIndex") // should never happen
+        }
+    }
+}

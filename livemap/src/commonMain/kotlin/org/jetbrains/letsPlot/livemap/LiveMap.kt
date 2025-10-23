@@ -70,6 +70,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportGridUpdateSyste
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportPositionUpdateSystem
 import org.jetbrains.letsPlot.livemap.ui.*
 
+
 class LiveMap(
     private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection,
@@ -124,7 +125,7 @@ class LiveMap(
         myContext = LiveMapContext(
             mapProjection = myMapProjection,
             mouseEventSource = canvasControl,
-            mapRenderContext = MapRenderContext(viewport, canvasControl),
+            mapRenderContext = MapRenderContext(viewport, canvasControl, canvasControl.pixelDensity),
             errorHandler = { canvasControl.schedule { errorEvent.fire(it) } },
             camera = camera,
             layerManager = myLayerManager
@@ -262,7 +263,7 @@ class LiveMap(
             .addComponents {
                 + ClickableComponent(
                     Rectangle().apply {
-                        origin = org.jetbrains.letsPlot.livemap.Client.ZERO_VEC.toDoubleVector()
+                        origin = Client.ZERO_VEC.toDoubleVector()
                         dimension = viewport.size.toDoubleVector()
                     }
                 )

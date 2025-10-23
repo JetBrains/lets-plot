@@ -64,7 +64,8 @@ class LayerConfig constructor(
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    val dtypesByVarName: Map<String, DataType>
+    val geoMappings: Map<Aes<*>, DataFrame.Variable>
+    val dtypeByVarName: Map<String, DataType>
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
     val labelFormat: String? = getString(Option.Geom.Text.LABEL_FORMAT)
@@ -235,8 +236,7 @@ class LayerConfig constructor(
             }
         }
 
-        val (aesMappings: Map<Aes<*>, DataFrame.Variable>,
-            rawCombinedData: DataFrame) = layerMappingsAndCombinedData(
+        val (aesMappings, geoMappings, rawCombinedData) = layerMappingsAndCombinedData(
             layerOptions = layerOptions,
             geomKind = geomProto.geomKind,
             stat = stat,
@@ -250,6 +250,7 @@ class LayerConfig constructor(
             isMapPlot = isMapPlot
         )
 
+        this.geoMappings = geoMappings
         val baseDTypes = DataMetaUtil.getDTypesByVarName(plotDataMeta) +
                 DataMetaUtil.getDTypesByVarName(getMap(DATA_META))
 
@@ -262,7 +263,7 @@ class LayerConfig constructor(
             emptyMap()
         }
 
-        dtypesByVarName = baseDTypes + discreteVarsDTypes
+        dtypeByVarName = baseDTypes + discreteVarsDTypes
 
 
         // init AES constants excluding mapped AES

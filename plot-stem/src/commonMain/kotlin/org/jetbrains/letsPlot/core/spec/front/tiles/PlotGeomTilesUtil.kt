@@ -120,8 +120,9 @@ internal object PlotGeomTilesUtil {
         tz: TimeZone?
     ): Map<Any, (Any) -> String> {
         val expFormat = extractExponentFormat(exponentFormat)
-        val dataFormatters =
-            layerConfig.dtypesByVarName.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat, tz) }
+        val dataFormatters = layerConfig.dtypeByVarName.mapValues { (_, dtype) ->
+            FormatterUtil.byDataType(dtype, expFormat, tz)
+        }
         val statFormatters = Stats.VARS.mapValues { FormatterUtil.byDataType(DataType.FLOATING, expFormat, tz) }
         val varFormatters = dataFormatters + statFormatters
 

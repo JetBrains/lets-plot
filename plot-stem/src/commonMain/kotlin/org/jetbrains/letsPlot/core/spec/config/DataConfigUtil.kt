@@ -69,7 +69,7 @@ internal object DataConfigUtil {
         isYOrientation: Boolean,
         clientSide: Boolean,
         isMapPlot: Boolean,
-    ): Pair<Map<Aes<*>, DataFrame.Variable>, DataFrame> {
+    ): Triple<Map<Aes<*>, DataFrame.Variable>, Map<Aes<*>, DataFrame.Variable>, DataFrame> {
 
         val isGeoConfigApplicable = GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)
         val isDataGeoDF = GeoConfig.isGeoDataframe(layerOptions, Option.PlotBase.DATA)
@@ -99,7 +99,8 @@ internal object DataConfigUtil {
         }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && isGeoConfigApplicable) {
+        val geoMappings: Map<Aes<*>, DataFrame.Variable>
+        if (!clientSide && isGeoConfigApplicable) {
             val geoConfig = GeoConfig(
                 geomKind,
                 combinedData,
@@ -108,9 +109,11 @@ internal object DataConfigUtil {
             )
             combinedData = geoConfig.dataAndCoordinates
             aesMappings = geoConfig.mappings
+            geoMappings = geoConfig.geoMappings
 
         } else {
             aesMappings = ConfigUtil.createAesMapping(combinedData, consumedAesMappings)
+            geoMappings = emptyMap()
         }
 
         if (clientSide) {
@@ -129,10 +132,7 @@ internal object DataConfigUtil {
         @Suppress("ConvertArgumentToSet")
         aesMappings = aesMappings - explicitConstantAes
 
-        return Pair(
-            first = aesMappings,
-            second = combinedData
-        )
+        return Triple(aesMappings, geoMappings, combinedData)
     }
 
     fun isAesDiscrete(

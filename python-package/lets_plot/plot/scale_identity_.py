@@ -21,7 +21,8 @@ __all__ = ['scale_identity',
 
 
 def scale_identity(aesthetic, *,
-                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None, **other):
+                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                   format=None, **other):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -95,7 +96,8 @@ def scale_identity(aesthetic, *,
                   **other)
 
 
-def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                         format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -164,7 +166,8 @@ def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limit
                           format=format)
 
 
-def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                        format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -233,7 +236,8 @@ def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits
                           format=format)
 
 
-def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                         format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -300,13 +304,11 @@ def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limit
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
-                          format=format,
-                          #
-                          solid=None,
-                          discrete=True)
+                          format=format)
 
 
-def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                            format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -377,12 +379,11 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, li
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
-                          format=format,
-                          #
-                          discrete=True)
+                          format=format)
 
 
-def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                         format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -452,7 +453,8 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limit
                           format=format)
 
 
-def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                        format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -522,7 +524,8 @@ def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits
                           format=format)
 
 
-def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                             format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that can be handled directly.
@@ -590,7 +593,8 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, l
                           format=format)
 
 
-def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
+def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
+                          format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that can be handled directly.

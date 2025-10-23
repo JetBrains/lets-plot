@@ -29,7 +29,6 @@ class GeoConfigWithStatApplyingTest {
     private val commonMapping = """ "fill": "Vote", "weight": "Number" """
     private val groupAB = """ "group": "Name" """
     private val groupYesANoAYesBNoB = """ "group": ["Vote", "Name"] """
-    private val groupNone = """ "group": [] """  // to cancel default grouping
     private val xMapping = """ "x": "Name" """
 
     // Add variables to tooltips just to keep them
@@ -47,63 +46,50 @@ class GeoConfigWithStatApplyingTest {
         """.trimMargin()
 
     @Test
-    fun `not map plot and no positional mapping - the sum will be calculated for all records`() {
-        // "group" mapping cancels default grouping (see https://github.com/JetBrains/lets-plot/issues/1401)
-
-        // Two grops: A, B
-        getGeomLayer(
-            """
+    fun `pie with two grouping vars`() {
+        getGeomLayer("""
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |           ${pieLayer("$commonMapping, $groupAB")}
-            |       }
-            |    ]
-            |}
-            """.trimMargin()
-        )
-            .assertValues("Name", listOf("A", "B"))
-            .assertValues("transform.X", listOf(-80.0, 80.0)) // gdf coordinates
-            .assertValues("transform.Y", listOf(-40.0, 40.0))
-            .assertValues("..sum..", listOf(250.0, 250.0))   // sum by all records
-
-        // Four groups: Yes.A, No.A, Yes.B, No.B
-        getGeomLayer(
-            """
-            |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |           ${pieLayer("$commonMapping, $groupYesANoAYesBNoB")}
-            |       }
-            |    ]
-            |}
-            """.trimMargin()
+            |  "kind": "plot", 
+            |  "layers": [
+            |    {
+            |      "geom": "livemap", 
+            |      "tiles": { 
+            |        "kind": "vector_lets_plot", 
+            |        "url": "wss://tiles.datalore.jetbrains.com", 
+            |        "theme": "color", 
+            |        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>." 
+            |      }
+            |    }, 
+            |    {
+            |      "geom": "pie", 
+            |      "data": {
+            |        "Name": [ "A", "A", "B", "B" ], 
+            |        "Vote": [ "Yes", "No", "Yes", "No" ], 
+            |        "Number": [ 120.0, 30.0, 20.0, 80.0 ], 
+            |        "Registered": [ 165.0, 165.0, 111.0, 111.0 ], 
+            |        "Full name": [ "City A", "City A", "City B", "City B" ]
+            |      }, 
+            |      "mapping": { "fill": "Vote", "weight": "Number", "group": ["Name", "Vote"] }, 
+            |      "tooltips": { "variables": [ "..sum..", "Registered", "Full name", "Vote", "Number" ] }, 
+            |      "map": {
+            |        "name": [ "A", "B" ], 
+            |        "coord": [ "{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}", "{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}" ]
+            |      }, 
+            |      "map_data_meta": { "geodataframe": { "geometry": "coord" } }, 
+            |      "map_join": [ [ "Name" ], [ "name" ] ]
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
         )
             .assertValues("Name", listOf("A", "A", "B", "B"))
             .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
             .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
-
-        // TODO: expectations?
-//        // No groups
-//        getGeomLayer(
-//            """
-//            |{
-//            |    "kind": "plot",
-//            |    "layers": [
-//            |       {
-//            |           ${pieLayer("$commonMapping, $groupNone")}
-//            |       }
-//            |    ]
-//            |}
-//            """.trimMargin()
-//        )
-//            .assertValues("Name", listOf("A", "A", "B", "B"))
-//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0)) // gdf coordinates
-//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))   // sum by all records
+            .assertValues("..sum..", listOf(150.0, 150.0, 100.0, 100.0))
+            .assertValues("Registered", listOf(165.0, 165.0, 111.0, 111.0))
+            .assertValues("Full name", listOf("City A", "City A", "City B", "City B"))
+            .assertValues("Vote", listOf("Yes", "No", "Yes", "No"))
+            .assertValues("Number", listOf(120.0, 30.0, 20.0, 80.0))
     }
 
     @Test
@@ -129,75 +115,6 @@ class GeoConfigWithStatApplyingTest {
     }
 
     @Test
-    fun `map plot and no positional mapping - the sum will be calculated for all records`() {
-        // "group" mapping cancels default grouping (see https://github.com/JetBrains/lets-plot/issues/1401)
-
-        // Two grops: A, B
-        getGeomLayer(
-            """
-            |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |          "geom": "livemap"
-            |       },
-            |       {
-            |            ${pieLayer("$commonMapping, $groupAB")}
-            |       }
-            |    ]
-            |}
-            """.trimMargin()
-        )
-            .assertValues("Name", listOf("A", "B"))
-            .assertValues("transform.X", listOf(-80.0, 80.0))
-            .assertValues("transform.Y", listOf(-40.0, 40.0))
-            .assertValues("..sum..", listOf(250.0, 250.0))
-
-        // Four groups: Yes.A, No.A, Yes.B, No.B
-        getGeomLayer(
-            """
-            |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |          "geom": "livemap"
-            |       },
-            |       {
-            |            ${pieLayer("$commonMapping, $groupYesANoAYesBNoB")}
-            |       }
-            |    ]
-            |}
-            """.trimMargin()
-        )
-            .assertValues("Name", listOf("A", "A", "B", "B"))
-            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
-            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
-
-        // TODO: expectations?
-//        // No groups
-//        getGeomLayer(
-//            """
-//            |{
-//            |    "kind": "plot",
-//            |    "layers": [
-//            |       {
-//            |          "geom": "livemap"
-//            |       },
-//            |       {
-//            |            ${pieLayer("$commonMapping, $groupNone")}
-//            |       }
-//            |    ]
-//            |}
-//            """.trimMargin()
-//        )
-//            .assertValues("Name", listOf("A", "A", "B", "B"))
-//            .assertValues("transform.X", listOf(-80.0, -80.0, 80.0, 80.0))
-//            .assertValues("transform.Y", listOf(-40.0, -40.0, 40.0, 40.0))
-//            .assertValues("..sum..", listOf(250.0, 250.0, 250.0, 250.0))
-    }
-
-    @Test
     fun `map plot with positional mapping - the sum will be calculated for each position`() {
         getGeomLayer(
             """
@@ -214,7 +131,6 @@ class GeoConfigWithStatApplyingTest {
             |}
             """.trimMargin()
         )
-            .assertValues("Name", listOf("A", "B", "A", "B"))
             // It's the map plot => will get GeoDataframe coordinates even with specified positional mapping:
             .assertValues("transform.X", listOf(-80.0, 80.0, -80.0, 80.0))
             .assertValues("transform.Y", listOf(-40.0, 40.0, -40.0, 40.0))

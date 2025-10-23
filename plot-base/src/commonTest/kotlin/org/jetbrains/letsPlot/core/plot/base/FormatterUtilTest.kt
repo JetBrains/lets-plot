@@ -17,6 +17,7 @@ class FormatterUtilTest {
     fun intDtypeHasSameDefaultFormatAsFloating() {
         assertEquals("1", formatDType(1.0, DataType.INTEGER))
         assertEquals("1.5", formatDType(1.5, DataType.INTEGER))
+        assertEquals("2,025", formatDType(2025, DataType.INTEGER))
         assertEquals("1e+30", formatDType(1e30, DataType.INTEGER))
     }
 

@@ -11,7 +11,9 @@ import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtilNew
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -27,6 +29,7 @@ internal class CompositeFigureBuildInfo constructor(
     private val caption: String?,
     private val theme: Theme,
     override val computationMessages: List<String>,
+    private val legendBlocks: List<CompositeLegendBlockInfo>,
 ) : FigureBuildInfo {
 
     override val isComposite: Boolean = true
@@ -78,7 +81,8 @@ internal class CompositeFigureBuildInfo constructor(
                 bounds,
                 title, subtitle, caption,
                 theme,
-                computationMessages
+                computationMessages,
+                legendBlocks,
             )
         }
     }
@@ -86,14 +90,22 @@ internal class CompositeFigureBuildInfo constructor(
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
         val plotTheme = theme.plot()
 
-        // Layout inner positions relative to left-top of the figure.
+        // Lay out inner positions relative to the left-top of the figure.
         val contextBounds = DoubleRectangle(DoubleVector.ZERO, bounds.dimension)
         val withoutMargins = plotTheme.layoutMargins().shrinkRect(contextBounds)
         val withoutTitles = PlotLayoutUtil.boundsWithoutTitleAndCaption(
             outerBounds = withoutMargins,
             title, subtitle, caption, theme
         )
-        val elementsAreaBounds = plotTheme.plotInset().shrinkRect(withoutTitles)
+
+        val withoutPlotInset = plotTheme.plotInset().shrinkRect(withoutTitles)
+
+        // Subtract space for fixed-position legend blocks
+        val elementsAreaBounds = PlotLayoutUtilNew.subtractLegendsSpace(
+            bounds = withoutPlotInset,
+            legendBlocks = legendBlocks,
+            theme = theme.legend()
+        )
 
         val layoutedElements = layout.doLayout(elementsAreaBounds, elements)
         val layoutedElementsAreaBounds = layoutedElements.filterNotNull()
@@ -107,7 +119,8 @@ internal class CompositeFigureBuildInfo constructor(
             bounds,
             title, subtitle, caption,
             theme,
-            computationMessages
+            computationMessages,
+            legendBlocks
         ).apply {
             this._layoutInfo = FigureLayoutInfo(
                 figureSize = contextBounds.dimension,
@@ -127,7 +140,8 @@ internal class CompositeFigureBuildInfo constructor(
             DoubleRectangle(DoubleVector.ZERO, size),
             title, subtitle, caption,
             theme,
-            computationMessages
+            computationMessages,
+            legendBlocks
         )
     }
 }

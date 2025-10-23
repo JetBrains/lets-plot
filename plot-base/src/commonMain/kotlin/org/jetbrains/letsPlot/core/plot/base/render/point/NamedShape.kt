@@ -68,9 +68,11 @@ enum class NamedShape(
                 STICK_DIAMOND,
                 STICK_DIAMOND_PLUS,
                 FILLED_DIAMOND -> sqrt(2.0)
+
                 STICK_PLUS,
                 STICK_STAR,
                 STICK_CROSS -> 2.0
+
                 else -> 1.0
             }
             shapeCoeff * strokeWidth(dataPoint)
@@ -85,5 +87,13 @@ enum class NamedShape(
             0.0
         else
             AesScaling.pointStrokeWidth(dataPoint)
+    }
+
+    companion object {
+        private val SHAPE_BY_CODE: Map<Int, NamedShape> = NamedShape.entries.associateBy { it.code }
+
+        fun fromInt(code: Int): NamedShape? {
+            return SHAPE_BY_CODE[code]
+        }
     }
 }

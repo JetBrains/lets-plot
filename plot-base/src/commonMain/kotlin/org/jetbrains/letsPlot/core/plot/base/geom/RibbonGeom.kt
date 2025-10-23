@@ -7,9 +7,13 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMAX
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMAX_WITH_FINITE_YMIN
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMIN
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMIN_WITH_FINITE_YMAX
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_ZERO
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
@@ -17,14 +21,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
-    private fun finiteOrNull(x: Double?, y: Double?): DoubleVector? {
-        return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
-            DoubleVector(x!!, y!!)
-        } else null
-    }
-
     private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)
+        val data = GeomUtil.with_X(aesthetics.dataPoints())
         return GeomUtil.ordered_X(data)
     }
 
@@ -38,18 +36,15 @@ class RibbonGeom : GeomBase() {
         val dataPoints = dataPoints(aesthetics)
         val helper = LinesHelper(pos, coord, ctx)
 
-        val upper = { p: DataPointAesthetics -> finiteOrNull(p[Aes.X], p[Aes.YMAX]) }
-        val lower = { p: DataPointAesthetics -> finiteOrNull(p[Aes.X], p[Aes.YMIN]) }
-
-        val paths = helper.createBands(dataPoints, upper, lower)
+        val paths = helper.createBands(dataPoints, TO_LOCATION_X_YMAX_WITH_FINITE_YMIN, TO_LOCATION_X_YMIN_WITH_FINITE_YMAX)
         root.appendNodes(paths)
 
         //if you want to retain the side edges of ribbon:
-        //comment out the following codes, and switch decorate method in LinesHelper.createbands
+        //comment out the following codes, and switch decorate method in LinesHelper.createBands
         helper.setAlphaEnabled(false)
 
-        root.appendNodes(helper.createLines(dataPoints, upper))
-        root.appendNodes(helper.createLines(dataPoints, lower))
+        root.appendNodes(helper.createLines(dataPoints, TO_LOCATION_X_YMAX))
+        root.appendNodes(helper.createLines(dataPoints, TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
     }
@@ -61,14 +56,10 @@ class RibbonGeom : GeomBase() {
             .defaultObjectRadius(0.0)
             .defaultKind(HORIZONTAL_TOOLTIP.takeUnless { ctx.flipped } ?: VERTICAL_TOOLTIP)
 
-        val location = { p: DataPointAesthetics -> finiteOrNull(p[Aes.X], 0.0) }
-        val upper = { p: DataPointAesthetics -> finiteOrNull(p[Aes.X], p[Aes.YMAX]) }
-        val lower = { p: DataPointAesthetics -> finiteOrNull(p[Aes.X], p[Aes.YMIN]) }
-
         for (p in aesthetics.dataPoints()) {
-            val x = location(p)?.let { helper.toClient(it, p) }?.x ?: continue
-            val top = upper(p)?.let { helper.toClient(it, p) }?.y ?: continue
-            val bottom = lower(p)?.let { helper.toClient(it, p) }?.y ?: continue
+            val x = TO_LOCATION_X_ZERO(p)?.let { helper.toClient(it, p) }?.x ?: continue
+            val top = TO_LOCATION_X_YMAX(p)?.let { helper.toClient(it, p) }?.y
+            val bottom = TO_LOCATION_X_YMIN(p)?.let { helper.toClient(it, p) }?.y
 
             hint.defaultCoord(p[Aes.X]!!)
                 .defaultColor(p.fill()!!, alpha = null)
@@ -82,8 +73,13 @@ class RibbonGeom : GeomBase() {
                 markerColors = colorMapper(p)
             )
 
-            ctx.targetCollector.addPoint(p.index(), DoubleVector(x, top), 0.0, tooltipParams)
-            ctx.targetCollector.addPoint(p.index(), DoubleVector(x, bottom), 0.0, tooltipParams)
+            if (top != null) {
+                ctx.targetCollector.addPoint(p.index(), DoubleVector(x, top), 0.0, tooltipParams)
+            }
+
+            if (bottom != null) {
+                ctx.targetCollector.addPoint(p.index(), DoubleVector(x, bottom), 0.0, tooltipParams)
+            }
         }
     }
 

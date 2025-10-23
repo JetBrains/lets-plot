@@ -222,6 +222,21 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             return DoubleRectangle(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
         }
 
+        @Suppress("FunctionName")
+        fun WH(width: Number, height: Number): DoubleRectangle {
+            return DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble())
+        }
+
+        @Suppress("FunctionName")
+        fun WH(dim: DoubleVector): DoubleRectangle {
+            return DoubleRectangle(DoubleVector.ZERO, dim)
+        }
+
+        @Suppress("FunctionName")
+        fun WH(dim: Vector): DoubleRectangle {
+            return DoubleRectangle(DoubleVector.ZERO, DoubleVector(dim.x, dim.y))
+        }
+
         fun hvRange(hRange: DoubleSpan, vRange: DoubleSpan): DoubleRectangle {
             return DoubleRectangle(
                 hRange.lowerEnd,

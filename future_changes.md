@@ -6,6 +6,10 @@
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/ggtb_size_zoomin.ipynb).
 
+- `geom_histogram()`: parameter `breaks`. [[#1382](https://github.com/JetBrains/lets-plot/issues/1382)]
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_histogram_param_breaks.ipynb).
+
 - `flavor_standard()` sets the theme's default color scheme [[#1277](https://github.com/JetBrains/lets-plot/issues/1277)]. <br>
   Use to override other flavors or make defaults explicit.
 
@@ -36,8 +40,16 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
 - markdown: links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
 
+- Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
+  
+  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
+
 ### Fixed
 
 - geom_density2d: NullPointerException when weight aesthetic contains None values [[#1399](https://github.com/JetBrains/lets-plot/issues/1399)].
 - Tooltip shows duplicate lines when as_discrete is applied twice to the same var [[#1400](https://github.com/JetBrains/lets-plot/issues/1400)].
 - geom_density2d: Incorrect processing of weighted statistics when None value occurs in the x or y column.
+- facet_wrap: indescriptive error when the specified facet variable is not present in the dataset [[#1409](https://github.com/JetBrains/lets-plot/issues/1409)].
+- Integer numbers in facet strip titles are displayed as float [[#1386](https://github.com/JetBrains/lets-plot/issues/1386)].
+- Error when using scale_identity(aesthetic="shape") [[#1212](https://github.com/JetBrains/lets-plot/issues/1212)].
+- ggsave: theme option face="italic" doesn't work [[#1391](https://github.com/JetBrains/lets-plot/issues/1391)].

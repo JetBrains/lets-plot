@@ -51,15 +51,21 @@ internal class AwtContext2d(
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
+        log { "AwtContext2d.drawImage(snapshot) size=${snapshot.size}, transform=${graphics.transform}" }
+
         drawImage(snapshot, 0.0, 0.0)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
+        log { "AwtContext2d.drawImage(snapshot, x=$x, y=$y) size=${snapshot.size}, transform=${graphics.transform}" }
+
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), null)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        log { "AwtContext2d.drawImage(snapshot, x=$x, y=$y, dw=$dw, dh=$dh) size=${snapshot.size}, transform=${graphics.transform}" }
+
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), dw.toInt(), dh.toInt(), null)
     }
@@ -75,6 +81,11 @@ internal class AwtContext2d(
         dw: Double,
         dh: Double
     ) {
+        log {
+            "AwtContext2d.drawImage(snapshot, sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh) " +
+                    "size=${snapshot.size}, transform=${graphics.transform}"
+        }
+
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(
             awtSnapshot.image,

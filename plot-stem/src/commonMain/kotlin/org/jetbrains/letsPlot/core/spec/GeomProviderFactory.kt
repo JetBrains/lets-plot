@@ -33,7 +33,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.LINE] = GeomProvider.line()
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
-        PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
         PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
         PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
@@ -66,6 +65,14 @@ internal object GeomProviderFactory {
         tz: TimeZone?,
     ): GeomProvider {
         return when (geomKind) {
+            GeomKind.HISTOGRAM -> GeomProvider.histogram { ctx ->
+                val geom = HistogramGeom()
+                if (layerConfig.hasOwn(Option.Geom.Histogram.BREAKS)) {
+                    geom.setBreaks(layerConfig.getDoubleList(Option.Geom.Histogram.BREAKS))
+                }
+                geom
+            }
+
             GeomKind.AREA -> GeomProvider.area {
                 val geom = AreaGeom()
 

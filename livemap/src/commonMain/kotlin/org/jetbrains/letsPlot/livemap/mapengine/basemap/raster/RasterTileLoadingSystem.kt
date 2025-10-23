@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
-import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
 import org.jetbrains.letsPlot.livemap.core.ecs.*
@@ -69,11 +68,11 @@ class RasterTileLoadingSystem(
                         when (response.errorCode) {
                             null -> drawImageTile(imageData, context)
                             else -> drawErrorTile(response.errorCode, context)
-                        }.onSuccess { snapshot ->
+                        }.onSuccess { tile ->
                             runLaterBySystem(httpTileEntity) { theEntity ->
-                                theEntity.get<BasemapTileComponent>().apply {
-                                    nonCacheable = response.errorCode != null
-                                    tile = Tile.SnapshotTile(snapshot)
+                                theEntity.get<BasemapTileComponent>().also {
+                                    it.nonCacheable = response.errorCode != null
+                                    it.tile = tile
                                 }
                                 ParentLayerComponent.tagDirtyParentLayer(theEntity)
                             }
@@ -89,7 +88,7 @@ class RasterTileLoadingSystem(
         downloadedEntities.forEach { it.remove<HttpTileResponseComponent>() }
     }
 
-    private fun drawImageTile(imageData: ByteArray, context: LiveMapContext): Async<Canvas.Snapshot> {
+    private fun drawImageTile(imageData: ByteArray, context: LiveMapContext): Async<Tile> {
         return context.mapRenderContext.canvasProvider
             .decodePng(imageData)
             .map { imageSnapshot ->
@@ -106,14 +105,14 @@ class RasterTileLoadingSystem(
                     dh = TILE_PIXEL_SIZE
                 )
 
-                tileCanvas.takeSnapshot()
+                Tile.SnapshotTile(tileCanvas.takeSnapshot(), context.mapRenderContext.pixelDensity)
             }
     }
 
     private fun drawErrorTile(
         errorCode: Throwable?,
         context: LiveMapContext
-    ): Async<Canvas.Snapshot> {
+    ): Async<Tile> {
         val errorText = errorCode!!.message ?: "Unknown error"
         val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
         val tileCtx = tileCanvas.context2d
@@ -125,7 +124,7 @@ class RasterTileLoadingSystem(
         }
         tileCtx.setFont(Font())
         tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
-        return Asyncs.constant(tileCanvas.takeSnapshot())
+        return Asyncs.constant(Tile.SnapshotTile(tileCanvas.takeSnapshot(), context.mapRenderContext.pixelDensity))
     }
 
     private fun getTileLayerEntities(cellKey: CellKey): Sequence<EcsEntity> {

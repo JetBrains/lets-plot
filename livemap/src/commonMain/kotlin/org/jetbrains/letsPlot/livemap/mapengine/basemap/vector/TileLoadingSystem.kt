@@ -95,7 +95,7 @@ class TileLoadingSystem(
                                 .map {
                                     runLaterBySystem(tileLayerEntity) { theEntity ->
                                         val snapshot = canvas.takeSnapshot()
-                                        theEntity.get<BasemapTileComponent>().tile = SnapshotTile(snapshot)
+                                        theEntity.get<BasemapTileComponent>().tile = SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
                                         theEntity.remove<BusyStateComponent>()
                                         ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                     }

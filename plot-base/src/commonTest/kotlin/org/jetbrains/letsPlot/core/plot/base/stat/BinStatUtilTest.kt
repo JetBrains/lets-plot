@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.BinStat.Companion.DEF_BIN_COUNT
+import kotlin.math.abs
 import kotlin.test.*
 
 class BinStatUtilTest {
@@ -118,6 +119,140 @@ class BinStatUtilTest {
     }
 
     @Test
+    fun checkComputeHistogramBinsSimple() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(2.0, 4.0),
+            valuesX = listOf(3.0, 1.0, 5.0, 1.0, 5.0, 4.0),
+            breaks = listOf(0.0, 2.0, 6.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsEmptyValues() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(0.0, 0.0),
+            valuesX = listOf(),
+            breaks = listOf(0.0, 2.0, 6.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsOneBin() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(1.0),
+            valuesX = listOf(1.0),
+            breaks = listOf(0.0, 2.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsBorderValues() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(3.0, 3.0),
+            valuesX = listOf(0.0, 2.0, 2.0, 6.0, 6.0, 6.0),
+            breaks = listOf(0.0, 2.0, 6.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsBeyondTheBorder() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(2.0, 3.0),
+            valuesX = listOf(-1.0, 1.0, 1.0, 3.0, 4.0, 5.0, 7.0),
+            breaks = listOf(0.0, 2.0, 6.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsWithNegativeValues() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(1.0, 1.0),
+            valuesX = listOf(-2.0, 0.0),
+            breaks = listOf(-3.0, -1.0, 3.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsWithNAValues() {
+        computeHistogramBinsFor(
+            expectedCounts = listOf(1.0, 0.0),
+            valuesX = listOf(1.0, null, Double.NaN),
+            breaks = listOf(0.0, 2.0, 6.0)
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsWeighted() {
+        val weights = listOf(2.0, 3.0)
+        computeHistogramBinsFor(
+            expectedCounts = listOf(2.0, 3.0),
+            valuesX = listOf(1.0, 4.0),
+            breaks = listOf(0.0, 2.0, 6.0),
+            weightAtIndex = { weights[it] }
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsNegativeWeights() {
+        val weights = listOf(2.0, -1.0)
+        computeHistogramBinsFor(
+            expectedCounts = listOf(2.0, -1.0),
+            valuesX = listOf(1.0, 4.0),
+            breaks = listOf(0.0, 2.0, 6.0),
+            weightAtIndex = { weights[it] }
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsZeroWeights() {
+        val weights = listOf(0.0, 0.0)
+        computeHistogramBinsFor(
+            expectedCounts = listOf(0.0, 0.0),
+            valuesX = listOf(1.0, 4.0),
+            breaks = listOf(0.0, 2.0, 6.0),
+            weightAtIndex = { weights[it] }
+        )
+    }
+
+    @Test
+    fun checkComputeHistogramBinsRequiresEnoughBreaks() {
+        val exception = assertFailsWith<IllegalArgumentException> {
+            computeHistogramBinsFor(
+                expectedCounts = listOf(0.0),
+                valuesX = listOf(1.0, 4.0),
+                breaks = listOf(0.0)
+            )
+        }
+        assertEquals("At least two breaks are required", exception.message)
+    }
+
+    @Test
+    fun checkComputeHistogramBinsRequiresDistinctBreaks() {
+        val breaks = listOf(0.0, 2.0, 2.0, 6.0)
+        val exception = assertFailsWith<IllegalArgumentException> {
+            computeHistogramBinsFor(
+                expectedCounts = listOf(2.0, 4.0),
+                valuesX = listOf(3.0, 1.0, 5.0, 1.0, 5.0, 4.0),
+                breaks = breaks
+            )
+        }
+        assertEquals("Breaks should be distinct: $breaks", exception.message)
+    }
+
+    @Test
+    fun checkComputeHistogramBinsRequiresOrderedBreaks() {
+        val breaks = listOf(0.0, 2.0, 6.0, 2.0)
+        val exception = assertFailsWith<IllegalArgumentException> {
+            computeHistogramBinsFor(
+                expectedCounts = listOf(2.0, 4.0),
+                valuesX = listOf(3.0, 1.0, 5.0, 1.0, 5.0, 4.0),
+                breaks = breaks
+            )
+        }
+        assertEquals("Breaks should be sorted in ascending order: $breaks", exception.message)
+    }
+
+    @Test
     fun checkComputeHistogramStatSeries() {
         val valuesX = listOf(-0.5, 0.0, 0.0, 1.5)
         val data = DataFrame.Builder()
@@ -166,6 +301,63 @@ class BinStatUtilTest {
             assertEquals(1.0, sumPropTotal, tolerance)
             val sumPctTotal = statData.sumPct.sum()
             assertEquals(100.0, sumPctTotal, tolerance)
+        }
+    }
+
+    companion object {
+        private const val EPSILON = 1e-13
+
+        private fun computeHistogramBinsFor(
+            expectedCounts: List<Double>,
+            valuesX: List<Double?>,
+            breaks: List<Double>,
+            weightAtIndex: (Int) -> Double = { 1.0 }
+        ) {
+            val binsData = BinStatUtil.computeHistogramBins(valuesX, breaks, weightAtIndex)
+            // Check x values
+            binsData.x.forEachIndexed { i, x ->
+                val expectedX = (breaks[i] + breaks[i + 1]) / 2.0
+                assertEquals(expectedX, x, "bin x at index $i")
+            }
+            // Check counts
+            binsData.count.forEachIndexed { i, count ->
+                assertEquals(expectedCounts[i], count, EPSILON, "bin count at index $i")
+            }
+            // Check densities
+            val densityNormalizingFactor = binsData.count.first() / binsData.density.first()
+            binsData.density.forEachIndexed { i, density ->
+                val expectedDensity = expectedCounts[i] / densityNormalizingFactor
+                assertEquals(expectedDensity, density, EPSILON, "bin density at index $i")
+            }
+            // Area of density histogram should be equal to 1.0
+            val area = (binsData.density zip binsData.binWidth).sumOf { abs(it.first) * it.second }
+            if (area.isFinite()) {
+                assertEquals(1.0, area, EPSILON, "area of density histogram")
+            }
+            // Check sumProp
+            val totalCount = expectedCounts.sum()
+            binsData.sumProp.forEachIndexed { i, sumProp ->
+                val expectedSumProp = expectedCounts[i] / totalCount
+                assertEquals(expectedSumProp, sumProp, EPSILON, "bin sumProp at index $i")
+            }
+            val sumPropTotal = binsData.sumProp.sum()
+            if (sumPropTotal.isFinite()) {
+                assertEquals(1.0, sumPropTotal, EPSILON, "sum of bin sumProp")
+            }
+            // Check sumPct
+            binsData.sumPct.forEachIndexed { i, sumPct ->
+                val expectedSumPct = 100.0 * expectedCounts[i] / totalCount
+                assertEquals(expectedSumPct, sumPct, EPSILON, "bin sumPct at index $i")
+            }
+            val sumPctTotal = binsData.sumPct.sum()
+            if (sumPctTotal.isFinite()) {
+                assertEquals(100.0, sumPctTotal, EPSILON, "sum of bin sumPct")
+            }
+            // Check bin width
+            binsData.binWidth.forEachIndexed { i, binWidth ->
+                val expectedBinWidth = breaks[i + 1] - breaks[i]
+                assertEquals(expectedBinWidth, binWidth, EPSILON, "bin width at index $i")
+            }
         }
     }
 }

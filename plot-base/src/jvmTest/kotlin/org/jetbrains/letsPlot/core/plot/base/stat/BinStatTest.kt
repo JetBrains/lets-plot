@@ -15,12 +15,13 @@ import kotlin.test.Test
 
 class BinStatTest {
 
-    private fun applyBinStat(df: DataFrame, binCount: Int): DataFrame {
+    private fun applyBinStat(df: DataFrame, binCount: Int, breaks: List<Double> = emptyList()): DataFrame {
         val stat = BinStat(
             binCount,
             null,
             BinStat.XPosKind.NONE,
             0.0,
+            breaks,
             null
         )
         val statDf = stat.apply(df, SimpleStatContext(df))
@@ -104,6 +105,33 @@ class BinStatTest {
 
         // expecting density sum is equal to 1 / width
         val area = binWidth * statDf.getNumeric(Stats.DENSITY).filterNotNull().sum()
+        assertThat(area, Matchers.closeTo(1.0, 1e-12))
+
+        // expecting sumprop sum is equal to 1
+        val sumPropTotal = statDf.getNumeric(Stats.SUMPROP).filterNotNull().sum()
+        assertThat(sumPropTotal, Matchers.closeTo(1.0, 1e-12))
+
+        // expecting sumpct sum is equal to 100
+        val sumPctTotal = statDf.getNumeric(Stats.SUMPCT).filterNotNull().sum()
+        assertThat(sumPctTotal, Matchers.closeTo(100.0, 1e-12))
+    }
+
+    @Test
+    fun fourPointsInUnequalBins() {
+        val breaks = listOf(0.0, 2.0, 6.0, 8.0)
+        val df = DataFrameUtil.fromMap(
+            mapOf(
+                TransformVar.X.name to listOf(1.0, 3.0, 5.0, 7.0)
+            )
+        )
+
+        val statDf = applyBinStat(df, breaks.size - 1, breaks = breaks)
+
+        // expecting count = [1,2,1]
+        assertThat(statDf.getNumeric(Stats.COUNT), Matchers.contains(1.0, 2.0, 1.0))
+
+        // expecting area under density = 1
+        val area = (listOf(2.0, 4.0, 2.0) zip statDf.getNumeric(Stats.DENSITY).filterNotNull()).sumOf { it.first * it.second }
         assertThat(area, Matchers.closeTo(1.0, 1e-12))
 
         // expecting sumprop sum is equal to 1

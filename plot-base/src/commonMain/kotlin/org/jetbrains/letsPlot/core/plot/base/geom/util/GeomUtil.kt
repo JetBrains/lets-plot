@@ -43,6 +43,23 @@ object GeomUtil {
             0.0
         )
     }
+
+    val TO_LOCATION_X_YMAX_WITH_FINITE_YMIN = { p: DataPointAesthetics ->
+        toLocationOrNull(
+            x = p.x(),
+            y = p.ymax(),
+            requireAlso = p.ymin()
+        )
+    }
+
+    val TO_LOCATION_X_YMIN_WITH_FINITE_YMAX = { p: DataPointAesthetics ->
+        toLocationOrNull(
+            x = p.x(),
+            y = p.ymin(),
+            requireAlso = p.ymax()
+        )
+    }
+
     val TO_RECTANGLE = { p: DataPointAesthetics ->
         if (SeriesUtil.allFinite(p.xmin(), p.ymin(), p.xmax(), p.ymax())) {
             rectToGeometry(
@@ -81,6 +98,12 @@ object GeomUtil {
 
     private fun toLocationOrNull(x: Double?, y: Double?): DoubleVector? {
         return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
+            DoubleVector(x!!, y!!)
+        } else null
+    }
+
+    private fun toLocationOrNull(x: Double?, y: Double?, requireAlso: Double?): DoubleVector? {
+        return if (SeriesUtil.allFinite(x, y, requireAlso)) {
             DoubleVector(x!!, y!!)
         } else null
     }

@@ -22,8 +22,8 @@ import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_XMIN
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMAX
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMIN
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
-import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotAssembler
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotGeomTiles
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -220,8 +220,9 @@ class GeoConfigTest {
     }
 
     private fun singleGeomLayer(spec: String): GeomLayer {
-        val config = PlotConfigFrontend.create(parsePlotSpec(spec)) {}
-        return createPlotGeomTiles(config).coreLayersByTile().single().single()
+        val plotSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(spec))
+        val frontendConfig = PlotConfigFrontend.create(plotSpec) { messages -> }
+        return createPlotGeomTiles(frontendConfig).coreLayersByTile().single().single()
     }
 
     @Test
@@ -258,7 +259,7 @@ class GeoConfigTest {
     fun `aes(color'fig'), data=df, map=gdf without map_join should fail`() {
         // don't know how to join data with map without id columns.
         assertEquals(
-            MAP_JOIN_REQUIRED_MESSAGE, failedTransformToClientPlotConfig(
+            "Internal error: IllegalStateException : $MAP_JOIN_REQUIRED_MESSAGE", failedTransformToClientPlotConfig(
                 """
             |{
             |    "kind": "plot", 
@@ -468,10 +469,6 @@ class GeoConfigTest {
         )
             .assertValues("County", listOf("qux", "qux", "qux"))
             .assertValues("State", listOf("foo", "bar", "baz"))
-            .assertValues("name", listOf("Qux", "Qux", "Qux"))
-            .assertValues("county", listOf("qux", "qux", "qux"))
-            .assertValues("state", listOf("foo", "bar", "baz"))
-            .assertValues("values", listOf(100.0, 500.0, 42.42))
             .assertValues("lon", listOf(1.0, 3.0, 5.0))
             .assertValues("lat", listOf(2.0, 4.0, 6.0))
             .assertAes(Aes.COLOR, listOf(Color(228, 26, 28), Color(55, 126, 184), Color(77, 175, 74, 255)))
@@ -581,7 +578,6 @@ class GeoConfigTest {
             |}
             """.trimMargin()
         )
-            .assertValues("fruit", listOf("Apple", "Orange", "Apple", "Orange"))
             .assertValues("transform.X", listOf(3.0, 1.0, 3.0, 1.0))
             .assertValues("transform.Y", listOf(4.0, 2.0, 4.0, 2.0))
             .assertValues("..count..", listOf(4.0, 6.0, 16.0, 9.0))

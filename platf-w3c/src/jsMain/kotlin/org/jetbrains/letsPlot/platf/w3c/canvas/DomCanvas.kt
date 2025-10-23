@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setLeft
@@ -24,10 +23,9 @@ import kotlin.math.ceil
 
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
-    override val size: Vector,
-    pixelRatio: Double
+    override val size: Vector
 ) : Canvas {
-    override val context2d: Context2d = ScaledContext2d.wrap(DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D), pixelRatio)
+    override val context2d: Context2d = DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D)
 
     override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size)
 
@@ -57,7 +55,11 @@ internal class DomCanvas private constructor(
 
         fun create(size: Vector, pixelRatio: Double): DomCanvas {
             val nativeCanvas = createNativeCanvas(size, pixelRatio)
-            return DomCanvas(nativeCanvas, size, pixelRatio)
+            return DomCanvas(nativeCanvas, size).also {
+                if (pixelRatio != 1.0) {
+                    it.context2d.scale(pixelRatio, pixelRatio)
+                }
+            }
         }
 
         private fun createNativeCanvas(

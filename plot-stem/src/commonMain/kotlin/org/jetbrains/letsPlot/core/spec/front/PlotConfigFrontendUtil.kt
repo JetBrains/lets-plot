@@ -11,10 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
+import org.jetbrains.letsPlot.core.plot.builder.assemble.*
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
@@ -223,8 +220,9 @@ object PlotConfigFrontendUtil {
 
     fun createPlotAssembler(
         config: PlotConfigFrontend,
-        sharedContinuousDomainX: DoubleSpan? = null,
-        sharedContinuousDomainY: DoubleSpan? = null,
+        sharedContinuousDomainX: DoubleSpan?,
+        sharedContinuousDomainY: DoubleSpan?,
+        detachedLegendsCollector: DetachedLegendsCollector?,
     ): PlotAssembler {
 
         val plotGeomTiles = createPlotGeomTiles(
@@ -247,7 +245,8 @@ object PlotConfigFrontendUtil {
             guideOptionsMap = config.guideOptionsMap,
             plotSpecId = config.specId,
             tz = config.tz,
-            scaleFactor
+            scaleFactor,
+            detachedLegendsCollector = detachedLegendsCollector
         )
     }
 }

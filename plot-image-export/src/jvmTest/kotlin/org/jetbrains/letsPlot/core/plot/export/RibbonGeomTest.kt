@@ -355,4 +355,176 @@ class RibbonGeomTest: VisualPlotTestBase() {
 
         assertPlot("ribbon_geom_5.png", plotSpec)
     }
+
+    @Test
+    fun `geom_ribbon with None values`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "subplots",
+            |  "layout": {
+            |    "ncol": 2.0,
+            |    "nrow": 2.0,
+            |    "name": "grid"
+            |  },
+            |  "figures": [
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, 5.0, 7.0, 4.0, 3.0, 1.0, 0.0 ],
+            |        "ymin": [ 1.0, 3.0, 4.0, 6.0, 4.0, 5.0, 2.0, 3.0, 2.0, 0.0 ],
+            |        "ymax": [ 3.0, 5.0, 6.0, 8.0, 6.0, 7.0, 4.0, 5.0, 4.0, 2.0 ]
+            |      },
+            |      "mapping": {},
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "int",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "ymin"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "ymax"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "ribbon",
+            |          "mapping": {
+            |            "x": "x",
+            |            "ymin": "ymin",
+            |            "ymax": "ymax"
+            |          },
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, null, 7.0, 4.0, 3.0, 1.0, null ],
+            |        "ymin": [ 1.0, 3.0, 4.0, 6.0, 4.0, 5.0, 2.0, 3.0, 2.0, 0.0 ],
+            |        "ymax": [ 3.0, 5.0, 6.0, 8.0, 6.0, 7.0, 4.0, 5.0, 4.0, 2.0 ]
+            |      },
+            |      "mapping": {},
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "ymin"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "ymax"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "ribbon",
+            |          "mapping": {
+            |            "x": "x",
+            |            "ymin": "ymin",
+            |            "ymax": "ymax"
+            |          },
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, 5.0, 7.0, 4.0, 3.0, 1.0, 0.0 ],
+            |        "ymin": [ 1.0, 3.0, 4.0, 6.0, null, 5.0, 2.0, 3.0, 2.0, null ],
+            |        "ymax": [ 3.0, 5.0, 6.0, 8.0, 6.0, 7.0, 4.0, 5.0, 4.0, 2.0 ]
+            |      },
+            |      "mapping": {},
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "int",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "ymin"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "ymax"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "ribbon",
+            |          "mapping": {
+            |            "x": "x",
+            |            "ymin": "ymin",
+            |            "ymax": "ymax"
+            |          },
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, 5.0, 7.0, 4.0, 3.0, 1.0, 0.0 ],
+            |        "ymin": [ 1.0, 3.0, 4.0, 6.0, 4.0, 5.0, 2.0, 3.0, 2.0, 0.0 ],
+            |        "ymax": [ 3.0, 5.0, 6.0, 8.0, null, 7.0, 4.0, 5.0, 4.0, null ]
+            |      },
+            |      "mapping": {},
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "int",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "ymin"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "ymax"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "ribbon",
+            |          "mapping": {
+            |            "x": "x",
+            |            "ymin": "ymin",
+            |            "ymax": "ymax"
+            |          },
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    }
+            |  ]
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("ribbon_geom_6.png", plotSpec)
+    }
 }

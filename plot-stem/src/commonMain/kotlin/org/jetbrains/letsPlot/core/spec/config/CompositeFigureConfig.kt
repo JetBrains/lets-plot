@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.FeatureSwitch
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
@@ -55,6 +56,10 @@ class CompositeFigureConfig constructor(
     internal val elementConfigs: List<OptionsAccessor?>
     internal val layout: CompositeFigureLayout
     internal val theme: Theme
+    internal var collectLegends: Boolean = false  // whether to collect legends from sub-figures al all
+        private set
+    internal var collectOverlayLegends: Boolean = false  // whether to collect overlay legends from sub-figures
+        private set
 
     internal val title: String?
         get() = getMap(TITLE)[TITLE_TEXT] as String?
@@ -80,14 +85,22 @@ class CompositeFigureConfig constructor(
                 @Suppress("UNCHECKED_CAST")
                 spec as Map<String, Any>
 
-                // Add 'ggtoolbar' option to each sub-figure:
+                // Add the 'ggtoolbar' option to each subfigure:
                 val extendedSpec = opts[GG_TOOLBAR]?.let { ggToolbar ->
-                     spec + (GG_TOOLBAR to ggToolbar)
+                    spec + (GG_TOOLBAR to ggToolbar)
                 } ?: spec
 
                 when (PlotConfig.figSpecKind(extendedSpec)) {
-                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(extendedSpec, theme) { computationMessages.addAll(it) }
-                    FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(extendedSpec, theme) { computationMessages.addAll(it) }
+                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(
+                        extendedSpec,
+                        theme
+                    ) { computationMessages.addAll(it) }
+
+                    FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(
+                        extendedSpec,
+                        theme
+                    ) { computationMessages.addAll(it) }
+
                     FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
                 }
             } else {
@@ -102,6 +115,10 @@ class CompositeFigureConfig constructor(
             Layout.SUBPLOTS_FREE -> createFreeLayout(layoutOptions, elementConfigs.size)
             else -> throw IllegalArgumentException("Unsupported composit figure layout: $layoutKind")
         }
+
+        // Collect legends or not?
+        // TODO: add an option
+        collectLegends = layoutKind == Layout.SUBPLOTS_GRID && FeatureSwitch.GGGRID_COLLECT_LEGENDS
 
         computationMessagesHandler(computationMessages)
     }
