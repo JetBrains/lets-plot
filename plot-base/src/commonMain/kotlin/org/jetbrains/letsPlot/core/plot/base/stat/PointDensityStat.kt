@@ -98,10 +98,34 @@ class PointDensityStat(
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
-        val xy = xRange.length / yRange.length
-        val rX = xRange.length / 12.0 // For standard bivariate normal distribution and ~1000 points, the rX is about 0.5
-        val r2 = adjust * rX * rX / xy
-        val statCount = countNeighbors(xs, ys, weights, r2, xy)
+        val statCount = when {
+            xRange.length > 0 && yRange.length > 0 -> {
+                val xy = xRange.length / yRange.length
+                val rX = RADIUS_FACTOR * xRange.length
+                val r2 = adjust * rX * rX / xy
+                countNeighbors(xs, ys, weights, r2, xy)
+            }
+            xRange.length > 0 && yRange.length == 0.0 -> {
+                // Only x varies
+                val rX = RADIUS_FACTOR * xRange.length
+                val r2 = adjust * rX * rX
+                countNeighbors(xs, ys, weights, r2, 1.0)
+            }
+            xRange.length == 0.0 && yRange.length > 0 -> {
+                // Only y varies
+                val rY = RADIUS_FACTOR * yRange.length
+                val r2 = adjust * rY * rY
+                countNeighbors(xs, ys, weights, r2, 1.0)
+            }
+            xRange.length == 0.0 && yRange.length == 0.0 -> {
+                // All points are at the same position
+                val weightsSum = SeriesUtil.sum(weights)
+                weights.map {
+                    if (adjust > 0) weightsSum - it else 0.0
+                }
+            }
+            else -> error("Unexpected case: xRange = $xRange, yRange = $yRange") // should never happen
+        }
         val statDensity = statCount.map { it / statCount.size }
         val maxCount = statCount.maxOrNull() ?: 0.0
         val statScaled = statCount.map { it / maxCount }
@@ -159,6 +183,8 @@ class PointDensityStat(
 
     companion object {
         val DEF_METHOD: Method = Method.NEIGHBOURS
+
+        private const val RADIUS_FACTOR = 1.0 / 12.0 // For standard bivariate normal distribution and ~1000 points, the rX will be about 0.5
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
