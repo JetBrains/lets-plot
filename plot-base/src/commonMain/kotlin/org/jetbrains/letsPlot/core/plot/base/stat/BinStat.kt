@@ -53,7 +53,7 @@ open class BinStat(
         val statSumPct = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
-        val filteredBreaks = breaks.filter(Double::isFinite)
+        val filteredBreaks = breaks.filter(Double::isFinite).distinct().sorted()
         when {
             filteredBreaks.isNotEmpty() -> {
                 BinStatUtil.computeHistogramBins(

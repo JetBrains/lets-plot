@@ -15,7 +15,7 @@ class HistogramGeom : BarGeom(), WithWidth {
     private var breaks: List<Double> = emptyList()
 
     fun setBreaks(breaks: List<Double>) {
-        this.breaks = breaks.filter(Double::isFinite)
+        this.breaks = breaks.filter(Double::isFinite).distinct().sorted()
     }
 
     override fun getBinSpanCalculator(ctx: GeomContext): (DataPointAesthetics) -> DoubleSpan? {
