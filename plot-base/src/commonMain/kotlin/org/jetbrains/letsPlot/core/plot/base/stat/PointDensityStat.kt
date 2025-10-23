@@ -166,18 +166,6 @@ class PointDensityStat(
             Aes.COLOR to Stats.DENSITY
         )
 
-        internal fun countNeighbors(xs: List<Double>, ys: List<Double>, weights: List<Double>, r2: Double, xy: Double): List<Double> {
-            return xs.indices.map { i ->
-                xs.indices.sumOf { j ->
-                    if (i != j && scaledDistanceSquared(xs[i], ys[i], xs[j], ys[j], xy) < r2) {
-                        weights[i]
-                    } else {
-                        0.0
-                    }
-                }
-            }
-        }
-
         /**
          * Approximate count from density matrix.
          * Find rectangle in which (x, y) is located and return value of the closest corner.
@@ -201,6 +189,18 @@ class PointDensityStat(
                 alphaRow < 0.5 && alphaCol >= 0.5 -> densityMatrix.getEntry(rowLow, colHigh)
                 alphaRow >= 0.5 && alphaCol < 0.5 -> densityMatrix.getEntry(rowHigh, colLow)
                 else -> densityMatrix.getEntry(rowHigh, colHigh)
+            }
+        }
+
+        internal fun countNeighbors(xs: List<Double>, ys: List<Double>, weights: List<Double>, r2: Double, xy: Double): List<Double> {
+            return xs.indices.map { i ->
+                xs.indices.sumOf { j ->
+                    if (i != j && scaledDistanceSquared(xs[i], ys[i], xs[j], ys[j], xy) < r2) {
+                        weights[j]
+                    } else {
+                        0.0
+                    }
+                }
             }
         }
 
