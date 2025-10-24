@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern
 
+import kotlin.math.abs
 import kotlin.test.*
 
 class CollectionsExTest {
@@ -69,5 +70,23 @@ class CollectionsExTest {
     fun testBracketingIndicesValueBiggerThanLastElement() {
         val bracketingIndices = listOf(1.0, 3.0, 5.0).bracketingIndicesOrNull(6.0)
         assertNull(bracketingIndices)
+    }
+
+    @Test
+    fun testBracketingIndicesWithCustomComparator() {
+        val bracketingIndices = listOf(1.0, 3.0, 5.0).bracketingIndicesOrNull(
+            element = 0.999,
+            comparator = Comparator { a, b ->
+                when {
+                    abs(a - b) < 0.01 -> 0
+                    a < b -> -1
+                    else -> 1
+                }
+            }
+        )
+        assertNotNull(bracketingIndices)
+        val (i, j) = bracketingIndices
+        assertEquals(0, i)
+        assertEquals(1, j)
     }
 }
