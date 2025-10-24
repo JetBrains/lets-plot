@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtilNew
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -101,7 +101,7 @@ class CompositeFigureBuildInfo constructor(
         val withoutPlotInset = plotTheme.plotInset().shrinkRect(withoutTitles)
 
         // Subtract space for fixed-position legend blocks
-        val elementsAreaBounds = PlotLayoutUtilNew.subtractLegendsSpace(
+        val elementsAreaBounds = PlotLegendsLayoutUtil.subtractLegendsSpace(
             bounds = withoutPlotInset,
             legendBlocks = legendBlocks,
             theme = theme.legend()

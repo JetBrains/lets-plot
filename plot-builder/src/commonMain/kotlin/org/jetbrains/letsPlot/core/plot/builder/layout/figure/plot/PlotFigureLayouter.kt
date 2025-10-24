@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil.legendsSpaceLeftTopDelta
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapAxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import kotlin.math.max
@@ -189,7 +189,7 @@ internal class PlotFigureLayouter(
         // Inner bounds - all without titles and legends.
         // Plot origin: the origin of the plot area: geoms, axis and facet labels (no titles, legends).
         val plotOrigin = figureBoundsWithoutTitleAndCaption.origin
-            .add(legendBlockLeftTopDelta(legendsBlockInfo, theme.legend()))
+            .add(legendsSpaceLeftTopDelta(listOfNotNull(legendsBlockInfo), theme.legend()))
             .add(
                 axisTitlesOriginOffset(
                     hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flipAxis)),

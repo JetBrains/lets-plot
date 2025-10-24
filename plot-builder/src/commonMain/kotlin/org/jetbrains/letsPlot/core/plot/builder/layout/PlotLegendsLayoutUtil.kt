@@ -5,22 +5,50 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
-object PlotLayoutUtilNew {
-    fun subtractLegendsSpace(
+internal object PlotLegendsLayoutUtil {
+
+    internal fun legendsSpaceLeftTopDelta(
+        legendBlocks: List<LegendsBlockInfo>,
+        theme: LegendTheme
+    ): DoubleVector {
+        val insets = computeLegendsSpace(legendBlocks, theme)
+        return insets.leftTop
+    }
+
+    internal fun legendsSpaceTotalDelta(
+        legendBlocks: List<LegendsBlockInfo>,
+        theme: LegendTheme
+    ): DoubleVector {
+        val insets = computeLegendsSpace(legendBlocks, theme)
+        return DoubleVector(
+            x = insets.left + insets.right,
+            y = insets.top + insets.bottom
+        )
+    }
+
+    internal fun subtractLegendsSpace(
         bounds: DoubleRectangle,
         legendBlocks: List<LegendsBlockInfo>,
         theme: LegendTheme,
     ): DoubleRectangle {
+        val insets = computeLegendsSpace(legendBlocks, theme)
+        return insets.subtractFrom(bounds)
+    }
+
+    private fun computeLegendsSpace(
+        legendBlocks: List<LegendsBlockInfo>,
+        theme: LegendTheme,
+    ): DoubleInsets {
         // Only process fixed-position legends
         val fixedPositionBlocks = legendBlocks.filter { it.position.isFixed }
-
         if (fixedPositionBlocks.isEmpty()) {
-            return bounds
+            return DoubleInsets.ZERO
         }
 
         val spacing = theme.boxSpacing()
@@ -55,20 +83,11 @@ object PlotLayoutUtilNew {
             }
         }
 
-        var adjustedBounds = bounds
-        if (leftSpace > 0) {
-            adjustedBounds = DoubleRectangles.extendLeft(adjustedBounds, -leftSpace)
-        }
-        if (rightSpace > 0) {
-            adjustedBounds = DoubleRectangles.extendRight(adjustedBounds, -rightSpace)
-        }
-        if (topSpace > 0) {
-            adjustedBounds = DoubleRectangles.extendUp(adjustedBounds, -topSpace)
-        }
-        if (bottomSpace > 0) {
-            adjustedBounds = DoubleRectangles.extendDown(adjustedBounds, -bottomSpace)
-        }
-
-        return adjustedBounds
+        return DoubleInsets(
+            left = leftSpace,
+            top = topSpace,
+            right = rightSpace,
+            bottom = bottomSpace
+        )
     }
 }
