@@ -15,8 +15,10 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
+import kotlin.Comparator
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.math.abs
 
 class PointDensityStat(
     bandWidthX: Double?,
@@ -143,10 +145,12 @@ class PointDensityStat(
         xRange: DoubleSpan,
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
+        val xComparator = approxCountComparator(APPROX_COUNT_EPSILON * xRange.length)
+        val yComparator = approxCountComparator(APPROX_COUNT_EPSILON * yRange.length)
         val statCount = if (xs.any()) {
             val (stepsX, stepsY, densityMatrix) = density2dGrid(xs, ys, weights, xRange, yRange)
             xs.mapIndexed { i, x ->
-                approxCount(x, ys[i], stepsX, stepsY, densityMatrix)
+                approxCount(x, ys[i], stepsX, stepsY, densityMatrix, xComparator, yComparator)
             }
         } else {
             emptyList()
@@ -185,6 +189,7 @@ class PointDensityStat(
         val DEF_METHOD: Method = Method.NEIGHBOURS
 
         private const val RADIUS_FACTOR = 1.0 / 12.0 // For standard bivariate normal distribution and ~1000 points, the rX will be about 0.5
+        private const val APPROX_COUNT_EPSILON = 1e-12
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
@@ -201,10 +206,12 @@ class PointDensityStat(
             y: Double,
             stepsX: List<Double>,
             stepsY: List<Double>,
-            densityMatrix: BlockRealMatrix
+            densityMatrix: BlockRealMatrix,
+            xComparator: Comparator<Double>,
+            yComparator: Comparator<Double>
         ): Double {
-            val (colLow, colHigh) = stepsX.bracketingIndicesOrNull(x)!!
-            val (rowLow, rowHigh) = stepsY.bracketingIndicesOrNull(y)!!
+            val (colLow, colHigh) = stepsX.bracketingIndicesOrNull(x, xComparator)!!
+            val (rowLow, rowHigh) = stepsY.bracketingIndicesOrNull(y, yComparator)!!
             if (colLow == colHigh && rowLow == rowHigh) {
                 return densityMatrix.getEntry(rowLow, colLow)
             }
@@ -241,5 +248,14 @@ class PointDensityStat(
         private fun scaledDistanceSquared(x1: Double, y1: Double, x2: Double, y2: Double, xy: Double): Double {
             return (x1 - x2) * (x1 - x2) / xy + (y1 - y2) * (y1 - y2) * xy
         }
+
+        private fun approxCountComparator(epsilon: Double): Comparator<Double> =
+            Comparator { a, b ->
+                when {
+                    abs(a - b) < epsilon -> 0
+                    a < b -> -1
+                    else -> 1
+                }
+            }
     }
 }
