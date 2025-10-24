@@ -10,20 +10,15 @@ object Xml {
     data class ParsingResult(
         val root: XmlNode,
         val nodeMap: Map<XmlNode, IntRange>,
-        val unparsedRemainder: String
+        val errorPos: Int?
     )
 
     fun parse(xml: String): ParsingResult {
         val lexer = Lexer(xml)
         val parser = Parser(lexer)
-        return parser.parse()
-    }
 
-    // Parse XML and return the parsed node and the rest of the input if parsing was not complete
-    fun parseSafe(xml: String): ParsingResult {
-        val lexer = Lexer(xml)
-        val parser = Parser(lexer)
-        return parser.parse()
+        val res = parser.parse()
+        return res
     }
 
     sealed class XmlNode {

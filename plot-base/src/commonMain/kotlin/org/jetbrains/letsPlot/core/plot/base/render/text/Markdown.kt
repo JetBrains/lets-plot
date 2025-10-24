@@ -17,7 +17,12 @@ internal object Markdown {
             return listOf(RichTextNode.Text(""))
         }
 
-        val res = Xml.parseSafe("<p>${Markdown.mdToHtml(text)}</p>")
+        val res = Xml.parse("<p>${Markdown.mdToHtml(text)}</p>")
+
+        if (res.errorPos != null) {
+            // Parsing error - return plain text
+            return listOf(RichTextNode.Text(text))
+        }
 
         return renderRichText(res.root)
     }

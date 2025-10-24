@@ -11,15 +11,19 @@ internal class Parser(
     val lexer: Lexer
 ) {
     private val nodeMap = mutableMapOf<XmlNode, IntRange>()
+    var errorPosition: Int? = null
+        private set
 
     fun parse(): Xml.ParsingResult {
         nodeMap.clear()
+        errorPosition = null
+
         val element = parseElement()
         
         return Xml.ParsingResult(
             root = element,
             nodeMap = nodeMap,
-            unparsedRemainder = lexer.remainingInput()
+            errorPos = errorPosition
         )
     }
 
@@ -63,10 +67,12 @@ internal class Parser(
             return createElement(name, attributes, children, pos)
         } catch (_: Throwable) {
             return if (lexer.token == Token.EOF) {
+                errorPosition = pos
                 val text = XmlNode.Text(lexer.input.substring(pos))
                 nodeMap[text] = IntRange(pos, lexer.input.length)
                 text
             } else {
+                errorPosition = pos
                 val text = XmlNode.Text(lexer.input.substring(pos, lexer.tokenPos))
                 nodeMap[text] = IntRange(pos, lexer.tokenPos)
                 text

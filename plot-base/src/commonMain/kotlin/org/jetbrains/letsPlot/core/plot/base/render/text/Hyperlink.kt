@@ -15,12 +15,14 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 
 internal object Hyperlink {
-    fun canRender(node: XmlNode.Element): Boolean {
-        return node.name == "a"
+    fun canRender(node: XmlNode): Boolean {
+        return node is XmlNode.Element && node.name == "a"
     }
 
     // Simplified: only text nodes inside <a>
-    fun render(node: XmlNode.Element): RichTextNode {
+    fun render(node: XmlNode): RichTextNode {
+        require(node is XmlNode.Element)
+
         val href = node.attributes["href"] ?: ""
         val target = node.attributes["target"]
         val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }

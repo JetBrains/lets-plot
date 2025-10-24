@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.xml
 
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -215,7 +216,7 @@ class XmlTest {
     @Test
     fun nested() {
         val xml = """<p>press <button>send<img src="send.png"/></button> button</p>"""
-        val (parsed, nodeMap, _) = Xml.parse(xml)
+        val (parsed, nodeMap) = Xml.parse(xml)
         assertEquals(
             expected = XmlNode.Element(
                 name = "p",
@@ -287,24 +288,45 @@ class XmlTest {
     fun `malformed - not closed`() {
         val xml = """<br"""
 
-        val parsed = parse(xml)
+        val res = Xml.parse(xml)
+        val parsed = res.root
         assertEquals(
             expected = XmlNode.Text("<br"),
             actual = parsed
         )
+
+        assertThat(res.errorPos).isEqualTo(0)
+    }
+
+    @Test
+    fun `malformed - text after closing root tag`() {
+        val xml = """<p>Hello</p> world"""
+
+        val res = Xml.parse(xml)
+        val parsed = res.root
+        assertEquals(
+            expected = XmlNode.Element(name = "p", children = listOf(XmlNode.Text("Hello"))),
+            actual = parsed
+        )
+
+        // No error report just because it was easy to implement. Could be changed if needed.
+        // Useful for relaxed parsing - like plaintext with some tags inside.
+        assertThat(res.errorPos).isNull()
     }
 
     @Test
     fun `malformed - special symbols`() {
         val xml = """<p>< & ' \" \\ / > ®</p>"""
-        val parsed = parse(xml)
+        val res = Xml.parse(xml)
         assertEquals(
             expected = XmlNode.Text("""<p>< & ' \" \\ / > ®</p>"""),
-            actual = parsed
+            actual = res.root
         )
+
+        assertThat(res.errorPos).isEqualTo(0)
     }
 
-    internal fun parse(xml: String): XmlNode? {
+    internal fun parse(xml: String): XmlNode {
         return Xml.parse(xml).root
     }
 }

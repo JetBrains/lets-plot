@@ -6,11 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichTextTermTest.Companion.estimateWidth
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichTextTermTest.Companion.toSvg
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichTextTermTest.Companion.toTestWidth
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.estimateWidth
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toTestWidth
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.test.Test

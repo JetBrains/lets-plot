@@ -6,16 +6,16 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.core.plot.base.render.svg.RichTextTermTest.Companion.toSvg
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.HYPERLINK_ELEMENT_CLASS
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.test.Test
 
-class RichTextMarkdownTest {
+class MarkdownTest {
     @Test
     fun noMarkdown() {
         val richTextSvg = toSvg("Hello, world!", markdown = true).single()
@@ -208,5 +208,38 @@ class RichTextMarkdownTest {
         assertTSpan(hyperlinkText, "lets-plot", color = null) // color is not inherited from the parent
         assertThat(hyperlinkText.hasClass(HYPERLINK_ELEMENT_CLASS)).isTrue()
         assertThat(hyperlink.href().get()).isEqualTo("https://github.com/lets-plot")
+    }
+
+
+    @Test
+    fun `malformed markdown should append not parsed remainder as normal text`() {
+        val richTextSvg = toSvg("**Hello, world!", markdown = true).single()
+
+        assertThat(richTextSvg.tspans()).hasSize(1)
+        assertTSpan(richTextSvg.tspans().single(), "**Hello, world!")
+    }
+
+    @Test
+    fun `malformed hyperlink should be rendered as normal text`() {
+        val richTextSvg = toSvg("Click <a href=''>here", markdown = true).single()
+
+        assertThat(richTextSvg.tspans()).hasSize(1)
+        assertTSpan(richTextSvg.tspans().single(), "Click <a href=''>here")
+    }
+
+    @Test
+    fun `unclosed span tag should be rendered as normal text`() {
+        val richTextSvg = toSvg("This is <span style='color:blue'>blue text", markdown = true).single()
+
+        assertThat(richTextSvg.tspans()).hasSize(1)
+        assertTSpan(richTextSvg.tspans().single(), "This is <span style='color:blue'>blue text")
+    }
+
+    @Test
+    fun `lower than and greater than signs`() {
+        val richTextSvg = toSvg("5 < 10 and 10 > 5", markdown = true).single()
+
+        assertThat(richTextSvg.tspans()).hasSize(1)
+        assertTSpan(richTextSvg.tspans().single(), "5 < 10 and 10 > 5")
     }
 }
