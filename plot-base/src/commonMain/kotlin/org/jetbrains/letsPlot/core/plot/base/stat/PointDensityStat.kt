@@ -88,6 +88,13 @@ class PointDensityStat(
         yRange: DoubleSpan
     ): Map<DataFrame.Variable, List<Double>> {
         return when (method) {
+            Method.AUTO -> {
+                if (xs.size <= AUTO_THRESHOLD) {
+                    buildNeighboursStat(xs, ys, weights, xRange, yRange)
+                } else {
+                    buildKde2dStat(xs, ys, weights, xRange, yRange)
+                }
+            }
             Method.NEIGHBOURS -> buildNeighboursStat(xs, ys, weights, xRange, yRange)
             Method.KDE2D -> buildKde2dStat(xs, ys, weights, xRange, yRange)
         }
@@ -165,7 +172,7 @@ class PointDensityStat(
     }
 
     enum class Method {
-        NEIGHBOURS, KDE2D;
+        AUTO, NEIGHBOURS, KDE2D;
 
         companion object {
 
@@ -179,15 +186,16 @@ class PointDensityStat(
                 return ENUM_INFO.safeValueOf(methodName) ?:
                     throw IllegalArgumentException(
                         "Unsupported method: '$v'\n" +
-                        "Use one of: neighbours, kde2d."
+                        "Use one of: auto, neighbours, kde2d."
                     )
             }
         }
     }
 
     companion object {
-        val DEF_METHOD: Method = Method.NEIGHBOURS
+        val DEF_METHOD: Method = Method.AUTO
 
+        private const val AUTO_THRESHOLD = 25_000 // Number of points to switch method from "neighbours" to "kde2d"
         private const val RADIUS_FACTOR = 1.0 / 12.0 // For standard bivariate normal distribution and ~1000 points, the rX will be about 0.5
         private const val APPROX_COUNT_EPSILON = 1e-12
 
