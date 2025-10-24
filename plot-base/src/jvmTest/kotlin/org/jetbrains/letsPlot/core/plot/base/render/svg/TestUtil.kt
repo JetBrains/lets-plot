@@ -6,11 +6,59 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
+import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import kotlin.math.max
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 object TestUtil {
+    private val DEF_FONT = Font(family = FontFamily.SERIF, size = 16, isBold = false, isItalic = false)
+
+    internal fun toSvg(
+        text: String,
+        wrapLength: Int = -1,
+        markdown: Boolean = false,
+        anchor: Text.HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
+    ): List<SvgTextElement> {
+        return RichText.toSvg(
+            text = text,
+            font = DEF_FONT,
+            wrapLength = wrapLength,
+            markdown = markdown,
+            anchor = anchor
+        )
+    }
+
+    internal fun estimateWidth(
+        text: String,
+        font: Font = DEF_FONT,
+        wrapLength: Int = -1,
+        markdown: Boolean = false,
+    ): Double {
+        return RichText.estimateWidth(
+            text = text,
+            font = font,
+            wrapLength = wrapLength,
+            markdown = markdown
+        )
+    }
+
+    internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {
+        val font = level.sizeValue()?.let { levelSizeScale ->
+            val levelFontSize = max(1, (baseFont.size * levelSizeScale).roundToInt())
+            Font(baseFont.family, levelFontSize, baseFont.isBold, baseFont.isItalic)
+        } ?: baseFont
+        return TextWidthEstimator.widthCalculator(text, font)
+    }
+
+    internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {
+        return texts.maxOf { toTestWidth(it, baseFont, level) }
+    }
 
     fun SvgTSpanElement.wholeText(): String {
         return children()

@@ -11,21 +11,11 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.wholeText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.max
 import kotlin.test.Test
 
 class LabelTest {
-    @Test
-    fun labelWithQuotes() {
-        val text = """Hello, 'cruel' "world"!"""
-        val label = Label(text)
-        val svg = label.rootGroup.children().single() as SvgTextElement
-        val textContent = svg.tspans()[0].wholeText()
-        assertThat(textContent).isEqualTo(text)
-    }
-
     @Test
     fun setHorizontalAnchorBasic() {
         val text = """text"""

@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.commons.xml.Xml
-import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -64,9 +62,14 @@ object RichText {
         }
 
         val terms = listOf(RichTextNode.Text(text))
-            .let { it.takeUnless { markdown } ?: parse(it, Markdown::parse) }
+            .let {
+                if (markdown) {
+                    parse(it, Markdown::parse)
+                } else {
+                    parse(it, Plaintext::parse)
+                }
+            }
             .let { parse(it, Latex(font)::parse) }
-            .let { parse(it, Hyperlink::parse) }
             .let { parseBreaks(it) }
 
         val lines = buildLines(terms)
@@ -76,32 +79,13 @@ object RichText {
         return wrappedLines
     }
 
-    internal fun parseAsXml(text: String): XmlNode {
-        // wrap in <p> to make it a valid XML with a single root element
-        return Xml.parseSafe("<p>$text</p>")
-            .let { (doc, unparsed) ->
-                if (unparsed.isEmpty()) return@let doc
-
-                // Failed to parse. Add the unparsed text as a text node to the document for better user experience.
-                when (doc) {
-                    is XmlNode.Element -> doc.copy(children = doc.children + XmlNode.Text(unparsed))
-                    is XmlNode.Text -> doc.copy(content = doc.content + unparsed)
-                }
-            }
-    }
-
     private fun wrap(lines: List<List<RichTextNode>>, wrapLength: Int, maxLinesCount: Int): List<List<RichTextNode>> {
         val wrappedLines = lines.flatMap { line -> wrapLine(line, wrapLength) }
         return when {
             maxLinesCount < 0 -> wrappedLines
             wrappedLines.size < maxLinesCount -> wrappedLines
-            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(
-                mutableListOf(
-                    RichTextNode.Text(
-                        "..."
-                    )
-                )
-            )
+            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) +
+                    mutableListOf(mutableListOf(RichTextNode.Text("...")))
         }
     }
 
@@ -144,7 +128,16 @@ object RichText {
             if (term is RichTextNode.LineBreak) {
                 startNewLine = true
             } else {
-                lines.last().add(term)
+                val lastTerm = lines.last().lastOrNull()
+
+                if (lastTerm is RichTextNode.Text && term is RichTextNode.Text) {
+                    // merge adjacent text nodes
+                    lines.last().removeLast()
+                    lines.last().add(RichTextNode.Text(lastTerm.text + term.text))
+                    return@forEach
+                } else {
+                    lines.last().add(term)
+                }
             }
         }
 
@@ -153,32 +146,6 @@ object RichText {
         }
 
         return lines
-    }
-
-    internal fun fillTextTermGaps(
-        text: String,
-        specialTerms: List<Pair<RichTextNode.RichSpan, IntRange>>
-    ): List<RichTextNode.RichSpan> {
-        fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
-            if (toSubtract.isEmpty()) {
-                return listOf(range)
-            }
-
-            val sortedToSubtract = toSubtract.sortedBy(IntRange::first)
-            val firstRange = IntRange(range.first, sortedToSubtract.first().first - 1)
-            val intermediateRanges = sortedToSubtract.windowed(2).map { (prevRange, nextRange) ->
-                IntRange(prevRange.last + 1, nextRange.first - 1)
-            }
-            val lastRange = IntRange(sortedToSubtract.last().last + 1, range.last)
-
-            return (listOf(firstRange) + intermediateRanges + listOf(lastRange)).filterNot(IntRange::isEmpty)
-        }
-
-        val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
-            .map { pos -> RichTextNode.Text(text.substring(pos)) to pos }
-        return (specialTerms + textTerms)
-            .sortedBy { (_, termLocation) -> termLocation.first }
-            .map { (term, _) -> term }
     }
 
     private fun wrapLine(line: List<RichTextNode>, wrapLength: Int = -1): List<List<RichTextNode>> {

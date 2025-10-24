@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.markdown.Markdown
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
+import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.parseAsXml
 
 internal object Markdown {
     fun parse(text: String): List<RichTextNode> {
@@ -17,10 +17,14 @@ internal object Markdown {
             return listOf(RichTextNode.Text(""))
         }
 
-        val html = Markdown.mdToHtml(text)
-        val doc = parseAsXml(html)
+        val res = Xml.parse("<p>${Markdown.mdToHtml(text)}</p>")
 
-        return renderRichText(doc)
+        if (res.errorPos != null) {
+            // Parsing error - return plain text
+            return listOf(RichTextNode.Text(text))
+        }
+
+        return renderRichText(res.root)
     }
 
     private fun renderRichText(node: XmlNode): List<RichTextNode> {
@@ -29,7 +33,7 @@ internal object Markdown {
         when (node) {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
-                if (node.name == "a") {
+                if (Hyperlink.canRender(node)) {
                     output += Hyperlink.render(node)
                     return output
                 }
@@ -53,7 +57,7 @@ internal object Markdown {
                     ?: Pair(emptyList(), emptyList())
 
                 output += prefix
-                output += node.children.flatMap(::renderRichText)
+                output += node.children.flatMap{ renderRichText(it) }
                 output += suffix
             }
         }
