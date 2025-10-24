@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -16,22 +17,24 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import kotlin.math.max
 
 internal class GeomAreaInsets private constructor(
-    left: Double,
-    top: Double,
-    right: Double,
-    bottom: Double,
+    val left: Double,
+    val top: Double,
+    val right: Double,
+    val bottom: Double,
     private val axisLayoutQuad: AxisLayoutQuad,
     val axisInfoQuad: AxisLayoutInfoQuad,
-) : Insets(
-    left = left,
-    top = top,
-    right = right,
-    bottom = bottom,
 ) {
 
-    override fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
+    private val insets = DoubleInsets(
+        left = left,
+        top = top,
+        right = right,
+        bottom = bottom,
+    )
+
+    fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
-        val r = super.subtractFrom(r)
+        val r = insets.subtractFrom(r)
         return DoubleRectangle(
             r.origin,
             DoubleVector(
@@ -48,8 +51,8 @@ internal class GeomAreaInsets private constructor(
         val axisInfosNew = AxisLayoutInfoQuad(
             left = axisInfoQuad.left,
             right = axisInfoQuad.right,
-            top = axisLayoutQuad.top?.doLayout(axisDomain, axisLength, this),
-            bottom = axisLayoutQuad.bottom?.doLayout(axisDomain, axisLength, this),
+            top = axisLayoutQuad.top?.doLayout(axisDomain, axisLength, insets),
+            bottom = axisLayoutQuad.bottom?.doLayout(axisDomain, axisLength, insets),
         )
 
         return GeomAreaInsets(
@@ -64,8 +67,8 @@ internal class GeomAreaInsets private constructor(
 
     fun layoutVAxis(axisDomain: DoubleSpan, axisLength: Double): GeomAreaInsets {
         val axisInfosNew = AxisLayoutInfoQuad(
-            left = axisLayoutQuad.left?.doLayout(axisDomain, axisLength, this),
-            right = axisLayoutQuad.right?.doLayout(axisDomain, axisLength, this),
+            left = axisLayoutQuad.left?.doLayout(axisDomain, axisLength, insets),
+            right = axisLayoutQuad.right?.doLayout(axisDomain, axisLength, insets),
             top = axisInfoQuad.top,
             bottom = axisInfoQuad.bottom,
         )
@@ -78,6 +81,10 @@ internal class GeomAreaInsets private constructor(
             axisLayoutQuad,
             axisInfosNew,
         )
+    }
+
+    override fun toString(): String {
+        return "GeomAreaInsets(left=$left, top=$top, right=$right, bottom=$bottom)"
     }
 
     companion object {

@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProvider
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 
 internal abstract class AxisLabelsLayout protected constructor(
@@ -74,7 +74,7 @@ internal abstract class AxisLabelsLayout protected constructor(
         fun horizontalFixedBreaks(
             orientation: Orientation,
             breaks: ScaleBreaks,
-            geomAreaInsets: Insets,
+            geomAreaInsets: DoubleInsets,
             theme: AxisTheme,
             polar: Boolean
         ): AxisLabelsLayout {

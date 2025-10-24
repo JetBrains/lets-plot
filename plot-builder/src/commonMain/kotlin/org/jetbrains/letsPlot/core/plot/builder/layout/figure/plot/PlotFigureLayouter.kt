@@ -201,7 +201,7 @@ internal class PlotFigureLayouter(
                 )
             )
 
-        // Geom area: plot without axis and facet labels.
+        // Geom area: plot without titles, legends, axis and facet labels.
         val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
             .add(plotOrigin)
 
