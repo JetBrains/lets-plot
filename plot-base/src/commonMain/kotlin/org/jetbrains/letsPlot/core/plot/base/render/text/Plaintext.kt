@@ -9,28 +9,31 @@ internal object Plaintext {
 
         var i = 0
         var plainText = ""
+
         while (i < text.length) {
-            if (text[i] != '<') {
-                plainText += text[i]
-                i++
-            } else {
-                val tag = text.substring(i)
-                val res = Xml.parse(tag)
-                if (res.errorPos != null) {
-                    plainText += text[i]
-                    i++
-                } else {
-                    val node = res.root
-                    if (!Hyperlink.canRender(node)) {
+            if (text[i] == '<') {
+                val (node, nodeLocations, err) = Xml.parse(text.substring(i))
+                if (err == null) {
+                    if (Hyperlink.canRender(node)) {
+                        output += RichTextNode.Text(plainText)
+                        output += Hyperlink.render(node)
+
+                        plainText = ""
+                        i += nodeLocations.getValue(node).last + 1
+                    } else {
+                        // Not a hyperlink tag - treat as plain text
                         plainText += text[i]
                         i++
-                    } else {
-                        output += RichTextNode.Text(plainText)
-                        plainText = ""
-                        output += Hyperlink.render(node)
-                        i += (res.nodeMap[node]?.last ?: 0) + 1
                     }
+                } else {
+                    // Malformed tag - treat as plain text
+                    plainText += text[i]
+                    i++
                 }
+            } else {
+                // Plain text character
+                plainText += text[i]
+                i++
             }
         }
 

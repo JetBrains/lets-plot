@@ -9,7 +9,7 @@ package org.jetbrains.letsPlot.commons.xml
 object Xml {
     data class ParsingResult(
         val root: XmlNode,
-        val nodeMap: Map<XmlNode, IntRange>,
+        val nodeLocations: Map<XmlNode, IntRange>,
         val errorPos: Int?
     )
 

@@ -216,7 +216,7 @@ class XmlTest {
     @Test
     fun nested() {
         val xml = """<p>press <button>send<img src="send.png"/></button> button</p>"""
-        val (parsed, nodeMap) = Xml.parse(xml)
+        val (rootNode, nodeLocations) = Xml.parse(xml)
         assertEquals(
             expected = XmlNode.Element(
                 name = "p",
@@ -232,19 +232,19 @@ class XmlTest {
                     XmlNode.Text(" button")
                 )
             ),
-            actual = parsed
+            actual = rootNode
         )
 
-        require(parsed is XmlNode.Element)
+        require(rootNode is XmlNode.Element)
 
-        assertEquals(0..61, nodeMap[parsed])
-        assertEquals(3..8, nodeMap[parsed.children[0]]) // "press "
-        assertEquals(9..50, nodeMap[parsed.children[1]]) // <button>...</button>
-        assertEquals(51..57, nodeMap[parsed.children[2]]) // " button"
+        assertEquals(0..61, nodeLocations[rootNode])
+        assertEquals(3..8, nodeLocations[rootNode.children[0]]) // "press "
+        assertEquals(9..50, nodeLocations[rootNode.children[1]]) // <button>...</button>
+        assertEquals(51..57, nodeLocations[rootNode.children[2]]) // " button"
 
-        val buttonNode = parsed.children[1] as XmlNode.Element
-        assertEquals(17..20, nodeMap[buttonNode.children[0]]) // "send"
-        assertEquals(21..41, nodeMap[buttonNode.children[1]]) // <img .../>
+        val buttonNode = rootNode.children[1] as XmlNode.Element
+        assertEquals(17..20, nodeLocations[buttonNode.children[0]]) // "send"
+        assertEquals(21..41, nodeLocations[buttonNode.children[1]]) // <img .../>
     }
 
 

@@ -10,19 +10,19 @@ import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 internal class Parser(
     val lexer: Lexer
 ) {
-    private val nodeMap = mutableMapOf<XmlNode, IntRange>()
+    private val nodeLocations = mutableMapOf<XmlNode, IntRange>()
     var errorPosition: Int? = null
         private set
 
     fun parse(): Xml.ParsingResult {
-        nodeMap.clear()
+        nodeLocations.clear()
         errorPosition = null
 
         val element = parseElement()
         
         return Xml.ParsingResult(
             root = element,
-            nodeMap = nodeMap,
+            nodeLocations = nodeLocations,
             errorPos = errorPosition
         )
     }
@@ -69,12 +69,12 @@ internal class Parser(
             return if (lexer.token == Token.EOF) {
                 errorPosition = pos
                 val text = XmlNode.Text(lexer.input.substring(pos))
-                nodeMap[text] = IntRange(pos, lexer.input.length)
+                nodeLocations[text] = IntRange(pos, lexer.input.length)
                 text
             } else {
                 errorPosition = pos
                 val text = XmlNode.Text(lexer.input.substring(pos, lexer.tokenPos))
-                nodeMap[text] = IntRange(pos, lexer.tokenPos)
+                nodeLocations[text] = IntRange(pos, lexer.tokenPos)
                 text
             }
         }
@@ -129,13 +129,13 @@ internal class Parser(
 
     private fun createElement(name: String, attributes: Map<String, String>, children: List<XmlNode>, startPos: Int): XmlNode.Element {
         val element = XmlNode.Element(name, attributes, children)
-        nodeMap[element] = IntRange(startPos, lexer.tokenPos - 1)
+        nodeLocations[element] = IntRange(startPos, lexer.tokenPos - 1)
         return element
     }
 
     private fun createText(content: String, startPos: Int): XmlNode.Text {
         val text = XmlNode.Text(content)
-        nodeMap[text] = IntRange(startPos, lexer.tokenPos - 1)
+        nodeLocations[text] = IntRange(startPos, lexer.tokenPos - 1)
         return text
     }
 
