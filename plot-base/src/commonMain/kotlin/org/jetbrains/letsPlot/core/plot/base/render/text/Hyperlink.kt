@@ -44,8 +44,29 @@ internal object Hyperlink {
                     output += HyperlinkElement(text, href, target)
                     return output
                 } else {
-                    val content = input.substring(nodeMap[node]!!)
-                    output += RichTextNode.Text(content)
+                    val nodeRange = nodeMap[node] ?: error("Node $node not found")
+
+                    if (node.children.isEmpty()) {
+                        val nodeText = input.substring(nodeRange)
+                        output += RichTextNode.Text(nodeText)
+                        return output
+                    } else {
+                        val fistChild = node.children.first()
+                        val lastChild = node.children.last()
+
+                        val firstChildRange = nodeMap[fistChild] ?: error("Node $fistChild not found")
+                        val lastChildRange = nodeMap[lastChild] ?: error("Node $lastChild not found")
+
+                        val head = input.substring(nodeRange.first, firstChildRange.first)
+                        output += RichTextNode.Text(head)
+
+                        for (child in node.children) {
+                            output += render(child, nodeMap, input)
+                        }
+
+                        val tail = input.substring(lastChildRange.last + 1, nodeRange.last + 1)
+                        output += RichTextNode.Text(tail)
+                    }
                 }
             }
         }

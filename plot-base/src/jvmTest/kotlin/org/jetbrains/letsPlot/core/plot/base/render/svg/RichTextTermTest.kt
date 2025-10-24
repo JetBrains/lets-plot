@@ -20,6 +20,69 @@ import kotlin.test.Test
 
 class RichTextTermTest {
     @Test
+    fun `unsupported tag should be preserved as plain text`() {
+        val text = """Hello, <b>cruel</b> world!"""
+        val richTextSvg = toSvg(text).single()
+        assertThat(richTextSvg.stringParts()).containsExactly(text)
+    }
+
+    @Test
+    fun `unsupported tag and hyperlink outside`() {
+        val text = """Hello, <b>cruel</b> world from <a href="https://lets-plot.org">lets-plot</a>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>cruel</b> world from ", "lets-plot", "!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink and text inside`() {
+        val text = """Hello, <b>foo <a href="https://lets-plot.org">lets-plot</a> bar</b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>foo ", "lets-plot", " bar</b>!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink only`() {
+        val text = """Hello, <b><a href="https://lets-plot.org">lets-plot</a></b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>", "lets-plot", "</b>!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink and left child`() {
+        val text = """Hello, <b>foo <a href="https://lets-plot.org">lets-plot</a></b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>foo ", "lets-plot", "</b>!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink and right child`() {
+        val text = """Hello, <b><a href="https://lets-plot.org">lets-plot</a> foo</b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>", "lets-plot", " foo</b>!")
+    }
+
+    @Test
+    fun `unsupported tag without children`() {
+        val text = """Hello, <b></b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b></b>!")
+    }
+
+    @Test
+    fun `label with quotes`() {
+        val text = """Hello, 'cruel' "world"!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly(text)
+    }
+
+    @Test
     fun newLines() {
         val richTextSvg = toSvg("Hello\nworld!")
 

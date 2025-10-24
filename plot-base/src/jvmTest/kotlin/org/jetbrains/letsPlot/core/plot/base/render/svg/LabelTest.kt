@@ -10,51 +10,12 @@ import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalcul
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.stringParts
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.wholeText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.max
 import kotlin.test.Test
 
 class LabelTest {
-    @Test
-    fun `non markdown label with unsupported tag`() {
-        val text = """Hello, <b>cruel</b> world!"""
-        val label = Label(text)
-        val svgTextElement = label.rootGroup.children().single() as SvgTextElement
-        assertThat(svgTextElement.stringParts()).containsExactly(text)
-    }
-
-    @Test
-    fun `non markdown label with unsupported tag and hyperlink`() {
-        val text = """Hello, <b>cruel</b> world from <a href="https://lets-plot.org">lets-plot</a>!"""
-        val label = Label(text)
-        val svgTextElement = label.rootGroup.children().single() as SvgTextElement
-
-        assertThat(svgTextElement.stringParts()).containsExactly("Hello, <b>cruel</b> world from ", "lets-plot", "!")
-    }
-
-    @Test
-    fun `non markdown label with hyperlink inside unsupported tag`() {
-        val text = """Hello, <b>foo <a href="https://lets-plot.org">lets-plot</a> bar</b>!"""
-        val label = Label(text)
-        val svgTextElement = label.rootGroup.children().single() as SvgTextElement
-
-        assertThat(svgTextElement.stringParts()).containsExactly("Hello, <b>foo ", "lets-plot", " bar </b>!")
-    }
-
-
-
-    @Test
-    fun `label with quotes`() {
-        val text = """Hello, 'cruel' "world"!"""
-        val label = Label(text)
-        val svg = label.rootGroup.children().single() as SvgTextElement
-        val textContent = svg.tspans().single().wholeText()
-        assertThat(textContent).isEqualTo(text)
-    }
-
     @Test
     fun setHorizontalAnchorBasic() {
         val text = """text"""

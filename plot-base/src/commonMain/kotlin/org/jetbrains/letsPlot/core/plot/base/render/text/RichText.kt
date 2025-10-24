@@ -79,13 +79,8 @@ object RichText {
         return when {
             maxLinesCount < 0 -> wrappedLines
             wrappedLines.size < maxLinesCount -> wrappedLines
-            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(
-                mutableListOf(
-                    RichTextNode.Text(
-                        "..."
-                    )
-                )
-            )
+            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) +
+                    mutableListOf(mutableListOf(RichTextNode.Text("...")))
         }
     }
 
@@ -146,32 +141,6 @@ object RichText {
         }
 
         return lines
-    }
-
-    internal fun fillTextTermGaps(
-        text: String,
-        specialTerms: List<Pair<RichTextNode.RichSpan, IntRange>>
-    ): List<RichTextNode.RichSpan> {
-        fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
-            if (toSubtract.isEmpty()) {
-                return listOf(range)
-            }
-
-            val sortedToSubtract = toSubtract.sortedBy(IntRange::first)
-            val firstRange = IntRange(range.first, sortedToSubtract.first().first - 1)
-            val intermediateRanges = sortedToSubtract.windowed(2).map { (prevRange, nextRange) ->
-                IntRange(prevRange.last + 1, nextRange.first - 1)
-            }
-            val lastRange = IntRange(sortedToSubtract.last().last + 1, range.last)
-
-            return (listOf(firstRange) + intermediateRanges + listOf(lastRange)).filterNot(IntRange::isEmpty)
-        }
-
-        val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
-            .map { pos -> RichTextNode.Text(text.substring(pos)) to pos }
-        return (specialTerms + textTerms)
-            .sortedBy { (_, termLocation) -> termLocation.first }
-            .map { (term, _) -> term }
     }
 
     private fun wrapLine(line: List<RichTextNode>, wrapLength: Int = -1): List<List<RichTextNode>> {
