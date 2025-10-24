@@ -62,9 +62,14 @@ object RichText {
         }
 
         val terms = listOf(RichTextNode.Text(text))
-            .let { it.takeUnless { markdown } ?: parse(it, Markdown::parse) }
+            .let {
+                if (markdown) {
+                    parse(it, Markdown::parse)
+                } else {
+                    parse(it, Plaintext::parse)
+                }
+            }
             .let { parse(it, Latex(font)::parse) }
-            .let { parse(it, Hyperlink::parse) }
             .let { parseBreaks(it) }
 
         val lines = buildLines(terms)

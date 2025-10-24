@@ -17,20 +17,19 @@ internal object Markdown {
             return listOf(RichTextNode.Text(""))
         }
 
-        val html = "<p>${Markdown.mdToHtml(text)}</p>"
-        val (doc, nodeMap, unparsed) = Xml.parseSafe(html)
+        val res = Xml.parseSafe("<p>${Markdown.mdToHtml(text)}</p>")
 
-        return renderRichText(doc, nodeMap, html)
+        return renderRichText(res.root)
     }
 
-    private fun renderRichText(node: XmlNode, nodeMap: Map<XmlNode, IntRange>, input: String): List<RichTextNode> {
+    private fun renderRichText(node: XmlNode): List<RichTextNode> {
         val output = mutableListOf<RichTextNode>()
 
         when (node) {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
-                if (node.name == "a") {
-                    output += Hyperlink.render(node, nodeMap, input)
+                if (Hyperlink.canRender(node)) {
+                    output += Hyperlink.render(node)
                     return output
                 }
 
@@ -53,7 +52,7 @@ internal object Markdown {
                     ?: Pair(emptyList(), emptyList())
 
                 output += prefix
-                output += node.children.flatMap{ renderRichText(it, nodeMap, input) }
+                output += node.children.flatMap{ renderRichText(it) }
                 output += suffix
             }
         }
