@@ -219,15 +219,23 @@ class PointDensityStat(
         }
 
         internal fun countNeighbors(xs: List<Double>, ys: List<Double>, weights: List<Double>, r2: Double, xy: Double): List<Double> {
-            return xs.indices.map { i ->
-                xs.indices.sumOf { j ->
-                    if (i != j && scaledDistanceSquared(xs[i], ys[i], xs[j], ys[j], xy) < r2) {
-                        weights[j]
-                    } else {
-                        0.0
+            val n = xs.size
+            val xVector = xs.toDoubleArray()
+            val yVector = ys.toDoubleArray()
+            val weightVector = weights.toDoubleArray()
+            val neighboursCounts = DoubleArray(n)
+            for (i in 0 until n) {
+                val xi = xVector[i]
+                val yi = yVector[i]
+                val wi = weightVector[i]
+                for (j in i + 1 until n) {
+                    if (scaledDistanceSquared(xi, yi, xVector[j], yVector[j], xy) < r2) {
+                        neighboursCounts[i] = neighboursCounts[i] + weightVector[j]
+                        neighboursCounts[j] = neighboursCounts[j] + wi
                     }
                 }
             }
+            return neighboursCounts.toList()
         }
 
         private fun scaledDistanceSquared(x1: Double, y1: Double, x2: Double, y2: Double, xy: Double): Double {
