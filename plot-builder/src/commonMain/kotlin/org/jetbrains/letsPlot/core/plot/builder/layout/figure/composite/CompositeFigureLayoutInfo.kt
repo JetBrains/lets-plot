@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 
 class CompositeFigureLayoutInfo constructor(
@@ -25,5 +25,5 @@ class CompositeFigureLayoutInfo constructor(
      */
     val elementsAreaBounds: DoubleRectangle,
 
-    val legendsBlockInfos: List<CompositeLegendBlockInfo>,
+    val legendsBlockInfos: List<LegendsBlockInfo>,
 ) : FigureLayoutInfo(figureSize)

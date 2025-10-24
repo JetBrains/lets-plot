@@ -93,7 +93,7 @@ object PlotLayoutUtil {
         hAxisTitle: String?,
         vAxisTitle: String?,
         axisEnabled: Boolean,
-        legendsBlockInfo: LegendsBlockInfo,
+        legendsBlockInfo: LegendsBlockInfo?,
         theme: Theme,
         flippedAxis: Boolean
     ): DoubleVector {
@@ -123,7 +123,7 @@ object PlotLayoutUtil {
         hAxisTitle: String?,
         vAxisTitle: String?,
         axisEnabled: Boolean,
-        legendsBlockInfo: LegendsBlockInfo,
+        legendsBlockInfo: LegendsBlockInfo?,
         theme: Theme,
         flippedAxis: Boolean
     ): DoubleVector {
@@ -148,7 +148,7 @@ object PlotLayoutUtil {
         hAxisTitle: String?,
         vAxisTitle: String?,
         axisEnabled: Boolean,
-        legendsBlockInfo: LegendsBlockInfo,
+        legendsBlockInfo: LegendsBlockInfo?,
         theme: Theme,
         flippedAxis: Boolean
     ): DoubleVector {
@@ -245,12 +245,11 @@ object PlotLayoutUtil {
     }
 
     private fun legendBlockDelta(
-        legendsBlockInfo: LegendsBlockInfo,
+        legendsBlockInfo: LegendsBlockInfo?,
         theme: LegendTheme
     ): DoubleVector {
+        if (legendsBlockInfo == null) return DoubleVector.ZERO
         if (!theme.position().isFixed) return DoubleVector.ZERO
-
-        if (legendsBlockInfo.boxWithLocationList.isEmpty()) return DoubleVector.ZERO
 
         val size = legendsBlockInfo.size()
         val spacing = theme.boxSpacing()
@@ -263,12 +262,11 @@ object PlotLayoutUtil {
     }
 
     internal fun legendBlockLeftTopDelta(
-        legendsBlockInfo: LegendsBlockInfo,
+        legendsBlockInfo: LegendsBlockInfo?,
         theme: LegendTheme
     ): DoubleVector {
+        if (legendsBlockInfo == null) return DoubleVector.ZERO
         if (!theme.position().isFixed) return DoubleVector.ZERO
-
-        if (legendsBlockInfo.boxWithLocationList.isEmpty()) return DoubleVector.ZERO
 
         val size = legendsBlockInfo.size()
         val spacing = theme.boxSpacing()

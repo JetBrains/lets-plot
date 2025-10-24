@@ -17,14 +17,14 @@ internal object LegendBoxesLayoutUtil {
     fun arrangeLegendBoxes(
         infos: List<LegendBoxInfo>,
         theme: LegendTheme
-    ): LegendsBlockInfo {
+    ): List<LegendBoxesLayout.BoxWithLocation> {
         val legendArrangement = theme.boxArrangement()
         val legendBoxJustification = legendBoxJustification(theme.boxJustification(), legendArrangement)
         val boxWithLocationList = when (legendArrangement) {
             LegendArrangement.VERTICAL -> verticalStack(infos, theme.spacing().y, legendBoxJustification)
             LegendArrangement.HORIZONTAL -> horizontalStack(infos, theme.spacing().x, legendBoxJustification)
         }
-        return LegendsBlockInfo(boxWithLocationList)
+        return boxWithLocationList
     }
 
     private fun legendBoxJustification(

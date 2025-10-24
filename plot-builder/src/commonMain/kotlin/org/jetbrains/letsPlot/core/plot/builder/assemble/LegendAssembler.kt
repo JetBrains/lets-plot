@@ -124,7 +124,7 @@ class LegendAssembler(
             position = legendTheme.position(),
             justification = legendTheme.justification()
         ) {
-            override fun createLegendBox(): LegendBox {
+            override fun createSvgComponent(): LegendBox {
                 val c = LegendComponent(spec, panelTheme)
                 c.debug = DEBUG_DRAWING
                 return c

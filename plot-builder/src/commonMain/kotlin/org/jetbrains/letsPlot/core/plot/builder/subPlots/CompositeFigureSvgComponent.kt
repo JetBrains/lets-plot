@@ -152,10 +152,9 @@ class CompositeFigureSvgComponent constructor(
         for (legendBlock in layoutInfo.legendsBlockInfos) {
             val position = legendBlock.position
             val justification = legendBlock.justification
-            val legendsBlockInfo = legendBlock.legendsBlockInfo
 
             // Calculate legend origin
-            val blockSize = legendsBlockInfo.size()
+            val blockSize = legendBlock.size()
             val legendOrigin = if (position.isFixed) {
                 LegendBoxesLayoutUtil.overlayLegendOriginOutsidePlot(
                     innerBounds = elementsAreaBounds,
@@ -174,9 +173,9 @@ class CompositeFigureSvgComponent constructor(
             }
 
             // Position and render each legend box in the block
-            val positionedLegends = legendsBlockInfo.moveAll(legendOrigin)
+            val positionedLegends = legendBlock.moveAll(legendOrigin)
             for (boxWithLocation in positionedLegends.boxWithLocationList) {
-                val legendBox = boxWithLocation.legendBox.createLegendBox()
+                val legendBox = boxWithLocation.legendBox.createSvgComponent()
                 legendBox.moveTo(boxWithLocation.location)
                 add(legendBox)
             }

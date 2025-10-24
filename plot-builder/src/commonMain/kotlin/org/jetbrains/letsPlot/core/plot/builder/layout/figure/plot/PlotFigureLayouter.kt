@@ -37,14 +37,19 @@ internal class PlotFigureLayouter(
 
     private val axisEnabled = !containsLiveMap
 
-    private val legendsBlockInfo: LegendsBlockInfo
+    private val legendsBlockInfo: LegendsBlockInfo?
 
     init {
         val legendTheme = theme.legend()
-        legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-            legendBoxInfos,
-            legendTheme
-        )
+        legendsBlockInfo = when {
+            legendBoxInfos.isNotEmpty() -> LegendsBlockInfo.arrangeLegendBoxes(
+                legendBoxInfos,
+                legendTheme
+            )
+
+            else -> null
+        }
+
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
@@ -182,7 +187,7 @@ internal class PlotFigureLayouter(
         }
 
         // Inner bounds - all without titles and legends.
-        // Plot origin : the origin of the plot area: geoms, axis and facet labels (no titles, legends).
+        // Plot origin: the origin of the plot area: geoms, axis and facet labels (no titles, legends).
         val plotOrigin = figureBoundsWithoutTitleAndCaption.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, theme.legend()))
             .add(

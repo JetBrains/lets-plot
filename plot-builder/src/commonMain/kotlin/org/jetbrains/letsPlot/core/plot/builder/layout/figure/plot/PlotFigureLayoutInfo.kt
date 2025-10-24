@@ -29,6 +29,6 @@ class PlotFigureLayoutInfo constructor(
     val geomAreaBounds: DoubleRectangle,
     figurePreferredSize: DoubleVector,
     val plotLayoutInfo: PlotLayoutInfo,
-    val legendsBlockInfo: LegendsBlockInfo,
+    val legendsBlockInfo: LegendsBlockInfo?,
 
     ) : FigureLayoutInfo(figurePreferredSize)

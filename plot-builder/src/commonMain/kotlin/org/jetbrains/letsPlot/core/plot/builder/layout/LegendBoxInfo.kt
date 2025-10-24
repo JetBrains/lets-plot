@@ -19,5 +19,5 @@ abstract class LegendBoxInfo(
     val position: LegendPosition,
     val justification: LegendJustification
 ) {
-    abstract fun createLegendBox(): LegendBox
+    abstract fun createSvgComponent(): LegendBox
 }

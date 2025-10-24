@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.DetachedLegendsCollecto
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.CompositeFigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
-import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -283,6 +283,8 @@ object MonolithicCommon {
             }
         }
 
+        val theme = config.theme
+
         // Create legend blocks from collected legends
         val legendBlocks = detachedLegendsCollector?.collectedLegends?.let { collectedLegends ->
             // Group legends by position and justification
@@ -292,11 +294,10 @@ object MonolithicCommon {
 
             // Create a CompositeLegendBlockInfo for each group
             legendsByPositionAndJustification.values.map { legendsInGroup ->
-                CompositeLegendBlockInfo.create(legendsInGroup, theme = config.theme.legend())
+                LegendsBlockInfo.arrangeLegendBoxes(legendsInGroup, theme = theme.legend())
             }
         } ?: emptyList()
 
-        val theme = config.theme
         val title: String? = config.title?.takeIf { theme.plot().showTitle() }
         val subtitle: String? = config.subtitle?.takeIf { theme.plot().showSubtitle() }
         val caption: String? = config.caption?.takeIf { theme.plot().showCaption() }

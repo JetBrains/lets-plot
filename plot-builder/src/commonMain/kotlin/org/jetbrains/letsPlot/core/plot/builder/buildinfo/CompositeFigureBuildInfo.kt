@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtilNew
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
@@ -28,7 +28,7 @@ class CompositeFigureBuildInfo constructor(
     private val caption: String?,
     private val theme: Theme,
     override val computationMessages: List<String>,
-    private val legendBlocks: List<CompositeLegendBlockInfo>,
+    private val legendBlocks: List<LegendsBlockInfo>,
 ) : FigureBuildInfo {
 
     override val isComposite: Boolean = true

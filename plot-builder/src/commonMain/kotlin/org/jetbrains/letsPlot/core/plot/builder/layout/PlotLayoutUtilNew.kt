@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 object PlotLayoutUtilNew {
     fun subtractLegendsSpace(
         bounds: DoubleRectangle,
-        legendBlocks: List<CompositeLegendBlockInfo>,
+        legendBlocks: List<LegendsBlockInfo>,
         theme: LegendTheme,
     ): DoubleRectangle {
         // Only process fixed-position legends
@@ -33,7 +33,7 @@ object PlotLayoutUtilNew {
         // Multiple blocks at the same position have different justifications,
         // so they can be placed side-by-side - we take the max, not sum
         for (legendBlock in fixedPositionBlocks) {
-            val size = legendBlock.legendsBlockInfo.size()
+            val size = legendBlock.size()
             when (legendBlock.position) {
                 LegendPosition.LEFT -> {
                     leftSpace = maxOf(leftSpace, size.x + spacing)
