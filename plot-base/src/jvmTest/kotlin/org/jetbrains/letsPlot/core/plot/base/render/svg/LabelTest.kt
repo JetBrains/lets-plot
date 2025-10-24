@@ -19,25 +19,35 @@ import kotlin.test.Test
 
 class LabelTest {
     @Test
-    fun nonMarkdownLabelWithUnsupportedTag() {
+    fun `non markdown label with unsupported tag`() {
         val text = """Hello, <b>cruel</b> world!"""
         val label = Label(text)
-        val svg = label.rootGroup.children().single() as SvgTextElement
-        val textContent = svg.tspans().single().wholeText()
-        assertThat(textContent).isEqualTo(text)
+        val svgTextElement = label.rootGroup.children().single() as SvgTextElement
+        assertThat(svgTextElement.stringParts()).containsExactly(text)
     }
 
     @Test
-    fun nonMarkdownLabelWithUnsupportedTagAndHyperlink() {
+    fun `non markdown label with unsupported tag and hyperlink`() {
         val text = """Hello, <b>cruel</b> world from <a href="https://lets-plot.org">lets-plot</a>!"""
         val label = Label(text)
-        val svg = label.rootGroup.children().single() as SvgTextElement
+        val svgTextElement = label.rootGroup.children().single() as SvgTextElement
 
-        assertThat(svg.stringParts()).containsExactly("Hello, <b>cruel</b> world from ", "lets-plot", "!")
+        assertThat(svgTextElement.stringParts()).containsExactly("Hello, <b>cruel</b> world from ", "lets-plot", "!")
     }
 
     @Test
-    fun labelWithQuotes() {
+    fun `non markdown label with hyperlink inside unsupported tag`() {
+        val text = """Hello, <b>foo <a href="https://lets-plot.org">lets-plot</a> bar</b>!"""
+        val label = Label(text)
+        val svgTextElement = label.rootGroup.children().single() as SvgTextElement
+
+        assertThat(svgTextElement.stringParts()).containsExactly("Hello, <b>foo ", "lets-plot", " bar </b>!")
+    }
+
+
+
+    @Test
+    fun `label with quotes`() {
         val text = """Hello, 'cruel' "world"!"""
         val label = Label(text)
         val svg = label.rootGroup.children().single() as SvgTextElement

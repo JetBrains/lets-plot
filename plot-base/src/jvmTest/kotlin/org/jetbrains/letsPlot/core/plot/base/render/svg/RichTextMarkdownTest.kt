@@ -136,11 +136,10 @@ class RichTextMarkdownTest {
 
         assertThat(richTextLines).hasSize(1)
 
-        val (hello, comma, softBreak, world) = richTextLines.single().tspans()
+        val (hello, commaWithSoftBreak, world) = richTextLines.single().tspans()
 
         assertTSpan(hello, "Hello", italic = true)
-        assertTSpan(comma, ",")
-        assertTSpan(softBreak, " ")
+        assertTSpan(commaWithSoftBreak, ", ") // extra space for a soft break
         assertTSpan(world, "world", bold = true)
     }
 
