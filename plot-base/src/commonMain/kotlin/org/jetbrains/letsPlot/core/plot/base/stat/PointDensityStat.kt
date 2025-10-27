@@ -220,11 +220,8 @@ class PointDensityStat(
         ): Double {
             val (colLow, colHigh) = stepsX.bracketingIndicesOrNull(x, xComparator)!!
             val (rowLow, rowHigh) = stepsY.bracketingIndicesOrNull(y, yComparator)!!
-            if (colLow == colHigh && rowLow == rowHigh) {
-                return densityMatrix.getEntry(rowLow, colLow)
-            }
-            val alphaRow = if (rowLow == rowHigh) 0.0 else (y - stepsY[rowLow]) / (stepsY[rowHigh] - stepsY[rowLow])
-            val alphaCol = if (colLow == colHigh) 0.0 else (x - stepsX[colLow]) / (stepsX[colHigh] - stepsX[colLow])
+            val alphaCol = (x - stepsX[colLow]) / (stepsX[colHigh] - stepsX[colLow]) // always stepsX[colHigh] != stepsX[colLow] because colHigh != colLow by bracketingIndicesOrNull contract
+            val alphaRow = (y - stepsY[rowLow]) / (stepsY[rowHigh] - stepsY[rowLow]) // the same as above
             return when {
                 alphaRow < 0.5 && alphaCol < 0.5 -> densityMatrix.getEntry(rowLow, colLow)
                 alphaRow < 0.5 && alphaCol >= 0.5 -> densityMatrix.getEntry(rowLow, colHigh)
