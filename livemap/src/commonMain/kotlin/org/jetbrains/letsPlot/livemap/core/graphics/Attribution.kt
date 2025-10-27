@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.core.graphics
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
@@ -88,7 +87,10 @@ class Attribution : RenderBox() {
     }
 
     override fun renderInternal(ctx: Context2d) {
-        ctx.clearRect(DoubleRectangle.WH(dimension))
+        ctx.save()
+        ctx.setFillStyle(background)
+        ctx.fillRect(0.0, 0.0, dimension.x, dimension.y) // actually produces gray background, not transparent
+        ctx.restore()
 
         tspans.forEach { tspan ->
             ctx.save()
