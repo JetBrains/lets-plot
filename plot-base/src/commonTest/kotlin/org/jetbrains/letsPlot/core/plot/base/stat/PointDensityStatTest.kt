@@ -163,17 +163,17 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 0.0),
             radius = 4.0
         ).let { counts ->
-            assertEquals(listOf(1.0, 1.0, 0.0), counts)
+            assertEquals(listOf(2.0, 1.0, 1.0), counts)
         }
     }
 
     @Test
     fun testCountNeighborsCheckXY() {
         val checks = listOf(
-            4.0 to listOf(0.0, 0.0, 0.0),
-            4.0 + EPSILON to listOf(2.0, 1.0, 1.0),
+            4.0 - EPSILON to listOf(0.0, 0.0, 0.0),
+            4.0 to listOf(2.0, 1.0, 1.0),
             sqrt(32.0) - EPSILON to listOf(2.0, 1.0, 1.0),
-            sqrt(32.0) + EPSILON to listOf(2.0, 2.0, 2.0),
+            sqrt(32.0) to listOf(2.0, 2.0, 2.0),
         )
         for ((radius, expectedCounts) in checks) {
             countNeighbors(

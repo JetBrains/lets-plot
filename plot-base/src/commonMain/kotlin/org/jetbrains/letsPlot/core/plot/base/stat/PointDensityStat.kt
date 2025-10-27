@@ -244,7 +244,7 @@ class PointDensityStat(
                 val yi = yVector[i]
                 val wi = weightVector[i]
                 for (j in i + 1 until n) {
-                    if (scaledDistanceSquared(xi, yi, xVector[j], yVector[j], xy) < r2) {
+                    if (scaledDistanceSquared(xi, yi, xVector[j], yVector[j], xy) <= r2) {
                         neighboursCounts[i] = neighboursCounts[i] + weightVector[j]
                         neighboursCounts[j] = neighboursCounts[j] + wi
                     }
