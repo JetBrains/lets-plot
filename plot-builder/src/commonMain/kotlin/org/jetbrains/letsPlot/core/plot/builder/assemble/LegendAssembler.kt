@@ -23,7 +23,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssemblerUtil.map
 import org.jetbrains.letsPlot.core.plot.builder.guide.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Legend
-import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -239,6 +238,8 @@ class LegendAssembler(
     companion object {
         private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
         private const val MAX_LEGEND_LABELS = 200
+        private const val MAX_ROWS_PER_COL = 15
+        private const val MAX_COLS_PER_ROW = 5
 
         fun createLegendSpec(
             title: String,
@@ -272,32 +273,53 @@ class LegendAssembler(
                     }
                 }
 
-            // row, col count
-            val breakCount = breaks.size
-            val colCount: Int
-            val rowCount: Int
-            if (options.byRow) {
-                colCount = when {
-                    options.hasColCount() -> min(options.colCount!!, breakCount)
-                    options.hasRowCount() -> ceil(breakCount / options.rowCount!!.toDouble()).toInt()
-                    legendDirection === LegendDirection.HORIZONTAL -> breakCount
-                    else -> 1
+            fun computeLayoutGrid(
+                breakCount: Int,
+                colCount: Int?,
+                rowCount: Int?,
+                byRow: Boolean,
+                horizontal: Boolean
+            ): Pair<Int, Int> {
+
+                fun ceilDiv(a: Int, b: Int): Int = (a + b - 1) / b
+
+                fun computePrimaryCount(primary: Int?, secondary: Int?): Int {
+                    return when {
+                        primary != null -> min(primary, breakCount)
+                        secondary != null -> ceilDiv(breakCount, secondary)
+                        else -> when {
+                            horizontal && byRow -> min(breakCount, MAX_COLS_PER_ROW)
+                            horizontal && !byRow -> ceilDiv(breakCount, MAX_COLS_PER_ROW)
+                            !horizontal && byRow -> ceilDiv(breakCount, MAX_ROWS_PER_COL)
+                            else -> min(breakCount, MAX_ROWS_PER_COL)
+                        }
+                    }
                 }
-                rowCount = ceil(breakCount / colCount.toDouble()).toInt()
-            } else {
-                // by column
-                rowCount = when {
-                    options.hasRowCount() -> min(options.rowCount!!, breakCount)
-                    options.hasColCount() -> ceil(breakCount / options.colCount!!.toDouble()).toInt()
-                    legendDirection !== LegendDirection.HORIZONTAL -> breakCount
-                    else -> 1
+
+                return if (byRow) {
+                    val cols = computePrimaryCount(colCount, rowCount)
+                    val rows = ceilDiv(breakCount, cols)
+                    cols to rows
+                } else {
+                    val rows = computePrimaryCount(rowCount, colCount)
+                    val cols = ceilDiv(breakCount, rows)
+                    cols to rows
                 }
-                colCount = ceil(breakCount / rowCount.toDouble()).toInt()
             }
+
+            val breakCount = breaks.size
+            val horizontal = (legendDirection == LegendDirection.HORIZONTAL)
+            val (colCount, rowCount) = computeLayoutGrid(
+                breakCount,
+                options.colCount,
+                options.rowCount,
+                options.byRow,
+                horizontal
+            )
 
             val layout: LegendComponentLayout
             @Suppress("LiftReturnOrAssignment")
-            if (legendDirection === LegendDirection.HORIZONTAL) {
+            if (horizontal) {
                 if (options.hasRowCount() || options.hasColCount() && options.colCount!! < breakCount) {
                     layout = LegendComponentLayout.horizontalMultiRow(
                         title,
