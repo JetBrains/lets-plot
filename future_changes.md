@@ -43,6 +43,7 @@
 - Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
   
   See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
+- The multi-layer line plot now shows tooltips for each series simultaneously, in the same way that a single-layer plot with color mapped to series does.
 
 ### Fixed
 
