@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomTooltipSetup
 import org.jetbrains.letsPlot.core.spec.StatKind
@@ -26,17 +25,6 @@ private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
 
 
 object GeomInteractionUtil {
-    internal fun configGeomTargets(
-        layerConfig: LayerConfig,
-        scaleMap: Map<Aes<*>, Scale>,
-        multilayerWithTooltips: Boolean,
-        isLiveMap: Boolean,
-        isPolarCoordSystem: Boolean,
-        theme: Theme
-    ): GeomInteraction {
-        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, isPolarCoordSystem, theme).build()
-    }
-
     internal fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
         scaleMap: Map<Aes<*>, Scale>,
@@ -52,16 +40,6 @@ object GeomInteractionUtil {
             isPolarCoordSystem = isPolarCoordSystem,
             multilayerWithTooltips = multilayerWithTooltips
         )
-        return createGeomInteractionBuilder(layerConfig, scaleMap, tooltipSetup, isLiveMap, theme)
-    }
-
-    private fun createGeomInteractionBuilder(
-        layerConfig: LayerConfig,
-        scaleMap: Map<Aes<*>, Scale>,
-        tooltipSetup: GeomTooltipSetup,
-        isLiveMap: Boolean,
-        theme: Theme
-    ): GeomInteractionBuilder {
 
         val axisWithoutTooltip = HashSet<Aes<*>>()
         if (isLiveMap || !theme.horizontalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.X)
@@ -71,24 +49,13 @@ object GeomInteractionUtil {
         val axisWithNoLabels = HashSet<Aes<*>>()
         if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.X)
         if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.Y)
-
         val yOrientation = layerConfig.isYOrientation
         val axisAesFromFunctionKind = tooltipSetup.axisAesFromFunctionKind
         val isAxisTooltipEnabled = tooltipSetup.axisTooltipEnabled
-
-        val hiddenAesList = createHiddenAesList(
-            layerConfig,
-            axisAesFromFunctionKind
-        ).afterOrientation(yOrientation) +
-                axisWithoutTooltip
-
-        val axisAes = createAxisAesList(
-            isAxisTooltipEnabled,
-            axisAesFromFunctionKind,
-            layerConfig.geomProto.geomKind,
-        ).afterOrientation(yOrientation) -
-                hiddenAesList -
-                axisWithNoLabels
+        val hiddenAesList = createHiddenAesList(layerConfig, axisAesFromFunctionKind)
+            .afterOrientation(yOrientation) + axisWithoutTooltip
+        val axisAes = createAxisAesList(isAxisTooltipEnabled, axisAesFromFunctionKind, layerConfig.geomProto.geomKind,)
+            .afterOrientation(yOrientation) - hiddenAesList - axisWithNoLabels
 
         val tooltipAes: List<Aes<*>>
         val sideTooltipAes: List<Aes<*>>
@@ -126,7 +93,6 @@ object GeomInteractionUtil {
             tooltipAxisAes = axisAes,
             sideTooltipAes = sideTooltipAes
         )
-
         return builder
             .tooltipLinesSpec(tooltipSpecification)
             .tooltipConstants(createConstantAesList(layerConfig))
@@ -140,12 +106,7 @@ object GeomInteractionUtil {
         isPolarCoordSystem: Boolean,
         multilayerWithTooltips: Boolean
     ): GeomTooltipSetup {
-        val tooltipSetup = createGeomTooltipSetup(
-            geomKind,
-            statKind,
-            isCrosshairEnabled,
-            isPolarCoordSystem
-        ).let {
+        val tooltipSetup = createGeomTooltipSetup(geomKind, statKind, isCrosshairEnabled, isPolarCoordSystem).let {
             var multilayerLookup = false
             if (multilayerWithTooltips && !isCrosshairEnabled) {
                 // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,

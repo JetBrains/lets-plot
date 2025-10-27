@@ -92,24 +92,28 @@ internal object PlotGeomTilesUtil {
                 // marginal layer doesn't have interactions
                 null
             } else {
-                val otherLayerWithTooltips = layerConfigs
-                    .filterIndexed { index, _ -> index != layerIndex }
-                    .any { layer ->
-                        // Assume that a layer has tooltips
-                        // if it has mapping and tooltips are not hidden,
-                        // or if tooltips are explicitly specified
-                        (layer.varBindings.isNotEmpty() && !layer.tooltips.hideTooltips())
-                                || !layer.tooltips.tooltipLinePatterns.isNullOrEmpty()
-                    }
+                val otherLayers = layerConfigs.filterIndexed { index, _ -> index != layerIndex }
 
-                GeomInteractionUtil.configGeomTargets(
+                val otherLayerWithTooltips = when {
+                    // Same layers will have same lookup strategy and will be compatible - keep their lookup strategy
+                    otherLayers.all { layer -> layer.geomProto.geomKind == layerConfig.geomProto.geomKind } -> false
+
+                    // Assume that a layer has tooltips
+                    // if it has mapping and tooltips are not hidden,
+                    // or if tooltips are explicitly specified
+                    else -> otherLayers.any { layer ->
+                        (layer.varBindings.isNotEmpty() && !layer.tooltips.hideTooltips())
+                                || !layer.tooltips.tooltipLinePatterns.isNullOrEmpty() }
+                }
+
+                GeomInteractionUtil.createGeomInteractionBuilder(
                     layerConfig,
                     scaleMapByLayer[layerIndex],
                     otherLayerWithTooltips,
                     isLiveMap,
                     coordProvider.isPolar,
                     theme
-                )
+                ).build()
             }
         }
     }
