@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.QuantilesHelper
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
 import org.jetbrains.letsPlot.core.plot.base.stat.BaseYDensityStat
@@ -30,6 +31,9 @@ class SinaGeom : GeomBase() {
     var seed: Long? = null
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = PointLegendKeyElementFactory()
 
     override fun buildIntern(
         root: SvgRoot,
