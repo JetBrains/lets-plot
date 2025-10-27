@@ -18,7 +18,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 0.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(1.0, 1.0, 0.0), counts)
+            assertEquals(listOf(2.0, 2.0, 1.0), counts)
         }
     }
 
@@ -30,7 +30,7 @@ class PointDensityStatTest : BaseStatTest() {
             weights = listOf(2.0, 1.0, 1.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(1.0, 2.0, 0.0), counts)
+            assertEquals(listOf(3.0, 3.0, 1.0), counts)
         }
     }
 
@@ -52,7 +52,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(2.0),
             radius = 1.0
         ).let { counts ->
-            assertEquals(listOf(0.0), counts)
+            assertEquals(listOf(1.0), counts)
         }
     }
 
@@ -63,7 +63,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 2.0, 0.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(2.0, 2.0, 2.0, 0.0), counts)
+            assertEquals(listOf(3.0, 3.0, 3.0, 1.0), counts)
         }
     }
 
@@ -75,7 +75,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = List(size) { 2.0 },
             radius = 1.0
         ).let { counts ->
-            assertEquals(List(size) { size - 1.0 }, counts)
+            assertEquals(List(size) { size.toDouble() }, counts)
         }
     }
 
@@ -87,7 +87,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 6.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(1.0, 1.0, 0.0), counts)
+            assertEquals(listOf(2.0, 2.0, 1.0), counts)
         }
         // Flat along Y axis
         countNeighbors(
@@ -95,7 +95,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 0.0, 0.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(1.0, 1.0, 0.0), counts)
+            assertEquals(listOf(2.0, 2.0, 1.0), counts)
         }
     }
 
@@ -104,10 +104,10 @@ class PointDensityStatTest : BaseStatTest() {
         countNeighbors(
             xs = listOf(0.0, 0.0, 4.0),
             ys = listOf(0.0, 2.0, 0.0),
-            weights = listOf(-1.0, 1.0, 1.0),
+            weights = listOf(-2.0, 1.0, 1.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(1.0, -1.0, 0.0), counts)
+            assertEquals(listOf(-1.0, -1.0, 1.0), counts)
         }
     }
 
@@ -119,7 +119,7 @@ class PointDensityStatTest : BaseStatTest() {
             weights = listOf(0.0, 1.0, 1.0),
             radius = 3.0
         ).let { counts ->
-            assertEquals(listOf(1.0, 0.0, 0.0), counts)
+            assertEquals(listOf(1.0, 1.0, 1.0), counts)
         }
     }
 
@@ -130,7 +130,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 0.0),
             radius = 5.0
         ).let { counts ->
-            assertEquals(listOf(2.0, 2.0, 2.0), counts)
+            assertEquals(listOf(3.0, 3.0, 3.0), counts)
         }
     }
 
@@ -141,7 +141,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 0.0),
             radius = 1.0
         ).let { counts ->
-            assertEquals(listOf(0.0, 0.0, 0.0), counts)
+            assertEquals(listOf(1.0, 1.0, 1.0), counts)
         }
     }
 
@@ -152,7 +152,7 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 0.0),
             radius = 0.0
         ).let { counts ->
-            assertEquals(listOf(0.0, 0.0, 0.0), counts)
+            assertEquals(listOf(1.0, 1.0, 1.0), counts)
         }
     }
 
@@ -163,17 +163,17 @@ class PointDensityStatTest : BaseStatTest() {
             ys = listOf(0.0, 2.0, 0.0),
             radius = 4.0
         ).let { counts ->
-            assertEquals(listOf(2.0, 1.0, 1.0), counts)
+            assertEquals(listOf(3.0, 2.0, 2.0), counts)
         }
     }
 
     @Test
     fun testCountNeighborsCheckXY() {
         val checks = listOf(
-            4.0 - EPSILON to listOf(0.0, 0.0, 0.0),
-            4.0 to listOf(2.0, 1.0, 1.0),
-            sqrt(32.0) - EPSILON to listOf(2.0, 1.0, 1.0),
-            sqrt(32.0) to listOf(2.0, 2.0, 2.0),
+            4.0 - EPSILON to listOf(1.0, 1.0, 1.0),
+            4.0 to listOf(3.0, 2.0, 2.0),
+            sqrt(32.0) - EPSILON to listOf(3.0, 2.0, 2.0),
+            sqrt(32.0) to listOf(3.0, 3.0, 3.0),
         )
         for ((radius, expectedCounts) in checks) {
             countNeighbors(

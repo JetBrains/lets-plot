@@ -238,7 +238,7 @@ class PointDensityStat(
             val xVector = xs.toDoubleArray()
             val yVector = ys.toDoubleArray()
             val weightVector = weights.toDoubleArray()
-            val neighboursCounts = DoubleArray(n)
+            val neighboursCounts = weightVector.copyOf() // Each point counts itself with its weight
             for (i in 0 until n) {
                 val xi = xVector[i]
                 val yi = yVector[i]
