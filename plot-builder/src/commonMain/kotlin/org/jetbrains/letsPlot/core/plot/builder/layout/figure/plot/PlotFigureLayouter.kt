@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil.legendsSpaceLeftTopDelta
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapAxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import kotlin.math.max
@@ -37,14 +37,19 @@ internal class PlotFigureLayouter(
 
     private val axisEnabled = !containsLiveMap
 
-    private val legendsBlockInfo: LegendsBlockInfo
+    private val legendsBlockInfo: LegendsBlockInfo?
 
     init {
         val legendTheme = theme.legend()
-        legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-            legendBoxInfos,
-            legendTheme
-        )
+        legendsBlockInfo = when {
+            legendBoxInfos.isNotEmpty() -> LegendsBlockInfo.arrangeLegendBoxes(
+                legendBoxInfos,
+                legendTheme
+            )
+
+            else -> null
+        }
+
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
@@ -159,7 +164,12 @@ internal class PlotFigureLayouter(
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
             val plotOuterOrigin = figurePreferredBounds.origin
                 .add(deltaApplied)
-                .add(DoubleVector(plotLayoutMargins.left, plotLayoutMargins.top)) // apply margins inside the overall rect
+                .add(
+                    DoubleVector(
+                        plotLayoutMargins.left,
+                        plotLayoutMargins.top
+                    )
+                ) // apply margins inside the overall rect
 
             DoubleRectangle(
                 plotOuterOrigin,
@@ -177,9 +187,9 @@ internal class PlotFigureLayouter(
         }
 
         // Inner bounds - all without titles and legends.
-        // Plot origin : the origin of the plot area: geoms, axis and facet labels (no titles, legends).
+        // Plot origin: the origin of the plot area: geoms, axis and facet labels (no titles, legends).
         val plotOrigin = figureBoundsWithoutTitleAndCaption.origin
-            .add(legendBlockLeftTopDelta(legendsBlockInfo, theme.legend()))
+            .add(legendsSpaceLeftTopDelta(listOfNotNull(legendsBlockInfo), theme.legend()))
             .add(
                 axisTitlesOriginOffset(
                     hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flipAxis)),
@@ -191,7 +201,7 @@ internal class PlotFigureLayouter(
                 )
             )
 
-        // Geom area: plot without axis and facet labels.
+        // Geom area: plot without titles, legends, axis and facet labels.
         val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
             .add(plotOrigin)
 

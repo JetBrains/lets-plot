@@ -1,14 +1,11 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.layout.util
+package org.jetbrains.letsPlot.commons.geometry
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-
-open class Insets(
+class DoubleInsets(
     val leftTop: DoubleVector,
     val rightBottom: DoubleVector,
 ) {
@@ -22,18 +19,13 @@ open class Insets(
         rightBottom = DoubleVector(right, bottom),
     )
 
-    //    val leftTop = DoubleVector(left, top)
-//    val rightBottom = DoubleVector(right, bottom)
     val left: Double = leftTop.x
     val top: Double = leftTop.y
     val right: Double = rightBottom.x
     val bottom: Double = rightBottom.y
 
 
-    open fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
-//        val leftTop = DoubleVector(left, top)
-//        val rightBottom = DoubleVector(right, bottom)
-
+    fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
         // ? can be negative
         val size = r.dimension
             .subtract(leftTop)
@@ -50,6 +42,6 @@ open class Insets(
     }
 
     companion object {
-        val ZERO = Insets(0.0, 0.0, 0.0, 0.0)
+        val ZERO = DoubleInsets(0.0, 0.0, 0.0, 0.0)
     }
 }

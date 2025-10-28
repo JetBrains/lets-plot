@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
-import org.jetbrains.letsPlot.core.plot.builder.layout.DetachedLegendBoxInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 
 /**
  * Collects detached legends from individual plots when building a composite figure.
@@ -14,15 +13,9 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.DetachedLegendBoxInfo
 class DetachedLegendsCollector(
     val detachOverlayLegends: Boolean = false
 ) {
-    private val _collectedLegends = mutableListOf<DetachedLegendBoxInfo>()
-    val collectedLegends: List<DetachedLegendBoxInfo>
-        get() = _collectedLegends.toList()
+    val collectedLegends: List<LegendBoxInfo> = mutableListOf<LegendBoxInfo>()
 
-    fun collect(legends: List<DetachedLegendBoxInfo>) {
-        _collectedLegends.addAll(legends)
-    }
-
-    fun groupedByPosition(): Map<LegendPosition, List<DetachedLegendBoxInfo>> {
-        return _collectedLegends.groupBy { it.position }
+    fun collect(legends: List<LegendBoxInfo>) {
+        (collectedLegends as MutableList<LegendBoxInfo>).addAll(legends)
     }
 }

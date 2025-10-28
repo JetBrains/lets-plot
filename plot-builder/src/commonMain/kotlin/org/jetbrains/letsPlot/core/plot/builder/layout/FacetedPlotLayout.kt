@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FixedScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FreeScalesTilesLayouter
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import kotlin.math.max
 
 internal class FacetedPlotLayout(
@@ -33,7 +33,7 @@ internal class FacetedPlotLayout(
     private val totalAddedHSize: Double = facetsTheme.panelSpacing().x * (facets.colCount - 1)
     private val totalAddedVSize: Double = facetsTheme.panelSpacing().y * (facets.rowCount - 1)
 
-    private val insets: Insets = plotInsets(plotTheme.plotInset())
+    private val insets: DoubleInsets = plotInsets(plotTheme.plotInset())
 
     init {
         require(facets.isDefined) { "Undefined facets." }
@@ -132,8 +132,10 @@ internal class FacetedPlotLayout(
         // Align geom areas of tiles.
 
         // absolute offsets of tile geom areas.
-        val geomOffsetByCol = geomOffsetsByCol(layoutInfos, facetTiles,
-            facetsTheme.panelSpacing().x, facets.colCount)
+        val geomOffsetByCol = geomOffsetsByCol(
+            layoutInfos, facetTiles,
+            facetsTheme.panelSpacing().x, facets.colCount
+        )
 
         val geomOffsetByRow = geomOffsetsByRow(
             layoutInfos, facetTiles,
@@ -264,7 +266,7 @@ internal class FacetedPlotLayout(
             finalLayoutInfos.add(newLayoutInfo)
         }
 
-        val plotInsets = Insets(tilesPaddingLeftTop, insets.rightBottom)
+        val plotInsets = DoubleInsets(tilesPaddingLeftTop, insets.rightBottom)
         return PlotLayoutInfo(finalLayoutInfos, plotInsets)
     }
 

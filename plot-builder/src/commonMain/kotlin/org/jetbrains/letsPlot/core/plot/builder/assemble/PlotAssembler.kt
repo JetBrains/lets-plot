@@ -23,7 +23,6 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.BogusFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.PolarFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReferenceProvider
-import org.jetbrains.letsPlot.core.plot.builder.layout.DetachedLegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
@@ -38,9 +37,9 @@ class PlotAssembler constructor(
     private val xAxisPosition: AxisPosition,
     private val yAxisPosition: AxisPosition,
     private val theme: Theme,
-    title: String? = null,
-    subtitle: String? = null,
-    caption: String? = null,
+    private val title: String? = null,
+    private val subtitle: String? = null,
+    private val caption: String? = null,
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
     private val plotSpecId: String?,
     private val tz: TimeZone?,
@@ -49,10 +48,6 @@ class PlotAssembler constructor(
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
-
-    private val plotTitle = title?.takeIf { theme.plot().showTitle() }
-    private val plotSubtitle = subtitle?.takeIf { theme.plot().showSubtitle() }
-    private val plotCaption = caption?.takeIf { theme.plot().showCaption() }
 
     private var interactionsEnabled = true
 
@@ -65,7 +60,7 @@ class PlotAssembler constructor(
     // Contains legends with fixed positions (LEFT, RIGHT, TOP, BOTTOM) and optionally
     // overlay legends.
     // Each legend includes its position and justification information.
-    val detachedLegends: List<DetachedLegendBoxInfo>
+    val detachedLegends: List<LegendBoxInfo>
 
     init {
         plotContext = PlotAssemblerPlotContext(
@@ -96,18 +91,8 @@ class PlotAssembler constructor(
                 (legendPosition.isFixed || (legendPosition.isOverlay && detachedLegendsCollector.detachOverlayLegends))
 
         detachedLegends = if (shouldDetachLegends) {
-            // Wrap each legend box with its position and justification
-            val legendJustification = legendTheme.justification()
-            val detached = legendBoxInfos.map { legendBoxInfo ->
-                DetachedLegendBoxInfo(
-                    legendBoxInfo = legendBoxInfo,
-                    position = legendPosition,
-                    justification = legendJustification
-                )
-            }
-            // Add to collector
-            detachedLegendsCollector!!.collect(detached)
-            detached
+            detachedLegendsCollector!!.collect(legendBoxInfos)
+            legendBoxInfos
         } else {
             emptyList()
         }
@@ -160,9 +145,9 @@ class PlotAssembler constructor(
             containsLiveMap = geomTiles.containsLiveMap,
             theme = theme,
             legendBoxInfos = legendBoxInfosForLayout,
-            title = plotTitle,
-            subtitle = plotSubtitle,
-            caption = plotCaption
+            title = title,
+            subtitle = subtitle,
+            caption = caption
         )
     }
 
@@ -190,9 +175,9 @@ class PlotAssembler constructor(
         plotContext: PlotContext
     ): PlotSvgComponent {
         return PlotSvgComponent(
-            title = plotTitle,
-            subtitle = plotSubtitle,
-            caption = plotCaption,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
             coreLayersByTile = geomTiles.coreLayersByTile(),
             marginalLayersByTile = geomTiles.marginalLayersByTile(),
             figureLayoutInfo = figureLayoutInfo,

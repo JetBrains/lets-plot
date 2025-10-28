@@ -87,7 +87,7 @@ class PlotSvgComponent constructor(
 
     override fun clear() {
         // Effectivly disposes the plot component
-        // because "interactor" is likely got disposed too,
+        // because "interactor" have likely been disposed too,
         // and "interactor" can't be reused.
         isDisposed = true
         super.clear()
@@ -371,18 +371,19 @@ class PlotSvgComponent constructor(
         }
 
         // add legends
-        val legendTheme = theme.legend()
-        val legendsBlockInfo = figureLayoutInfo.legendsBlockInfo
-        val legendsBlockInfoLayouted = LegendBoxesLayout(
-            outerBounds = plotOuterBoundsWithoutTitleAndCaption,
-            innerBounds = geomAreaBounds,
-            legendTheme
-        ).doLayout(legendsBlockInfo)
+        figureLayoutInfo.legendsBlockInfo?.let { blockInfo ->
+            val legendTheme = theme.legend()
+            val legendsBlockInfoLayouted = LegendBoxesLayout(
+                outerBounds = plotOuterBoundsWithoutTitleAndCaption,
+                innerBounds = geomAreaBounds,
+                legendTheme
+            ).doLayout(blockInfo)
 
-        for (boxWithLocation in legendsBlockInfoLayouted.boxWithLocationList) {
-            val legendBox = boxWithLocation.legendBox.createLegendBox()
-            legendBox.moveTo(boxWithLocation.location)
-            add(legendBox)
+            for (boxWithLocation in legendsBlockInfoLayouted.boxWithLocationList) {
+                val legendBox = boxWithLocation.legendBox.createSvgComponent()
+                legendBox.moveTo(boxWithLocation.location)
+                add(legendBox)
+            }
         }
 
         // add caption

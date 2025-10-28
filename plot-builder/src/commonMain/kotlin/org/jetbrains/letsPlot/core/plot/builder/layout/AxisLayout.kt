@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisLayouter
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 
 internal class AxisLayout(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
@@ -22,7 +22,7 @@ internal class AxisLayout(
     fun doLayout(
         axisDomain: DoubleSpan,
         axisLength: Double,
-        geomAreaInsets: Insets
+        geomAreaInsets: DoubleInsets
     ): AxisLayoutInfo {
         val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
         val layouter = AxisLayouter.create(orientation, breaksProvider, geomAreaInsets, theme, polar)

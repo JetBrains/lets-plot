@@ -1,20 +1,18 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.util
+package org.jetbrains.letsPlot.core.plot.builder.buildinfo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 
-internal class PlotFigureBuildInfo constructor(
+class PlotFigureBuildInfo constructor(
     private val plotAssembler: PlotAssembler,
     private val processedPlotSpec: Map<String, Any>,
     override val bounds: DoubleRectangle,
@@ -25,7 +23,7 @@ internal class PlotFigureBuildInfo constructor(
 
     override val containsLiveMap: Boolean = plotAssembler.containsLiveMap
 
-    override val layoutInfo: FigureLayoutInfo
+    override val layoutInfo: PlotFigureLayoutInfo
         get() = _layoutInfo
 
     private lateinit var _layoutInfo: PlotFigureLayoutInfo
@@ -101,7 +99,7 @@ internal class PlotFigureBuildInfo constructor(
         return PlotFigureBuildInfo(
             plotAssembler,
             processedPlotSpec,
-            DoubleRectangle(DoubleVector.ZERO, size),
+            DoubleRectangle(DoubleVector.Companion.ZERO, size),
             computationMessages
         )
     }

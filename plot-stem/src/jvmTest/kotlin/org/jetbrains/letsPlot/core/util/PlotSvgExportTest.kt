@@ -39,7 +39,7 @@ class PlotSvgExportTest {
             svgToString = SvgToString()
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("222.0")
         assertThat(root.attributes["height"]).isEqualTo("111.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -60,7 +60,7 @@ class PlotSvgExportTest {
             svgToString = SvgToString()
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("400.0")
         assertThat(root.attributes["height"]).isEqualTo("200.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -74,7 +74,7 @@ class PlotSvgExportTest {
             svgToString = SvgToString()
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("600.0")
         assertThat(root.attributes["height"]).isEqualTo("400.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -88,7 +88,7 @@ class PlotSvgExportTest {
             svgToString = SvgToString()
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("500.0")
         assertThat(root.attributes["height"]).isEqualTo("300.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -103,7 +103,7 @@ class PlotSvgExportTest {
             svgToString = SvgToString()
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("8.0in")
         assertThat(root.attributes["height"]).isEqualTo("6.0in")
         assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")
@@ -118,7 +118,7 @@ class PlotSvgExportTest {
             svgToString = SvgToString()
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("8.0in")
         assertThat(root.attributes["height"]).isEqualTo("6.0in")
         assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")

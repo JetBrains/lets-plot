@@ -8,14 +8,14 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 
 /**
  * Only "geom" area + axes.
  */
 class PlotLayoutInfo constructor(
     val tiles: List<TileLayoutInfo>,
-    private val insets: Insets,
+    private val insets: DoubleInsets,
 ) {
     val hasTopAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.hAxisTitleOrientation == Orientation.TOP
     val hasLeftAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.vAxisTitleOrientation == Orientation.LEFT

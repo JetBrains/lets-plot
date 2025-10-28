@@ -9,37 +9,24 @@ import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalcul
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.parseAsXml
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 
 internal object Hyperlink {
-    fun parse(text: String): List<RichTextNode> {
-        val doc = parseAsXml(text)
-        return render(doc)
+    fun canRender(node: XmlNode): Boolean {
+        return node is XmlNode.Element && node.name == "a"
     }
 
-    fun render(node: XmlNode): List<RichTextNode> {
-        val output = mutableListOf<RichTextNode>()
+    // Simplified: only text nodes inside <a>
+    fun render(node: XmlNode): RichTextNode {
+        require(node is XmlNode.Element)
 
-        when (node) {
-            is XmlNode.Text -> output += RichTextNode.Text(node.content)
-            is XmlNode.Element -> {
-                if (node.name == "a") {
-                    val href = node.attributes["href"] ?: ""
-                    val target = node.attributes["target"]
-                    val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
-                    output += HyperlinkElement(text, href, target)
-                    return output
-                }
-
-                output += node.children.flatMap(::render)
-            }
-        }
-
-        return output
+        val href = node.attributes["href"] ?: ""
+        val target = node.attributes["target"]
+        val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
+        return HyperlinkElement(text, href, target)
     }
 
     class HyperlinkElement(

@@ -6,19 +6,118 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.estimateWidth
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.lineParts
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.stringParts
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toTestWidth
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import kotlin.math.max
-import kotlin.math.roundToInt
 import kotlin.test.Test
 
-class RichTextTermTest {
+class PlaintextTest {
+    @Test
+    fun `unsupported tag should be preserved as plain text`() {
+        val text = """Hello, <b>cruel</b> world!"""
+        val richTextSvg = toSvg(text).single()
+        assertThat(richTextSvg.stringParts()).containsExactly(text)
+    }
+
+    @Test
+    fun `unsupported tag and hyperlink outside`() {
+        val text = """Hello, <b>cruel</b> world from <a href="https://lets-plot.org">lets-plot</a>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>cruel</b> world from ", "lets-plot", "!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink and text inside`() {
+        val text = """Hello, <b>foo <a href="https://lets-plot.org">lets-plot</a> bar</b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>foo ", "lets-plot", " bar</b>!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink only`() {
+        val text = """Hello, <b><a href="https://lets-plot.org">lets-plot</a></b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>", "lets-plot", "</b>!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink and left child`() {
+        val text = """Hello, <b>foo <a href="https://lets-plot.org">lets-plot</a></b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>foo ", "lets-plot", "</b>!")
+    }
+
+    @Test
+    fun `unsupported tag with hyperlink and right child`() {
+        val text = """Hello, <b><a href="https://lets-plot.org">lets-plot</a> foo</b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b>", "lets-plot", " foo</b>!")
+    }
+
+    @Test
+    fun `unsupported tag without children`() {
+        val text = """Hello, <b></b>!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("Hello, <b></b>!")
+    }
+
+    @Test
+    fun `lower than and greater than signs`() {
+        val richTextSvg = toSvg("5 < 10 and 10 > 5").single()
+
+        assertThat(richTextSvg.tspans()).hasSize(1)
+        assertTSpan(richTextSvg.tspans().single(), "5 < 10 and 10 > 5")
+    }
+
+    @Test
+    fun `lower than with hyperlink`() {
+        val richTextSvg = toSvg("5 < 10 visit <a href=\"https://lets-plot.org\">lets-plot</a> now").single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("5 < 10 visit ", "lets-plot", " now")
+    }
+
+    @Test
+    fun `hyperlink with lower than `() {
+        val richTextSvg = toSvg("<a href=\"https://lets-plot.org\">lets-plot</a> now 5 < 10 visit ").single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("lets-plot", " now 5 < 10 visit ")
+    }
+
+    @Test
+    fun `text with hyperlink and with lower than `() {
+        val richTextSvg = toSvg("hello <a href=\"https://lets-plot.org\">lets-plot</a> now 5 < 10 visit ").single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly("hello ", "lets-plot", " now 5 < 10 visit ")
+    }
+
+    @Test
+    fun `malformed hyperlink should be rendered as normal text`() {
+        val richTextSvg = toSvg("Click <a href=''>here").single()
+
+        assertTSpan(richTextSvg.tspans().single(), "Click <a href=''>here")
+    }
+
+    @Test
+    fun `label with quotes`() {
+        val text = """Hello, 'cruel' "world"!"""
+        val richTextSvg = toSvg(text).single()
+
+        assertThat(richTextSvg.stringParts()).containsExactly(text)
+    }
+
     @Test
     fun newLines() {
         val richTextSvg = toSvg("Hello\nworld!")
@@ -207,50 +306,5 @@ class RichTextTermTest {
         val arial = Font(FontFamily("Arial", monospaced = false), 12)
         val width = estimateWidth("Hello, <a href=\"https://example.com\">world</a>!", arial)
         assertThat(width).isEqualTo(toTestWidth("Hello, world!", arial))
-    }
-
-    companion object {
-        private val DEF_FONT = Font(family = FontFamily.SERIF, size = 16, isBold = false, isItalic = false)
-
-        internal fun toSvg(
-            text: String,
-            wrapLength: Int = -1,
-            markdown: Boolean = false,
-            anchor: Text.HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
-        ): List<SvgTextElement> {
-            return RichText.toSvg(
-                text = text,
-                font = DEF_FONT,
-                wrapLength = wrapLength,
-                markdown = markdown,
-                anchor = anchor
-            )
-        }
-
-        internal fun estimateWidth(
-            text: String,
-            font: Font = DEF_FONT,
-            wrapLength: Int = -1,
-            markdown: Boolean = false,
-        ): Double {
-            return RichText.estimateWidth(
-                text = text,
-                font = font,
-                wrapLength = wrapLength,
-                markdown = markdown
-            )
-        }
-
-        internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT, level: TestUtil.FormulaLevel = TestUtil.FormulaLevel()): Double {
-            val font = level.sizeValue()?.let { levelSizeScale ->
-                val levelFontSize = max(1, (baseFont.size * levelSizeScale).roundToInt())
-                Font(baseFont.family, levelFontSize, baseFont.isBold, baseFont.isItalic)
-            } ?: baseFont
-            return TextWidthEstimator.widthCalculator(text, font)
-        }
-
-        internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT, level: TestUtil.FormulaLevel = TestUtil.FormulaLevel()): Double {
-            return texts.maxOf { toTestWidth(it, baseFont, level) }
-        }
     }
 }

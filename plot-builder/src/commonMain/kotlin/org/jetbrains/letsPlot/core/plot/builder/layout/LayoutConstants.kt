@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 
 internal object LayoutConstants {
     val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
@@ -16,5 +16,5 @@ internal object LayoutConstants {
 
     // Facets layout
     // Allow axis labels to exceed dimensions of the panel.
-    val FACET_PANEL_AXIS_EXPAND = Insets(5.0, 5.0, 5.0, 5.0)
+    val FACET_PANEL_AXIS_EXPAND = DoubleInsets(5.0, 5.0, 5.0, 5.0)
 }

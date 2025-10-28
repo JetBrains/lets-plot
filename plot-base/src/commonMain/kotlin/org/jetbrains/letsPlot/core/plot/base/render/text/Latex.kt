@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalcul
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_START
@@ -376,6 +375,33 @@ internal class Latex(
             return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }
     }
+
+    internal fun fillTextTermGaps(
+        text: String,
+        specialTerms: List<Pair<RichTextNode.RichSpan, IntRange>>
+    ): List<RichTextNode.RichSpan> {
+        fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
+            if (toSubtract.isEmpty()) {
+                return listOf(range)
+            }
+
+            val sortedToSubtract = toSubtract.sortedBy(IntRange::first)
+            val firstRange = IntRange(range.first, sortedToSubtract.first().first - 1)
+            val intermediateRanges = sortedToSubtract.windowed(2).map { (prevRange, nextRange) ->
+                IntRange(prevRange.last + 1, nextRange.first - 1)
+            }
+            val lastRange = IntRange(sortedToSubtract.last().last + 1, range.last)
+
+            return (listOf(firstRange) + intermediateRanges + listOf(lastRange)).filterNot(IntRange::isEmpty)
+        }
+
+        val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
+            .map { pos -> RichTextNode.Text(text.substring(pos)) to pos }
+        return (specialTerms + textTerms)
+            .sortedBy { (_, termLocation) -> termLocation.first }
+            .map { (term, _) -> term }
+    }
+
 
     companion object {
         private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"

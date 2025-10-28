@@ -1,26 +1,25 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.util
+package org.jetbrains.letsPlot.core.plot.builder.buildinfo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.layout.CompositeLegendBlockInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtilNew
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 
-internal class CompositeFigureBuildInfo constructor(
+class CompositeFigureBuildInfo constructor(
     private val elements: List<FigureBuildInfo?>,
     private val layout: CompositeFigureLayout,
     override val bounds: DoubleRectangle,
@@ -29,18 +28,18 @@ internal class CompositeFigureBuildInfo constructor(
     private val caption: String?,
     private val theme: Theme,
     override val computationMessages: List<String>,
-    private val legendBlocks: List<CompositeLegendBlockInfo>,
+    private val legendBlocks: List<LegendsBlockInfo>,
 ) : FigureBuildInfo {
 
     override val isComposite: Boolean = true
 
-    override val layoutInfo: FigureLayoutInfo
+    override val layoutInfo: CompositeFigureLayoutInfo
         get() = _layoutInfo
 
     override val containsLiveMap: Boolean
         get() = elements.filterNotNull().any { it.containsLiveMap }
 
-    private lateinit var _layoutInfo: FigureLayoutInfo
+    private lateinit var _layoutInfo: CompositeFigureLayoutInfo
 
 
     override fun injectLiveMapProvider(f: (tiles: List<List<GeomLayer>>, spec: Map<String, Any>) -> Any) {
@@ -55,15 +54,12 @@ internal class CompositeFigureBuildInfo constructor(
             it.createSvgRoot()
         }
 
-        val overalSize = layoutInfo.figureSize
-        val elementsAreaBounds = layoutInfo.geomAreaBounds
         val svgComponent = CompositeFigureSvgComponent(
             elementSvgRoots,
-            overalSize,
-            elementsAreaBounds,
             title = title,
             subtitle = subtitle,
             caption = caption,
+            layoutInfo = layoutInfo,
             theme = theme,
             styleSheet = Style.fromTheme(theme, flippedAxis = false),
         )
@@ -91,17 +87,21 @@ internal class CompositeFigureBuildInfo constructor(
         val plotTheme = theme.plot()
 
         // Lay out inner positions relative to the left-top of the figure.
-        val contextBounds = DoubleRectangle(DoubleVector.ZERO, bounds.dimension)
-        val withoutMargins = plotTheme.layoutMargins().shrinkRect(contextBounds)
+        val outerBounds = DoubleRectangle(DoubleVector.ZERO, bounds.dimension)
+
+        // Exclude plot border and margin
+        val plotLayoutMargins = theme.plot().layoutMargins()
+        val contentAreaBounds = plotLayoutMargins.shrinkRect(outerBounds)
+
         val withoutTitles = PlotLayoutUtil.boundsWithoutTitleAndCaption(
-            outerBounds = withoutMargins,
+            outerBounds = contentAreaBounds,
             title, subtitle, caption, theme
         )
 
         val withoutPlotInset = plotTheme.plotInset().shrinkRect(withoutTitles)
 
         // Subtract space for fixed-position legend blocks
-        val elementsAreaBounds = PlotLayoutUtilNew.subtractLegendsSpace(
+        val elementsAreaBounds = PlotLegendsLayoutUtil.subtractLegendsSpace(
             bounds = withoutPlotInset,
             legendBlocks = legendBlocks,
             theme = theme.legend()
@@ -111,7 +111,7 @@ internal class CompositeFigureBuildInfo constructor(
         val layoutedElementsAreaBounds = layoutedElements.filterNotNull()
             .map { it.bounds }
             .reduceOrNull { acc, el -> acc.union(el) }
-            ?: contextBounds
+            ?: elementsAreaBounds
 
         return CompositeFigureBuildInfo(
             elements = layoutedElements,
@@ -122,9 +122,11 @@ internal class CompositeFigureBuildInfo constructor(
             computationMessages,
             legendBlocks
         ).apply {
-            this._layoutInfo = FigureLayoutInfo(
-                figureSize = contextBounds.dimension,
-                geomAreaBounds = layoutedElementsAreaBounds
+            this._layoutInfo = CompositeFigureLayoutInfo(
+                figureSize = outerBounds.dimension,
+                contentAreaBounds = contentAreaBounds,
+                elementsAreaBounds = layoutedElementsAreaBounds,
+                legendsBlockInfos = legendBlocks
             )
         }
     }
@@ -137,7 +139,7 @@ internal class CompositeFigureBuildInfo constructor(
         return CompositeFigureBuildInfo(
             elements,
             layout,
-            DoubleRectangle(DoubleVector.ZERO, size),
+            DoubleRectangle(DoubleVector.Companion.ZERO, size),
             title, subtitle, caption,
             theme,
             computationMessages,

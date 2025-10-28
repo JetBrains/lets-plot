@@ -6,26 +6,18 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBox
 
+/**
+ * The positioning metadata here allows legend boxes to be "detached" from individual plots and collected at the
+ * composite figure level.
+ */
 abstract class LegendBoxInfo(
-    internal val size: DoubleVector
+    internal val size: DoubleVector,
+    val position: LegendPosition,
+    val justification: LegendJustification
 ) {
-
-    open val isEmpty: Boolean
-        get() = false
-
-    abstract fun createLegendBox(): LegendBox
-
-    companion object {
-        val EMPTY: LegendBoxInfo = object : LegendBoxInfo(DoubleVector.ZERO) {
-            override val isEmpty: Boolean
-                get() = true
-
-            override fun createLegendBox(): LegendBox {
-                throw IllegalStateException("Empty legend box info")
-            }
-        }
-    }
-
+    abstract fun createSvgComponent(): LegendBox
 }

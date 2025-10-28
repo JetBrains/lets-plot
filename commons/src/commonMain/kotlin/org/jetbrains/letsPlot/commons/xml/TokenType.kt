@@ -6,5 +6,5 @@
 package org.jetbrains.letsPlot.commons.xml
 
 internal enum class TokenType {
-    LT, LT_SLASH, GT, SLASH, SLASH_GT, EQUALS, EOF, WHITESPACE, QUOTED_STRING, TEXT
+    LT, LT_SLASH, GT, SLASH, SLASH_GT, EQUALS, EOF, WHITESPACE, SINGLE_QUOTED_STRING, DOUBLE_QUOTED_STRING, TEXT
 }
