@@ -56,10 +56,11 @@ class ColorBarAssembler constructor(
         return object : LegendBoxInfo(
             size = spec.size,
             position = theme.position(),
-            justification = theme.justification()
+            justification = theme.justification(),
+            spec = spec
         ) {
             override fun createSvgComponent(): LegendBox {
-                val c = ColorBarComponent(spec)
+                val c = ColorBarComponent(this.spec as ColorBarComponentSpec)
                 c.debug = DEBUG_DRAWING
                 return c
             }

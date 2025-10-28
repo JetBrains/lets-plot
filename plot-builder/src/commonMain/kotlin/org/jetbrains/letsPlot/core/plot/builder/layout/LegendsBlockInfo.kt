@@ -41,10 +41,17 @@ class LegendsBlockInfo private constructor(
             theme: LegendTheme,
         ): LegendsBlockInfo {
             check(legendsInBlock.isNotEmpty()) { "Legends in block list is empty" }
-            val boxWithLocationList = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-                legendsInBlock,
-                theme
-            )
+
+            // Remove duplicated legends
+            val infos = mutableListOf<LegendBoxInfo>()
+            for (legend in legendsInBlock) {
+                val isDuplicate = infos.any { it.hasSameContent(legend) }
+                if (!isDuplicate) {
+                    infos.add(legend)
+                }
+            }
+
+            val boxWithLocationList = LegendBoxesLayoutUtil.arrangeLegendBoxes(infos, theme)
             return LegendsBlockInfo(boxWithLocationList)
         }
     }

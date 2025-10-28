@@ -23,6 +23,24 @@ class ColorBarComponentSpec(
     reverse: Boolean
 ) : LegendBoxSpec(title, theme, reverse) {
 
+    override fun hasSameContent(other: LegendBoxSpec): Boolean {
+        if (other !is ColorBarComponentSpec) return false
+
+        if (title != other.title) return false
+        if (reverse != other.reverse) return false
+        if (domain != other.domain) return false
+
+        if (breaks.domainValues != other.breaks.domainValues) return false
+        if (breaks.labels != other.breaks.labels) return false
+
+        // Compare colors by sampling the scale mapper at the break points
+        val thisColors = breaks.transformedValues.map { scaleMapper(it) }
+        val otherColors = other.breaks.transformedValues.map { other.scaleMapper(it) }
+        if (thisColors != otherColors) return false
+
+        return true
+    }
+
     companion object {
         const val DEF_NUM_BIN = 20
 

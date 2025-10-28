@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBox
+import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBoxSpec
 
 /**
  * The positioning metadata here allows legend boxes to be "detached" from individual plots and collected at the
@@ -17,7 +18,12 @@ import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBox
 abstract class LegendBoxInfo(
     internal val size: DoubleVector,
     val position: LegendPosition,
-    val justification: LegendJustification
+    val justification: LegendJustification,
+    val spec: LegendBoxSpec
 ) {
     abstract fun createSvgComponent(): LegendBox
+
+    fun hasSameContent(other: LegendBoxInfo): Boolean {
+        return spec.hasSameContent(other.spec)
+    }
 }

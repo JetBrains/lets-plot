@@ -121,10 +121,11 @@ class LegendAssembler(
         return object : LegendBoxInfo(
             size = spec.size,
             position = legendTheme.position(),
-            justification = legendTheme.justification()
+            justification = legendTheme.justification(),
+            spec = spec
         ) {
             override fun createSvgComponent(): LegendBox {
-                val c = LegendComponent(spec, panelTheme)
+                val c = LegendComponent(this.spec as LegendComponentSpec, panelTheme)
                 c.debug = DEBUG_DRAWING
                 return c
             }
