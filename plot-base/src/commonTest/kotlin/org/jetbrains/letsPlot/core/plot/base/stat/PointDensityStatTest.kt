@@ -5,14 +5,188 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import demoAndTestShared.assertArrayEquals
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Transform
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.IdentityTransform
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import kotlin.math.sqrt
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class PointDensityStatTest : BaseStatTest() {
+
+    @Test
+    fun basic() {
+        val radiusToAdjust: (Double) -> Double = { r -> 9 * r * r }
+        check(
+            data = mapOf(
+                TransformVar.X to listOf(0.0, 0.0, 4.0),
+                TransformVar.Y to listOf(0.0, 2.0, 0.0)
+            ),
+            adjust = radiusToAdjust(5.0),
+            expectedCounts = listOf(3.0, 2.0, 2.0)
+        )
+    }
+
+    @Test
+    fun emptyDataFrame() {
+        testEmptyDataFrame(pointdensity())
+    }
+
+    @Test
+    fun flatOneDimension() {
+        check(
+            data = mapOf(
+                TransformVar.X to listOf(0.0, 0.0, 0.0),
+                TransformVar.Y to listOf(0.0, 2.0, 6.0)
+            ),
+            adjust = 36.0,
+            expectedCounts = listOf(2.0, 2.0, 1.0)
+        )
+    }
+
+    @Test
+    fun flatBothDimensions() {
+        val radiusToAdjust: (Double) -> Double = { r -> 9 * r * r }
+        check(
+            data = mapOf(
+                TransformVar.X to listOf(0.0, 0.0, 0.0),
+                TransformVar.Y to listOf(0.0, 0.0, 0.0)
+            ),
+            adjust = radiusToAdjust(1.0),
+            expectedCounts = listOf(3.0, 3.0, 3.0)
+        )
+    }
+
+    @Test
+    fun oneElementDataFrame() {
+        val radiusToAdjust: (Double) -> Double = { r -> 9 * r * r }
+        check(
+            data = mapOf(
+                TransformVar.X to listOf(0.0),
+                TransformVar.Y to listOf(0.0)
+            ),
+            adjust = radiusToAdjust(1.0),
+            expectedCounts = listOf(1.0)
+        )
+    }
+
+    @Test
+    fun withWeight() {
+        val radiusToAdjust: (Double) -> Double = { r -> 9 * r * r }
+        check(
+            data = mapOf(
+                TransformVar.X to listOf(0.0, 0.0, 4.0),
+                TransformVar.Y to listOf(0.0, 2.0, 0.0),
+                TransformVar.WEIGHT to listOf(2.0, 1.0, 1.0)
+            ),
+            adjust = radiusToAdjust(5.0),
+            expectedCounts = listOf(4.0, 3.0, 3.0)
+        )
+    }
+
+    @Test
+    fun withNAValues() {
+        val radiusToAdjust: (Double) -> Double = { r -> 9 * r * r }
+        check(
+            data = mapOf(
+                TransformVar.X to listOf(0.0, null, Double.NaN, 0.0, 0.0, 0.0, 4.0, 4.0, 4.0),
+                TransformVar.Y to listOf(0.0, 0.0, 0.0, 2.0, null, Double.NaN, 0.0, 0.0, 0.0),
+                TransformVar.WEIGHT to listOf(2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, null, Double.NaN)
+            ),
+            adjust = radiusToAdjust(5.0),
+            expectedCounts = listOf(4.0, 3.0, 3.0, 3.0, 3.0)
+        )
+    }
+
+    @Test
+    fun withIndices() {
+        val df = dataFrame(mapOf(
+            TransformVar.X to listOf(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+            TransformVar.Y to listOf(0.0, 1.0, null, 3.0, 4.0, 5.0, 6.0, null, 8.0, 9.0),
+            TransformVar.SIZE to listOf(10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+        ))
+        val bindings = listOf(
+            VarBinding(TransformVar.X, Aes.X),
+            VarBinding(TransformVar.Y, Aes.Y),
+            VarBinding(TransformVar.SIZE, Aes.SIZE)
+        )
+        val transformByAes: Map<Aes<*>, Transform> = mapOf(
+            Aes.X to IdentityTransform(),
+            Aes.Y to IdentityTransform(),
+            Aes.SIZE to IdentityTransform()
+        )
+        val statDf = DataProcessing.applyStatTest(
+            data = df,
+            stat = pointdensity(),
+            bindings = bindings,
+            transformByAes = transformByAes,
+            statCtx = statContext(df)
+        )
+        assertArrayEquals(arrayOf(10.0, 11.0, 13.0, 14.0, 15.0, 16.0, 18.0, 19.0), statDf.getNumeric(TransformVar.SIZE).toTypedArray())
+    }
+
+    @Test
+    fun methodKde2d() {
+        val df = dataFrame(mapOf(
+            TransformVar.X to listOf(0.0, 0.0, 4.0),
+            TransformVar.Y to listOf(0.0, 2.0, 0.0)
+        ))
+        val stat = pointdensity(method = PointDensityStat.Method.KDE2D)
+        val statDf = stat.apply(df, statContext(df))
+        val expectedDensityOrder = listOf(2, 1, 0)
+        statDf.getNumeric(Stats.DENSITY).slice(expectedDensityOrder).zipWithNext { a, b ->
+            assertNotNull(a)
+            assertNotNull(b)
+            assertTrue(a!! <= b!!, "Expected density ordered as $expectedDensityOrder")
+        }
+    }
+
+    @Test
+    fun adjustedRadius() {
+        val radiusToAdjust: (Double) -> Double = { r -> 9 * r * r }
+        listOf(
+            radiusToAdjust(0.0) to listOf(1.0, 1.0, 1.0),
+            radiusToAdjust(4.0 - EPSILON) to listOf(1.0, 1.0, 1.0),
+            radiusToAdjust(4.0) to listOf(3.0, 2.0, 2.0),
+            radiusToAdjust(sqrt(32.0) - EPSILON) to listOf(3.0, 2.0, 2.0),
+            radiusToAdjust(sqrt(32.0)) to listOf(3.0, 3.0, 3.0),
+        ).forEach { (adjust, expectedCounts) ->
+            check(
+                data = mapOf(
+                    TransformVar.X to listOf(0.0, 0.0, 4.0),
+                    TransformVar.Y to listOf(0.0, 2.0, 0.0)
+                ),
+                adjust = adjust,
+                expectedCounts = expectedCounts
+            )
+        }
+    }
+
+    @Test
+    fun regressionForComparator() {
+        val badValue = 41 * sqrt(2.0)
+        val df = dataFrame(mapOf(
+            TransformVar.X to listOf(-badValue, -badValue, 3 * badValue),
+            TransformVar.Y to listOf(-badValue, badValue, -badValue)
+        ))
+        val stat = pointdensity(method = PointDensityStat.Method.KDE2D)
+        val statDf = stat.apply(df, statContext(df))
+        val expectedDensityOrder = listOf(2, 1, 0)
+        statDf.getNumeric(Stats.DENSITY).slice(expectedDensityOrder).zipWithNext { a, b ->
+            assertNotNull(a)
+            assertNotNull(b)
+            assertTrue(a!! <= b!!, "Expected density ordered as $expectedDensityOrder")
+        }
+    }
 
     // PointDensityStat::countNeighbors()
 
@@ -318,9 +492,36 @@ class PointDensityStatTest : BaseStatTest() {
         }
     }
 
+    private fun check(
+        data: Map<DataFrame.Variable, List<Double?>>,
+        adjust: Double,
+        expectedCounts: List<Double>
+    ) {
+        val df = dataFrame(data)
+        val stat = pointdensity(adjust = adjust)
+        val statDf = stat.apply(df, statContext(df))
+        checkStatVarValues(statDf, Stats.COUNT, expectedCounts)
+    }
+
     companion object {
         private const val EPSILON = 1e-12
         private val COMPARATOR: Comparator<Double> = compareBy { it }
+
+        private fun pointdensity(
+            method: PointDensityStat.Method = PointDensityStat.Method.NEIGHBOURS,
+            adjust: Double = 1.0
+        ): PointDensityStat {
+            return PointDensityStat(
+                bandWidthX = null,
+                bandWidthY = null,
+                bandWidthMethod = AbstractDensity2dStat.DEF_BW,
+                adjust = adjust,
+                kernel = AbstractDensity2dStat.DEF_KERNEL,
+                nX = AbstractDensity2dStat.DEF_N,
+                nY = AbstractDensity2dStat.DEF_N,
+                method = method
+            )
+        }
 
         private fun countNeighbors(
             xs: List<Double>,
