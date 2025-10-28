@@ -74,7 +74,15 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>, isMapPlot: Boolean): Boolean {
+        fun isApplicable(
+            geomKind: GeomKind,
+            layerOptions: Map<*, *>,
+            combinedMappings: Map<*, *>,
+            isMapPlot: Boolean,
+            clientSide: Boolean
+        ): Boolean {
+            // TODO: isMapPlot is not needed here anymore with backend processed map_join?
+            // TODO: Looks like map_join abd map should have higher priority than positional mappings
             if (!isMapPlot && combinedMappings.keys
                     .mapNotNull { it as? String }
                     .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
@@ -83,10 +91,27 @@ class GeoConfig(
                 return false
             }
 
-            return layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
+            val hasGeoData = layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(MAP_DATA_META, GEOREFERENCE) ||
                     layerOptions.has(DATA_META, GEOREFERENCE)
+
+            if (!hasGeoData) {
+                return false
+            }
+
+            if (isMapPlot) {
+                // On LiveMap always use backend processing
+                return !clientSide
+            }
+
+
+            // Only point geometries are supported on a backend for performance reasons
+            if (!clientSide && geomKind !in setOf(POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE)) {
+                return false
+            }
+
+            return true
         }
 
         fun isGeoDataframe(layerOptions: Map<*, *>, gdfRole: String): Boolean {

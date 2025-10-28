@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
 import demoAndTestShared.parsePlotSpec
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -23,6 +24,8 @@ import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMAX
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMIN
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotGeomTiles
+import org.jetbrains.letsPlot.core.spec.getList
+import org.jetbrains.letsPlot.core.spec.has
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.junit.Ignore
 import kotlin.test.Test
@@ -257,10 +260,7 @@ class GeoConfigTest {
 
     @Test
     fun `aes(color'fig'), data=df, map=gdf without map_join should fail`() {
-        // don't know how to join data with map without id columns.
-        assertEquals(
-            "Internal error: IllegalStateException : $MAP_JOIN_REQUIRED_MESSAGE", failedTransformToClientPlotConfig(
-                """
+        val spec = """
             |{
             |    "kind": "plot", 
             |    "layers": [{
@@ -271,8 +271,11 @@ class GeoConfigTest {
             |        "map_data_meta": {"geodataframe": {"geometry": "coord"}}
             |    }]
             |}""".trimMargin()
-            )
-        )
+
+        val plotSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(spec))
+        val e = runCatching { PlotConfigFrontend.create(plotSpec) { } }.exceptionOrNull()
+
+        assertThat(e).hasMessage(MAP_JOIN_REQUIRED_MESSAGE)
     }
 
 
@@ -507,6 +510,111 @@ class GeoConfigTest {
             .assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
+    @Test
+    fun `polygon should be merged on client side`() {
+        val plotSpec = parsePlotSpec(
+            """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "polygon",
+            |      "data": {
+            |        "key": [ "A", "B", "C", "A", "B", "C" ],
+            |        "kind": [ "Point", "MPoint", "Line", "MLine", "Polygon", "MPolygon" ],
+            |        "coord": [
+            |          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+            |          "{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 15.0], [6.0, 13.0]]}",
+            |          "{\"type\": \"LineString\", \"coordinates\": [[0.0, 0.0], [5.0, 5.0]]}",
+            |          "{\"type\": \"MultiLineString\", \"coordinates\": [[[10.0, 0.0], [15.0, 5.0]], [[10.0, 5.0], [15.0, 0.0]]]}",
+            |          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+            |          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [7.0, 4.0], [11.0, 12.0]]], [[[10.0, 2.0], [13.0, 10.0], [12.0, 3.0], [10.0, 2.0]]]]}"
+            |        ]
+            |      },
+            |      "mapping": { "fill": "kind" },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "str", "column": "key" },
+            |          { "type": "str", "column": "kind" },
+            |          { "type": "unknown(pandas:unknown-array)", "column": "coord" }
+            |        ],
+            |        "geodataframe": { "geometry": "coord" }
+            |      }
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+        )
+        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec)
+
+        // geo data was not replaced on a frontend
+        assertThat(processedSpec.has("layers", 0, "data", POINT_X)).isFalse
+        assertThat(processedSpec.has("layers", 0, "data", POINT_Y)).isFalse
+        assertThat(processedSpec.getList("layers", 0, "data", "coord")).hasSize(6)
+
+        val plotConfig = PlotConfigFrontend.create(processedSpec){}
+        val layerData = plotConfig.layerConfigs.single().combinedData
+
+        val x = findVariableOrFail(layerData, POINT_X)
+        val y = findVariableOrFail(layerData, POINT_Y)
+
+        assertThat(layerData[x]).hasSize(24) // total points in all geometries
+        assertThat(layerData[y]).hasSize(24)
+    }
+
+    @Test
+    fun `point should be merged on server side`() {
+        val plotSpec = parsePlotSpec(
+            """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "data": {
+            |        "key": [ "A", "B", "C", "A", "B", "C" ],
+            |        "kind": [ "Point", "MPoint", "Line", "MLine", "Polygon", "MPolygon" ],
+            |        "coord": [
+            |          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
+            |          "{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 15.0], [6.0, 13.0]]}",
+            |          "{\"type\": \"LineString\", \"coordinates\": [[0.0, 0.0], [5.0, 5.0]]}",
+            |          "{\"type\": \"MultiLineString\", \"coordinates\": [[[10.0, 0.0], [15.0, 5.0]], [[10.0, 5.0], [15.0, 0.0]]]}",
+            |          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
+            |          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [7.0, 4.0], [11.0, 12.0]]], [[[10.0, 2.0], [13.0, 10.0], [12.0, 3.0], [10.0, 2.0]]]]}"
+            |        ]
+            |      },
+            |      "mapping": { "fill": "kind" },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "str", "column": "key" },
+            |          { "type": "str", "column": "kind" },
+            |          { "type": "unknown(pandas:unknown-array)", "column": "coord" }
+            |        ],
+            |        "geodataframe": { "geometry": "coord" }
+            |      }
+            |    }
+            |  ]
+            |}
+            |""".trimMargin()
+        )
+        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec)
+
+        // geo data for point was replaced on a backend
+        assertThat(processedSpec.has("layers", 0, "data", POINT_X)).isTrue
+        assertThat(processedSpec.has("layers", 0, "data", POINT_Y)).isTrue
+        assertThat(processedSpec.getList("layers", 0, "data", POINT_X)).containsExactly(-5.0, 3.0, 6.0)
+        assertThat(processedSpec.getList("layers", 0, "data", POINT_Y)).containsExactly(17.0, 15.0, 13.0)
+
+        val plotConfig = PlotConfigFrontend.create(processedSpec){}
+        val layerData = plotConfig.layerConfigs.single().combinedData
+
+        val x = findVariableOrFail(layerData, POINT_X)
+        val y = findVariableOrFail(layerData, POINT_Y)
+
+        assertThat(layerData[x]).containsExactly(-5.0, 3.0, 6.0)
+        assertThat(layerData[y]).containsExactly(17.0, 15.0, 13.0)
+    }
+
     // excluding LiveMap layer
     private fun getGeomLayer(spec: String): GeomLayer {
         val layers = TestingGeomLayersBuilder.createSingleTileGeomLayers(parsePlotSpec(spec))
@@ -517,30 +625,7 @@ class GeoConfigTest {
 
     @Test
     fun `for map plot - should trigger even if positional mapping exist`() {
-        val orangeCoord = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
-        val appleCoord = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
-
-        // add tooltips - just to keep these variable to check stat variables
-        val pieLayer = """
-            |        "geom": "pie",
-            |        "data": {
-            |            "fruit": ["Apple", "Apple", "Orange", "Orange"],
-            |            "values": [4.0, 16.0, 6.0, 9.0],
-            |            "nutrients": ["Fiber", "Carbs", "Fiber", "Carbs"]
-            |        },
-            |        "mapping": {
-            |           "x" : "fruit",
-            |           "weight" : "values", 
-            |           "fill": "nutrients"
-            |        },
-            |        "tooltips": { "variables": ["..count..", "..proppct..", "..sum.." ] },
-            |        "map": {
-            |            "name": ["Orange", "Apple"],
-            |            "coord": ["$orangeCoord", "$appleCoord"]
-            |        },
-            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": [["fruit"], ["name"]]            
-        """.trimMargin()
+        // add tooltips - just to keep these variables to check stat variables
 
         // without livemap => mapping
         getGeomLayer(
@@ -549,7 +634,27 @@ class GeoConfigTest {
             |    "kind": "plot",
             |    "layers": [
             |       {
-            |           $pieLayer
+            |         "geom": "pie",
+            |         "data": {
+            |             "fruit": ["Apple", "Apple", "Orange", "Orange"],
+            |             "values": [4.0, 16.0, 6.0, 9.0],
+            |             "nutrients": ["Fiber", "Carbs", "Fiber", "Carbs"]
+            |         },
+            |         "mapping": {
+            |            "x" : "fruit",
+            |            "weight" : "values",
+            |            "fill": "nutrients"
+            |         },
+            |         "tooltips": { "variables": ["..count..", "..proppct..", "..sum.." ] },
+            |         "map": {
+            |             "name": ["Orange", "Apple"],
+            |             "coord": [
+            |                "{\"type\": \"Point\", \"coordinates\": [11.0, 22.0]}",
+            |                "{\"type\": \"Point\", \"coordinates\": [33.0, 44.0]}"
+            |            ]
+            |         },
+            |         "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |         "map_join": [["fruit"], ["name"]]                   
             |       }
             |    ]
             |}
@@ -569,17 +674,44 @@ class GeoConfigTest {
             |    "kind": "plot",
             |    "layers": [
             |       {
-            |          "geom": "livemap"
+            |          "geom": "livemap",
+            |          "tiles": {
+            |            "kind": "vector_lets_plot",
+            |            "url": "wss://tiles.datalore.jetbrains.com",
+            |            "url": "wss://tiles.datalore.jetbrains.com",
+            |            "theme": null,
+            |            "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |          }
             |       },
             |       {
-            |           $pieLayer
+            |         "geom": "pie",
+            |         "data": {
+            |             "fruit": ["Apple", "Apple", "Orange", "Orange"],
+            |             "values": [4.0, 16.0, 6.0, 9.0],
+            |             "nutrients": ["Fiber", "Carbs", "Fiber", "Carbs"]
+            |         },
+            |         "mapping": {
+            |            "x" : "fruit",
+            |            "weight" : "values",
+            |            "fill": "nutrients"
+            |         },
+            |         "tooltips": { "variables": ["..count..", "..proppct..", "..sum.." ] },
+            |         "map": {
+            |             "name": ["Orange", "Apple"],
+            |             "coord": [
+            |                "{\"type\": \"Point\", \"coordinates\": [11.0, 22.0]}",
+            |                "{\"type\": \"Point\", \"coordinates\": [33.0, 44.0]}"
+            |            ]
+            |         },
+            |         "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |         "map_join": [["fruit"], ["name"]]
             |       }
             |    ]
             |}
             """.trimMargin()
         )
-            .assertValues("transform.X", listOf(3.0, 1.0, 3.0, 1.0))
-            .assertValues("transform.Y", listOf(4.0, 2.0, 4.0, 2.0))
+            .assertValues("transform.X", listOf(33.0, 11.0, 33.0, 11.0))
+            .assertValues("transform.Y", listOf(44.0, 22.0, 44.0, 22.0))
             .assertValues("..count..", listOf(4.0, 6.0, 16.0, 9.0))
             .assertValues("..proppct..", listOf(20.0, 40.0, 80.0, 60.0))
             .assertValues("..sum..", listOf(20.0, 15.0, 20.0, 15.0))
@@ -588,29 +720,6 @@ class GeoConfigTest {
     @Test
     // check point coordinates
     fun `should handle geometries with positional mapping for map plot`() {
-        @Suppress("LocalVariableName")
-        val BOSTON_LON = -71.0884755326693
-
-        @Suppress("LocalVariableName")
-        val BOSTON_LAT = 42.3110405355692
-
-        val pointLayer = """
-            |        "geom": "point",
-            |        "data": { 
-            |           "Name": [ "Boston" ] 
-            |         },
-            |        "mapping": {
-            |           "x" : "Name"
-            |        },
-            |        "map": {
-            |            "city": ["Boston"],
-            |            "geometry": [
-            |               "{\"type\": \"Point\", \"coordinates\": [ $BOSTON_LON, $BOSTON_LAT]}"
-            |            ]
-            |        },
-            |        "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
-            |        "map_join": [ ["Name"], ["city"] ]            
-        """.trimMargin()
 
         // just point layer
         getGeomLayer(
@@ -619,7 +728,21 @@ class GeoConfigTest {
             |    "kind": "plot",
             |    "layers": [
             |       {
-            |           $pointLayer
+            |         "geom": "point",
+            |         "data": {
+            |            "Name": [ "Boston" ]
+            |          },
+            |         "mapping": {
+            |            "x" : "Name"
+            |         },
+            |         "map": {
+            |             "city": ["Boston"],
+            |             "geometry": [
+            |                "{\"type\": \"Point\", \"coordinates\": [ -71.0884755326693, 42.3110405355692]}"
+            |             ]
+            |         },
+            |         "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
+            |         "map_join": [ ["Name"], ["city"] ]            
             |       }
             |    ]
             |}
@@ -636,17 +759,38 @@ class GeoConfigTest {
             |    "kind": "plot",
             |    "layers": [
             |       {
-            |          "geom": "livemap"
+            |          "geom": "livemap",
+            |           "tiles": {
+            |            "kind": "vector_lets_plot",
+            |            "url": "wss://tiles.datalore.jetbrains.com",
+            |            "url": "wss://tiles.datalore.jetbrains.com",
+            |            "theme": null,
+            |            "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |          }
             |       },
             |       {
-            |           $pointLayer
+            |         "geom": "point",
+            |         "data": {
+            |            "Name": [ "Boston" ]
+            |          },
+            |         "mapping": {
+            |            "x" : "Name"
+            |         },
+            |         "map": {
+            |             "city": ["Boston"],
+            |             "geometry": [
+            |                "{\"type\": \"Point\", \"coordinates\": [ -71.0884755326693, 42.3110405355692]}"
+            |             ]
+            |         },
+            |         "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
+            |         "map_join": [ ["Name"], ["city"] ]
             |       }
             |    ]
             |}
             """.trimMargin()
         )
-            .assertValues("lon", listOf(BOSTON_LON))
-            .assertValues("lat", listOf(BOSTON_LAT))
+            .assertValues("lon", listOf(-71.0884755326693))
+            .assertValues("lat", listOf(42.3110405355692))
     }
 
     @Test

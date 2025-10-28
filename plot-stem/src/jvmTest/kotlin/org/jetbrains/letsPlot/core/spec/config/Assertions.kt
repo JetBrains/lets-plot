@@ -9,7 +9,6 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
@@ -27,17 +26,6 @@ fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigFr
         .let(BackendTestUtil::backendSpecTransform)
         .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
         .let(TestUtil::createPlotConfigFrontend)
-}
-
-fun failedTransformToClientPlotConfig(spec: String): String {
-    val s = parsePlotSpec(spec)
-    val transformed = BackendTestUtil.backendSpecTransform(s)
-
-    if (PlotConfig.isFailure(transformed)) {
-        return PlotConfig.getErrorMessage(transformed)
-    }
-
-    fail("Error expected")
 }
 
 fun PlotConfigFrontend.assertValue(variable: String, values: List<*>): PlotConfigFrontend {
@@ -75,11 +63,6 @@ fun PlotConfigFrontend.assertScale(
 fun PlotConfigFrontend.createScales(): Map<Aes<*>, Scale> {
     val (_, scaleByAes) = PlotConfigFrontendUtil.createMappersAndScalesBeforeFacets(this)
     return scaleByAes
-}
-
-fun PlotConfigFrontend.createScaleMappers(): Map<Aes<*>, ScaleMapper<*>> {
-    val (mapperByAes, _) = PlotConfigFrontendUtil.createMappersAndScalesBeforeFacets(this)
-    return mapperByAes
 }
 
 fun PlotConfigFrontend.hasVariable(variable: DataFrame.Variable): PlotConfigFrontend {

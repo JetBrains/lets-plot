@@ -71,7 +71,7 @@ internal object DataConfigUtil {
         isMapPlot: Boolean,
     ): Triple<Map<Aes<*>, DataFrame.Variable>, Map<Aes<*>, DataFrame.Variable>, DataFrame> {
 
-        val isGeoConfigApplicable = GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)
+        val isGeoConfigApplicable = GeoConfig.isApplicable(geomKind, layerOptions, consumedAesMappings, isMapPlot, clientSide)
         val isDataGeoDF = GeoConfig.isGeoDataframe(layerOptions, Option.PlotBase.DATA)
 
         val keepData: Boolean =
@@ -100,7 +100,7 @@ internal object DataConfigUtil {
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
         val geoMappings: Map<Aes<*>, DataFrame.Variable>
-        if (!clientSide && isGeoConfigApplicable) {
+        if (isGeoConfigApplicable) {
             val geoConfig = GeoConfig(
                 geomKind,
                 combinedData,
