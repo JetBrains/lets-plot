@@ -130,7 +130,7 @@ class PointDensityStat(
                 // All points are at the same position
                 val weightsSum = SeriesUtil.sum(weights)
                 weights.map {
-                    if (adjust > 0) weightsSum - it else 0.0
+                    if (adjust > 0) weightsSum else 0.0
                 }
             }
             else -> error("Unexpected case: xRange = $xRange, yRange = $yRange") // should never happen
