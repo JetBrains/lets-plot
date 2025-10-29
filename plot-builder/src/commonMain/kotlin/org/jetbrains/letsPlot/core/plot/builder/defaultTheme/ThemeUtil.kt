@@ -30,11 +30,12 @@ object ThemeUtil {
         val effectiveOptions = baselineValues + userOptions
 
         if (themeName == ThemeOption.Name.LP_NONE) {
-            // Not apply flavor to 'none' theme
+            // Not apply flavor to the 'none' theme
             return effectiveOptions
         }
 
-        val requestedFlavorName = effectiveOptions[ThemeOption.FLAVOR] as? String ?: error("Flavor name should be specified")
+        val requestedFlavorName = effectiveOptions[ThemeOption.FLAVOR] as? String
+            ?: error("Flavor name should be specified")
         val flavorName =
             if (requestedFlavorName == ThemeOption.Flavor.STANDARD) {
                 (baselineValues.values[ThemeOption.FLAVOR] as? String)

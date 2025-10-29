@@ -410,7 +410,7 @@ class GeomInteractionBuilderCreationTest {
         )
         return createGeomInteractionBuilder(
             plotOpts,
-            theme = ThemeConfig(themeOpts, DefaultFontFamilyRegistry()).theme
+            theme = ThemeConfig(themeOptions = themeOpts, containerTheme = null, DefaultFontFamilyRegistry()).theme
         )
     }
 

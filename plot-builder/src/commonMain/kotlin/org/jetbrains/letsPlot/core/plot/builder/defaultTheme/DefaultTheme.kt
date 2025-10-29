@@ -5,21 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
-import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.LINETYPE
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.SIZE
 
 class DefaultTheme internal constructor(
-    private val options: Map<String, Any>,
+    val options: Map<String, Any>,
     override val fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry(),
 ) : Theme {
     private val axisX = DefaultAxisTheme("x", options, fontFamilyRegistry)
@@ -67,53 +60,6 @@ class DefaultTheme internal constructor(
     }
 
     override fun colors(): ColorTheme = colors
-
-    /**
-     * Makes a 'theme' to be applied to sub-plots in composite figure.
-     */
-    override fun toInherited(containerTheme: Theme): Theme {
-        if (!(containerTheme is DefaultTheme)) return this  // can't inherit
-
-        val inheritedOptions = containerTheme.options.mapValues { (k, v) ->
-            when (k) {
-                ThemeOption.PLOT_BKGR_RECT -> {
-                    mapOf(
-                        // Inherit background 'fill' color.
-                        BLANK to !containerTheme.plot.showBackground(),
-                        FILL to containerTheme.plot.backgroundFill(),
-                        // Do not inherit conteiner's border.
-                        COLOR to this.plot.backgroundColor(),
-                        SIZE to this.plot.backgroundStrokeWidth(),
-                        LINETYPE to this.plot.backgroundLineType()
-                    )
-                }
-
-//                ThemeOption.PLOT_MARGIN -> with(this.plot.plotMargins()) {
-//                    // Do not inherit conteiner's margins.
-//                    mapOf(
-//                        Margin.TOP to top,
-//                        Margin.RIGHT to right,
-//                        Margin.BOTTOM to bottom,
-//                        Margin.LEFT to left
-//                    )
-//                }
-                ThemeOption.PLOT_MARGIN,
-                ThemeOption.PLOT_INSET ->
-                    // Do not inherit conteiner's margins/insets.
-                    this.options[k]
-
-                ThemeOption.PLOT_TITLE, ThemeOption.PLOT_TITLE_POSITION,
-                ThemeOption.PLOT_SUBTITLE,
-                ThemeOption.PLOT_CAPTION, ThemeOption.PLOT_CAPTION_POSITION ->
-                    // Do not inherit figure titles settings.
-                    this.options[k]
-
-                else -> v
-            }
-        }.filterNotNullValues()
-
-        return DefaultTheme(inheritedOptions, fontFamilyRegistry)
-    }
 
     companion object {
         // For demo and tests

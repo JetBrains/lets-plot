@@ -29,7 +29,9 @@ class ThemeColorOptionsTest(
         val message: String
     )
 
-    private val theme: Theme = ThemeConfig(themeValues, DefaultFontFamilyRegistry()).theme
+    private val theme: Theme = ThemeConfig(
+        themeOptions = themeValues, containerTheme = null, DefaultFontFamilyRegistry()
+    ).theme
 
     // The order should be as follows:
     //      named theme options

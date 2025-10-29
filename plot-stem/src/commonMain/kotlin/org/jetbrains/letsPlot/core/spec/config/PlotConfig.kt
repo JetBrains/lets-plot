@@ -28,6 +28,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.FACET
 import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
@@ -69,12 +70,11 @@ abstract class PlotConfig(
 
     init {
         val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
-        val ownTheme = ThemeConfig(getMap(Option.Plot.THEME), fontFamilyRegistry).theme
-        theme = if (containerTheme == null || hasOwn(Option.Plot.THEME)) {
-            ownTheme
-        } else {
-            ownTheme.toInherited(containerTheme)
-        }
+        theme = ThemeConfig(
+            themeOptions = getMap(THEME),
+            containerTheme = containerTheme,
+            fontFamilyRegistry
+        ).theme
 
         aopConversion = AesOptionConversion(
             ColorOptionConverter(

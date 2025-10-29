@@ -114,7 +114,11 @@ class PolarTileLayoutTest {
                 )
             )
 
-        val theme = ThemeConfig(fontFamilyRegistry = DefaultFontFamilyRegistry()).theme
+        val theme = ThemeConfig(
+            themeOptions = emptyMap(),
+            containerTheme = null,
+            fontFamilyRegistry = DefaultFontFamilyRegistry()
+        ).theme
         val left = AxisLayout(
             breaksProviderFactory = breaksProviderFactory,
             orientation = Orientation.LEFT,

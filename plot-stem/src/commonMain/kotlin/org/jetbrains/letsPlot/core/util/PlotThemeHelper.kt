@@ -20,7 +20,7 @@ object PlotThemeHelper {
             if (it is Map<*, *>) it as Map<String, Any>
             else emptyMap()
         } ?: emptyMap()
-        val theme = ThemeConfig(themeOptions, DefaultFontFamilyRegistry()).theme
+        val theme = ThemeConfig(themeOptions, containerTheme = null, DefaultFontFamilyRegistry()).theme
         return theme.plot().backgroundFill()
     }
 }

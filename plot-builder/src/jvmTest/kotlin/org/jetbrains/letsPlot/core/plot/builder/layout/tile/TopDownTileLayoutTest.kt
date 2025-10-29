@@ -134,7 +134,11 @@ class TopDownTileLayoutTest {
         marginLayout: GeomMarginsLayout = GeomMarginsLayout(0.0, 0.0, 0.0, 0.0),
         coordFixed: Boolean = true,
     ): TileLayoutInfo {
-        val theme = ThemeConfig(fontFamilyRegistry = DefaultFontFamilyRegistry()).theme
+        val theme = ThemeConfig(
+            themeOptions = emptyMap(),
+            containerTheme = null,
+            fontFamilyRegistry = DefaultFontFamilyRegistry()
+        ).theme
 
         val breaksProviderFactory: AxisBreaksProviderFactory =
             AxisBreaksProviderFactory.AdaptableBreaksProviderFactory(

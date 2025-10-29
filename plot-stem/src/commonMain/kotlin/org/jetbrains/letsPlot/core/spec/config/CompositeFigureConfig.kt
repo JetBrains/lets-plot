@@ -70,12 +70,11 @@ class CompositeFigureConfig constructor(
 
     init {
         val fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
-        val ownTheme = ThemeConfig(getMap(THEME), fontFamilyRegistry).theme
-        theme = if (containerTheme == null || hasOwn(THEME)) {
-            ownTheme
-        } else {
-            ownTheme.toInherited(containerTheme)
-        }
+        theme = ThemeConfig(
+            themeOptions = getMap(THEME),
+            containerTheme = containerTheme,
+            fontFamilyRegistry
+        ).theme
 
         @Suppress("UNCHECKED_CAST")
         val figuresSpecs = getList(Option.SubPlots.FIGURES) as List<Any>
@@ -92,13 +91,13 @@ class CompositeFigureConfig constructor(
 
                 when (PlotConfig.figSpecKind(extendedSpec)) {
                     FigKind.PLOT_SPEC -> PlotConfigFrontend.create(
-                        extendedSpec,
-                        theme
+                        plotSpec = extendedSpec,
+                        containerTheme = theme
                     ) { computationMessages.addAll(it) }
 
                     FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(
-                        extendedSpec,
-                        theme
+                        opts = extendedSpec,
+                        containerTheme = theme
                     ) { computationMessages.addAll(it) }
 
                     FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
