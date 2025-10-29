@@ -57,8 +57,7 @@ class LayerConfig constructor(
     val geomProto: GeomProto,
     val aopConversion: AesOptionConversion,
     private val clientSide: Boolean,
-    isMapPlot: Boolean,
-    public val tz: TimeZone?,
+    val tz: TimeZone?,
 ) : OptionsAccessor(
     layerOptions,
     initLayerDefaultOptions(layerOptions, geomProto)
@@ -246,8 +245,7 @@ class LayerConfig constructor(
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,
-            clientSide = clientSide,
-            isMapPlot = isMapPlot
+            clientSide = clientSide
         )
 
         this.geoMappings = geoMappings

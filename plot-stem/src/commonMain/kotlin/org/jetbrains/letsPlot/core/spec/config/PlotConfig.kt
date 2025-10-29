@@ -10,14 +10,15 @@ import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
-import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.GeomProto
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
@@ -31,6 +32,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.ColorOptionConverter
 
@@ -62,8 +64,8 @@ abstract class PlotConfig(
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
-    public val tz: TimeZone? = DataMetaUtil.determineTimeZoneID(opts)?.let { TimeZone(it) }
-    public val dataTypeByAes: (aes: Aes<*>) -> DataType
+    val tz: TimeZone? = DataMetaUtil.determineTimeZoneID(opts)?.let { TimeZone(it) }
+    val dataTypeByAes: (aes: Aes<*>) -> DataType
 
     init {
         val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -139,20 +141,13 @@ abstract class PlotConfig(
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
 
-        val isMapPlot = layerOptionsList
-            .mapNotNull { layerOptions -> (layerOptions as? Map<*, *>)?.getString(Option.Layer.GEOM) }
-            .map(Option.GeomName::toGeomKind)
-            .any { it in listOf(GeomKind.LIVE_MAP, GeomKind.MAP) }
-
         for (layerOptions in layerOptionsList) {
             require(layerOptions is Map<*, *>) { "Layer options: expected Map but was ${layerOptions!!::class.simpleName}" }
             @Suppress("UNCHECKED_CAST")
             layerOptions as Map<String, Any>
 
             val aesMapping = getMap(MAPPING).filterNot { (aes, _) -> aes == Mapping.GROUP }
-            val groupingVars = OptionsAccessor
-                .over(getMap(MAPPING))
-                .getAsStringListQ(Mapping.GROUP)
+            val groupingVars = over(getMap(MAPPING)).getAsStringListQ(Mapping.GROUP)
             val layerConfig = createLayerConfig(
                 layerOptions,
                 sharedData,
@@ -160,8 +155,7 @@ abstract class PlotConfig(
                 plotExplicitGroupingVars = groupingVars,
                 plotDataMeta = getMap(DATA_META),
                 plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING), isClientSide),
-                isClientSide,
-                isMapPlot
+                isClientSide
             )
             layerConfigs.add(layerConfig)
         }
@@ -175,8 +169,7 @@ abstract class PlotConfig(
         plotExplicitGroupingVars: List<String>?,
         plotDataMeta: Map<String, Any>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
-        isClientSide: Boolean,
-        isMapPlot: Boolean
+        isClientSide: Boolean
     ): LayerConfig {
         val geomName = layerOptions[Option.Layer.GEOM] as String
         val geomKind = Option.GeomName.toGeomKind(geomName)
@@ -192,7 +185,6 @@ abstract class PlotConfig(
             geomProto,
             aopConversion = aopConversion,
             clientSide = isClientSide,
-            isMapPlot,
             tz,
         )
     }

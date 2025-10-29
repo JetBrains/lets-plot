@@ -11,7 +11,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -30,58 +29,9 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class GeoConfigTest {
-    private val point = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
-    private val multiPoint = """{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 4.0], [5.0, 6.0]]}"""
-    private val lineString = """{\"type\": \"LineString\", \"coordinates\": [[7.0, 8.0], [9.0, 10.0]]}"""
-    private val multiLineString =
-        """{\"type\": \"MultiLineString\", \"coordinates\": [[[11.0, 12.0], [13.0, 14.0]], [[15.0, 16.0], [17.0, 18.0]]]}"""
-    private val polygon = """
-|{
-|   \"type\": \"Polygon\", 
-|   \"coordinates\":[
-|       [
-|           [21.0, 21.0], 
-|           [21.0, 29.0], 
-|           [29.0, 29.0], 
-|           [29.0, 21.0], 
-|           [21.0, 21.0]
-|       ], 
-|       [
-|           [22.0, 22.0], 
-|           [23.0, 22.0], 
-|           [23.0, 23.0], 
-|           [22.0, 23.0], 
-|           [22.0, 22.0]
-|       ], 
-|       [
-|           [24.0, 24.0], 
-|           [26.0, 24.0], 
-|           [26.0, 26.0], 
-|           [24.0, 26.0], 
-|           [24.0, 24.0]
-|       ]
-|   ]
-|}""".trimMargin()
-
-    private val multiPolygon = """
-|{
-|    \"type\": \"MultiPolygon\", 
-|    \"coordinates\": [
-|       [
-|           [
-|               [11.0, 12.0], 
-|               [13.0, 14.0], 
-|               [15.0, 13.0], 
-|               [11.0, 12.0]
-|           ]
-|       ]
-|   ]
-|}""".trimMargin()
-
 
     private fun <T> polygonSequence(groupId: T) = (0..14).map { groupId }
     private fun <T> multiPolygonSequence(groupId: T) = (0..3).map { groupId }
@@ -89,7 +39,14 @@ class GeoConfigTest {
     private val gdf = """
         |{
         |    "kind": ["Point", "MPoint", "Line", "MLine", "Polygon", "MPolygon"],
-        |    "coord": ["$point", "$multiPoint", "$lineString", "$multiLineString", "$polygon", "$multiPolygon"],
+        |    "coord": [
+        |        "{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}", 
+        |        "{\"type\": \"MultiPoint\", \"coordinates\": [[3.0, 4.0], [5.0, 6.0]]}", 
+        |        "{\"type\": \"LineString\", \"coordinates\": [[7.0, 8.0], [9.0, 10.0]]}", 
+        |        "{\"type\": \"MultiLineString\", \"coordinates\": [[[11.0, 12.0], [13.0, 14.0]], [[15.0, 16.0], [17.0, 18.0]]]}", 
+        |        "{ \"type\": \"Polygon\", \"coordinates\":[ [ [21.0, 21.0],  [21.0, 29.0],  [29.0, 29.0],  [29.0, 21.0],  [21.0, 21.0] ], [ [22.0, 22.0],  [23.0, 22.0],  [23.0, 23.0],  [22.0, 23.0],  [22.0, 22.0] ], [ [24.0, 24.0],  [26.0, 24.0],  [26.0, 26.0],  [24.0, 26.0],  [24.0, 24.0] ] ] }", 
+        |        "{ \"type\": \"MultiPolygon\", \"coordinates\": [ [ [ [11.0, 12.0],  [13.0, 14.0],  [15.0, 13.0],  [11.0, 12.0] ] ] ] }"
+        |    ],
         |    "points": [1, 2, 2, 4, 15, 4]
         |}
         """.trimMargin()
@@ -325,67 +282,31 @@ class GeoConfigTest {
 
     @Test
     fun `right join special case - should add rows from map to data`() {
-        val foo1 = """
-            |{
-            |    \"type\": \"Polygon\", 
-            |    \"coordinates\": [
-            |       [
-            |               [1.0, 2.0], 
-            |               [3.0, 4.0], 
-            |               [5.0, 3.0], 
-            |               [1.0, 2.0]
-            |       ]
-            |   ]
-            |}""".trimMargin()
-
-        val foo2 = """
-            |{
-            |    \"type\": \"Polygon\", 
-            |    \"coordinates\": [
-            |       [
-            |               [21.0, 22.0], 
-            |               [23.0, 24.0], 
-            |               [25.0, 23.0], 
-            |               [21.0, 22.0]
-            |       ]
-            |   ]
-            |}""".trimMargin()
-
-        val bar1 = """
-            |{
-            |    \"type\": \"Polygon\", 
-            |    \"coordinates\": [
-            |       [
-            |               [31.0, 32.0], 
-            |               [33.0, 34.0], 
-            |               [35.0, 33.0], 
-            |               [31.0, 32.0]
-            |       ]
-            |   ]
-            |}""".trimMargin()
-
-
         val europe = Color(228, 26, 28)
         val asia = Color(55, 126, 184)
         singleGeomLayer(
             """
             |{
-            |    "kind": "plot", 
-            |    "layers": [{
-            |        "geom": "rect",
-            |        "data": {
-            |            "continent": ["Europe", "Asia"],
-            |            "temp": [8.6, 16.6]
-            |        },
-            |        "mapping": {"fill": "continent"},
-            |        "map": {
-            |            "country": ["Germany", "France", "China"],
-            |            "cont": ["Europe", "Europe", "Asia"],
-            |            "coord": ["$foo1", "$foo2", "$bar1"]
-            |        },
-            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": [["continent"], ["cont"]]
-            |    }]
+            |  "kind": "plot", 
+            |  "layers": [{
+            |    "geom": "rect",
+            |    "data": {
+            |      "continent": ["Europe", "Asia"],
+            |      "temp": [8.6, 16.6]
+            |    },
+            |    "mapping": {"fill": "continent"},
+            |    "map": {
+            |      "country": ["Germany", "France", "China"],
+            |      "cont": ["Europe", "Europe", "Asia"],
+            |      "coord": [
+            |        "{ \"type\": \"Polygon\", \"coordinates\": [ [ [1.0, 2.0], [3.0, 4.0], [5.0, 3.0], [1.0, 2.0] ] ] }", 
+            |        "{ \"type\": \"Polygon\", \"coordinates\": [ [ [21.0, 22.0], [23.0, 24.0], [25.0, 23.0], [21.0, 22.0] ] ] }", 
+            |        "{ \"type\": \"Polygon\", \"coordinates\": [ [ [31.0, 32.0], [33.0, 34.0], [35.0, 33.0], [31.0, 32.0] ] ] }"
+            |      ]
+            |    },
+            |    "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |    "map_join": [["continent"], ["cont"]]
+            |  }]
             |}
         """.trimMargin()
         )
@@ -478,7 +399,7 @@ class GeoConfigTest {
     }
 
     @Test
-    fun `should not trigger when positional mapping exist and it is not the map plot`() {
+    fun `gdf in data without map_join should not override positional mapping with coord column`() {
         singleGeomLayer(
             """
             |{
@@ -628,8 +549,7 @@ class GeoConfigTest {
         // add tooltips - just to keep these variables to check stat variables
 
         // without livemap => mapping
-        getGeomLayer(
-            """
+        val plotSpec = """
             |{
             |    "kind": "plot",
             |    "layers": [
@@ -643,7 +563,8 @@ class GeoConfigTest {
             |         "mapping": {
             |            "x" : "fruit",
             |            "weight" : "values",
-            |            "fill": "nutrients"
+            |            "fill": "nutrients",
+            |            "group": ["fruit", "nutrients"]
             |         },
             |         "tooltips": { "variables": ["..count..", "..proppct..", "..sum.." ] },
             |         "map": {
@@ -659,13 +580,14 @@ class GeoConfigTest {
             |    ]
             |}
             """.trimMargin()
-        )
-            .assertValues("fruit", listOf("Apple", "Orange", "Apple", "Orange"))
-            .assertValues("transform.X", listOf(0.0, 1.0, 0.0, 1.0))
-            .assertValues("transform.Y", listOf(0.0, 0.0, 0.0, 0.0))
-            .assertValues("..count..", listOf(4.0, 6.0, 16.0, 9.0))
-            .assertValues("..proppct..", listOf(20.0, 40.0, 80.0, 60.0))
-            .assertValues("..sum..", listOf(20.0, 15.0, 20.0, 15.0))
+
+        getGeomLayer(plotSpec)
+            .assertValues("fruit", listOf("Apple", "Apple", "Orange", "Orange"))
+            .assertValues("transform.X", listOf(33.0, 33.0, 11.0, 11.0))
+            .assertValues("transform.Y", listOf(44.0, 44.0, 22.0, 22.0))
+            .assertValues("..count..", listOf(4.0, 16.0, 6.0, 9.0))
+            .assertValues("..proppct..", listOf(20.0, 80.0, 40.0, 60.0))
+            .assertValues("..sum..", listOf(20.0, 20.0, 15.0, 15.0))
 
         // with livemap => geodata
         getGeomLayer(
@@ -725,32 +647,25 @@ class GeoConfigTest {
         getGeomLayer(
             """
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |         "geom": "point",
-            |         "data": {
-            |            "Name": [ "Boston" ]
-            |          },
-            |         "mapping": {
-            |            "x" : "Name"
-            |         },
-            |         "map": {
-            |             "city": ["Boston"],
-            |             "geometry": [
-            |                "{\"type\": \"Point\", \"coordinates\": [ -71.0884755326693, 42.3110405355692]}"
-            |             ]
-            |         },
-            |         "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
-            |         "map_join": [ ["Name"], ["city"] ]            
-            |       }
-            |    ]
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "data": { "Name": [ "Boston" ] },
+            |      "mapping": { "x" : "Name" },
+            |      "map": {
+            |        "city": ["Boston"],
+            |        "geometry": [ "{\"type\": \"Point\", \"coordinates\": [ -71.0884755326693, 42.3110405355692]}" ]
+            |      },
+            |      "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
+            |      "map_join": [ ["Name"], ["city"] ]            
+            |    }
+            |  ]
             |}
             """.trimMargin()
-        ).let {
-            assertFalse(DataFrameUtil.hasVariable(it.dataFrame, "lon"))
-            assertFalse(DataFrameUtil.hasVariable(it.dataFrame, "lat"))
-        }
+        )
+            .assertValues("lon", listOf(-71.0884755326693))
+            .assertValues("lat", listOf(42.3110405355692))
 
         // add livemap
         getGeomLayer(
@@ -770,18 +685,9 @@ class GeoConfigTest {
             |       },
             |       {
             |         "geom": "point",
-            |         "data": {
-            |            "Name": [ "Boston" ]
-            |          },
-            |         "mapping": {
-            |            "x" : "Name"
-            |         },
-            |         "map": {
-            |             "city": ["Boston"],
-            |             "geometry": [
-            |                "{\"type\": \"Point\", \"coordinates\": [ -71.0884755326693, 42.3110405355692]}"
-            |             ]
-            |         },
+            |         "data": { "Name": [ "Boston" ] },
+            |         "mapping": { "x" : "Name" },
+            |         "map": { "city": ["Boston"], "geometry": [ "{\"type\": \"Point\", \"coordinates\": [ -71.0884755326693, 42.3110405355692]}" ] },
             |         "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
             |         "map_join": [ ["Name"], ["city"] ]
             |       }

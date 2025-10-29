@@ -17,34 +17,6 @@ class GeoConfigWithStatApplyingTest {
     // Config plot with applying of statistical transformation and using of 'map_join' to join coordinates with data
     // Take a pie geom as an example ('count2d' is applied)
 
-    private val myData = """
-        "Name": ["A", "A", "B", "B"],
-        "Vote": ["Yes", "No", "Yes", "No"],
-        "Number": [120, 30, 20, 80 ],
-        "Registered": [165, 165, 111, 111],
-        "Full name": ["City A", "City A", "City B", "City B"]
-    """
-    private val coordA = """{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}"""
-    private val coordB = """{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"""
-    private val commonMapping = """ "fill": "Vote", "weight": "Number" """
-    private val groupAB = """ "group": "Name" """
-    private val groupYesANoAYesBNoB = """ "group": ["Vote", "Name"] """
-    private val xMapping = """ "x": "Name" """
-
-    // Add variables to tooltips just to keep them
-    private fun pieLayer(mapping: String) = """
-            |        "geom": "pie",
-            |        "data": { $myData },
-            |        "mapping": { $mapping },
-            |        "tooltips": { "variables": ["..sum..", "Registered", "Full name"] },
-            |        "map": {
-            |            "name": ["A", "B"],
-            |            "coord": ["$coordA", "$coordB"]
-            |        },
-            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
-            |        "map_join": [["Name"], ["name"]]            
-        """.trimMargin()
-
     @Test
     fun `pie with two grouping vars`() {
         getGeomLayer("""
@@ -97,19 +69,34 @@ class GeoConfigWithStatApplyingTest {
         getGeomLayer(
             """
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |           ${pieLayer("$commonMapping, $xMapping")}
-            |       }
-            |    ]
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "pie",
+            |      "data": {
+            |        "Name": ["A", "A", "B", "B"],
+            |        "Vote": ["Yes", "No", "Yes", "No"],
+            |        "Number": [120, 30, 20, 80 ],
+            |        "Registered": [165, 165, 111, 111],
+            |        "Full name": ["City A", "City A", "City B", "City B"]
+            |      },
+            |      "mapping": { "fill": "Vote", "weight": "Number", "x": "Name" },
+            |      "tooltips": { "variables": ["..sum..", "Vote", "Number"] },
+            |      "map": {
+            |        "name": ["A", "B"],
+            |        "coord": ["{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}", "{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"]
+            |      },
+            |      "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |      "map_join": [["Name"], ["name"]]
+            |    }
+            |  ]
             |}
             """.trimMargin()
         )
-            .assertValues("Name", listOf("A", "B", "A", "B"))
+            .assertValues("Name", listOf("A", "A", "A", "A")) // stat could preserve proper Name
             // GeoDataframe is not used because it's not a map plot and positional mapping is set:
-            .assertValues("transform.X", listOf(0.0, 1.0, 0.0, 1.0))
-            .assertValues("transform.Y", listOf(0.0, 0.0, 0.0, 0.0))
+            .assertValues("transform.X", listOf(-80.0, 80.0, -80.0, 80.0))
+            .assertValues("transform.Y", listOf(-40.0, 40.0, -40.0, 40.0))
             // The sums were calculated for each Name:
             .assertValues("..sum..", listOf(150.0, 100.0, 150.0, 100.0))
     }
@@ -119,15 +106,30 @@ class GeoConfigWithStatApplyingTest {
         getGeomLayer(
             """
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       {
-            |          "geom": "livemap"
-            |       },
-            |       {
-            |            ${pieLayer("$commonMapping, $xMapping")}
-            |       }
-            |    ]
+            |  "kind": "plot",
+            |  "layers": [
+            |   {
+            |      "geom": "livemap"
+            |   },
+            |   {
+            |     "geom": "pie",
+            |     "data": {
+            |       "Name": ["A", "A", "B", "B"],
+            |       "Vote": ["Yes", "No", "Yes", "No"],
+            |       "Number": [120, 30, 20, 80 ],
+            |       "Registered": [165, 165, 111, 111],
+            |       "Full name": ["City A", "City A", "City B", "City B"]
+            |     },
+            |     "mapping": { "fill": "Vote", "weight": "Number", "x": "Name" },
+            |     "tooltips": { "variables": ["..sum..", "Registered", "Full name"] },
+            |     "map": {
+            |       "name": ["A", "B"],
+            |       "coord": ["{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}", "{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"]
+            |     },
+            |     "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |     "map_join": [["Name"], ["name"]]
+            |   }
+            |  ]
             |}
             """.trimMargin()
         )
@@ -144,16 +146,31 @@ class GeoConfigWithStatApplyingTest {
         getGeomLayer(
             """
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       { 
-            |           ${pieLayer("$commonMapping, $xMapping")}
-            |       }
-            |    ]
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "pie",
+            |      "data": {
+            |        "Name": ["A", "A", "B", "B"],
+            |        "Vote": ["Yes", "No", "Yes", "No"],
+            |        "Number": [120, 30, 20, 80 ],
+            |        "Registered": [165, 165, 111, 111],
+            |        "Full name": ["City A", "City A", "City B", "City B"]
+            |      },
+            |      "mapping": { "fill": "Vote", "weight": "Number", "x": "Name" },
+            |      "tooltips": { "variables": ["..sum..", "Registered", "Full name"] },
+            |      "map": {
+            |        "name": ["A", "B"],
+            |        "coord": ["{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}", "{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"]
+            |      },
+            |      "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |      "map_join": [["Name"], ["name"]]
+            |    }
+            |  ]
             |}
             """.trimMargin()
         )
-            .assertValues("Name", listOf("A", "B", "A", "B"))
+            .assertValues("Name", listOf("A", "A", "A", "A")) // stat could preserve proper group Name
             // Averages will be obtained for numeric or the first in the data for non-numeric values:
             .assertValues("Registered", listOf(138.0, 138.0, 138.0, 138.0))
             .assertValues("Full name", listOf("City A", "City A", "City A", "City A"))
@@ -165,12 +182,27 @@ class GeoConfigWithStatApplyingTest {
         getGeomLayer(
             """
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       { 
-            |           ${pieLayer("$commonMapping, $groupAB")} 
-            |       }
-            |    ]
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "pie",
+            |      "data": {
+            |        "Name": ["A", "A", "B", "B"],
+            |        "Vote": ["Yes", "No", "Yes", "No"],
+            |        "Number": [120, 30, 20, 80 ],
+            |        "Registered": [165, 165, 111, 111],
+            |        "Full name": ["City A", "City A", "City B", "City B"]
+            |      },
+            |      "mapping": {  "fill": "Vote", "weight": "Number" ,  "group": "Name"  },
+            |      "tooltips": { "variables": ["..sum..", "Registered", "Full name"] },
+            |      "map": {
+            |        "name": ["A", "B"],
+            |        "coord": ["{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}", "{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"]
+            |      },
+            |      "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |      "map_join": [["Name"], ["name"]] 
+            |    }
+            |  ]
             |}
             """.trimMargin()
         )
@@ -182,12 +214,27 @@ class GeoConfigWithStatApplyingTest {
         getGeomLayer(
             """
             |{
-            |    "kind": "plot",
-            |    "layers": [
-            |       { 
-            |           ${pieLayer("$commonMapping, $groupYesANoAYesBNoB")} 
-            |       }
-            |    ]
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "pie",
+            |      "data": {
+            |        "Name": ["A", "A", "B", "B"],
+            |        "Vote": ["Yes", "No", "Yes", "No"],
+            |        "Number": [120, 30, 20, 80 ],
+            |        "Registered": [165, 165, 111, 111],
+            |        "Full name": ["City A", "City A", "City B", "City B"]
+            |      },
+            |      "mapping": {  "fill": "Vote", "weight": "Number" ,  "group": ["Vote", "Name"]  },
+            |      "tooltips": { "variables": ["..sum..", "Registered", "Full name"] },
+            |      "map": {
+            |        "name": ["A", "B"],
+            |        "coord": ["{\"type\": \"Point\", \"coordinates\": [-80.0, -40.0]}", "{\"type\": \"Point\", \"coordinates\": [80.0, 40.0]}"]
+            |      },
+            |      "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |      "map_join": [["Name"], ["name"]] 
+            |    }
+            |  ]
             |}
             """.trimMargin()
         )

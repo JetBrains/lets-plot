@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
-import org.jetbrains.letsPlot.core.spec.Option.Mapping.toAes
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
@@ -42,8 +41,8 @@ class GeoConfig(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<Aes<*>, Variable>
-    val geoMappings: Map<Aes<*>, Variable>
+    val mappings: Map<Aes<*>, Variable> // user mappings from layer + auto generated geo mappings
+    val geoMappings: Map<Aes<*>, Variable> // only geo mappings
 
     init {
         if (layerOptions.has(MAP_DATA_META, GDF) || layerOptions.has(DATA_META, GDF)) {
@@ -74,20 +73,12 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(
-            geomKind: GeomKind,
-            layerOptions: Map<*, *>,
-            combinedMappings: Map<*, *>,
-            isMapPlot: Boolean,
-            clientSide: Boolean
-        ): Boolean {
-            // TODO: isMapPlot is not needed here anymore with backend processed map_join?
-            // TODO: Looks like map_join abd map should have higher priority than positional mappings
-            if (!isMapPlot && combinedMappings.keys
-                    .mapNotNull { it as? String }
-                    .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
-                    .any(Aes.Companion::isPositional)
-            ) {
+        fun isApplicable(geomKind: GeomKind, layerOptions: Map<*, *>, clientSide: Boolean): Boolean {
+            val dataGeometry = layerOptions.getString(DATA_META, GDF, GEOMETRY)
+
+            // Stats that heavily rebuild data (like bin) may drop the geometry column.
+            // In this case consider geo config as non-applicable.
+            if (dataGeometry != null && !layerOptions.has(DATA, dataGeometry)) {
                 return false
             }
 
@@ -100,18 +91,17 @@ class GeoConfig(
                 return false
             }
 
-            if (isMapPlot) {
-                // On LiveMap always use backend processing
-                return !clientSide
+            val pointGeoms = setOf(POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE)
+
+            return if (clientSide) {
+                // front end - non-point geometries (path and polygon)
+                // Pass effectively encoded geo data to the front end and merge there
+                geomKind !in pointGeoms
+            } else {
+                // back end - point geometries
+                // Merge geo data on the back end - needed for grouping and stat calculations
+                geomKind in pointGeoms
             }
-
-
-            // Only point geometries are supported on a backend for performance reasons
-            if (!clientSide && geomKind !in setOf(POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE)) {
-                return false
-            }
-
-            return true
         }
 
         fun isGeoDataframe(layerOptions: Map<*, *>, gdfRole: String): Boolean {
@@ -215,7 +205,7 @@ class GeoDataFrameProcessor(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<Aes<*>, Variable>
+    val mappings: Map<Aes<*>, Variable> // including geoMappings
     val geoMappings: Map<Aes<*>, Variable>
 
     init {
