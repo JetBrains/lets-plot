@@ -5676,15 +5676,16 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
 
 def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
-                    manual_key=None, sampling=None,
-                    tooltips=None,
-                    method=None,
-                    kernel=None,
-                    adjust=None,
-                    bw=None,
-                    n=None,
-                    color_by=None, fill_by=None,
-                    **other_args):
+                      manual_key=None, sampling=None,
+                      tooltips=None,
+                      method=None,
+                      kernel=None,
+                      adjust=None,
+                      bw=None,
+                      n=None,
+                      map=None, map_join=None, use_crs=None,
+                      color_by=None, fill_by=None,
+                      **other_args):
     return _geom('pointdensity',
                  mapping=mapping,
                  data=data,
@@ -5699,6 +5700,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
                  kernel=kernel,
                  adjust=adjust,
                  bw=bw, n=n,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
