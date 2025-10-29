@@ -143,7 +143,7 @@ internal class TimeBreaksHelper(
 //        private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
 
         private fun newStringFormat(format: String): StringFormat =
-            StringFormat.forNArgs(format, -1, tz = null)
+            StringFormat.forNArgs(format, tz = null)
 
         private fun StringFormat.apply(vararg args: Any): String = format(args.toList())
     }

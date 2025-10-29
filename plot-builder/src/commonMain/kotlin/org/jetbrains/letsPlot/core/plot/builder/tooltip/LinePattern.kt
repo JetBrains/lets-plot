@@ -30,7 +30,8 @@ class LinePattern(
         tz: TimeZone?
     ): (List<Any>) -> String {
         require(myLineFormatter == null)
-        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", expFormat, tz)::format
+        // TODO: StringFormat.validatePattern(pattern, fields.size) to report pattern errors using computation messages mechanism
+        myLineFormatter = StringFormat.forNArgs(pattern, expFormat, tz)::format
         return myLineFormatter!!
     }
 

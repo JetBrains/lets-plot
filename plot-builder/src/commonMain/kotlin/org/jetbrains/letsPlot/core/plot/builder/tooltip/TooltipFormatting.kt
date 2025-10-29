@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -18,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 internal object TooltipFormatting {
     private val FALLBACK_NUMBER_FORMATTER: (v: Number) -> String =
-        StringFormat.forOneArg(".2f", FormatType.NUMBER_FORMAT, tz = null)::format
+        StringFormat.forOneArg(".2f", tz = null)::format
 
     fun fromScale(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
         // expect only X, Y or not positional
@@ -73,14 +72,12 @@ internal object TooltipFormatting {
         return when (variable) {
             Stats.PROP, Stats.SUMPROP -> StringFormat.forOneArg(
                 ".2f",
-                formatFor = variable.name,
                 expFormat = expFormat,
                 tz = tz
             )::format
 
             Stats.PROPPCT, Stats.SUMPCT -> StringFormat.forOneArg(
                 "{.1f} %",
-                formatFor = variable.name,
                 expFormat = expFormat,
                 tz = tz
             )::format

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.DATETIME_FORMAT
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
@@ -217,7 +216,7 @@ class ScaleConfig<T> constructor(
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             val dateTimeFormatter = getString(FORMAT)?.let { pattern ->
-                val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
+                val stringFormat = StringFormat.forOneArg(pattern, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
             configureDateTimeScaleBreaks(

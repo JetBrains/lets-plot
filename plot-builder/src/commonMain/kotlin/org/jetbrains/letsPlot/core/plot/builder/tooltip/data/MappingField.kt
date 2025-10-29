@@ -31,7 +31,6 @@ class MappingField(
         val mappingFormatter = format?.let {
             StringFormat.forOneArg(
                 it,
-                formatFor = aes.name,
                 expFormat = ctx.expFormat,
                 tz = ctx.tz,
             )
