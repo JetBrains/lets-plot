@@ -28,12 +28,12 @@
 - [**BREAKING**] Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it [[#1401](https://github.com/JetBrains/lets-plot/issues/1401)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/group_override_defaults.ipynb).
-> [!IMPORTANT]
-> Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
-> aesthetics (color, shape, etc.). \
-> Now it groups ONLY by the explicit variable, matching `ggplot2` behavior. \
-> Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
-> and `group=[]` to disable any grouping. 
+  > [!IMPORTANT]
+  > Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
+  > aesthetics (color, shape, etc.). \
+  > Now it groups ONLY by the explicit variable, matching `ggplot2` behavior. \
+  > Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
+  > and `group=[]` to disable any grouping. 
 
 - Geoms with 1-to-1 statistics (`geom_qq()`, `geom_sina()`) now keep bijection with original data for aesthetics.
 
