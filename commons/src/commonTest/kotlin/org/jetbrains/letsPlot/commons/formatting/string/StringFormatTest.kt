@@ -19,16 +19,16 @@ class StringFormatTest {
         assertEquals(1, createStringFormat("{.1f} test").argsNumber)
         assertEquals(2, createStringFormat("{.1f} {}").argsNumber)
         assertEquals(3, createStringFormat("{.1f} {.2f} {.3f}").argsNumber)
-        assertEquals(1, createStringFormat("%d.%m.%y %H:%M").argsNumber)
+        assertEquals(1, createStringFormat("{%d.%m.%y %H:%M}").argsNumber)
         assertEquals(2, createStringFormat("at {%H:%M} on {%A}").argsNumber)
     }
 
     @Test
-    fun numeric_format() {
+    fun numeric_format_without_curly_brackets_treated_as_plain_text() {
         val formatPattern = ".2f"
         val valueToFormat = 4
         val formattedString = createStringFormat(formatPattern).format(valueToFormat)
-        assertEquals("4.00", formattedString)
+        assertEquals(".2f", formattedString)
     }
 
     @Test
@@ -141,7 +141,7 @@ class StringFormatTest {
     @Test
     fun string_similar_to_a_numeric_format_as_static_text() {
         val formattedString = createStringFormat(".2f").format(emptyList())
-        assertEquals("", formattedString)
+        assertEquals(".2f", formattedString)
     }
 
     @Test
@@ -157,11 +157,11 @@ class StringFormatTest {
 
     @Test
     fun dateTime_format() {
-        assertEquals("August", createStringFormat("%B").format(dateTimeToFormat))
-        assertEquals("Tuesday", createStringFormat("%A").format(dateTimeToFormat))
-        assertEquals("2019", createStringFormat("%Y").format(dateTimeToFormat))
-        assertEquals("06.08.19", createStringFormat("%d.%m.%y").format(dateTimeToFormat))
-        assertEquals("06.08.19 04:46", createStringFormat("%d.%m.%y %H:%M").format(dateTimeToFormat))
+        assertEquals("August", createStringFormat("{%B}").format(dateTimeToFormat))
+        assertEquals("Tuesday", createStringFormat("{%A}").format(dateTimeToFormat))
+        assertEquals("2019", createStringFormat("{%Y}").format(dateTimeToFormat))
+        assertEquals("06.08.19", createStringFormat("{%d.%m.%y}").format(dateTimeToFormat))
+        assertEquals("06.08.19 04:46", createStringFormat("{%d.%m.%y %H:%M}").format(dateTimeToFormat))
     }
 
     @Test
@@ -184,22 +184,22 @@ class StringFormatTest {
     fun dateTime_format_can_be_used_to_form_the_string_without_braces_in_its_pattern() {
         assertEquals(
             expected = "at 04:46 on Tuesday",
-            createStringFormat("at %H:%M on %A").format(dateTimeToFormat)
+            createStringFormat("at {%H:%M} on {%A}").format(listOf(dateTimeToFormat, dateTimeToFormat))
         )
     }
 
     @Test
-    fun number_pattern_as_DateTime_format_will_return_string_with_pattern() {
+    fun number_format_for_instant_will_return_formatted_number() {
         assertEquals(
             expected = "1565066795000.0",
-            createStringFormat(".1f").format(dateTimeToFormat)
+            createStringFormat("{.1f}").format(dateTimeToFormat)
         )
     }
 
     @Test
     fun try_to_format_static_text_as_DateTime_format() {
         val exception = assertFailsWith(IllegalStateException::class) {
-            createStringFormat("%d.%m.%y").format("01.01.2000")
+            createStringFormat("{%d.%m.%y}").format("01.01.2000")
         }
         assertEquals(
             "Expected Unix timestamp in milliseconds (Number), but got '01.01.2000' (String)",

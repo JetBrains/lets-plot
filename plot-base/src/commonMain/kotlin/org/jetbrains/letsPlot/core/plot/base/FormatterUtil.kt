@@ -15,7 +15,7 @@ object FormatterUtil {
 
     fun byDataType(dataType: DataType, expFormat: ExponentFormat, tz: TimeZone?): (Any) -> String {
         fun stringFormatter() = StringFormat.forOneArg("{}", tz = tz)
-        fun numberFormatter() = StringFormat.forOneArg(",~g", expFormat = expFormat, tz = tz)
+        fun numberFormatter() = StringFormat.forOneArg("{,~g}", expFormat = expFormat, tz = tz)
 
         return when (dataType) {
             FLOATING, INTEGER -> numberFormatter()::format
