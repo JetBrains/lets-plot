@@ -491,10 +491,8 @@ class TooltipConfigTest {
         )
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
 
-        assertEquals(
-            "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2",
-            kotlin.runCatching { getGeneralTooltipStrings(geomLayer) }.exceptionOrNull()!!.message
-        )
+        val tooltip = getGeneralTooltipStrings(geomLayer).single()
+        assertEquals("cty: 15.00 {.2f}", tooltip)
     }
 
     private fun assertFailTooltipSpec(

@@ -18,19 +18,21 @@ class StringFormat private constructor(
     expFormat: ExponentFormat?,
     private val tz: TimeZone?,
 ) {
+    private val placeholders = PLACEHOLDER_REGEX.findAll(pattern).toList()
+    private val formatters: List<(Any) -> String>
+
     enum class FormatType {
         NUMBER_FORMAT,
         DATETIME_FORMAT,
         STRING_FORMAT
     }
 
-    private val formatters: List<(Any) -> String>
 
     init {
         formatters = when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, expFormat))
             STRING_FORMAT -> {
-                BRACES_REGEX.findAll(pattern)
+                placeholders
                     .map { it.groupValues[TEXT_IN_BRACES] }
                     .map { pattern ->
                         val formatType = detectFormatType(pattern)
@@ -49,40 +51,55 @@ class StringFormat private constructor(
     fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
-        check(argsNumber == values.size) {
-            "Can't format values $values with pattern '$pattern'. Wrong number of arguments: expected $argsNumber instead of ${values.size}"
-        }
-
         return when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> {
-                require(formatters.size == 1)
-                formatters.single()(values.single())
+                // single formatter for single value
+                val fmt = formatters.firstOrNull()
+                val v = values.firstOrNull()
+                return when {
+                    fmt != null && v != null -> fmt(v)
+                    fmt == null && v != null -> v.toString()
+                    fmt != null && v == null -> ""
+                    fmt == null && v == null -> ""
+                    else -> error("Should not be here")
+                }
             }
 
             STRING_FORMAT -> {
-                var index = 0
-                BRACES_REGEX.replace(pattern) {
-                    val originalValue = values[index]
-                    val formatter = formatters[index++]
-                    formatter(originalValue)
+                val formattedParts = formatters.mapIndexed { i, fmt ->
+                    if (i < values.size) {
+                        fmt(values[i])
+                    } else if (i < placeholders.size){
+                        // no value to format -> output the pattern itself so that the user can notice the problem
+                        placeholders[i].value
+                    } else {
+                        // should not be here
+                        "UNDEFINED"
+                    }
                 }
-                    .replace("{{", "{")
-                    .replace("}}", "}")
+
+                var string = pattern
+
+                placeholders.withIndex().reversed().forEach { (i, placeholder) ->
+                    string = string.replaceRange(placeholder.range, formattedParts[i])
+                }
+
+                string.replace("{{", "{").replace("}}", "}")
             }
         }
     }
 
     private fun initFormatter(
-        formatPattern: String,
+        pattern: String,
         formatType: FormatType,
         expFormat: ExponentFormat?,
     ): ((Any) -> String) {
-        if (formatPattern.isEmpty()) {
+        if (pattern.isEmpty()) {
             return Any::toString
         }
         when (formatType) {
             NUMBER_FORMAT -> {
-                val formatSpec = NumberFormat.parseSpec(formatPattern)
+                val formatSpec = NumberFormat.parseSpec(pattern)
 
                 // override exponent properties if expFormat is set
                 val spec = formatSpec.copy(
@@ -102,13 +119,13 @@ class StringFormat private constructor(
 
             DATETIME_FORMAT -> {
                 return DateTimeFormatUtil.createInstantFormatter(
-                    formatPattern,
+                    pattern,
                     tz ?: TimeZone.UTC,
                 )
             }
 
             else -> {
-                error("Undefined format pattern $formatPattern")
+                error("Undefined format pattern $pattern")
             }
         }
     }
@@ -131,8 +148,28 @@ class StringFormat private constructor(
         //     "{{text}}" -> "{text}"
         //     "{.1f} -> 1.2
         //     "{{{.1f}}} -> {1.2}
-        private val BRACES_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
+        private val PLACEHOLDER_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
         private const val TEXT_IN_BRACES = 2
+
+        fun validate(
+            pattern: String,
+            type: FormatType? = null,
+            formatFor: String? = null,
+            expectedArgs: Int = -1,
+            expFormat: ExponentFormat? = null,
+            tz: TimeZone?,
+        ) {
+            val fmt = create(pattern, type, formatFor, expFormat = expFormat, tz = tz)
+            if (expectedArgs > 0) {
+                require(fmt.argsNumber == expectedArgs) {
+                    @Suppress("NAME_SHADOWING")
+                    val formatFor = formatFor?.let { "to format \'$formatFor\'" } ?: ""
+                    "Wrong number of arguments in pattern \'$pattern\' $formatFor. " +
+                            "Expected $expectedArgs ${if (expectedArgs > 1) "arguments" else "argument"} " +
+                            "instead of ${fmt.argsNumber}"
+                }
+            }
+        }
 
         fun valueInLinePattern() = "{}"
 
@@ -187,21 +224,7 @@ class StringFormat private constructor(
             tz: TimeZone?,
         ): StringFormat {
             val formatType = type ?: detectFormatType(pattern)
-            return StringFormat(
-                pattern, formatType,
-                expFormat = expFormat,
-                tz
-            ).also {
-                if (expectedArgs > 0) {
-                    require(it.argsNumber == expectedArgs) {
-                        @Suppress("NAME_SHADOWING")
-                        val formatFor = formatFor?.let { "to format \'$formatFor\'" } ?: ""
-                        "Wrong number of arguments in pattern \'$pattern\' $formatFor. " +
-                                "Expected $expectedArgs ${if (expectedArgs > 1) "arguments" else "argument"} " +
-                                "instead of ${it.argsNumber}"
-                    }
-                }
-            }
+            return StringFormat(pattern, formatType, expFormat = expFormat, tz)
         }
     }
 }
