@@ -5788,6 +5788,42 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
     - stroke : width of the shape border. Applied only to the shapes having border.
     - weight : used by 'pointdensity' stat to compute weighted density.
 
+    ----
+
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
+
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
+
+    ----
+
+    The conventions for the values of ``map_join`` parameter are as follows:
+
+    - Joining data and ``GeoDataFrame`` object
+
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and ``Geocoder`` object
+
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
+
     Examples
     --------
     .. jupyter-execute::
