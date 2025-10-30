@@ -462,14 +462,14 @@ object StatProto {
         var bwValueX: Double? = null
         var bwValueY: Double? = null
         var bwMethod: DensityStat.BandWidthMethod? = null
-        options[Density2d.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValueX = this.toDouble()
-                bwValueY = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
+        options[Density2d.BAND_WIDTH]?.let {
+            if (it is Number) {
+                bwValueX = it.toDouble()
+                bwValueY = it.toDouble()
+            } else if (it is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(it)
+            } else if (it is List<*>) {
+                for ((i, v) in it.withIndex()) {
                     when (i) {
                         0 -> bwValueX = v?.let { (v as Number).toDouble() }
                         1 -> bwValueY = v?.let { (v as Number).toDouble() }
@@ -484,12 +484,12 @@ object StatProto {
     private fun getN2d(options: OptionsAccessor): Pair<Int?, Int?> {
         var nX: Int? = null
         var nY: Int? = null
-        options[Density2d.N]?.run {
-            if (this is Number) {
-                nX = this.toInt()
-                nY = this.toInt()
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
+        options[Density2d.N]?.let {
+            if (it is Number) {
+                nX = it.toInt()
+                nY = it.toInt()
+            } else if (it is List<*>) {
+                for ((i, v) in it.withIndex()) {
                     when (i) {
                         0 -> nX = v?.let { (v as Number).toInt() }
                         1 -> nY = v?.let { (v as Number).toInt() }
