@@ -28,8 +28,19 @@ class DataFrameField(
         require(myFormatter == null)
 
         myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable, myDataAccess.defaultFormatters, expFormat, tz)
-            else -> StringFormat.forOneArg(format, expFormat, tz = tz)::format
+            null -> TooltipFormatting.createFormatter(
+                myVariable,
+                myDataAccess.defaultFormatters,
+                expFormat,
+                tz = tz
+            )
+
+            else -> StringFormat.forOneArg(
+                format,
+                formatFor = name,
+                expFormat = expFormat,
+                tz = tz
+            )::format
         }
         return myFormatter!!
     }

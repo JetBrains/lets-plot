@@ -322,6 +322,8 @@ internal class FacetConfig(
                 else -> {
                     val sf = StringFormat.forOneArg(
                         pattern = providedFormat,
+                        type = null, // ?
+                        formatFor = varName,
                         expFormat = expFormat,
                         tz = tz
                     );

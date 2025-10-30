@@ -470,7 +470,11 @@ open class PlotConfigBackend(
                 return breaksPattern ?: patterns.last()
             }
             (listOfNotNull(breaksPattern) + patterns).forEach { pattern ->
-                val formatter = StringFormat.forOneArg(pattern, tz = tz)
+                val formatter = StringFormat.forOneArg(
+                    pattern,
+                    type = StringFormat.FormatType.DATETIME_FORMAT,
+                    tz = tz
+                )
                 val formattedValues = mutableSetOf<String>()
                 for (value in distinctValues) {
                     if (!formattedValues.add(formatter.format(value))) {

@@ -27,6 +27,7 @@ class StringFormat private constructor(
         STRING_FORMAT
     }
 
+
     init {
         formatters = when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, expFormat))
@@ -84,7 +85,11 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(pattern: String, formatType: FormatType, expFormat: ExponentFormat?): ((Any) -> String) {
+    private fun initFormatter(
+        pattern: String,
+        formatType: FormatType,
+        expFormat: ExponentFormat?,
+    ): ((Any) -> String) {
         if (pattern.isEmpty()) {
             return Any::toString
         }
@@ -132,11 +137,6 @@ class StringFormat private constructor(
     }
 
     companion object {
-        fun isStringFormat(pattern: String): Boolean {
-            val matches = BRACES_REGEX.findAll(pattern).toList()
-            return matches.size > 1
-        }
-
         // Format strings contain “replacement fields” surrounded by braces {}.
         // Anything not contained in braces is considered literal text, which is copied unchanged to the output.
         // If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}.
@@ -149,12 +149,13 @@ class StringFormat private constructor(
 
         fun validate(
             pattern: String,
+            type: FormatType? = null,
             formatFor: String? = null,
             expectedArgs: Int = -1,
             expFormat: ExponentFormat? = null,
-            tz: TimeZone?
+            tz: TimeZone?,
         ) {
-            val fmt = create(pattern, expFormat, tz)
+            val fmt = create(pattern, type, formatFor, expFormat = expFormat, tz = tz)
             if (expectedArgs > 0) {
                 require(fmt.argsNumber == expectedArgs) {
                     @Suppress("NAME_SHADOWING")
@@ -170,33 +171,56 @@ class StringFormat private constructor(
 
         fun forOneArg(
             pattern: String,
+            type: FormatType? = null,
+            formatFor: String? = null,
             expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
             tz: TimeZone?,
         ): StringFormat {
-            return create(pattern, expFormat = expFormat, tz)
+            return create(
+                pattern,
+                type,
+                formatFor,
+                expectedArgs = 1,
+                expFormat = expFormat,
+                tz
+            )
         }
 
         fun forNArgs(
             pattern: String,
+            argCount: Int,
+            formatFor: String? = null,
             expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
             tz: TimeZone?,
         ): StringFormat {
-            return create(pattern, expFormat, tz)
+            return create(
+                pattern,
+                STRING_FORMAT,
+                formatFor,
+                argCount,
+                expFormat = expFormat,
+                tz,
+            )
         }
 
         private fun detectFormatType(pattern: String): FormatType {
             return when {
-                isStringFormat(pattern) -> STRING_FORMAT
                 NumberFormat.isValidPattern(pattern) -> NUMBER_FORMAT
                 isDateTimeFormat(pattern) -> DATETIME_FORMAT
                 else -> STRING_FORMAT
             }
         }
 
-        internal fun create(pattern: String, expFormat: ExponentFormat? = null, tz: TimeZone?): StringFormat {
-            val formatType = detectFormatType(pattern)
-            val fmt = StringFormat(pattern, formatType, expFormat = expFormat, tz)
-            return fmt
+        internal fun create(
+            pattern: String,
+            type: FormatType? = null,
+            formatFor: String? = null,
+            expectedArgs: Int = -1,
+            expFormat: ExponentFormat? = null,
+            tz: TimeZone?,
+        ): StringFormat {
+            val formatType = type ?: detectFormatType(pattern)
+            return StringFormat(pattern, formatType, expFormat = expFormat, tz)
         }
     }
 }
