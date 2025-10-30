@@ -56,7 +56,6 @@ def aes(x=None, y=None, **kwargs):
         - Use ``group=['var1', 'var2', ...]`` to group by the interaction of multiple variables
         - Use ``group=[]`` to disable all the grouping completely
 
-
     Examples
     --------
     .. jupyter-execute::
