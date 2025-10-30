@@ -135,6 +135,8 @@ object Option {
             const val NAME = Meta.NAME
             const val SUBPLOTS_GRID = "grid"
             const val SUBPLOTS_FREE = "free"
+
+            const val GUIDES = "guides"
         }
 
         object Grid {
@@ -162,6 +164,12 @@ object Option {
          */
         object Free {
             const val REGIONS = "regions" // array of 4 numbers [x, y, width, height] in relative units
+        }
+
+        object Guides {
+            const val AUTO = "auto" // The default: allow upper level to collect, otherwise keep in supplots.
+            const val COLLECT = "collect" // Collect legengs from subplots.
+            const val KEEP = "keep" // Keep legends in subplots.
         }
     }
 

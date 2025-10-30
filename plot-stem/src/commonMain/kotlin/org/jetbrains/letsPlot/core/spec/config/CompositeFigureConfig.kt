@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.FeatureSwitch
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
@@ -56,8 +55,7 @@ class CompositeFigureConfig constructor(
     internal val elementConfigs: List<OptionsAccessor?>
     internal val layout: CompositeFigureLayout
     internal val theme: Theme
-    internal var collectLegends: Boolean = false  // whether to collect legends from sub-figures al all
-        private set
+    internal val guidesSharing: GuidesSharingMode
     internal var collectOverlayLegends: Boolean = false  // whether to collect overlay legends from sub-figures
         private set
 
@@ -115,10 +113,11 @@ class CompositeFigureConfig constructor(
             else -> throw IllegalArgumentException("Unsupported composit figure layout: $layoutKind")
         }
 
-        // Collect legends or not?
-        // TODO: add an option
-        collectLegends = layoutKind == Layout.SUBPLOTS_GRID && FeatureSwitch.GGGRID_COLLECT_LEGENDS
-
+        guidesSharing = if (layoutKind == Layout.SUBPLOTS_GRID) {
+            GuidesSharingMode.fromOption(layoutOptions.getString(Layout.GUIDES))
+        } else {
+            GuidesSharingMode.KEEP
+        }
         computationMessagesHandler(computationMessages)
     }
 
@@ -221,4 +220,24 @@ class CompositeFigureConfig constructor(
 
         return CompositeFigureFreeLayout(regions, offsets, elementsCount)
     }
+
+    enum class GuidesSharingMode(val id: String) {
+        AUTO(Option.SubPlots.Guides.AUTO),
+        COLLECT(Option.SubPlots.Guides.COLLECT),
+        KEEP(Option.SubPlots.Guides.KEEP);
+
+        companion object {
+            fun fromOption(option: String?): GuidesSharingMode {
+                return when (option?.lowercase()) {
+                    null,
+                    Option.SubPlots.Guides.AUTO -> AUTO
+
+                    Option.SubPlots.Guides.COLLECT -> COLLECT
+                    Option.SubPlots.Guides.KEEP -> KEEP
+                    else -> throw IllegalArgumentException("'guides'='$option'. Use: 'auto', 'collect', or 'keep'.")
+                }
+            }
+        }
+    }
+
 }

@@ -232,6 +232,7 @@ class ThemeConfig constructor(
                         containerTheme.options.filterKeys { key ->
                             key in setOf(
                                 Option.Meta.NAME,                  // a name of a predefined theme.
+                                ThemeOption.FLAVOR,
                                 ThemeOption.LEGEND_POSITION,       // for 'guide collect' in the container feature.
                                 ThemeOption.LEGEND_JUSTIFICATION,
                                 ThemeOption.LEGEND_DIRECTION,
@@ -248,8 +249,8 @@ class ThemeConfig constructor(
             // Plot background: preserve own border settings (color, size, linetype),
             // Keep the container's 'fill' color (if specified in container but not specified in own options).
             @Suppress("UNCHECKED_CAST")
-            val ownBackgroundOptions =
-                ownThemeUserOptions[ThemeOption.PLOT_BKGR_RECT] as? Map<String, Any> ?: emptyMap()
+            val ownBackgroundOptions = ownThemeUserOptions[ThemeOption.PLOT_BKGR_RECT] as? Map<String, Any>
+                ?: emptyMap()
             val mergedBackgroundOptions: Map<String, Any?> =
                 if (ownThemeUserOptions.containsKey(ThemeOption.FLAVOR)) {
                     // Keep own plot background.
