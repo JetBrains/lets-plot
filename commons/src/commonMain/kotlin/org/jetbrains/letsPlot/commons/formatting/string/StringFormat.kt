@@ -80,8 +80,8 @@ class StringFormat private constructor(
 
                 var string = pattern
 
-                placeholders.withIndex().reversed().forEach { (i, match) ->
-                    string = string.replaceRange(match.range, formattedParts[i])
+                placeholders.withIndex().reversed().forEach { (i, placeholder) ->
+                    string = string.replaceRange(placeholder.range, formattedParts[i])
                 }
 
                 string.replace("{{", "{").replace("}}", "}")
