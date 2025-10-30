@@ -18,7 +18,7 @@ class StringFormat private constructor(
     expFormat: ExponentFormat?,
     private val tz: TimeZone?,
 ) {
-    private val matches = BRACES_REGEX.findAll(pattern).toList()
+    private val placeholders = PLACEHOLDER_REGEX.findAll(pattern).toList()
     private val formatters: List<(Any) -> String>
 
     enum class FormatType {
@@ -32,7 +32,7 @@ class StringFormat private constructor(
         formatters = when (formatType) {
             NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, expFormat))
             STRING_FORMAT -> {
-                BRACES_REGEX.findAll(pattern)
+                placeholders
                     .map { it.groupValues[TEXT_IN_BRACES] }
                     .map { pattern ->
                         val formatType = detectFormatType(pattern)
@@ -69,14 +69,18 @@ class StringFormat private constructor(
                 val formattedParts = formatters.mapIndexed { i, fmt ->
                     if (i < values.size) {
                         fmt(values[i])
+                    } else if (i < placeholders.size){
+                        // no value to format -> output the pattern itself so that the user can notice the problem
+                        placeholders[i].value
                     } else {
-                        matches[i].value
+                        // should not be here
+                        "UNDEFINED"
                     }
                 }
 
                 var string = pattern
 
-                matches.withIndex().reversed().forEach { (i, match) ->
+                placeholders.withIndex().reversed().forEach { (i, match) ->
                     string = string.replaceRange(match.range, formattedParts[i])
                 }
 
@@ -144,7 +148,7 @@ class StringFormat private constructor(
         //     "{{text}}" -> "{text}"
         //     "{.1f} -> 1.2
         //     "{{{.1f}}} -> {1.2}
-        private val BRACES_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
+        private val PLACEHOLDER_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
         private const val TEXT_IN_BRACES = 2
 
         fun validate(

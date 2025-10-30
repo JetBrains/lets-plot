@@ -103,7 +103,7 @@ class StringFormatTest {
     }
 
     @Test
-    fun no_arg_should_format_as_is() {
+    fun pattern_without_placeholders() {
         val fmt = StringFormat.forOneArg("It is .2f", tz = null)
         assertEquals("It is .2f", fmt.format(42))
     }
@@ -142,8 +142,8 @@ class StringFormatTest {
 
     @Test
     fun string_similar_to_a_numeric_format_as_static_text() {
-        val formattedString = createStringFormat(".2f").format(emptyList())
-        assertEquals("", formattedString)
+        val formattedString = createStringFormat(".2f", type = STRING_FORMAT).format(emptyList())
+        assertEquals(".2f", formattedString)
     }
 
     @Test
@@ -189,15 +189,15 @@ class StringFormatTest {
     fun dateTime_format_can_be_used_to_form_the_string_without_braces_in_its_pattern() {
         assertEquals(
             expected = "at 04:46 on Tuesday",
-            createStringFormat("at %H:%M on %A").format(dateTimeToFormat)
+            createStringFormat("at %H:%M on %A", type = DATETIME_FORMAT).format(dateTimeToFormat)
         )
     }
 
     @Test
     fun number_pattern_as_DateTime_format_will_return_string_with_pattern() {
         assertEquals(
-            expected = "1565066795000.0",
-            createStringFormat(".1f").format(dateTimeToFormat)
+            expected = ".1f",
+            createStringFormat(".1f", type = DATETIME_FORMAT).format(dateTimeToFormat)
         )
     }
 
