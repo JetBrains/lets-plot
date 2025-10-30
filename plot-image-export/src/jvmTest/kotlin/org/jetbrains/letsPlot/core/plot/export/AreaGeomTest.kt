@@ -192,4 +192,120 @@ class AreaGeomTest : VisualPlotTestBase() {
 
         assertPlot("area_geom_3.png", plotSpec)
     }
+
+    @Test
+    fun `geom_area with NaN`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "subplots",
+            |  "layout": {
+            |    "ncol": 3.0,
+            |    "nrow": 1.0,
+            |    "name": "grid"
+            |  },
+            |  "figures": [
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, 5.0, 7.0, 4.0, 3.0, 1.0, 0.0 ],
+            |        "y": [ 3.0, 5.0, 6.0, 8.0, 6.0, 7.0, 4.0, 5.0, 4.0, 2.0 ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "int",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "y"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "area",
+            |          "mapping": {},
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, null, 7.0, 4.0, 3.0, 1.0, null],
+            |        "y": [ 3.0, 5.0, 6.0, 8.0, 6.0, 7.0, 4.0, 5.0, 4.0, 2.0 ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "float",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "int",
+            |            "column": "y"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "area",
+            |          "mapping": {},
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 2.0, 6.0, 8.0, 9.0, 5.0, 7.0, 4.0, 3.0, 1.0, 0.0 ],
+            |        "y": [ 3.0, 5.0, 6.0, 8.0, null, 7.0, 4.0, 5.0, 4.0, null ]
+            |      },
+            |      "mapping": {
+            |        "x": "x",
+            |        "y": "y"
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          {
+            |            "type": "int",
+            |            "column": "x"
+            |          },
+            |          {
+            |            "type": "float",
+            |            "column": "y"
+            |          }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "scales": [],
+            |      "layers": [
+            |        {
+            |          "geom": "area",
+            |          "mapping": {},
+            |          "data_meta": {}
+            |        }
+            |      ],
+            |      "metainfo_list": []
+            |    }
+            |  ]
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("area_geom_4.png", plotSpec)
+    }
 }
