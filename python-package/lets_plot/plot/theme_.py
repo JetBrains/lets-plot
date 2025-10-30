@@ -671,10 +671,11 @@ def element_markdown(
     This theme element draws text with Markdown support.
 
     Supported features:
-    - Emphasis (*, **, ***, _, __, ___)
+
+    - Emphasis (\*, \*\*, \*\*\*, _, __, ___)
     - Coloring with inline style (<span style='color:red'>text</span>)
     - Links with anchor tags (<a href="https://lets-plot.org">Lets-Plot</a>). Supports target attribute (default is "_blank")
-    - Multiple lines using double space and a newline delimiter (  \n)
+    - Multiple lines using double space and a newline delimiter (  ``\\n``)
 
     Parameters
     ----------
