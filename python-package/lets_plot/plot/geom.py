@@ -5721,7 +5721,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
     method : {'auto', 'neighbours', 'kde2d'}, default='auto'
         The method to compute the density estimate.
 
-        - ``'neighbors'`` – estimates density from the number of nearby points.
+        - ``'neighbours'`` – estimates density from the number of nearby points.
         - ``'kde2d'`` – estimates density using a smoothed 2D kernel density.
         - ``'auto'`` – automatically selects an estimation method based on data size.
 
@@ -5735,7 +5735,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
         Only used when ``method='kde2d'``.
     adjust : float
-        If ``method='neighbours'``, adjust the radius in which to count neighbors.
+        If ``method='neighbours'``, adjust the radius in which to count neighbours.
         If ``method='kde2d'``, adjust the value of bandwidth by multiplying it.
     n : list of int
         The number of sampled points for plotting the function
