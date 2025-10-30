@@ -36,18 +36,26 @@ def ggtb(size_basis=None, size_zoomin=None) -> FeatureSpec:
     size_zoomin : int, default=0
         Control how zooming in affects the size of geometry objects on the plot. Currently, works only with
         the geom_point layer and layers based on it (geom_jitter, geom_sina, etc.).
+
         0 - size never increases;
+
         -1 - size will be increasing without limits;
+
         n - the number of times the size of objects will increase (relative to the initial state of the plot).
+
         Farther zooming will no longer affect the size.
     size_basis: String, default="max" {'x', 'y', 'min', 'max'}
         Defines the axis along which the scaling factor for geometry objects will be calculated.
+
         'x' - size changes only when zooming in/out along x-axis;
+
         'y' - size changes only when zooming in/out along y-axis;
+
         'min' - size changes when zooming in/out along any axis, but the change is determined by the axis
-               with the minimum zoom factor;
+        with the minimum zoom factor;
+
         'max' - size changes when zooming in/out along any axis, but the change is determined by the axis
-               with the maximum zoom factor.
+        with the maximum zoom factor.
 
     Returns
     -------
