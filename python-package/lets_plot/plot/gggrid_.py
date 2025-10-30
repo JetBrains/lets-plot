@@ -28,10 +28,10 @@ def gggrid(plots: list, ncol: int = None, *,
     Parameters
     ----------
     plots : list
-        A list where each element is a plot specification, a subplots specification, or None.
-        Use value None to fill-in empty cells in grid.
+        A list where each element is a plot specification, a subplot specification, or `None`.
+        Use `None` to fill in empty cells in the grid.
     ncol : int
-        Number of columns in grid.
+        Number of columns in the grid.
         If not specified, shows plots horizontally, in one row.
     sharex, sharey : bool or str, default=False
         Controls sharing of axis limits between subplots in the grid.
@@ -42,9 +42,9 @@ def gggrid(plots: list, ncol: int = None, *,
         - 'col' - share limits between subplots in the same column.
 
     widths : list of numbers
-        Relative width of each column of grid, left to right.
+        Relative width of each column in the grid, left to right.
     heights : list of numbers
-        Relative height of each row of grid, top-down.
+        Relative height of each row in the grid, top-down.
     hspace : float, default=4.0
         Cell horizontal spacing in px.
     vspace : float, default=4.0
@@ -58,14 +58,14 @@ def gggrid(plots: list, ncol: int = None, *,
     guides : str, default='auto'
         Specifies how guides (legends and colorbars) should be treated in the layout.
 
-        - 'collect' - collect guides from subplots, removing duplicates.
+        - 'collect' - collect guides from all subplots, removing duplicates.
         - 'keep' - keep guides in their original subplots; do not collect at this level.
-        - 'auto' - allow guides to be collected if an upper level uses ``guides='collect'``,
-          otherwise keep them in subplots.
+        - 'auto' - allow guides to be collected if an upper-level layout uses ``guides='collect'``; otherwise, keep them in subplots.
 
         Duplicates are identified by comparing visual properties:
-        for legends - title, labels, and all aesthetic values (colors, shapes, sizes, etc.);
-        for colorbars - title, domain limits, breaks, and color gradient.
+
+        - For legends: title, labels, and all aesthetic values (colors, shapes, sizes, etc.).
+        - For colorbars: title, domain limits, breaks, and color gradient.
 
     Returns
     -------
