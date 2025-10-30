@@ -42,8 +42,8 @@ def ggtb(size_basis=None, size_zoomin=None) -> FeatureSpec:
         -1 - size will be increasing without limits;
 
         n - the number of times the size of objects will increase (relative to the initial state of the plot).
-
         Farther zooming will no longer affect the size.
+
     size_basis: String, default="max" {'x', 'y', 'min', 'max'}
         Defines the axis along which the scaling factor for geometry objects will be calculated.
 
