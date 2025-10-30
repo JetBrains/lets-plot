@@ -21,6 +21,16 @@ class StepGeom : LineGeom() {
     fun setDirection(dir: String) {
         myDirection = Direction.toDirection(dir)
     }
+    // commit name:
+    override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+        // filter out points with NaN x-values but keep +/-Infinity (for 'padded' mode)
+        val data = aesthetics.dataPoints().filter { p: DataPointAesthetics ->
+            val x = p.x()
+            x != null && (x.isFinite() || x.isFinite())
+        }
+
+        return GeomUtil.ordered_X(data)
+    }
 
     override fun buildIntern(
         root: SvgRoot,
