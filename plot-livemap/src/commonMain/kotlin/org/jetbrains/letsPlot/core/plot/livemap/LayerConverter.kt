@@ -49,6 +49,7 @@ object LayerConverter {
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 SPOKE -> MapLayerKind.PATH to dataPointsConverter.toSpoke(layer.geom as SpokeGeom)
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
+                POINT_DENSITY -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom as PointDensityGeom)
                 TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom as PieGeom)

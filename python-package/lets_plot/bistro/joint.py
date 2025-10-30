@@ -2,11 +2,11 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from ..plot.plot import ggplot
+from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 from ..plot.core import DummySpec, aes
 from ..plot.geom import geom_smooth
 from ..plot.label import xlab, ylab
-from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
+from ..plot.plot import ggplot
 
 __all__ = ['joint_plot']
 
@@ -27,7 +27,7 @@ def _get_marginal_def(geom_kind, color_by=None):
 def _is_reg_line_needed(reg_line, geom_kind):
     if reg_line is not None:
         return reg_line
-    if geom_kind == 'point':
+    if geom_kind in ['point', 'pointdensity']:
         return True
     else:
         return False
@@ -51,7 +51,7 @@ def joint_plot(data, x, y, *,
         The data to be displayed.
     x, y : str
         Names of a variables.
-    geom : {'point', 'tile', 'hex', 'density2d', 'density2df'}, default='point'
+    geom : {'point', 'tile', 'hex', 'density2d', 'density2df', 'pointdensity'}, default='point'
         The geometric object to use to display the data.
     bins : int or list of int
         Number of bins in both directions, vertical and horizontal. Overridden by ``binwidth``.

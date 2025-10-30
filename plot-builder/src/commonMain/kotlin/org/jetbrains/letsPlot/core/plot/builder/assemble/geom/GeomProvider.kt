@@ -274,6 +274,13 @@ class GeomProvider internal constructor(
             ) { Density2dfGeom() }
         }
 
+        fun pointDensity(): GeomProvider {
+            return GeomProvider(
+                GeomKind.POINT_DENSITY,
+                PointDensityGeom.HANDLES_GROUPS
+            ) { PointDensityGeom() }
+        }
+
         fun jitter(): GeomProvider {
             return GeomProvider(
                 GeomKind.JITTER,

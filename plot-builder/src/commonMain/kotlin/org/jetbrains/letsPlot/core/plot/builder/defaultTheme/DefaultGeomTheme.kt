@@ -64,7 +64,8 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.JITTER,
                 GeomKind.SINA,
                 GeomKind.Q_Q,
-                GeomKind.Q_Q_2 -> COMMON_POINT_SIZE
+                GeomKind.Q_Q_2,
+                GeomKind.POINT_DENSITY -> COMMON_POINT_SIZE
 
                 GeomKind.HISTOGRAM,
                 GeomKind.CONTOUR,
