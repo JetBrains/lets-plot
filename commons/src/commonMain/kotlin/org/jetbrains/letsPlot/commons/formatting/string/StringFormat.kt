@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 class StringFormat private constructor(
     private val pattern: String,
+    private val formatType: FormatType,
     expFormat: ExponentFormat?,
     private val tz: TimeZone?,
 ) {
@@ -27,17 +28,21 @@ class StringFormat private constructor(
     }
 
     init {
-        formatters = BRACES_REGEX.findAll(pattern)
-            .map { it.groupValues[TEXT_IN_BRACES] }
-            .map { pattern ->
-                val formatType = detectFormatType(pattern)
-                check(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
-                    "Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'"
-                }
-                initFormatter(pattern, formatType, expFormat)
+        formatters = when (formatType) {
+            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, expFormat))
+            STRING_FORMAT -> {
+                BRACES_REGEX.findAll(pattern)
+                    .map { it.groupValues[TEXT_IN_BRACES] }
+                    .map { pattern ->
+                        val formatType = detectFormatType(pattern)
+                        check(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
+                            "Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'"
+                        }
+                        initFormatter(pattern, formatType, expFormat)
+                    }
+                    .toList()
             }
-            .toList()
-
+        }
     }
 
     val argsNumber = formatters.size
@@ -45,21 +50,38 @@ class StringFormat private constructor(
     fun format(value: Any): String = format(listOf(value))
 
     fun format(values: List<Any>): String {
-        val formattedParts = formatters.mapIndexed { i, fmt ->
-            if (i < values.size) {
-                fmt(values[i])
-            } else {
-                matches[i].value
+        return when (formatType) {
+            NUMBER_FORMAT, DATETIME_FORMAT -> {
+                // single formatter for single value
+                val fmt = formatters.firstOrNull()
+                val v = values.firstOrNull()
+                return when {
+                    fmt != null && v != null -> fmt(v)
+                    fmt == null && v != null -> v.toString()
+                    fmt != null && v == null -> ""
+                    fmt == null && v == null -> ""
+                    else -> error("Should not be here")
+                }
+            }
+
+            STRING_FORMAT -> {
+                val formattedParts = formatters.mapIndexed { i, fmt ->
+                    if (i < values.size) {
+                        fmt(values[i])
+                    } else {
+                        matches[i].value
+                    }
+                }
+
+                var string = pattern
+
+                matches.withIndex().reversed().forEach { (i, match) ->
+                    string = string.replaceRange(match.range, formattedParts[i])
+                }
+
+                string.replace("{{", "{").replace("}}", "}")
             }
         }
-
-        var string = pattern
-
-        matches.withIndex().reversed().forEach { (i, match) ->
-            string = string.replaceRange(match.range, formattedParts[i])
-        }
-
-        return string.replace("{{", "{").replace("}}", "}")
     }
 
     private fun initFormatter(pattern: String, formatType: FormatType, expFormat: ExponentFormat?): ((Any) -> String) {
@@ -87,10 +109,15 @@ class StringFormat private constructor(
             }
 
             DATETIME_FORMAT -> {
-                return DateTimeFormatUtil.createInstantFormatter(pattern, tz ?: TimeZone.UTC)
+                return DateTimeFormatUtil.createInstantFormatter(
+                    pattern,
+                    tz ?: TimeZone.UTC,
+                )
             }
 
-            else -> error("Undefined format pattern $pattern")
+            else -> {
+                error("Undefined format pattern $pattern")
+            }
         }
     }
 
@@ -105,6 +132,10 @@ class StringFormat private constructor(
     }
 
     companion object {
+        fun isStringFormat(pattern: String): Boolean {
+            val matches = BRACES_REGEX.findAll(pattern).toList()
+            return matches.size > 1
+        }
 
         // Format strings contain “replacement fields” surrounded by braces {}.
         // Anything not contained in braces is considered literal text, which is copied unchanged to the output.
@@ -155,6 +186,7 @@ class StringFormat private constructor(
 
         private fun detectFormatType(pattern: String): FormatType {
             return when {
+                isStringFormat(pattern) -> STRING_FORMAT
                 NumberFormat.isValidPattern(pattern) -> NUMBER_FORMAT
                 isDateTimeFormat(pattern) -> DATETIME_FORMAT
                 else -> STRING_FORMAT
@@ -162,7 +194,8 @@ class StringFormat private constructor(
         }
 
         internal fun create(pattern: String, expFormat: ExponentFormat? = null, tz: TimeZone?): StringFormat {
-            val fmt = StringFormat(pattern, expFormat = expFormat, tz)
+            val formatType = detectFormatType(pattern)
+            val fmt = StringFormat(pattern, formatType, expFormat = expFormat, tz)
             return fmt
         }
     }
