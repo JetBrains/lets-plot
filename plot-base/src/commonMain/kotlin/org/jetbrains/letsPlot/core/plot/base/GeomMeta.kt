@@ -316,6 +316,7 @@ object GeomMeta {
             GeomKind.DENSITY -> AREA
             GeomKind.DENSITY2D -> PATH
             GeomKind.DENSITY2DF -> POLYGON
+            GeomKind.POINT_DENSITY -> POINT
             GeomKind.JITTER -> POINT
             GeomKind.Q_Q -> listOf(
                 Aes.X, Aes.Y,

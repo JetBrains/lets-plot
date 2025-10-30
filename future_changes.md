@@ -2,6 +2,10 @@
 
 ### Added
 
+- `geom_pointdensity()` [[#1370](https://github.com/JetBrains/lets-plot/issues/1370)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_pointdensity.ipynb).
+
 - `ggtb()`: `size_zoomin` and `size_basis` parameters for geometry scaling. [[#1369](https://github.com/JetBrains/lets-plot/issues/1369)]
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/ggtb_size_zoomin.ipynb).
@@ -60,3 +64,4 @@
 - Integer numbers in facet strip titles are displayed as float [[#1386](https://github.com/JetBrains/lets-plot/issues/1386)].
 - Error when using scale_identity(aesthetic="shape") [[#1212](https://github.com/JetBrains/lets-plot/issues/1212)].
 - ggsave: theme option face="italic" doesn't work [[#1391](https://github.com/JetBrains/lets-plot/issues/1391)].
+- Fail early if string format is incorrect [[#1410](https://github.com/JetBrains/lets-plot/issues/1410)].

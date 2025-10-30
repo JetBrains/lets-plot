@@ -44,6 +44,14 @@ object GeomUtil {
         )
     }
 
+    val TO_LOCATION_X_ZERO_WITH_FINITE_Y = { p: DataPointAesthetics ->
+        toLocationOrNull(
+            p.x(),
+            0.0,
+            requireAlso = p.y()
+        )
+    }
+
     val TO_LOCATION_X_YMAX_WITH_FINITE_YMIN = { p: DataPointAesthetics ->
         toLocationOrNull(
             x = p.x(),

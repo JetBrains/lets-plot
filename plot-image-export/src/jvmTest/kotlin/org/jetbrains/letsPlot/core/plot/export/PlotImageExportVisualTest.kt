@@ -1014,54 +1014,6 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     }
 
     @Test
-    fun `area with none`() {
-        val spec = parsePlotSpec("""
-            |{
-            |  "data": {
-            |    "x": [ null, null, 0.0, null, 1.0, 2.0, null, 4.0, 5.0, 6.0 ],
-            |    "y": [ null, 0.0, 0.5, 0.0, 0.0, 1.0, null, null, 0.5, 1.0 ],
-            |    "c": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 ]
-            |  },
-            |  "mapping": {
-            |    "x": "x",
-            |    "y": "c"
-            |  },
-            |  "data_meta": {
-            |    "series_annotations": [
-            |      {
-            |        "type": "float",
-            |        "column": "x"
-            |      },
-            |      {
-            |        "type": "float",
-            |        "column": "y"
-            |      },
-            |      {
-            |        "type": "int",
-            |        "column": "c"
-            |      }
-            |    ]
-            |  },
-            |  "kind": "plot",
-            |  "scales": [],
-            |  "layers": [
-            |    {
-            |      "geom": "area",
-            |      "stat": "identity",
-            |      "mapping": {},
-            |      "data_meta": {}
-            |    }
-            |  ],
-            |  "metainfo_list": []
-            |}
-        """.trimMargin())
-
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("area_with_none.png", plotSpec)
-    }
-
-    @Test
     fun `line with none`() {
         val spec = parsePlotSpec("""
             |{

@@ -18,6 +18,8 @@ import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig.GuidesSharingMode
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig.GuidesSharingMode.*
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
@@ -220,7 +222,9 @@ object MonolithicCommon {
         return buildCompositeFigure(
             compositeFigureConfig,
             preferredSize,
-            computationMessages
+            computationMessages,
+            containerGuidesSharing = AUTO,
+            containerDetachedLegendsCollector = null
         )
     }
 
@@ -228,11 +232,18 @@ object MonolithicCommon {
         config: CompositeFigureConfig,
         preferredSize: DoubleVector,
         computationMessages: MutableList<String>,
+        containerGuidesSharing: GuidesSharingMode,
+        containerDetachedLegendsCollector: DetachedLegendsCollector?,
     ): CompositeFigureBuildInfo {
 
         val compositeFigureLayout = config.layout
 
-        val detachedLegendsCollector = if (config.collectLegends) {
+        val ownGuidesSharingMode = config.guidesSharing
+        val collectLegends = when (containerGuidesSharing) {
+            KEEP, AUTO -> ownGuidesSharingMode == COLLECT
+            COLLECT -> ownGuidesSharingMode in setOf(COLLECT, AUTO)
+        }
+        val ownDetachedLegendsCollector = if (collectLegends) {
             DetachedLegendsCollector(
                 detachOverlayLegends = config.collectOverlayLegends
             )
@@ -267,14 +278,21 @@ object MonolithicCommon {
                         sharedContinuousDomainX = sharedXDomains?.get(index),
                         sharedContinuousDomainY = sharedYDomains?.get(index),
                         computationMessages = emptyList(),  // No "own messages" when a part of a composite.
-                        detachedLegendsCollector = detachedLegendsCollector
+                        detachedLegendsCollector = ownDetachedLegendsCollector
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
+                        val containerGuidesSharing = if (ownDetachedLegendsCollector != null) {
+                            COLLECT
+                        } else {
+                            AUTO
+                        }
                         buildCompositeFigure(
                             config = it as CompositeFigureConfig,
                             preferredSize = DoubleVector.ZERO, // Will be updateed by subplots' layout.
-                            computationMessages
+                            computationMessages,
+                            containerGuidesSharing = containerGuidesSharing,
+                            containerDetachedLegendsCollector = ownDetachedLegendsCollector,
                         )
                     }
 
@@ -286,15 +304,22 @@ object MonolithicCommon {
         val theme = config.theme
 
         // Create legend blocks from collected legends
-        val legendBlocks = detachedLegendsCollector?.collectedLegends?.let { collectedLegends ->
-            // Group legends by position and justification
-            val legendsByPositionAndJustification = collectedLegends.groupBy {
-                it.position to it.justification
-            }
+        val legendBlocks = ownDetachedLegendsCollector?.collectedLegends?.let { collectedLegends ->
+            if (ownGuidesSharingMode == AUTO) {
+                // Pass through collected legends to the container
+                containerDetachedLegendsCollector?.collect(collectedLegends)
+                emptyList()
+            } else {
+                // Must be own COLLECT mode.
+                // Group legends by position and justification
+                val legendsByPositionAndJustification = collectedLegends.groupBy {
+                    it.position to it.justification
+                }
 
-            // Create a CompositeLegendBlockInfo for each group
-            legendsByPositionAndJustification.values.map { legendsInGroup ->
-                LegendsBlockInfo.arrangeLegendBoxes(legendsInGroup, theme = theme.legend())
+                // Create a LegendBlockInfo for each group
+                legendsByPositionAndJustification.values.map { legendsInGroup ->
+                    LegendsBlockInfo.arrangeLegendBoxes(legendsInGroup, theme = theme.legend())
+                }
             }
         } ?: emptyList()
 

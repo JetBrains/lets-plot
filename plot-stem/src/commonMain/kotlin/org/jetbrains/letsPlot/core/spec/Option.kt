@@ -135,6 +135,8 @@ object Option {
             const val NAME = Meta.NAME
             const val SUBPLOTS_GRID = "grid"
             const val SUBPLOTS_FREE = "free"
+
+            const val GUIDES = "guides"
         }
 
         object Grid {
@@ -162,6 +164,12 @@ object Option {
          */
         object Free {
             const val REGIONS = "regions" // array of 4 numbers [x, y, width, height] in relative units
+        }
+
+        object Guides {
+            const val AUTO = "auto" // The default: allow upper level to collect, otherwise keep in supplots.
+            const val COLLECT = "collect" // Collect legengs from subplots.
+            const val KEEP = "keep" // Keep legends in subplots.
         }
     }
 
@@ -557,6 +565,10 @@ object Option {
             const val IS_CONTOUR = "contour"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+        }
+
+        object PointDensity {
+            const val METHOD = "method"
         }
 
         object DensityRidges {
@@ -1076,6 +1088,7 @@ object Option {
         private const val CONTOURF = "contourf"
         private const val DENSITY2D = "density2d"
         private const val DENSITY2DF = "density2df"
+        private const val POINT_DENSITY = "pointdensity"
         const val JITTER = "jitter"
         private const val Q_Q = "qq"
         private const val Q_Q_2 = "qq2"
@@ -1134,6 +1147,7 @@ object Option {
             map[CONTOURF] = GeomKind.CONTOURF
             map[DENSITY2D] = GeomKind.DENSITY2D
             map[DENSITY2DF] = GeomKind.DENSITY2DF
+            map[POINT_DENSITY] = GeomKind.POINT_DENSITY
             map[JITTER] = GeomKind.JITTER
             map[Q_Q] = GeomKind.Q_Q
             map[Q_Q_2] = GeomKind.Q_Q_2

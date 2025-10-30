@@ -19,7 +19,8 @@ def gggrid(plots: list, ncol: int = None, *,
            hspace: float = None,
            vspace: float = None,
            fit: bool = None,
-           align: bool = None
+           align: bool = None,
+           guides: str = None
            ) -> SupPlotsSpec:
     """
     Combine several plots on one figure, organized in a regular grid.
@@ -54,6 +55,17 @@ def gggrid(plots: list, ncol: int = None, *,
     align : bool, default=False
         If True, align inner areas (i.e. "geom" bounds) of plots.
         However, cells containing other (sub)grids are not participating in the plot "inner areas" layouting.
+    guides : str, default='auto'
+        Specifies how guides (legends and colorbars) should be treated in the layout.
+
+        - 'collect' - collect guides from subplots, removing duplicates.
+        - 'keep' - keep guides in their original subplots; do not collect at this level.
+        - 'auto' - allow guides to be collected if an upper level uses ``guides='collect'``,
+          otherwise keep them in subplots.
+
+        Duplicates are identified by comparing visual properties:
+        for legends - title, labels, and all aesthetic values (colors, shapes, sizes, etc.);
+        for colorbars - title, domain limits, breaks, and color gradient.
 
     Returns
     -------
@@ -111,7 +123,8 @@ def gggrid(plots: list, ncol: int = None, *,
         hspace=hspace,
         vspace=vspace,
         fit=fit,
-        align=align
+        align=align,
+        guides=guides
     )
 
     figures = [_strip_theme_if_global(fig) for fig in plots]

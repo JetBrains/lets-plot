@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.formatting.string
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.DATETIME_FORMAT
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.STRING_FORMAT
 import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -96,35 +97,27 @@ class StringFormatTest {
     @Test
     fun different_number_of_parameters_in_the_pattern_and_number_of_values_to_format() {
         val formatPattern = "{.1f} x {.2f} x {.3f}"
-        val valuesToFormat = listOf(1, 2)
+        val fmt = createStringFormat(formatPattern)
 
-        val exception = assertFailsWith(IllegalStateException::class) {
-            createStringFormat(formatPattern).format(valuesToFormat)
-        }
-        assertEquals(
-            "Can't format values [1, 2] with pattern '{.1f} x {.2f} x {.3f}'. Wrong number of arguments: expected 3 instead of 2",
-            exception.message
-        )
+        assertEquals("1.0 x 2.00 x {.3f}", fmt.format(listOf(1, 2)))
     }
 
     @Test
-    fun wrong_number_of_arguments_in_pattern() {
-        assertFailsWith(IllegalArgumentException::class) {
-            StringFormat.forOneArg("{.2f} {.2f}", tz = null)
-        }.let { exception ->
-            assertEquals(
-                "Wrong number of arguments in pattern '{.2f} {.2f}' . Expected 1 argument instead of 2",
-                exception.message
-            )
-        }
-        assertFailsWith(IllegalArgumentException::class) {
-            StringFormat.forNArgs("{.2f} {.2f}", argCount = 3, tz = null)
-        }.let { exception ->
-            assertEquals(
-                "Wrong number of arguments in pattern '{.2f} {.2f}' . Expected 3 arguments instead of 2",
-                exception.message
-            )
-        }
+    fun pattern_without_placeholders() {
+        val fmt = StringFormat.forOneArg("It is .2f", tz = null)
+        assertEquals("It is .2f", fmt.format(42))
+    }
+
+    @Test
+    fun wrong_number_of_arguments_in_pattern_for_one_arg() {
+        val fmt = StringFormat.forOneArg("{.2f} {.2f}", tz = null)
+        assertEquals("3.14 {.2f}", fmt.format(3.14159))
+    }
+
+    @Test
+    fun wrong_number_of_arguments_in_pattern_for_n_args() {
+        val fmt = StringFormat.forNArgs("{.2f} {.2f}", 2, tz = null)
+        assertEquals("3.14 2.72", fmt.format(listOf(3.14159, 2.71828, 1.61803)))
     }
 
     @Test
@@ -155,13 +148,8 @@ class StringFormatTest {
 
     @Test
     fun try_to_format_static_text_as_number_format() {
-        val exception = assertFailsWith(IllegalArgumentException::class) {
-            createStringFormat("pattern", type = NUMBER_FORMAT).format("text")
-        }
-        assertEquals(
-            "Wrong number format pattern: 'pattern'",
-            exception.message
-        )
+        val fmt = createStringFormat("pattern")
+        assertEquals("pattern", fmt.format("text"))
     }
 
     private val dateTimeToFormat = DateTime(
@@ -201,10 +189,7 @@ class StringFormatTest {
     fun dateTime_format_can_be_used_to_form_the_string_without_braces_in_its_pattern() {
         assertEquals(
             expected = "at 04:46 on Tuesday",
-            createStringFormat(
-                pattern = "at %H:%M on %A",
-                type = DATETIME_FORMAT
-            ).format(dateTimeToFormat)
+            createStringFormat("at %H:%M on %A", type = DATETIME_FORMAT).format(dateTimeToFormat)
         )
     }
 
@@ -248,6 +233,7 @@ class StringFormatTest {
         private fun createStringFormat(pattern: String): StringFormat {
             return StringFormat.create(pattern, tz = null)
         }
+
 
         private fun createStringFormat(pattern: String, type: StringFormat.FormatType): StringFormat {
             return StringFormat.create(pattern, type, tz = null)

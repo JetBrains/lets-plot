@@ -22,7 +22,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_boxplot', 'geom_violin', 'geom_sina', 'geom_ydotplot',
            'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
-           'geom_density2d', 'geom_density2df', 'geom_jitter',
+           'geom_density2d', 'geom_density2df', 'geom_pointdensity', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
            'geom_segment', 'geom_curve', 'geom_spoke',
@@ -5671,6 +5671,232 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  bw=bw, n=n,
                  bins=bins,
                  binwidth=binwidth,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                      manual_key=None, sampling=None,
+                      tooltips=None,
+                      method=None,
+                      kernel=None,
+                      adjust=None,
+                      bw=None,
+                      n=None,
+                      map=None, map_join=None, use_crs=None,
+                      color_by=None, fill_by=None,
+                      **other_args):
+    """
+    Plots data points and colors each point by the local density of nearby points.
+
+    Parameters
+    ----------
+    mapping : ``FeatureSpec``
+        Set of aesthetic mappings created by `aes() <https://lets-plot.org/python/pages/api/lets_plot.aes.html>`__ function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars ``DataFrame``
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='pointdensity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or ``FeatureSpec``, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or ``layer_key``
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
+    sampling : ``FeatureSpec``
+        Result of the call to the ``sampling_xxx()`` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : ``layer_tooltips``
+        Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
+        Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
+    method : {'auto', 'neighbours', 'kde2d'}, default='auto'
+        The method to compute the density estimate.
+
+        - ``'neighbours'`` – estimates density from the number of nearby points.
+        - ``'kde2d'`` – estimates density using a smoothed 2D kernel density.
+        - ``'auto'`` – automatically selects an estimation method based on data size.
+
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+        Only used when ``method='kde2d'``.
+    bw : str or list of float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
+        Only used when ``method='kde2d'``.
+    adjust : float
+        If ``method='neighbours'``, adjust the radius in which to count neighbours.
+        If ``method='kde2d'``, adjust the value of bandwidth by multiplying it.
+    n : list of int
+        The number of sampled points for plotting the function
+        (on x and y direction correspondingly).
+        Only used when ``method='kde2d'``.
+    map : ``GeoDataFrame`` or ``Geocoder``
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in ``data``.
+        Second value in pair - column/columns in ``map``.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in ``GeoDataFrame`` (see the ``map`` parameter)
+        will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the ``GeoDataFrame``'s original CRS.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    ``LayerSpec``
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..density.. : density estimate (mapped by default).
+    - ..count.. : density * number of points (corresponds to number of nearby points for ``'neighbours'`` method).
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+
+    ``geom_pointdensity()`` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of the point. Accept values between 0 and 1.
+    - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - shape : shape of the point, an integer from 0 to 25. For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
+    - angle : rotation angle of the point shape, in degrees.
+    - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
+    - weight : used by 'pointdensity' stat to compute weighted density.
+
+    ----
+
+    The ``data`` and ``map`` parameters of ``GeoDataFrame`` type support shapes ``Point`` and ``MultiPoint``.
+
+    The ``map`` parameter of ``Geocoder`` type implicitly invokes
+    `get_centroids() <https://lets-plot.org/python/pages/api/lets_plot.geo_data.NamesGeocoder.html#lets_plot.geo_data.NamesGeocoder.get_centroids>`__ function.
+
+    ----
+
+    The conventions for the values of ``map_join`` parameter are as follows:
+
+    - Joining data and ``GeoDataFrame`` object
+
+      Data has a column named 'State_name' and ``GeoDataFrame`` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and ``Geocoder`` object
+
+      Data has a column named 'State_name'. The matching key in ``Geocoder`` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level ``Geocoder`` object (the ``Geocoder`` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__
+    to the ``axis_tooltip``, ``axis_tooltip_x`` or ``axis_tooltip_y`` parameter of the `theme() <https://lets-plot.org/python/pages/api/lets_plot.theme.html>`__.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_pointdensity()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 5_000
+        np.random.seed(42)
+        x = np.random.poisson(size=n) + np.random.normal(scale=.1, size=n)
+        y = np.random.normal(size=n)
+        gggrid([
+            ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+                geom_pointdensity(aes(color='..count..'),
+                                  method=method) + \\
+                ggtitle("method='{0}'".format(method))
+            for method in ['neighbours', 'kde2d']
+        ])
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        data = {'x': 10 * np.random.normal(size=n) - 100, \\
+                'y': 3 * np.random.normal(size=n) + 40}
+        ggplot(data, aes('x', 'y')) + \\
+            geom_livemap(zoom=4) + \\
+            geom_pointdensity(aes(fill='..density..'),
+                              color='black', shape=21,
+                              show_legend=False) + \\
+            scale_fill_viridis()
+
+    """
+    return _geom('pointdensity',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 method=method,
+                 kernel=kernel,
+                 adjust=adjust,
+                 bw=bw, n=n,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 

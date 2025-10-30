@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_ZERO
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_ZERO_WITH_FINITE_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.QuantilesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
@@ -26,7 +27,8 @@ open class AreaGeom : GeomBase() {
     override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
 
     protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.ordered_X(aesthetics.dataPoints())
+        val data = GeomUtil.with_X(aesthetics.dataPoints())
+        return GeomUtil.ordered_X(data)
     }
 
     override fun buildIntern(
@@ -45,7 +47,7 @@ open class AreaGeom : GeomBase() {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 
-        val dataPoints = GeomUtil.withDefined(dataPoints(aesthetics), Aes.X, Aes.Y)
+        val dataPoints = dataPoints(aesthetics)
         val closePath = helper.meetsRadarPlotReq()
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
@@ -53,7 +55,7 @@ open class AreaGeom : GeomBase() {
                     val bands = helper.renderBands(
                         points,
                         TO_LOCATION_X_Y,
-                        TO_LOCATION_X_ZERO,
+                        TO_LOCATION_X_ZERO_WITH_FINITE_Y,
                         simplifyBorders = false,
                         closePath = closePath
                     )

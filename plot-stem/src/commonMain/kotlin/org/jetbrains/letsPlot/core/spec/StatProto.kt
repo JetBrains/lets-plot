@@ -18,12 +18,13 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Density
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density2d
 import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
 import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
+import org.jetbrains.letsPlot.core.spec.Option.Stat.PointDensity
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
+import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
-import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
@@ -144,6 +145,7 @@ object StatProto {
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
             DENSITY2DF -> configureDensity2dStat(options, true)
+            POINTDENSITY -> configurePointDensityStat(options)
             StatKind.QQ -> configureQQStat(options)
             QQ2 -> Stats.qq2()
             QQ_LINE -> configureQQLineStat(options)
@@ -328,46 +330,11 @@ object StatProto {
     }
 
     private fun configureDensity2dStat(options: OptionsAccessor, filled: Boolean): AbstractDensity2dStat {
-        var bwValueX: Double? = null
-        var bwValueY: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod? = null
-        options[Density2d.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValueX = this.toDouble()
-                bwValueY = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
-                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
-                        else -> break
-                    }
-                }
-            }
-        }
-
+        val (bwValueX, bwValueY, bwMethod) = getBandWidth2d(options)
         val kernel = options.getString(Density2d.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
-        var nX: Int? = null
-        var nY: Int? = null
-        options[Density2d.N]?.run {
-            if (this is Number) {
-                nX = this.toInt()
-                nY = this.toInt()
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> nX = v?.let { (v as Number).toInt() }
-                        1 -> nY = v?.let { (v as Number).toInt() }
-                        else -> break
-                    }
-                }
-            }
-        }
+        val (nX, nY) = getN2d(options)
 
         return if (filled) {
             Density2dfStat(
@@ -396,6 +363,27 @@ object StatProto {
                 binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
             )
         }
+    }
+
+    private fun configurePointDensityStat(options: OptionsAccessor): PointDensityStat {
+        val (bwValueX, bwValueY, bwMethod) = getBandWidth2d(options)
+        val kernel = options.getString(Density2d.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+        val (nX, nY) = getN2d(options)
+
+        return PointDensityStat(
+            bandWidthX = bwValueX,
+            bandWidthY = bwValueY,
+            bandWidthMethod = bwMethod ?: AbstractDensity2dStat.DEF_BW,
+            adjust = options.getDoubleDef(Density2d.ADJUST, AbstractDensity2dStat.DEF_ADJUST),
+            kernel = kernel ?: AbstractDensity2dStat.DEF_KERNEL,
+            nX = nX ?: AbstractDensity2dStat.DEF_N,
+            nY = nY ?: AbstractDensity2dStat.DEF_N,
+            method = options.getString(PointDensity.METHOD)?.let {
+                PointDensityStat.Method.safeValueOf(it)
+            } ?: PointDensityStat.DEF_METHOD
+        )
     }
 
     private fun configureQQStat(options: OptionsAccessor): QQStat {
@@ -468,6 +456,49 @@ object StatProto {
             }
         }
         return Pair(bwValue, bwMethod)
+    }
+
+    private fun getBandWidth2d(options: OptionsAccessor): Triple<Double?, Double?, DensityStat.BandWidthMethod?> {
+        var bwValueX: Double? = null
+        var bwValueY: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod? = null
+        options[Density2d.BAND_WIDTH]?.let {
+            if (it is Number) {
+                bwValueX = it.toDouble()
+                bwValueY = it.toDouble()
+            } else if (it is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(it)
+            } else if (it is List<*>) {
+                for ((i, v) in it.withIndex()) {
+                    when (i) {
+                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
+                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
+                        else -> break
+                    }
+                }
+            }
+        }
+        return Triple(bwValueX, bwValueY, bwMethod)
+    }
+
+    private fun getN2d(options: OptionsAccessor): Pair<Int?, Int?> {
+        var nX: Int? = null
+        var nY: Int? = null
+        options[Density2d.N]?.let {
+            if (it is Number) {
+                nX = it.toInt()
+                nY = it.toInt()
+            } else if (it is List<*>) {
+                for ((i, v) in it.withIndex()) {
+                    when (i) {
+                        0 -> nX = v?.let { (v as Number).toInt() }
+                        1 -> nY = v?.let { (v as Number).toInt() }
+                        else -> break
+                    }
+                }
+            }
+        }
+        return Pair(nX, nY)
     }
 
     private fun getYDensityScale(options: OptionsAccessor): BaseYDensityStat.Scale? {
