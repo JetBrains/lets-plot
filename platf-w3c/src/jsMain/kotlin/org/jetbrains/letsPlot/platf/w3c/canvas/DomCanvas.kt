@@ -34,10 +34,6 @@ internal class DomCanvas private constructor(
         override val size: Vector
     ) : Canvas.Snapshot {
 
-        init {
-            println("Create DomSnapshot: size= $size")
-        }
-
         override val bitmap: Bitmap
             get() {
                 TODO("DomSnapshot.toBitmap() is not implemented yet")
