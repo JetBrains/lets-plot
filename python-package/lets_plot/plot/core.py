@@ -566,10 +566,11 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
-            import numpy as np
             import io
+            from IPython.display import HTML
+            import numpy as np
             from lets_plot import *
             LetsPlot.setup_html()
             np.random.seed(42)
@@ -577,6 +578,7 @@ class PlotSpec(FeatureSpec):
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_html(file_like)
+            HTML(file_like.getvalue().decode('utf-8'))
 
         """
         return _to_html(self, path, iframe)

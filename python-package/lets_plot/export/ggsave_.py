@@ -113,25 +113,31 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     Examples
     --------
-    .. code-block::
+    .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 4
+        :emphasize-lines: 6
 
+        from IPython.display import Image
         from lets_plot import *
         LetsPlot.setup_html()
-        plot = ggplot() + geom_point(x=0, y=0)
-        ggsave(plot, 'plot.html', path='.', iframe=False)
+        filename = 'plot.png'
+        plot = ggplot() + geom_point(x=0, y=0) + ggtitle(filename)
+        fullpath = ggsave(plot, filename, w=4, h=3)
+        Image(filename=fullpath, width=600, height=450)
 
     |
 
-    .. code-block::
+    .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 4
+        :emphasize-lines: 6
 
+        from IPython.display import HTML
         from lets_plot import *
         LetsPlot.setup_html()
-        plot = ggplot() + geom_point(x=0, y=0)
-        ggsave(plot, 'plot.png', w=4, h=3)
+        filename = 'plot.html'
+        plot = ggplot() + geom_point(x=0, y=0) + ggtitle(filename)
+        fullpath = ggsave(plot, filename, iframe=False)
+        HTML(filename=fullpath)
 
     """
 
