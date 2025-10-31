@@ -352,7 +352,7 @@ class TooltipCheckLabelInLines {
 
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
 
-        assertXAxisTooltip(layer, expectedLines = listOf("label: 2.46913e+6"), hitIndex = 1)
+        assertXAxisTooltip(layer, expectedLines = listOf("label: 2.46913·\\(10^{6}\\)"), hitIndex = 1)
     }
 
     @Test

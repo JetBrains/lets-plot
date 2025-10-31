@@ -102,7 +102,7 @@ def theme(*,
 
     Parameters
     ----------
-    exponent_format : {'e', 'pow', 'pow_full'} or tuple, default='e'
+    exponent_format : {'e', 'pow', 'pow_full'} or tuple, default='pow'
         Controls the appearance of numbers formatted with 'e' or 'g' types.
 
         Value is either a string - style, or a tuple: (style, lower_exp_bound, upper_exp_bound)

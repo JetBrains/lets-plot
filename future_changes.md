@@ -48,6 +48,8 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
 - markdown: links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
 
+- `theme`: the `exponent_format` default value changed to `'pow'`.
+
 - Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
   
   See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
