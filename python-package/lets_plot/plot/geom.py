@@ -831,8 +831,10 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     -----
     ``geom_bar()`` makes the height of the bar proportional to the number
     of observed variable values, mapped to x-axis. Is intended to use for discrete data.
-    If used for continuous data with stat='bin' produces histogram for binned data.
-    ``geom_bar()`` handles no group aesthetics.
+    If used for continuous data with ``stat='bin'`` produces histogram for binned data.
+
+    ``geom_bar()`` handles no group aesthetics. Stacking and dodging are controlled by the position adjustment.
+    With ``position='identity'``, groups are neither stacked nor dodged (bars overlap).
 
     Computed variables:
 
