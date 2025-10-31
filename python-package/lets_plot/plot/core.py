@@ -521,18 +521,20 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             import io
             from lets_plot import *
             from IPython import display
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
+
         """
         return _to_svg(self, path, w=w, h=h, unit=unit)
 
@@ -562,16 +564,18 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 8
+            :emphasize-lines: 9
 
             import numpy as np
             import io
             from lets_plot import *
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_html(file_like)
+
         """
         return _to_html(self, path, iframe)
 
@@ -640,13 +644,14 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             import io
             from lets_plot import *
             from IPython import display
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
