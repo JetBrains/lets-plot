@@ -106,6 +106,10 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
       - The plot's pixel size (default or set by `ggsize() <https://lets-plot.org/python/pages/api/lets_plot.ggsize.html>`__) is ignored.
       - The output size is calculated using the specified ``w``, ``h``, and ``unit``.
 
+    ----
+
+    Plots with ``geom_livemap()`` can be saved to HTML only.
+
 
     Examples
     --------

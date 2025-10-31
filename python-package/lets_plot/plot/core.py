@@ -495,6 +495,8 @@ class PlotSpec(FeatureSpec):
         """
         Export the plot in SVG format.
 
+        Plots containing ``geom_livemap()`` are not supported.
+
         Parameters
         ----------
         self : ``PlotSpec``
@@ -583,6 +585,8 @@ class PlotSpec(FeatureSpec):
         """
         Export a plot to a file or to a file-like object in PNG format.
 
+        Plots containing ``geom_livemap()`` are not supported.
+
         Parameters
         ----------
         self : ``PlotSpec``
@@ -664,6 +668,8 @@ class PlotSpec(FeatureSpec):
     def to_pdf(self, path, scale: float = None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export a plot to a file or to a file-like object in PDF format.
+
+        Plots containing ``geom_livemap()`` are not supported.
 
         Parameters
         ----------
