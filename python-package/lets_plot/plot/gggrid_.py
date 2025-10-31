@@ -28,8 +28,8 @@ def gggrid(plots: list, ncol: int = None, *,
     Parameters
     ----------
     plots : list
-        A list where each element is a plot specification, a subplot specification, or `None`.
-        Use `None` to fill in empty cells in the grid.
+        A list where each element is a plot specification, a subplot specification, or None.
+        Use None to fill in empty cells in the grid.
     ncol : int
         Number of columns in the grid.
         If not specified, shows plots horizontally, in one row.
