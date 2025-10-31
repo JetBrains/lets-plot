@@ -59,7 +59,13 @@
 - If the `axis_ticks_length`, `axis_ticks_length_x`, or `axis_ticks_length_y` parameter in theme() is negative, the ticks are drawn inward.
 
   See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/axis_tick_direction.ipynb).
+- Plot with scale_y_log10() is distorting the value and producing the wrong plot. [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)]
 
+  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_ribbon_with_NaN.ipynb).
+- geom_area: Handling NaN values. geom_area() will now break if y includes NaN values.
+
+  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_area_with_NaN.ipynb).
+  
 
 ### Fixed
 
