@@ -26,7 +26,7 @@ class StepGeom : LineGeom() {
         // filter out points with NaN x-values but keep +/-Infinity (for 'padded' mode)
         val data = aesthetics.dataPoints().filter { p: DataPointAesthetics ->
             val x = p.x()
-            x != null && (x.isFinite() || x.isFinite())
+            x != null && (x.isFinite() || x.isInfinite())
         }
 
         return GeomUtil.ordered_X(data)
