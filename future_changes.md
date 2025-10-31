@@ -1,4 +1,4 @@
-## [4.7.4] - 2025-mm-dd
+## [4.8.0] - 2025-11-dd
 
 ### Added
 
@@ -24,8 +24,12 @@
 - `legend_justification` parameter of `theme()` accepts additional string values: `'left'`, `'right'`, `'top'`, and `'bottom'`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_justification.ipynb).
+
 - markdown: `target` attribute for links.
 
+- `guides` parameter in `gggrid()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/gggrid_legend_collect.ipynb).
 
 ### Changed
 
@@ -52,6 +56,9 @@
 - The legend automatically wraps to prevent overlap - up to 15 rows for vertical legends and 5 columns for horizontal ones [[#1235](https://github.com/JetBrains/lets-plot/issues/1235)].
 
   See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_wrap.ipynb).
+- If the `axis_ticks_length`, `axis_ticks_length_x`, or `axis_ticks_length_y` parameter in theme() is negative, the ticks are drawn inward.
+
+  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/axis_tick_direction.ipynb).
 
 
 ### Fixed
