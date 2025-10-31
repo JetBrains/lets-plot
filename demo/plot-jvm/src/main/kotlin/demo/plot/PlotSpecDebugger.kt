@@ -18,6 +18,7 @@ import java.io.IOException
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
+import javax.swing.plaf.basic.BasicButtonUI
 import javax.swing.undo.UndoManager
 
 fun main() {
@@ -119,6 +120,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
     // New components for frontend selection and pixel density
     private val frontendComboBox = JComboBox(arrayOf("batik", "DefaultPlotPanelCanvas", "CanvasPane")).apply {
+        selectedItem = "DefaultPlotPanelCanvas"
         addActionListener {
             pixelDensityLabel.isVisible = selectedItem == "CanvasPane"
             pixelDensitySpinner.isVisible = selectedItem == "CanvasPane"
@@ -158,6 +160,33 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val loadFavoriteButton = JButton("Load")
     private val removeFavoriteButton = JButton("Remove")
 
+    // Processed spec components
+    private val processedSpecTextArea = JTextArea().apply {
+        isEditable = false
+        font = Font(Font.SANS_SERIF, Font.PLAIN, 12)
+        lineWrap = false
+    }
+    private val processedSpecScrollPane = JScrollPane(processedSpecTextArea)
+    private val toggleSpecPanelButton = JToggleButton().apply {
+        margin = Insets(5, 2, 5, 2)
+    }
+    private var mainSplitPane: JSplitPane
+    private var lastProcessedSpecDividerLocation: Int = -1
+    private var defaultDividerSize: Int = 0
+
+    // Message components
+    private val messagesTextArea = JTextArea().apply {
+        isEditable = false
+        font = Font("Monospaced", Font.PLAIN, 12)
+        foreground = Color.RED
+        wrapStyleWord = true
+        lineWrap = true
+        autoscrolls = true
+    }
+    private val messagesScrollPane = JScrollPane(messagesTextArea)
+    private val plotAndMessagesSplitPane: JSplitPane
+
+
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
         preferredSize = Dimension(1400, 600)
@@ -180,28 +209,21 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         val evalHeight = evaluateButton.preferredSize.height
         pasteAndEvaluateButton.preferredSize = Dimension(evalHeight, evalHeight)
 
-        // Panel for the buttons
-        val favoriteButtonsPanel = JPanel(GridLayout(1, 3, 5, 0)).apply { // 1 row, 3 cols, 5px horizontal gap
+        val favoriteButtonsPanel = JPanel(GridLayout(1, 3, 5, 0)).apply {
             add(loadFavoriteButton)
             add(saveFavoriteButton)
             add(removeFavoriteButton)
         }
 
-        // Main panel with a vertical layout
         val favoritesPanel = JPanel().apply {
             layout = BoxLayout(this, BoxLayout.Y_AXIS)
             border = BorderFactory.createTitledBorder("Favorites")
-
-            // Align components to the left
             favoritesComboBox.alignmentX = LEFT_ALIGNMENT
             favoriteButtonsPanel.alignmentX = LEFT_ALIGNMENT
-
-            // Set max size to prevent vertical stretching of combobox
             favoritesComboBox.maximumSize = Dimension(Integer.MAX_VALUE, favoritesComboBox.preferredSize.height)
             favoriteButtonsPanel.maximumSize = Dimension(Integer.MAX_VALUE, favoriteButtonsPanel.preferredSize.height)
-
             add(favoritesComboBox)
-            add(Box.createRigidArea(Dimension(0, 5))) // 5px vertical space
+            add(Box.createRigidArea(Dimension(0, 5)))
             add(favoriteButtonsPanel)
         }
 
@@ -212,28 +234,97 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             add(buttonPanel, BorderLayout.SOUTH)
         }
 
-        // Main layout changes:
-        contentPane.layout = BorderLayout()
+        plotAndMessagesSplitPane = JSplitPane(
+            JSplitPane.VERTICAL_SPLIT,
+            plotPanel,
+            messagesScrollPane
+        ).apply {
+            resizeWeight = 1.0 // Give all extra space to the plot panel
+        }
+        messagesScrollPane.isVisible = false // Hide initially
 
-        val mainPanel = JPanel(BorderLayout())  // Panel to hold plot and frontend panel
+        val plotAreaPanel = JPanel(BorderLayout())
+        plotAreaPanel.add(sharedToolbar, BorderLayout.NORTH)
+        plotAreaPanel.add(plotAndMessagesSplitPane, BorderLayout.CENTER)
+        plotAreaPanel.add(frontendPanel, BorderLayout.SOUTH)
 
-        mainPanel.add(sharedToolbar, BorderLayout.NORTH)
-        mainPanel.add(plotPanel, BorderLayout.CENTER) // Plot occupies center
-        mainPanel.add(frontendPanel, BorderLayout.SOUTH) // Frontend panel under the plot
+        controlPanel.minimumSize = Dimension(0, 0)
+        plotAreaPanel.minimumSize = Dimension(0, 0)
+        processedSpecScrollPane.minimumSize = Dimension(0, 0)
 
-        val splitPane = JSplitPane(
-            JSplitPane.HORIZONTAL_SPLIT, controlPanel, mainPanel
+        val leftSplitPane = JSplitPane(
+            JSplitPane.HORIZONTAL_SPLIT, controlPanel, plotAreaPanel
         ).apply {
             dividerLocation = 420
         }
 
-        contentPane.add(splitPane, BorderLayout.CENTER) // splitPane occupies the contentPane
+        mainSplitPane = JSplitPane(
+            JSplitPane.HORIZONTAL_SPLIT,
+            leftSplitPane,
+            processedSpecScrollPane
+        ).apply {
+            isContinuousLayout = true
+            resizeWeight = 1.0
+        }
+
+        // FIX: Hide splitter and panel by default.
+        processedSpecScrollPane.isVisible = false
+        defaultDividerSize = mainSplitPane.dividerSize
+        mainSplitPane.dividerSize = 0
+
+        setupProcessedSpecToggle()
+
+        val mainPanel = JPanel(BorderLayout())
+        mainPanel.add(mainSplitPane, BorderLayout.CENTER)
+        mainPanel.add(toggleSpecPanelButton, BorderLayout.EAST)
+
+        contentPane.add(mainPanel)
 
         pack()
         setLocationRelativeTo(null)
 
         updateFavoritesComboBox()
         updateSaveButtonState()
+    }
+
+    private fun setupProcessedSpecToggle() {
+        toggleSpecPanelButton.setUI(VerticalButtonUI())
+        updateToggleButtonText()
+
+        toggleSpecPanelButton.addActionListener {
+            if (toggleSpecPanelButton.isSelected) {
+                // Show panel
+                processedSpecScrollPane.isVisible = true
+                mainSplitPane.dividerSize = defaultDividerSize // Restore splitter
+
+                // FIX: Use invokeLater to set the divider location after the layout is updated.
+                SwingUtilities.invokeLater {
+                    val targetLocation = if (lastProcessedSpecDividerLocation != -1) {
+                        lastProcessedSpecDividerLocation
+                    } else {
+                        // First time opening: occupy 25% of the width
+                        (mainSplitPane.width * 0.75).toInt()
+                    }
+                    mainSplitPane.setDividerLocation(targetLocation)
+                }
+            } else {
+                // Hide panel
+                lastProcessedSpecDividerLocation = mainSplitPane.dividerLocation // Store current size
+                processedSpecScrollPane.isVisible = false
+                mainSplitPane.dividerSize = 0 // Hide splitter
+            }
+            updateToggleButtonText()
+        }
+    }
+
+
+    private fun updateToggleButtonText() {
+        val text = if (toggleSpecPanelButton.isSelected) {
+            "Hide processed spec"
+        } else {
+            "Show processed spec"
+        }
+        toggleSpecPanelButton.text = text.toCharArray().joinToString("\n")
     }
 
     private fun getFavoritesFile(): File {
@@ -307,7 +398,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         val favoriteContent = favorites[selectedName]
         val currentContent = plotSpecTextArea.text
 
-        // Disable if the selected favorite's content is the same as the current text
         saveFavoriteButton.isEnabled = (favoriteContent != currentContent)
     }
 
@@ -485,62 +575,74 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     }
 
     fun evaluate() {
-        // Stop the debouncer timer if it's running
         densityDebouncer.stop()
-
         saveSpecToFile()
+
+        // Clear and hide messages pane at the start of evaluation
+        messagesTextArea.text = ""
+        messagesScrollPane.isVisible = false
 
         val spec = parsePlotSpec(plotSpecTextArea.text)
         plotPanel.removeAll()
 
+        // Message handler to display messages in the UI
+        val messageHandler: (List<String>) -> Unit = { messages ->
+            if (messages.isNotEmpty()) {
+                SwingUtilities.invokeLater {
+                    if (!messagesScrollPane.isVisible) {
+                        messagesScrollPane.isVisible = true
+                        plotAndMessagesSplitPane.setDividerLocation(0.8)
+                    }
+                    messagesTextArea.text = messages.joinToString("\n")
+                    messagesTextArea.caretPosition = messagesTextArea.document.length
+                }
+            }
+        }
+
         try {
-            val newPlotComponent = when (frontendComboBox.selectedItem) {
+            val processedSpec: Map<String, Any>
+            val newPlotComponent: JComponent
+
+            when (frontendComboBox.selectedItem) {
                 "batik" -> {
-                    val processedSpec = MonolithicCommon.processRawSpecs(spec)
-                    DefaultPlotPanelBatik(
+                    processedSpec = MonolithicCommon.processRawSpecs(spec)
+                    newPlotComponent = DefaultPlotPanelBatik(
                         processedSpec = processedSpec,
                         preferredSizeFromPlot = false,
                         repaintDelay = 300,
                         preserveAspectRatio = false,
-                    ) { messages ->
-                        for (message in messages) {
-                            println("[Demo Plot Viewer] $message")
-                        }
-                    }
+                        computationMessagesHandler = messageHandler
+                    )
                 }
 
                 "CanvasPane" -> {
+                    processedSpec = MonolithicCommon.processRawSpecs(spec)
                     val plotFig = PlotCanvasFigure2()
                     plotFig.update(
-                        MonolithicCommon.processRawSpecs(spec),
+                        processedSpec,
                         sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
-                        computationMessagesHandler = { messages ->
-                            for (message in messages) {
-                                println("[PlotSpecDebugger] $message")
-                            }
-                        }
+                        computationMessagesHandler = messageHandler
                     )
-                    CanvasPane2(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                    newPlotComponent = CanvasPane2(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
                 }
 
                 "DefaultPlotPanelCanvas" -> {
-                    val processedSpec = MonolithicCommon.processRawSpecs(spec)
-                    DefaultPlotPanelCanvas(
+                    processedSpec = MonolithicCommon.processRawSpecs(spec)
+                    newPlotComponent = DefaultPlotPanelCanvas(
                         processedSpec = processedSpec,
                         preferredSizeFromPlot = false,
-                        repaintDelay = 300,
+                        repaintDelay = 0,
                         preserveAspectRatio = false,
-                    ) { messages ->
-                        for (message in messages) {
-                            println("[Demo Plot Viewer] $message")
-                        }
-                    }
+                        computationMessagesHandler = messageHandler
+                    )
                 }
 
                 else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
             }
 
-//            if (newPlotComponent is WithFigureModel) {
+            processedSpecTextArea.text = JsonSupport.formatJson(processedSpec, pretty = true)
+            processedSpecTextArea.caretPosition = 0
+
             if (newPlotComponent is DefaultPlotPanelBatik) {
                 sharedToolbar.attach(newPlotComponent.figureModel)
             } else if (newPlotComponent is DefaultPlotPanelCanvas) {
@@ -550,16 +652,17 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             plotPanel.add(newPlotComponent, BorderLayout.CENTER)
         } catch (e: Exception) {
             e.printStackTrace()
+            val errorText = "Error processing spec:\n\n${e.message}\n\n${e.stackTraceToString()}"
+            processedSpecTextArea.text = errorText
+            messageHandler(listOf(errorText)) // Show error in the new message panel
             JOptionPane.showMessageDialog(
                 this,
                 "Error building plot: ${e.message}",
                 "Plot Error",
                 JOptionPane.ERROR_MESSAGE
             )
-            // The crucial part:  Reset the selection back to what it was.
-            // This prevents the combo box from getting into a bad state.
             SwingUtilities.invokeLater {
-                frontendComboBox.selectedItem = frontendComboBox.selectedItem // Reset selection
+                frontendComboBox.selectedItem = frontendComboBox.selectedItem
             }
 
         } finally {
@@ -571,28 +674,17 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         override fun paintIcon(c: Component?, g: Graphics, x: Int, y: Int) {
             val g2d = g.create() as Graphics2D
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-
-            // A dark, solid color for high contrast
             val boardColor = Color(80, 80, 80)
-
-            // Draw the clipboard backplate
             g2d.color = boardColor
             g2d.fillRoundRect(x + 2, y, size - 4, size, 6, 6)
-
-            // Draw the clip on top
             g2d.fillRect(x + 6, y - 1, size - 12, 5)
-
-            // Draw the "paper" with a very light color
             g2d.color = Color(245, 245, 245)
             g2d.fillRect(x + 4, y + 4, size - 8, size - 7)
-
-            // Draw text lines
             g2d.stroke = BasicStroke(1.5f)
             g2d.color = boardColor
             g2d.drawLine(x + 5, y + 8, x + 14, y + 8)
             g2d.drawLine(x + 5, y + 11, x + 14, y + 11)
             g2d.drawLine(x + 5, y + 14, x + 14, y + 14)
-
             g2d.dispose()
         }
 
@@ -600,4 +692,54 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         override fun getIconHeight(): Int = size
     }
 
+    private class VerticalButtonUI : BasicButtonUI() {
+        override fun paint(g: Graphics, c: JComponent) {
+            val button = c as AbstractButton
+            val text = button.text
+
+            button.text = null
+            super.paint(g, c)
+            button.text = text
+
+            if (text == null || text.isEmpty()) {
+                return
+            }
+
+            val g2d = g.create() as Graphics2D
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            g2d.color = button.foreground
+            g2d.font = button.font
+
+            val fm = g2d.fontMetrics
+            val lines = text.split("\n")
+            val lineHeight = fm.height
+            val totalHeight = lines.size * lineHeight
+
+            var y = (c.height - totalHeight) / 2 + fm.ascent
+
+            for (line in lines) {
+                val stringWidth = fm.stringWidth(line)
+                val x = (c.width - stringWidth) / 2
+                g2d.drawString(line, x, y)
+                y += lineHeight
+            }
+            g2d.dispose()
+        }
+
+        override fun getPreferredSize(c: JComponent): Dimension {
+            val text = (c as AbstractButton).text ?: return Dimension(20, 100)
+            val fm = c.getFontMetrics(c.font)
+            val lines = text.split("\n")
+            var maxWidth = 0
+            for (line in lines) {
+                maxWidth = kotlin.math.max(maxWidth, fm.stringWidth(line))
+            }
+            val totalHeight = fm.height * lines.size
+            val insets = c.insets
+            return Dimension(
+                maxWidth + insets.left + insets.right,
+                totalHeight + insets.top + insets.bottom
+            )
+        }
+    }
 }
