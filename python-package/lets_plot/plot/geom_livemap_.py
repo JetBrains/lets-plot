@@ -63,17 +63,25 @@ def geom_livemap(*,
     data_size_zoomin : int, default=0
         Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is set by means of mapping between the data and the ``size`` aesthetic.
+
         0 - size never increases;
+
         -1 - size will be increasing without limits;
+
         n - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
+
     const_size_zoomin : int, default=-1
         Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is not linked to a data (i.e. constant size).
+
         0 - size never increases;
+
         -1 - size will be increasing without limits;
+
         n - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
+
     other_args
         Other arguments passed on to the layer.
 

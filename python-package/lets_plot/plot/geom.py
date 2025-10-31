@@ -510,21 +510,48 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12-13
+        :emphasize-lines: 11-12
+
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.uniform(0, 2, size=n)
+        y = x**2 + np.random.normal(scale=.5, size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point() + \\
+            geom_line(stat='smooth', method='loess',
+                      color='red', linetype='longdash')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13-16,19
 
         import numpy as np
         import pandas as pd
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
-        t = np.arange(100)
+        t = np.linspace(0, 1, 100)
         x1 = np.cumsum(np.random.normal(size=t.size))
         x2 = np.cumsum(np.random.normal(size=t.size))
         df = pd.DataFrame({'t': t, 'x1': x1, 'x2': x2})
-        df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
-        ggplot(df, aes(x='t', y='value', group='variable')) + \\
-            geom_line(aes(color='variable'), size=1, alpha=0.5) + \\
-            geom_line(stat='smooth', color='red', linetype='longdash')
+        melted_df = pd.melt(df, id_vars=['t'], value_vars=['x1', 'x2'])
+        gggrid([
+            ggplot(df) + \\
+                geom_line(aes(x='t', y='x1'), size=1, alpha=0.5,
+                          color="red", manual_key="x1") + \\
+                geom_line(aes(x='t', y='x2'), size=1, alpha=0.5,
+                          color="blue", manual_key="x2") + \\
+                ggtitle('Two geom_line() layers'),
+            ggplot(melted_df, aes(x='t', y='value', group='variable')) + \\
+                geom_line(aes(color='variable'), size=1, alpha=0.5) + \\
+                ggtitle('One geom_line() layer')
+        ])
 
     """
     return _geom('line',
@@ -804,8 +831,10 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     -----
     ``geom_bar()`` makes the height of the bar proportional to the number
     of observed variable values, mapped to x-axis. Is intended to use for discrete data.
-    If used for continuous data with stat='bin' produces histogram for binned data.
-    ``geom_bar()`` handles no group aesthetics.
+    If used for continuous data with ``stat='bin'`` produces histogram for binned data.
+
+    ``geom_bar()`` handles no group aesthetics. Stacking and dodging are controlled by the position adjustment.
+    With ``position='identity'``, groups are neither stacked nor dodged (bars overlap).
 
     Computed variables:
 
@@ -8613,19 +8642,24 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9-10
+        :emphasize-lines: 9-15
 
         from lets_plot import *
         from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        data = {"city": ["New York", "New York", "Philadelphia", "Philadelphia"], \\
-                "est_pop_2020": [4_381_593, 3_997_959, 832_685, 748_846], \\
+        data = {"city": ["New York", "New York", "Philadelphia", "Philadelphia"],
+                "est_pop_2020": [4_381_593, 3_997_959, 832_685, 748_846],
                 "sex": ["female", "male", "female", "male"]}
         centroids = geocode_cities(data["city"]).get_centroids()
         ggplot() + geom_livemap() + \\
-            geom_pie(aes(slice="est_pop_2020", fill="sex", size="est_pop_2020"), \\
-                     stat='identity', data=data, map=centroids, map_join="city") + \\
-            scale_size(guide='none')
+            geom_pie(aes(fill="sex", weight="est_pop_2020", size="..sum..", group=["city", "sex"]),
+                     data=data, map=centroids, map_join="city",
+                     tooltips=layer_tooltips().title("@city")
+                                              .format("@est_pop_2020", ".3~s")
+                                              .line("population (@sex):\\n@est_pop_2020 (@..proppct..)")
+                                              .format("@..sum..", ".3~s")
+                                              .line("population (total):\\n@..sum..")) + \\
+            scale_size(range=[4, 10], guide='none')
 
     """
     if 'stroke_color' in other_args:

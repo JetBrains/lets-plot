@@ -56,7 +56,6 @@ def aes(x=None, y=None, **kwargs):
         - Use ``group=['var1', 'var2', ...]`` to group by the interaction of multiple variables
         - Use ``group=[]`` to disable all the grouping completely
 
-
     Examples
     --------
     .. jupyter-execute::
@@ -496,6 +495,8 @@ class PlotSpec(FeatureSpec):
         """
         Export the plot in SVG format.
 
+        Plots containing ``geom_livemap()`` are not supported.
+
         Parameters
         ----------
         self : ``PlotSpec``
@@ -522,18 +523,20 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             import io
             from lets_plot import *
             from IPython import display
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
+
         """
         return _to_svg(self, path, w=w, h=h, unit=unit)
 
@@ -563,22 +566,28 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 8
+            :emphasize-lines: 10
 
-            import numpy as np
             import io
+            from IPython.display import HTML
+            import numpy as np
             from lets_plot import *
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_html(file_like)
+            HTML(file_like.getvalue().decode('utf-8'))
+
         """
         return _to_html(self, path, iframe)
 
     def to_png(self, path, scale: float = None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export a plot to a file or to a file-like object in PNG format.
+
+        Plots containing ``geom_livemap()`` are not supported.
 
         Parameters
         ----------
@@ -641,13 +650,14 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             import io
             from lets_plot import *
             from IPython import display
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
@@ -660,6 +670,8 @@ class PlotSpec(FeatureSpec):
     def to_pdf(self, path, scale: float = None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export a plot to a file or to a file-like object in PDF format.
+
+        Plots containing ``geom_livemap()`` are not supported.
 
         Parameters
         ----------

@@ -38,11 +38,11 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1,
         Specify the format pattern for displaying faceting values in rows.
     x_labwidth : int, default=None
         The maximum label length (in characters) before a line breaking is applied.
-        If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
+        If the original facet label already contains ``\\n`` as a text separator, it splits at those points first,
         then wraps each part according to ``x_labwidth``.
     y_labwidth : int, default=None
         The maximum label length (in characters) before a line breaking is applied.
-        If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
+        If the original facet label already contains ``\\n`` as a text separator, it splits at those points first,
         then wraps each part according to ``y_labwidth``.
 
     Returns
@@ -138,7 +138,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         Direction: either 'h' for horizontal or 'v' for vertical.
     labwidth : int or list
         The maximum label length (in characters) before a line breaking is applied.
-        If the original facet label already contains ``\\\\n`` as a text separator, it splits at those points first,
+        If the original facet label already contains ``\\n`` as a text separator, it splits at those points first,
         then wraps each part according to ``labwidth``.
 
 

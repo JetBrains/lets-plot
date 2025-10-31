@@ -182,10 +182,10 @@ def theme(*,
         To remove the plot legend, use the 'none' value.
         If parameter is a list, then it should be a two-element numeric vector [x, y], where each value is between 0 and 1.
         These coordinates position the legend inside the plotting area, where [0, 0] is the bottom left corner and [1, 1] is the top right corner.
-        The anchor point of the legend box can be controlled with `legend_justification`.
+        The anchor point of the legend box can be controlled with ``legend_justification``.
     legend_justification : {'center', 'left', 'right', 'top', 'bottom'} or list
         Anchor point of the legend box for positioning.
-        Determines which point of the legend box is placed at the coordinates specified by `legend_position`.
+        Determines which point of the legend box is placed at the coordinates specified by ``legend_position``.
         If parameter is a list, then it should be a two-element numeric vector [x, y], where each value is between 0 and 1.
         The pair [0, 0] corresponds to the bottom left corner of the legend box, and [1, 1] corresponds to the top right corner.
     legend_direction : {'horizontal', 'vertical'}
@@ -671,10 +671,11 @@ def element_markdown(
     This theme element draws text with Markdown support.
 
     Supported features:
-    - Emphasis (*, **, ***, _, __, ___)
+
+    - Emphasis (\*, \*\*, \*\*\*, _, __, ___)
     - Coloring with inline style (<span style='color:red'>text</span>)
     - Links with anchor tags (<a href="https://lets-plot.org">Lets-Plot</a>). Supports target attribute (default is "_blank")
-    - Multiple lines using double space and a newline delimiter (  \n)
+    - Multiple lines using double space and a newline delimiter (  ``\\n``)
 
     Parameters
     ----------
