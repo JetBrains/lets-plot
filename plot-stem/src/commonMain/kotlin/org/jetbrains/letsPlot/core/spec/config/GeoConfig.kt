@@ -64,6 +64,7 @@ class GeoConfig(
 
 
     companion object {
+        private val POINT_GEOMS = setOf(POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE, POINT_DENSITY)
         const val GEO_ID = "__geo_id__"
         const val POINT_X = "lon"
         const val POINT_Y = "lat"
@@ -91,16 +92,16 @@ class GeoConfig(
                 return false
             }
 
-            val pointGeoms = setOf(POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE)
-
             return if (clientSide) {
-                // front end - non-point geometries (path and polygon)
-                // Pass effectively encoded geo data to the front end and merge there
-                geomKind !in pointGeoms
+                // front end
+                // Merge non-point geo data (path and polygon) on the front end - needed for drawing
+                // Point geometries already merged on the back end - don't allow merging again
+                geomKind !in POINT_GEOMS
             } else {
-                // back end - point geometries
-                // Merge geo data on the back end - needed for grouping and stat calculations
-                geomKind in pointGeoms
+                // back end
+                // Merge point geo data on the back end - needed for grouping and stat calculations
+                // Pass effectively encoded path and polygon geo data to the front
+                geomKind in POINT_GEOMS
             }
         }
 
