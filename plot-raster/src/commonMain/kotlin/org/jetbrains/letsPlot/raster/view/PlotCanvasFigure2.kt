@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 import org.jetbrains.letsPlot.raster.builder.ViewModel
@@ -74,6 +75,9 @@ class PlotCanvasFigure2 : CanvasFigure2 {
     }
 
     override val eventPeer: MouseEventPeer = MouseEventPeer()
+
+    @Suppress("unused") // for lets-plot-compose
+    val toolEventDispatcher: ToolEventDispatcher? get() = viewModel?.toolEventDispatcher
 
     override fun resize(width: Number, height: Number) {
         containerSize = DoubleVector(width.toDouble(), height.toDouble())
