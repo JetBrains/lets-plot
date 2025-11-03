@@ -24,6 +24,7 @@ import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
 import kotlin.math.ceil
 
+@Deprecated("Migrate to SvgCanvasFigure2 and CanvasPane2")
 class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     var svgSvgElement: SvgSvgElement = svg
         set(value) {

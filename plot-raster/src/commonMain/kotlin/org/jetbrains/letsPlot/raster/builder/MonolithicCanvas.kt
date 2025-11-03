@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
  * no JComponents or Views are created here.
  */
 object MonolithicCanvas {
+    @Deprecated("Migrate to PlotCanvasFigure2 and CanvasPane2")
     fun buildPlotFigureFromRawSpec(
         rawSpec: MutableMap<String, Any>,
         sizingPolicy: SizingPolicy,
@@ -32,6 +33,7 @@ object MonolithicCanvas {
         return plotCanvasFigure
     }
 
+    @Deprecated("Migrate to PlotCanvasFigure2 and CanvasPane2")
     fun updatePlotFigureFromRawSpec(
         plotCanvasFigure: PlotCanvasFigure,
         rawSpec: MutableMap<String, Any>,

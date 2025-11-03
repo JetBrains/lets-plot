@@ -31,6 +31,7 @@ import javax.imageio.ImageIO
 import javax.swing.JComponent
 import javax.swing.JLayeredPane
 
+@Deprecated("Migrate to CanvasPane2")
 class CanvasPane(
     figure: CanvasFigure? = null,
     private val pixelDensity: Double = 1.0,

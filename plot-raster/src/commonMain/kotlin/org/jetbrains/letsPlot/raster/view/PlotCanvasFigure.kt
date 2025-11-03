@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
 
+@Deprecated("Migrate to PlotCanvasFigure2 and CanvasPane2")
 class PlotCanvasFigure : CanvasFigure {
     private var processedSpec: Map<String, Any>? = null
     private var sizingPolicy: SizingPolicy = SizingPolicy.keepFigureDefaultSize()
