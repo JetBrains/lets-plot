@@ -6,6 +6,10 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_pointdensity.ipynb).
 
+ - Geoms with 1-to-1 statistics (such as `geom_qq()`, `geom_sina()`) preserve the mapping to original data after statistical transformation.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
+
 - `ggtb()`: `size_zoomin` and `size_basis` parameters for geometry scaling. [[#1369](https://github.com/JetBrains/lets-plot/issues/1369)]
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/ggtb_size_zoomin.ipynb).
@@ -14,22 +18,35 @@
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_histogram_param_breaks.ipynb).
 
-- `flavor_standard()` sets the theme's default color scheme [[#1277](https://github.com/JetBrains/lets-plot/issues/1277)]. <br>
-  Use to override other flavors or make defaults explicit.
+- Plot Layout:
+  - The legend automatically wraps to prevent overlap - up to 15 rows for vertical legends and 5 columns for horizontal ones [[#1235](https://github.com/JetBrains/lets-plot/issues/1235)].
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/flavor_standard.ipynb).
-  
-- `theme_gray()` as an alias for `theme_grey()`.
+    See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_wrap.ipynb).
 
-- `legend_justification` parameter of `theme()` accepts additional string values: `'left'`, `'right'`, `'top'`, and `'bottom'`.
+  - `guides` parameter in `gggrid()`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_justification.ipynb).
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/gggrid_legend_collect.ipynb).
 
-- markdown: `target` attribute for links.
+- Plot Theme:
+  - `flavor_standard()` sets the theme's default color scheme [[#1277](https://github.com/JetBrains/lets-plot/issues/1277)]. <br>
+    Use to override other flavors or make defaults explicit.
 
-- `guides` parameter in `gggrid()`.
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/flavor_standard.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/gggrid_legend_collect.ipynb).
+  - `theme_gray()` as an alias for `theme_grey()`.
+
+  - `legend_justification` parameter of `theme()` accepts additional string values: `'left'`, `'right'`, `'top'`, and `'bottom'`.
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_justification.ipynb).
+
+  - Support for inward axis ticks.
+
+    See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/axis_tick_direction.ipynb).
+
+- Markdown:
+  -  Support for `target` attribute for links.
+  -  Links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
+
 
 ### Changed
 
@@ -43,24 +60,15 @@
   > Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
   > and `group=[]` to disable any grouping. 
 
-- Geoms with 1-to-1 statistics (`geom_qq()`, `geom_sina()`) now keep bijection with original data for aesthetics.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
-- markdown: links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
-
-- `theme`: the `exponent_format` default value changed to `'pow'`.
+- `theme`: the `exponent_format` default value changed to `'pow'` - superscript powers of 10 (was e-notation).
 
 - Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
   
   See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
+
 - The multi-layer line plot now shows tooltips for each series simultaneously, in the same way that a single-layer plot with color mapped to series does.
 - `map_join` now has a higher priority and overrides positional mappings.
-- The legend automatically wraps to prevent overlap - up to 15 rows for vertical legends and 5 columns for horizontal ones [[#1235](https://github.com/JetBrains/lets-plot/issues/1235)].
 
-  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_wrap.ipynb).
-- If the `axis_ticks_length`, `axis_ticks_length_x`, or `axis_ticks_length_y` parameter in theme() is negative, the ticks are drawn inward.
-
-  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/axis_tick_direction.ipynb).
 - Plot with scale_y_log10() is distorting the value and producing the wrong plot. [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)]
 
   See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_ribbon_with_NaN.ipynb).

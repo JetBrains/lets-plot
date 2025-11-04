@@ -12,10 +12,11 @@ dependencies:
   - gdal                            # for DEM data
   - pip
   - pip:                            # Packages installed from PyPI
-      - lets-plot==4.7.0
+      - lets-plot==4.8.0rc1
 #      - pypng                      # will be installed by lets-plot dependencies
 #      - palettable
 #      - pillow                     # will be installed by lets-plot dependencies
+      - polars
       - scikit-datasets
       - geopandas
       - requests
