@@ -21,7 +21,7 @@
 - Plot Layout:
   - The legend automatically wraps to prevent overlap - up to 15 rows for vertical legends and 5 columns for horizontal ones [[#1235](https://github.com/JetBrains/lets-plot/issues/1235)].
 
-    See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_wrap.ipynb).
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_wrap.ipynb).
 
   - `guides` parameter in `gggrid()`.
 
@@ -41,7 +41,7 @@
 
   - Support for inward axis ticks.
 
-    See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/axis_tick_direction.ipynb).
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/axis_tick_direction.ipynb).
 
 - Markdown:
   -  Support for `target` attribute for links.
@@ -64,17 +64,17 @@
 
 - Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
   
-  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
 
 - The multi-layer line plot now shows tooltips for each series simultaneously, in the same way that a single-layer plot with color mapped to series does.
 - `map_join` now has a higher priority and overrides positional mappings.
 - `geom_pie` now groups data by coordinates when no explicit `group` aesthetic is provided.
 - Plot with scale_y_log10() is distorting the value and producing the wrong plot. [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)]
 
-  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_ribbon_with_NaN.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_ribbon_with_NaN.ipynb).
 - geom_area: Handling NaN values. geom_area() will now break if y includes NaN values.
 
-  See: [example notebook](https://nbviewer.lp.hil-hk.com/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_area_with_NaN.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_area_with_NaN.ipynb).
   
 
 ### Fixed
