@@ -69,7 +69,8 @@ Also read:
 - #### Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it
 
 > [!IMPORTANT]
-> **BREAKING CHANGE**
+> **BREAKING CHANGE:**
+> 
 > Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
 > aesthetics (color, shape, etc.). \
 > Now it groups ONLY by the explicit variable, matching `ggplot2` behavior. \
