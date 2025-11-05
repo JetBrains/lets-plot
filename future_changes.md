@@ -1,20 +1,17 @@
 ## [4.8.0] - 2025-11-dd
 
 ### Added
+           
+- Geometries:
+  - `geom_pointdensity()` [[#1370](https://github.com/JetBrains/lets-plot/issues/1370)].
 
-- `geom_pointdensity()` [[#1370](https://github.com/JetBrains/lets-plot/issues/1370)].
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_pointdensity.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_pointdensity.ipynb).
+  - Geoms with 1-to-1 statistics (such as `geom_qq()`, `geom_sina()`) preserve the mapping to original data after statistical transformation.
 
- - Geoms with 1-to-1 statistics (such as `geom_qq()`, `geom_sina()`) preserve the mapping to original data after statistical transformation.
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/stat_data_bijection.ipynb).
-
-- `ggtb()`: `size_zoomin` and `size_basis` parameters for geometry scaling. [[#1369](https://github.com/JetBrains/lets-plot/issues/1369)]
-  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/ggtb_size_zoomin.ipynb).
-
-- `geom_histogram()`: parameter `breaks`. [[#1382](https://github.com/JetBrains/lets-plot/issues/1382)]
+  - `geom_histogram()`: custom bin bounds (parameter `breaks`) [[#1382](https://github.com/JetBrains/lets-plot/issues/1382)].
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_histogram_param_breaks.ipynb).
 
@@ -23,7 +20,7 @@
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/legend_wrap.ipynb).
 
-  - `guides` parameter in `gggrid()`.
+  - `gggrid()`: support for shared legends (parameter `guides`).
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/gggrid_legend_collect.ipynb).
 
@@ -47,6 +44,10 @@
   -  Support for `target` attribute for links.
   -  Links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
 
+- `ggtb()`: `size_zoomin` and `size_basis` parameters for geometry scaling [[#1369](https://github.com/JetBrains/lets-plot/issues/1369)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/ggtb_size_zoomin.ipynb).
+
 
 ### Changed
 
@@ -60,25 +61,18 @@
   > Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
   > and `group=[]` to disable any grouping. 
 
+- Missing values in `geom_line(), geom_path(), geom_ribbon()`, and `geom_area()` create gaps in geometries instead of being interpolated over [[#818](https://github.com/JetBrains/lets-plot/issues/818)], [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/missing_values_line_path_area_ribbon.ipynb).
+
 - `theme`: the `exponent_format` default value changed to `'pow'` - superscript powers of 10 (was e-notation).
 
-- Plot Nothing when encountering NaN [[#818](https://github.com/JetBrains/lets-plot/issues/818)].
-  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_path_with_breaks_at_NaN.ipynb).
-
 - The multi-layer line plot now shows tooltips for each series simultaneously, in the same way that a single-layer plot with color mapped to series does.
-- `map_join` now has a higher priority and overrides positional mappings.
-- `geom_pie` now groups data by coordinates when no explicit `group` aesthetic is provided.
-- Plot with scale_y_log10() is distorting the value and producing the wrong plot. [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)]
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_ribbon_with_NaN.ipynb).
-- geom_area: Handling NaN values. geom_area() will now break if y includes NaN values.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25e/geom_area_with_NaN.ipynb).
   
 
 ### Fixed
 
+- `geom_pie` on geospatioal plot with `map_join` failes to render without explicit `group` aesthetic.
 - geom_density2d: NullPointerException when weight aesthetic contains None values [[#1399](https://github.com/JetBrains/lets-plot/issues/1399)].
 - Tooltip shows duplicate lines when as_discrete is applied twice to the same var [[#1400](https://github.com/JetBrains/lets-plot/issues/1400)].
 - geom_sina: incorrect shape in legend [[#1403](https://github.com/JetBrains/lets-plot/issues/1403)].
