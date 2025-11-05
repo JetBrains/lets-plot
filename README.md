@@ -58,64 +58,62 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.7.0
+## What is new in 4.8.0
 
-- #### Time Series Plotting
-  - Support for Python `time` and `date` objects.
-  - Support for timezone-aware `datetime` objects and Pandas/Polars `Series`.
+- #### `geom_pointdensity()` Geometry
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/time_date_datetime.png" alt="f-25b/images/time_date_datetime.png" width="400" height="237">
-  
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/time_date_datetime.ipynb).
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/geom_pointdensity.png" alt="f-25e/images/geom_pointdensity.png" width="400" height="246">
 
-- #### Native support for PNG and PDF exports
-  Exporting to PNG and PDF formats now uses the `ImageMagick` library bundled with Lets-Plot Python wheels and available out-of-the-box. <br>
-  This replaces the previous dependency on the `CairoSVG` library and comes with improved support for LaTeX labels rasterization. <br>
+  See [example notebook](https://lets-plot.org/releases/f-25e/geom_pointdensity.html).
+                         
+- #### Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it
 
-- #### `geom_sina()` Geometry
+> [!IMPORTANT]
+> **BREAKING CHANGE:**
+> 
+> Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
+> aesthetics (color, shape, etc.). \
+> Now it groups ONLY by the explicit variable, matching `ggplot2` behavior. \
+> Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
+> and `group=[]` to disable any grouping.
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/geom_sina.png" alt="f-25b/images/geom_sina.png" width="400" height="276">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/group_override_defaults.png" alt="f-25e/images/group_override_defaults.png" width="400" height="263">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
+  See [example notebook](https://lets-plot.org/releases/f-25e/group_override_defaults.html).
 
-- #### `geom_text_repel()` and `geom_label_repel()` Geometries
+- #### `gggrid()`: support for shared legends (parameter `guides`)
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/geom_repel.png" alt="f-25b/images/geom_repel.png" width="400" height="232">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/gggrid_legend_collect.png" alt="f-25e/images/group_override_defaults.png" width="500" height="172">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/ggrepel.ipynb).
+  See [example notebook](https://lets-plot.org/releases/f-25e/gggrid_legend_collect.html).
 
-- #### `waterfall_plot()` Chart
+- #### Better handling of missing values in `geom_line(), geom_path(), geom_ribbon()`, and `geom_area()`
 
-  - Annotations support via `relative_labels` and `absolute_labels` parameters. <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/waterfall_plot_annotations.png" alt="f-25b/images/waterfall_plot_annotations.png" width="400" height="253">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/missing_values_ribbon.png" alt="f-25e/images/missing_values_ribbon.png" width="500" height="192">
 
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
-                                   
-  - Support for combining waterfall bars with other geometry layers. <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/waterfall_plot_layers.png" alt="f-25b/images/waterfall_plot_layers.png" width="400" height="227">
+  See [example notebook](https://lets-plot.org/releases/f-25e/missing_values_line_path_area_ribbon.html).
 
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_layers.ipynb).
+- #### `geom_histogram()`: custom bin bounds (parameter `breaks`)
 
-- #### Continuous Data on Discrete Scales
+  See [example notebook](https://lets-plot.org/releases/f-25e/geom_histogram_param_breaks.html).
 
-  Continuous data when used with discrete positional scales is no longer transformed to discrete data. <br>
-  Instead, it remains continuous, allowing for precise positioning of continuous elements relative to discrete ones. <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/combo_discrete_continuous.png" alt="f-25b/images/combo_discrete_continuous.png" width="400" height="151">
+- #### Legend automatically wraps to prevent overlap — up to 15 rows for vertical legends and 5 columns for horizontal ones
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
+  See [example notebook](https://lets-plot.org/releases/f-25e/legend_wrap.html).
 
-> [!TIP]
-> New way of handling continuous data on discrete scales could potentially break existing plots.
-> If you want to restore a broken plot to its original form, you can use the [`as_discrete()`](https://lets-plot.org/python/pages/api/lets_plot.mapping.as_discrete.html) function to annotate continuous data as discrete.
+- #### `flavor_standard()` resets the theme's default color scheme
+  Use to override other flavors or make defaults explicit.
 
+  See [example notebook](https://lets-plot.org/releases/f-25e/flavor_standard.html).
 
-- #### Plot Layout
-  The default plot layout has been improved to better accommodate axis labels and titles. <br>
-  Also, new `theme()` options `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` control spacing between axis ticks and labels. <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/plot_layout_diagram.png" alt="f-25b/images/plot_layout_diagram.png" width="400" height="175">
+- #### `'left'`, `'right'`, `'top'`, and `'bottom'` legend justification
 
-  See the [plot layout diagram](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb) showing various layout options and their effects on plot appearance.
+  See [example notebook](https://lets-plot.org/releases/f-25e/legend_justification.html).
 
+- #### `ggtb()`: Added `size_zoomin` and `size_basis` parameters to control point size scaling behavior when zooming (works with `geom_point` and related layers).
+
+  See: [example notebook](https://lets-plot.org/releases/f-25e/ggtb_size_zoomin.html).
+                                                                                                                  
 
 - #### And More
 
