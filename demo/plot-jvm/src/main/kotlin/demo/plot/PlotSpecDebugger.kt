@@ -661,10 +661,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 "Plot Error",
                 JOptionPane.ERROR_MESSAGE
             )
-            SwingUtilities.invokeLater {
-                frontendComboBox.selectedItem = frontendComboBox.selectedItem
-            }
-
         } finally {
             plotPanel.revalidate()
         }
