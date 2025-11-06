@@ -691,12 +691,10 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private class VerticalButtonUI : BasicButtonUI() {
         override fun paint(g: Graphics, c: JComponent) {
             val button = c as AbstractButton
-            val text = button.text
-
-            button.text = null
+            // Call the superclass's paint method to paint the button's background, border, etc.
             super.paint(g, c)
-            button.text = text
 
+            val text = button.text
             if (text == null || text.isEmpty()) {
                 return
             }
@@ -711,9 +709,11 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             val lineHeight = fm.height
             val totalHeight = lines.size * lineHeight
 
+            // Calculate the starting y-coordinate to center the text vertically
             var y = (c.height - totalHeight) / 2 + fm.ascent
 
             for (line in lines) {
+                // Calculate the x-coordinate to center the text horizontally
                 val stringWidth = fm.stringWidth(line)
                 val x = (c.width - stringWidth) / 2
                 g2d.drawString(line, x, y)
@@ -737,5 +737,4 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 totalHeight + insets.top + insets.bottom
             )
         }
-    }
-}
+    }}
