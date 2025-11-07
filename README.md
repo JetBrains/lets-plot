@@ -122,6 +122,9 @@ Also read:
 
 ## Recent Updates in the [Gallery](https://lets-plot.org/python/pages/gallery.html)
 
+  <a href="https://lets-plot.org/examples/demo/cities_density.html">
+    <img src="https://github.com/JetBrains/lets-plot-docs/blob/bcc63703214b5b02a8a374668d8bba7a451a9152/source/_static/images/changelog/4.8.0/square-cities_density.png?raw=true" alt="images/changelog/4.8.0/square-cities_density.png" width="128" height="128">
+  </a>
   <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/raincloud.ipynb">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-raincloud.png?raw=true" alt="images/changelog/4.7.0/square-raincloud.png" width="128" height="128">
   </a>
