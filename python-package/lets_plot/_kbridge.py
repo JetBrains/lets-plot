@@ -35,6 +35,19 @@ def _generate_png(bytestring: Dict, output_width: float, output_height: float, u
     return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, unit, dpi, scale)
 
 
+def _generate_mvg(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
+    """
+    Export a plot to MVG format. For internal use.
+    """
+    plot_spec = _standardize_plot_spec(bytestring)
+    output_width = -1.0 if output_width is None else float(output_width)
+    output_height = -1.0 if output_height is None else float(output_height)
+    unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
+    dpi = -1 if dpi is None else int(dpi)
+    scale = -1.0 if scale is None else float(scale)
+    return lets_plot_kotlin_bridge.export_mvg(plot_spec, output_width, output_height, unit, dpi, scale)
+
+
 def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)
     scriptUrl = get_js_cdn_url()

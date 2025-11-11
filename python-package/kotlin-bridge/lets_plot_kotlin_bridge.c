@@ -63,6 +63,26 @@ static PyObject* export_png(PyObject* self, PyObject* args) {
     return imageData; // base64 encoded PNG
 }
 
+static PyObject* export_mvg(PyObject* self, PyObject* args) {
+    T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
+
+    PyObject *rawPlotSpecDict;
+    float width;
+    float height;
+    const char* unit;
+    int dpi;
+    float scale;
+    if (!PyArg_ParseTuple(args, "Offsif", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale)) {
+        PyErr_SetString(PyExc_TypeError, "export_mvg: failed to parse arguments");
+        return NULL;
+    }
+
+    //printf("export_mvg: width=%f, height=%f, unit=%s, dpi=%d, scale=%f\n", width, height, unit, dpi, scale);
+
+    PyObject* mvg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportMvg(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale);
+    return mvg;
+}
+
 static PyObject* export_html(PyObject* self, PyObject* args) {
     T_(PlotReprGenerator) reprGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator._instance();
 
@@ -121,6 +141,7 @@ static PyMethodDef module_methods[] = {
    { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },
    { "export_svg", (PyCFunction)export_svg, METH_VARARGS, "Generates SVG representing plot." },
    { "export_html", (PyCFunction)export_html, METH_VARARGS, "Generates HTML page showing plot." },
+   { "export_mvg", (PyCFunction)export_mvg, METH_VARARGS, "Generates MVG string representing plot. For internal use." },
    { "export_png", (PyCFunction)export_png, METH_VARARGS, "Generates Base64-encoded PNG string representing plot." },
    { "get_static_configure_html", (PyCFunction)get_static_configure_html, METH_O, "Generates static HTML configuration." },
    { "get_display_html_for_raw_spec", (PyCFunction)get_display_html_for_raw_spec, METH_VARARGS, "Generates display HTML for raw plot spec." },

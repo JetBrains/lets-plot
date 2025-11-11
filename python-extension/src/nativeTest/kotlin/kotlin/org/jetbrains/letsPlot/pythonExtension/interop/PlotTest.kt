@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 import kotlin.random.Random
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.time.measureTime
@@ -857,6 +858,7 @@ class PlotTest {
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
     }
 
+    @Ignore
     @Test
     fun perf() {
         val rnd = Random(42)

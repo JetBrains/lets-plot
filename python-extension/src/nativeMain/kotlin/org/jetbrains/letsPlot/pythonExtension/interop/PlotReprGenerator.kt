@@ -7,6 +7,7 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
+import ImageMagick.DrawGetVectorGraphics
 import Python.PyErr_SetString
 import Python.PyExc_ValueError
 import Python.PyObject
@@ -33,15 +34,6 @@ import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
 import kotlin.time.TimeSource
 
 object PlotReprGenerator {
-    private fun logPerf(message: () -> String) {
-        if (LOG_PERF) {
-            println(message())
-        }
-    }
-
-    private const val LOG_PERF = false
-    private const val LOG_MVG = false
-
     private val defaultFontManager by lazy { MagickFontManager.default() }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
@@ -166,11 +158,7 @@ object PlotReprGenerator {
     ): Pair<Bitmap, Double> {
         var canvasReg: Registration? = null
         try {
-            val start = TimeSource.Monotonic.markNow()
-
             val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
-
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): $exportParameters" }
 
             @Suppress("UNCHECKED_CAST")
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
@@ -182,8 +170,6 @@ object PlotReprGenerator {
                 computationMessagesHandler = { }
             )
 
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): plotCanvasFigure built, size=${plotCanvasFigure.size}" }
-
             val magickCanvasPeer = MagickCanvasPeer(
                 pixelDensity = exportParameters.scaleFactor,
                 fontManager = fontManager,
@@ -191,41 +177,18 @@ object PlotReprGenerator {
 
             canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): plot mapped to canvas" }
-
             val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
-
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}" }
 
             plotCanvasFigure.paint(canvas.context2d)
 
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): plot painted" }
-
             // Save the image to a file
             val snapshot = canvas.takeSnapshot()
-
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): snapshot taken" }
-
             val bitmap = snapshot.bitmap
-
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): bitmap extracted" }
-
-            if (LOG_MVG) {
-                val wand = canvas.context2d.wand
-                val vectorGraphics = ImageMagick.DrawGetVectorGraphics(wand)
-                if (vectorGraphics != null) {
-                    println(vectorGraphics.toKString())
-                } else {
-                    println("MagicWand: MVG is null")
-                }
-            }
 
             canvas.dispose()
             snapshot.dispose()
             magickCanvasPeer.dispose()
-
-            logPerf { "${TimeSource.Monotonic.markNow() - start}: exportBitmap(): resources disposed" }
-
+            
             return bitmap to exportParameters.dpi
         } finally {
             canvasReg?.dispose()
@@ -273,4 +236,90 @@ object PlotReprGenerator {
             return null
         }
     }
+
+    @Suppress("unused") // This function is used in kotlin_bridge.c
+    fun exportMvg(
+        plotSpecDict: CPointer<PyObject>?,
+        width: Float,
+        height: Float,
+        unit: CPointer<ByteVar>,
+        dpi: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        var canvasReg: Registration? = null
+        try {
+            val start = TimeSource.Monotonic.markNow()
+
+            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
+            val sizeUnit = SizeUnit.fromName(unit.toKString())
+            val dpi = if (dpi >= 0) dpi.toDouble() else null
+            val scaleFactor = if (scale >= 0) scale.toDouble() else null
+            val plotSpec = pyDictToMap(plotSpecDict)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotSpec parsed")
+
+            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scaleFactor)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): $exportParameters")
+
+            @Suppress("UNCHECKED_CAST")
+            val rawPlotSpec = plotSpec as MutableMap<String, Any>
+
+            val plotCanvasFigure = PlotCanvasFigure2()
+            plotCanvasFigure.update(
+                processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
+                sizingPolicy = exportParameters.sizingPolicy,
+                computationMessagesHandler = { }
+            )
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure built, size=${plotCanvasFigure.size}")
+
+            val magickCanvasPeer = MagickCanvasPeer(
+                pixelDensity = exportParameters.scaleFactor,
+                fontManager = defaultFontManager,
+            )
+
+            canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
+
+            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}")
+
+            plotCanvasFigure.paint(canvas.context2d)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot painted")
+
+            // Save the image to a file
+            val snapshot = canvas.takeSnapshot()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): snapshot taken")
+
+            val bitmap = snapshot.bitmap
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): bitmap extracted")
+
+            val wand = canvas.context2d.wand
+            val mvg = DrawGetVectorGraphics(wand)?.toKString() ?: "MagicWand: MVG is null"
+
+            canvas.dispose()
+            snapshot.dispose()
+            magickCanvasPeer.dispose()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): resources disposed")
+
+            return Py_BuildValue("s", mvg)
+        } catch (e: Throwable) {
+            canvasReg?.dispose()
+
+            //e.printStackTrace()
+
+            // Set a Python exception with the caught error message
+            PyErr_SetString(PyExc_ValueError, "${e.message}")
+            // Return null to signal that an exception was raised
+            return null
+        }
+    }
+
 }

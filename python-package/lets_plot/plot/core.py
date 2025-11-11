@@ -1016,6 +1016,23 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
         raise ValueError("Unknown export format: {}".format(export_format))
 
 
+def _to_mvg(spec, path, scale: float, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+    from .. import _kbridge
+
+    mvg = _kbridge._generate_mvg(spec.as_dict(), w, h, unit, dpi, scale)
+
+    if path is None:
+        return mvg
+    elif isinstance(path, str):
+        abspath = _makedirs(path)
+        with io.open(abspath, mode="w", encoding="utf-8") as f:
+            f.write(mvg)
+            return abspath
+    else:
+        path.write(mvg.encode())
+        return None
+
+
 def _makedirs(path: str) -> str:
     """Return absolute path to a file after creating all directories in the path."""
     abspath = os.path.abspath(path)

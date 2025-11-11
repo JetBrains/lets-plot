@@ -5,10 +5,7 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.convert
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.refTo
+import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.values.Bitmap
 
 object MagickUtil {
@@ -57,6 +54,16 @@ object MagickUtil {
         if (MEMORY_LOG_ENABLED) {
             println(message())
         }
+    }
+
+    fun getException(wand: CPointer<ImageMagick.MagickWand>): String {
+        val errPtr = ImageMagick.MagickGetException(wand, null)
+        val errMsg = errPtr?.toKString() ?: "Unknown error"
+
+        if (errPtr != null) {
+            ImageMagick.MagickRelinquishMemory(errPtr)
+        }
+        return errMsg
     }
 
     fun newPixelWand(): CPointer<ImageMagick.PixelWand> {
