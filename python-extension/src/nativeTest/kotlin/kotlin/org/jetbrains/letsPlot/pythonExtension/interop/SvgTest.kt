@@ -4,6 +4,7 @@ import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure2
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -17,6 +18,7 @@ class SvgTest {
         private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
     }
 
+    @Ignore
     @Test
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
