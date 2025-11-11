@@ -21,6 +21,7 @@ import kotlin.time.measureTime
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@Ignore
 class PlotTest {
     companion object {
         private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
@@ -858,7 +859,6 @@ class PlotTest {
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
     }
 
-    @Ignore
     @Test
     fun perf() {
         val rnd = Random(42)
@@ -877,15 +877,17 @@ class PlotTest {
 
         val plotSpec = parsePlotSpec(spec)
         val times = mutableListOf<Long>()
+        var mvg: String? = null
         repeat(1) {
             times += measureTime {
-                val (bitmap, _) = PlotReprGenerator.exportBitmap(
+                mvg = PlotReprGenerator.generateMvg(
                     plotSpec = plotSpec,
                     fontManager = embeddedFontsManager
                     //fontManager = MagickFontManager.default() // For manual testing
                 )
             }.inWholeMilliseconds
         }
+        println(mvg)
         println("Time for plotting $n points: ${times.joinToString()} ms")
         //assertPlot("perf.png", plotSpec)
 

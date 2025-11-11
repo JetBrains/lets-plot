@@ -96,7 +96,15 @@ class MagickContext2d(
         dirtyFont = true
     }
 
+    override fun circle(x: Double, y: Double, radius: Double) {
+        ImageMagick.DrawCircle(wand, x, y, x + radius, y)
+    }
+
     override fun setFillStyle(color: Color?) {
+        if (stateDelegate.getFillColor() == color) {
+            return
+        }
+
         stateDelegate.setFillStyle(color)
 
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
@@ -104,6 +112,10 @@ class MagickContext2d(
     }
 
     override fun setStrokeStyle(color: Color?) {
+        if (stateDelegate.getStrokeColor() == color) {
+            return
+        }
+
         stateDelegate.setStrokeStyle(color)
 
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
@@ -111,12 +123,19 @@ class MagickContext2d(
     }
 
     override fun setLineWidth(lineWidth: Double) {
+        if (stateDelegate.getLineWidth() == lineWidth) {
+            return
+        }
         stateDelegate.setLineWidth(lineWidth)
 
         ImageMagick.DrawSetStrokeWidth(wand, lineWidth)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
+        if (stateDelegate.getLineDash() == lineDash.toList()) {
+            return
+        }
+
         stateDelegate.setLineDash(lineDash)
 
         if (lineDash.isNotEmpty()) {
@@ -179,6 +198,13 @@ class MagickContext2d(
 
             drawPath(fillWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
         }
+    }
+
+    override fun fillAndStroke() {
+        // Make ctm identity. null for degenerate case, e.g., scale(0, 0) - skip drawing.
+        val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
+
+        drawPath(wand, stateDelegate.getCurrentPath(), inverseCtmTransform)
     }
 
     override fun fillEvenOdd() {
@@ -516,3 +542,4 @@ class MagickContext2d(
 
     }
 }
+

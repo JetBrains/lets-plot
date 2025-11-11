@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
+import kotlin.math.PI
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
@@ -34,11 +35,18 @@ interface Context2d {
     fun clip()
     fun stroke()
     fun fill()
+    fun fillAndStroke() {
+        fill()
+        stroke()
+    }
+
     fun fillEvenOdd()
     fun fillRect(x: Double, y: Double, w: Double, h: Double)
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
+    fun circle(x: Double, y: Double, radius: Double) = arc(x, y, radius, 0.0, 2.0 * PI, false)
+
     fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean)
     fun save()
     fun restore()
