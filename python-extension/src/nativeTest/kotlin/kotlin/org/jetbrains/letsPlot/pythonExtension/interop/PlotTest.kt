@@ -9,8 +9,10 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.fail
+import kotlin.time.measureTime
 
 
 /*
@@ -853,6 +855,38 @@ class PlotTest {
         val plotSpec = parsePlotSpec(spec)
 
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
+    }
+
+    @Test
+    fun perf() {
+        val rnd = Random(42)
+        val n = 10_000
+        val xs = List(n) { rnd.nextDouble() * 1000 }
+        val ys = List(n) { rnd.nextDouble() * 1000 }
+
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": { "x": [${xs.joinToString(", ")}], "y": [${ys.joinToString(", ")}] },
+            |  "mapping": { "x": "x", "y": "y", "fill": "x" },
+            |  "layers": [ { "geom": "point", "size": 4, "color": "black", "shape": 21 } ]
+            |}
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        val times = mutableListOf<Long>()
+        repeat(1) {
+            times += measureTime {
+                val (bitmap, _) = PlotReprGenerator.exportBitmap(
+                    plotSpec = plotSpec,
+                    fontManager = embeddedFontsManager
+                    //fontManager = MagickFontManager.default() // For manual testing
+                )
+            }.inWholeMilliseconds
+        }
+        println("Time for plotting $n points: ${times.joinToString()} ms")
+        //assertPlot("perf.png", plotSpec)
+
     }
 
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {

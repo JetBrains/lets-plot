@@ -6,11 +6,9 @@
 package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
@@ -24,16 +22,10 @@ class MagickCanvas(
     private val fontManager: MagickFontManager,
 ) : Canvas, Disposable {
     private val magickContext2d = MagickContext2d(_img, pixelDensity, fontManager)
-    override val context2d: Context2d = magickContext2d
+    override val context2d: MagickContext2d = magickContext2d
 
     override fun takeSnapshot(): MagickSnapshot {
-        val wand = (context2d as MagickContext2d).wand
-
-        if (false) {
-            val v = ImageMagick.DrawGetVectorGraphics(wand)
-            println(v!!.toKString())
-        }
-
+        val wand = context2d.wand
         ImageMagick.MagickDrawImage(_img, wand)
         return MagickSnapshot(cloneMagickWand(_img))
     }
@@ -58,5 +50,4 @@ class MagickCanvas(
             return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble(), fontManager = fontManager)
         }
     }
-
 }
