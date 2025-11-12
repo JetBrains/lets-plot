@@ -282,7 +282,7 @@ object PlotReprGenerator {
 
             val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
-            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): $exportParameters")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): exportParameters(dpi=${exportParameters.dpi}, scaleFactor=${exportParameters.scaleFactor}, sizingPolicy=${exportParameters.sizingPolicy})")
 
             @Suppress("UNCHECKED_CAST")
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
@@ -324,6 +324,8 @@ object PlotReprGenerator {
 
             val wand = canvas.context2d.wand
             val mvg = DrawGetVectorGraphics(wand)?.toKString() ?: "MagicWand: MVG is null"
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): MVG extracted, length=${mvg.length}")
 
             canvas.dispose()
             snapshot.dispose()

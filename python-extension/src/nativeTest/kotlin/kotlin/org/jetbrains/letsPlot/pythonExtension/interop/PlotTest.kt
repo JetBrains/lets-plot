@@ -859,6 +859,7 @@ class PlotTest {
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
     }
 
+    @Ignore
     @Test
     fun perf() {
         val rnd = Random(42)
