@@ -45,7 +45,8 @@ interface Context2d {
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
-    fun circle(x: Double, y: Double, radius: Double) = arc(x, y, radius, 0.0, 2.0 * PI, false)
+
+    fun drawCircle(x: Double, y: Double, radius: Double) = arc(x, y, radius, 0.0, 2.0 * PI, false)
 
     fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean)
     fun save()
