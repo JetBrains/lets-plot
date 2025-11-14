@@ -64,7 +64,7 @@ Also read:
 
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/geom_pointdensity.png" alt="f-25e/images/geom_pointdensity.png" width="400" height="246">
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/geom_pointdensity.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_pointdensity.html).
                          
 - #### Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it
 
@@ -79,40 +79,40 @@ Also read:
 
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/group_override_defaults.png" alt="f-25e/images/group_override_defaults.png" width="400" height="263">
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/group_override_defaults.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/group_override_defaults.html).
 
 - #### `gggrid()`: support for shared legends (parameter `guides`)
 
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/gggrid_legend_collect.png" alt="f-25e/images/group_override_defaults.png" width="500" height="172">
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/gggrid_legend_collect.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/gggrid_legend_collect.html).
 
 - #### Better handling of missing values in `geom_line(), geom_path(), geom_ribbon()`, and `geom_area()`
 
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/missing_values_ribbon.png" alt="f-25e/images/missing_values_ribbon.png" width="500" height="192">
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/missing_values_line_path_area_ribbon.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/missing_values_line_path_area_ribbon.html).
 
 - #### `geom_histogram()`: custom bin bounds (parameter `breaks`)
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/geom_histogram_param_breaks.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_histogram_param_breaks.html).
 
 - #### Legend automatically wraps to prevent overlap — up to 15 rows for vertical legends and 5 columns for horizontal ones
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/legend_wrap.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_wrap.html).
 
 - #### `flavor_standard()` resets the theme's default color scheme
   Use to override other flavors or make defaults explicit.
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/flavor_standard.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/flavor_standard.html).
 
 - #### `'left'`, `'right'`, `'top'`, and `'bottom'` legend justification
 
-  See [example notebook](https://lets-plot.org/releases/f-25e/legend_justification.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_justification.html).
 
 - #### `ggtb()`: Added `size_zoomin` and `size_basis` parameters to control point size scaling behavior when zooming (works with `geom_point` and related layers).
 
-  See: [example notebook](https://lets-plot.org/releases/f-25e/ggtb_size_zoomin.html).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/ggtb_size_zoomin.html).
                                                                                                                   
 
 - #### And More

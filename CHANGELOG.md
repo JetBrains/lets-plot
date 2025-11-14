@@ -12,40 +12,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Geometries:
   - `geom_pointdensity()` [[#1370](https://github.com/JetBrains/lets-plot/issues/1370)].
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/geom_pointdensity.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_pointdensity.html).
 
   - Geoms with 1-to-1 statistics (such as `geom_qq()`, `geom_sina()`) preserve the mapping to original data after statistical transformation.
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/stat_data_bijection.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/stat_data_bijection.html).
 
   - `geom_histogram()`: custom bin bounds (parameter `breaks`) [[#1382](https://github.com/JetBrains/lets-plot/issues/1382)].
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/geom_histogram_param_breaks.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_histogram_param_breaks.html).
 
 - Plot Layout:
   - The legend automatically wraps to prevent overlap - up to 15 rows for vertical legends and 5 columns for horizontal ones [[#1235](https://github.com/JetBrains/lets-plot/issues/1235)].
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/legend_wrap.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_wrap.html).
 
   - `gggrid()`: support for shared legends (parameter `guides`).
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/gggrid_legend_collect.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/gggrid_legend_collect.html).
 
 - Plot Theme:
   - `flavor_standard()` sets the theme's default color scheme [[#1277](https://github.com/JetBrains/lets-plot/issues/1277)]. <br>
     Use to override other flavors or make defaults explicit.
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/flavor_standard.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/flavor_standard.html).
 
   - `theme_gray()` as an alias for `theme_grey()`.
 
   - `legend_justification` parameter of `theme()` accepts additional string values: `'left'`, `'right'`, `'top'`, and `'bottom'`.
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/legend_justification.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_justification.html).
 
   - Support for inward axis ticks.
 
-    See: [example notebook](https://lets-plot.org/releases/f-25e/axis_tick_direction.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/axis_tick_direction.html).
 
 - Markdown:
   -  Support for `target` attribute for links.
@@ -53,14 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ggtb()`: `size_zoomin` and `size_basis` parameters for geometry scaling [[#1369](https://github.com/JetBrains/lets-plot/issues/1369)].
 
-  See: [example notebook](https://lets-plot.org/releases/f-25e/ggtb_size_zoomin.html).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/ggtb_size_zoomin.html).
 
 
 ### Changed
 
 - [**BREAKING**] Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it [[#1401](https://github.com/JetBrains/lets-plot/issues/1401)].
 
-  See: [example notebook](https://lets-plot.org/releases/f-25e/group_override_defaults.html).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/group_override_defaults.html).
 
 > [!IMPORTANT]
 > Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
@@ -71,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Missing values in `geom_line(), geom_path(), geom_ribbon()`, and `geom_area()` create gaps in geometries instead of being interpolated over [[#818](https://github.com/JetBrains/lets-plot/issues/818)], [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)].
 
-  See: [example notebook](https://lets-plot.org/releases/f-25e/missing_values_line_path_area_ribbon.html).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/missing_values_line_path_area_ribbon.html).
 
 - `theme`: the `exponent_format` default value changed to `'pow'` - superscript powers of 10 (was e-notation).
 
