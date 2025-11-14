@@ -345,6 +345,11 @@ class MagickContext2d(
         val inverseCTMTransform = stateDelegate.getCTM().inverse() ?: return
         val clipId = clipPath.hashCode().toUInt().toString(16)
 
+        // Always wrap clipPath definition to avoid error that slows down drawing and produces no warnings.
+        // Only the way to get error message is to use magick CLI with generated MVG content.
+        // magick -size 1200x800 mvg:./void.mvg void.png
+        // > magick: non-conforming drawing primitive definition `circle’ @ error/draw.c/RenderMVGContent/4548.
+        ImageMagick.PushDrawingWand(wand)
         ImageMagick.DrawPushDefs(wand)
         ImageMagick.DrawPushClipPath(wand, clipId)
 
@@ -356,6 +361,7 @@ class MagickContext2d(
         ImageMagick.DrawPopDefs(wand)
 
         ImageMagick.DrawSetClipPath(wand, clipId)
+        ImageMagick.PopDrawingWand(wand)
     }
 
     override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
