@@ -198,12 +198,6 @@ object ThemeOption {
         const val HIGH_CONTRAST_LIGHT = "high_contrast_light"
         const val HIGH_CONTRAST_DARK = "high_contrast_dark"
         const val STANDARD= "standard"
-
-        // base theme flavors
-        const val BASE = "base"
-        const val GREY = "grey"
-        const val LIGHT = "light"
-        const val BW = "bw"
     }
 
     object Geom {

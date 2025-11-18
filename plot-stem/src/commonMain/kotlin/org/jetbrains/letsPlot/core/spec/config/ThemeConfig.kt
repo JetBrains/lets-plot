@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.spec.Option
 
 class ThemeConfig constructor(
@@ -39,7 +38,7 @@ class ThemeConfig constructor(
 
     companion object {
         private fun standardizeThemeOptionValue(key: String, value: Any): Any {
-            var value = convertElementBlank(value)
+            var  value = convertElementBlank(value)
             value = convertMargins(key, value)
             value = convertInset(key, value)
             value = convertExponentFormat(key, value)
@@ -239,12 +238,6 @@ class ThemeConfig constructor(
                                 ThemeOption.LEGEND_DIRECTION,
                                 ThemeOption.LEGEND_BOX_JUST,
                             )
-                        }.let { options ->
-                            if (options[ThemeOption.FLAVOR] == Flavor.BASE) {
-                                options - ThemeOption.FLAVOR
-                            } else {
-                                options
-                            }
                         }
                     }
                 }
