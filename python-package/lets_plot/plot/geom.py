@@ -5288,7 +5288,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
     n : list of int
         The number of sampled points for plotting the function
-        (on x and y direction correspondingly).
+        (in x and y direction, respectively).
     bins : int
         Number of levels.
     binwidth : float
@@ -5523,7 +5523,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
     n : list of int
         The number of sampled points for plotting the function
-        (on x and y direction correspondingly).
+        (in x and y direction, respectively).
     bins : int
         Number of levels.
     binwidth : float
@@ -5749,11 +5749,9 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
         Set tooltips='none' to hide tooltips from the layer.
     method : {'auto', 'neighbours', 'kde2d'}, default='auto'
         The method to compute the density estimate.
-
         - ``'neighbours'`` – estimates density from the number of nearby points.
         - ``'kde2d'`` – estimates density using a smoothed 2D kernel density.
         - ``'auto'`` – automatically selects an estimation method based on data size.
-
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -5768,7 +5766,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
         If ``method='kde2d'``, adjust the value of bandwidth by multiplying it.
     n : list of int
         The number of sampled points for plotting the function
-        (on x and y direction correspondingly).
+        (in x and y direction, respectively).
         Only used when ``method='kde2d'``.
     map : ``GeoDataFrame`` or ``Geocoder``
         Data containing coordinates of points.

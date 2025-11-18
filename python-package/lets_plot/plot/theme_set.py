@@ -407,7 +407,7 @@ def flavor_high_contrast_dark():
 def flavor_standard():
     """
     Set the theme’s default color scheme.
-    Use to override other flavors or make defaults explicit.
+    Use to override other flavors or to make defaults explicit.
 
     Returns
     -------

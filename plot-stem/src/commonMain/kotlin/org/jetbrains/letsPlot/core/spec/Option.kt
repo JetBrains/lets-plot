@@ -168,7 +168,7 @@ object Option {
 
         object Guides {
             const val AUTO = "auto" // The default: allow upper level to collect, otherwise keep in supplots.
-            const val COLLECT = "collect" // Collect legengs from subplots.
+            const val COLLECT = "collect" // Collect legends from subplots.
             const val KEEP = "keep" // Keep legends in subplots.
         }
     }
