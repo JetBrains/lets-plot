@@ -34,16 +34,13 @@ object ThemeUtil {
             return effectiveOptions
         }
 
-        val requestedFlavorName = effectiveOptions[ThemeOption.FLAVOR] as? String
-            ?: error("Flavor name should be specified")
-        val flavorName =
-            if (requestedFlavorName == ThemeOption.Flavor.STANDARD) {
-                (baselineValues.values[ThemeOption.FLAVOR] as? String)
-                    ?: error("Default flavor is not defined for theme '$themeName'")
-            } else {
-                requestedFlavorName
-            }
-        val flavor = ThemeFlavor.forName(flavorName)
+        val userFlavorName = userOptions[ThemeOption.FLAVOR] as? String
+
+        val flavor: ThemeFlavor = when (userFlavorName) {
+            null,
+            ThemeOption.Flavor.STANDARD -> baselineValues.defaultFlavor()
+            else -> ThemeFlavor.forName(userFlavorName)
+        }
 
         val geomThemeOptions = mapOf(
             ThemeOption.GEOM to mapOf(
@@ -55,11 +52,12 @@ object ThemeUtil {
 
         // resolve symbolic colors
         val withResolvedColors = effectiveOptions.mapValues { (parameter, options) ->
+            val flavorNameForError = userFlavorName ?: "default($themeName)"
             val subOptions = options as? Map<*, *> ?: return@mapValues options
             subOptions.mapValues subOptionsScope@{ (key, value) ->
                 val color = value as? SymbolicColor ?: return@subOptionsScope value
                 flavor.symbolicColors[color]
-                    ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${color.name}'")
+                    ?: error("Undefined color in flavor scheme = '$flavorNameForError': '$parameter': '${key}' = '${color.name}'")
             }
         }
 

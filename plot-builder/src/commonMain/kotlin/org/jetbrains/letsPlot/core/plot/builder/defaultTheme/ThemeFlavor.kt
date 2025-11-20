@@ -35,7 +35,11 @@ internal class ThemeFlavor private constructor(
         private val LIGHT_GREY = parseHex("#E9E9E9")
         private val GREY85 = parseHex("#D9D9D9")
 
-        internal fun forName(name: String): ThemeFlavor {
+        private fun baseStylePalette(
+            grey2: Color,
+            grey3: Color,
+            grey4: Color,
+        ): ThemeFlavor {
             val baseSpecialColors = mapOf(
                 ThemeOption.TOOLTIP_RECT to mapOf(
                     Elem.COLOR to DARK_GREY,
@@ -43,67 +47,54 @@ internal class ThemeFlavor private constructor(
                 )
             )
 
+            val symbolic = mapOf(
+                SymbolicColor.WHITE  to Color.WHITE,
+                SymbolicColor.BLACK  to DARK_GREY,
+                SymbolicColor.GREY_1 to LIGHT_GREY,
+                SymbolicColor.GREY_2 to grey2,
+                SymbolicColor.GREY_3 to grey3,
+                SymbolicColor.GREY_4 to grey4,
+            )
+
+            return ThemeFlavor(
+                symbolicColors = symbolic,
+                specialColors = baseSpecialColors,
+                pen   = DARK_GREY,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.WHITE
+            )
+        }
+
+        internal fun commonPalette(): ThemeFlavor =
+            baseStylePalette(
+                grey2 = LIGHT_GREY,
+                grey3 = LIGHT_GREY,
+                grey4 = LIGHT_GREY,
+            )
+
+        internal fun greyPalette(): ThemeFlavor =
+            baseStylePalette(
+                grey2 = GREY85,
+                grey3 = parseHex("#EBEBEB"),
+                grey4 = DARK_GREY,
+            )
+
+        internal fun lightPalette(): ThemeFlavor =
+            baseStylePalette(
+                grey2 = GREY85,
+                grey3 = Color.WHITE,
+                grey4 = parseHex("#C9C9C9"),
+            )
+
+        internal fun bwPalette(): ThemeFlavor =
+            baseStylePalette(
+                grey2 = GREY85,
+                grey3 = Color.WHITE,
+                grey4 = parseHex("#333333"),
+            )
+
+        internal fun forName(name: String): ThemeFlavor {
             return when (name) {
-                ThemeOption.Flavor.BASE -> ThemeFlavor(
-                    symbolicColors = mapOf(
-                        SymbolicColor.WHITE to Color.WHITE,
-                        SymbolicColor.BLACK to DARK_GREY,
-                        SymbolicColor.GREY_1 to LIGHT_GREY,
-                        SymbolicColor.GREY_2 to LIGHT_GREY,
-                        SymbolicColor.GREY_3 to LIGHT_GREY,
-                        SymbolicColor.GREY_4 to LIGHT_GREY,
-                    ),
-                    specialColors = baseSpecialColors,
-                    pen = DARK_GREY,
-                    brush = Color.PACIFIC_BLUE,
-                    paper = Color.WHITE
-                )
-
-                ThemeOption.Flavor.GREY -> ThemeFlavor(
-                    symbolicColors = mapOf(
-                        SymbolicColor.WHITE to Color.WHITE,
-                        SymbolicColor.BLACK to DARK_GREY,
-                        SymbolicColor.GREY_1 to LIGHT_GREY,
-                        SymbolicColor.GREY_2 to GREY85,
-                        SymbolicColor.GREY_3 to parseHex("#EBEBEB"),
-                        SymbolicColor.GREY_4 to DARK_GREY,
-                    ),
-                    specialColors = baseSpecialColors,
-                    pen = DARK_GREY,
-                    brush = Color.PACIFIC_BLUE,
-                    paper = Color.WHITE
-                )
-
-                ThemeOption.Flavor.LIGHT -> ThemeFlavor(
-                    symbolicColors = mapOf(
-                        SymbolicColor.WHITE to Color.WHITE,
-                        SymbolicColor.BLACK to DARK_GREY,
-                        SymbolicColor.GREY_1 to LIGHT_GREY,
-                        SymbolicColor.GREY_2 to GREY85,
-                        SymbolicColor.GREY_3 to Color.WHITE,
-                        SymbolicColor.GREY_4 to parseHex("#C9C9C9"),
-                    ),
-                    specialColors = baseSpecialColors,
-                    pen = DARK_GREY,
-                    brush = Color.PACIFIC_BLUE,
-                    paper = Color.WHITE
-                )
-
-                ThemeOption.Flavor.BW -> ThemeFlavor(
-                    symbolicColors = mapOf(
-                        SymbolicColor.WHITE to Color.WHITE,
-                        SymbolicColor.BLACK to DARK_GREY,
-                        SymbolicColor.GREY_1 to LIGHT_GREY,
-                        SymbolicColor.GREY_2 to GREY85,
-                        SymbolicColor.GREY_3 to Color.WHITE,
-                        SymbolicColor.GREY_4 to parseHex("#333333"),
-                    ),
-                    specialColors = baseSpecialColors,
-                    pen = DARK_GREY,
-                    brush = Color.PACIFIC_BLUE,
-                    paper = Color.WHITE
-                )
-
                 ThemeOption.Flavor.DARCULA -> ThemeFlavor(
                     symbolicColors = mapOf(
                         SymbolicColor.WHITE to parseHex("#303030"),
@@ -163,9 +154,6 @@ internal class ThemeFlavor private constructor(
                     brush = Color.PACIFIC_BLUE,
                     paper = parseHex("#0E3C4A")
                 )
-
-                // depends on the theme; resolved in ThemeUtil
-                ThemeOption.Flavor.STANDARD -> forName(ThemeOption.Flavor.BASE)
 
                 ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> ThemeFlavor(
                     symbolicColors = mapOf(
