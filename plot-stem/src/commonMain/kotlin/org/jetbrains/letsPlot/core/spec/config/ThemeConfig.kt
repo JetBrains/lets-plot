@@ -38,7 +38,8 @@ class ThemeConfig constructor(
 
     companion object {
         private fun standardizeThemeOptionValue(key: String, value: Any): Any {
-            var  value = convertElementBlank(value)
+            @Suppress("NAME_SHADOWING")
+            var value = convertElementBlank(value)
             value = convertMargins(key, value)
             value = convertInset(key, value)
             value = convertExponentFormat(key, value)
