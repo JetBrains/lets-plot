@@ -36,9 +36,11 @@ import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
 import org.jetbrains.letsPlot.core.spec.config.*
 import org.jetbrains.letsPlot.core.spec.getString
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 open class PlotConfigBackend(
-    opts: Map<String, Any>,
+    private val opts: Map<String, Any>,
     containerTheme: Theme?,
 ) : PlotConfig(
     opts,
@@ -162,6 +164,18 @@ open class PlotConfigBackend(
                     )
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
                 }
+        }
+
+        val result = MonolithicCommon.buildPlotsFromProcessedSpecs(opts, null, SizingPolicy.keepFigureDefaultSize())
+
+        if (!result.isError) {
+            result as MonolithicCommon.PlotsBuildResult.Success
+
+            val messages = result.buildInfo.reportComputationMessage()
+
+            messages.forEach {
+                PlotConfigUtil.addComputationMessage(this, it)
+            }
         }
     }
 

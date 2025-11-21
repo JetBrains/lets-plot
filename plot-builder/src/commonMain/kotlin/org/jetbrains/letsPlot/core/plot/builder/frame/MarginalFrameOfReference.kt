@@ -66,4 +66,8 @@ internal class MarginalFrameOfReference(
     override fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
         throw UnsupportedInteractionException("$eventSpec denied by marginal plot component.")
     }
+
+    override fun reportGeom(layer: GeomLayer): List<String> {
+        return emptyList()
+    }
 }

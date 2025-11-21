@@ -38,4 +38,6 @@ abstract class FrameOfReference {
      * Throws UnsupportedInteractionException if not supported
      */
     abstract fun checkMouseInteractionSupported(eventSpec: MouseEventSpec)
+
+    abstract fun reportGeom(layer: GeomLayer): List<String>
 }

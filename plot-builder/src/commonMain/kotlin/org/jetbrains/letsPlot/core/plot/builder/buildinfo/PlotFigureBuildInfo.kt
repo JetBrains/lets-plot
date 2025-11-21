@@ -49,6 +49,10 @@ class PlotFigureBuildInfo constructor(
         )
     }
 
+    override fun reportComputationMessage(): List<String> {
+        return plotAssembler.reportMessages()
+    }
+
     override fun withBounds(bounds: DoubleRectangle): PlotFigureBuildInfo {
         return if (bounds == this.bounds) {
             this

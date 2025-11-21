@@ -66,6 +66,15 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
+    override fun reportComputationMessages(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ): List<String> {
+        return listOf("Test message from PointGeom")
+    }
+
     companion object {
         const val HANDLES_GROUPS = false
     }

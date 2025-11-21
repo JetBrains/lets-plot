@@ -47,6 +47,15 @@ open class PathGeom : GeomBase() {
         root.appendNodes(svgPath)
     }
 
+    override fun reportComputationMessages(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ): List<String> {
+        return listOf("Test message from PathGeom")
+    }
+
 
     companion object {
         const val HANDLES_GROUPS = true

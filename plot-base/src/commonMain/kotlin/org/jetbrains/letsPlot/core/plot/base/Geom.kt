@@ -12,4 +12,5 @@ interface Geom {
     val legendKeyElementFactory: LegendKeyElementFactory
     fun rangeIncludesZero(aes: Aes<*>): Boolean = false
     fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
+    fun reportComputationMessages(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext): List<String>
 }

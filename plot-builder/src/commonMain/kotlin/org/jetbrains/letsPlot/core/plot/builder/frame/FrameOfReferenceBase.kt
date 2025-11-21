@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil
@@ -69,6 +70,19 @@ internal abstract class FrameOfReferenceBase(
             backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
             bounds = layoutInfo.geomContentBounds
         )
+    }
+
+    override fun reportGeom(layer: GeomLayer): List<String> {
+        return buildGeom(
+            plotContext,
+            layer,  // positional aesthetics are the same as positional data.
+            xyAesBounds = adjustedDomain.flipIf(flipAxis), // Data space -> View space
+            coord,
+            flipAxis,
+            NullGeomTargetCollector(),
+            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
+            bounds = layoutInfo.geomContentBounds
+        ).reportLayer()
     }
 
     private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
@@ -167,7 +181,7 @@ internal abstract class FrameOfReferenceBase(
             targetCollector: GeomTargetCollector,
             backgroundColor: Color,
             bounds: DoubleRectangle = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO),
-        ): SvgComponent {
+        ): SvgLayerRenderer {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
             @Suppress("NAME_SHADOWING")

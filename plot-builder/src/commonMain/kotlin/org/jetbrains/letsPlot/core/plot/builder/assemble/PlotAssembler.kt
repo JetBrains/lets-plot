@@ -195,6 +195,23 @@ class PlotAssembler constructor(
         interactionsEnabled = false
     }
 
+    fun reportMessages(): List<String> {
+
+        val messages = ArrayList<String>()
+        frameProviderByTile.forEach {
+            val tileLayoutInfo = it.createTileLayoutProvider().createTopDownTileLayout().doLayout(
+                DoubleVector(640.0, 480.0),
+                geomTiles.coordProvider)
+
+            val msgs = geomTiles.coreLayersByTile().flatten().flatMap { layer ->
+                it.createTileFrame(tileLayoutInfo, geomTiles.coordProvider).reportGeom(layer)
+            }
+
+            messages.addAll(msgs)
+        }
+        return messages
+    }
+
     companion object {
         fun demoAndTest(
             geomTiles: PlotGeomTiles,
@@ -298,4 +315,5 @@ class PlotAssembler constructor(
             return StringFormat.ExponentFormat(notationType, exponentFormat.min, exponentFormat.max)
         }
     }
+
 }

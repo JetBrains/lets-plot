@@ -33,6 +33,15 @@ abstract class GeomBase : Geom {
         buildIntern(root, aesthetics, pos, coord, ctx)
     }
 
+    override fun reportComputationMessages(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ): List<String> {
+        return emptyList()
+    }
+
     open fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
         return DoubleSpan(-0.5, 0.5)
     }

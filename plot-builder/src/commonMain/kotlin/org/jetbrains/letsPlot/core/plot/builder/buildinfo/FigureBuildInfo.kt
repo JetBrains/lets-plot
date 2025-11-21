@@ -29,4 +29,6 @@ interface FigureBuildInfo {
     fun layoutedByGeomBounds(geomBounds: DoubleRectangle): FigureBuildInfo
 
     fun withPreferredSize(size: DoubleVector): FigureBuildInfo
+
+    fun reportComputationMessage(): List<String>
 }

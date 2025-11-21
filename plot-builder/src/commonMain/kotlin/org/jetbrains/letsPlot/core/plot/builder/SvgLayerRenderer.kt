@@ -24,4 +24,8 @@ class SvgLayerRenderer(
     private fun buildLayer() {
         geom.build(this, aesthetics, pos, coord, geomContext)
     }
+
+    fun reportLayer(): List<String> {
+        return geom.reportComputationMessages(aesthetics, pos, coord, geomContext)
+    }
 }

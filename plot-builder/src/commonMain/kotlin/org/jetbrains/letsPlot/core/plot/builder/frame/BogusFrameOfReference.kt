@@ -34,4 +34,8 @@ internal class BogusFrameOfReference : FrameOfReference() {
     override fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
+
+    override fun reportGeom(layer: GeomLayer): List<String> {
+        throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
+    }
 }

@@ -28,6 +28,15 @@ class LiveMapGeom : Geom {
         throw IllegalStateException("Not applicable to live map")
     }
 
+    override fun reportComputationMessages(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ): List<String> {
+        return emptyList()
+    }
+
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
         myMapProvider = liveMapProvider
     }

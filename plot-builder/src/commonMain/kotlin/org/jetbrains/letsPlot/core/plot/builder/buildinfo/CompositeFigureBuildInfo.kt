@@ -146,4 +146,8 @@ class CompositeFigureBuildInfo constructor(
             legendBlocks
         )
     }
+
+    override fun reportComputationMessage(): List<String> {
+        return elements.flatMap { it?.reportComputationMessage() ?: emptyList()  }
+    }
 }
