@@ -12,7 +12,17 @@ from ._type_utils import standardize_dict
 
 def _generate_dynamic_display_html(plot_spec: Dict) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)
-    return lets_plot_kotlin_bridge.generate_html(plot_spec)
+    # Old implementation (deprecated):
+    # return lets_plot_kotlin_bridge.generate_html(plot_spec)
+
+    # New implementation using get_display_html_for_raw_spec with default parameters
+    return lets_plot_kotlin_bridge.get_display_html_for_raw_spec(
+        plot_spec,
+        {},  # empty sizing_options -> defaults to notebookCell sizing (MIN width, SCALED height)
+        True,  # dynamic_script_loading
+        False,  # force_immediate_render
+        False  # responsive
+    )
 
 
 def _generate_svg(plot_spec: Dict, w: float = None, h: float = None, unit: str = None, use_css_pixelated_image_rendering: bool=True) -> str:
@@ -54,6 +64,28 @@ def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:
     return lets_plot_kotlin_bridge.export_html(plot_spec, scriptUrl, iframe)
 
 
+def _generate_static_html_page_for_raw_spec(
+        plot_spec: Dict,
+        sizing_options: Dict,
+        dynamic_script_loading: bool = False,
+        force_immediate_render: bool = False,
+        responsive: bool = False,
+        height100pct: bool = False
+) -> str:
+    plot_spec = _standardize_plot_spec(plot_spec)
+    sizing_options = standardize_dict(sizing_options)
+    scriptUrl = get_js_cdn_url()
+    return lets_plot_kotlin_bridge.get_static_html_page_for_raw_spec(
+        plot_spec,
+        scriptUrl,
+        sizing_options,
+        dynamic_script_loading,
+        force_immediate_render,
+        responsive,
+        height100pct
+    )
+
+
 def _standardize_plot_spec(plot_spec: Dict) -> Dict:
     """
     :param plot_spec: dict
@@ -83,7 +115,8 @@ def _generate_display_html_for_raw_spec(
         *,
         dynamic_script_loading: bool = False,
         force_immediate_render: bool = False,
-        responsive: bool = False
+        responsive: bool = False,
+        height100pct: bool = False
 ) -> str:
     """
     Generate HTML for displaying a plot from 'raw' specification (not processed by plot backend)
@@ -96,16 +129,17 @@ def _generate_display_html_for_raw_spec(
     sizing_options : Dict
         Dict containing sizing policy options (width_mode, height_mode, width, height).
     dynamic_script_loading : bool, default=False
-        Controls how the generated JS code interacts with the lets-plot JS library.
-        If True, assumes the library will be loaded dynamically.
-        If False, assumes the library is already present in the page header (static loading).
+        Controls how the generated JS code interacts with the lets-plot.js library.
+        If True, assumes the library loads dynamically (asynchronously).
+        If False, assumes the library loads synchronously via a <script> tag in the page header.
     force_immediate_render : bool, default=False
         Controls the timing of plot rendering.
-        If True, forces immediate plot rendering.
-        If False, waits for ResizeObserver(JS) event and renders the plot after the plot
-        container is properly layouted in DOM.
+        If True, renders the plot immediately.
+        If False, waits for the ResizeObserver event to ensure proper DOM layout.
     responsive : bool, default=False
         If True, makes the plot responsive to container size changes.
+    height100pct : bool, default=False
+        If True, sets the plot container div height to 100%.
 
     Returns
     -------
@@ -126,7 +160,7 @@ def _generate_display_html_for_raw_spec(
 
     1. FIXED mode:
        - Uses the explicitly provided width/height values
-       - Falls back to the default figure size if no values provided
+       - Falls back to the default figure size if no values are provided
        - Not responsive to container size
 
     2. MIN mode:
@@ -143,11 +177,11 @@ def _generate_display_html_for_raw_spec(
 
     4. SCALED mode:
        - Always preserves the figure's aspect ratio
-       - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode
+       - Typical usage: one dimension (usually width) uses FIXED/MIN/FIT mode,
          and SCALED height adjusts to maintain aspect ratio
        - Special case: when both width and height are SCALED:
          * Requires container size to be available
-         * Fits figure within container while preserving aspect ratio
+         * Fits a figure within container while preserving the aspect ratio
          * Neither dimension is predetermined
 
     """
@@ -158,5 +192,6 @@ def _generate_display_html_for_raw_spec(
         sizing_options,
         dynamic_script_loading,
         force_immediate_render,
-        responsive
+        responsive,
+        height100pct
     )

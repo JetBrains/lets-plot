@@ -1,26 +1,26 @@
 #
-# Copyright (c) 2019. JetBrains s.r.o.
+# Copyright (c) 2025. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from typing import Dict
 
+from ._dynamic_configure_html import generate_dynamic_configure_html
 from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
 
 
 # noinspection PyPackageRequirements
 
-
-class StaticHtmlPageContext(FrontendContext):
+class IsolatedWebviewPanelContext(FrontendContext):
 
     def __init__(self, offline: bool, *,
-                 width_mode: str = None,
-                 height_mode: str = None,
+                 width_mode: str = 'fit',
+                 height_mode: str = 'fit',
                  width: float = None,
                  height: float = None,
-                 responsive: bool = False,
+                 responsive: bool = True,
                  force_immediate_render: bool = False,
-                 height100pct: bool = False,
+                 height100pct: bool = True  # Set height to 100% the panel height
                  ) -> None:
         super().__init__()
         self.connected = not offline
@@ -33,14 +33,10 @@ class StaticHtmlPageContext(FrontendContext):
         self.height100pct = height100pct
 
     def configure(self, verbose: bool):
-        # Nothing here because the entire html page is created per each cell output.
-        if not self.connected:
-            print("WARN: Embedding Lets-Plot JS library for offline usage is not supported.")
+        # Nothing here because everything is inside the WebView panel.
+        pass
 
     def as_str(self, plot_spec: Dict) -> str:
-        # Old implementation (uses static HTML page generator):
-        # return kbr._generate_static_html_page(plot_spec, iframe=False)
-
         # Build sizing_options
         # Default to notebookCell sizing (MIN width, SCALED height) if not specified
         if self.width_mode is not None and self.height_mode is not None:
@@ -62,11 +58,24 @@ class StaticHtmlPageContext(FrontendContext):
         if self.height is not None:
             sizing_options['height'] = self.height
 
-        return kbr._generate_static_html_page_for_raw_spec(
+        # Generate dynamic configure HTML (verbose=False)
+        dynamic_configure_html = generate_dynamic_configure_html(
+            offline=not self.connected,
+            verbose=False
+        )
+
+        # Generate dynamic display HTML
+        dynamic_display_html = kbr._generate_display_html_for_raw_spec(
             plot_spec,
             sizing_options,
-            dynamic_script_loading=False,  # False for static HTML pages
+            dynamic_script_loading=True,  # True for WebView panel
             force_immediate_render=self.force_immediate_render,
             responsive=self.responsive,
             height100pct=self.height100pct
         )
+
+        # Wrap both in a fixed position container
+        return f"""<div style="position: fixed; width: 100%; height: 100%;">
+{dynamic_configure_html}
+{dynamic_display_html}
+</div>"""

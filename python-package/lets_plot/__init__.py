@@ -39,31 +39,66 @@ class LetsPlot:
                    isolated_frame: bool = None,
                    offline: bool = None,
                    no_js: bool = None,
-                   show_status: bool = False) -> None:
+                   show_status: bool = False,
+                   **kwargs) -> None:
         """
         Configure Lets-Plot HTML output.
-        Depending on the usage, LetsPlot generates different HTML to show plots.
-        In most cases LetsPlot will detect type of the environment automatically.
-        Auto-detection can be overwritten using this method parameters.
+        This method should typically be called before rendering any plots.
+        Depending on the usage, Lets-Plot generates different HTML to show plots.
+        In most cases Lets-Plot will detect the type of the environment automatically.
+        Use this method to adjust or override the autoconfigured output mode.
 
         Parameters
         ----------
         isolated_frame : bool
             True - generate HTML which can be used in iframe or in a standalone HTML document.
-            False - pre-load Lets-Plot JS library. Notebook cell output will only consist
-            of HTML for the plot rendering. Default: None - auto-detect.
+            False - preload Lets-Plot JS library. Notebook cell output will only consist
+            of HTML for the plot rendering. Default: auto-detect.
         offline : bool
             True - full Lets-Plot JS bundle will be added to the notebook.
-            Use this option if you would like to work with notebook
-            without the Internet connection. False - load Lets-Plot JS library from CDN.
-            Default (None): 'connected' mode in production environment
-            and 'offline' mode in dev environment.
+            Use this option if you would like to work with a notebook without the Internet connection.
+            False - load Lets-Plot JS library from CDN.
+            Default: 'connected' mode in the production environment, 'offline' mode in the dev environment.
         no_js : bool, default=False
             True - do not generate HTML+JS as an output - just static SVG image.
-            Note that without JS interactive maps and tooltips doesn't work!
+            Note that without JS interactive maps and tooltips don't work!
         show_status : bool, default=False
-            Whether to show status of loading of the Lets-Plot JS library.
+            Whether to show the Lets-Plot JS library loading status.
             Only applicable when the Lets-Plot JS library is preloaded.
+        **kwargs
+            Advanced display options for developers testing in new environments
+            or debugging rendering behavior. These options control the underlying
+            HTML rendering:
+
+            - isolated_webview_panel : bool
+                If True, generates HTML for an isolated webview panel with dynamic script loading.
+                When enabled, the 'isolated_frame' parameter is ignored.
+            - width_mode : str
+                Plot width sizing mode: 'fixed', 'min', 'fit', or 'scaled'.
+                Requires height_mode to also be specified.
+            - height_mode : str
+                Plot height sizing mode: 'fixed', 'min', 'fit', or 'scaled'.
+                Requires width_mode to also be specified.
+            - width : float
+                Explicit width value in px (used with certain sizing modes).
+            - height : float
+                Explicit height value in px (used with certain sizing modes).
+            - force_immediate_render : bool
+                Controls the timing of plot rendering.
+                If True, renders plot immediately.
+                If False, waits for the ResizeObserver event to ensure proper DOM layout.
+            - responsive : bool
+                If True, the plot automatically resizes when the container is resized.
+            - height100pct : bool
+                If True, sets the plot container div height to 100%.
+
+            Sizing modes:
+
+            - 'fixed': Uses specified width/height or default size (not responsive)
+            - 'min': Uses smallest of: default size, specified size, and container size
+            - 'fit': Uses container size or specified size if provided
+            - 'scaled': Adjusts to preserve the aspect ratio
+
 
         Examples
         --------
@@ -96,13 +131,77 @@ class LetsPlot:
         if not isinstance(show_status, bool):
             raise ValueError("'show_status' argument is not boolean: {}".format(type(show_status)))
 
+        # Validate dev options
+        if kwargs:
+            supported_keys = {'width_mode', 'height_mode', 'width', 'height',
+                             'responsive', 'force_immediate_render', 'height100pct', 'isolated_webview_panel'}
+            unsupported_keys = set(kwargs.keys()) - supported_keys
+            if unsupported_keys:
+                raise ValueError(
+                    "Unsupported parameter(s): {}".format(', '.join(sorted(unsupported_keys)))
+                )
+
+            has_width_mode = 'width_mode' in kwargs
+            has_height_mode = 'height_mode' in kwargs
+            if has_width_mode != has_height_mode:
+                raise ValueError(
+                    "Both 'width_mode' and 'height_mode' must be specified together. "
+                    "Got: width_mode={}, height_mode={}".format(
+                        kwargs.get('width_mode', 'not specified'),
+                        kwargs.get('height_mode', 'not specified')
+                    )
+                )
+
+            if has_width_mode:
+                valid_modes = ['fixed', 'min', 'fit', 'scaled']
+                width_mode = kwargs['width_mode']
+                if not isinstance(width_mode, str):
+                    raise ValueError("'width_mode' must be a string, got: {}".format(type(width_mode)))
+                if width_mode.lower() not in valid_modes:
+                    raise ValueError(
+                        "'width_mode' must be one of {}, got: '{}'".format(valid_modes, width_mode)
+                    )
+
+            if has_height_mode:
+                valid_modes = ['fixed', 'min', 'fit', 'scaled']
+                height_mode = kwargs['height_mode']
+                if not isinstance(height_mode, str):
+                    raise ValueError("'height_mode' must be a string, got: {}".format(type(height_mode)))
+                if height_mode.lower() not in valid_modes:
+                    raise ValueError(
+                        "'height_mode' must be one of {}, got: '{}'".format(valid_modes, height_mode)
+                    )
+
+            if 'width' in kwargs:
+                width = kwargs['width']
+                if not isinstance(width, (int, float)):
+                    raise ValueError("'width' must be a number, got: {}".format(type(width)))
+
+            if 'height' in kwargs:
+                height = kwargs['height']
+                if not isinstance(height, (int, float)):
+                    raise ValueError("'height' must be a number, got: {}".format(type(height)))
+
+            # Validate boolean options
+            for bool_option in ['responsive', 'force_immediate_render', 'height100pct', 'isolated_webview_panel']:
+                if bool_option in kwargs and not isinstance(kwargs[bool_option], bool):
+                    raise ValueError("'{}' must be a boolean, got: {}".format(
+                        bool_option, type(kwargs[bool_option])
+                    ))
+
+            # Warn if isolated_webview_panel is True
+            if kwargs.get('isolated_webview_panel'):
+                print("WARNING: 'isolated_webview_panel=True' - using isolated webview panel context. "
+                      "The 'isolated_frame' parameter will be ignored.")
+
         offline = offline if offline is not None else get_global_bool(OFFLINE)
         no_js = no_js if no_js is not None else get_global_bool(NO_JS)
 
         cfg._setup_html_context(isolated_frame=isolated_frame,
                                 offline=offline,
                                 no_js=no_js,
-                                show_status=show_status)
+                                show_status=show_status,
+                                dev_options=kwargs)
 
     @classmethod
     def set(cls, settings: Dict):

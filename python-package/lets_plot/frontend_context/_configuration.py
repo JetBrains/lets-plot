@@ -29,26 +29,11 @@ def _setup_html_context(*,
                         isolated_frame: bool = None,
                         offline: bool,
                         no_js: bool,
-                        show_status: bool) -> None:
+                        show_status: bool,
+                        dev_options: Dict = None) -> None:
     """
     Configures Lets-Plot HTML output.
-
-    Parameters
-    ----------
-    isolated_frame : bool
-        True - generate HTLM which can be used in `iframe` or in a standalone HTML document
-        False - pre-load Lets-Plot JS library. Notebook cell output will only consist of HTML for the plot rendering.
-        Default: None - auto-detect.
-    offline : bool
-        True - full Lets-Plot JS bundle will be added to the notebook. Use this option if you would like
-        to work with notebook without the Internet connection.
-        False - load Lets-Plot JS library from CDN.
-    no_js : bool
-        True - do not generate HTML+JS as an output - just static SVG image.
-    show_status : bool
-        Whether to show status of loading of the Lets-Plot JS library.
-        Only applicable when the Lets-Plot JS library is preloaded.
-
+    See the docstring in `setup_html()` for details on parameters.
     """
     global _default_mimetype
     if _default_mimetype == LETS_PLOT_JSON:
@@ -63,7 +48,7 @@ def _setup_html_context(*,
     if no_js:
         ctx = StaticSvgImageContext()
     else:
-        ctx = _create_html_frontend_context(isolated_frame, offline=offline)
+        ctx = _create_html_frontend_context(isolated_frame, offline=offline, dev_options=dev_options)
 
     ctx.configure(verbose=show_status)
     _frontend_contexts[TEXT_HTML] = ctx

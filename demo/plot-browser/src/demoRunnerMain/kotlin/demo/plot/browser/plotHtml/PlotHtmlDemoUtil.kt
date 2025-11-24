@@ -9,6 +9,7 @@ import demo.common.utils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.DisplayHtmlPolicy
 import org.jetbrains.letsPlot.core.util.PlotHtmlExport
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingMode
@@ -113,9 +114,12 @@ object PlotHtmlDemoUtil {
                         val displayHtml = PlotHtmlHelper.getDisplayHtmlForRawSpec(
                             plotSpec,
                             SizingPolicy(SizingMode.FIT, SizingMode.SCALED),
-                            dynamicScriptLoading = false,
-                            forceImmediateRender = false,
-                            responsive = true,
+                            displayHtmlPolicy = DisplayHtmlPolicy(
+                                dynamicScriptLoading = false,
+                                forceImmediateRender = false,
+                                responsive = true,
+                                height100pct = false,
+                            ),
                             removeComputationMessages = false,
                             logComputationMessages = false
                         )

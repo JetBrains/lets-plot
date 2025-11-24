@@ -8,6 +8,7 @@ package demo.plot.browser.plotMessage
 import demo.common.utils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
+import org.jetbrains.letsPlot.core.util.DisplayHtmlPolicy
 import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingMode
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -78,9 +79,7 @@ object PlotMessageDemoUtil {
                     val displayHtml = PlotHtmlHelper.getDisplayHtmlForRawSpec(
                         plotSpec,
                         sizingPolicy = sizing,
-                        dynamicScriptLoading = false,
-                        forceImmediateRender = false,
-                        responsive = false,
+                        displayHtmlPolicy = DisplayHtmlPolicy.entirelyStatic(),
                         removeComputationMessages = false,
                         logComputationMessages = false
                     )

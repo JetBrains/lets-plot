@@ -2,10 +2,6 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import os
-import pkgutil
-import random
-import string
 from typing import Dict
 
 try:
@@ -14,106 +10,71 @@ except ImportError:
     display_html = None
 
 from ._frontend_ctx import FrontendContext
+from ._dynamic_configure_html import generate_dynamic_configure_html
 from .. import _kbridge as kbr
-from .._global_settings import get_js_cdn_url
-from .._global_settings import JS_BASE_URL, JS_NAME
-from .._version import __version__
-
-# Data-attributes used to store extra information about the meaning of 'script' elements
-_ATT_SCRIPT_KIND = 'data-lets-plot-script'
-_SCRIPT_KIND_LIB_LOADING = 'library'
-_SCRIPT_KIND_PLOT = 'plot'
 
 
 class JupyterNotebookContext(FrontendContext):
 
-    def __init__(self, offline: bool) -> None:
+    def __init__(self, offline: bool, *,
+                 width_mode: str = 'min',
+                 height_mode: str = 'scaled',
+                 width: float = None,
+                 height: float = None,
+                 responsive: bool = False,
+                 force_immediate_render: bool = False,
+                 height100pct: bool = False
+                 ) -> None:
         super().__init__()
         self.connected = not offline
+        self.width_mode = width_mode
+        self.height_mode = height_mode
+        self.width = width
+        self.height = height
+        self.responsive = responsive
+        self.force_immediate_render = force_immediate_render
+        self.height100pct = height100pct
 
     def configure(self, verbose: bool):
-        if self.connected:
-            # noinspection PyTypeChecker
-            display_html(self._configure_connected_script(verbose), raw=True)
-        else:
-            # noinspection PyTypeChecker
-            display_html(self._configure_embedded_script(verbose), raw=True)
+        html = generate_dynamic_configure_html(offline=not self.connected, verbose=verbose)
+        # noinspection PyTypeChecker
+        display_html(html, raw=True)
 
     def as_str(self, plot_spec: Dict) -> str:
-        return kbr._generate_dynamic_display_html(plot_spec)
+        # Old implementation (deprecated):
+        # return kbr._generate_dynamic_display_html(plot_spec)
 
-    @staticmethod
-    def _configure_connected_script(verbose: bool) -> str:
-        url = get_js_cdn_url()
-        output_id = JupyterNotebookContext._rand_string()
-        success_message = """
-            var div = document.createElement("div");
-            div.style.color = 'darkblue';
-            div.textContent = 'Lets-Plot JS successfully loaded.';
-            document.getElementById("{id}").appendChild(div);
-        """.format(id=output_id) if verbose else ""
+        # Build sizing_options
+        # Default to notebookCell sizing (MIN width, SCALED height) if not specified
+        # if self.width_mode is not None and self.height_mode is not None:
+        #     # Use dev options
+        #     sizing_options = {
+        #         'width_mode': self.width_mode,
+        #         'height_mode': self.height_mode
+        #     }
+        # else:
+        #     # Default to notebookCell sizing
+        #     sizing_options = {
+        #         'width_mode': 'min',
+        #         'height_mode': 'scaled'
+        #     }
 
-        return """
-            <div id="{id}"></div>
-            <script type="text/javascript" {data_attr}="{script_kind}">
-                if(!window.letsPlotCallQueue) {{
-                    window.letsPlotCallQueue = [];
-                }}; 
-                window.letsPlotCall = function(f) {{
-                    window.letsPlotCallQueue.push(f);
-                }};
-                (function() {{
-                    var script = document.createElement("script");
-                    script.type = "text/javascript";
-                    script.src = "{url}";
-                    script.onload = function() {{
-                        window.letsPlotCall = function(f) {{f();}};
-                        window.letsPlotCallQueue.forEach(function(f) {{f();}});
-                        window.letsPlotCallQueue = [];
-                        {success_message}
-                    }};
-                    script.onerror = function(event) {{
-                        window.letsPlotCall = function(f) {{}};    // noop
-                        window.letsPlotCallQueue = [];
-                        var div = document.createElement("div");
-                        div.style.color = 'darkred';
-                        div.textContent = 'Error loading Lets-Plot JS';
-                        document.getElementById("{id}").appendChild(div);
-                    }};
-                    var e = document.getElementById("{id}");
-                    e.appendChild(script);
-                }})()
-            </script>
-            """.format(
-            data_attr=_ATT_SCRIPT_KIND,
-            script_kind=_SCRIPT_KIND_LIB_LOADING,
-            id=output_id,
-            url=url,
-            success_message=success_message)
+        sizing_options = {
+            'width_mode': self.width_mode,
+            'height_mode': self.height_mode
+        }
 
-    @staticmethod
-    def _configure_embedded_script(verbose: bool) -> str:
-        js_name = "lets-plot.min.js"
-        path = os.path.join("package_data", js_name)
-        js_code = pkgutil.get_data("lets_plot", path).decode("utf-8")
-        success_message = '<div style="color:darkblue;">Lets-Plot JS is embedded.</div>' if verbose else ""
+        # Add width and height if specified
+        if self.width is not None:
+            sizing_options['width'] = self.width
+        if self.height is not None:
+            sizing_options['height'] = self.height
 
-        return """
-            <script type="text/javascript" {data_attr}="{script_kind}">
-                window.letsPlotCall = function(f) {{f();}};
-                console.log('Embedding: {js_name}');
-                {js_code}
-            </script>
-            {success_message}
-            """.format(
-            data_attr=_ATT_SCRIPT_KIND,
-            script_kind=_SCRIPT_KIND_LIB_LOADING,
-            js_code=js_code,
-            js_name=js_name,
-            success_message=success_message)
-
-    @staticmethod
-    def _rand_string(size=6) -> str:
-        alphabet = string.ascii_letters + string.digits
-        # noinspection PyShadowingBuiltins
-        return ''.join([random.choice(alphabet) for _ in range(size)])
+        return kbr._generate_display_html_for_raw_spec(
+            plot_spec,
+            sizing_options,
+            dynamic_script_loading=True,  # True for Jupyter Notebook, JupyterLab
+            force_immediate_render=self.force_immediate_render,
+            responsive=self.responsive,
+            height100pct=self.height100pct
+        )

@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.util.DisplayHtmlPolicy
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
@@ -36,18 +37,28 @@ import kotlin.time.TimeSource
 object PlotReprGenerator {
     private val defaultFontManager by lazy { MagickFontManager.default() }
 
-    @Suppress("unused") // This function is used in kotlin_bridge.c
-    fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
-        return try {
-            val plotSpecMap = pyDictToMap(plotSpecDict)
-
-            @Suppress("UNCHECKED_CAST")
-            val html = PlotHtmlHelper.getDynamicDisplayHtmlForRawSpec(plotSpecMap as MutableMap<String, Any>)
-            Py_BuildValue("s", html)
-        } catch (e: Throwable) {
-            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}")
-        }
-    }
+    // Deprecated: replaced by generateDisplayHtmlForRawSpec() with default parameters
+    // Used to be called from kotlin_bridge.c generate_html() function
+//    @Suppress("unused") // This function is used in kotlin_bridge.c
+//    fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
+//        return try {
+//            val plotSpecMap = pyDictToMap(plotSpecDict)
+//
+//            @Suppress("UNCHECKED_CAST")
+//            val html = PlotHtmlHelper.getDisplayHtmlForRawSpec(
+//                plotSpec = plotSpecMap as MutableMap<String, Any>,
+//                sizingPolicy = SizingPolicy.notebookCell(),
+//                dynamicScriptLoading = true,
+//                forceImmediateRender = false,
+//                responsive = false,
+//                removeComputationMessages = false,
+//                logComputationMessages = false
+//            )
+//            Py_BuildValue("s", html)
+//        } catch (e: Throwable) {
+//            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}")
+//        }
+//    }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateSvg(
@@ -84,7 +95,7 @@ object PlotReprGenerator {
     }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
-    fun generateStaticHtmlPage(
+    fun generateExportHtml(
         plotSpecDict: CPointer<PyObject>?,
         scriptUrlCStr: CPointer<ByteVar>,
         iFrame: Int
@@ -101,7 +112,7 @@ object PlotReprGenerator {
             )
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}")
+            Py_BuildValue("s", "generateExportHtml() - Exception: ${e.message}")
         }
     }
 
@@ -124,26 +135,68 @@ object PlotReprGenerator {
         sizingOptionsDict: CPointer<PyObject>,
         dynamicScriptLoading: Int,
         forceImmediateRender: Int,
-        responsive: Int
+        responsive: Int,
+        height100pct: Int,
     ): CPointer<PyObject>? {
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
             val sizingOptionsMap = pyDictToMap(sizingOptionsDict)
             val sizingPolicy = SizingPolicy.create(sizingOptionsMap)
+            val displayHtmlPolicy = DisplayHtmlPolicy(
+                dynamicScriptLoading = dynamicScriptLoading == 1,
+                forceImmediateRender = forceImmediateRender == 1,
+                responsive = responsive == 1,
+                height100pct = height100pct == 1,
+            )
 
             @Suppress("UNCHECKED_CAST")
             val html = PlotHtmlHelper.getDisplayHtmlForRawSpec(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
                 sizingPolicy = sizingPolicy,
-                dynamicScriptLoading = dynamicScriptLoading == 1,
-                forceImmediateRender = forceImmediateRender == 1,
-                responsive = responsive == 1,
+                displayHtmlPolicy = displayHtmlPolicy,
                 removeComputationMessages = false,
                 logComputationMessages = false
             )
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
             Py_BuildValue("s", "generateDisplayHtmlForRawSpec() - Exception: ${e.message}")
+        }
+    }
+
+    @Suppress("unused") // This function is used in kotlin_bridge.c
+    fun generateStaticHtmlPageForRawSpec(
+        plotSpecDict: CPointer<PyObject>,
+        scriptUrlCStr: CPointer<ByteVar>,
+        sizingOptionsDict: CPointer<PyObject>,
+        dynamicScriptLoading: Int,
+        forceImmediateRender: Int,
+        responsive: Int,
+        height100pct: Int,
+    ): CPointer<PyObject>? {
+        return try {
+            val plotSpecMap = pyDictToMap(plotSpecDict)
+            val scriptUrl = scriptUrlCStr.toKString()
+            val sizingOptionsMap = pyDictToMap(sizingOptionsDict)
+            val sizingPolicy = SizingPolicy.create(sizingOptionsMap)
+            val displayHtmlPolicy = DisplayHtmlPolicy(
+                dynamicScriptLoading = dynamicScriptLoading == 1,
+                forceImmediateRender = forceImmediateRender == 1,
+                responsive = responsive == 1,
+                height100pct = height100pct == 1,
+            )
+
+            @Suppress("UNCHECKED_CAST")
+            val html = PlotHtmlHelper.getStaticHtmlPageForRawSpec(
+                plotSpec = plotSpecMap as MutableMap<String, Any>,
+                scriptUrl = scriptUrl,
+                sizingPolicy = sizingPolicy,
+                displayHtmlPolicy = displayHtmlPolicy,
+                removeComputationMessages = false,
+                logComputationMessages = false
+            )
+            Py_BuildValue("s", html)
+        } catch (e: Throwable) {
+            Py_BuildValue("s", "generateStaticHtmlPageForRawSpec() - Exception: ${e.message}")
         }
     }
 
@@ -188,7 +241,7 @@ object PlotReprGenerator {
             canvas.dispose()
             snapshot.dispose()
             magickCanvasPeer.dispose()
-            
+
             return bitmap to exportParameters.dpi
         } finally {
             canvasReg?.dispose()
