@@ -103,23 +103,28 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         }
 
         element.clipPath?.let { clipPath ->
-            ctx.save()
+            if (!needRestore) {
+                ctx.save()
+                needRestore = true
+            }
+
             ctx.beginPath()
             ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
             ctx.clip()
-        }
 
-        if (element.clipPath != null) {
+            // Make sure graphical objects will belong to the different save/restore block
+            // to avoid perf issues in ImageMagick
             ctx.save()
         }
+
         element.render(ctx)
         if (element is Container) {
             render(element.children, ctx)
         }
 
         if (element.clipPath != null) {
-            ctx.restore()
+            // Restore clip path save
             ctx.restore()
         }
 
