@@ -81,17 +81,13 @@ def _display_plot(spec: Any):
         raise ValueError("PlotSpec or SupPlotsSpec expected but was: {}".format(type(spec)))
 
     if _default_mimetype == TEXT_HTML:
-        if TEXT_HTML not in _frontend_contexts:
-            raise RuntimeError(
-                "HTML frontend not configured. Before displaying plots, please call either:\n"
-                "- LetsPlot.setup_html() for displaying HTML output inplace\n"
-                "- LetsPlot.setup_show_ext() for displaying HTML output in an external web browser\n"
-            )
+        ctx = _frontend_contexts.get(TEXT_HTML)
 
-        if isinstance(_frontend_contexts[TEXT_HTML], WebBrHtmlPageContext):
-            _frontend_contexts[TEXT_HTML].show(spec.as_dict())
+        if ctx is not None and isinstance(ctx, WebBrHtmlPageContext):
+            ctx.show(spec.as_dict())
             return
 
+        # If ctx is None, _as_html() will try to initialize the context lazily
         plot_html = _as_html(spec.as_dict())
         try:
             from IPython.display import display_html
