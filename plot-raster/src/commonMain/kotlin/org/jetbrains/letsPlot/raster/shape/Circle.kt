@@ -7,8 +7,6 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import kotlin.math.PI
-
 
 internal class Circle : Figure() {
     var centerX: Float by visualProp(0.0f)
@@ -20,12 +18,15 @@ internal class Circle : Figure() {
             return
         }
 
-        ctx.beginPath()
-        ctx.arc(centerX.toDouble(), centerY.toDouble(), radius.toDouble(), 0.0, 2* PI)
-        ctx.closePath()
+        fillPaint
+            ?.let { applyPaint(it, ctx) }
+            ?: ctx.setFillStyle(null)
 
-        fillPaint?.let { ctx.fill(it) }
-        strokePaint?.let { ctx.stroke(it) }
+        strokePaint
+            ?.let { applyPaint(it, ctx) }
+            ?: ctx.setStrokeStyle(null)
+
+        ctx.drawCircle(centerX.toDouble(), centerY.toDouble(), radius.toDouble())
     }
 
     override val localBounds: DoubleRectangle

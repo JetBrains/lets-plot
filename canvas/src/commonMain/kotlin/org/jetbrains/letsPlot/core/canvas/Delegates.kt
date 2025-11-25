@@ -47,6 +47,10 @@ class Context2dDelegate(
     override fun moveTo(x: Double, y: Double) { log("moveTo: x=$x, y=$y") }
     override fun lineTo(x: Double, y: Double) { log("lineTo: x=$x, y=$y") }
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { log("arc: x=$x, y=$y, radius=$radius, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise") }
+    override fun drawCircle(x: Double, y: Double, radius: Double) {
+        log("drawCircle: x=$x, y=$y, radius=$radius")
+    }
+
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { log("ellipse: x=$x, y=$y, radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise") }
     override fun save() { log("save") }
     override fun restore() { log("restore") }

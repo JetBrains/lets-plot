@@ -258,17 +258,13 @@ object PlotReprGenerator {
         scale: Float
     ): CPointer<PyObject>? {
         try {
-            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-            val sizeUnit = SizeUnit.fromName(unit.toKString())
-            val dpi = if (dpi >= 0) dpi.toDouble() else null
-            val scaleFactor = if (scale >= 0) scale.toDouble() else null
 
             val (bitmap, bitmapDpi) = exportBitmap(
                 plotSpec = pyDictToMap(plotSpecDict),
-                plotSize = plotSize,
-                sizeUnit = sizeUnit,
-                dpi = dpi,
-                scale = scaleFactor,
+                plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
+                sizeUnit = SizeUnit.fromName(unit.toKString()),
+                dpi = if (dpi >= 0) dpi.toDouble() else null,
+                scale = if (scale >= 0) scale.toDouble() else null,
                 fontManager = defaultFontManager
             )
             // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
@@ -299,21 +295,43 @@ object PlotReprGenerator {
         dpi: Int,
         scale: Float
     ): CPointer<PyObject>? {
+        try {
+
+            val mvg = generateMvg(
+                plotSpec = pyDictToMap(plotSpecDict),
+                plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
+                sizeUnit = SizeUnit.fromName(unit.toKString()),
+                dpi = if (dpi >= 0) dpi.toDouble() else null,
+                scale = if (scale >= 0) scale.toDouble() else null
+            )
+            return Py_BuildValue("s", mvg)
+        } catch (e: Throwable) {
+            //e.printStackTrace()
+
+            // Set a Python exception with the caught error message
+            PyErr_SetString(PyExc_ValueError, "${e.message}")
+            // Return null to signal that an exception was raised
+            return null
+        }
+    }
+
+    @Suppress("unused") // This function is used in kotlin_bridge.c
+    fun generateMvg(
+        plotSpec: Map<*, *>,
+        plotSize: DoubleVector? = null,
+        sizeUnit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null,
+    ): String {
         var canvasReg: Registration? = null
         try {
             val start = TimeSource.Monotonic.markNow()
 
-            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-            val sizeUnit = SizeUnit.fromName(unit.toKString())
-            val dpi = if (dpi >= 0) dpi.toDouble() else null
-            val scaleFactor = if (scale >= 0) scale.toDouble() else null
-            val plotSpec = pyDictToMap(plotSpecDict)
-
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotSpec parsed")
 
-            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scaleFactor)
+            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
-            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): $exportParameters")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): exportParameters(dpi=${exportParameters.dpi}, scaleFactor=${exportParameters.scaleFactor}, sizingPolicy=${exportParameters.sizingPolicy})")
 
             @Suppress("UNCHECKED_CAST")
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
@@ -356,22 +374,17 @@ object PlotReprGenerator {
             val wand = canvas.context2d.wand
             val mvg = DrawGetVectorGraphics(wand)?.toKString() ?: "MagicWand: MVG is null"
 
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): MVG extracted, length=${mvg.length}")
+
             canvas.dispose()
             snapshot.dispose()
             magickCanvasPeer.dispose()
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): resources disposed")
 
-            return Py_BuildValue("s", mvg)
-        } catch (e: Throwable) {
+            return mvg
+        } finally {
             canvasReg?.dispose()
-
-            //e.printStackTrace()
-
-            // Set a Python exception with the caught error message
-            PyErr_SetString(PyExc_ValueError, "${e.message}")
-            // Return null to signal that an exception was raised
-            return null
         }
     }
 

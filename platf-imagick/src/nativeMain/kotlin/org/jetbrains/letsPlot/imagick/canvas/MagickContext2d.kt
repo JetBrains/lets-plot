@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newDrawingWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 import kotlin.math.tan
 
+private const val ignoreSameParams = true
+
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
@@ -96,7 +98,15 @@ class MagickContext2d(
         dirtyFont = true
     }
 
+    override fun drawCircle(x: Double, y: Double, radius: Double) {
+        ImageMagick.DrawCircle(wand, x, y, x + radius, y)
+    }
+
     override fun setFillStyle(color: Color?) {
+        if (ignoreSameParams && stateDelegate.getFillColor() == color) {
+            return
+        }
+
         stateDelegate.setFillStyle(color)
 
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
@@ -104,6 +114,10 @@ class MagickContext2d(
     }
 
     override fun setStrokeStyle(color: Color?) {
+        if (ignoreSameParams && stateDelegate.getStrokeColor() == color) {
+            return
+        }
+
         stateDelegate.setStrokeStyle(color)
 
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
@@ -111,12 +125,19 @@ class MagickContext2d(
     }
 
     override fun setLineWidth(lineWidth: Double) {
+        if (ignoreSameParams && stateDelegate.getLineWidth() == lineWidth) {
+            return
+        }
         stateDelegate.setLineWidth(lineWidth)
 
         ImageMagick.DrawSetStrokeWidth(wand, lineWidth)
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
+        if (ignoreSameParams && stateDelegate.getLineDash() == lineDash.toList()) {
+            return
+        }
+
         stateDelegate.setLineDash(lineDash)
 
         if (lineDash.isNotEmpty()) {
@@ -516,3 +537,4 @@ class MagickContext2d(
 
     }
 }
+

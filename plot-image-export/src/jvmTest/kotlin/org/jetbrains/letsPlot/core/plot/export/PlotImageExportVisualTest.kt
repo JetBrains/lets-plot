@@ -6,6 +6,8 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlin.random.Random
 import kotlin.test.Test
+import kotlin.test.assertTrue
+import kotlin.time.measureTime
 
 
 class PlotImageExportVisualTest: VisualPlotTestBase() {
@@ -1735,4 +1737,51 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
         assertPlot("contour_with_none.png", plotSpec)
     }
+
+    @Test
+    fun `issue1423 - drawing primitives and clip-path at the same level`() {
+        val rnd = Random(42)
+        val n = 100
+        val xs = List(n) { rnd.nextDouble() * 1000 }
+        val ys = List(n) { rnd.nextDouble() * 1000 }
+
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ ${xs.joinToString(", ")} ],
+            |    "y": [ ${ys.joinToString(", ")} ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y",
+            |    "fill": "x"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "float", "column": "x" },
+            |      { "type": "float", "column": "y" },
+            |      { "type": "float", "column": "v" }
+            |    ]
+            |  },
+            |    "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank"
+            |  },
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "point", "size": 30, "show_legend": false } ],
+            |  "metainfo_list": []
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        val time = measureTime {
+            assertPlot("issue1423_test.png", plotSpec)
+        }
+        println("Plotting time: ${time.inWholeMilliseconds} ms")
+
+        assertTrue(time.inWholeMilliseconds < 1000, "Plotting took too long: ${time.inWholeMilliseconds} ms")
+    }
+
 }
