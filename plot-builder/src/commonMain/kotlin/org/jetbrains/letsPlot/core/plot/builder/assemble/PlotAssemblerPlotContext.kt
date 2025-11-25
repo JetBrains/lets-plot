@@ -17,7 +17,8 @@ internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
     override val expFormat: ExponentFormat,
     override val tz: TimeZone?,
-    private val myScaleFactor: Double = 1.0
+    private val myScaleFactor: Double = 1.0,
+    private val messageConsumer: (String) -> Unit
 ) : PlotContext {
 
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
@@ -42,6 +43,10 @@ internal class PlotAssemblerPlotContext constructor(
         return tooltipFormatters.getOrPut(aes) {
             TooltipFormatting.fromScale(aes, this)
         }
+    }
+
+    override fun getMessageConsumer(): (String) -> Unit {
+        return messageConsumer
     }
 
     private companion object {

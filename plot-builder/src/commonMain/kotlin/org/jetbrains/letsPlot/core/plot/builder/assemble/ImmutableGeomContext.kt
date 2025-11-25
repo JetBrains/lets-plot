@@ -43,6 +43,8 @@ interface ImmutableGeomContext : GeomContext {
 
         fun scaleFactor(scaleFactor: Double): Builder
 
+        fun messageConsumer(messageConsumer: (String) -> Unit): Builder
+
         fun build(): ImmutableGeomContext
     }
 }

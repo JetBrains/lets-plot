@@ -32,10 +32,11 @@ open class PathGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-
         val dataPoints = dataPoints(aesthetics)
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
+
+        ctx.consumeMessage("Test string from geomPath")
 
         val closePath = linesHelper.meetsRadarPlotReq()
         val pathData = linesHelper.createPathData(dataPoints, GeomUtil.TO_LOCATION_X_Y, closePath)

@@ -31,6 +31,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var coordinateSystem: CoordinateSystem? = null
     private var contentBounds: DoubleRectangle? = null
     private var scaleFactor: Double = 1.0
+    private var messageConsumer: (String) -> Unit = {}
 
     constructor()
 
@@ -112,6 +113,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun messageConsumer(messageConsumer: (String) -> Unit): ImmutableGeomContext.Builder {
+        this.messageConsumer = messageConsumer
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -125,6 +131,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val _coordinateSystem = b.coordinateSystem
         val _contentBounds = b.contentBounds
         val _scaleFactor = b.scaleFactor
+        val _messageConsumer = b.messageConsumer
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -194,6 +201,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override fun getScaleFactor(): Double {
             return _scaleFactor
+        }
+
+        override fun consumeMessage(message: String) {
+            _messageConsumer(message)
         }
 
         override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {

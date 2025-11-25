@@ -45,6 +45,7 @@ class PlotAssembler constructor(
     private val tz: TimeZone?,
     scaleFactor: Double = 1.0,
     private val detachedLegendsCollector: DetachedLegendsCollector?,
+    private val messageConsumer: (String) -> Unit = {},
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -67,7 +68,8 @@ class PlotAssembler constructor(
             geomTiles,
             expFormat = extractExponentFormat(theme.exponentFormat),
             tz = tz,
-            scaleFactor
+            scaleFactor,
+            messageConsumer
         )
 
         val legendTheme = theme.legend()
