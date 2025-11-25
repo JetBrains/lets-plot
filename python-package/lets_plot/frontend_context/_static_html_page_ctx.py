@@ -14,8 +14,8 @@ from .. import _kbridge as kbr
 class StaticHtmlPageContext(FrontendContext):
 
     def __init__(self, offline: bool, *,
-                 width_mode: str = None,
-                 height_mode: str = None,
+                 width_mode: str = 'min',
+                 height_mode: str = 'scaled',
                  width: float = None,
                  height: float = None,
                  responsive: bool = False,
@@ -33,7 +33,7 @@ class StaticHtmlPageContext(FrontendContext):
         self.height100pct = height100pct
 
     def configure(self, verbose: bool):
-        # Nothing here because the entire html page is created per each cell output.
+        # Nothing here because the complete HTML page is created per each cell output.
         if not self.connected:
             print("WARN: Embedding Lets-Plot JS library for offline usage is not supported.")
 
@@ -43,18 +43,22 @@ class StaticHtmlPageContext(FrontendContext):
 
         # Build sizing_options
         # Default to notebookCell sizing (MIN width, SCALED height) if not specified
-        if self.width_mode is not None and self.height_mode is not None:
-            # Use dev options
-            sizing_options = {
-                'width_mode': self.width_mode,
-                'height_mode': self.height_mode
-            }
-        else:
-            # Default to notebookCell sizing
-            sizing_options = {
-                'width_mode': 'min',
-                'height_mode': 'scaled'
-            }
+        # if self.width_mode is not None and self.height_mode is not None:
+        #     # Use dev options
+        #     sizing_options = {
+        #         'width_mode': self.width_mode,
+        #         'height_mode': self.height_mode
+        #     }
+        # else:
+        #     # Default to notebookCell sizing
+        #     sizing_options = {
+        #         'width_mode': 'min',
+        #         'height_mode': 'scaled'
+        #     }
+        sizing_options = {
+            'width_mode': self.width_mode,
+            'height_mode': self.height_mode
+        }
 
         # Add width and height if specified
         if self.width is not None:

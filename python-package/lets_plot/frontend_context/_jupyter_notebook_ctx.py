@@ -16,6 +16,8 @@ from .. import _kbridge as kbr
 
 class JupyterNotebookContext(FrontendContext):
 
+    requires_configure = True
+
     def __init__(self, offline: bool, *,
                  width_mode: str = 'min',
                  height_mode: str = 'scaled',

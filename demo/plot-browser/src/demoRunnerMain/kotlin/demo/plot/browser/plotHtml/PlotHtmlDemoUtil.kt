@@ -44,7 +44,7 @@ object PlotHtmlDemoUtil {
     ): String {
 
         val responsiveDemo = plotSize == null && preferredWidth == null
-        val width100pct = responsiveDemo
+//        val width100pct = responsiveDemo
 
         val scriptUrl = BrowserDemoUtil.getPlotLibPath(dev = false)
         val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)

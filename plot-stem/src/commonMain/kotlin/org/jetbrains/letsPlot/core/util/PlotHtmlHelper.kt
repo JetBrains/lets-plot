@@ -22,6 +22,11 @@ object PlotHtmlHelper {
     private const val SCRIPT_KIND_LIB_LOADING = "library"
     private const val SCRIPT_KIND_PLOT = "plot"
 
+    // The data attibute <body data-lets-plot-preferred-width='700'>
+    // is used in Datalore reports to control the size of the plot.
+    // This is the key to access the attribute value via JavaScript.
+    private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
+
     /**
      * This method is used in Lets-Plot Kotlin API.
      */
@@ -253,7 +258,7 @@ object PlotHtmlHelper {
         |       height: ${sizingPolicy.height} 
         |   };
         |   
-        |   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+        |   const preferredWidth = document.body.dataset.$DATALORE_PREFERRED_WIDTH;
         |   if (preferredWidth !== undefined) {
         |       sizing = {
         |           width_mode: 'FIXED',

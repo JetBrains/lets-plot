@@ -5,7 +5,7 @@
 from typing import Dict, Any
 
 from ._frontend_ctx import FrontendContext
-from ._html_contexts import _create_html_frontend_context, _use_isolated_frame, _create_wb_html_frontend_context
+from ._html_contexts import _create_html_frontend_context, _create_wb_html_frontend_context
 from ._json_contexts import _create_json_frontend_context, _is_Intellij_Python_Lets_Plot_Plugin
 from ._mime_types import TEXT_HTML, LETS_PLOT_JSON
 from ._static_svg_ctx import StaticSvgImageContext
@@ -38,12 +38,11 @@ def _setup_html_context(*,
     global _default_mimetype
     if _default_mimetype == LETS_PLOT_JSON:
         # Plots will be rendered by Lets-Plot IntelliJ plugin.
-        # No other contexts are needed.
+        # But still create HTML context in case it's necessary.
         if show_status:
             print(
                 'Lets-Plot v{}: output mimetype {} configured by default. No need for HTML output.'.format(__version__,
                                                                                                            LETS_PLOT_JSON))
-        return
 
     if no_js:
         ctx = StaticSvgImageContext()
@@ -118,19 +117,28 @@ def _as_html(plot_spec: Dict) -> str:
 
     :param plot_spec: dict
     """
-    if TEXT_HTML not in _frontend_contexts:
-        if _use_isolated_frame():
-            # 'Isolated' HTML context can be setup lazily.
-            _setup_html_context(isolated_frame=True,
-                                offline=False,
-                                no_js=False,
-                                show_status=False)
-        else:
-            return """\
-                <div style="color:darkred;">
-                    Lets-plot `html` is not configured.<br> 
-                    Try to use `LetsPlot.setup_html()` before first occurrence of plot.
-                </div>    
-                """
+    ctx = _frontend_contexts.get(TEXT_HTML)
 
-    return _frontend_contexts[TEXT_HTML].as_str(plot_spec)
+    if ctx is None:
+        # Set up HTML context lazily
+        _setup_html_context(isolated_frame=None,
+                            offline=False,
+                            no_js=False,
+                            show_status=False)
+
+        ctx = _frontend_contexts[TEXT_HTML]
+
+        # Check if this context allows lazy set-up.
+        requires_configure = getattr(ctx, 'requires_configure', False)
+        if requires_configure:
+            # Clear the context and return an error message
+            _frontend_contexts[TEXT_HTML] = None
+            return """\
+            <div style="color:darkred;">
+                Lets-plot `html` is not configured.<br>
+                Try to use `LetsPlot.setup_html()` before first occurrence of plot.
+            </div>
+            """
+
+    # Generate "display" HTML
+    return ctx.as_str(plot_spec)

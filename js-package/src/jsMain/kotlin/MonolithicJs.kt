@@ -27,11 +27,6 @@ import tools.DefaultToolbarJs.Companion.EXPECTED_TOOLBAR_HEIGHT
 
 private val LOG = PortableLogging.logger("MonolithicJs")
 
-// Key for the data attibute <body data-lets-plot-preferred-width='700'>
-// Used in Datalore reports to control size of the plot.
-// See generated HTML (PlotHtmlHelper.kt)
-private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
-
 /**
  * Main entry point for creating plots from the JavaScript environment.
  *
