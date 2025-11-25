@@ -448,8 +448,7 @@ def _filter_none(original: dict) -> dict:
 
 def element_blank() -> dict:
     """
-    Specify how non-data components of the plot are drawn.
-    This theme element draws nothing, and assigns no space.
+    Theme element that draws nothing and allocates no space for non-data components of the plot.
 
     Returns
     -------
@@ -482,8 +481,7 @@ def element_rect(
         blank=False,
 ) -> dict:
     """
-    Specify how non-data components of the plot are drawn.
-    This theme element draws borders and backgrounds.
+    Theme element that draws rectangular non-data components of the plot: borders and backgrounds.
 
     Parameters
     ----------
@@ -535,8 +533,7 @@ def element_line(
         blank=False,
 ) -> dict:
     """
-    Specify how non-data components of the plot are drawn.
-    This theme element draws lines.
+    Theme element that draws line-based non-data components of the plot.
 
     Parameters
     ----------
@@ -591,8 +588,7 @@ def element_text(
         blank=False,
 ) -> dict:
     """
-    Specify how non-data components of the plot are drawn.
-    This theme element draws text.
+    Theme element that draws text for non-data components of the plot.
 
     Parameters
     ----------
@@ -667,8 +663,7 @@ def element_markdown(
         blank=False,
 ) -> dict:
     """
-    Specify how non-data components of the plot are drawn.
-    This theme element draws text with Markdown support.
+    Theme element that draws text with Markdown support for non-data components of the plot.
 
     Supported features:
 
@@ -761,7 +756,7 @@ def element_geom(
         # ToDo: fatten
 ) -> dict:
     """
-    Specify custom values for named geom colors used in plot elements.
+    Theme element that specifies custom values for named geom colors used in plot elements.
 
     Parameters
     ----------

@@ -85,6 +85,35 @@ def aes(x=None, y=None, **kwargs):
         ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
                                 color='black', alpha=.5, size=1)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12,16,18,20
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        data = {
+            'val': np.concatenate([np.random.normal(loc=-2, size=n),
+                                   np.random.normal(loc=2, size=n)]),
+            'group': ['g1'] * n + ['g2'] * n,
+            'cat': np.random.choice(['A', 'B', 'C'], size=2*n),
+        }
+        g = ggplot(data, aes(x='val', fill='cat'))
+        gggrid([
+            g + geom_density(alpha=.25) + \\
+                ggtitle("Default grouping"),
+            g + geom_density(aes(group='group'), alpha=.25) + \\
+                ggtitle("group='group'"),
+            g + geom_density(aes(group=['cat', 'group']), alpha=.25) + \\
+                ggtitle("group=['cat', 'group']"),
+            g + geom_density(aes(group=[]), alpha=.25) + \\
+                ggtitle("group=[]"),
+        ], ncol=2)
+
     """
 
     return FeatureSpec('mapping', name=None, x=x, y=y, **kwargs)

@@ -24,9 +24,8 @@ def scale_identity(aesthetic, *,
                    name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                    format=None, **other):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity scale that maps already-scaled data directly to aesthetic values, without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -99,9 +98,8 @@ def scale_identity(aesthetic, *,
 def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                          format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity color scale that maps already-scaled data directly to the color aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -169,9 +167,8 @@ def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limit
 def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                         format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity fill scale that maps already-scaled data directly to the fill aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -239,9 +236,8 @@ def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits
 def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                          format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity shape scale that maps already-scaled data directly to the shape aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -310,9 +306,8 @@ def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limit
 def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                             format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity linetype scale that maps already-scaled data directly to the linetype aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -385,9 +380,8 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, li
 def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                          format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity alpha scale that maps already-scaled data directly to the alpha aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -456,9 +450,8 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limit
 def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                         format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that the library can handle directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity size scale that maps already-scaled data directly to the size aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -527,9 +520,8 @@ def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits
 def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                              format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that can be handled directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity linewidth scale that maps already-scaled data directly to the linewidth aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------
@@ -596,9 +588,8 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, l
 def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none',
                           format=None):
     """
-    Use this scale when your data has already been scaled.
-    I.e. it already represents aesthetic values that can be handled directly.
-    This will not produce a legend unless you also supply the breaks and labels.
+    Identity stroke scale that maps already-scaled data directly to the stroke aesthetic without transformation.
+    This scale does not produce a legend unless breaks and labels are supplied.
 
     Parameters
     ----------

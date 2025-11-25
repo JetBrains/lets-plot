@@ -5716,7 +5716,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
                       color_by=None, fill_by=None,
                       **other_args):
     """
-    Plots data points and colors each point by the local density of nearby points.
+    Plot data points and color each point by the local density of nearby points.
 
     Parameters
     ----------
@@ -8084,6 +8084,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Maximum number of iterations used to resolve collisions.
     max_time : float, default=5
         Maximum allowed time in seconds for resolving label collisions.
+        Set to -1 to disable the time limit.
     direction : {'both', 'x', 'y'}, default='both'
         Direction in which text labels can be moved.
     point_padding : float
@@ -8092,6 +8093,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Padding around text labels to prevent overlap between labels.
     max_overlaps : int, default=10
         The maximum number of overlapping labels allowed. Additional labels will be hidden.
+        Set to -1 to disable overlap filtering.
     min_segment_length : float
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : ``FeatureSpec``
@@ -8308,6 +8310,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Maximum number of iterations used to resolve collisions.
     max_time : float, default=5
         Maximum allowed time in seconds for resolving label collisions.
+        Set to -1 to disable the time limit.
     direction : {'both', 'x', 'y'}, default='both'
         Direction in which text labels can be moved.
     point_padding : float
@@ -8316,6 +8319,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Padding around text labels to prevent overlap between labels.
     max_overlaps : int, default=10
         The maximum number of overlapping labels allowed. Additional labels will be hidden.
+        Set to -1 to disable overlap filtering.
     min_segment_length : float
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : ``FeatureSpec``
