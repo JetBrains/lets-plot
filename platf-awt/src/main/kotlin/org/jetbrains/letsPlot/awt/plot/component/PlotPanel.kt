@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.awt.BorderLayout
 import java.awt.Component
@@ -201,8 +202,6 @@ open class PlotPanel constructor(
 
 
     companion object {
-        const val TOOLBAR_HEIGHT = 33
-
         fun actualPlotComponentFromProvidedComponent(providedComponent: JComponent): JComponent {
             return if (providedComponent is JScrollPane) {
                 providedComponent.viewport.view as JComponent
