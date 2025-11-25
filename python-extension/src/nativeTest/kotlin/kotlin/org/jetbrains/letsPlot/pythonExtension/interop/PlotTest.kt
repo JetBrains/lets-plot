@@ -21,7 +21,6 @@ import kotlin.time.measureTime
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-@Ignore
 class PlotTest {
     companion object {
         private val embeddedFontsManager by lazy { newEmbeddedFontsManager() }
@@ -859,6 +858,52 @@ class PlotTest {
         assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
     }
 
+    @Test
+    fun `issue1423 - drawing primitives and clip-path at the same level`() {
+        // With 5_000 points test will hang or take a very long time to render if issue #1423 is present.
+        // Don't use time measurement because it may vary depending on the machine performance and give false negatives.
+        val n = 5_000
+        val rnd = Random(42)
+        val xs = List(n) { rnd.nextDouble() * 1000 }
+        val ys = List(n) { rnd.nextDouble() * 1000 }
+
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ ${xs.joinToString(", ")} ],
+            |    "y": [ ${ys.joinToString(", ")} ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y",
+            |    "fill": "x"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "float", "column": "x" },
+            |      { "type": "float", "column": "y" },
+            |      { "type": "float", "column": "v" }
+            |    ]
+            |  },
+            |    "theme": {
+            |    "name": "classic",
+            |    "line": "blank",
+            |    "axis": "blank"
+            |  },
+            |  "kind": "plot",
+            |  "layers": [ { "geom": "point", "size": 30, "show_legend": false } ],
+            |  "metainfo_list": []
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        val time = measureTime {
+            assertPlot("issue1423_test.png", plotSpec)
+        }
+        println("Plotting time: ${time.inWholeMilliseconds} ms")
+    }
+
     @Ignore
     @Test
     fun perf() {
@@ -881,11 +926,7 @@ class PlotTest {
         var mvg: String? = null
         repeat(1) {
             times += measureTime {
-                mvg = PlotReprGenerator.generateMvg(
-                    plotSpec = plotSpec,
-                    fontManager = embeddedFontsManager
-                    //fontManager = MagickFontManager.default() // For manual testing
-                )
+                mvg = PlotReprGenerator.generateMvg(plotSpec)
             }.inWholeMilliseconds
         }
         println(mvg)

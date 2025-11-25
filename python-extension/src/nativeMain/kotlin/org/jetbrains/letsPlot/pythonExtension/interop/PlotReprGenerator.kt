@@ -205,17 +205,13 @@ object PlotReprGenerator {
         scale: Float
     ): CPointer<PyObject>? {
         try {
-            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-            val sizeUnit = SizeUnit.fromName(unit.toKString())
-            val dpi = if (dpi >= 0) dpi.toDouble() else null
-            val scaleFactor = if (scale >= 0) scale.toDouble() else null
 
             val (bitmap, bitmapDpi) = exportBitmap(
                 plotSpec = pyDictToMap(plotSpecDict),
-                plotSize = plotSize,
-                sizeUnit = sizeUnit,
-                dpi = dpi,
-                scale = scaleFactor,
+                plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
+                sizeUnit = SizeUnit.fromName(unit.toKString()),
+                dpi = if (dpi >= 0) dpi.toDouble() else null,
+                scale = if (scale >= 0) scale.toDouble() else null,
                 fontManager = defaultFontManager
             )
             // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
@@ -247,13 +243,14 @@ object PlotReprGenerator {
         scale: Float
     ): CPointer<PyObject>? {
         try {
-            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-            val sizeUnit = SizeUnit.fromName(unit.toKString())
-            val dpi = if (dpi >= 0) dpi.toDouble() else null
-            val scaleFactor = if (scale >= 0) scale.toDouble() else null
-            val plotSpec = pyDictToMap(plotSpecDict)
 
-            val mvg = generateMvg(plotSpec, defaultFontManager, plotSize, sizeUnit, dpi, scaleFactor)
+            val mvg = generateMvg(
+                plotSpec = pyDictToMap(plotSpecDict),
+                plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
+                sizeUnit = SizeUnit.fromName(unit.toKString()),
+                dpi = if (dpi >= 0) dpi.toDouble() else null,
+                scale = if (scale >= 0) scale.toDouble() else null
+            )
             return Py_BuildValue("s", mvg)
         } catch (e: Throwable) {
             //e.printStackTrace()
@@ -268,7 +265,6 @@ object PlotReprGenerator {
     @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateMvg(
         plotSpec: Map<*, *>,
-        fontManager: MagickFontManager,
         plotSize: DoubleVector? = null,
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,

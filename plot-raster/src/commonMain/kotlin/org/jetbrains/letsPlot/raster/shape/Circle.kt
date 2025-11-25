@@ -7,15 +7,6 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import kotlin.math.PI
-
-private enum class StrokeRenderingMode {
-    FILL_AND_STROKE,
-    CIRCLE,
-    SINGLE_DRAW
-}
-
-private val strokeRenderingMode = StrokeRenderingMode.CIRCLE
 
 internal class Circle : Figure() {
     var centerX: Float by visualProp(0.0f)
@@ -27,31 +18,15 @@ internal class Circle : Figure() {
             return
         }
 
-        when (strokeRenderingMode) {
-            StrokeRenderingMode.SINGLE_DRAW -> {
-                ctx.beginPath()
-                ctx.arc(centerX.toDouble(), centerY.toDouble(), radius.toDouble(), 0.0, 2 * PI)
-                ctx.closePath()
+        fillPaint
+            ?.let { applyPaint(it, ctx) }
+            ?: ctx.setFillStyle(null)
 
-                ctx.fillAndStroke(fillPaint, strokePaint)
-            }
+        strokePaint
+            ?.let { applyPaint(it, ctx) }
+            ?: ctx.setStrokeStyle(null)
 
-            StrokeRenderingMode.CIRCLE -> {
-                fillPaint?.let { applyPaint(it, ctx) }
-                strokePaint?.let { applyPaint(it, ctx) }
-
-                ctx.drawCircle(centerX.toDouble(), centerY.toDouble(), radius.toDouble())
-            }
-
-            StrokeRenderingMode.FILL_AND_STROKE -> {
-                ctx.beginPath()
-                ctx.arc(centerX.toDouble(), centerY.toDouble(), radius.toDouble(), 0.0, 2* PI)
-                ctx.closePath()
-
-                fillPaint?.let { ctx.fill(it) }
-                strokePaint?.let { ctx.stroke(it) }
-            }
-        }
+        ctx.drawCircle(centerX.toDouble(), centerY.toDouble(), radius.toDouble())
     }
 
     override val localBounds: DoubleRectangle

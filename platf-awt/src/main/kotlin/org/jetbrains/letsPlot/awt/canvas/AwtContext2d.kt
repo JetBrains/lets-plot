@@ -15,10 +15,7 @@ import java.awt.BasicStroke
 import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.font.GlyphVector
-import java.awt.geom.AffineTransform
-import java.awt.geom.GeneralPath
-import java.awt.geom.Path2D
-import java.awt.geom.Rectangle2D
+import java.awt.geom.*
 import java.util.*
 import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
@@ -92,6 +89,13 @@ internal class AwtContext2d(
             dx.toInt(), dy.toInt(), dw.toInt() + dx.toInt(), dh.toInt() + dy.toInt(),
             sx.toInt(), sy.toInt(), sw.toInt() + sx.toInt(), sh.toInt() + sy.toInt(), null
         )
+    }
+
+    override fun drawCircle(x: Double, y: Double, radius: Double) {
+        val circle = Arc2D.Double(x - radius, y - radius, 2 * radius, 2 * radius, 0.0, 360.0, Arc2D.OPEN)
+
+        withStrokeGraphics { g -> g.draw(circle) }
+        withFillGraphics { g -> g.fill(circle) }
     }
 
     override fun save() {

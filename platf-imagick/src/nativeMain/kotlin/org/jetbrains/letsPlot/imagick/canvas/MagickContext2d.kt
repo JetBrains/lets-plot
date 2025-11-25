@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newDrawingWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 import kotlin.math.tan
 
-private const val ignoreSameParams = false
+private const val ignoreSameParams = true
 
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
@@ -200,13 +200,6 @@ class MagickContext2d(
 
             drawPath(fillWand, stateDelegate.getCurrentPath(), inverseCtmTransform)
         }
-    }
-
-    override fun fillAndStroke() {
-        // Make ctm identity. null for degenerate case, e.g., scale(0, 0) - skip drawing.
-        val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
-
-        drawPath(wand, stateDelegate.getCurrentPath(), inverseCtmTransform)
     }
 
     override fun fillEvenOdd() {

@@ -103,24 +103,6 @@ internal abstract class Figure : Element() {
             stroke()
         }
 
-        internal fun Context2d.fillAndStroke(fillPaint: Paint?, strokePaint: Paint?) {
-            fillPaint?.let {
-                require(!it.isStroke) { "Paint must be a fill paint" }
-                setFillStyle(it.color)
-            }
-
-            strokePaint?.let {
-                require(it.isStroke) { "Paint must be a stroke paint" }
-
-                setLineWidth(it.strokeWidth.toDouble())
-                setStrokeStyle(it.color)
-                setStrokeMiterLimit(it.strokeMiter.toDouble())
-                setLineDash(it.strokeDashList)
-            }
-
-            fillAndStroke()
-        }
-
         internal fun Context2d.fill(paint: Paint) {
             require(!paint.isStroke) { "Paint must be a fill paint" }
 

@@ -103,19 +103,24 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         }
 
         element.clipPath?.let { clipPath ->
-            if (!needRestore) {
-                ctx.save()
-                needRestore = true
-            }
+            ctx.save()
             ctx.beginPath()
             ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
             ctx.clip()
         }
 
+        if (element.clipPath != null) {
+            ctx.save()
+        }
         element.render(ctx)
         if (element is Container) {
             render(element.children, ctx)
+        }
+
+        if (element.clipPath != null) {
+            ctx.restore()
+            ctx.restore()
         }
 
         if (needRestore) {

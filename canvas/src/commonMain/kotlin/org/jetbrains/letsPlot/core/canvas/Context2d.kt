@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
-import kotlin.math.PI
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
@@ -30,49 +29,45 @@ interface Context2d {
         dh: Double
     )
 
+    fun setFont(f: Font)
+    fun setGlobalAlpha(alpha: Double)
+    fun setLineWidth(lineWidth: Double)
+    fun setFillStyle(color: Color?)
+    fun setStrokeStyle(color: Color?)
+    fun setLineCap(lineCap: LineCap)
+    fun setStrokeMiterLimit(miterLimit: Double)
+    fun setLineJoin(lineJoin: LineJoin)
+    fun setTextBaseline(baseline: TextBaseline)
+    fun setTextAlign(align: TextAlign)
+    fun setLineDash(lineDash: DoubleArray)
+    fun setLineDashOffset(lineDashOffset: Double)
+
+    fun drawCircle(x: Double, y: Double, radius: Double)
+    fun strokeRect(x: Double, y: Double, w: Double, h: Double)
+    fun fillRect(x: Double, y: Double, w: Double, h: Double)
+    fun strokeText(text: String, x: Double, y: Double)
+    fun fillText(text: String, x: Double, y: Double)
+
     fun beginPath()
     fun closePath()
     fun clip()
     fun stroke()
     fun fill()
-    fun fillAndStroke() {
-        fill()
-        stroke()
-    }
-
     fun fillEvenOdd()
-    fun fillRect(x: Double, y: Double, w: Double, h: Double)
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
-
-    fun drawCircle(x: Double, y: Double, radius: Double) = arc(x, y, radius, 0.0, 2.0 * PI, false)
-
     fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean)
+    fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
+
     fun save()
     fun restore()
-    fun setFillStyle(color: Color?)
-    fun setStrokeStyle(color: Color?)
-    fun setGlobalAlpha(alpha: Double)
-    fun setFont(f: Font)
-    fun setLineWidth(lineWidth: Double)
-    fun strokeRect(x: Double, y: Double, w: Double, h: Double)
-    fun strokeText(text: String, x: Double, y: Double)
-    fun fillText(text: String, x: Double, y: Double)
     fun scale(x: Double, y: Double)
     fun scale(xy: Double)
     fun rotate(angle: Double)
     fun translate(x: Double, y: Double)
     fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double)
-    fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
-    fun setLineJoin(lineJoin: LineJoin)
-    fun setLineCap(lineCap: LineCap)
-    fun setStrokeMiterLimit(miterLimit: Double)
-    fun setTextBaseline(baseline: TextBaseline)
-    fun setTextAlign(align: TextAlign)
     fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double)
-    fun setLineDash(lineDash: DoubleArray)
-    fun setLineDashOffset(lineDashOffset: Double)
     fun measureTextWidth(str: String): Double
     fun measureText(str: String): TextMetrics
 
