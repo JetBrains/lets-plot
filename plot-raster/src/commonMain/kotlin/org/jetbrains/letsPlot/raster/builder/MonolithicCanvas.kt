@@ -52,11 +52,8 @@ object MonolithicCanvas {
     ): ViewModel {
 
         val frontMessages: MutableList<String> = ArrayList()
-        val messageConsumer: (String) -> Unit = { message ->
-            frontMessages.add(message)
-        }
 
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy, messageConsumer)
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy, frontMessages::add)
         if (buildResult is MonolithicCommon.PlotsBuildResult.Error) {
             return SimpleModel(createErrorSvgText(buildResult.error), UnsupportedToolEventDispatcher())
         }

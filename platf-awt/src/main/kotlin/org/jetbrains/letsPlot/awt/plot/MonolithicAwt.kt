@@ -64,15 +64,12 @@ object MonolithicAwt {
             }
 
             val frontMessages: MutableList<String> = ArrayList()
-            val messageConsumer: (String) -> Unit = { message ->
-                frontMessages.add(message)
-            }
 
             val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
                 plotSpec,
                 containerSizeDV,
                 sizingPolicy,
-                messageConsumer
+                frontMessages::add
             )
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error

@@ -275,15 +275,12 @@ internal fun buildPlotFromProcessedSpecsIntern(
 ): FigureModelJs? {
 
     val frontMessages: MutableList<String> = ArrayList()
-    val messageConsumer: (String) -> Unit = { message ->
-        frontMessages.add(message)
-    }
 
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
         containerSize.invoke(),
         sizingPolicy,
-        messageConsumer
+        frontMessages::add
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error

@@ -64,11 +64,8 @@ object MonolithicCommon {
         val (sizingPolicy, _, unit) = computeExportParameters(plotSize = plotSize, unit = sizeUnit)
 
         val frontMessages: MutableList<String> = ArrayList()
-        val messageConsumer: (String) -> Unit = { message ->
-            frontMessages.add(message)
-        }
 
-        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy, messageConsumer)
+        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy, frontMessages::add)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
