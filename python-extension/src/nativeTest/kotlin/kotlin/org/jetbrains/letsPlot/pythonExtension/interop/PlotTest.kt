@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 import kotlin.random.Random
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.time.measureTime
@@ -860,9 +859,9 @@ class PlotTest {
 
     @Test
     fun `issue1423 - drawing primitives and clip-path at the same level`() {
-        // With 5_000 points test will hang or take a very long time to render if issue #1423 is present.
+        // With 3_000 points test will hang or take a very long time to render if issue #1423 is present.
         // Don't use time measurement because it may vary depending on the machine performance and give false negatives.
-        val n = 5_000
+        val n = 1_000
         val rnd = Random(42)
         val xs = List(n) { rnd.nextDouble() * 1000 }
         val ys = List(n) { rnd.nextDouble() * 1000 }
@@ -898,13 +897,15 @@ class PlotTest {
 
         val plotSpec = parsePlotSpec(spec)
 
-        val time = measureTime {
-            assertPlot("issue1423_test.png", plotSpec)
+        val plottingDuration = measureTime {
+            assertPlot("issue1423_test.png", plotSpec, scale = 2)
         }
-        println("Plotting time: ${time.inWholeMilliseconds} ms")
+
+        if (plottingDuration.inWholeSeconds > 20) {
+            fail("Plotting took ${plottingDuration.inWholeSeconds} seconds, possible presence of issue #1423")
+        }
     }
 
-    @Ignore
     @Test
     fun perf() {
         val rnd = Random(42)
