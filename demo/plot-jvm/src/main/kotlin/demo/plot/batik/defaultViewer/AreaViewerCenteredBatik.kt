@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 //            windowSize = Dimension(640, 480),
             windowSize = null,
             rawSpec = plotSpecList().first(),
-            preserveAspectRatio = false
+            preserveAspectRatio = true
         ).open()
     }
 }

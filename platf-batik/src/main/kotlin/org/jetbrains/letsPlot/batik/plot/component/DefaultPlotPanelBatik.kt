@@ -25,5 +25,5 @@ open class DefaultPlotPanelBatik(
     preferredSizeFromPlot = preferredSizeFromPlot,
     repaintDelay = repaintDelay,
     applicationContext = DefaultSwingContextBatik(),
-    showToolbar = processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
+    hasToolbar = processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
 )
