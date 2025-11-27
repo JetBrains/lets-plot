@@ -52,5 +52,5 @@ interface GeomContext {
 
     fun getScaleFactor(): Double
 
-    fun consumeMessage(message: String)
+    fun consumeMessages(messages: List<String>)
 }

@@ -22,9 +22,9 @@ class StepGeom : LineGeom() {
         myDirection = Direction.toDirection(dir)
     }
     // commit name:
-    override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         // filter out points with NaN x-values but keep +/-Infinity (for 'padded' mode)
-        val data = aesthetics.dataPoints().filter { p: DataPointAesthetics ->
+        val data = dataPoints.filter { p: DataPointAesthetics ->
             val x = p.x()
             x != null && (x.isFinite() || x.isInfinite())
         }

@@ -18,12 +18,10 @@ open class PathGeom : GeomBase() {
     var flat: Boolean = false
     var geodesic: Boolean = false
 
+    override val geomName: String = "path"
+
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
-
-    protected open fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return aesthetics.dataPoints()
-    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -33,10 +31,8 @@ open class PathGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val dataPoints = dataPoints(aesthetics)
-        val linesHelper = LinesHelper(pos, coord, ctx)
+        val linesHelper = LinesHelper(pos, coord, ctx, ::addNulls)
         linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
-
-        ctx.consumeMessage("Test string from geomPath")
 
         val closePath = linesHelper.meetsRadarPlotReq()
         val pathData = linesHelper.createPathData(dataPoints, GeomUtil.TO_LOCATION_X_Y, closePath)
@@ -47,7 +43,6 @@ open class PathGeom : GeomBase() {
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
     }
-
 
     companion object {
         const val HANDLES_GROUPS = true

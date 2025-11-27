@@ -203,8 +203,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return _scaleFactor
         }
 
-        override fun consumeMessage(message: String) {
-            _messageConsumer(message)
+        override fun consumeMessages(messages: List<String>) {
+            messages.forEach { _messageConsumer(it) }
         }
 
         override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {

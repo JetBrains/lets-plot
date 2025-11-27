@@ -59,7 +59,7 @@ object BogusContext : GeomContext {
         return 1.0
     }
 
-    override fun consumeMessage(message: String) {
+    override fun consumeMessages(messages: List<String>) {
         error("Not available in a bogus geom context")
     }
 

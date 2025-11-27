@@ -21,8 +21,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
-    private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.with_X(aesthetics.dataPoints())
+    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        val data = GeomUtil.with_X(dataPoints)
         return GeomUtil.ordered_X(data)
     }
 
