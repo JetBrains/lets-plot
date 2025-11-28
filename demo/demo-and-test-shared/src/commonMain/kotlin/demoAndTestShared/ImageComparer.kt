@@ -40,8 +40,8 @@ class ImageComparer(
                 println(it)
                 return
             }
-            println("Failed to read expected image. Actual image saved to $actualFilePath")
-            error("Failed to read expected image. Actual image saved to '$actualFilePath'")
+            println("Failed to read expected image. Actual image saved to file://$actualFilePath")
+            error("Failed to read expected image. Actual image saved to 'file://$actualFilePath'")
         }
 
         val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)

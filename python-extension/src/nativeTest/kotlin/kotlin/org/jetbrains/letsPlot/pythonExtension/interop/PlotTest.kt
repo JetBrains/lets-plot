@@ -936,6 +936,136 @@ class PlotTest {
 
     }
 
+    @Test
+    fun `plot layout scheme example`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ 210.0, 307.0, 404.0, 501.0, 598.0, 695.0, 792.0, 889.0, 986.0 ],
+            |    "y": [ 240.0, 210.0, 270.0, 330.0, 240.0, 360.0, 570.0, 480.0, 480.0  ]
+            |  },
+            |  "mapping": { "x": "x", "y": "y" },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" }
+            |    ]
+            |  },
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "ggsize": { "width": 1240.0, "height": 840.0 },
+            |  "kind": "plot",
+            |  "scales": [ { "aesthetic": "y", "trans": "reverse" } ],
+            |  "layers": [
+            |    { "geom": "rect", "xmin": 11.0, "xmax": 1229.0, "ymin": 11.0, "ymax": 829.0, "size": 8.0, "fill": "white", "color": "lemon_chiffon", "alpha": 0.9 },
+            |    { "geom": "text", "family": "NotoSans", "x": 620.0, "y": 420.0, "label": "", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1229.0, "y": 15.5, "label": "plot_margin", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 1.0, "xmax": 1239.0, "ymin": 1.0, "ymax": 839.0, "size": -2.0, "fill": "white", "color": "gold", "alpha": 0.0 },
+            |    { "geom": "text", "family": "NotoSans", "x": 620.0, "y": 420.0, "label": "", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1239.0, "y": 0.5, "label": "", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 100.0, "xmax": 1023.0, "ymin": 169.0, "ymax": 681.0, "size": 8.0, "fill": "white", "color": "plum", "alpha": 0.5 },
+            |    { "geom": "text", "family": "NotoSans", "x": 561.5, "y": 425.0, "label": "", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1023.0, "y": 173.5, "label": "plot_inset", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 187.0, "xmax": 1001.0, "ymin": 33.0, "ymax": 78.0, "size": 8.0, "fill": "light_blue", "color": "light_blue", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 594.0, "y": 55.5, "label": "TITLE", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1001.0, "y": 37.5, "label": "plot_title: margin", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 187.0, "xmax": 1001.0, "ymin": 99.0, "ymax": 146.0, "size": 8.0, "fill": "light_green", "color": "light_green", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 594.0, "y": 122.5, "label": "SUBTITLE", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1001.0, "y": 103.5, "label": "plot_subtitle: margin", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 33.0, "xmax": 78.0, "ymin": 191.0, "ymax": 597.0, "size": 8.0, "fill": "peach_puff", "color": "peach_puff", "alpha": 0.2 },
+            |    { "geom": "text", "family": "NotoSans", "x": 55.5, "y": 394.0, "label": "Y-AXIS TITLE", "angle": 90.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 22.5, "y": 191.0, "label": "axis_title_y: margin", "angle": 90.0, "hjust": 1.0, "vjust": 1.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 112.0, "xmax": 144.0, "ymin": 196.0, "ymax": 588.0, "size": -3.0, "fill": "pink", "color": "light_pink", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 128.0, "y": 392.0, "label": "y-axis labels", "angle": 90.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 107.0, "y": 196.0, "label": "", "angle": 90.0, "hjust": 1.0, "vjust": 1.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 155.0, "xmax": 157.0, "ymin": 207.0, "ymax": 577.0, "size": 8.0, "fill": "pink", "color": "light_pink", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 156.0, "y": 392.0, "label": "", "angle": 90.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 144.5, "y": 207.0, "label": "axis_text_spacing_y", "angle": 90.0, "hjust": 1.0, "vjust": 1.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 187.0, "xmax": 1001.0, "ymin": 704.0, "ymax": 745.0, "size": 8.0, "fill": "peach_puff", "color": "peach_puff", "alpha": 0.2 },
+            |    { "geom": "text", "family": "NotoSans", "x": 594.0, "y": 724.5, "label": "X-AXIS TITLE", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1001.0, "y": 708.5, "label": "axis_title_x: margin", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 196.0, "xmax": 996.0, "ymin": 640.0, "ymax": 668.0, "size": -3.0, "fill": "pink", "color": "light_pink", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 596.0, "y": 654.0, "label": "x-axis labels", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 996.0, "y": 639.0, "label": "", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 207.0, "xmax": 985.0, "ymin": 627.0, "ymax": 627.0, "size": 8.0, "fill": "pink", "color": "light_pink", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 596.0, "y": 627.0, "label": "", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 985.0, "y": 631.5, "label": "axis_text_spacing_x", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 187.0, "xmax": 1001.0, "ymin": 191.0, "ymax": 597.0, "size": 8.0, "fill": "gray", "color": "light_gray", "alpha": 0.5 },
+            |    { "geom": "text", "family": "NotoSans", "x": 594.0, "y": 394.0, "label": "PLOT\nPANEL", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1001.0, "y": 195.5, "label": "panel_inset", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 187.0, "xmax": 1001.0, "ymin": 767.0, "ymax": 809.0, "size": 8.0, "fill": "sky_blue", "color": "sky_blue", "alpha": 0.3 },
+            |    { "geom": "text", "family": "NotoSans", "x": 594.0, "y": 788.0, "label": "CAPTION", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1001.0, "y": 771.5, "label": "plot_caption: margin", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 1047.0, "xmax": 1053.0, "ymin": 285.0, "ymax": 497.0, "size": 8.0, "fill": "gray93", "color": "gray93" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1050.0, "y": 391.0, "label": "", "angle": 90.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1036.5, "y": 285.0, "label": "legend_box_spacing", "angle": 90.0, "hjust": 1.0, "vjust": 1.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "rect", "xmin": 1065.0, "xmax": 1219.0, "ymin": 275.0, "ymax": 507.0, "size": -2.0, "fill": "chocolate", "color": "chocolate", "alpha": 0.1 },
+            |    { "geom": "text", "family": "NotoSans", "x": 1142.0, "y": 391.0, "label": "LEGEND", "angle": 0.0, "color": "darkgray" },
+            |    { "geom": "text", "family": "NotoSans", "x": 1219.0, "y": 274.5, "label": "", "angle": 0.0, "hjust": 1.0, "vjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "segment",
+            |      "arrow": { "name": "arrow", "angle": 20.0, "length": 8.0, "ends": "last", "type": "open" },
+            |      "x": 1058.0,
+            |      "y": 644.0,
+            |      "xend": 1000.0,
+            |      "yend": 612.0
+            |    },
+            |    { "geom": "text", "family": "NotoSans", "x": 1042.0, "y": 652.0, "label": "axis tick area", "hjust": 0.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "segment",
+            |      "arrow": { "name": "arrow", "angle": 20.0, "length": 8.0, "ends": "last", "type": "open" },
+            |      "x": 150.0,
+            |      "y": 148.0,
+            |      "xend": 172.0,
+            |      "yend": 194.0
+            |    },
+            |    { "geom": "text", "family": "NotoSans", "x": 174.0, "y": 138.0, "label": "axis tick area", "hjust": 1.0, "family": "NotoSans", "color": "black" },
+            |    { "geom": "point", "color": "dodgerblue", "alpha": 1.0 },
+            |    { "geom": "line", "color": "dodgerblue", "alpha": 1.0 },
+            |    { "geom": "segment",
+            |      "data": {
+            |        "x": [ 210.0, 307.0, 404.0, 501.0, 598.0, 695.0, 792.0, 889.0, 986.0 ],
+            |        "xend": [ 210.0, 307.0, 404.0, 501.0, 598.0, 695.0, 792.0, 889.0, 986.0 ],
+            |        "y": [ 608.0, 608.0, 608.0, 608.0, 608.0, 608.0, 608.0, 608.0, 608.0 ],
+            |        "yend": [ 616.0, 616.0, 616.0, 616.0, 616.0, 616.0, 616.0, 616.0, 616.0 ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y", "xend": "xend", "yend": "yend" },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" },
+            |          { "type": "int", "column": "xend" },
+            |          { "type": "int","column": "y" },
+            |          { "type": "int", "column": "yend" }
+            |        ]
+            |      },
+            |      "color": "gray50",
+            |      "size": 1.0
+            |    },
+            |    { "geom": "segment",
+            |      "data": {
+            |        "y": [ 208.0, 281.2, 354.4, 427.6, 500.8, 574.0 ],
+            |        "yend": [ 208.0, 281.2, 354.4, 427.6, 500.8, 574.0 ],
+            |        "x": [ 168.0, 168.0, 168.0, 168.0, 168.0, 168.0 ],
+            |        "xend": [ 176.0, 176.0, 176.0, 176.0, 176.0, 176.0 ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y", "xend": "xend", "yend": "yend" },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "float", "column": "y" },
+            |          { "type": "float","column": "yend"},
+            |          { "type": "int", "column": "x" },
+            |          { "type": "int", "column": "xend"}
+            |        ]
+            |      },
+            |      "color": "gray50",
+            |      "size": 1.0
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_layout_scheme_example_test.png", plotSpec)
+    }
+
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {
         MagickUtil.startCountAllocations()
 
