@@ -14,17 +14,18 @@ import org.jetbrains.letsPlot.core.canvas.TextMetrics
 class MagickCanvasPeer(
     val pixelDensity: Double,
     private val fontManager: MagickFontManager,
+    private val antialiasing: Boolean = true
 ) : CanvasPeer, Disposable {
-    private val measureCanvas = MagickCanvas.create(1, 1, pixelDensity, fontManager)
+    private val measureCanvas = MagickCanvas.create(1, 1, pixelDensity, fontManager, antialiasing)
 
     private val snapshots = mutableSetOf<MagickSnapshot>()
 
     override fun createCanvas(size: Vector): MagickCanvas {
-        return MagickCanvas.create(size.x, size.y, pixelDensity, fontManager)
+        return MagickCanvas.create(size.x, size.y, pixelDensity, fontManager, antialiasing)
     }
 
     fun createCanvas(width: Number, height: Number): MagickCanvas {
-        return MagickCanvas.create(width, height, pixelDensity, fontManager)
+        return MagickCanvas.create(width, height, pixelDensity, fontManager, antialiasing)
     }
 
     override fun measureText(text: String, font: Font): TextMetrics {

@@ -208,6 +208,7 @@ object PlotReprGenerator {
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
+        antialiasing: Boolean = true
     ): Pair<Bitmap, Double> {
         var canvasReg: Registration? = null
         try {
@@ -226,6 +227,7 @@ object PlotReprGenerator {
             val magickCanvasPeer = MagickCanvasPeer(
                 pixelDensity = exportParameters.scaleFactor,
                 fontManager = fontManager,
+                antialiasing = antialiasing
             )
 
             canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
@@ -367,7 +369,8 @@ object PlotReprGenerator {
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): snapshot taken")
 
-            val bitmap = snapshot.bitmap
+            // bitmap is a getter property that does on read. Read it to measure the time.
+            snapshot.bitmap
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): bitmap extracted")
 

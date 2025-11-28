@@ -4,7 +4,6 @@ import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure2
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /*
@@ -18,7 +17,6 @@ class SvgTest {
         private val imageComparer by lazy { createImageComparer(embeddedFontsManager) }
     }
 
-    @Ignore
     @Test
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
@@ -30,7 +28,7 @@ class SvgTest {
     private fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
         val fig = SvgCanvasFigure2(svg)
 
-        val canvasPeer = MagickCanvasPeer(pixelDensity = 1.0, fontManager = embeddedFontsManager)
+        val canvasPeer = MagickCanvasPeer(pixelDensity = 1.0, antialiasing = true, fontManager = embeddedFontsManager)
         fig.mapToCanvas(canvasPeer)
 
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")

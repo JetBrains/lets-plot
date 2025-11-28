@@ -1063,7 +1063,7 @@ class PlotTest {
 
         val plotSpec = parsePlotSpec(spec)
 
-        assertPlot("plot_layout_scheme_example_test.png", plotSpec)
+        assertPlot("plot_layout_scheme_example_test.png", plotSpec, antialiasing = false)
     }
 
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {
@@ -1088,7 +1088,8 @@ class PlotTest {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = SizeUnit.PX,
         dpi: Number? = null,
-        scale: Number? = 1
+        scale: Number? = 1,
+        antialiasing: Boolean = true
     ) {
         val (bitmap, _) = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
@@ -1096,8 +1097,9 @@ class PlotTest {
             sizeUnit = unit,
             dpi = dpi,
             scale = scale,
-            fontManager = embeddedFontsManager
+            fontManager = embeddedFontsManager,
             //fontManager = MagickFontManager.default() // For manual testing
+            antialiasing = antialiasing
         )
 
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)

@@ -19,9 +19,10 @@ class MagickCanvas(
     private val _img: CPointer<ImageMagick.MagickWand>,
     override val size: Vector,
     pixelDensity: Double,
-    private val fontManager: MagickFontManager,
+    antialiasing: Boolean,
+    fontManager: MagickFontManager,
 ) : Canvas, Disposable {
-    private val magickContext2d = MagickContext2d(_img, pixelDensity, fontManager)
+    private val magickContext2d = MagickContext2d(_img, pixelDensity, antialiasing, fontManager)
     override val context2d: MagickContext2d = magickContext2d
 
     override fun takeSnapshot(): MagickSnapshot {
@@ -36,18 +37,18 @@ class MagickCanvas(
     }
 
     companion object {
-        fun create(width: Number, height: Number, pixelDensity: Number, fontManager: MagickFontManager): MagickCanvas {
-            return create(Vector(width.toInt(), height.toInt()), pixelDensity, fontManager)
+        fun create(width: Number, height: Number, pixelDensity: Number, fontManager: MagickFontManager, antialiasing: Boolean = true): MagickCanvas {
+            return create(Vector(width.toInt(), height.toInt()), pixelDensity, fontManager, antialiasing)
         }
 
-        fun create(size: Vector, pixelDensity: Number, fontManager: MagickFontManager): MagickCanvas {
+        fun create(size: Vector, pixelDensity: Number, fontManager: MagickFontManager, antialiasing: Boolean = true): MagickCanvas {
             val wand = newMagickWand()
             ImageMagick.MagickSetImageAlphaChannel(wand, ImageMagick.AlphaChannelOption.OnAlphaChannel)
             val background = newPixelWand()
             ImageMagick.PixelSetColor(background, "transparent")
             ImageMagick.MagickNewImage(wand, (size.x * pixelDensity.toFloat()).toULong(), (size.y * pixelDensity.toFloat()).toULong(), background)
             destroyPixelWand(background)
-            return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble(), fontManager = fontManager)
+            return MagickCanvas(wand, size, pixelDensity.toDouble(), antialiasing, fontManager)
         }
     }
 }
