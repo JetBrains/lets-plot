@@ -222,6 +222,7 @@ object GeomUtil {
         }
 
         var nulls = 0
+        var singlePointPaths = 0
         val result = groups.values
             .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
             .also { a ->
@@ -229,9 +230,12 @@ object GeomUtil {
             }
             .map { pathPoints -> pathPoints.splitByNull() }
             .flatten()
-            .mapNotNull { PathData.create(it) }
+            .mapNotNull {
+                if (it.size == 1) singlePointPaths++
+                PathData.create(it)
+            }
 
-        nullsCounter(nulls)
+        nullsCounter(nulls + singlePointPaths)
 
         return result
     }
