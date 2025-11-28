@@ -25,6 +25,7 @@ private const val ignoreSameParams = true
 class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
+    antialiasing: Boolean,
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate, Disposable {
@@ -43,6 +44,12 @@ class MagickContext2d(
     private var emulateItalicStyle: Boolean = false
 
     init {
+        if (antialiasing) {
+            ImageMagick.MagickSetAntialias(img, ImageMagick.MagickTrue)
+        } else {
+            ImageMagick.MagickSetAntialias(img, ImageMagick.MagickFalse)
+        }
+
         ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
         currentFillRule = ImageMagick.FillRule.NonZeroRule
 

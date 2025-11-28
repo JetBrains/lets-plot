@@ -31,6 +31,10 @@ internal abstract class Figure : Element() {
         Figure::strokeMiter,
         managed = true
     ) {
+        if (strokeWidth < 0f) {
+            return@computedProp null
+        }
+
         return@computedProp strokePaint(
             stroke = stroke,
             strokeWidth = strokeWidth,
