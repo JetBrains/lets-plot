@@ -25,10 +25,11 @@ open class PlotPanel constructor(
     val sizingPolicy: SizingPolicy,
     repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
-    val hasToolbar: Boolean = false,
+    showToolbar: Boolean = false,
 ) : JPanel(), WithFigureModel, Disposable {
 
     final override val figureModel: FigureModel
+    val hasToolbar = showToolbar
 
     // The panel that contains the plot component when a toolbar is shown.
     private lateinit var plotComponentContainer: JPanel
