@@ -5,8 +5,11 @@
 
 package org.jetbrains.letsPlot.raster.view
 
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -20,6 +23,7 @@ import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
 import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.shape.reversedDepthFirstTraversal
 import kotlin.math.ceil
 
 class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
@@ -28,6 +32,8 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
         return Vector(contentWidth, contentHeight)
     }
+
+    override val eventPeer: MouseEventPeer = MouseEventPeer()
 
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
@@ -41,6 +47,11 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
+    private var onHrefClick: (String) -> Unit = { }
+
+    fun onHrefClick(handler: (String) -> Unit) {
+        onHrefClick = handler
+    }
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         svgCanvasPeer = SvgCanvasPeer(canvasPeer)
@@ -54,7 +65,20 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         }
     }
 
-    override val eventPeer: MouseEventPeer = MouseEventPeer()
+    init {
+        eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
+            override fun onEvent(event: MouseEvent) {
+                val coord = event.location.toDoubleVector()
+                val linkElement = reversedDepthFirstTraversal(rootMapper.target)
+                    .filter { it.href != null }
+                    .filterNot(Element::isMouseTransparent)
+                    .firstOrNull() { coord in it.screenBounds }
+
+                val href = linkElement?.href ?: return
+                onHrefClick(href)
+            }
+        })
+    }
 
     override fun paint(context2d: Context2d) {
         renderElement(rootMapper.target, context2d)

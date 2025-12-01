@@ -50,6 +50,10 @@ class PlotCanvasFigure2 : CanvasFigure2 {
         buildPlotSvg()
     }
 
+    fun onHrefClick(handler: (href: String) -> Unit) {
+        plotSvgFigure.onHrefClick(handler)
+    }
+
     override fun paint(context2d: Context2d) {
         plotSvgFigure.paint(context2d)
     }
@@ -98,6 +102,7 @@ class PlotCanvasFigure2 : CanvasFigure2 {
         )
 
         plotSvgFigure.svgSvgElement = vm.svg
+        plotSvgFigure.eventPeer.addEventSource(eventPeer)
         eventReg = vm.eventDispatcher.addEventSource(eventPeer)
 
         viewModel = vm

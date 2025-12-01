@@ -24,9 +24,20 @@ open class DefaultPlotComponentProviderCanvas(
     companion object {
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderCanvas::class)
 
+        private fun browseLink(href: String) {
+            try {
+                val uri = java.net.URI(href)
+                java.awt.Desktop.getDesktop().browse(uri)
+            } catch (e: Exception) {
+                LOG.info { "Failed to open link: $href (${e.message})" }
+            }
+        }
+
         private val SVG_COMPONENT_FACTORY_CANVAS = { svg: SvgSvgElement ->
             CanvasPane2().apply {
-                figure = SvgCanvasFigure2(svg)
+                figure = SvgCanvasFigure2(svg).apply {
+                    onHrefClick(::browseLink)
+                }
             }
         }
     }
