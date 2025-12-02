@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.raster.builder.ViewModel
 import kotlin.math.ceil
 
 class PlotCanvasFigure2 : CanvasFigure2 {
+    override val eventPeer: MouseEventPeer = MouseEventPeer()
     override val size: Vector get() {
         val (w, h) = sizingPolicy.resize(
             figureSizeDefault = plotSvgFigure.size.toDoubleVector(),
@@ -28,7 +29,9 @@ class PlotCanvasFigure2 : CanvasFigure2 {
 
         return Vector(ceil(w).toInt(), ceil(h).toInt())
     }
-    private val plotSvgFigure: SvgCanvasFigure2 = SvgCanvasFigure2()
+    private val plotSvgFigure: SvgCanvasFigure2 = SvgCanvasFigure2().also {
+        it.eventPeer.addEventSource(eventPeer)
+    }
 
     private var eventReg: Registration = Registration.EMPTY
     private var processedSpec: Map<String, Any>? = null
@@ -78,8 +81,6 @@ class PlotCanvasFigure2 : CanvasFigure2 {
         return reg
     }
 
-    override val eventPeer: MouseEventPeer = MouseEventPeer()
-
     @Suppress("unused") // for lets-plot-compose
     val toolEventDispatcher: ToolEventDispatcher? get() = viewModel?.toolEventDispatcher
 
@@ -102,7 +103,6 @@ class PlotCanvasFigure2 : CanvasFigure2 {
         )
 
         plotSvgFigure.svgSvgElement = vm.svg
-        plotSvgFigure.eventPeer.addEventSource(eventPeer)
         eventReg = vm.eventDispatcher.addEventSource(eventPeer)
 
         viewModel = vm
