@@ -31,7 +31,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
+import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import kotlin.time.TimeSource
 
 object PlotReprGenerator {
@@ -217,7 +217,7 @@ object PlotReprGenerator {
             @Suppress("UNCHECKED_CAST")
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-            val plotCanvasFigure = PlotCanvasFigure2()
+            val plotCanvasFigure = PlotCanvasFigure()
             plotCanvasFigure.update(
                 processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
                 sizingPolicy = exportParameters.sizingPolicy,
@@ -338,7 +338,7 @@ object PlotReprGenerator {
             @Suppress("UNCHECKED_CAST")
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-            val plotCanvasFigure = PlotCanvasFigure2()
+            val plotCanvasFigure = PlotCanvasFigure()
             plotCanvasFigure.update(
                 processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
                 sizingPolicy = exportParameters.sizingPolicy,

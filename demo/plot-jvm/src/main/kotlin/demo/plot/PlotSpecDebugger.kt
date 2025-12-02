@@ -1,7 +1,7 @@
 package demo.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotPanelCanvas
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
+import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
@@ -617,7 +617,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
                 "CanvasPane" -> {
                     processedSpec = MonolithicCommon.processRawSpecs(spec)
-                    val plotFig = PlotCanvasFigure2()
+                    val plotFig = PlotCanvasFigure()
                     plotFig.onHrefClick {
                         Desktop.getDesktop().browse(java.net.URI.create(it))
                     }
@@ -626,7 +626,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                         sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
                         computationMessagesHandler = messageHandler
                     )
-                    newPlotComponent = CanvasPane2(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                    newPlotComponent = CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
                 }
 
                 "DefaultPlotPanelCanvas" -> {

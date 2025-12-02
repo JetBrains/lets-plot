@@ -5,184 +5,85 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.commons.encoding.Png
-import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.commons.registration.*
+import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import java.awt.Dimension
+import java.awt.Graphics
 import java.awt.Graphics2D
-import java.awt.Rectangle
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import java.awt.image.BufferedImage
-import java.io.ByteArrayInputStream
-import javax.imageio.ImageIO
 import javax.swing.JComponent
-import javax.swing.JLayeredPane
 
-@Deprecated("Migrate to CanvasPane2")
+@Deprecated("Migrate to CanvasPane", ReplaceWith("CanvasPane", "org.jetbrains.letsPlot.awt.canvas.CanvasPane"))
+typealias CanvasPane2 = CanvasPane
+
 class CanvasPane(
-    figure: CanvasFigure? = null,
-    private val pixelDensity: Double = 1.0,
-    private val disableAnimationTimer: Boolean = false
-) : JLayeredPane() {
-    private val canvasControl: CanvasControl = AwtCanvasControl()
+    figure: CanvasFigure2? = null,
+    pixelDensity: Double = 1.0
+) : DisposingHub, Disposable, JComponent() {
+    private val registrations = CompositeRegistration()
     private var figureRegistration: Registration = Registration.EMPTY
-    val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    private val canvasPeer: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
+    private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
 
-    var figure: CanvasFigure? = null
-        set(value) {
-            if (field == value) {
+    var figure: CanvasFigure2? = null
+        set(canvasFigure) {
+            if (field == canvasFigure) {
                 return
             }
 
             figureRegistration.remove()
-            if (value != null) {
-                figureRegistration = value.mapToCanvas(canvasControl)
-                bounds = Rectangle(0, 0, value.bounds().get().dimension.x, value.bounds().get().dimension.y)
+            if (canvasFigure != null) {
+                canvasFigure.resize(width, height)
+                canvasFigure.eventPeer.addEventSource(mouseEventSource)
+                figureRegistration = CompositeRegistration(
+                    canvasFigure.mapToCanvas(canvasPeer),
+                    canvasFigure.onRepaintRequested(::repaint),
+                )
             }
-            field = value
+            field = canvasFigure
         }
 
     init {
+        isOpaque = false
         this.figure = figure
     }
 
+    override fun getPreferredSize(): Dimension? {
+        return figure?.size?.let { s -> Dimension(s.x, s.y) }
+    }
 
-    override fun isPaintingOrigin(): Boolean = true
+    override fun setBounds(x: Int, y: Int, width: Int, height: Int) {
+        val sizeChanged = this.width != width || this.height != height
+        super.setBounds(x, y, width, height)
 
-    internal inner class AwtCanvasControl : CanvasControl {
-        override val pixelDensity: Double
-            get() = this@CanvasPane.pixelDensity
-
-        override val size: Vector
-            get() = Vector(
-                x = this@CanvasPane.width,
-                y = this@CanvasPane.height
-            )
-
-        private val animationTimerPeer: AwtAnimationTimerPeer = AwtAnimationTimerPeer()
-        private val myMappedCanvases = HashMap<Canvas, JComponent>()
-
-        override fun addChild(canvas: Canvas) {
-            addChild(componentCount, canvas)
-        }
-
-        override fun addChild(index: Int, canvas: Canvas) {
-            val canvasComponent = CanvasComponent(canvas as AwtCanvas)
-            add(canvasComponent, componentCount - index)
-            revalidate()
-            myMappedCanvases[canvas] = canvasComponent
-        }
-
-        override fun removeChild(canvas: Canvas) {
-            remove(myMappedCanvases[canvas])
-            revalidate()
-            myMappedCanvases.remove(canvas)
-        }
-
-        override fun onResize(listener: (Vector) -> Unit): Registration {
-            val sizeListener = object : ComponentAdapter() {
-                override fun componentResized(e: ComponentEvent?) {
-                    listener(size)
-                }
-            }
-
-            addComponentListener(sizeListener)
-
-            return object : Registration() {
-                override fun doRemove() {
-                    this@CanvasPane.removeComponentListener(sizeListener)
-                }
-            }
-        }
-
-        override fun snapshot(): Canvas.Snapshot {
-            TODO("Not yet implemented")
-        }
-
-        override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
-            if (disableAnimationTimer) {
-                // Timer is not needed - return a dummy implementation.
-                return object : AnimationTimer {
-                    override fun start() {}
-                    override fun stop() {}
-                }
-            }
-
-            return object : AnimationTimer {
-                override fun start() {
-                    animationTimerPeer.addHandler(::handle)
-                }
-
-                override fun stop() {
-                    animationTimerPeer.removeHandler(::handle)
-                }
-
-                fun handle(millisTime: Long) {
-                    if (eventHandler.onEvent(millisTime)) {
-                        repaint()
-                    }
-                }
-            }
-        }
-
-        override fun createCanvas(size: Vector): Canvas {
-            return AwtCanvas.create(size, pixelDensity)
-        }
-
-        override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
-            val img = BitmapUtil.toBufferedImage(bitmap)
-            return AwtCanvas.AwtSnapshot(img)
-        }
-
-        private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
-            val img = Png.decodeDataImage(dataUrl)
-            val bufImg = BitmapUtil.toBufferedImage(img)
-            return bufImg
-        }
-
-        override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
-            println("CanvasPane.CanvasControl.createSnapshot(dataUrl): dataUrl.size = ${dataUrl.length}")
-            return Asyncs.constant(
-                AwtCanvas.AwtSnapshot(imagePngBase64ToImage(dataUrl))
-            )
-        }
-
-        override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
-            val src = ImageIO.read(ByteArrayInputStream(png))
-            val snapshot = AwtCanvas.AwtSnapshot(src)
-            return Asyncs.constant(snapshot)
-        }
-
-        override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-            return mouseEventSource.addEventHandler(eventSpec, eventHandler)
-        }
-
-        override fun <T> schedule(f: () -> T) {
-//        invokeLater { f() }
-            animationTimerPeer.executor { f() }
+        // Intercept the size change immediately and update the figure.
+        // This happens before componentResized and before any repaint triggered by the resize.
+        if (sizeChanged) {
+            figure?.resize(width, height)
         }
     }
 
-    companion object {
-        fun paint(figure: CanvasFigure, pixelDensity: Double, graphics: Graphics2D) {
-            val canvasPane = CanvasPane(figure, pixelDensity, disableAnimationTimer = true)
-            val plotComponentSize = figure.bounds().get().dimension
-            canvasPane.bounds = Rectangle(0, 0, plotComponentSize.x, plotComponentSize.y)
-            canvasPane.doLayout()
-            canvasPane.paint(graphics)
+    override fun paintComponent(g: Graphics?) {
+        super.paintComponent(g)
+
+        if (width <= 0 || height <= 0) {
+            return
         }
+
+        val g2d = g!!.create() as Graphics2D
+
+        if (figure != null) {
+            val ctx = AwtContext2d(g2d)
+            figure!!.paint(ctx)
+        }
+    }
+
+    override fun registerDisposable(disposable: Disposable) {
+        registrations.add(DisposableRegistration(disposable))
+    }
+
+    override fun dispose() {
+        registrations.dispose()
+        figureRegistration.dispose()
     }
 }
