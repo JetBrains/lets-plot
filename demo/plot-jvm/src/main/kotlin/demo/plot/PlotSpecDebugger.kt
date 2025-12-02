@@ -618,6 +618,9 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 "CanvasPane" -> {
                     processedSpec = MonolithicCommon.processRawSpecs(spec)
                     val plotFig = PlotCanvasFigure2()
+                    plotFig.onHrefClick {
+                        Desktop.getDesktop().browse(java.net.URI.create(it))
+                    }
                     plotFig.update(
                         processedSpec,
                         sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),

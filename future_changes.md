@@ -5,3 +5,4 @@
 ### Changed
 
 ### Fixed
+- Hyperlinks support for lets-plot-compose 

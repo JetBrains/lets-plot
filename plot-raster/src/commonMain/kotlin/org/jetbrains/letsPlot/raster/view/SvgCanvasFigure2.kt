@@ -47,9 +47,9 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
-    private var onHrefClick: (String) -> Unit = { }
+    private var onHrefClick: ((String) -> Unit)? = null
 
-    fun onHrefClick(handler: (String) -> Unit) {
+    fun onHrefClick(handler: ((String) -> Unit)?) {
         onHrefClick = handler
     }
 
@@ -68,14 +68,16 @@ class SvgCanvasFigure2(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     init {
         eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
+                val hrefClickHandler = onHrefClick ?: return
+
                 val coord = event.location.toDoubleVector()
                 val linkElement = reversedDepthFirstTraversal(rootMapper.target)
                     .filter { it.href != null }
                     .filterNot(Element::isMouseTransparent)
-                    .firstOrNull() { coord in it.screenBounds }
+                    .firstOrNull { coord in it.screenBounds }
 
                 val href = linkElement?.href ?: return
-                onHrefClick(href)
+                hrefClickHandler(href)
             }
         })
     }
