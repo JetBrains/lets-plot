@@ -15,7 +15,9 @@ abstract class RegressionEvaluator protected constructor(
     private val sumXX: Double,
     private val model: (Double) -> Double,
     private val standardErrorOfEstimate: Double,
-    private val tCritical: Double
+    private val tCritical: Double,
+    private val formula: String?,
+    private val r2: Double,
 ) {
     fun value(x: Double): Double {
         return model(x)
@@ -71,6 +73,34 @@ abstract class RegressionEvaluator protected constructor(
                 tQuantile(degreesOfFreedom)(1.0 - alpha / 2.0)
             } else {
                 Double.NaN
+            }
+        }
+
+        fun calcRSquared(
+            xVals: DoubleArray,
+            yVals: DoubleArray,
+            model: (Double) -> Double
+        ): Double {
+            val meanY = yVals.average()
+
+            var ssTot = 0.0
+            var ssRes = 0.0
+
+            for (i in xVals.indices) {
+                val y = yVals[i]
+                val yHat = model(xVals[i])
+
+                val diffRes = y - yHat
+                ssRes += diffRes * diffRes
+
+                val diffMean = y - meanY
+                ssTot += diffMean * diffMean
+            }
+
+            return if (ssTot == 0.0) {
+                0.0
+            } else {
+                1.0 - ssRes / ssTot
             }
         }
     }
