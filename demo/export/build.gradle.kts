@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":commons"))
     implementation(project(":plot-stem"))
     implementation(project(":plot-image-export"))
+    implementation(project(":platf-awt"))
     implementation(project(":demo-common-plot"))
     implementation(project(":demo-common-jvm-utils"))
 

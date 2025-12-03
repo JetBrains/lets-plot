@@ -1,4 +1,4 @@
-package org.jetbrains.letsPlot.core.plot.export
+package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.CM

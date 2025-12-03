@@ -2,11 +2,11 @@
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
-package org.jetbrains.letsPlot.core.plot.export
+package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.core.plot.export.PlotImageExport.Format
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format
 import java.awt.Desktop
 import java.io.File
 import kotlin.test.Test

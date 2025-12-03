@@ -6,7 +6,7 @@
 package demo.plot.export.browser.image
 
 import demo.plot.common.model.plotConfig.Area
-import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG
 
 @Suppress("ClassName")
 object Area_PNG_Resolutions {
@@ -19,7 +19,7 @@ object Area_PNG_Resolutions {
                 plotSpecList().first(),
                 scalingFactors = listOf(1.0, 1.0, 1.0),
                 targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { PlotImageExport.Format.PNG }
+                formats = MutableList(3) { PNG }
             ))
         }
     }

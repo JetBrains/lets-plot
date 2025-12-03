@@ -4,6 +4,7 @@
  */
 
 val jsvgVersion = project.extra["weisj.jsvg.version"] as String
+val assertjVersion = extra["assertj.version"] as String
 
 dependencies {
     compileOnly(project(":commons"))
@@ -22,4 +23,6 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":canvas"))
     testImplementation(project(":plot-raster"))
+    testImplementation(project(":plot-raster"))
+    testImplementation("org.assertj:assertj-core:${assertjVersion}")
 }

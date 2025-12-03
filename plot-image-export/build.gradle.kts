@@ -34,12 +34,6 @@ kotlin {
                 implementation(project(":plot-stem"))
             }
         }
-        commonTest {
-            dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
-            }
-        }
         jvmMain {
             dependencies {
                 implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
@@ -49,19 +43,6 @@ kotlin {
                 implementation(project(":platf-awt"))
                 implementation(project(":canvas"))
                 implementation(project(":plot-raster"))
-            }
-        }
-        jvmTest {
-            dependencies {
-                implementation("org.assertj:assertj-core:$assertjVersion")
-                implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
-                implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
-                implementation("org.mockito:mockito-core:$mockitoVersion")
-
-                implementation(kotlin("test"))
-                implementation(kotlin("test-junit"))
-
-                implementation(project(":demo-and-test-shared"))
             }
         }
     }
