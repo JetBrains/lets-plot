@@ -5,17 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.export
 
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import javax.imageio.ImageIO
 
+@Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("PlotImageExport", "org.jetbrains.letsPlot.awt.plot.PlotImageExport"))
 object PlotImageExport {
+    @Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format", "org.jetbrains.letsPlot.awt.plot.PlotImageExport"))
     sealed class Format {
         val defFileExt: String
             get() {
@@ -34,17 +29,21 @@ object PlotImageExport {
             }
         }
 
+        @Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG", "org.jetbrains.letsPlot.awt.plot.PlotImageExport"))
         object PNG : Format()
+        @Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.TIFF", "org.jetbrains.letsPlot.awt.plot.PlotImageExport"))
         object TIFF : Format()
+        @Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.JPEG", "org.jetbrains.letsPlot.awt.plot.PlotImageExport"))
         class JPEG(val quality: Double = 0.8) : Format()
     }
 
+    @Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("org.jetbrains.letsPlot.awt.plot.PlotImageExport.ImageData", "org.jetbrains.letsPlot.awt.plot.PlotImageExport.ImageData"))
     class ImageData(
         val bytes: ByteArray,
         val plotSize: DoubleVector
     )
 
-
+    @Deprecated("Use PlotImageExport from platf-awt module", ReplaceWith("org.jetbrains.letsPlot.awt.plot.PlotImageExport.buildImageFromRawSpecs(plotSpec, format, scalingFactor, targetDPI, plotSize, unit)", "org.jetbrains.letsPlot.awt.plot.PlotImageExport"))
     /**
      * @param plotSpec Raw specification of a plot.
      * @param format Output image format. PNG, TIFF, or JPEG (supports quality parameter).
@@ -61,47 +60,22 @@ object PlotImageExport {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
     ): ImageData {
-        @Suppress("NAME_SHADOWING")
-        val targetDPI = targetDPI?.toDouble()?.takeIf { it.isFinite() } // kandy may pass NaN
-
-        val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
-
-        val plotFigure = PlotCanvasFigure()
-        plotFigure.update(
-            processedSpec = MonolithicCommon.processRawSpecs(plotSpec = plotSpec, frontendOnly = false),
-            sizingPolicy = sizingPolicy,
-            computationMessagesHandler = {}
+        val img = org.jetbrains.letsPlot.awt.plot.PlotImageExport.buildImageFromRawSpecs(
+            plotSpec,
+            when (format) {
+                is Format.PNG -> org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG
+                is Format.TIFF -> org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.TIFF
+                is Format.JPEG -> org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.JPEG(format.quality)
+            },
+            scalingFactor,
+            targetDPI,
+            plotSize,
+            unit
         )
 
-        val awtCanvasPeer = AwtCanvasPeer(scaleFactor)
-        plotFigure.mapToCanvas(awtCanvasPeer)
-
-        val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
-
-        // Note: the scale is already applied in AwtCanvas constructor
-        //canvas.context2d.scale(scaleFactor, scaleFactor)
-
-        plotFigure.paint(canvas.context2d)
-
-        val outputStream = ByteArrayOutputStream()
-
-        if (format.defFileExt == "jpg") {
-            // JPEG does not support transparency. We need to fill the background with white color.
-            val rgbBufferedImage = BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
-            val g = rgbBufferedImage.createGraphics()
-            g.drawImage(canvas.image, 0, 0, java.awt.Color.WHITE, null)
-            g.dispose()
-            ImageIO.write(rgbBufferedImage, format.defFileExt, outputStream)
-        } else {
-            ImageIO.write(canvas.image, format.defFileExt, outputStream)
-        }
-
         return ImageData(
-            bytes = outputStream.toByteArray(),
-            plotSize = DoubleVector(
-                x = plotFigure.size.x.toDouble(),
-                y = plotFigure.size.y.toDouble()
-            )
+            bytes = img.bytes,
+            plotSize = img.plotSize
         )
     }
 }
