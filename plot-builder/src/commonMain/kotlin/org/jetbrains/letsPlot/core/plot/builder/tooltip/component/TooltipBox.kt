@@ -85,7 +85,6 @@ class TooltipBox(
         lines: List<TooltipSpec.Line>,
         title: String?,
         textClassName: String,
-        rotate: Boolean,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
         markerColors: List<Color>,
@@ -101,7 +100,6 @@ class TooltipBox(
             title,
             textColor,
             tooltipMinWidth,
-            rotate,
             markerColors,
             textClassName
         )
@@ -327,7 +325,6 @@ class TooltipBox(
             title: String?,
             valueTextColor: Color?,
             tooltipMinWidth: Double?,
-            rotate: Boolean,
             markerColors: List<Color>,
             textClassName: String
         ) {
@@ -348,7 +345,6 @@ class TooltipBox(
                 lines,
                 valueTextColor,
                 minWidthWithTitle,
-                rotate,
                 textClassName
             )
 
@@ -508,7 +504,6 @@ class TooltipBox(
             lines: List<TooltipSpec.Line>,
             valueTextColor: Color?,
             tooltipMinWidth: Double?,
-            rotate: Boolean,
             textClassName: String
         ): DoubleVector {
             val labelFontSize = styleSheet.getTextStyle(TOOLTIP_LABEL).size

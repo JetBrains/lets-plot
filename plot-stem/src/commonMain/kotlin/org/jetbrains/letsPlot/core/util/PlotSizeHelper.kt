@@ -160,6 +160,7 @@ object PlotSizeHelper {
             return sizingPolicy.getFixedSize()
         }
         // Adjust container size if the toolbar is present - subtract toolbar height first
+        @Suppress("NAME_SHADOWING")
         val containerSize = if (hasToolbar) {
             DoubleVector(containerSize.x, containerSize.y - TOOLBAR_HEIGHT)
         } else {

@@ -34,16 +34,16 @@ object TypedContinuousIdentityMappers {
 
     val SHAPE = object : ScaleMapper<PointShape> {
         override fun invoke(v: Double?): PointShape? {
-            return v?.let { v ->
-                NamedShape.fromInt(v.roundToInt())
+            return v?.let {
+                NamedShape.fromInt(it.roundToInt())
             }
         }
     }
 
     val LINETYPE = object : ScaleMapper<LineType> {
         override fun invoke(v: Double?): LineType? {
-            return v?.let { v ->
-                NamedLineType.fromInt(v.roundToInt())
+            return v?.let {
+                NamedLineType.fromInt(it.roundToInt())
             }
         }
     }

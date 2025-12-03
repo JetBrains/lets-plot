@@ -282,6 +282,7 @@ object MonolithicCommon {
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
+                        @Suppress("NAME_SHADOWING")
                         val containerGuidesSharing = if (ownDetachedLegendsCollector != null) {
                             COLLECT
                         } else {
