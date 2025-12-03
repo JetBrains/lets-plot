@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure2
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 open class DefaultPlotComponentProviderCanvas(
     processedSpec: MutableMap<String, Any>,
@@ -24,9 +24,20 @@ open class DefaultPlotComponentProviderCanvas(
     companion object {
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderCanvas::class)
 
+        private fun browseLink(href: String) {
+            try {
+                val uri = java.net.URI(href)
+                java.awt.Desktop.getDesktop().browse(uri)
+            } catch (e: Exception) {
+                LOG.info { "Failed to open link: $href (${e.message})" }
+            }
+        }
+
         private val SVG_COMPONENT_FACTORY_CANVAS = { svg: SvgSvgElement ->
-            CanvasPane2().apply {
-                figure = SvgCanvasFigure2(svg)
+            CanvasPane().apply {
+                figure = SvgCanvasFigure(svg).apply {
+                    onHrefClick(::browseLink)
+                }
             }
         }
     }

@@ -19,5 +19,5 @@ class DefaultPlotPanelCanvas(
     sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio),
     repaintDelay = repaintDelay,
     applicationContext = DefaultSwingContextCanvas(),
-    hasToolbar = processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
+    showToolbar = processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
 )
