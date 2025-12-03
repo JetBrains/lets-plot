@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure2
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 
 open class DefaultPlotComponentProviderCanvas(
     processedSpec: MutableMap<String, Any>,
@@ -34,8 +34,8 @@ open class DefaultPlotComponentProviderCanvas(
         }
 
         private val SVG_COMPONENT_FACTORY_CANVAS = { svg: SvgSvgElement ->
-            CanvasPane2().apply {
-                figure = SvgCanvasFigure2(svg).apply {
+            CanvasPane().apply {
+                figure = SvgCanvasFigure(svg).apply {
                     onHrefClick(::browseLink)
                 }
             }

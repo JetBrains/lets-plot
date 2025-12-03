@@ -5,16 +5,17 @@
 
 package org.jetbrains.letsPlot.raster.view
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
-import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.affineTransform
+import org.jetbrains.letsPlot.core.canvas.applyPath
+import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
@@ -22,98 +23,70 @@ import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
 import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.shape.reversedDepthFirstTraversal
 import kotlin.math.ceil
 
-@Deprecated("Migrate to SvgCanvasFigure2 and CanvasPane2")
-class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
+@Deprecated("Migrate to SvgCanvasFigure and CanvasPane", replaceWith = ReplaceWith("SvgCanvasFigure", "org.jetbrains.letsPlot.raster.view"))
+typealias SvgCanvasFigure2 = SvgCanvasFigure
+
+class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
+    override val size: Vector get() {
+        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
+        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+        return Vector(contentWidth, contentHeight)
+    }
+
+    override val eventPeer: MouseEventPeer = MouseEventPeer()
+
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
             field = value
-            val width = value.width().get()
-            val height = value.height().get()
-            if (width != null && height != null) {
-                svgBounds.set(Rectangle(0, 0, width.toInt(), height.toInt()))
-            }
-            needMapSvgSvgElement = true
-            needResizeContentCanvas = true
+            mapSvgSvgElement()
+            requestRedraw()
         }
 
-    private var needMapSvgSvgElement: Boolean = true // The whole svgSvgElement was replaced
-    private var needRedraw: Boolean = true // Some svg elements may change their appearance (e.g., text) and require redraw.
-    private var needResizeContentCanvas: Boolean = true // The size of svgSvgElement was changed, so we need to resize contentCanvas.
-
-    private var canvasPeer: CanvasPeer? = null
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
-    private var contentCanvas: Canvas? = null // Should have the same size as Figure
-    private var canvasControl: CanvasControl? = null
-    private var textMeasureCanvas: Canvas? = null
 
     internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-    private val svgBounds = ValueProperty(Rectangle(0, 0, 0, 0))
+    private val repaintRequestListeners = mutableListOf<() -> Unit>()
+    private var onHrefClick: ((String) -> Unit)? = null
 
-    override fun bounds(): ReadableProperty<Rectangle> {
-        return svgBounds
+    fun onHrefClick(handler: ((String) -> Unit)?) {
+        onHrefClick = handler
     }
 
-    override fun mapToCanvas(canvasControl: CanvasControl): Registration {
-        val textMeasureCanvas = canvasControl.createCanvas(0, 0)
-        val canvasPeer = object : CanvasPeer {
-            override fun createCanvas(size: Vector): Canvas {
-                return canvasControl.createCanvas(size.x, size.y)
-            }
-
-            override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
-                return canvasControl.createSnapshot(bitmap)
-            }
-
-            override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
-                return canvasControl.decodeDataImageUrl(dataUrl)
-            }
-
-            override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
-                return canvasControl.decodePng(png)
-            }
-
-            override fun measureText(
-                text: String,
-                font: Font
-            ): TextMetrics {
-                val ctx = textMeasureCanvas.context2d
-                ctx.save()
-                ctx.setFont(font)
-                val textMetrics = ctx.measureText(text)
-                ctx.restore()
-
-                return textMetrics
-            }
-
-            override fun dispose() {
-                // nothing to dispose
-            }
-        }
-
-        canvasControl.addChild(textMeasureCanvas)
-        this.canvasControl = canvasControl
-        this.textMeasureCanvas = textMeasureCanvas
-        this.canvasPeer = canvasPeer
+    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         svgCanvasPeer = SvgCanvasPeer(canvasPeer)
 
-        // TODO: for native export. There is no timer to trigger redraw, draw explicitly on attach to canvas.
-        onAnimationFrame()
-
-        val anim = canvasControl.createAnimationTimer(AnimationProvider.AnimationEventHandler.toHandler { onAnimationFrame() })
-        anim.start()
-
+        mapSvgSvgElement()
         return object : Registration() {
             override fun doRemove() {
-                contentCanvas?.let(canvasControl::removeChild)
-                textMeasureCanvas.let(canvasControl::removeChild)
                 rootMapper.detachRoot()
-                anim.stop()
-                this@SvgCanvasFigure.canvasControl = null
+                svgCanvasPeer = null
             }
         }
+    }
+
+    init {
+        eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
+            override fun onEvent(event: MouseEvent) {
+                val hrefClickHandler = onHrefClick ?: return
+
+                val coord = event.location.toDoubleVector()
+                val linkElement = reversedDepthFirstTraversal(rootMapper.target)
+                    .filter { it.href != null }
+                    .filterNot(Element::isMouseTransparent)
+                    .firstOrNull { coord in it.screenBounds }
+
+                val href = linkElement?.href ?: return
+                hrefClickHandler(href)
+            }
+        })
+    }
+
+    override fun paint(context2d: Context2d) {
+        renderElement(rootMapper.target, context2d)
     }
 
     private fun mapSvgSvgElement() {
@@ -127,55 +100,17 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
         })
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
         rootMapper.attachRoot(MappingContext())
-
-        needMapSvgSvgElement = false
     }
 
-    private fun resizeContentCanvas() {
-        //println("SvgCanvasFigure.resizeContentCanvas: width=$width, height=$height")
-        val canvasControl = canvasControl ?: return
-
-        contentCanvas?.let {
-            canvasControl.removeChild(it)
+    override fun onRepaintRequested(listener: () -> Unit): Registration {
+        repaintRequestListeners.add(listener)
+        return Registration.onRemove {
+            repaintRequestListeners.remove(listener)
         }
-
-        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
-        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
-
-        val newContentCanvas = canvasControl.createCanvas(contentWidth, contentHeight)
-        canvasControl.addChild(newContentCanvas)
-        contentCanvas = newContentCanvas
-
-        needResizeContentCanvas = false
-        svgBounds.set(Rectangle(0, 0, contentWidth, contentHeight))
-
-        //println("SvgCanvasFigure.resizeContentCanvas: done")
-        return
     }
 
-    private fun onAnimationFrame(): Boolean {
-        if (needMapSvgSvgElement) {
-            mapSvgSvgElement()
-            needRedraw = true
-        }
-
-        if (needResizeContentCanvas) {
-            resizeContentCanvas()
-            needRedraw = true
-        }
-
-        if (!needRedraw) {
-            return false
-        }
-
-        val canvas = contentCanvas ?: return false
-
-        canvas.context2d.clearRect(DoubleRectangle.XYWH(0.0, 0.0, canvas.size.x, canvas.size.y))
-
-        renderElement(rootMapper.target, canvas.context2d)
-
-        needRedraw = false
-        return true
+    override fun resize(width: Number, height: Number) {
+        // nothing to do - size is defined by svgSvgElement width/height attributes
     }
 
     private fun render(elements: List<Element>, ctx: Context2d) {
@@ -201,15 +136,25 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
                 ctx.save()
                 needRestore = true
             }
+
             ctx.beginPath()
             ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
             ctx.clip()
+
+            // Make sure graphical objects will belong to the different save/restore block
+            // to avoid perf issues in ImageMagick
+            ctx.save()
         }
 
         element.render(ctx)
         if (element is Container) {
             render(element.children, ctx)
+        }
+
+        if (element.clipPath != null) {
+            // Restore clip path save
+            ctx.restore()
         }
 
         if (needRestore) {
@@ -218,6 +163,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure {
     }
 
     private fun requestRedraw() {
-        needRedraw = true
+        repaintRequestListeners.forEach { it() }
     }
 }
