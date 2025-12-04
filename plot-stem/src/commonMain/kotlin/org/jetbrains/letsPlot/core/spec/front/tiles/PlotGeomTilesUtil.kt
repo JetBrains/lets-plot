@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -140,7 +139,7 @@ internal object PlotGeomTilesUtil {
             }
 
         val labelFormat = layerConfig.labelFormat?.let {
-            val fmt: (Any) -> String = StringFormat.forOneArg(it, tz = tz)::format
+            val fmt: (Any) -> String = FormatterUtil.byPattern(it, tz = tz)::format
             mapOf(Aes.LABEL to fmt)
         }
 

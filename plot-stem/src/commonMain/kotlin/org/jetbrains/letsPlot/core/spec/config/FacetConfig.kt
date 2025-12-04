@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.DataType.UNKNOWN
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil.byDataType
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
@@ -315,19 +316,9 @@ internal class FacetConfig(
             tz: TimeZone?,
         ): (Any) -> String {
             return when (providedFormat) {
-                null -> {
-                    byDataType(dataType, expFormat, tz)
-                }
-
+                null -> byDataType(dataType, expFormat, tz)
                 else -> {
-                    val sf = StringFormat.forOneArg(
-                        pattern = providedFormat,
-                        type = null, // ?
-                        formatFor = varName,
-                        expFormat = expFormat,
-                        tz = tz
-                    );
-
+                    val sf = FormatterUtil.byPattern(pattern = providedFormat, expFormat = expFormat, tz = tz);
                     { value: Any -> sf.format(value) }
                 }
             }

@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
@@ -29,12 +29,7 @@ class MappingField(
         require(myFormatter == null)
 
         val mappingFormatter = format?.let {
-            StringFormat.forOneArg(
-                it,
-                formatFor = aes.name,
-                expFormat = ctx.expFormat,
-                tz = ctx.tz,
-            )
+            FormatterUtil.byPattern(it, expFormat = ctx.expFormat, tz = ctx.tz)
         }
 
 //        // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)

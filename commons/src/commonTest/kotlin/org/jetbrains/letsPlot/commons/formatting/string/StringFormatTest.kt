@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.formatting.string
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.DATETIME_FORMAT
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.STRING_FORMAT
 import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,20 +19,12 @@ class StringFormatTest {
         assertEquals(1, createStringFormat("{.1f} test").argsNumber)
         assertEquals(2, createStringFormat("{.1f} {}").argsNumber)
         assertEquals(3, createStringFormat("{.1f} {.2f} {.3f}").argsNumber)
-        assertEquals(1, createStringFormat("%d.%m.%y %H:%M", DATETIME_FORMAT).argsNumber)
-        assertEquals(2, createStringFormat("at {%H:%M} on {%A}", STRING_FORMAT).argsNumber)
+        assertEquals(0, createStringFormat("%d.%m.%y %H:%M").argsNumber)
+        assertEquals(2, createStringFormat("at {%H:%M} on {%A}").argsNumber)
     }
 
     @Test
     fun numeric_format() {
-        val formatPattern = ".2f"
-        val valueToFormat = 4
-        val formattedString = createStringFormat(formatPattern).format(valueToFormat)
-        assertEquals("4.00", formattedString)
-    }
-
-    @Test
-    fun numeric_format_in_the_string_pattern() {
         val formatPattern = "{.2f}"
         val valueToFormat = 4
         val formattedString = createStringFormat(formatPattern).format(valueToFormat)
@@ -72,7 +62,7 @@ class StringFormatTest {
         val formattedString = createStringFormat(formatPattern).format(valueToFormat)
         assertEquals("original value = 4.2", formattedString)
 
-        val formatter = { value: Any -> StringFormat.forOneArg("{}", tz = null).format(value) }
+        val formatter = { value: Any -> StringFormat.forPattern("{}", tz = null).format(value) }
         assertEquals("4", formatter(4))
         assertEquals("4.123", formatter(4.123))
         assertEquals("{.2f}", formatter("{.2f}"))
@@ -104,19 +94,19 @@ class StringFormatTest {
 
     @Test
     fun pattern_without_placeholders() {
-        val fmt = StringFormat.forOneArg("It is .2f", tz = null)
+        val fmt = StringFormat.forPattern("It is .2f", tz = null)
         assertEquals("It is .2f", fmt.format(42))
     }
 
     @Test
     fun wrong_number_of_arguments_in_pattern_for_one_arg() {
-        val fmt = StringFormat.forOneArg("{.2f} {.2f}", tz = null)
+        val fmt = StringFormat.forPattern("{.2f} {.2f}", tz = null)
         assertEquals("3.14 {.2f}", fmt.format(3.14159))
     }
 
     @Test
     fun wrong_number_of_arguments_in_pattern_for_n_args() {
-        val fmt = StringFormat.forNArgs("{.2f} {.2f}", 2, tz = null)
+        val fmt = StringFormat.forPattern("{.2f} {.2f}", tz = null)
         assertEquals("3.14 2.72", fmt.format(listOf(3.14159, 2.71828, 1.61803)))
     }
 
@@ -142,7 +132,7 @@ class StringFormatTest {
 
     @Test
     fun string_similar_to_a_numeric_format_as_static_text() {
-        val formattedString = createStringFormat(".2f", type = STRING_FORMAT).format(emptyList())
+        val formattedString = createStringFormat(".2f").format(emptyList())
         assertEquals(".2f", formattedString)
     }
 
@@ -159,18 +149,18 @@ class StringFormatTest {
 
     @Test
     fun dateTime_format() {
-        assertEquals("August", createStringFormat("%B").format(dateTimeToFormat))
-        assertEquals("Tuesday", createStringFormat("%A").format(dateTimeToFormat))
-        assertEquals("2019", createStringFormat("%Y").format(dateTimeToFormat))
-        assertEquals("06.08.19", createStringFormat("%d.%m.%y").format(dateTimeToFormat))
-        assertEquals("06.08.19 04:46", createStringFormat("%d.%m.%y %H:%M").format(dateTimeToFormat))
+        assertEquals("August", createStringFormat("{%B}").format(dateTimeToFormat))
+        assertEquals("Tuesday", createStringFormat("{%A}").format(dateTimeToFormat))
+        assertEquals("2019", createStringFormat("{%Y}").format(dateTimeToFormat))
+        assertEquals("06.08.19", createStringFormat("{%d.%m.%y}").format(dateTimeToFormat))
+        assertEquals("06.08.19 04:46", createStringFormat("{%d.%m.%y %H:%M}").format(dateTimeToFormat))
     }
 
     @Test
     fun string_pattern_with_Number_and_DateTime() {
         val formatPattern = "{d}nd day of {%B}"
         val valuesToFormat = listOf(2, dateTimeToFormat)
-        val formattedString = createStringFormat(formatPattern, STRING_FORMAT).format(valuesToFormat)
+        val formattedString = createStringFormat(formatPattern).format(valuesToFormat)
         assertEquals("2nd day of August", formattedString)
     }
 
@@ -178,33 +168,14 @@ class StringFormatTest {
     fun use_DateTime_format_in_the_string_pattern() {
         assertEquals(
             "at 04:46 on Tuesday",
-            createStringFormat(
-                pattern = "at {%H:%M} on {%A}",
-                type = STRING_FORMAT
-            ).format(listOf(dateTimeToFormat, dateTimeToFormat))
-        )
-    }
-
-    @Test
-    fun dateTime_format_can_be_used_to_form_the_string_without_braces_in_its_pattern() {
-        assertEquals(
-            expected = "at 04:46 on Tuesday",
-            createStringFormat("at %H:%M on %A", type = DATETIME_FORMAT).format(dateTimeToFormat)
-        )
-    }
-
-    @Test
-    fun number_pattern_as_DateTime_format_will_return_string_with_pattern() {
-        assertEquals(
-            expected = ".1f",
-            createStringFormat(".1f", type = DATETIME_FORMAT).format(dateTimeToFormat)
+            createStringFormat(pattern = "at {%H:%M} on {%A}").format(listOf(dateTimeToFormat, dateTimeToFormat))
         )
     }
 
     @Test
     fun try_to_format_static_text_as_DateTime_format() {
         val exception = assertFailsWith(IllegalStateException::class) {
-            createStringFormat("%d.%m.%y").format("01.01.2000")
+            createStringFormat("{%d.%m.%y}").format("01.01.2000")
         }
         assertEquals(
             "Expected Unix timestamp in milliseconds (Number), but got '01.01.2000' (String)",
@@ -232,11 +203,6 @@ class StringFormatTest {
 
         private fun createStringFormat(pattern: String): StringFormat {
             return StringFormat.create(pattern, tz = null)
-        }
-
-
-        private fun createStringFormat(pattern: String, type: StringFormat.FormatType): StringFormat {
-            return StringFormat.create(pattern, type, tz = null)
         }
     }
 }

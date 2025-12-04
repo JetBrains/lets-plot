@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -470,11 +469,7 @@ open class PlotConfigBackend(
                 return breaksPattern ?: patterns.last()
             }
             (listOfNotNull(breaksPattern) + patterns).forEach { pattern ->
-                val formatter = StringFormat.forOneArg(
-                    pattern,
-                    type = StringFormat.FormatType.DATETIME_FORMAT,
-                    tz = tz
-                )
+                val formatter = FormatterUtil.byPattern(pattern, tz = tz)
                 val formattedValues = mutableSetOf<String>()
                 for (value in distinctValues) {
                     if (!formattedValues.add(formatter.format(value))) {

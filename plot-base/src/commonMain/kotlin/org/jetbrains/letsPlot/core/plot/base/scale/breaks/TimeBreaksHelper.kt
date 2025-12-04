@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.WEEK
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -143,7 +144,7 @@ internal class TimeBreaksHelper(
 //        private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
 
         private fun newStringFormat(format: String): StringFormat =
-            StringFormat.forNArgs(format, -1, tz = null)
+            FormatterUtil.byPattern(format, tz = null)
 
         private fun StringFormat.apply(vararg args: Any): String = format(args.toList())
     }

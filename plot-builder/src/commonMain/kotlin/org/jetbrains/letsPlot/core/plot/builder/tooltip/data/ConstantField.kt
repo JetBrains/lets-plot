@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
@@ -48,11 +48,7 @@ class ConstantField(
 
     private fun initFormattedValue(ctx: PlotContext): String {
         formattedValue = format?.let {
-            StringFormat.forOneArg(
-                format,
-                expFormat = ctx.expFormat,
-                tz = ctx.tz
-            ).format(value)
+            FormatterUtil.byPattern(format, expFormat = ctx.expFormat, tz = ctx.tz).format(value)
         } ?: run {
             val tooltipAes = when {
                 Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes)
