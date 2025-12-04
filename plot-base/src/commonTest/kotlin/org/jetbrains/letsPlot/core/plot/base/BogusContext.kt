@@ -60,7 +60,7 @@ object BogusContext : GeomContext {
     }
 
     override fun consumeMessages(messages: List<String>) {
-        error("Not available in a bogus geom context")
+        // do nothing
     }
 
     override fun estimateTextSize(
