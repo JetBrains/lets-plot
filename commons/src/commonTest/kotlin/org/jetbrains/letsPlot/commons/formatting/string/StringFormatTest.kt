@@ -15,11 +15,14 @@ class StringFormatTest {
     @Test
     fun check_expected_number_of_arguments() {
         assertEquals(0, createStringFormat("text").argsNumber)
+        assertEquals(0, createStringFormat("%d.%m.%y %H:%M").argsNumber)
+        assertEquals(0, createStringFormat(".1f").argsNumber)
+
         assertEquals(1, createStringFormat("{.1f}").argsNumber)
         assertEquals(1, createStringFormat("{.1f} test").argsNumber)
         assertEquals(2, createStringFormat("{.1f} {}").argsNumber)
         assertEquals(3, createStringFormat("{.1f} {.2f} {.3f}").argsNumber)
-        assertEquals(0, createStringFormat("%d.%m.%y %H:%M").argsNumber)
+        assertEquals(1, createStringFormat("{%d.%m.%y %H:%M}").argsNumber)
         assertEquals(2, createStringFormat("at {%H:%M} on {%A}").argsNumber)
     }
 
@@ -111,23 +114,9 @@ class StringFormatTest {
     }
 
     @Test
-    fun try_to_format_non_numeric_and_non_string_value() {
-        val formatPattern = "{.1f}"
-        val valueToFormat = mapOf(1 to 2)
-
-        val exception = assertFailsWith(IllegalStateException::class) {
-            createStringFormat(formatPattern).format(valueToFormat)
-        }
-
-        // Actual type in message varies depending on the target platform
-        val errorMessage = exception.message
-            ?.replace("SingletonMap", "Map")
-            ?.replace("HashMap", "Map")
-
-        assertEquals(
-            "Failed to format value with type Map. Supported types are Number and String.",
-            errorMessage
-        )
+    fun non_numeric_and_non_string_value_formatted_using_toString() {
+        val fmt = StringFormat.forPattern("{.1f}", tz = null)
+        assertEquals("(key, value)", fmt.format("key" to "value"))
     }
 
     @Test
@@ -173,14 +162,9 @@ class StringFormatTest {
     }
 
     @Test
-    fun try_to_format_static_text_as_DateTime_format() {
-        val exception = assertFailsWith(IllegalStateException::class) {
-            createStringFormat("{%d.%m.%y}").format("01.01.2000")
-        }
-        assertEquals(
-            "Expected Unix timestamp in milliseconds (Number), but got '01.01.2000' (String)",
-            exception.message
-        )
+    fun non_dateTime_value_formatted_using_toString() {
+        val str = createStringFormat("{%d.%m.%y}").format("01.01.2000")
+        assertEquals("01.01.2000", str)
     }
 
     @Test
@@ -188,7 +172,7 @@ class StringFormatTest {
         val formatPattern = "{.1f} x {PP}"
         val valuesToFormat = listOf(1, 2)
 
-        val exception = assertFailsWith(IllegalStateException::class) {
+        val exception = assertFailsWith(IllegalArgumentException::class) {
             createStringFormat(formatPattern).format(valuesToFormat)
         }
 
@@ -202,7 +186,7 @@ class StringFormatTest {
         private val TZ = TimeZone.UTC
 
         private fun createStringFormat(pattern: String): StringFormat {
-            return StringFormat.create(pattern, tz = null)
+            return StringFormat.forPattern(pattern, tz = null)
         }
     }
 }

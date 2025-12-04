@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFor
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.DataType.*
-import org.jetbrains.letsPlot.core.plot.base.FormatterUtil.FormatType.*
 
 object FormatterUtil {
 
@@ -51,38 +50,23 @@ object FormatterUtil {
     // - string with two or more placeholders: "Value: {,.2f}, Date: {%Y-%m-%d}"
     fun byPattern(
         pattern: String,
-        type: FormatType? = null,
         expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
         tz: TimeZone? = null,
     ): StringFormat {
-        val formatType = type ?: detectFormatType(pattern)
-
         // Adjust pattern: for number and datetime formats the pattern should be enclosed in braces.
         // Keep the original pattern if the desired type does not match the detected type - in this case StringFormat will print the pattern as is.
         // E.g., byPattern(",.2f", = DATETIME_FORMAT):
         // format(DateTime.now().toEpochMillis())
         // will output "{,.2f}", not "12345467234,00"
-        val pattern = when (formatType) {
-            NUMBER_FORMAT -> pattern.takeUnless(NumberFormat::isValidPattern) ?: "{$pattern}"
-            DATETIME_FORMAT -> pattern.takeUnless { isDateTimeFormat(it) } ?: "{$pattern}"
-            STRING_FORMAT -> pattern
+        val pattern = when {
+            // contains("{") is important for multiple placeholders with datetime formats
+            // isDateTimeFormat("{%Y-%m-%d}x{%H:%M}") returns true because of a loose check for delimiters
+            pattern.contains("{") && pattern.contains("}") -> pattern // a string format with multiple placeholders
+            NumberFormat.isValidPattern(pattern) -> "{$pattern}" // wrap to braces to make a placeholder
+            isDateTimeFormat(pattern) -> "{$pattern}" // wrap to braces to make a placeholder
+            else -> pattern // literal string, keep as is
         }
 
         return StringFormat.forPattern(pattern, expFormat = expFormat, tz = tz)
     }
-
-    private fun detectFormatType(pattern: String): FormatType {
-        return when {
-            NumberFormat.isValidPattern(pattern) -> NUMBER_FORMAT
-            isDateTimeFormat(pattern) -> DATETIME_FORMAT
-            else -> STRING_FORMAT
-        }
-    }
-
-    enum class FormatType {
-        NUMBER_FORMAT,
-        DATETIME_FORMAT,
-        STRING_FORMAT
-    }
-
 }

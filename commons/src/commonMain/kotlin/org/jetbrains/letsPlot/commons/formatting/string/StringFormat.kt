@@ -13,28 +13,14 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 class StringFormat private constructor(
     private val pattern: String,
-    expFormat: ExponentFormat?,
+    private val expFormat: ExponentFormat?,
     private val tz: TimeZone?,
 ) {
     private val placeholders = PLACEHOLDER_REGEX.findAll(pattern).toList()
-    private val formatters: List<(Any) -> String>
-
-    init {
-        formatters =
-            placeholders
-                .map { it.groupValues[TEXT_IN_BRACES] }
-                .map { pattern ->
-                    val formatType = detectFormatType(pattern)
-
-                    check(NumberFormat.isValidPattern(pattern) || isDateTimeFormat(pattern)) {
-                        "Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'"
-                    }
-                    initFormatter(pattern, formatType, expFormat)
-                }
-                .toList()
-
-
-    }
+    private val formatters: List<(Any) -> String> = placeholders
+        .map { it.groupValues[TEXT_IN_BRACES] }
+        .map { pattern -> initFormatter(pattern, expFormat) }
+        .toList()
 
     val argsNumber = formatters.size
 
@@ -62,44 +48,49 @@ class StringFormat private constructor(
         return string.replace("{{", "{").replace("}}", "}")
     }
 
-    private fun initFormatter(
-        pattern: String,
-        formatType: FormatType,
-        expFormat: ExponentFormat?,
-    ): ((Any) -> String) {
-        if (pattern.isEmpty()) {
-            return Any::toString
-        }
-        when (formatType) {
-            FormatType.NUMBER_FORMAT -> {
+    private fun initFormatter(pattern: String, expFormat: ExponentFormat?): ((Any) -> String) {
+        when {
+            pattern.isEmpty() -> return Any::toString
+
+            NumberFormat.isValidPattern(pattern) -> {
                 val formatSpec = NumberFormat.parseSpec(pattern)
 
                 // override exponent properties if expFormat is set
-                val spec = formatSpec.copy(
+                val adjustedFormatSpec = formatSpec.copy(
                     expType = expFormat?.notationType ?: formatSpec.expType,
                     minExp = expFormat?.min ?: formatSpec.minExp,
                     maxExp = expFormat?.max ?: formatSpec.maxExp
                 )
-                val numberFormatter = NumberFormat(spec)
+                val fmt = NumberFormat(adjustedFormatSpec)
+
+                // Try to convert value to Float.
+                // If a value is not a number or a string representing a number, return the value itself as a string.
+                // This way we avoid exceptions during formatting, and the user may notice the problem in the output.
                 return { value: Any ->
                     when (value) {
-                        is Number -> numberFormatter.apply(value)
-                        is String -> value.toFloatOrNull()?.let(numberFormatter::apply) ?: value
-                        else -> error("Failed to format value with type ${value::class.simpleName}. Supported types are Number and String.")
+                        is Number -> fmt.apply(value)
+                        is String -> value.toFloatOrNull()?.let(fmt::apply) ?: value
+                        else -> value.toString()
                     }
                 }
             }
 
-            FormatType.DATETIME_FORMAT -> {
-                return DateTimeFormatUtil.createInstantFormatter(
-                    pattern,
-                    tz ?: TimeZone.UTC,
-                )
+            isDateTimeFormat(pattern) -> {
+                val fmt = DateTimeFormatUtil.createInstantFormatter(pattern, tz ?: TimeZone.UTC)
+
+                // Try to convert value to epoch millis.
+                // If a value is not a number or a string representing a number, return the value itself as a string.
+                // This way we avoid exceptions during formatting, and the user may notice the problem in the output.
+                return { value: Any ->
+                    when (value) {
+                        is Number -> fmt(value) // epoch millis
+                        is String -> value.toLongOrNull()?.let(fmt) ?: value
+                        else -> value.toString()
+                    }
+                }
             }
 
-            else -> {
-                error("Undefined format pattern $pattern")
-            }
+            else -> throw IllegalArgumentException("Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'")
         }
     }
 
@@ -124,65 +115,15 @@ class StringFormat private constructor(
         private val PLACEHOLDER_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
         private const val TEXT_IN_BRACES = 2
 
-        fun validate(
-            pattern: String,
-            formatFor: String? = null,
-            expectedArgs: Int = -1,
-            expFormat: ExponentFormat? = null,
-            tz: TimeZone?,
-        ) {
-            val fmt = create(pattern, expFormat = expFormat, tz = tz)
-            if (expectedArgs > 0) {
-                require(fmt.argsNumber == expectedArgs) {
-                    @Suppress("NAME_SHADOWING")
-                    val formatFor = formatFor?.let { "to format \'$formatFor\'" } ?: ""
-                    "Wrong number of arguments in pattern \'$pattern\' $formatFor. " +
-                            "Expected $expectedArgs ${if (expectedArgs > 1) "arguments" else "argument"} " +
-                            "instead of ${fmt.argsNumber}"
-                }
-            }
-        }
-
         fun valueInLinePattern() = "{}"
 
         // always string format
         fun forPattern(
             pattern: String,
             expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
-            tz: TimeZone?,
-        ): StringFormat {
-            return create(pattern, expFormat = expFormat, tz = tz)
-        }
-
-        fun forNArgs(
-            pattern: String,
-            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
-            tz: TimeZone?,
-        ): StringFormat {
-            return create(pattern, expFormat = expFormat, tz)
-        }
-
-        private fun detectFormatType(pattern: String): FormatType {
-            return when {
-                NumberFormat.isValidPattern(pattern) -> FormatType.NUMBER_FORMAT
-                isDateTimeFormat(pattern) -> FormatType.DATETIME_FORMAT
-                else -> FormatType.STRING_FORMAT
-            }
-        }
-
-        internal fun create(
-            pattern: String,
-            expFormat: ExponentFormat? = null,
-            tz: TimeZone?,
+            tz: TimeZone? = null,
         ): StringFormat {
             return StringFormat(pattern, expFormat = expFormat, tz)
         }
     }
-
-    private enum class FormatType {
-        NUMBER_FORMAT,
-        DATETIME_FORMAT,
-        STRING_FORMAT
-    }
-
 }
