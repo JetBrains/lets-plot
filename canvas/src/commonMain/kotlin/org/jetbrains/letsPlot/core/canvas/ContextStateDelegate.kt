@@ -84,6 +84,11 @@ class ContextStateDelegate(
         return currentState.fontBaseline
     }
 
+    fun getLineWidth(): Double {
+        return currentState.strokeWidth
+    }
+
+
     override fun beginPath() {
         currentPath = Path2d()
     }

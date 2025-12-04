@@ -49,7 +49,7 @@ class ColorBrewerMapperProvider(
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         val n = discreteTransform.effectiveDomain.size
-        val colorScheme = colorScheme(true, n)
+        val colorScheme = colorScheme(true)
         val colors = colors(colorScheme, n)
         return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
@@ -71,7 +71,7 @@ class ColorBrewerMapperProvider(
         }
     }
 
-    private fun colorScheme(discrete: Boolean, colorCount: Int? = null): ColorScheme {
+    private fun colorScheme(discrete: Boolean): ColorScheme {
         val paletteType = when {
             paletteNameOrIndex is String -> {
                 val palType = PaletteUtil.paletteTypeByPaletteName(paletteNameOrIndex)

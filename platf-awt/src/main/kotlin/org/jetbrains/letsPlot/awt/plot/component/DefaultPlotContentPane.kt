@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
+import org.jetbrains.letsPlot.core.util.PlotSizeHelper
 import java.awt.Color
 import java.awt.Component
 import javax.swing.BorderFactory
@@ -28,14 +29,17 @@ abstract class DefaultPlotContentPane(
 
 ) : Disposable, WithFigureModel, JPanel() {
 
-    private val plotPanel: PlotPanel
-    final override val figureModel: FigureModel get() = plotPanel.figureModel
+    final override val figureModel: FigureModel
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
         createUI(processedSpec).let { (plotPanel, messagesArea) ->
-            this.plotPanel = plotPanel
-            this.add(plotPanel)
+            this.figureModel = plotPanel.figureModel
+            val centeredPanel = CenteredPlotPanel(
+                plotPanel = plotPanel,
+                figurePanelDefaultSize = PlotSizeHelper.figurePanelSizeDefault(processedSpec),
+            )
+            this.add(centeredPanel)
             this.add(messagesArea)
         }
     }
@@ -84,7 +88,7 @@ abstract class DefaultPlotContentPane(
             }
         }
 
-        plotPanel.alignmentX = Component.CENTER_ALIGNMENT
+//        plotPanel.alignmentX = Component.CENTER_ALIGNMENT
         messagesArea.alignmentX = Component.CENTER_ALIGNMENT
 
         return Pair(plotPanel, messagesArea)

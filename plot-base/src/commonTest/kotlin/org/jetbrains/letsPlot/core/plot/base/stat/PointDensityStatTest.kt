@@ -146,7 +146,7 @@ class PointDensityStatTest : BaseStatTest() {
         statDf.getNumeric(Stats.DENSITY).slice(expectedDensityOrder).zipWithNext { a, b ->
             assertNotNull(a)
             assertNotNull(b)
-            assertTrue(a!! <= b!!, "Expected density ordered as $expectedDensityOrder")
+            assertTrue(a <= b, "Expected density ordered as $expectedDensityOrder")
         }
     }
 
@@ -184,7 +184,7 @@ class PointDensityStatTest : BaseStatTest() {
         statDf.getNumeric(Stats.DENSITY).slice(expectedDensityOrder).zipWithNext { a, b ->
             assertNotNull(a)
             assertNotNull(b)
-            assertTrue(a!! <= b!!, "Expected density ordered as $expectedDensityOrder")
+            assertTrue(a <= b, "Expected density ordered as $expectedDensityOrder")
         }
     }
 

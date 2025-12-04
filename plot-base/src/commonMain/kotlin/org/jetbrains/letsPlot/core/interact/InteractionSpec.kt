@@ -82,6 +82,7 @@ class InteractionSpec(
             }
 
             val keyModifiers = (spec[KeyModifier.PROPERTY_NAME] as? List<*>)?.map { modifierStr ->
+                @Suppress("NAME_SHADOWING")
                 val modifierStr = modifierStr as? String
                     ?: throw IllegalArgumentException("Key modifier must be a string: $modifierStr")
                 KeyModifier.fromString(modifierStr)

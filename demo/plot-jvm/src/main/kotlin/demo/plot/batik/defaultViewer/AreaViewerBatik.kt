@@ -14,8 +14,8 @@ fun main(args: Array<String>) {
     with(Area()) {
         PlotViewerWindowBatik(
             "Area plot",
-            windowSize = Dimension(640, 480),
-//            windowSize = null,
+//            windowSize = Dimension(640, 480),
+            windowSize = null,
             rawSpec = plotSpecList().first(),
             preserveAspectRatio = false
         ).open()

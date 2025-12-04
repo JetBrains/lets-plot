@@ -9,7 +9,7 @@ plugins {
 }
 
 val batikVersion = project.extra["batik.version"] as String
-val commonsIOVersion = project.extra["commons-io.version"] as String
+//val commonsIOVersion = project.extra["commons-io.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
 val ktorVersion = project.extra["ktor.version"] as String
@@ -40,7 +40,7 @@ dependencies {
     implementation(project(":platf-awt"))
 
     implementation("org.apache.xmlgraphics:batik-codec:${batikVersion}")
-    implementation("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
+//    implementation("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
     implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
     compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
 

@@ -115,6 +115,10 @@ internal class DomContext2d(
         ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
 
+    override fun drawCircle(x: Double, y: Double, radius: Double) {
+        TODO("Not yet implemented")
+    }
+
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
         ctx.ellipse(x, y, radiusX, radiusY, 0.0, 0.0, 2 * PI)
     }

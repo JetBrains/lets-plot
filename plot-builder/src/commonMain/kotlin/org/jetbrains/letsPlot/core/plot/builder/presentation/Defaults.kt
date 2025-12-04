@@ -25,6 +25,8 @@ object Defaults {
     val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
     val DEF_LARGE_PLOT_SIZE = DoubleVector(DEF_LARGE_PLOT_WIDTH, DEF_LARGE_PLOT_WIDTH / ASPECT_RATIO)
 
+    const val TOOLBAR_HEIGHT = 33
+
     // HEX colors only (because of using of parseHex())
     const val DARK_GRAY = "#3d3d3d"
     val GRAY = Color.GRAY.toHexColor()

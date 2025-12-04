@@ -9,6 +9,7 @@ import com.github.weisj.jsvg.SVGDocument
 import com.github.weisj.jsvg.parser.SVGLoader
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.*
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.TOOLBAR_HEIGHT
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -238,7 +239,6 @@ internal class PlotPanelToolbar : JPanel() {
     }
 
     companion object {
-        const val TOOLBAR_HEIGHT = 33
         val BUTTON_DIM = Dimension(22, 22)
 
         private val C_BACKGR = Color(247, 248, 250)

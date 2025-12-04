@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
-import org.jetbrains.letsPlot.awt.plot.component.PlotPanelToolbar.Companion.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.awt.BorderLayout
 import java.awt.Component
@@ -22,35 +22,14 @@ import javax.swing.JScrollPane
 open class PlotPanel constructor(
     private val plotComponentProvider: PlotComponentProvider,
     preferredSizeFromPlot: Boolean,
-    private val sizingPolicy: SizingPolicy,
+    val sizingPolicy: SizingPolicy,
     repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
-    private val showToolbar: Boolean = false,
+    showToolbar: Boolean = false,
 ) : JPanel(), WithFigureModel, Disposable {
 
-    @Deprecated(
-        message = "Removed API: use constructor with sizingPolicy parameter",
-        level = DeprecationLevel.ERROR,
-        replaceWith = ReplaceWith(
-            expression = "PlotPanel(plotComponentProvider = plotComponentProvider, preferredSizeFromPlot = preferredSizeFromPlot, sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio), repaintDelay = repaintDelay, applicationContext = applicationContext, showToolbar = false)",
-            imports = ["org.jetbrains.letsPlot.core.util.sizing.SizingPolicy"]
-        )
-    )
-    constructor(
-        plotComponentProvider: PlotComponentProvider,
-        preferredSizeFromPlot: Boolean,
-        repaintDelay: Int,
-        applicationContext: ApplicationContext
-    ) : this(
-        plotComponentProvider,
-        preferredSizeFromPlot,
-        SizingPolicy.fitContainerSize(preserveAspectRatio = false),
-        repaintDelay,
-        applicationContext,
-        false
-    )
-
     final override val figureModel: FigureModel
+    val hasToolbar = showToolbar
 
     // The panel that contains the plot component when a toolbar is shown.
     private lateinit var plotComponentContainer: JPanel
@@ -80,7 +59,7 @@ open class PlotPanel constructor(
             }
         })
 
-        if (showToolbar) {
+        if (hasToolbar) {
             // The panel that contains the plot component when a toolbar is shown.
             // Must be initialized before the first call to 'rebuildProvidedComponent()'.
             plotComponentContainer = JPanel(BorderLayout(0, 0))
@@ -127,7 +106,7 @@ open class PlotPanel constructor(
             )
         )
 
-        if (showToolbar) {
+        if (hasToolbar) {
             add(PlotPanelToolbar().also { it.attach(figureModel) }, BorderLayout.NORTH)
             add(plotComponentContainer, BorderLayout.CENTER)
         }
@@ -135,7 +114,7 @@ open class PlotPanel constructor(
 
     override fun dispose() {
         figureModel.dispose()
-        if (showToolbar) {
+        if (hasToolbar) {
             plotComponentContainer.removeAll()
         }
         removeAll()
@@ -176,11 +155,11 @@ open class PlotPanel constructor(
         sizingPolicy: SizingPolicy,
         specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent {
-        val plotComponentContainer = if (showToolbar) plotComponentContainer else this
+        val plotComponentContainer = if (hasToolbar) plotComponentContainer else this
         plotComponentContainer.removeAll()
 
         // Adjust the container size if we have a toolbar
-        val adjustedContainerSize = if (showToolbar && containerSize != null) {
+        val adjustedContainerSize = if (hasToolbar && containerSize != null) {
             Dimension(containerSize.width, containerSize.height - TOOLBAR_HEIGHT)
         } else {
             containerSize

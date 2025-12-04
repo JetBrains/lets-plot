@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.8.1] - 2025-12-01
+
+### Fixed
+
+- saving plots as png takes a very long time [[#1423](https://github.com/JetBrains/lets-plot/issues/1423)].
+- `stat_ecdf()` takes a very long time for even moderately sized datasets [[#1424](https://github.com/JetBrains/lets-plot/issues/1424)].
+- lets-plot plots are not displayed in plots pane [[PST-8170](https://github.com/posit-dev/positron/issues/8170)].
+- inconsistencies in theme/flavor inheritance in `gggrid()` subplots.
+
 ## [4.8.0] - 2025-11-05
 
 ### Added

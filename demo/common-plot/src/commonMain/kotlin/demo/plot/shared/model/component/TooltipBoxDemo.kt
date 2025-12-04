@@ -66,7 +66,6 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 lines,
                 title,
                 textClassName,
-                rotate,
                 tooltipMinWidth,
                 borderRadius,
                 markerColors
