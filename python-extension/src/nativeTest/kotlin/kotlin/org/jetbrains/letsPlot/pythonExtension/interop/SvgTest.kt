@@ -3,7 +3,7 @@ package org.jetbrains.letsPlot.pythonExtension.interop
 import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure2
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.test.Test
 
 /*
@@ -26,7 +26,7 @@ class SvgTest {
 
 
     private fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
-        val fig = SvgCanvasFigure2(svg)
+        val fig = SvgCanvasFigure(svg)
 
         val canvasPeer = MagickCanvasPeer(pixelDensity = 1.0, antialiasing = true, fontManager = embeddedFontsManager)
         fig.mapToCanvas(canvasPeer)

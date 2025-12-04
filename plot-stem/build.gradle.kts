@@ -35,7 +35,10 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(project(":demo-and-test-shared"))
+                implementation(project(":demo-and-test-shared")) {
+                    // w: duplicate library name: org.jetbrains.lets-plot:plot-stem
+                    exclude(group = "org.jetbrains.lets-plot", module = "plot-stem")
+                }
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }

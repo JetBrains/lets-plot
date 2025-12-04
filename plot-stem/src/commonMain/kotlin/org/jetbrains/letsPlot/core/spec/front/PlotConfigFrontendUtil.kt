@@ -223,6 +223,7 @@ object PlotConfigFrontendUtil {
         sharedContinuousDomainX: DoubleSpan?,
         sharedContinuousDomainY: DoubleSpan?,
         detachedLegendsCollector: DetachedLegendsCollector?,
+        messageConsumer: (String) -> Unit = {}
     ): PlotAssembler {
 
         val plotGeomTiles = createPlotGeomTiles(
@@ -251,7 +252,8 @@ object PlotConfigFrontendUtil {
             plotSpecId = config.specId,
             tz = config.tz,
             scaleFactor,
-            detachedLegendsCollector = detachedLegendsCollector
+            detachedLegendsCollector = detachedLegendsCollector,
+            messageConsumer
         )
     }
 }

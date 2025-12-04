@@ -65,7 +65,7 @@ internal object GeomProviderFactory {
         tz: TimeZone?,
     ): GeomProvider {
         return when (geomKind) {
-            GeomKind.HISTOGRAM -> GeomProvider.histogram { ctx ->
+            GeomKind.HISTOGRAM -> GeomProvider.histogram {
                 val geom = HistogramGeom()
                 if (layerConfig.hasOwn(Option.Geom.Histogram.BREAKS)) {
                     geom.setBreaks(layerConfig.getDoubleList(Option.Geom.Histogram.BREAKS))

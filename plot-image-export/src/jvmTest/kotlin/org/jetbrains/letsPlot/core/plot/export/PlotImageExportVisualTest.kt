@@ -22,8 +22,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
         val ys = mutableListOf<String>()
         val cs = mutableListOf<String>()
 
-        (0..dim).map { x ->
-            (0..dim).map { y ->
+        (0..dim).map {
+            (0..dim).map {
                 xs.add(rand.nextDouble().toString())
                 ys.add(rand.nextDouble().toString())
                 cs.add(rand.nextDouble().toString())

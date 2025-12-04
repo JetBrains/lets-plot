@@ -161,7 +161,7 @@ internal class DataPointsConverter(
                 setGeodesic(geom.geodesic)
             }
 
-            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
+            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true) {}
 
             val interpolatedPathData = paths.flatMap {
                 splitByStyle(it).let(::midPointsPathInterpolator)
@@ -171,7 +171,7 @@ internal class DataPointsConverter(
         }
 
         fun polygon(): List<DataPointLiveMapAesthetics> {
-            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
+            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true) {}
             return process(paths = paths, isClosed = true)
         }
 

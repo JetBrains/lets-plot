@@ -11,55 +11,33 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 
 /**
  * no JComponents or Views are created here.
  */
 object MonolithicCanvas {
-    @Deprecated("Migrate to PlotCanvasFigure2 and CanvasPane2")
-    fun buildPlotFigureFromRawSpec(
-        rawSpec: MutableMap<String, Any>,
-        sizingPolicy: SizingPolicy,
-        computationMessagesHandler: (List<String>) -> Unit
-    ) : PlotCanvasFigure {
-        val plotCanvasFigure = PlotCanvasFigure()
-
-        plotCanvasFigure.update(
-            processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false),
-            sizingPolicy = sizingPolicy,
-            computationMessagesHandler = computationMessagesHandler
-        )
-        return plotCanvasFigure
-    }
-
-    @Deprecated("Migrate to PlotCanvasFigure2 and CanvasPane2")
-    fun updatePlotFigureFromRawSpec(
-        plotCanvasFigure: PlotCanvasFigure,
-        rawSpec: MutableMap<String, Any>,
-        sizingPolicy: SizingPolicy,
-        computationMessagesHandler: (List<String>) -> Unit
-    ) {
-        val processedSpec = MonolithicCommon.processRawSpecs(rawSpec, frontendOnly = false)
-        plotCanvasFigure.update(processedSpec, sizingPolicy, computationMessagesHandler)
-    }
-
     internal fun buildViewModelFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         sizingPolicy: SizingPolicy,
         computationMessagesHandler: (List<String>) -> Unit,
         containerSize: DoubleVector? = null,
     ): ViewModel {
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy)
+
+        val frontMessages: MutableList<String> = ArrayList()
+
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy, frontMessages::add)
         if (buildResult is MonolithicCommon.PlotsBuildResult.Error) {
             return SimpleModel(createErrorSvgText(buildResult.error), UnsupportedToolEventDispatcher())
         }
 
         val success = buildResult as MonolithicCommon.PlotsBuildResult.Success
-        val computationMessages = success.buildInfo.computationMessages
-        computationMessagesHandler(computationMessages)
 
-        return FigureToViewModel.eval(success.buildInfo)
+        val figure = FigureToViewModel.eval(success.buildInfo)
+
+        val computationMessages = success.buildInfo.computationMessages
+        computationMessagesHandler(computationMessages + frontMessages)
+
+        return figure
     }
 
     private fun createErrorSvgText(s: String): SvgSvgElement {

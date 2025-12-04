@@ -76,8 +76,7 @@ private val LOG = PortableLogging.logger("MonolithicJs")
 fun buildPlotFromRawSpecs(
     plotSpecJs: dynamic,
     parentElement: HTMLElement,
-    sizingJs: dynamic,
-    optionsJs: dynamic = null
+    sizingJs: dynamic
 ): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
@@ -86,17 +85,11 @@ fun buildPlotFromRawSpecs(
 
         @Suppress("DuplicatedCode")
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
-        val options: Map<String, Any> = if (optionsJs != null) {
-            dynamicObjectToMap(optionsJs)
-        } else {
-            emptyMap()
-        }
 
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
-            sizingOptions,
-            options
+            sizingOptions
         )
     } catch (e: RuntimeException) {
         handleException(e, SimpleMessageHandler(parentElement))
@@ -153,8 +146,7 @@ fun buildPlotFromRawSpecs(
 fun buildPlotFromProcessedSpecs(
     plotSpecJs: dynamic,
     parentElement: HTMLElement,
-    sizingJs: dynamic,
-    optionsJs: dynamic = null
+    sizingJs: dynamic
 ): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
@@ -163,17 +155,11 @@ fun buildPlotFromProcessedSpecs(
         // we are going to use a truly processed specs.
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
-        val options: Map<String, Any> = if (optionsJs != null) {
-            dynamicObjectToMap(optionsJs)
-        } else {
-            emptyMap()
-        }
 
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
-            sizingOptions,
-            options
+            sizingOptions
         )
     } catch (e: RuntimeException) {
         handleException(e, SimpleMessageHandler(parentElement))
@@ -184,23 +170,22 @@ fun buildPlotFromProcessedSpecs(
 private fun buildPlotFromProcessedSpecsPrivate(
     processedSpec: Map<String, Any>,
     containerDiv: HTMLElement,
-    sizingOptions: Map<String, Any>,
-    options: Map<String, Any>
+    sizingOptions: Map<String, Any>
 ): FigureModelJs? {
 
     val showToolbar = PLOT_VIEW_TOOLBOX_HTML || processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
-    var (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
+    val (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
         // Wrapper for toolbar and chart
-        var outputDiv = document.createElement("div") as HTMLDivElement
+        val outputDiv = document.createElement("div") as HTMLDivElement
         outputDiv.style.display = "inline-block"
         containerDiv.appendChild(outputDiv);
 
         // Toolbar
-        var toolbar = DefaultToolbarJs();
+        val toolbar = DefaultToolbarJs();
         outputDiv.appendChild(toolbar.getElement());
 
         // Plot
-        var plotContainer = document.createElement("div") as HTMLElement;
+        val plotContainer = document.createElement("div") as HTMLElement;
         plotContainer.style.position = "relative"
         outputDiv.appendChild(plotContainer);
         Pair(plotContainer, toolbar)
@@ -274,10 +259,13 @@ internal fun buildPlotFromProcessedSpecsIntern(
     messageHandler: MessageHandler
 ): FigureModelJs? {
 
+    val frontMessages: MutableList<String> = ArrayList()
+
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
         containerSize.invoke(),
-        sizingPolicy
+        sizingPolicy,
+        frontMessages::add
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
@@ -286,10 +274,11 @@ internal fun buildPlotFromProcessedSpecsIntern(
     }
 
     val success = buildResult as Success
-    val computationMessages = success.buildInfo.computationMessages
-    messageHandler.showComputationMessages(computationMessages)
-
     val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
+
+    val computationMessages = success.buildInfo.computationMessages
+    messageHandler.showComputationMessages(computationMessages + frontMessages)
+
     return FigureModelJs(
         plotSpec,
         wrapperElement,

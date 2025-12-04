@@ -13,7 +13,13 @@ dependencies {
     compileOnly(project(":plot-stem"))
     compileOnly(project(":platf-awt"))
     compileOnly("org.apache.xmlgraphics:batik-codec:$batikVersion")
-    compileOnly("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
+
+    // commons-io: enforce a newer version than Batik's transitive dependency.
+    // A fix for https://github.com/JetBrains/lets-plot/issues/1421 (Drop commons-io dependency)
+//    compileOnly("commons-io:commons-io:${commonsIOVersion}")
+    constraints {
+        api("commons-io:commons-io:$commonsIOVersion")
+    }
 
     testImplementation(project(":commons"))
     testImplementation(project(":datamodel"))

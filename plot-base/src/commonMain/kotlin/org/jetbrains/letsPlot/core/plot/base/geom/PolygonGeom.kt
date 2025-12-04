@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 open class PolygonGeom : GeomBase() {
 
-    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.with_X_Y(aesthetics.dataPoints())
+    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        return GeomUtil.with_X_Y(dataPoints)
     }
 
     override fun buildIntern(

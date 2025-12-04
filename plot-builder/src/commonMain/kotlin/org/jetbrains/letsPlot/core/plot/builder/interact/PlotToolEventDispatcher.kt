@@ -287,7 +287,7 @@ internal class PlotToolEventDispatcher(
 
     private fun deactivateOverlappingInteractions(
         originBeingActivated: String,
-        interactionSpecBeingActivated: InteractionSpec
+        @Suppress("UNUSED_PARAMETER") interactionSpecBeingActivated: InteractionSpec
     ) {
         // Special cases
         if (originBeingActivated == ORIGIN_FIGURE_IMPLICIT) {

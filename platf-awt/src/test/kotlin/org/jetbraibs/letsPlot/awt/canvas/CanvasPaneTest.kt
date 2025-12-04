@@ -4,13 +4,13 @@ import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane2
+import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure2
+import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import org.junit.BeforeClass
 import java.awt.*
 import java.awt.image.BufferedImage
@@ -21,7 +21,7 @@ import kotlin.test.Test
 class CanvasPaneTest {
     @Test
     fun `should handle zero size`() {
-        val pane = CanvasPane2(
+        val pane = CanvasPane(
             figure = createPlotFigure(plotSpec)
         )
 
@@ -40,7 +40,7 @@ class CanvasPaneTest {
 
     @Test
     fun `figure set after layout`() {
-        val pane = CanvasPane2()
+        val pane = CanvasPane()
 
         // do layout before figure set
         pane.bounds = Rectangle(200, 200)
@@ -60,7 +60,7 @@ class CanvasPaneTest {
 
     @Test
     fun `figure set before layout`() {
-        val pane = CanvasPane2(
+        val pane = CanvasPane(
             figure = createPlotFigure(plotSpec)
         )
 
@@ -79,7 +79,7 @@ class CanvasPaneTest {
 
     @Test
     fun `paint with clip`() {
-        val pane = CanvasPane2(
+        val pane = CanvasPane(
             figure = createPlotFigure(plotSpec)
         )
 
@@ -100,7 +100,7 @@ class CanvasPaneTest {
 
     @Test
     fun `paint on retina`() {
-        val pane = CanvasPane2(
+        val pane = CanvasPane(
             figure = createPlotFigure(plotSpec)
         )
 
@@ -125,9 +125,9 @@ class CanvasPaneTest {
     private fun createPlotFigure(
         rawSpec: Map<String, Any>,
         sizingPolicy: SizingPolicy = SizingPolicy.fitContainerSize(false)
-    ): PlotCanvasFigure2 {
+    ): PlotCanvasFigure {
         val spec = MonolithicCommon.processRawSpecs(plotSpec = rawSpec.toMutableMap(), frontendOnly = false)
-        return PlotCanvasFigure2().apply {
+        return PlotCanvasFigure().apply {
             update(
                 processedSpec = spec,
                 sizingPolicy = sizingPolicy,
