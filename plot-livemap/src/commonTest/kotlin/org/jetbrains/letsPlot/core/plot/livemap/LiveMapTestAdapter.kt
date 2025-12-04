@@ -32,7 +32,7 @@ class LiveMapTestAdapter(
             processSpecs,
             containerSize = null,
             SizingPolicy.fixed(600.0, 400.0)
-        )
+        ) {}
         val successBuildResult = buildResult as MonolithicCommon.PlotsBuildResult.Success
         val buildInfo = successBuildResult.buildInfo.layoutedByOuterSize()
         buildInfo.injectLiveMapProvider { tiles, spec -> injectLiveMapProvider(tiles, spec, CursorServiceConfig()) }

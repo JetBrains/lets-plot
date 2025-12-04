@@ -29,7 +29,8 @@ object TestingPlotContext {
         return PlotAssemblerPlotContext(
             geomTiles = TestingPlotGeomTiles(layers, scaleMap),
             expFormat = ExponentFormat(ExponentNotationType.E),
-            tz = null
+            tz = null,
+            messageConsumer = {}
         )
     }
 }

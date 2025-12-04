@@ -210,7 +210,8 @@ object GeomUtil {
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?),
         sorted: Boolean,
-        closePath: Boolean = false
+        closePath: Boolean = false,
+        nullsCounter: (Int) -> Unit,
     ): List<PathData> {
         val groups = createGroups(dataPoints, sorted).let { groups ->
             if (closePath) {
@@ -220,11 +221,23 @@ object GeomUtil {
             }
         }
 
-        return groups.values
+        var nulls = 0
+        var singlePointPaths = 0
+        val result = groups.values
             .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
+            .also { a ->
+                nulls += a.flatten().count { it == null }
+            }
             .map { pathPoints -> pathPoints.splitByNull() }
             .flatten()
-            .mapNotNull { PathData.create(it) }
+            .mapNotNull {
+                if (it.size == 1) singlePointPaths++
+                PathData.create(it)
+            }
+
+        nullsCounter(nulls + singlePointPaths)
+
+        return result
     }
 
     private fun toPathPoints(

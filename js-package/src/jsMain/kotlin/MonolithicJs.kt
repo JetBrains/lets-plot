@@ -259,10 +259,13 @@ internal fun buildPlotFromProcessedSpecsIntern(
     messageHandler: MessageHandler
 ): FigureModelJs? {
 
+    val frontMessages: MutableList<String> = ArrayList()
+
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
         containerSize.invoke(),
-        sizingPolicy
+        sizingPolicy,
+        frontMessages::add
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
@@ -271,10 +274,11 @@ internal fun buildPlotFromProcessedSpecsIntern(
     }
 
     val success = buildResult as Success
-    val computationMessages = success.buildInfo.computationMessages
-    messageHandler.showComputationMessages(computationMessages)
-
     val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
+
+    val computationMessages = success.buildInfo.computationMessages
+    messageHandler.showComputationMessages(computationMessages + frontMessages)
+
     return FigureModelJs(
         plotSpec,
         wrapperElement,

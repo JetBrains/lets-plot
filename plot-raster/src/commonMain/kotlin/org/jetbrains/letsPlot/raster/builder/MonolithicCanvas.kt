@@ -22,16 +22,22 @@ object MonolithicCanvas {
         computationMessagesHandler: (List<String>) -> Unit,
         containerSize: DoubleVector? = null,
     ): ViewModel {
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy)
+
+        val frontMessages: MutableList<String> = ArrayList()
+
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy, frontMessages::add)
         if (buildResult is MonolithicCommon.PlotsBuildResult.Error) {
             return SimpleModel(createErrorSvgText(buildResult.error), UnsupportedToolEventDispatcher())
         }
 
         val success = buildResult as MonolithicCommon.PlotsBuildResult.Success
-        val computationMessages = success.buildInfo.computationMessages
-        computationMessagesHandler(computationMessages)
 
-        return FigureToViewModel.eval(success.buildInfo)
+        val figure = FigureToViewModel.eval(success.buildInfo)
+
+        val computationMessages = success.buildInfo.computationMessages
+        computationMessagesHandler(computationMessages + frontMessages)
+
+        return figure
     }
 
     private fun createErrorSvgText(s: String): SvgSvgElement {
