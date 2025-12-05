@@ -58,6 +58,7 @@ object FormatterUtil {
         // E.g., byPattern(",.2f", = DATETIME_FORMAT):
         // format(DateTime.now().toEpochMillis())
         // will output "{,.2f}", not "12345467234,00"
+        @Suppress("NAME_SHADOWING")
         val pattern = when {
             // contains("{") is important for multiple placeholders with datetime formats
             // isDateTimeFormat("{%Y-%m-%d}x{%H:%M}") returns true because of a loose check for delimiters

@@ -30,14 +30,9 @@ class LinePattern(
         tz: TimeZone?
     ): (List<Any>) -> String {
         require(myLineFormatter == null)
-        // TODO: do we really need formatter here?
-        //  Looks like it's always {} and single element list.
-        //myLineFormatter = { a ->
-        //    println("LinePattern.initFormatter: pattern='$pattern', args=$a")
-        //    StringFormat.forPattern(pattern, expFormat = expFormat, tz = tz).format(a)//pattern
-        //}//
+
         // Do not use FormatterUtil.byPattern here - it will transform pattern-like ",.2f" to "{,.2f}"
-        // But for tooltip line the only supported placeholder is "{}" (string) or multiple "{}"s.
+        // But for the tooltip line it is unnecessary.
         myLineFormatter = StringFormat.forPattern(pattern, expFormat = expFormat, tz = tz)::format
         return myLineFormatter!!
     }
