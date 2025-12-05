@@ -59,6 +59,11 @@ class StringFormatTest {
     }
 
     @Test
+    fun braces_in_value_should_not_be_altered() {
+        assertEquals("{{hello}}", StringFormat.forPattern("{}").format("{{hello}}"))
+    }
+
+    @Test
     fun use_original_value_in_the_string_pattern() {
         val formatPattern = "original value = {}"
         val valueToFormat = 4.2
@@ -176,10 +181,7 @@ class StringFormatTest {
             createStringFormat(formatPattern).format(valuesToFormat)
         }
 
-        assertEquals(
-            "Can't detect type of pattern 'PP' used in string pattern '{.1f} x {PP}'",
-            exception.message
-        )
+        assertEquals("Can't detect type of pattern 'PP'", exception.message)
     }
 
     companion object {

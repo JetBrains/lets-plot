@@ -88,7 +88,7 @@ open class LineSpecConfigParser(
                     it.value.removePrefix("\\")
                 } else {
                     fieldsInPattern += getValueSource(it.value)
-                    StringFormat.valueInLinePattern()
+                    StringFormat.STRING_PLACEHOLDER
                 }
             }
             return LinePattern(

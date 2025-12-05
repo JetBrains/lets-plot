@@ -88,7 +88,7 @@ class LinePattern(
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): LinePattern = LinePattern(
             label = DEFAULT_LABEL_SPECIFIER,
-            pattern = StringFormat.valueInLinePattern(),
+            pattern = StringFormat.STRING_PLACEHOLDER,
             fields = listOf(valueSource)
         )
 

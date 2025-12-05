@@ -224,10 +224,7 @@ class FormatterUtilTest {
             createStringFormat(formatPattern).format(valuesToFormat)
         }
 
-        assertEquals(
-            "Can't detect type of pattern 'PP' used in string pattern '{.1f} x {PP}'",
-            exception.message
-        )
+        assertEquals("Can't detect type of pattern 'PP'", exception.message)
     }
 
     companion object {

@@ -13,84 +13,43 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 
 class StringFormat private constructor(
     private val pattern: String,
-    private val expFormat: ExponentFormat?,
-    private val tz: TimeZone?,
+    private val fields: List<FormatField>
 ) {
-    private val placeholders = PLACEHOLDER_REGEX.findAll(pattern).toList()
-    private val formatters: List<(Any) -> String> = placeholders
-        .map { it.groupValues[TEXT_IN_BRACES] }
-        .map { pattern -> initFormatter(pattern, expFormat) }
-        .toList()
+    private data class FormatField(
+        val range: IntRange,
+        val placeholderText: String, // The original "{...}" text for fallback
+        val fmt: (Any) -> String
+    )
 
-    val argsNumber = formatters.size
+    val argsNumber = fields.size
 
-    fun format(value: Any): String = format(listOf(value))
-
-    fun format(values: List<Any>): String {
-        val formattedParts = formatters.mapIndexed { i, fmt ->
-            if (i < values.size) {
-                fmt(values[i])
-            } else if (i < placeholders.size) {
-                // no value to format -> output the pattern itself so that the user can notice the problem
-                placeholders[i].value
-            } else {
-                // should not be here
-                "UNDEFINED"
-            }
-        }
-
-        var string = pattern
-
-        placeholders.withIndex().reversed().forEach { (i, placeholder) ->
-            string = string.replaceRange(placeholder.range, formattedParts[i])
-        }
-
-        return string.replace("{{", "{").replace("}}", "}")
+    fun format(value: Any): String {
+        return format(listOf(value))
     }
 
-    private fun initFormatter(pattern: String, expFormat: ExponentFormat?): ((Any) -> String) {
-        when {
-            pattern.isEmpty() -> return Any::toString
+    fun format(values: List<Any>): String {
+        return buildString {
+            var lastIndex = 0
 
-            NumberFormat.isValidPattern(pattern) -> {
-                val formatSpec = NumberFormat.parseSpec(pattern)
+            fields.forEachIndexed { i, field ->
+                // text before the placeholder
+                val staticPart = pattern.substring(lastIndex, field.range.first)
+                append(staticPart.replace("{{", "{").replace("}}", "}"))
 
-                // override exponent properties if expFormat is set
-                val adjustedFormatSpec = formatSpec.copy(
-                    expType = expFormat?.notationType ?: formatSpec.expType,
-                    minExp = expFormat?.min ?: formatSpec.minExp,
-                    maxExp = expFormat?.max ?: formatSpec.maxExp
-                )
-                val fmt = NumberFormat(adjustedFormatSpec)
-
-                // Try to convert value to Float.
-                // If a value is not a number or a string representing a number, return the value itself as a string.
-                // This way we avoid exceptions during formatting, and the user may notice the problem in the output.
-                return { value: Any ->
-                    when (value) {
-                        is Number -> fmt.apply(value)
-                        is String -> value.toFloatOrNull()?.let(fmt::apply) ?: value
-                        else -> value.toString()
-                    }
+                val fieldValue = when (i in values.indices) {
+                    true -> field.fmt(values[i])
+                    false -> field.placeholderText // fewer values than required - use placeholder text
                 }
+                append(fieldValue)
+
+                lastIndex = field.range.last + 1
             }
 
-            isDateTimeFormat(pattern) -> {
-                val fmt = DateTimeFormatUtil.createInstantFormatter(pattern, tz ?: TimeZone.UTC)
-
-                // Try to convert value to epoch millis.
-                // If a value is not a number or a string representing a number, return the value itself as a string.
-                // This way we avoid exceptions during formatting, and the user may notice the problem in the output.
-                return { value: Any ->
-                    when (value) {
-                        is Number -> fmt(value) // epoch millis
-                        is String -> value.toLongOrNull()?.let(fmt) ?: value
-                        else -> value.toString()
-                    }
-                }
+            // remaining text
+            if (lastIndex < pattern.length) {
+                val lastPart = pattern.substring(lastIndex)
+                append(lastPart.replace("{{", "{").replace("}}", "}"))
             }
-
-            else -> throw IllegalArgumentException("Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'")
         }
     }
 
@@ -105,6 +64,8 @@ class StringFormat private constructor(
     }
 
     companion object {
+        const val STRING_PLACEHOLDER = "{}"
+
         // Format strings contain “replacement fields” surrounded by braces {}.
         // Anything not contained in braces is considered literal text, which is copied unchanged to the output.
         // If you need to include a brace character in the literal text, it can be escaped by doubling: {{ and }}.
@@ -113,17 +74,70 @@ class StringFormat private constructor(
         //     "{.1f} -> 1.2
         //     "{{{.1f}}} -> {1.2}
         private val PLACEHOLDER_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
-        private const val TEXT_IN_BRACES = 2
 
-        fun valueInLinePattern() = "{}"
-
-        // always string format
         fun forPattern(
             pattern: String,
             expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
             tz: TimeZone? = null,
         ): StringFormat {
-            return StringFormat(pattern, expFormat = expFormat, tz)
+            val fields = PLACEHOLDER_REGEX
+                .findAll(pattern)
+                .map { match ->
+                    val (_, fieldPattern) = match.destructured
+                    FormatField(
+                        range = match.range,
+                        placeholderText = match.value,
+                        fmt = initFormatter(fieldPattern, expFormat, tz)
+                    )
+                }.toList()
+
+            return StringFormat(pattern, fields)
+        }
+
+        private fun initFormatter(pattern: String, expFormat: ExponentFormat?, tz: TimeZone?): (Any) -> String {
+            when {
+                pattern.isEmpty() -> return Any::toString
+
+                NumberFormat.isValidPattern(pattern) -> {
+                    val formatSpec = NumberFormat.parseSpec(pattern)
+
+                    // override exponent properties if expFormat is set
+                    val adjustedFormatSpec = formatSpec.copy(
+                        expType = expFormat?.notationType ?: formatSpec.expType,
+                        minExp = expFormat?.min ?: formatSpec.minExp,
+                        maxExp = expFormat?.max ?: formatSpec.maxExp
+                    )
+                    val fmt = NumberFormat(adjustedFormatSpec)
+
+                    // Try to convert value to Float.
+                    // If a value is not a number or a string representing a number, return the value itself as a string.
+                    // This way we avoid exceptions during formatting, and the user may notice the problem in the output.
+                    return { value: Any ->
+                        when (value) {
+                            is Number -> fmt.apply(value)
+                            is String -> value.toDoubleOrNull()?.let(fmt::apply) ?: value
+                            else -> value.toString()
+                        }
+                    }
+                }
+
+                isDateTimeFormat(pattern) -> {
+                    val fmt = DateTimeFormatUtil.createInstantFormatter(pattern, tz ?: TimeZone.UTC)
+
+                    // Try to convert value to epoch millis.
+                    // If a value is not a number or a string representing a number, return the value itself as a string.
+                    // This way we avoid exceptions during formatting, and the user may notice the problem in the output.
+                    return { value: Any ->
+                        when (value) {
+                            is Number -> fmt(value) // epoch millis
+                            is String -> value.toLongOrNull()?.let(fmt) ?: value
+                            else -> value.toString()
+                        }
+                    }
+                }
+
+                else -> throw IllegalArgumentException("Can't detect type of pattern '$pattern'")
+            }
         }
     }
 }
