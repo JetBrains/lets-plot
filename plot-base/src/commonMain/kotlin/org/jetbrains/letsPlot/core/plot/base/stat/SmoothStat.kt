@@ -149,18 +149,21 @@ class SmoothStat constructor(
         val statMinY: List<Double>
         val statMaxY: List<Double>
         val statSE: List<Double>
+        val statR2: List<String>
 
         val statValues = applySmoothing(valuesX, valuesY)
 
-        statX = statValues[Stats.X]!!
-        statY = statValues[Stats.Y]!!
-        statMinY = statValues[Stats.Y_MIN]!!
-        statMaxY = statValues[Stats.Y_MAX]!!
-        statSE = statValues[Stats.SE]!!
+        statX = statValues[Stats.X]!! as List<Double>
+        statY = statValues[Stats.Y]!! as List<Double>
+        statMinY = statValues[Stats.Y_MIN]!! as List<Double>
+        statMaxY = statValues[Stats.Y_MAX]!! as List<Double>
+        statSE = statValues[Stats.SE]!! as List<Double>
+        statR2 = statValues[Stats.R2]!! as List<String>
 
         val statData = DataFrame.Builder()
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.Y, statY)
+            .put(Stats.R2, statR2)
 
         if (displayConfidenceInterval) {
             statData.putNumeric(Stats.Y_MIN, statMinY)
@@ -179,19 +182,21 @@ class SmoothStat constructor(
    * Generalized Additive Model: Unknown
    * */
 
-    private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<Double>> {
+    private fun applySmoothing(valuesX: List<Double?>, valuesY: List<Double?>): Map<DataFrame.Variable, List<*>> {
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         val statMinY = ArrayList<Double>()
         val statMaxY = ArrayList<Double>()
         val statSE = ArrayList<Double>()
+        val statR2 = ArrayList<String>()
 
-        val result = HashMap<DataFrame.Variable, List<Double>>()
+        val result = HashMap<DataFrame.Variable, List<*>>()
         result[Stats.X] = statX
         result[Stats.Y] = statY
         result[Stats.Y_MIN] = statMinY
         result[Stats.Y_MAX] = statMaxY
         result[Stats.SE] = statSE
+        result[Stats.R2] = statR2
 
         val regression = when (smoothingMethod) {
             Method.LM -> {
@@ -226,6 +231,7 @@ class SmoothStat constructor(
             statMinY.add(eval.ymin)
             statMaxY.add(eval.ymax)
             statSE.add(eval.se)
+            statR2.add(eval.r2)
         }
         return result
     }

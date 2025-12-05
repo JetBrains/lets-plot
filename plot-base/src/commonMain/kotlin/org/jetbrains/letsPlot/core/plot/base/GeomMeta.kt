@@ -85,7 +85,8 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA
+                Aes.ALPHA,
+                Aes.LABEL
             )
 
             GeomKind.BAR -> listOf(

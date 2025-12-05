@@ -46,7 +46,8 @@ abstract class RegressionEvaluator protected constructor(
             yHat,
             yHat - halfConfidenceInterval,
             yHat + halfConfidenceInterval,
-            se
+            se,
+            if (formula == null) "R^2=$r2" else "$formula \n R^2=$r2"
         )
     }
 
