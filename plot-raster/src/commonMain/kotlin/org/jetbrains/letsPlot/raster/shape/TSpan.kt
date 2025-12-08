@@ -58,7 +58,7 @@ internal class TSpan : Figure() {
     }
 
     // TODO: replace with bbox as it reports the same size
-    val dimension by computedProp(TSpan::text, TSpan::font, Node::peer) {
+    val dimension by computedProp(TSpan::text, TSpan::font, Element::peer) {
         val peer = peer ?: return@computedProp DoubleVector(0.0, 0.0)
 
         val textMeasure = peer.measureText(text, font)
@@ -69,7 +69,7 @@ internal class TSpan : Figure() {
         )
     }
 
-    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline, Node::peer) {
+    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline, Element::peer) {
         val peer = peer ?: return@computedProp DoubleRectangle.ZERO
         if (text.isEmpty()) return@computedProp DoubleRectangle.XYWH(0.0, 0.0, 0.0, 0.0)
 

@@ -19,6 +19,7 @@ open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
+    override val geomName: String = "point"
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -36,6 +37,7 @@ open class PointGeom : GeomBase() {
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
+        var goodPointsCount = 0
 
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
@@ -62,7 +64,9 @@ open class PointGeom : GeomBase() {
             )
             val o = PointShapeSvg.create(shape, location, p, scaleFactor)
             o.appendTo(slimGroup)
+            goodPointsCount += 1
         }
+        addNulls(count - goodPointsCount)
         root.add(wrap(slimGroup))
     }
 

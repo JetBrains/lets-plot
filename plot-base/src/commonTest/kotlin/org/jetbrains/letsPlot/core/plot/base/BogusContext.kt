@@ -59,6 +59,10 @@ object BogusContext : GeomContext {
         return 1.0
     }
 
+    override fun consumeMessages(messages: List<String>) {
+        // do nothing
+    }
+
     override fun estimateTextSize(
         text: String,
         family: String,

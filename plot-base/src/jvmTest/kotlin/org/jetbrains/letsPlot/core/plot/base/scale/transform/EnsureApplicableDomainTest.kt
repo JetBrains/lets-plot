@@ -51,7 +51,7 @@ internal class EnsureApplicableDomainTest(
         fun params(): List<Array<Any?>> {
             return paramsIdentity() + paramsReverse() +
                     paramsSqrt() +
-                    paramsLog(Transforms.LOG10, 10.0) + paramsLog(Transforms.LOG2, 2.0) +
+                    paramsLog(Transforms.LOG10) + paramsLog(Transforms.LOG2) +
                     paramsSymlog()
         }
 
@@ -130,7 +130,7 @@ internal class EnsureApplicableDomainTest(
             )
         }
 
-        private fun paramsLog(transform: ContinuousTransform, base: Double): List<Array<Any?>> {
+        private fun paramsLog(transform: ContinuousTransform): List<Array<Any?>> {
             return listOf(
                 arrayOf(
                     transform,

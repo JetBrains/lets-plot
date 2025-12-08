@@ -20,6 +20,8 @@ interface PlotContext {
     fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
 
     fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String
+
+    fun getMessageConsumer(): (String) -> Unit
 }
 
 object NullPlotContext : PlotContext {
@@ -31,4 +33,5 @@ object NullPlotContext : PlotContext {
     override fun getScaleFactor(): Double = 1.0
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan = error("No domain for aesthetic $aes")
     override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String = Any?::toString
+    override fun getMessageConsumer(): (String) -> Unit = {}
 }

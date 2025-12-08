@@ -12,7 +12,7 @@ class PropertiesSynchronizationTest {
 
     @Test
     fun `transitive dep baz in foo-bar-baz should be updated on foo invalidation`() {
-        class C : Node() {
+        class C :   Element() {
             var foo: String by visualProp("")
             val bar: String by computedProp(C::foo) { foo + "bar" }
             val baz: String by computedProp(C::bar) { bar + "baz" }
@@ -28,7 +28,7 @@ class PropertiesSynchronizationTest {
 
     @Test
     fun `transitive dep e in a-b-c-d-e should be updated on a invalidation`() {
-        class C : Node() {
+        class C : Element() {
             var a: String by visualProp("")
             val b: String by computedProp(C::a) { a + "b" }
             val c: String by computedProp(C::b) { b + "c" }
@@ -46,7 +46,7 @@ class PropertiesSynchronizationTest {
 
     @Test
     fun `two properties with same dep`() {
-        class C : Node() {
+        class C : Element() {
             var a: String by visualProp("")
             val shared: String by computedProp(C::a) { a + "shared" }
             val c: String by computedProp(C::shared) { shared + "c" }
@@ -65,7 +65,7 @@ class PropertiesSynchronizationTest {
 
     @Test(expected = IllegalStateException::class)
     fun `cyclic deps are not allowed`() {
-        class C : Node() {
+        class C : Element() {
             var foo: String by visualProp("")
             val bar: String by computedProp(C::foo, C::baz) { foo + "bar" }
             val baz: String by computedProp(C::foo, C::bar) { bar + "baz" }

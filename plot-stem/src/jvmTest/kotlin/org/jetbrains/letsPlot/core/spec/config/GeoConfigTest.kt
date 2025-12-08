@@ -181,7 +181,7 @@ class GeoConfigTest {
 
     private fun singleGeomLayer(spec: String): GeomLayer {
         val plotSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(spec))
-        val frontendConfig = PlotConfigFrontend.create(plotSpec) { messages -> }
+        val frontendConfig = PlotConfigFrontend.create(plotSpec) { _ -> }
         return createPlotGeomTiles(frontendConfig).coreLayersByTile().single().single()
     }
 

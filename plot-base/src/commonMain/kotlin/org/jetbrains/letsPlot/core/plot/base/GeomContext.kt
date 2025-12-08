@@ -51,4 +51,6 @@ interface GeomContext {
     fun getContentBounds(): DoubleRectangle
 
     fun getScaleFactor(): Double
+
+    fun consumeMessages(messages: List<String>)
 }
