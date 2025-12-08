@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 internal object TooltipFormatting {
     private val FALLBACK_NUMBER_FORMATTER: (v: Number) -> String =
-        StringFormat.forPattern("{.2f}", tz = null)::format
+        StringFormat.of("{.2f}", tz = null)::format
 
     fun fromScale(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
         // expect only X, Y or not positional
@@ -70,8 +70,8 @@ internal object TooltipFormatting {
         tz: TimeZone?,
     ): (Any) -> String {
         return when (variable) {
-            Stats.PROP, Stats.SUMPROP -> StringFormat.forPattern("{.2f}", expFormat = expFormat, tz = tz)::format
-            Stats.PROPPCT, Stats.SUMPCT -> StringFormat.forPattern("{.1f} %", expFormat = expFormat, tz = tz)::format
+            Stats.PROP, Stats.SUMPROP -> StringFormat.of("{.2f}", expFormat = expFormat, tz = tz)::format
+            Stats.PROPPCT, Stats.SUMPCT -> StringFormat.of("{.1f} %", expFormat = expFormat, tz = tz)::format
             else -> formatters[variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat, tz = tz)
         }
     }

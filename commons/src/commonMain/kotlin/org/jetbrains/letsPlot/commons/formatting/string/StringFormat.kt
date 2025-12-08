@@ -75,7 +75,7 @@ class StringFormat private constructor(
         //     "{{{.1f}}} -> {1.2}
         private val PLACEHOLDER_REGEX = Regex("""(?![^{]|\{\{)(\{([^{}]*)\})(?=[^}]|\}\}|$)""")
 
-        fun forPattern(
+        fun of(
             pattern: String,
             expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
             tz: TimeZone? = null,

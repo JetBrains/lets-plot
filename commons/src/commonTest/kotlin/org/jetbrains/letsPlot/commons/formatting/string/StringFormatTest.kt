@@ -60,7 +60,7 @@ class StringFormatTest {
 
     @Test
     fun braces_in_value_should_not_be_altered() {
-        assertEquals("{{hello}}", StringFormat.forPattern("{}").format("{{hello}}"))
+        assertEquals("{{hello}}", StringFormat.of("{}").format("{{hello}}"))
     }
 
     @Test
@@ -70,7 +70,7 @@ class StringFormatTest {
         val formattedString = createStringFormat(formatPattern).format(valueToFormat)
         assertEquals("original value = 4.2", formattedString)
 
-        val formatter = { value: Any -> StringFormat.forPattern("{}", tz = null).format(value) }
+        val formatter = { value: Any -> StringFormat.of("{}", tz = null).format(value) }
         assertEquals("4", formatter(4))
         assertEquals("4.123", formatter(4.123))
         assertEquals("{.2f}", formatter("{.2f}"))
@@ -102,25 +102,25 @@ class StringFormatTest {
 
     @Test
     fun pattern_without_placeholders() {
-        val fmt = StringFormat.forPattern("It is .2f", tz = null)
+        val fmt = StringFormat.of("It is .2f", tz = null)
         assertEquals("It is .2f", fmt.format(42))
     }
 
     @Test
     fun wrong_number_of_arguments_in_pattern_for_one_arg() {
-        val fmt = StringFormat.forPattern("{.2f} {.2f}", tz = null)
+        val fmt = StringFormat.of("{.2f} {.2f}", tz = null)
         assertEquals("3.14 {.2f}", fmt.format(3.14159))
     }
 
     @Test
     fun wrong_number_of_arguments_in_pattern_for_n_args() {
-        val fmt = StringFormat.forPattern("{.2f} {.2f}", tz = null)
+        val fmt = StringFormat.of("{.2f} {.2f}", tz = null)
         assertEquals("3.14 2.72", fmt.format(listOf(3.14159, 2.71828, 1.61803)))
     }
 
     @Test
     fun non_numeric_and_non_string_value_formatted_using_toString() {
-        val fmt = StringFormat.forPattern("{.1f}", tz = null)
+        val fmt = StringFormat.of("{.1f}", tz = null)
         assertEquals("(key, value)", fmt.format("key" to "value"))
     }
 
@@ -188,7 +188,7 @@ class StringFormatTest {
         private val TZ = TimeZone.UTC
 
         private fun createStringFormat(pattern: String): StringFormat {
-            return StringFormat.forPattern(pattern, tz = null)
+            return StringFormat.of(pattern, tz = null)
         }
     }
 }

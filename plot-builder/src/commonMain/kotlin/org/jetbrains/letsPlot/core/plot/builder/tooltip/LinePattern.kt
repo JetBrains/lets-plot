@@ -33,7 +33,7 @@ class LinePattern(
 
         // Do not use FormatterUtil.byPattern here - it will transform pattern-like ",.2f" to "{,.2f}"
         // But for the tooltip line it is unnecessary.
-        myLineFormatter = StringFormat.forPattern(pattern, expFormat = expFormat, tz = tz)::format
+        myLineFormatter = StringFormat.of(pattern, expFormat = expFormat, tz = tz)::format
         return myLineFormatter!!
     }
 

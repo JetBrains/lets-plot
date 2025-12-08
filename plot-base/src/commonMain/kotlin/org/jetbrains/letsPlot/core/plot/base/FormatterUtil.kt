@@ -17,15 +17,15 @@ import org.jetbrains.letsPlot.core.commons.data.DataType.*
 object FormatterUtil {
 
     fun byDataType(dataType: DataType, expFormat: ExponentFormat, tz: TimeZone?): (Any) -> String {
-        fun stringFormatter() = StringFormat.forPattern("{}", tz = tz)
-        fun numberFormatter() = StringFormat.forPattern("{,~g}", expFormat = expFormat, tz = tz)
+        fun stringFormatter() = StringFormat.of("{}", tz = tz)
+        fun numberFormatter() = StringFormat.of("{,~g}", expFormat = expFormat, tz = tz)
 
         return when (dataType) {
             FLOATING, INTEGER -> numberFormatter()::format
             STRING, BOOLEAN -> stringFormatter()::format
-            DATETIME_MILLIS -> StringFormat.forPattern("{%Y-%m-%dT%H:%M:%S}", tz = tz)::format
-            DATE_MILLIS -> StringFormat.forPattern("{%Y-%m-%d}", tz = tz)::format
-            TIME_MILLIS -> StringFormat.forPattern("{%H:%M:%S}", tz = tz)::format
+            DATETIME_MILLIS -> StringFormat.of("{%Y-%m-%dT%H:%M:%S}", tz = tz)::format
+            DATE_MILLIS -> StringFormat.of("{%Y-%m-%d}", tz = tz)::format
+            TIME_MILLIS -> StringFormat.of("{%H:%M:%S}", tz = tz)::format
             UNKNOWN -> {
                 // Outside the unknownFormatter to avoid creating of the same formatters multiple times
                 val numberFormatter = numberFormatter()
@@ -53,11 +53,6 @@ object FormatterUtil {
         expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
         tz: TimeZone? = null,
     ): StringFormat {
-        // Adjust pattern: for number and datetime formats the pattern should be enclosed in braces.
-        // Keep the original pattern if the desired type does not match the detected type - in this case StringFormat will print the pattern as is.
-        // E.g., byPattern(",.2f", = DATETIME_FORMAT):
-        // format(DateTime.now().toEpochMillis())
-        // will output "{,.2f}", not "12345467234,00"
         @Suppress("NAME_SHADOWING")
         val pattern = when {
             // contains("{") is important for multiple placeholders with datetime formats
@@ -68,6 +63,6 @@ object FormatterUtil {
             else -> pattern // literal string, keep as is
         }
 
-        return StringFormat.forPattern(pattern, expFormat = expFormat, tz = tz)
+        return StringFormat.of(pattern, expFormat = expFormat, tz = tz)
     }
 }
