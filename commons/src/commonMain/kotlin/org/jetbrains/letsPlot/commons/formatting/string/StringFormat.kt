@@ -16,7 +16,7 @@ class StringFormat private constructor(
     private val fields: List<FormatField>
 ) {
     private data class FormatField(
-        val range: IntRange,
+        val placeholderPos: IntRange,
         val placeholderText: String, // The original "{...}" text for fallback
         val fmt: (Any) -> String
     )
@@ -33,7 +33,7 @@ class StringFormat private constructor(
 
             fields.forEachIndexed { i, field ->
                 // text before the placeholder
-                val staticPart = pattern.substring(lastIndex, field.range.first)
+                val staticPart = pattern.substring(lastIndex, field.placeholderPos.first)
                 append(staticPart.replace("{{", "{").replace("}}", "}"))
 
                 val fieldValue = when (i in values.indices) {
@@ -42,7 +42,7 @@ class StringFormat private constructor(
                 }
                 append(fieldValue)
 
-                lastIndex = field.range.last + 1
+                lastIndex = field.placeholderPos.last + 1
             }
 
             // remaining text
@@ -85,7 +85,7 @@ class StringFormat private constructor(
                 .map { match ->
                     val (_, fieldPattern) = match.destructured
                     FormatField(
-                        range = match.range,
+                        placeholderPos = match.range,
                         placeholderText = match.value,
                         fmt = initFormatter(fieldPattern, expFormat, tz)
                     )
