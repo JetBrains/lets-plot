@@ -19,7 +19,7 @@ internal abstract class Figure : Element() {
     var fill: Color? by visualProp(null)
     var fillOpacity: Float by visualProp(1f)
 
-    val fillPaint: Paint? by computedProp(Figure::fill, Figure::fillOpacity, managed = true) {
+    val fillPaint: Paint? by computedProp(Figure::fill, Figure::fillOpacity) {
         return@computedProp fillPaint(fill, fillOpacity)
     }
 
@@ -28,8 +28,7 @@ internal abstract class Figure : Element() {
         Figure::strokeWidth,
         Figure::strokeDashArray,
         Figure::strokeOpacity,
-        Figure::strokeMiter,
-        managed = true
+        Figure::strokeMiter
     ) {
         if (strokeWidth < 0f) {
             return@computedProp null

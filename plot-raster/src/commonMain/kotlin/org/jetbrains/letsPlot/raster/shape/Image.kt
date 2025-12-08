@@ -20,7 +20,7 @@ internal class Image : Element() {
     var height: Float by visualProp(0.0f)
     var img: Bitmap? by visualProp(null)
 
-    private val snapshot: Canvas.Snapshot? by computedProp(Image::img, Node::peer) {
+    private val snapshot: Canvas.Snapshot? by computedProp(Image::img, Element::peer) {
         val peer = peer ?: return@computedProp null
         val image = img ?: return@computedProp null
 

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.export
+package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
@@ -41,7 +41,7 @@ open class VisualPlotTestBase {
         return ImageComparer(
             canvasProvider = AwtTestCanvasProvider(),
             bitmapIO = AwtBitmapIO,
-            expectedDir = System.getProperty("user.dir") + "/src/jvmTest/resources/expected/",
+            expectedDir = System.getProperty("user.dir") + "/src/test/resources/expected-images/",
             outDir = System.getProperty("user.dir") + "/build/reports/"
         )
     }
@@ -78,11 +78,11 @@ open class VisualPlotTestBase {
         @JvmStatic
         @BeforeClass
         fun setUp() {
-            registerFont("NotoSans-Regular.ttf")
-            registerFont("NotoSans-Bold.ttf")
-            registerFont("NotoSans-Italic.ttf")
-            registerFont("NotoSans-BoldItalic.ttf")
-            registerFont("NotoSerif-Regular.ttf")
+            registerFont("fonts/NotoSans-Regular.ttf")
+            registerFont("fonts/NotoSans-Bold.ttf")
+            registerFont("fonts/NotoSans-Italic.ttf")
+            registerFont("fonts/NotoSans-BoldItalic.ttf")
+            registerFont("fonts/NotoSerif-Regular.ttf")
         }
 
         private fun registerFont(resourceName: String) {
