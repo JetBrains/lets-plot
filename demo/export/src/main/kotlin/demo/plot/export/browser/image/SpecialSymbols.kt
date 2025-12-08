@@ -6,7 +6,7 @@
 package demo.plot.export.browser.image
 
 import demo.plot.common.model.plotConfig.SpecialSymbols
-import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.*
 
 object SpecialSymbols {
     @JvmStatic
@@ -18,7 +18,7 @@ object SpecialSymbols {
                 plotSpec(),
                 scalingFactors = listOf(2.0, 2.0, 2.0),
                 targetDPIs = listOf(96, 96, 96),
-                formats = listOf(PlotImageExport.Format.PNG, PlotImageExport.Format.TIFF, PlotImageExport.Format.JPEG())
+                formats = listOf(PNG, TIFF, JPEG())
             ))
         }
     }

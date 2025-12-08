@@ -9,7 +9,8 @@ import demo.common.utils.browser.BrowserDemoUtil
 import demo.common.utils.browser.BrowserDemoUtil.createDemoFile
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format
 import java.io.StringWriter
 
 object PlotImageDemoUtil {
@@ -21,7 +22,7 @@ object PlotImageDemoUtil {
         plotSpec: MutableMap<String, Any>,
         scalingFactors: List<Double>,
         targetDPIs: List<Number>,
-        formats: List<PlotImageExport.Format>
+        formats: List<Format>
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
@@ -37,7 +38,7 @@ object PlotImageDemoUtil {
     private fun getHtml(
         title: String,
         plotSpec: MutableMap<String, Any>,
-        formats: List<PlotImageExport.Format>,
+        formats: List<Format>,
         scaleFactors: List<Double>,
         targetDPIs: List<Number>
     ): String {
