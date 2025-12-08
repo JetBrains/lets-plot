@@ -43,7 +43,7 @@ internal class SvgCanvasPeer(
     }
 
     fun unregisterMapper(source: SvgNode) {
-        myMappingMap.remove(source)?.target?.release()
+        myMappingMap.remove(source)
     }
 
     override fun getComputedTextLength(node: SvgTextContent): Double {
