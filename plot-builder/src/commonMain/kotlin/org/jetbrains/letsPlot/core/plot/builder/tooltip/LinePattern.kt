@@ -83,7 +83,7 @@ class LinePattern(
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): LinePattern = LinePattern(
             label = DEFAULT_LABEL_SPECIFIER,
-            pattern = StringFormat.STRING_PLACEHOLDER,
+            pattern = "{}",  // use original value
             fields = listOf(valueSource)
         )
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
@@ -88,7 +87,7 @@ open class LineSpecConfigParser(
                     it.value.removePrefix("\\")
                 } else {
                     fieldsInPattern += getValueSource(it.value)
-                    StringFormat.STRING_PLACEHOLDER
+                    "{}"
                 }
             }
             return LinePattern(

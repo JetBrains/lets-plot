@@ -8,24 +8,8 @@ package org.jetbrains.letsPlot.commons.formatting.string
 import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class StringFormatTest {
-
-    @Test
-    fun check_expected_number_of_arguments() {
-        assertEquals(0, StringFormat.of("text").argsNumber)
-        assertEquals(0, StringFormat.of("%d.%m.%y %H:%M").argsNumber)
-        assertEquals(0, StringFormat.of(".1f").argsNumber)
-
-        assertEquals(1, StringFormat.of("{.1f}").argsNumber)
-        assertEquals(1, StringFormat.of("{.1f} test").argsNumber)
-        assertEquals(2, StringFormat.of("{.1f} {}").argsNumber)
-        assertEquals(3, StringFormat.of("{.1f} {.2f} {.3f}").argsNumber)
-        assertEquals(1, StringFormat.of("{%d.%m.%y %H:%M}").argsNumber)
-        assertEquals(2, StringFormat.of("at {%H:%M} on {%A}").argsNumber)
-    }
-
     @Test
     fun numeric_format() {
         val fmt = StringFormat.of("{.2f}")
@@ -116,7 +100,7 @@ class StringFormatTest {
     }
 
     @Test
-    fun try_to_format_static_text_as_number_format() {
+    fun parameter_without_placeholder_ignored() {
         val fmt = StringFormat.of("pattern")
         assertEquals("pattern", fmt.format("text"))
     }
@@ -154,12 +138,9 @@ class StringFormatTest {
     }
 
     @Test
-    fun try_to_use_undefined_pattern_inside_string_pattern() {
-        val exception = assertFailsWith(IllegalArgumentException::class) {
-            StringFormat.of("{.1f} x {PP}")
-        }
-
-        assertEquals("Can't detect type of pattern 'PP'", exception.message)
+    fun unknown_pattern_returned_as_is() {
+        val fmt = StringFormat.of("{.1f} x {PP} x {.2f}")
+        assertEquals("4.0 x {PP} x 5.00", fmt.format(listOf(4.0, "foo", 5.0)))
     }
 
     companion object {

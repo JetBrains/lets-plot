@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class FormatterUtilTest {
 
@@ -48,66 +47,39 @@ class FormatterUtilTest {
     }
 
     @Test
-    fun check_expected_number_of_arguments() {
-        assertEquals(0, FormatterUtil.byPattern("text").argsNumber)
-
-        assertEquals(1, FormatterUtil.byPattern(".1f").argsNumber)
-        assertEquals(1, FormatterUtil.byPattern("%d.%m.%y %H:%M").argsNumber)
-
-        assertEquals(1, FormatterUtil.byPattern("{.1f}").argsNumber)
-        assertEquals(1, FormatterUtil.byPattern("{.1f} test").argsNumber)
-        assertEquals(2, FormatterUtil.byPattern("{.1f} {}").argsNumber)
-        assertEquals(3, FormatterUtil.byPattern("{.1f} {.2f} {.3f}").argsNumber)
-        assertEquals(1, FormatterUtil.byPattern("{%d.%m.%y %H:%M}").argsNumber)
-        assertEquals(2, FormatterUtil.byPattern("at {%H:%M} on {%A}").argsNumber)
-    }
-
-    @Test
     fun numeric_format() {
-        val formatPattern = ".2f"
-        val valueToFormat = 4
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valueToFormat)
-        assertEquals("4.00", formattedString)
+        val fmt = FormatterUtil.byPattern(".2f")
+        assertEquals("4.00", fmt.format(4))
     }
 
     @Test
     fun numeric_format_in_the_string_pattern() {
-        val formatPattern = "{.2f}"
-        val valueToFormat = 4
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valueToFormat)
-        assertEquals("4.00", formattedString)
+        val fmt = FormatterUtil.byPattern("{.2f}")
+        assertEquals("4.00", fmt.format(4))
     }
 
     @Test
     fun string_pattern_with_multiple_parameters() {
-        val formatPattern = "{.1f} x {.2f}"
-        val valuesToFormat = listOf(1, 2)
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valuesToFormat)
-        assertEquals("1.0 x 2.00", formattedString)
+        val fmt = FormatterUtil.byPattern("{.1f} x {.2f}")
+        assertEquals("1.0 x 2.00", fmt.format(listOf(1, 2)))
     }
 
     @Test
     fun string_pattern_with_braces() {
-        val formatPattern = "{.1f} {{text}}"
-        val valueToFormat = 4
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valueToFormat)
-        assertEquals("4.0 {text}", formattedString)
+        val fmt = FormatterUtil.byPattern("{.1f} {{text}}")
+        assertEquals("4.0 {text}", fmt.format(4))
     }
 
     @Test
     fun value_inside_braces() {
-        val formatPattern = "{{{.1f}}}"
-        val valueToFormat = 4
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valueToFormat)
-        assertEquals("{4.0}", formattedString)
+        val fmt = FormatterUtil.byPattern("{{{.1f}}}")
+        assertEquals("{4.0}", fmt.format(4))
     }
 
     @Test
     fun use_original_value_in_the_string_pattern() {
-        val formatPattern = "original value = {}"
-        val valueToFormat = 4.2
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valueToFormat)
-        assertEquals("original value = 4.2", formattedString)
+        val fmt = FormatterUtil.byPattern("original value = {}")
+        assertEquals("original value = 4.2", fmt.format(4.2))
 
         val formatter = { value: Any -> FormatterUtil.byPattern("{}", tz = null).format(value) }
         assertEquals("4", formatter(4))
@@ -118,24 +90,19 @@ class FormatterUtilTest {
 
     @Test
     fun static_text_in_format() {
-        val formatPattern = "static text"
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(emptyList())
-        assertEquals("static text", formattedString)
+        val fmt = FormatterUtil.byPattern("static text")
+        assertEquals("static text", fmt.format(emptyList()))
     }
 
     @Test
     fun numeric_format_for_the_string_value_will_be_ignored() {
-        val formatPattern = "{.1f} x {.2f}"
-        val valuesToFormat = listOf("A", "B")
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valuesToFormat)
-        assertEquals("A x B", formattedString)
+        val fmt = FormatterUtil.byPattern("{.1f} x {.2f}")
+        assertEquals("A x B", fmt.format(listOf("A", "B")))
     }
 
     @Test
     fun different_number_of_parameters_in_the_pattern_and_number_of_values_to_format() {
-        val formatPattern = "{.1f} x {.2f} x {.3f}"
-        val fmt = FormatterUtil.byPattern(formatPattern)
-
+        val fmt = FormatterUtil.byPattern("{.1f} x {.2f} x {.3f}")
         assertEquals("1.0 x 2.00 x {.3f}", fmt.format(listOf(1, 2)))
     }
 
@@ -164,7 +131,7 @@ class FormatterUtilTest {
     }
 
     @Test
-    fun try_to_format_static_text_as_number_format() {
+    fun parameter_without_placeholder_ignored() {
         val fmt = FormatterUtil.byPattern("pattern")
         assertEquals("pattern", fmt.format("text"))
     }
@@ -185,10 +152,8 @@ class FormatterUtilTest {
 
     @Test
     fun string_pattern_with_Number_and_DateTime() {
-        val formatPattern = "{d}nd day of {%B}"
-        val valuesToFormat = listOf(2, dateTimeToFormat)
-        val formattedString = FormatterUtil.byPattern(formatPattern).format(valuesToFormat)
-        assertEquals("2nd day of August", formattedString)
+        val fmt = FormatterUtil.byPattern("{d}nd day of {%B}")
+        assertEquals("2nd day of August", fmt.format(listOf(2, dateTimeToFormat)))
     }
 
     @Test
@@ -211,20 +176,14 @@ class FormatterUtilTest {
 
     @Test
     fun non_dateTime_value_formatted_using_toString() {
-        val str = FormatterUtil.byPattern("{%d.%m.%y}").format("01.01.2000")
-        assertEquals("01.01.2000", str)
+        val fmt = FormatterUtil.byPattern("{%d.%m.%y}")
+        assertEquals("01.01.2000", fmt.format("01.01.2000"))
     }
 
     @Test
-    fun try_to_use_undefined_pattern_inside_string_pattern() {
-        val formatPattern = "{.1f} x {PP}"
-        val valuesToFormat = listOf(1, 2)
-
-        val exception = assertFailsWith(IllegalArgumentException::class) {
-            FormatterUtil.byPattern(formatPattern).format(valuesToFormat)
-        }
-
-        assertEquals("Can't detect type of pattern 'PP'", exception.message)
+    fun unknown_pattern_returned_as_is() {
+        val fmt = StringFormat.of("{.1f} x {PP} x {.2f}")
+        assertEquals("4.0 x {PP} x 5.00", fmt.format(listOf(4.0, "foo", 5.0)))
     }
 
     companion object {
