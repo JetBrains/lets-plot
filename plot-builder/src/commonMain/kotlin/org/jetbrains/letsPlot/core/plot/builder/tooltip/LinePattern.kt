@@ -30,7 +30,10 @@ class LinePattern(
         tz: TimeZone?
     ): (List<Any>) -> String {
         require(myLineFormatter == null)
-        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", expFormat, tz)::format
+
+        // Do not use FormatterUtil.byPattern here - it will transform pattern-like ",.2f" to "{,.2f}"
+        // But for the tooltip line it is unnecessary.
+        myLineFormatter = StringFormat.of(pattern, expFormat = expFormat, tz = tz)::format
         return myLineFormatter!!
     }
 
@@ -80,7 +83,7 @@ class LinePattern(
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): LinePattern = LinePattern(
             label = DEFAULT_LABEL_SPECIFIER,
-            pattern = StringFormat.valueInLinePattern(),
+            pattern = "{}",  // use original value
             fields = listOf(valueSource)
         )
 

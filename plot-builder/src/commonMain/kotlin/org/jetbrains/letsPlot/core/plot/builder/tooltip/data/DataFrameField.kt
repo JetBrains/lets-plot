@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
@@ -35,12 +36,7 @@ class DataFrameField(
                 tz = tz
             )
 
-            else -> StringFormat.forOneArg(
-                format,
-                formatFor = name,
-                expFormat = expFormat,
-                tz = tz
-            )::format
+            else -> FormatterUtil.byPattern(format, expFormat = expFormat, tz = tz)::format
         }
         return myFormatter!!
     }

@@ -5,6 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
+import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
@@ -14,15 +17,15 @@ import org.jetbrains.letsPlot.core.commons.data.DataType.*
 object FormatterUtil {
 
     fun byDataType(dataType: DataType, expFormat: ExponentFormat, tz: TimeZone?): (Any) -> String {
-        fun stringFormatter() = StringFormat.forOneArg("{}", tz = tz)
-        fun numberFormatter() = StringFormat.forOneArg(",~g", expFormat = expFormat, tz = tz)
+        fun stringFormatter() = StringFormat.of("{}", tz = tz)
+        fun numberFormatter() = StringFormat.of("{,~g}", expFormat = expFormat, tz = tz)
 
         return when (dataType) {
             FLOATING, INTEGER -> numberFormatter()::format
             STRING, BOOLEAN -> stringFormatter()::format
-            DATETIME_MILLIS -> StringFormat.forOneArg("%Y-%m-%dT%H:%M:%S", tz = tz)::format
-            DATE_MILLIS -> StringFormat.forOneArg("%Y-%m-%d", tz = tz)::format
-            TIME_MILLIS -> StringFormat.forOneArg("%H:%M:%S", tz = tz)::format
+            DATETIME_MILLIS -> StringFormat.of("{%Y-%m-%dT%H:%M:%S}", tz = tz)::format
+            DATE_MILLIS -> StringFormat.of("{%Y-%m-%d}", tz = tz)::format
+            TIME_MILLIS -> StringFormat.of("{%H:%M:%S}", tz = tz)::format
             UNKNOWN -> {
                 // Outside the unknownFormatter to avoid creating of the same formatters multiple times
                 val numberFormatter = numberFormatter()
@@ -36,5 +39,30 @@ object FormatterUtil {
                 })
             }
         }
+    }
+
+    // pattern example:
+    // - string placeholder: "Value: {}"
+    // - number placeholder without braces: ",.2f"
+    // - number placeholder with braces: "{,.2f}"
+    // - datetime placeholder without braces: "%Y-%m-%d"
+    // - datetime placeholder with braces: "{%Y-%m-%d}"
+    // - string with two or more placeholders: "Value: {,.2f}, Date: {%Y-%m-%d}"
+    fun byPattern(
+        pattern: String,
+        expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),
+        tz: TimeZone? = null,
+    ): StringFormat {
+        @Suppress("NAME_SHADOWING")
+        val pattern = when {
+            // contains("{") is important for multiple placeholders with datetime formats
+            // isDateTimeFormat("{%Y-%m-%d}x{%H:%M}") returns true because of a loose check for delimiters
+            pattern.contains("{") && pattern.contains("}") -> pattern // a string format with multiple placeholders
+            NumberFormat.isValidPattern(pattern) -> "{$pattern}" // wrap to braces to make a placeholder
+            isDateTimeFormat(pattern) -> "{$pattern}" // wrap to braces to make a placeholder
+            else -> pattern // literal string, keep as is
+        }
+
+        return StringFormat.of(pattern, expFormat = expFormat, tz = tz)
     }
 }

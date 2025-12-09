@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -249,7 +248,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             }
             if (myLabelFormat != null) {
                 with.labelFormatter(
-                    StringFormat.forOneArg(
+                    FormatterUtil.byPattern(
                         myLabelFormat,
                         expFormat = PlotAssembler.extractExponentFormat(myExpFormat),
                         tz = tz

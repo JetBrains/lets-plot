@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
@@ -472,7 +472,7 @@ internal object GeomProviderFactory {
 
     private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat, tz: TimeZone?) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(
+            geom.formatter = FormatterUtil.byPattern(
                 it,
                 expFormat = PlotAssembler.extractExponentFormat(expFormat),
                 tz = tz
