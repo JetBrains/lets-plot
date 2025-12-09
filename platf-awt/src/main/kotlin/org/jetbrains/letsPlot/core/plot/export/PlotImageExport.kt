@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.export
 
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 
@@ -60,12 +61,12 @@ object PlotImageExport {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
     ): ImageData {
-        val img = org.jetbrains.letsPlot.awt.plot.PlotImageExport.buildImageFromRawSpecs(
+        val img = PlotImageExport.buildImageFromRawSpecs(
             plotSpec,
             when (format) {
-                is Format.PNG -> org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG
-                is Format.TIFF -> org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.TIFF
-                is Format.JPEG -> org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.JPEG(format.quality)
+                is Format.PNG -> PlotImageExport.Format.PNG
+                is Format.TIFF -> PlotImageExport.Format.TIFF
+                is Format.JPEG -> PlotImageExport.Format.JPEG(format.quality)
             },
             scalingFactor,
             targetDPI,
