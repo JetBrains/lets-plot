@@ -19,5 +19,5 @@ dependencies:
       - build #For Python wheel build.
       - pypng
       - palettable
-      - polars>=1.36.0
+      - polars>=1.35.2
       - pillow
