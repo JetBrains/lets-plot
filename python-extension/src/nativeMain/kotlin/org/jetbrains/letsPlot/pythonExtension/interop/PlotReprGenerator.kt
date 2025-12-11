@@ -20,16 +20,12 @@ import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.util.DisplayHtmlPolicy
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.*
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
-import org.jetbrains.letsPlot.core.util.PlotHtmlExport
-import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
-import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import kotlin.time.TimeSource
@@ -65,8 +61,7 @@ object PlotReprGenerator {
         plotSpecDict: CPointer<PyObject>?,
         width: Float,
         height: Float,
-        unit: CPointer<ByteVar>,
-        useCssPixelatedImageRendering: Int,
+        unit: CPointer<ByteVar>
     ): CPointer<PyObject>? {
         return try {
             val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
@@ -75,11 +70,10 @@ object PlotReprGenerator {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
-            val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
+            val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
                 plotSize = plotSize,
-                sizeUnit = sizeUnit,
-                useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
+                sizeUnit = sizeUnit
             )
             Py_BuildValue("s", svg)
         } catch (e: Throwable) {

@@ -5,30 +5,25 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
+import org.jetbrains.letsPlot.core.util.PlotSvgExport
 
 object PlotSvgExport {
     /**
      * @param plotSpec Raw specification of a plot.
      * @param plotSize Desired plot size.
-     * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
      * @param sizeUnit Size unit for the plot size. The default is pixels (PX).
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector? = null,
-        useCssPixelatedImageRendering: Boolean = true,
         sizeUnit: SizeUnit = SizeUnit.PX
     ): String {
-        return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
+        return PlotSvgExport.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
-            rgbEncoder = RGBEncoder.DEFAULT,
-            useCssPixelatedImageRendering = useCssPixelatedImageRendering,
             sizeUnit = sizeUnit
         )
     }

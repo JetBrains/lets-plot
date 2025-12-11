@@ -85,7 +85,6 @@ kotlin {
                 implementation(project(":plot-base"))
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
-                implementation(project(":platf-native"))
                 implementation(project(":platf-imagick"))
                 implementation(project(":plot-raster"))
             }

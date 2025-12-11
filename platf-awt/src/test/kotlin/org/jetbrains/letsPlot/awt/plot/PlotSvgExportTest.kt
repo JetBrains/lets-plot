@@ -70,17 +70,7 @@ internal class PlotSvgExportTest {
             |}
         """.trimMargin()
 
-        PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = false
-        ).let {
-            assertTrue(it.contains("style=\"image-rendering: optimizeSpeed\""))
-        }
-
-        PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = true
-        ).let {
+        PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec = parsePlotSpec(spec)).let {
             assertTrue(it.contains("style=\"image-rendering: optimizeSpeed; image-rendering: pixelated\""))
         }
     }
@@ -169,10 +159,7 @@ internal class PlotSvgExportTest {
             |  ]
             |}""".trimMargin()
 
-        PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = true
-        ).let {
+        PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec = parsePlotSpec(spec)).let {
             // Double.toString() should not be used for formatting numbers.
             assertEquals(-1, it.indexOf("717273.0"))
 

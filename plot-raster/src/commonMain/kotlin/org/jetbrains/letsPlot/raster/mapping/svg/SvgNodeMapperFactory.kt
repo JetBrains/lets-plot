@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
@@ -26,7 +25,7 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
 
         if (src is SvgImageElementEx) {
             //src = src.asImageElement(SkiaRGBEncoder)
-            src = src.asImageElement(RGBEncoder.DEFAULT)
+            src = src.asImageElement()
         }
 
         return when (src) {

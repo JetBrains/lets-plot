@@ -65,6 +65,9 @@ kotlin {
             dependencies {
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
 
+                // deflate for PNG
+                implementation(npm("pako", "2.1.0"))
+
                 // Add timezone support for js (in kotlinx-datetime)
                 implementation(npm("@js-joda/timezone", "2.3.0"))
             }

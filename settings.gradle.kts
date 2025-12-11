@@ -32,7 +32,6 @@ include("platf-w3c")
 include("platf-awt")
 include("platf-batik")
 include("platf-jfx-swing")
-include("platf-native")
 
 include("python-extension")
 include("python-package-build")

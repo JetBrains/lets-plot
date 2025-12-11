@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.jfx.mapping.svg
 import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.image.ImageView
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -20,7 +19,7 @@ internal class SvgNodeMapperFactory(private val peer: SvgJfxPeer) : MapperFactor
         val target = Utils.newSceneNode(src)
 
         if (src is SvgImageElementEx) {
-            src = src.asImageElement(RGBEncoder.DEFAULT)
+            src = src.asImageElement()
         }
 
         if (src is SvgImageElement) {

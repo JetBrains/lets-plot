@@ -5,16 +5,12 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.util
 
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_PREFIX
 
-class SvgToString(
-    private val rgbEncoder: RGBEncoder = RGBEncoder.DEFAULT,
-    private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder
-) {
+class SvgToString {
     fun render(svg: SvgSvgElement): String {
         val buffer = StringBuilder()
         renderElement(svg, buffer, 0)
@@ -77,17 +73,14 @@ class SvgToString(
 
                     is SvgElement -> {
                         if (childNode is SvgImageElementEx) {
-                            childNode = childNode.asImageElement(rgbEncoder)
+                            childNode = childNode.asImageElement()
                         }
 
                         if (childNode is SvgImageElement) {
-                            val style = when (useCssPixelatedImageRendering) {
-                                true -> "image-rendering: optimizeSpeed; image-rendering: pixelated"
-                                false -> "image-rendering: optimizeSpeed"
-                            }
-                            childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, style)
+                            childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "image-rendering: optimizeSpeed; image-rendering: pixelated")
                         }
 
+                        @Suppress("USELESS_CAST") // Kotlin 1.9 fails to infer correctly here
                         renderElement(childNode as SvgElement, buffer, childrenLevel)
                     }
 

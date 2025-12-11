@@ -25,12 +25,12 @@ def _generate_dynamic_display_html(plot_spec: Dict) -> str:
     )
 
 
-def _generate_svg(plot_spec: Dict, w: float = None, h: float = None, unit: str = None, use_css_pixelated_image_rendering: bool=True) -> str:
-    plot_spec = _standardize_plot_spec(plot_spec)
+def _generate_svg(plot_spec: Dict, w: float = None, h: float = None, unit: str = None) -> str:
+    plot_spec  = _standardize_plot_spec(plot_spec)
     w = -1.0 if w is None else float(w)
     h = -1.0 if h is None else float(h)
     unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
-    return lets_plot_kotlin_bridge.export_svg(plot_spec, w, h, unit, use_css_pixelated_image_rendering)
+    return lets_plot_kotlin_bridge.export_svg(plot_spec, w, h, unit)
 
 def _generate_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
     """

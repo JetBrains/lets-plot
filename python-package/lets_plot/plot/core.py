@@ -964,7 +964,7 @@ def _theme_dicts_merge(x, y):
 def _to_svg(spec, path, w=None, h=None, unit=None) -> Union[str, None]:
     from .. import _kbridge as kbr
 
-    svg = kbr._generate_svg(spec.as_dict(), w, h, unit, use_css_pixelated_image_rendering=True)
+    svg = kbr._generate_svg(spec.as_dict(), w, h, unit)
 
     if path is None:
         return svg

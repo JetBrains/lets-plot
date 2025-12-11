@@ -49,15 +49,14 @@ static PyObject* export_svg(PyObject* self, PyObject* args) {
     float width;
     float height;
     const char* unit;
-    int useCssPixelatedImageRendering;          // 0 - false, 1 - true
-    if (!PyArg_ParseTuple(args, "Offsp", &rawPlotSpecDict, &width, &height, &unit, &useCssPixelatedImageRendering)) {
+    if (!PyArg_ParseTuple(args, "Offs", &rawPlotSpecDict, &width, &height, &unit)) {
         PyErr_SetString(PyExc_TypeError, "export_svg: failed to parse arguments");
         return NULL;
     }
 
-    //printf("export_svg: width=%f, height=%f, unit=%s, useCssPixelatedImageRendering=%d\n", width, height, unit, useCssPixelatedImageRendering);
+    //printf("export_svg: width=%f, height=%f, unit=%s\n", width, height, unit);
 
-    PyObject* svg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, width, height, unit, useCssPixelatedImageRendering);
+    PyObject* svg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, width, height, unit);
     return svg;
 }
 
