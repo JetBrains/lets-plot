@@ -19,5 +19,7 @@ interface Canvas {
         val size: Vector
         val bitmap: Bitmap
         fun copy(): Snapshot
+
+        fun dispose()
     }
 }

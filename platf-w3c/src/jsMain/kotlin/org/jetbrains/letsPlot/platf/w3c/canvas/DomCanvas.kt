@@ -44,6 +44,10 @@ internal class DomCanvas private constructor(
             canvasCopy.context2d.drawImage(canvasElement, 0.0, 0.0)
             return DomSnapshot(canvasCopy, size)
         }
+
+        override fun dispose() {
+            // No resources to dispose
+        }
     }
 
     companion object {

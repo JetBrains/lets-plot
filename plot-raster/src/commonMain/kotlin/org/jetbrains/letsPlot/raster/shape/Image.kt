@@ -36,7 +36,10 @@ internal class Image : Element() {
         }
     }
 
+    override fun onDetached() {
+        snapshot?.dispose()
+    }
+
     override val localBounds: DoubleRectangle
         get() = DoubleRectangle.XYWH(x, y, width, height)
-
 }

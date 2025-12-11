@@ -52,6 +52,10 @@ class AwtCanvas private constructor(
             return AwtSnapshot(b)
         }
 
+        override fun dispose() {
+            // No resources to dispose
+        }
+
         companion object {
             fun fromBitmap(bitmap: Bitmap): AwtSnapshot {
                 val image = BitmapUtil.toBufferedImage(bitmap)

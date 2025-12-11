@@ -101,6 +101,9 @@ object NullSnapshot : Canvas.Snapshot {
         get() = Bitmap(1, 1, intArrayOf(0xFFFFFFFF.toInt())) // White pixel
 
     override fun copy(): Canvas.Snapshot = this
+    override fun dispose() {
+        // No resources to dispose
+    }
 }
 
 open class CanvasControlDelegate(

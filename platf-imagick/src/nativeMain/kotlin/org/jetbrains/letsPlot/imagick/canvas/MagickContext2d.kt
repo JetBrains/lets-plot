@@ -17,18 +17,17 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyDrawingWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newDrawingWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 import kotlin.math.tan
 
-private const val ignoreSameParams = true
 
 class MagickContext2d(
-    private val img: CPointer<ImageMagick.MagickWand>?,
     pixelDensity: Double,
-    antialiasing: Boolean,
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate, Disposable {
+    private val img: CPointer<ImageMagick.MagickWand> = newMagickWand()
     private val none = newPixelWand()
     private val pixelWand = newPixelWand()
     private val currentFillWand = newPixelWand()
@@ -44,11 +43,7 @@ class MagickContext2d(
     private var emulateItalicStyle: Boolean = false
 
     init {
-        if (antialiasing) {
-            ImageMagick.MagickSetAntialias(img, ImageMagick.MagickTrue)
-        } else {
-            ImageMagick.MagickSetAntialias(img, ImageMagick.MagickFalse)
-        }
+        ImageMagick.MagickNewImage(img, 1.convert(), 1.convert(), none)
 
         ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
         currentFillRule = ImageMagick.FillRule.NonZeroRule
@@ -422,6 +417,7 @@ class MagickContext2d(
 
     override fun dispose() {
         //destroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
+        destroyMagickWand(img)
         destroyPixelWand(pixelWand)
         destroyPixelWand(currentFillWand)
         destroyPixelWand(currentStrokeWand)
@@ -542,6 +538,6 @@ class MagickContext2d(
             }
         }
 
+        private const val ignoreSameParams = true
     }
 }
-

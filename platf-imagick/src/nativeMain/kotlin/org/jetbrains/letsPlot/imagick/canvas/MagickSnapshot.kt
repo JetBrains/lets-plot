@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
@@ -15,7 +14,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 
 class MagickSnapshot(
     val img: CPointer<ImageMagick.MagickWand>
-) : Disposable, Canvas.Snapshot {
+) : Canvas.Snapshot {
     private var isDisposed = false
 
     override val size: Vector = Vector(

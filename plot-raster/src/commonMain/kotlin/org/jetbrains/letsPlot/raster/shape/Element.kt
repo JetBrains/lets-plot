@@ -16,7 +16,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 
-internal abstract class Element() {
+internal abstract class Element {
     private val visualPropInstances = mutableMapOf<KProperty<*>, VisualProperty<*>>()
     private val computedPropInstances = mutableMapOf<KProperty<*>, ComputedProperty<*>>()
     private val computedPropDependencies = mutableMapOf<KProperty<*>, Set<KProperty<*>>>() // direct and transitive dependencies
@@ -41,6 +41,10 @@ internal abstract class Element() {
     var isMouseTransparent: Boolean = true // need proper hitTest for non-rectangular shapes for correct default "false"
 
     var peer: SvgCanvasPeer? by visualProp(null)
+
+    fun detached() {
+        onDetached()
+    }
 
     fun <T> computedProp(
         vararg dependencies: KProperty<*>,
@@ -74,6 +78,7 @@ internal abstract class Element() {
     }
 
     protected open fun onPropertyChanged(prop: KProperty<*>) {}
+    protected open fun onDetached() {}
 
     // Set value from parent if not set explicitly
     internal fun <TValue> inheritValue(prop: KProperty<*>, value: TValue) {
@@ -109,6 +114,8 @@ internal abstract class Element() {
         // Bubbling: If my parent is caching, it needs to know its content is invalid.
         parent?.markDirty()
     }
+
+
 
     override fun toString(): String {
         val idStr = id?.let { "id: '$it' " } ?: ""

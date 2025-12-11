@@ -18,8 +18,6 @@ class MagickCanvasPeer(
 ) : CanvasPeer, Disposable {
     private val measureCanvas = MagickCanvas.create(1, 1, pixelDensity, fontManager, antialiasing)
 
-    private val snapshots = mutableSetOf<MagickSnapshot>()
-
     override fun createCanvas(size: Vector): MagickCanvas {
         return MagickCanvas.create(size.x, size.y, pixelDensity, fontManager, antialiasing)
     }
@@ -35,9 +33,7 @@ class MagickCanvasPeer(
     }
 
     override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
-        val snapshot = MagickSnapshot.fromBitmap(bitmap)
-        snapshots.add(snapshot)
-        return snapshot
+        return MagickSnapshot.fromBitmap(bitmap)
     }
 
     override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
@@ -51,10 +47,5 @@ class MagickCanvasPeer(
 
     override fun dispose() {
         measureCanvas.dispose()
-        for (snapshot in snapshots) {
-            snapshot.dispose()
-        }
-
-        snapshots.clear()
     }
 }

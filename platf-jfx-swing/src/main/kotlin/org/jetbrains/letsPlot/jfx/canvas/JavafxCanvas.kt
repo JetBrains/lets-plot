@@ -63,5 +63,9 @@ internal class JavafxCanvas private constructor(
                     image.height.roundToInt()
                 )
             )
+
+        override fun dispose() {
+            // No resources to dispose
+        }
     }
 }
