@@ -23,6 +23,8 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun showTickMarks(): Boolean = false
 
+    override fun showMinorTickMarks(): Boolean = false
+
     override fun showLabels(): Boolean = false
 
     override fun showTitle(): Boolean = false
@@ -47,9 +49,13 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tickMarkColor() = Defaults.Plot.Axis.LINE_COLOR
 
+    override fun minorTickMarkColor() = Defaults.Plot.Axis.LINE_COLOR
+
     override fun lineType() = NamedLineType.SOLID
 
     override fun tickMarkLineType() = NamedLineType.SOLID
+
+    override fun minorTickMarkLineType() = NamedLineType.SOLID
 
     override fun labelStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
@@ -73,9 +79,13 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tickMarkWidth() = 1.0
 
+    override fun minorTickMarkWidth() = 1.0
+
     override fun tickMarkLength() = 4.0
 
-    override fun tickLabelMargins() = Thickness(0.0, 0.0, 0.0, 0.0)
+    override fun minorTickMarkLength() = 4.0
+
+    override fun tickLabelMargins() = Thickness.ZERO
 
     override fun labelSpacing() = 2.0
 

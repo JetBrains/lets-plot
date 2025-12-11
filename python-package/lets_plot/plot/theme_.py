@@ -34,9 +34,11 @@ def theme(*,
           # ToDo: axis.text.x.left, axis.text.x.right
           axis_text_spacing=None, axis_text_spacing_x=None, axis_text_spacing_y=None,
           axis_ticks=None, axis_ticks_x=None, axis_ticks_y=None,
+          axis_minor_ticks=None, axis_minor_ticks_x=None, axis_minor_ticks_y=None,
           # ToDo: axis.ticks.x.top, axis.ticks.x.bottom
           # ToDo: axis.ticks.x.left, axis.ticks.x.right
           axis_ticks_length=None, axis_ticks_length_x=None, axis_ticks_length_y=None,
+          axis_minor_ticks_length=None, axis_minor_ticks_length_x=None, axis_minor_ticks_length_y=None,
           axis_line=None, axis_line_x=None, axis_line_y=None,
           # ToDo: axis.line.x.top, axis.line.x.bottom
           # ToDo: axis.line.x.left, axis.line.x.right
@@ -158,8 +160,15 @@ def theme(*,
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
         Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify all tick mark parameters.
         ``axis_ticks_*`` inherits from ``axis_ticks`` which inherits from ``line``.
+    axis_minor_ticks, axis_minor_ticks_x, axis_minor_ticks_y : str or dict
+        Style settings for minor tick marks along axes.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_line() <https://lets-plot.org/python/pages/api/lets_plot.element_line.html>`__ to specify all minor tick mark parameters.
+        ``axis_minor_ticks_*`` inherits from ``axis_minor_ticks`` which inherits from ``line``.
     axis_ticks_length, axis_ticks_length_x, axis_ticks_length_y : float
         Length of tick marks in px.
+    axis_minor_ticks_length, axis_minor_ticks_length_x, axis_minor_ticks_length_y : float
+        Length of minor tick marks in px.
     axis_line, axis_line_x, axis_line_y : str or dict
         Style settings for lines along axes.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
