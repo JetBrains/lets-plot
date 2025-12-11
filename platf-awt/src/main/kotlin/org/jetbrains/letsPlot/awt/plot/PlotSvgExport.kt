@@ -9,12 +9,14 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotSvgExport
 
+@Deprecated("Use PlotSvgExport from plot-stem module", ReplaceWith("PlotSvgExport", "org.jetbrains.letsPlot.core.util.PlotSvgExport"))
 object PlotSvgExport {
     /**
      * @param plotSpec Raw specification of a plot.
      * @param plotSize Desired plot size.
      * @param sizeUnit Size unit for the plot size. The default is pixels (PX).
      */
+    @Deprecated("Use PlotSvgExport from plot-stem module", ReplaceWith("PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize, sizeUnit)", "org.jetbrains.letsPlot.core.util.PlotSvgExport"))
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
