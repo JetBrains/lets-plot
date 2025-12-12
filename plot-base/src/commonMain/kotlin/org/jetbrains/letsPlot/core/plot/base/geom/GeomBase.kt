@@ -34,7 +34,9 @@ abstract class GeomBase : Geom {
         ctx: GeomContext
     ) {
         buildIntern(root, aesthetics, pos, coord, ctx)
-        ctx.consumeMessages(getMessages())
+        if (SHOW_NA_MESSAGES) {
+            ctx.consumeMessages(getMessages())
+        }
     }
 
     open fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
@@ -73,6 +75,8 @@ abstract class GeomBase : Geom {
     )
 
     companion object {
+        private const val SHOW_NA_MESSAGES = false
+
         fun wrap(slimGroup: SvgSlimGroup): SvgGElement {
             val g = SvgGElement()
             g.isPrebuiltSubtree = true
