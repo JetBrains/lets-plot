@@ -8,8 +8,6 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import org.jetbrains.letsPlot.core.canvas.Font
-import org.jetbrains.letsPlot.core.canvas.TextMetrics
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
@@ -17,8 +15,6 @@ import javax.imageio.ImageIO
 class AwtCanvasPeer(
     private val pixelDensity: Double = 1.0
 ) : CanvasPeer {
-    private val measureCanvas = AwtCanvas.create(Vector(1, 1), pixelDensity)
-
     override fun createCanvas(size: Vector): AwtCanvas {
         return AwtCanvas.create(size, pixelDensity)
     }
@@ -44,19 +40,9 @@ class AwtCanvasPeer(
         return Asyncs.constant(snapshot)
     }
 
-    override fun measureText(text: String, font: Font): TextMetrics {
-        val context2d = measureCanvas.context2d
-        context2d.setFont(font)
-        return context2d.measureText(text)
-    }
-
     private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
         val bitmap = Png.decodeDataImage(dataUrl)
         val bufferedImage = BitmapUtil.toBufferedImage(bitmap)
         return bufferedImage
-    }
-
-    override fun dispose() {
-
     }
 }

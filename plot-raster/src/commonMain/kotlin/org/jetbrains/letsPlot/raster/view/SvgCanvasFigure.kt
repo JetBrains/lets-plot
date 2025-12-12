@@ -63,6 +63,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         return object : Registration() {
             override fun doRemove() {
                 rootMapper.detachRoot()
+                svgCanvasPeer?.dispose()
                 svgCanvasPeer = null
             }
         }

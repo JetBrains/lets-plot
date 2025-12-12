@@ -7,8 +7,10 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.ContextStateDelegate
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
@@ -23,12 +25,15 @@ internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
     SvgNodeContainer(svgDocument)
 
     val canvasPeer = object : CanvasPeer {
-        override fun createCanvas(size: Vector) = TODO("Not yet implemented")
+        override fun createCanvas(size: Vector) = object : Canvas {
+            override val context2d: Context2d = DummyContext2D()
+            override val size: Vector = Vector.ZERO
+            override fun takeSnapshot(): Canvas.Snapshot = TODO("Not yet implemented")
+        }
+
         override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
         override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
         override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
-        override fun measureText(text: String, font: Font) = TODO("Not yet implemented")
-        override fun dispose() = TODO("Not yet implemented")
     }
 
     val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
@@ -166,4 +171,12 @@ internal inline fun <reified T> Container.element(id: String): T {
 
 internal fun Container.element(id: String): Element {
     return breadthFirstTraversal(this).first { it.id == id }
+}
+
+class DummyContext2D : Context2d by ContextStateDelegate(
+
+) {
+    override fun measureTextWidth(str: String): Double {
+        return str.length.toDouble() * 7.0 // approx.
+    }
 }

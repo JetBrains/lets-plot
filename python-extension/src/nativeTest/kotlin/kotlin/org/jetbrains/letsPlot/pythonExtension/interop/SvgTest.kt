@@ -34,11 +34,11 @@ class SvgTest {
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")
         val h = svg.height().get()?.toInt() ?: error("SVG height is not specified")
         val canvas = canvasPeer.createCanvas(w, h)
+        val ctx = canvas.context2d
         fig.paint(canvas.context2d)
 
         imageComparer.assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
 
-        canvas.dispose()
-        canvasPeer.dispose()
+        ctx.dispose()
     }
 }

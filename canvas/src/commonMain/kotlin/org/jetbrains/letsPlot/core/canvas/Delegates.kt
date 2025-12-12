@@ -32,6 +32,10 @@ class Context2dDelegate(
         }
     }
 
+    override fun dispose() {
+        log("dispose")
+    }
+
     override fun clearRect(rect: DoubleRectangle) { log("clearRect: $rect") }
     override fun drawImage(snapshot: Canvas.Snapshot) { log("drawImage: $snapshot") }
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) { log("drawImage: $snapshot, x=$x, y=$y") }

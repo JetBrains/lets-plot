@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.imagick.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
@@ -17,7 +16,7 @@ class MagickCanvas(
     private val pixelDensity: Double,
     fontManager: MagickFontManager,
     private val antialiasing: Boolean,
-) : Canvas, Disposable {
+) : Canvas {
     private val magickContext2d = MagickContext2d(pixelDensity, fontManager)
     override val context2d: MagickContext2d = magickContext2d
 
@@ -37,10 +36,6 @@ class MagickCanvas(
 
         ImageMagick.MagickDrawImage(img, context2d.wand)
         return MagickSnapshot(img)
-    }
-
-    override fun dispose() {
-        magickContext2d.dispose()
     }
 
     companion object {

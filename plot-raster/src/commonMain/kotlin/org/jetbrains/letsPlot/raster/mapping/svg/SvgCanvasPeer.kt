@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.TextMetrics
@@ -23,7 +25,8 @@ import org.jetbrains.letsPlot.raster.shape.breadthFirstTraversal
 
 internal class SvgCanvasPeer(
     val canvasPeer: CanvasPeer,
-) : SvgPlatformPeer {
+) : SvgPlatformPeer, Disposable {
+    private val textMeasuringCanvas = canvasPeer.createCanvas(Vector(1, 1))
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Element>>()
     var styleSheet: StyleSheet? = null
         private set
@@ -78,6 +81,12 @@ internal class SvgCanvasPeer(
     }
 
     fun measureText(text: String, font: Font): TextMetrics {
-        return canvasPeer.measureText(text, font)
+        val context2d = textMeasuringCanvas.context2d
+        context2d.setFont(font)
+        return context2d.measureText(text)
+    }
+
+    override fun dispose() {
+        textMeasuringCanvas.context2d.dispose()
     }
 }

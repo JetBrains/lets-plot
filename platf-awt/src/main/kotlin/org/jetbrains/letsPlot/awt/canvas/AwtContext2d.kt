@@ -43,6 +43,10 @@ internal class AwtContext2d(
         setLineCap(LineCap.BUTT)
     }
 
+    override fun dispose() {
+        graphics.dispose()
+    }
+
     override fun clearRect(rect: DoubleRectangle) {
         graphics.clearRect(rect.left.toInt(), rect.top.toInt(), rect.width.toInt(), rect.height.toInt())
     }

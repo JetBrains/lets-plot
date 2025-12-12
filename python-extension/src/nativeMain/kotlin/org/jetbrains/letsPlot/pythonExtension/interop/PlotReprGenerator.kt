@@ -227,16 +227,16 @@ object PlotReprGenerator {
             canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
             val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+            val ctx = canvas.context2d
 
-            plotCanvasFigure.paint(canvas.context2d)
+            plotCanvasFigure.paint(ctx)
 
             // Save the image to a file
             val snapshot = canvas.takeSnapshot()
             val bitmap = snapshot.bitmap
 
-            canvas.dispose()
+            ctx.dispose()
             snapshot.dispose()
-            magickCanvasPeer.dispose()
 
             return bitmap to exportParameters.dpi
         } finally {
@@ -351,10 +351,11 @@ object PlotReprGenerator {
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
 
             val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+            val ctx = canvas.context2d
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}")
 
-            plotCanvasFigure.paint(canvas.context2d)
+            plotCanvasFigure.paint(ctx)
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot painted")
 
@@ -373,9 +374,8 @@ object PlotReprGenerator {
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): MVG extracted, length=${mvg.length}")
 
-            canvas.dispose()
+            ctx.dispose()
             snapshot.dispose()
-            magickCanvasPeer.dispose()
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): resources disposed")
 

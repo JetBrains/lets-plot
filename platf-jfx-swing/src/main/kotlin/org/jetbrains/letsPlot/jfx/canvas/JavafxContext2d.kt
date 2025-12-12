@@ -297,4 +297,8 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.fillRule = fillRule
         myContext2d.fill()
     }
+
+    override fun dispose() {
+        // no-op
+    }
 }
