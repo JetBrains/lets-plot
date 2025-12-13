@@ -98,8 +98,8 @@ internal class AwtContext2d(
     override fun drawCircle(x: Double, y: Double, radius: Double) {
         val circle = Arc2D.Double(x - radius, y - radius, 2 * radius, 2 * radius, 0.0, 360.0, Arc2D.OPEN)
 
-        withStrokeGraphics { g -> g.draw(circle) }
         withFillGraphics { g -> g.fill(circle) }
+        withStrokeGraphics { g -> g.draw(circle) }
     }
 
     override fun save() {

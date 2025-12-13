@@ -77,6 +77,34 @@ class PlotTest {
     }
 
     @Test
+    fun `geom_point with stroke`() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+            |    "y": [ 5.0, 3.0, 4.0, 2.0, 1.0 ]
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "size": 20.0,
+            |      "stroke": 8.0,
+            |      "color": "blue",
+            |      "fill": "red",
+            |      "shape": 21
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_geom_point_with_stroke_test.png", plotSpec)
+    }
+
+
+    @Test
     fun `italic from theme`() {
         // See the issue https://github.com/JetBrains/lets-plot/issues/1391
         val spec = """
