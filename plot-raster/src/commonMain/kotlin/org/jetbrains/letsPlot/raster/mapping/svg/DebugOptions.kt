@@ -31,14 +31,13 @@ internal object DebugOptions {
             }
 
             val fillColor = color.changeAlpha((255*0.02).roundToInt())
-            canvas.context2d.setFillStyle(fillColor)
-            canvas.context2d.fillRect(el.screenBounds.left, el.screenBounds.top, el.screenBounds.width, el.screenBounds.height)
-
             val strokeColor = color.changeAlpha((255*0.7).roundToInt())
-            //val strokeWidth = if(el is Container) 3f else 1f
-            //strokeColor.pathEffect = if (el is Container) PathEffect.makeDash(floatArrayOf(3f, 8f), 0f) else null
+            canvas.context2d.setFillStyle(fillColor)
             canvas.context2d.setStrokeStyle(strokeColor)
-            canvas.context2d.strokeRect(el.screenBounds.left, el.screenBounds.top, el.screenBounds.width, el.screenBounds.height)
+
+            val screenBounds = el.absoluteBBox
+            canvas.context2d.fillRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
+            canvas.context2d.strokeRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
         }
     }
 }

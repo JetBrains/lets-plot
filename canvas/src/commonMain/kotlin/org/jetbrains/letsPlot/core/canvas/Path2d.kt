@@ -19,7 +19,19 @@ class Path2d() {
     val isEmpty: Boolean
         get() = commands.isEmpty()
 
-    val bounds: DoubleRectangle = DoubleRectangle.ZERO
+    val bounds: DoubleRectangle
+        get() {
+            if (isEmpty) {
+                return DoubleRectangle.ZERO
+            }
+
+            return DoubleRectangle.LTRB(minX, minY, maxX, maxY)
+        }
+
+    private var minX = Double.POSITIVE_INFINITY
+    private var minY = Double.POSITIVE_INFINITY
+    private var maxX = Double.NEGATIVE_INFINITY
+    private var maxY = Double.NEGATIVE_INFINITY
 
     private val commands = mutableListOf<PathCommand>()
 
@@ -41,12 +53,14 @@ class Path2d() {
     fun moveTo(x: Double, y: Double, at: AffineTransform = AffineTransform.IDENTITY): Path2d {
         val p = at.transform(x, y)
         commands += MoveTo(p.x, p.y)
+        expandBounds(p)
         return this
     }
 
     fun lineTo(x: Double, y: Double, at: AffineTransform = AffineTransform.IDENTITY): Path2d {
         val p = at.transform(x, y)
         commands += LineTo(p.x, p.y)
+        expandBounds(p)
         return this
     }
 
@@ -107,7 +121,7 @@ class Path2d() {
         }
 
         commands += CubicCurveTo(controlPoints)
-
+        controlPoints.forEach(::expandBounds)
         return this
     }
 
@@ -218,16 +232,21 @@ class Path2d() {
         y: Double,
         at: AffineTransform = AffineTransform.IDENTITY
     ): Path2d {
-        commands += CubicCurveTo(
-            controlPoints = at.transform(
-                listOf(
-                    DoubleVector(cp1x, cp1y),
-                    DoubleVector(cp2x, cp2y),
-                    DoubleVector(x, y)
-                )
-            )
-        )
+        val p1 = at.transform(cp1x, cp1y)
+        val p2 = at.transform(cp2x, cp2y)
+        val p = at.transform(x, y)
+        commands += CubicCurveTo(listOf(p1, p2, p))
+        expandBounds(p1)
+        expandBounds(p2)
+        expandBounds(p)
         return this
+    }
+
+    private fun expandBounds(point: DoubleVector) {
+        minX = min(minX, point.x)
+        minY = min(minY, point.y)
+        maxX = max(maxX, point.x)
+        maxY = max(maxY, point.y)
     }
 
     companion object {

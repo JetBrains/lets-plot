@@ -129,16 +129,21 @@ internal abstract class Element {
         parentCtm.concat(transform)
     }
 
-    open val localBounds: DoubleRectangle = DoubleRectangle.XYWH(0, 0, 0, 0)
+    // Bounds in local coordinates without applying transform and stroke width
+    open val bBox: DoubleRectangle = DoubleRectangle.XYWH(0, 0, 0, 0)
 
-    // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
-    // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
-    open val screenBounds: DoubleRectangle
-        get() = ctm.transform(localBounds)
+    open val absoluteBBox: DoubleRectangle
+        get() = ctm.transform(bBox)
+
+    // Bounds in local coordinates after applying transform and with stroke width considered
+    // Used for hit-testing and redraw region calculation
+    open val boundingClientRect: DoubleRectangle
+        get() = ctm.transform(bBox)
 
     open fun render(ctx: Context2d) {}
 
     open fun repr(): String? {
-        return ", ctm: ${ctm.repr()}, $screenBounds"
+        return ", ctm: ${ctm.repr()}, $absoluteBBox"
     }
 }
+

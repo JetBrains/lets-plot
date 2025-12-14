@@ -14,7 +14,7 @@ private fun log(str: () -> String) {
         println(str())
 }
 
-class ContextStateDelegate(
+open class ContextStateDelegate(
     logEnabled: Boolean = true,
     failIfNotImplemented: Boolean = true
 ) : Context2d by Context2dDelegate(

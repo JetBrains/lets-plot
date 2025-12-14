@@ -51,18 +51,18 @@ internal abstract class Container : Element() {
         }
     }
 
-    override val localBounds: DoubleRectangle
+    override val bBox: DoubleRectangle
         get() = children
             .filterNot { it is Container && it.children.isEmpty() }
-            .map(Element::localBounds)
+            .map(Element::bBox)
             .let(::union)
             ?: DoubleRectangle.XYWH(0, 0, 0, 0)
 
-    override val screenBounds: DoubleRectangle
+    override val absoluteBBox: DoubleRectangle
         get() {
             return children
                 .filterNot { it is Container && it.children.isEmpty() }
-                .map(Element::screenBounds)
+                .map(Element::absoluteBBox)
                 .let(::union)
                 ?: DoubleRectangle.XYWH(ctm.tx, ctm.ty, 0, 0)
         }

@@ -77,7 +77,7 @@ internal class SvgCanvasPeer(
                 }
             }
         }
-        return target.localBounds
+        return target.bBox
     }
 
     fun measureText(text: String, font: Font): TextMetrics {

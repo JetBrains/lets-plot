@@ -22,8 +22,8 @@ class SvgComplianceTest {
 
         doc.element<Group>("g").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslation(10f, 20f))
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 0f, 0f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 0f, 0f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslation(10f, 20f))
         }
     }
@@ -40,13 +40,13 @@ class SvgComplianceTest {
         }
 
         doc.element<Rectangle>("rect").let {
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
         }
 
         doc.element<Group>("g").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(5f, 16f, 40f, 15f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(5f, 16f, 40f, 15f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
         }
     }
@@ -61,8 +61,8 @@ class SvgComplianceTest {
 
         doc.element<Pane>("svg").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 0f, 0f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 0f, 0f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
         }
     }
@@ -79,13 +79,13 @@ class SvgComplianceTest {
 
         doc.element<Rectangle>("rect").let {
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
         }
 
         doc.element<Pane>("svg").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(5f, 16f, 40f, 15f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(5f, 16f, 40f, 15f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(15f, 36f, 40f, 15f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
         }
     }
@@ -104,13 +104,13 @@ class SvgComplianceTest {
         }
 
         doc.element<Group>("root_g").let {
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 10f, 20f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(50f, 70f, 10f, 20f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 10f, 20f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(50f, 70f, 10f, 20f))
         }
 
         doc.element<Group>("sub_g").let {
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 10f, 20f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(50f, 70f, 10f, 20f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 10f, 20f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(50f, 70f, 10f, 20f))
         }
     }
 
@@ -128,8 +128,8 @@ class SvgComplianceTest {
 
         doc.element<Rectangle>("rect").let {
             assertThat(it.transform).isEqualTo(AffineTransform.IDENTITY)
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(3f, 5f, 10f, 10f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(43f, 75f, 10f, 10f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(3f, 5f, 10f, 10f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(43f, 75f, 10f, 10f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(40f, 70f))
         }
     }
@@ -148,16 +148,16 @@ class SvgComplianceTest {
 
         doc.element<Pane>("svg").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(13f, 17f))
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(1f, 3f, 10f, 10f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(1f, 3f, 10f, 10f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(23f, 37f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(24f, 40f, 10f, 10f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(24f, 40f, 10f, 10f))
         }
 
 
         doc.element<Rectangle>("rect").let {
             assertThat(it.transform).isEqualTo(AffineTransform.IDENTITY)
-            assertThat(it.localBounds).isEqualTo(DoubleRectangle.XYWH(1f, 3f, 10f, 10f))
-            assertThat(it.screenBounds).isEqualTo(DoubleRectangle.XYWH(24f, 40f, 10f, 10f))
+            assertThat(it.bBox).isEqualTo(DoubleRectangle.XYWH(1f, 3f, 10f, 10f))
+            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(24f, 40f, 10f, 10f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(23f, 37f))
         }
     }

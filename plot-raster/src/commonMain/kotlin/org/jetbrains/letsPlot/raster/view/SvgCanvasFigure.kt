@@ -78,7 +78,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
                 val linkElement = reversedDepthFirstTraversal(rootMapper.target)
                     .filter { it.href != null }
                     .filterNot(Element::isMouseTransparent)
-                    .firstOrNull { coord in it.screenBounds }
+                    .firstOrNull { coord in it.absoluteBBox }
 
                 val href = linkElement?.href ?: return
                 hrefClickHandler(href)

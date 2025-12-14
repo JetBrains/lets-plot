@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.raster.shape
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.Path2d
 import org.jetbrains.letsPlot.core.canvas.applyPath
@@ -38,12 +39,22 @@ internal class Path : Figure() {
         context2d.applyPath(path.getCommands())
     }
 
-    override val localBounds: DoubleRectangle
+    override val bBox: DoubleRectangle
         get() {
             val path = pathData ?: return DoubleRectangle.XYWH(0, 0, 0, 0)
             val strokeWidth = strokePaint?.strokeWidth ?: return path.bounds
 
             return path.bounds.inflate(strokeWidth / 2.0)
+        }
+
+    override val boundingClientRect: DoubleRectangle
+        get() {
+            val bbox = bBox
+            if (bbox.dimension == DoubleVector.ZERO) {
+                return bbox
+            }
+
+            return bbox.inflate(strokeWidth / 2.0)
         }
 
     enum class FillRule {

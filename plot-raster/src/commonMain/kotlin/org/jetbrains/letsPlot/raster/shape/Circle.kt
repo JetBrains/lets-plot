@@ -29,11 +29,21 @@ internal class Circle : Figure() {
         ctx.drawCircle(centerX.toDouble(), centerY.toDouble(), radius.toDouble())
     }
 
-    override val localBounds: DoubleRectangle
+    override val bBox: DoubleRectangle
         get() = DoubleRectangle.XYWH(
-            centerX - radius,
-            centerY - radius,
-            radius * 2,
-            radius * 2
-        )
+                centerX - radius,
+                centerY - radius,
+                radius * 2,
+                radius * 2
+            )
+
+
+    override val boundingClientRect: DoubleRectangle
+        get() {
+            if (radius <= 0) {
+                return DoubleRectangle.XYWH(centerX.toDouble(), centerY.toDouble(), 0.0, 0.0)
+            }
+
+            return bBox.inflate(strokeWidth / 2.0)
+        }
 }

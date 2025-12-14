@@ -40,6 +40,6 @@ internal class Image : Element() {
         snapshot?.dispose()
     }
 
-    override val localBounds: DoubleRectangle
+    override val bBox: DoubleRectangle
         get() = DoubleRectangle.XYWH(x, y, width, height)
 }

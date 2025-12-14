@@ -69,7 +69,7 @@ internal class TSpan : Figure() {
         )
     }
 
-    val bbox by computedProp(TSpan::text, TSpan::font, TSpan::baseline, Element::peer) {
+    val textBBox by computedProp(TSpan::text, TSpan::font, TSpan::baseline, Element::peer) {
         val peer = peer ?: return@computedProp DoubleRectangle.ZERO
         if (text.isEmpty()) return@computedProp DoubleRectangle.XYWH(0.0, 0.0, 0.0, 0.0)
 
@@ -105,12 +105,12 @@ internal class TSpan : Figure() {
         val strokePaint: Paint?,
     )
 
-    override val localBounds: DoubleRectangle
+    override val bBox: DoubleRectangle
         get() {
-            val left = bbox.left
-            val top = bbox.top
-            val right = bbox.right
-            val bottom = bbox.bottom
+            val left = textBBox.left
+            val top = textBBox.top
+            val right = textBBox.right
+            val bottom = textBBox.bottom
 
             return DoubleRectangle.LTRB(
                 layoutX + left,

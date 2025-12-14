@@ -6,6 +6,7 @@
 
 package org.jetbrains.letsPlot.raster.shape
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -87,7 +88,7 @@ internal class Text(
             it.layoutX = x + cx + curX
             it.layoutY = y + cy + dy
 
-            curX += it.bbox.width.toFloat()
+            curX += it.textBBox.width.toFloat()
         }
 
         needLayout = false
@@ -136,6 +137,15 @@ internal class Text(
 
         invalidateLayout()
     }
+
+    override val bBox: DoubleRectangle
+        get() {
+            if (needLayout) {
+                layoutChildren()
+            }
+
+            return super.bBox
+        }
 
     enum class VerticalAlignment {
         TOP,
