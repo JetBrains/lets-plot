@@ -11,3 +11,4 @@
 - Hyperlinks support for lets-plot-compose.
 - Drop commons-io dependency [[#1421](https://github.com/JetBrains/lets-plot/issues/1421)].
 - Unexpected replacement of double curly brackets with a single curly bracket [[#1433](https://github.com/JetBrains/lets-plot/issues/1433)].
+- Colab no longer rendering lets-plot with empty setup HTML [[#1436](https://github.com/JetBrains/lets-plot/issues/1436)]
