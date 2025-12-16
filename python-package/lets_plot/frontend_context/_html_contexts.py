@@ -179,8 +179,9 @@ def _is_google_colab() -> bool:
 
 
 def _is_kaggle() -> bool:
-    return os.path.exists("/kaggle/input")
-
+    # This gives a false positive in Colab.
+    # return os.path.exists("/kaggle/input")
+    return 'KAGGLE_KERNEL_RUN_TYPE' in os.environ
 
 def _is_azure_notebook() -> bool:
     return "AZURE_NOTEBOOKS_HOST" in os.environ
