@@ -137,8 +137,7 @@ internal abstract class Element {
 
     // Bounds in local coordinates after applying transform and with stroke width considered
     // Used for hit-testing and redraw region calculation
-    open val boundingClientRect: DoubleRectangle
-        get() = ctm.transform(bBox)
+    abstract val boundingClientRect: DoubleRectangle
 
     open fun render(ctx: Context2d) {}
 

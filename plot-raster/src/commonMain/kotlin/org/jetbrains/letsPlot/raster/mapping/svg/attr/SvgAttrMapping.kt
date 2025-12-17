@@ -57,6 +57,7 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
             SvgTransformable.TRANSFORM.name -> setTransform(value.toString(), target)
             SvgElement.ID.name -> target.id = value as String?
             SvgGraphicsElement.POINTER_EVENTS.name -> target.isMouseTransparent = value == PointerEvents.NONE
+            "buffered-rendering" -> target.outputCache = (value as? String)?.lowercase() == "static"
 
             else -> {
                 val valRepr = when {

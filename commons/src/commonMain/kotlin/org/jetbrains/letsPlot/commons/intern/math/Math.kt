@@ -14,6 +14,7 @@ fun toDegrees(radians: Double): Double = radians * 180.0 / PI
 
 fun round(v: DoubleVector) = round(v.x, v.y)
 fun ceil(v: DoubleVector) = ceil(v.x, v.y)
+fun floor(v: DoubleVector) = floor(v.x, v.y)
 
 fun round(x: Double, y: Double): Vector {
     return Vector(
@@ -30,9 +31,24 @@ fun ceil(x: Double, y: Double): Vector {
     )
 }
 
+fun floor(x: Double, y: Double): Vector {
+    return Vector(
+        floor(x).toInt(),
+        floor(y).toInt()
+    )
+}
+
 
 fun Int.ipow(e: Int): Double {
     return this.toDouble().pow(e)
+}
+
+fun DoubleVector.subtract(other: Vector): DoubleVector {
+    return DoubleVector(this.x - other.x, this.y - other.y)
+}
+
+fun Vector.subtract(other: DoubleVector): DoubleVector {
+    return DoubleVector(this.x - other.x, this.y - other.y)
 }
 
 fun areEqual(a: Double, b: Double, epsilon: Double = 0.00001) = abs(a - b) < epsilon

@@ -58,6 +58,13 @@ internal abstract class Container : Element() {
             .let(::union)
             ?: DoubleRectangle.XYWH(0, 0, 0, 0)
 
+    override val boundingClientRect: DoubleRectangle
+        get() = children
+            .filterNot { it is Container && it.children.isEmpty() }
+            .map(Element::boundingClientRect)
+            .let(::union)
+            ?: DoubleRectangle.XYWH(0, 0, 0, 0)
+
     override val absoluteBBox: DoubleRectangle
         get() {
             return children
@@ -77,7 +84,15 @@ internal abstract class Container : Element() {
         }
     }
 
-    protected open fun onChildSet(event: CollectionItemEvent<out Element>) { }
-    protected open fun onChildAdded(event: CollectionItemEvent<out Element>) { }
-    protected open fun onChildRemoved(event: CollectionItemEvent<out Element>) { }
+    protected open fun onChildSet(event: CollectionItemEvent<out Element>) {
+        markDirty() // Structure changed
+    }
+
+    protected open fun onChildAdded(event: CollectionItemEvent<out Element>) {
+        markDirty() // Structure changed
+    }
+
+    protected open fun onChildRemoved(event: CollectionItemEvent<out Element>) {
+        markDirty() // Structure changed
+    }
 }

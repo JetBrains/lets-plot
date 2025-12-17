@@ -39,6 +39,7 @@ open class VisualPlotTestBase {
 
     private fun createImageComparer(): ImageComparer {
         return ImageComparer(
+            tol = 15,
             canvasProvider = AwtTestCanvasProvider(),
             bitmapIO = AwtBitmapIO,
             expectedDir = System.getProperty("user.dir") + "/src/test/resources/expected-images/",

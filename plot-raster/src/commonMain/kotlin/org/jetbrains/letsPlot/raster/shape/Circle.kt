@@ -44,6 +44,6 @@ internal class Circle : Figure() {
                 return DoubleRectangle.XYWH(centerX.toDouble(), centerY.toDouble(), 0.0, 0.0)
             }
 
-            return bBox.inflate(strokeWidth / 2.0)
+            return transform.transform(bBox.inflate(strokeWidth / 2.0))
         }
 }

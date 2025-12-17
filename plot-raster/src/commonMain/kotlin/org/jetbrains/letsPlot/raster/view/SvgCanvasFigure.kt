@@ -8,13 +8,14 @@ package org.jetbrains.letsPlot.raster.view
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.affineTransform
 import org.jetbrains.letsPlot.core.canvas.applyPath
+import org.jetbrains.letsPlot.core.canvas.transform
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -25,11 +26,18 @@ import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
 import org.jetbrains.letsPlot.raster.shape.reversedDepthFirstTraversal
 import kotlin.math.ceil
+import kotlin.math.max
+import kotlin.math.min
 
-@Deprecated("Migrate to SvgCanvasFigure and CanvasPane", replaceWith = ReplaceWith("SvgCanvasFigure", "org.jetbrains.letsPlot.raster.view"))
+@Deprecated(
+    "Migrate to SvgCanvasFigure and CanvasPane",
+    replaceWith = ReplaceWith("SvgCanvasFigure", "org.jetbrains.letsPlot.raster.view")
+)
 typealias SvgCanvasFigure2 = SvgCanvasFigure
 
 class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
+    private val ENABLE_OPTIMIZATION = true
+
     override val size: Vector get() {
         val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
         val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
@@ -45,10 +53,12 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             requestRedraw()
         }
 
+    private var canvasSize: Vector? = null
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
+    private var repaintManager: RepaintManager? = null
 
-    internal lateinit var rootMapper: SvgSvgElementMapper // = SvgSvgElementMapper(svgSvgElement, canvasPeer)
+    internal lateinit var rootMapper: SvgSvgElementMapper
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
     private var onHrefClick: ((String) -> Unit)? = null
 
@@ -58,13 +68,17 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         svgCanvasPeer = SvgCanvasPeer(canvasPeer)
-
+        repaintManager = RepaintManager(canvasPeer)
         mapSvgSvgElement()
         return object : Registration() {
             override fun doRemove() {
                 rootMapper.detachRoot()
+
                 svgCanvasPeer?.dispose()
                 svgCanvasPeer = null
+
+                repaintManager?.dispose()
+                repaintManager = null
             }
         }
     }
@@ -73,7 +87,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
                 val hrefClickHandler = onHrefClick ?: return
-
                 val coord = event.location.toDoubleVector()
                 val linkElement = reversedDepthFirstTraversal(rootMapper.target)
                     .filter { it.href != null }
@@ -86,14 +99,9 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         })
     }
 
-    override fun paint(context2d: Context2d) {
-        renderElement(rootMapper.target, context2d)
-    }
-
     private fun mapSvgSvgElement() {
-        val canvasPeer = svgCanvasPeer ?: return // not yet attached
-
-        nodeContainer = SvgNodeContainer(svgSvgElement)  // attach root
+        val canvasPeer = svgCanvasPeer ?: return
+        nodeContainer = SvgNodeContainer(svgSvgElement)
         nodeContainer!!.addListener(object : SvgNodeContainerListener {
             override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = requestRedraw()
             override fun onNodeAttached(node: SvgNode) = requestRedraw()
@@ -103,33 +111,53 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         rootMapper.attachRoot(MappingContext())
     }
 
+    override fun paint(context2d: Context2d) {
+        renderElement(rootMapper.target, context2d)
+    }
+
     override fun onRepaintRequested(listener: () -> Unit): Registration {
         repaintRequestListeners.add(listener)
-        return Registration.onRemove {
-            repaintRequestListeners.remove(listener)
-        }
+        return Registration.onRemove { repaintRequestListeners.remove(listener) }
     }
 
     override fun resize(width: Number, height: Number) {
-        // nothing to do - size is defined by svgSvgElement width/height attributes
+        canvasSize = Vector(width.toInt(), height.toInt())
+        requestRedraw()
     }
 
-    private fun render(elements: List<Element>, ctx: Context2d) {
+    private fun requestRedraw() {
+        repaintRequestListeners.forEach { it() }
+    }
+
+    private fun render(elements: List<Element>, ctx: Context2d, ignoreCache: Boolean) {
         elements.forEach { element ->
-            renderElement(element, ctx)
+            renderElement(element, ctx, ignoreCache)
         }
     }
 
-    private fun renderElement(element: Element, ctx: Context2d) {
-        if (!element.isVisible) {
-            return
-        }
+    private fun renderElement(element: Element, ctx: Context2d, ignoreCache: Boolean = false) {
+        if (!element.isVisible) return
 
         var needRestore = false
         if (!element.transform.isIdentity) {
             needRestore = true
             ctx.save()
-            ctx.affineTransform(element.transform)
+            ctx.transform(element.transform)
+        }
+
+        if (ENABLE_OPTIMIZATION && element.outputCache && !ignoreCache) {
+            val repaintManager = repaintManager ?: return
+
+            if (!repaintManager.containsElement(element) || element.isDirty) {
+                repaintManager.cacheElement(element, size) {
+                    renderElement(element, it, ignoreCache = true)
+                }
+                element.isDirty = false
+            }
+
+            repaintManager.paintElement(element, ctx)
+            if (needRestore) ctx.restore()
+            return
         }
 
         element.clipPath?.let { clipPath ->
@@ -137,33 +165,46 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
                 ctx.save()
                 needRestore = true
             }
-
             ctx.beginPath()
             ctx.applyPath(clipPath.getCommands())
             ctx.closePath()
             ctx.clip()
-
-            // Make sure graphical objects will belong to the different save/restore block
-            // to avoid perf issues in ImageMagick
             ctx.save()
         }
 
         element.render(ctx)
         if (element is Container) {
-            render(element.children, ctx)
+            render(element.children, ctx, ignoreCache)
         }
 
         if (element.clipPath != null) {
-            // Restore clip path save
             ctx.restore()
         }
-
         if (needRestore) {
             ctx.restore()
         }
     }
 
-    private fun requestRedraw() {
-        repaintRequestListeners.forEach { it() }
+
+    private fun DoubleRectangle.expand(w: Double, h: Double): DoubleRectangle {
+        val halfW = w / 2.0
+        val halfH = h / 2.0
+        return DoubleRectangle.XYWH(left - halfW, top - halfH, width + w, height + h)
+    }
+
+    private fun DoubleRectangle.intersect(other: DoubleRectangle): DoubleRectangle? {
+        val newLeft = max(left, other.left)
+        val newTop = max(top, other.top)
+        val newRight = min(right, other.right)
+        val newBottom = min(bottom, other.bottom)
+        if (newLeft >= newRight || newTop >= newBottom) return null
+        return DoubleRectangle.XYWH(newLeft, newTop, newRight - newLeft, newBottom - newTop)
+    }
+
+    private fun DoubleRectangle.contains(other: DoubleRectangle): Boolean {
+        return other.left >= this.left &&
+                other.right <= this.right &&
+                other.top >= this.top &&
+                other.bottom <= this.bottom
     }
 }

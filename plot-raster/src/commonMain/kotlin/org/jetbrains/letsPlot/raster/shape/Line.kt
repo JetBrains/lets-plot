@@ -41,7 +41,7 @@ internal class Line : Figure() {
                 return DoubleRectangle.XYWH(x0.toDouble(), y0.toDouble(), 0.0, 0.0)
             }
 
-            return bBox.inflate(strokeWidth / 2.0)
+            return transform.transform(bBox.inflate(strokeWidth / 2.0))
         }
 }
 

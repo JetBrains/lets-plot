@@ -13,8 +13,10 @@ import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
+import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
+import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
@@ -144,6 +146,39 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         isRepeats = false // Make it a single-shot timer
     }
 
+    // Screenshot Button
+    private val screenshotButton = JButton("Screenshot").apply {
+        addActionListener {
+            if (plotPanel.width > 0 && plotPanel.height > 0) {
+                try {
+                    // Create an image of the plotPanel content
+                    val image = BufferedImage(plotPanel.width, plotPanel.height, BufferedImage.TYPE_INT_RGB)
+                    val g2 = image.createGraphics()
+                    plotPanel.paint(g2)
+                    g2.dispose()
+
+                    // Show Save Dialog
+                    val fileChooser = JFileChooser().apply {
+                        dialogTitle = "Save Screenshot"
+                        selectedFile = File("plot_screenshot.png")
+                    }
+
+                    if (fileChooser.showSaveDialog(this@PlotSpecDebugger) == JFileChooser.APPROVE_OPTION) {
+                        ImageIO.write(image, "png", fileChooser.selectedFile)
+                    }
+                } catch (ex: Exception) {
+                    JOptionPane.showMessageDialog(
+                        this@PlotSpecDebugger,
+                        "Failed to save screenshot: ${ex.message}",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                    ex.printStackTrace()
+                }
+            }
+        }
+    }
+
     // Frontend panel
     private val frontendPanel = JPanel().apply {
         layout = FlowLayout(FlowLayout.LEFT)
@@ -151,6 +186,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         add(frontendComboBox)
         add(pixelDensityLabel)
         add(pixelDensitySpinner)
+        add(Box.createHorizontalStrut(10))
+        add(screenshotButton) // Added the button here
     }
 
     // Favorites components
@@ -740,4 +777,5 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 totalHeight + insets.top + insets.bottom
             )
         }
-    }}
+    }
+}

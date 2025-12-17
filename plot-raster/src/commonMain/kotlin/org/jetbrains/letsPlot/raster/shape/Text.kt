@@ -124,6 +124,8 @@ internal class Text(
     }
 
     override fun onChildAdded(event: CollectionItemEvent<out Element>) {
+        super.onChildAdded(event)
+
         val el = event.newItem as TSpan
         el.inheritValue(TSpan::fill, fill)
         el.inheritValue(TSpan::stroke, stroke)

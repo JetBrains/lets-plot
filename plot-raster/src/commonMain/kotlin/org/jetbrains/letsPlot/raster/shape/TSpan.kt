@@ -119,6 +119,8 @@ internal class TSpan : Figure() {
                 layoutY + bottom
             )
         }
+    override val boundingClientRect: DoubleRectangle
+        get() = transform.transform(bBox)
 
     override fun onPropertyChanged(prop: KProperty<*>) {
         if (

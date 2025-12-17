@@ -198,6 +198,22 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return "[rect $origin, $dimension]"
     }
 
+    fun include(p: DoubleVector): DoubleRectangle {
+        val x0 = min(left, p.x)
+        val x1 = max(right, p.x)
+        val y0 = min(top, p.y)
+        val y1 = max(bottom, p.y)
+        return DoubleRectangle(x0, y0, x1 - x0, y1 - y0)
+    }
+
+    fun include(points: List<DoubleVector>): DoubleRectangle {
+        var rect = this
+        for (p in points) {
+            rect = rect.include(p)
+        }
+        return rect
+    }
+
     companion object {
         fun span(leftTop: DoubleVector, rightBottom: DoubleVector): DoubleRectangle {
             val x0 = min(leftTop.x, rightBottom.x)

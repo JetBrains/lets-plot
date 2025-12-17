@@ -6,6 +6,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
 interface CanvasPeer {
+    fun createCanvas(width: Int, height: Int): Canvas = createCanvas(Vector(width, height))
     fun createCanvas(size: Vector): Canvas
     fun createSnapshot(bitmap: Bitmap): Snapshot
 

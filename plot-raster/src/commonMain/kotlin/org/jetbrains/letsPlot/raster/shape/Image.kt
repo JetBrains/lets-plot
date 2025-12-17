@@ -42,4 +42,7 @@ internal class Image : Element() {
 
     override val bBox: DoubleRectangle
         get() = DoubleRectangle.XYWH(x, y, width, height)
+
+    override val boundingClientRect: DoubleRectangle
+        get() = transform.transform(bBox)
 }
