@@ -149,7 +149,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             val repaintManager = repaintManager ?: return
 
             if (!repaintManager.containsElement(element) || element.isDirty) {
-                repaintManager.cacheElement(element, size) {
+                repaintManager.cacheElement(element, size, ctx.contentScale) {
                     renderElement(element, it, ignoreCache = true)
                 }
                 element.isDirty = false

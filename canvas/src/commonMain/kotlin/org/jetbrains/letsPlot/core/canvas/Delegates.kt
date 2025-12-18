@@ -20,7 +20,8 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 
 class Context2dDelegate(
     private val logEnabled: Boolean = false,
-    private val failIfNotImplemented: Boolean = false
+    private val failIfNotImplemented: Boolean = false,
+    override val contentScale: Double = 1.0
 ) : Context2d {
     private fun log(msg: String) {
         if (logEnabled) {

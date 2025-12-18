@@ -54,7 +54,7 @@ internal class Path : Figure() {
                 return bbox
             }
 
-            return transform.transform(bbox.inflate(strokeWidth / 2.0))
+            return ctm.transform(bbox.inflate(strokeWidth / 2.0))
         }
 
     enum class FillRule {

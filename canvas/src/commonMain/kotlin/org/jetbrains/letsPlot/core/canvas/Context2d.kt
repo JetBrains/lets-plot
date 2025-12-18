@@ -15,6 +15,8 @@ import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 interface Context2d : Disposable {
+    val contentScale: Double
+
     fun clearRect(rect: DoubleRectangle)
     fun drawImage(snapshot: Snapshot)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)

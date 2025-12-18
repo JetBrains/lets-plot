@@ -36,6 +36,6 @@ internal class Rectangle : Figure() {
                 return DoubleRectangle.XYWH(x.toDouble(), y.toDouble(), 0.0, 0.0)
             }
 
-            return transform.transform(bBox.inflate(strokeWidth / 2.0))
+            return ctm.transform(bBox.inflate(strokeWidth / 2.0))
         }
 }

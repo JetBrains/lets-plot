@@ -15,9 +15,7 @@ import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import kotlin.reflect.KProperty
 
-internal class Text(
-    //private val fontManager: FontManager
-) : Container() {
+internal class Text : Container() {
     var textOrigin: VerticalAlignment? by visualProp(null)
     var textAlignment: HorizontalAlignment? by visualProp(null)
     var x: Float by visualProp(0f)

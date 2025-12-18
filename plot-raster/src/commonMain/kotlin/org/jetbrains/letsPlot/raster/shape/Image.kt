@@ -44,5 +44,5 @@ internal class Image : Element() {
         get() = DoubleRectangle.XYWH(x, y, width, height)
 
     override val boundingClientRect: DoubleRectangle
-        get() = transform.transform(bBox)
+        get() = ctm.transform(bBox)
 }
