@@ -1,5 +1,6 @@
 package org.jetbrains.letsPlot.raster.view
 
+import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.math.ceil
@@ -18,7 +19,9 @@ internal class RepaintManager(
         return elementCache.containsKey(element)
     }
 
-    fun cacheElement(element: Element, viewportSize: Vector, contentScale: Double, painter: (Context2d) -> Unit) {
+    fun cacheElement(element: Element, viewportSize: Vector, contentScale: Double, painter: (Context2d) -> Unit): Boolean {
+        val snapshotInverseCtm = element.ctm.inverse() ?: return false
+
         val elementScreenBBox = element.boundingClientRect
 
         val elementPos = elementScreenBBox.origin
@@ -41,22 +44,26 @@ internal class RepaintManager(
         ctx.transform(element.ctm) // apply element transform
         painter.invoke(ctx)
         val snapshot = canvas.takeSnapshot()
-        elementCache[element] = CacheEntry(element, snapshot, scaledElementIntPos.sub(Vector(CACHE_PADDING, CACHE_PADDING)))
+
+        elementCache[element] = CacheEntry(
+            element = element,
+            snapshot = snapshot,
+            snapshotPos = scaledElementIntPos.sub(Vector(CACHE_PADDING, CACHE_PADDING)),
+            snapshotInverseCtm = snapshotInverseCtm
+        )
         ctx.dispose()
+
+        return true
     }
 
     fun paintElement(element: Element, ctx: Context2d) {
         val cacheEntry = elementCache[element] ?: return
 
-        val inverse = element.ctm.inverse()
-        if (inverse == null) {
-            println("RepaintManager: can't invert CTM for element: $element")
-            return
-        }
-
         ctx.save()
-        ctx.transform(inverse)
-        ctx.scale(1.0 / ctx.contentScale)  // adjust for content scale (snapshots are created with contentScale = 1.0)
+        // While panning/zooming, we need to apply the inverse transform to keep the cached snapshot in place
+        ctx.transform(cacheEntry.snapshotInverseCtm)
+        // Scale to 1.0 - snapshot image and positions are in device pixels
+        ctx.scale(1.0 / ctx.contentScale)
         ctx.drawImage(
             snapshot = cacheEntry.snapshot,
             x = cacheEntry.snapshotPos.x.toDouble(),
@@ -76,6 +83,7 @@ internal class RepaintManager(
         val element: Element,
         val snapshot: Canvas.Snapshot,
         val snapshotPos: Vector,
+        val snapshotInverseCtm: AffineTransform
     )
 
     companion object {

@@ -29,7 +29,7 @@ internal abstract class Element {
         (parent?.parents ?: emptyList()) + listOfNotNull(parent)
     }
 
-    var outputCache: Boolean by visualProp(false)
+    var bufferedRendering: Boolean by visualProp(false)
 
     // Internal dirty flag. Defaults to true so we render at least once.
     var isDirty: Boolean = true
@@ -97,7 +97,9 @@ internal abstract class Element {
     }
 
     private fun handlePropertyChange(property: KProperty<*>, oldValue: Any?, newValue: Any?) {
-        markDirty()
+        if (property != Element::ctm) {
+            markDirty()
+        }
 
         onPropertyChanged(property)
 

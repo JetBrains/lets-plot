@@ -152,7 +152,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             ctx.transform(element.transform)
         }
 
-        if (element.outputCache && !ignoreCache
+        if (element.bufferedRendering && !ignoreCache
             && options[RenderingHints.KEY_OFFSCREEN_BUFFERING] == RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON
         ) {
             val repaintManager = repaintManager ?: return
