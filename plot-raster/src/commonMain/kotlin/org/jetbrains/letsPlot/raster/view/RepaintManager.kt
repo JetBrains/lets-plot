@@ -23,21 +23,26 @@ internal class RepaintManager(
         val elementScreenBBox = element.boundingClientRect
 
         val elementPos = elementScreenBBox.origin
+        val scaledElementPos = elementPos.mul(contentScale)
         val elementSize = elementScreenBBox.dimension
 
-        val elementIntPos = floor(elementPos)
-        val subpixelOffset = elementPos.subtract(elementIntPos)
+        val scaledElementIntPos = floor(scaledElementPos)
+        val scaledSubpixelOffset = scaledElementPos.subtract(scaledElementIntPos)
 
-        val snapshotSize = elementSize.add(DoubleVector(2 * CACHE_PADDING, 2 * CACHE_PADDING))
-        val canvas = canvasPeer.createCanvas(ceil(snapshotSize))
+        val snapshotSize = elementSize
+            .add(DoubleVector(2 * CACHE_PADDING, 2 * CACHE_PADDING))
+            .mul(contentScale)
+
+        val canvas = canvasPeer.createCanvas(ceil(snapshotSize), contentScale = 1.0)
         val ctx = canvas.context2d
-        ctx.translate(elementPos.negate()) // move element to (0,0) in canvas space
+        ctx.translate(scaledElementPos.negate()) // move element to (0,0) in canvas space
         ctx.translate(CACHE_PADDING, CACHE_PADDING) // padding for anti-aliasing
-        ctx.translate(subpixelOffset) // snapshot alignment for pixel grid
+        ctx.translate(scaledSubpixelOffset) // snapshot alignment for pixel grid
+        ctx.scale(contentScale, contentScale)
         ctx.transform(element.ctm) // apply element transform
         painter.invoke(ctx)
         val snapshot = canvas.takeSnapshot()
-        elementCache[element] = CacheEntry(element, snapshot, elementIntPos.sub(Vector(CACHE_PADDING, CACHE_PADDING)))
+        elementCache[element] = CacheEntry(element, snapshot, scaledElementIntPos.sub(Vector(CACHE_PADDING, CACHE_PADDING)))
         ctx.dispose()
     }
 
@@ -48,8 +53,8 @@ internal class RepaintManager(
         ctx.setTransform(AffineTransform.IDENTITY)
         ctx.drawImage(
             snapshot = cacheEntry.snapshot,
-            x = cacheEntry.snapshotPos.x.toDouble() * ctx.contentScale,
-            y = cacheEntry.snapshotPos.y.toDouble() * ctx.contentScale,
+            x = cacheEntry.snapshotPos.x.toDouble(),
+            y = cacheEntry.snapshotPos.y.toDouble(),
             dw = cacheEntry.snapshot.size.x.toDouble(),
             dh = cacheEntry.snapshot.size.y.toDouble()
         )

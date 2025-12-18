@@ -19,6 +19,10 @@ class AwtCanvasPeer(
         return AwtCanvas.create(size, pixelDensity)
     }
 
+    override fun createCanvas(size: Vector, contentScale: Double): Canvas {
+        return AwtCanvas.create(size, contentScale)
+    }
+
     fun createCanvas(width: Number, height: Number): AwtCanvas {
         return AwtCanvas.create(Vector(width.toInt(), height.toInt()), pixelDensity)
     }

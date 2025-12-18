@@ -249,7 +249,7 @@ class ShapesTest {
     }
 
     private fun withTextMeasurer(measurer: (String, ContextStateDelegate) -> TextMetrics) : SvgCanvasPeer {
-        val ctx = object : ContextStateDelegate() {
+        val ctx = object : ContextStateDelegate(contentScale = 1.0) {
             override fun measureText(str: String): TextMetrics = measurer(str, this)
         }
 
@@ -261,6 +261,7 @@ class ShapesTest {
 
         val canvasPeer: CanvasPeer = object : CanvasPeer {
             override fun createCanvas(size: Vector): Canvas = canvas
+            override fun createCanvas(size: Vector, contentScale: Double) = TODO("Not yet implemented")
             override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
             override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
             override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
