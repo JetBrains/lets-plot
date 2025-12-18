@@ -23,6 +23,9 @@ import kotlin.math.ceil
 typealias PlotCanvasFigure2 = PlotCanvasFigure
 
 class PlotCanvasFigure : CanvasFigure2 {
+    fun setRenderingHint(key: Any, value: Any) {
+        plotSvgFigure.setOption(key, value)
+    }
     override val eventPeer: MouseEventPeer = MouseEventPeer()
     override val size: Vector get() {
         val (w, h) = sizingPolicy.resize(

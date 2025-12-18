@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.raster.shape.*
 import kotlin.math.roundToInt
 
@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 internal object DebugOptions {
     const val DEBUG_DRAWING_ENABLED: Boolean = false
 
-    fun drawBoundingBoxes(rootElement: Pane, canvas: Canvas) {
+    fun drawBoundingBoxes(rootElement: Pane, ctx: Context2d) {
         //val strokePaint = Paint().setStroke(true)
         //val fillPaint = Paint().setStroke(false)
 
@@ -32,12 +32,12 @@ internal object DebugOptions {
 
             val fillColor = color.changeAlpha((255*0.02).roundToInt())
             val strokeColor = color.changeAlpha((255*0.7).roundToInt())
-            canvas.context2d.setFillStyle(fillColor)
-            canvas.context2d.setStrokeStyle(strokeColor)
+            ctx.setFillStyle(fillColor)
+            ctx.setStrokeStyle(strokeColor)
 
-            val screenBounds = el.absoluteBBox
-            canvas.context2d.fillRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
-            canvas.context2d.strokeRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
+            val screenBounds = el.boundingClientRect
+            ctx.fillRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
+            ctx.strokeRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
         }
     }
 }

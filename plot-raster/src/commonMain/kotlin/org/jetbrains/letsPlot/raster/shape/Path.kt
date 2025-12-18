@@ -42,9 +42,9 @@ internal class Path : Figure() {
     override val bBox: DoubleRectangle
         get() {
             val path = pathData ?: return DoubleRectangle.XYWH(0, 0, 0, 0)
-            val strokeWidth = strokePaint?.strokeWidth ?: return path.bounds ?: DoubleRectangle.ZERO
+            val strokeWidth = strokePaint?.strokeWidth ?: return path.bounds
 
-            return path.bounds?.inflate(strokeWidth / 2.0) ?: DoubleRectangle.ZERO
+            return path.bounds.inflate(strokeWidth / 2.0)
         }
 
     override val boundingClientRect: DoubleRectangle

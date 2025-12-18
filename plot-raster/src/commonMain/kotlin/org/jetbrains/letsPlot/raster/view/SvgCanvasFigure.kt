@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
+import org.jetbrains.letsPlot.raster.mapping.svg.DebugOptions.drawBoundingBoxes
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
 import org.jetbrains.letsPlot.raster.shape.Container
@@ -36,13 +37,12 @@ import kotlin.math.min
 typealias SvgCanvasFigure2 = SvgCanvasFigure
 
 class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
-    private val ENABLE_OPTIMIZATION = true
-
-    override val size: Vector get() {
-        val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
-        val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
-        return Vector(contentWidth, contentHeight)
-    }
+    override val size: Vector
+        get() {
+            val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0
+            val contentHeight = svgSvgElement.height().get()?.let { ceil(it).toInt() } ?: 0
+            return Vector(contentWidth, contentHeight)
+        }
 
     override val eventPeer: MouseEventPeer = MouseEventPeer()
 
@@ -53,6 +53,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             requestRedraw()
         }
 
+    private val options = mutableMapOf<Any, Any>()
     private var canvasSize: Vector? = null
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
@@ -84,6 +85,8 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     init {
+        setOption(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON)
+
         eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
                 val hrefClickHandler = onHrefClick ?: return
@@ -113,6 +116,10 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
 
     override fun paint(context2d: Context2d) {
         renderElement(rootMapper.target, context2d)
+
+        if (options[RenderingHints.KEY_DEBUG_BBOXES] == RenderingHints.VALUE_DEBUG_BBOXES_ON) {
+            drawBoundingBoxes(rootMapper.target, context2d)
+        }
     }
 
     override fun onRepaintRequested(listener: () -> Unit): Registration {
@@ -145,7 +152,9 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             ctx.transform(element.transform)
         }
 
-        if (ENABLE_OPTIMIZATION && element.outputCache && !ignoreCache) {
+        if (element.outputCache && !ignoreCache
+            && options[RenderingHints.KEY_OFFSCREEN_BUFFERING] == RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON
+        ) {
             val repaintManager = repaintManager ?: return
 
             if (!repaintManager.containsElement(element) || element.isDirty) {
@@ -206,5 +215,9 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
                 other.right <= this.right &&
                 other.top >= this.top &&
                 other.bottom <= this.bottom
+    }
+
+    fun setOption(key: Any, value: Any) {
+        options[key] = value
     }
 }

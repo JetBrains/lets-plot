@@ -1,6 +1,5 @@
 package org.jetbrains.letsPlot.raster.view
 
-import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.math.ceil
@@ -49,8 +48,15 @@ internal class RepaintManager(
     fun paintElement(element: Element, ctx: Context2d) {
         val cacheEntry = elementCache[element] ?: return
 
+        val inverse = element.ctm.inverse()
+        if (inverse == null) {
+            println("RepaintManager: can't invert CTM for element: $element")
+            return
+        }
+
         ctx.save()
-        ctx.setTransform(AffineTransform.IDENTITY)
+        ctx.transform(inverse)
+        ctx.scale(1.0 / ctx.contentScale)  // adjust for content scale (snapshots are created with contentScale = 1.0)
         ctx.drawImage(
             snapshot = cacheEntry.snapshot,
             x = cacheEntry.snapshotPos.x.toDouble(),

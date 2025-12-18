@@ -25,10 +25,17 @@ internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
     SvgNodeContainer(svgDocument)
 
     val canvasPeer = object : CanvasPeer {
-        override fun createCanvas(size: Vector) = object : Canvas {
-            override val context2d: Context2d = DummyContext2D()
-            override val size: Vector = Vector.ZERO
-            override fun takeSnapshot(): Canvas.Snapshot = TODO("Not yet implemented")
+        override fun createCanvas(size: Vector) = createCanvas(size, contentScale = 1.0)
+
+        override fun createCanvas(
+            size: Vector,
+            contentScale: Double
+        ): Canvas {
+            return object : Canvas {
+                override val context2d: Context2d = DummyContext2D()
+                override val size: Vector = Vector.ZERO
+                override fun takeSnapshot(): Canvas.Snapshot = TODO("Not yet implemented")
+            }
         }
 
         override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")

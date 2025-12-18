@@ -28,6 +28,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.RenderingHints
 import kotlin.time.TimeSource
 
 object PlotReprGenerator {
@@ -212,6 +213,9 @@ object PlotReprGenerator {
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
             val plotCanvasFigure = PlotCanvasFigure()
+            // There is no interactive rendering in export - so offscreen buffering is not needed and just wastes memory
+            plotCanvasFigure.setRenderingHint(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF)
+
             plotCanvasFigure.update(
                 processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
                 sizingPolicy = exportParameters.sizingPolicy,
@@ -226,7 +230,7 @@ object PlotReprGenerator {
 
             canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
-            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size, contentScale = exportParameters.scaleFactor)
             val ctx = canvas.context2d
 
             plotCanvasFigure.paint(ctx)
