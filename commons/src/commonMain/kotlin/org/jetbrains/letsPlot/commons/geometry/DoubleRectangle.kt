@@ -174,6 +174,13 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         )
     }
 
+    fun inflate(deltaX: Double, deltaY: Double): DoubleRectangle {
+        return DoubleRectangle(
+            origin.subtract(DoubleVector(deltaX, deltaY)),
+            dimension.add(DoubleVector(deltaX * 2, deltaY * 2))
+        )
+    }
+
     fun rotate(angle: Double, around: DoubleVector): List<DoubleVector> {
         val lt = origin.rotateAround(around, angle)
         val lb = DoubleVector(left, bottom).rotateAround(around, angle)

@@ -1,8 +1,8 @@
 package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.math.add
 import org.jetbrains.letsPlot.commons.intern.math.ceil
 import org.jetbrains.letsPlot.commons.intern.math.floor
 import org.jetbrains.letsPlot.commons.intern.math.subtract
@@ -22,25 +22,22 @@ internal class RepaintManager(
     fun cacheElement(element: Element, viewportSize: Vector, contentScale: Double, painter: (Context2d) -> Unit): Boolean {
         val snapshotInverseCtm = element.ctm.inverse() ?: return false
 
-        val elementScreenBBox = element.boundingClientRect
+        val scaledElementPos = element.boundingClientRect.origin.mul(contentScale)
 
-        val elementPos = elementScreenBBox.origin
-        val scaledElementPos = elementPos.mul(contentScale)
-        val elementSize = elementScreenBBox.dimension
-
-        val scaledElementIntPos = floor(scaledElementPos)
+        val scaledElementIntPos = scaledElementPos.floor()
         val scaledSubpixelOffset = scaledElementPos.subtract(scaledElementIntPos)
 
-        val snapshotSize = elementSize
-            .add(DoubleVector(2 * CACHE_PADDING, 2 * CACHE_PADDING))
+        val snapshotSize = element.boundingClientRect.dimension
+            .add(2 * CACHE_PADDING_VALUE, 2 * CACHE_PADDING_VALUE)
             .mul(contentScale)
+            .ceil()
 
-        val canvas = canvasPeer.createCanvas(ceil(snapshotSize), contentScale = 1.0)
+        val canvas = canvasPeer.createCanvas(snapshotSize, contentScale = 1.0)
         val ctx = canvas.context2d
+        ctx.translate(CACHE_PADDING.toDoubleVector()) // padding for anti-aliasing
         ctx.translate(scaledElementPos.negate()) // move element to (0,0) in canvas space
-        ctx.translate(CACHE_PADDING, CACHE_PADDING) // padding for anti-aliasing
         ctx.translate(scaledSubpixelOffset) // snapshot alignment for pixel grid
-        ctx.scale(contentScale, contentScale)
+        ctx.scale(contentScale)
         ctx.transform(element.ctm) // apply element transform
         painter.invoke(ctx)
         val snapshot = canvas.takeSnapshot()
@@ -48,7 +45,7 @@ internal class RepaintManager(
         elementCache[element] = CacheEntry(
             element = element,
             snapshot = snapshot,
-            snapshotPos = scaledElementIntPos.sub(Vector(CACHE_PADDING, CACHE_PADDING)),
+            snapshotPos = scaledElementIntPos.sub(CACHE_PADDING),
             snapshotInverseCtm = snapshotInverseCtm
         )
         ctx.dispose()
@@ -87,7 +84,8 @@ internal class RepaintManager(
     )
 
     companion object {
-        private const val CACHE_PADDING: Int = 2
+        private const val CACHE_PADDING_VALUE: Int = 2
+        private val CACHE_PADDING: Vector = Vector(CACHE_PADDING_VALUE, CACHE_PADDING_VALUE)
         private const val OVERSCAN_FACTOR = 1.5
     }
 }
