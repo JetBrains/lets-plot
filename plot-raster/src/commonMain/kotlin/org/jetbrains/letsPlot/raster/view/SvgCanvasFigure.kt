@@ -157,7 +157,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         ) {
             val repaintManager = repaintManager ?: return
 
-            if (!repaintManager.isCacheValid(element, size)) {
+            if (!repaintManager.isCacheValid(element, size, ctx.contentScale)) {
                 repaintManager.cacheElement(element, size, ctx.contentScale) {
                     renderElement(element, it, ignoreCache = true)
                 }

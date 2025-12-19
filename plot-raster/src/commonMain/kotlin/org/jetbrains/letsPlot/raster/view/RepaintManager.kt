@@ -5,7 +5,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.math.ceil
 import org.jetbrains.letsPlot.commons.intern.math.floor
-import org.jetbrains.letsPlot.commons.intern.math.subtract
+import org.jetbrains.letsPlot.commons.intern.math.mul
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.raster.shape.Element
@@ -15,29 +15,25 @@ internal class RepaintManager(
 ) : Disposable {
     private val elementCache = mutableMapOf<Element, CacheEntry>()
 
-    fun containsElement(element: Element): Boolean {
-        return elementCache.containsKey(element)
-    }
+    fun isCacheValid(element: Element, viewportSize: Vector, contentScale: Double): Boolean {
+        if (element.isDirty) {
+            return false
+        }
 
-    // NEW: Check if the current visible area is fully covered by the cache
-    fun isCacheValid(element: Element, viewportSize: Vector): Boolean {
-        if (element.isDirty) return false
-        //return element in elementCache
         val entry = elementCache[element] ?: return false
 
-        // 1. Calculate the 'Required Area' in Screen Space (Viewport intersection)
+        if (entry.contentScale != contentScale) {
+            return false
+        }
+
         val viewportRect = DoubleRectangle.WH(viewportSize)
         val elementBounds = element.boundingClientRect
         val requiredScreenRect = viewportRect.intersect(elementBounds) ?: return true
 
-        // 2. Project 'Required Area' to Local Space
-        // We must compare in Local Space because the element might have panned,
-        // shifting the Screen coordinates relative to the cached content.
-        val currentInverseCtm = element.ctm.inverse() ?: return false
-        val requiredLocalRect = currentInverseCtm.transform(requiredScreenRect)
+        val inverseCtm = element.ctm.inverse() ?: return false
+        val requiredLocalRect = inverseCtm.transform(requiredScreenRect)
 
-        // 3. Check containment
-        return entry.cachedLocalBounds.contains(requiredLocalRect)
+        return entry.snapshotLocalBounds.contains(requiredLocalRect)
     }
 
     fun cacheElement(
@@ -46,15 +42,12 @@ internal class RepaintManager(
         contentScale: Double,
         painter: (Context2d) -> Unit
     ): Boolean {
-        println("RepaintManager: Caching element id='${element.id}'")
-        val inverseCtm = element.ctm.inverse() ?: return false
+        val elementInverseCtm = element.ctm.inverse() ?: return false
 
         val elementBounds = element.boundingClientRect
-        val viewportRect = DoubleRectangle.WH(viewportSize)
+        val overscanAmount = viewportSize.mul((OVERSCAN_FACTOR - 1.0) / 2.0)
 
-        // Visible Area + Overscan
-        val overscanAmount = viewportRect.dimension.mul((OVERSCAN_FACTOR - 1.0) / 2.0)
-        val targetRect = viewportRect
+        val targetRect = DoubleRectangle.WH(viewportSize)
             .inflate(overscanAmount)
             .intersect(elementBounds)
             ?: return false // Element is completely off-screen
@@ -63,10 +56,8 @@ internal class RepaintManager(
         val physicalTargetDimension = targetRect.dimension.mul(contentScale)
 
         val alignedOrigin = physicalTargetOrigin.floor()
-        val fraction = physicalTargetOrigin.subtract(alignedOrigin)
 
         val bufferSize = physicalTargetDimension
-            .add(fraction)
             .ceil()
             .add(CACHE_PADDING_SIZE.mul(2))
 
@@ -75,43 +66,40 @@ internal class RepaintManager(
         val canvas = canvasPeer.createCanvas(bufferSize, contentScale = 1.0)
         val ctx = canvas.context2d
 
-        ctx.translate(CACHE_PADDING_SIZE)
+        // Since 'physicalTargetOrigin' might be 'alignedOrigin + 0.5',
+        // the content will naturally draw at '0.5', preserving sub-pixel positions.
         ctx.translate(alignedOrigin.negate())
-        ctx.scale(contentScale, contentScale)
+        ctx.translate(CACHE_PADDING_SIZE)
+        ctx.scale(contentScale)
         ctx.transform(element.ctm)
 
         painter.invoke(ctx)
 
-        val snapshot = canvas.takeSnapshot()
-
-        // Calculate the Local Bounds of what we just cached
-        // targetRect is the Screen Space area we wanted.
-        val cachedLocalBounds = inverseCtm.transform(targetRect)
-
+        elementCache[element]?.snapshot?.dispose()
         elementCache[element] = CacheEntry(
-            snapshot = snapshot,
-            snapshotOrigin = alignedOrigin.sub(CACHE_PADDING_SIZE),
-            inverseCtm = inverseCtm,
-            cachedLocalBounds = cachedLocalBounds
+            snapshot = canvas.takeSnapshot(),
+            snapshotPhysicalOrigin = alignedOrigin.sub(CACHE_PADDING_SIZE),
+            elementInverseCtm = elementInverseCtm,
+            snapshotLocalBounds = elementInverseCtm.transform(targetRect),
+            contentScale = contentScale
         )
+
         ctx.dispose()
 
         return true
     }
 
     fun paintElement(element: Element, ctx: Context2d) {
-        val cacheEntry = elementCache[element] ?: return
+        val entry = elementCache[element] ?: return
 
         ctx.save()
-        ctx.transform(cacheEntry.inverseCtm)
-        ctx.scale(1.0 / ctx.contentScale)
-
+        ctx.transform(entry.elementInverseCtm) // to element local coords
+        ctx.scale(1.0 / entry.contentScale) // to physical pixel coords
         ctx.drawImage(
-            snapshot = cacheEntry.snapshot,
-            x = cacheEntry.snapshotOrigin.x.toDouble(),
-            y = cacheEntry.snapshotOrigin.y.toDouble()
+            snapshot = entry.snapshot,
+            x = entry.snapshotPhysicalOrigin.x.toDouble(),
+            y = entry.snapshotPhysicalOrigin.y.toDouble()
         )
-
         ctx.restore()
     }
 
@@ -122,14 +110,15 @@ internal class RepaintManager(
 
     private class CacheEntry(
         val snapshot: Canvas.Snapshot,
-        val snapshotOrigin: Vector,
-        val inverseCtm: AffineTransform,
-        val cachedLocalBounds: DoubleRectangle // Added: The local area covered by this cache
+        val snapshotPhysicalOrigin: Vector, // in physical pixel coordinates (for context with scale = 1.0)
+        val elementInverseCtm: AffineTransform,
+        val snapshotLocalBounds: DoubleRectangle,
+        val contentScale: Double
     )
 
     companion object {
         private const val CACHE_PADDING: Int = 2
-        private const val OVERSCAN_FACTOR = 1.1
         private val CACHE_PADDING_SIZE = Vector(CACHE_PADDING, CACHE_PADDING)
+        private const val OVERSCAN_FACTOR = 2.5
     }
 }

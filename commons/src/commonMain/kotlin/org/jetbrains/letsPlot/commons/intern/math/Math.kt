@@ -71,6 +71,10 @@ fun Vector.subtract(other: DoubleVector): DoubleVector {
     return DoubleVector(this.x - other.x, this.y - other.y)
 }
 
+fun Vector.mul(d: Double): DoubleVector {
+    return DoubleVector(x * d, y * d)
+}
+
 fun areEqual(a: Double, b: Double, epsilon: Double = 0.00001) = abs(a - b) < epsilon
 
 
