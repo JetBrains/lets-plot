@@ -167,17 +167,18 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return DoubleRectangle(newOrigin, newSize)
     }
 
-    fun inflate(delta: Double): DoubleRectangle {
-        return DoubleRectangle(
-            origin.subtract(DoubleVector(delta, delta)),
-            dimension.add(DoubleVector(delta * 2, delta * 2))
-        )
+    fun inflate(amount: DoubleVector): DoubleRectangle {
+        return inflate(amount.x, amount.y)
     }
 
-    fun inflate(deltaX: Double, deltaY: Double): DoubleRectangle {
+    fun inflate(amount: Double): DoubleRectangle {
+        return inflate(amount, amount)
+    }
+
+    fun inflate(amountX: Double, amountY: Double): DoubleRectangle {
         return DoubleRectangle(
-            origin.subtract(DoubleVector(deltaX, deltaY)),
-            dimension.add(DoubleVector(deltaX * 2, deltaY * 2))
+            origin.subtract(DoubleVector(amountX, amountY)),
+            dimension.add(DoubleVector(amountX * 2, amountY * 2))
         )
     }
 

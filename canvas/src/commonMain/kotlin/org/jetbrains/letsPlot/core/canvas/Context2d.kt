@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.canvas
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
@@ -114,6 +115,10 @@ interface Context2d : Disposable {
 
 fun Context2d.translate(v: DoubleVector) {
     translate(v.x, v.y)
+}
+
+fun Context2d.translate(v: Vector) {
+    translate(v.x.toDouble(), v.y.toDouble())
 }
 
 fun Context2d.translate(x: Int, y: Int) {
