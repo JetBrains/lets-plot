@@ -2,7 +2,6 @@ package org.jetbrains.letsPlot.raster.view
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.math.add
 import org.jetbrains.letsPlot.commons.intern.math.ceil
 import org.jetbrains.letsPlot.commons.intern.math.floor
 import org.jetbrains.letsPlot.commons.intern.math.subtract
@@ -12,39 +11,52 @@ import org.jetbrains.letsPlot.raster.shape.Element
 
 internal class RepaintManager(
     private val canvasPeer: CanvasPeer
-): Disposable {
+) : Disposable {
     private val elementCache = mutableMapOf<Element, CacheEntry>()
 
     fun containsElement(element: Element): Boolean {
         return elementCache.containsKey(element)
     }
 
-    fun cacheElement(element: Element, viewportSize: Vector, contentScale: Double, painter: (Context2d) -> Unit): Boolean {
-        val snapshotInverseCtm = element.ctm.inverse() ?: return false
+    fun cacheElement(
+        element: Element,
+        viewportSize: Vector,
+        contentScale: Double,
+        painter: (Context2d) -> Unit
+    ): Boolean {
+        val inverseCtm = element.ctm.inverse() ?: return false
 
-        val scaledElementPos = element.boundingClientRect.origin.mul(contentScale)
-        val scaledElementIntPos = scaledElementPos.floor()
+        val elementBounds = element.boundingClientRect
+        val physicalOrigin = elementBounds.origin.mul(contentScale)
+        val physicalDimension = elementBounds.dimension.mul(contentScale)
 
-        val snapshotSize = element.boundingClientRect.dimension
-            .add(2 * CACHE_PADDING_VALUE, 2 * CACHE_PADDING_VALUE)
-            .mul(contentScale)
+        val fraction = physicalOrigin.subtract(physicalOrigin.floor())
+        val bufferSize = physicalDimension
+            .add(fraction)
             .ceil()
+            .add(CACHE_PADDING_SIZE.mul(2))
 
-        val canvas = canvasPeer.createCanvas(snapshotSize, contentScale = 1.0)
+        if (bufferSize.x <= 0 || bufferSize.y <= 0) return false
+
+        val canvas = canvasPeer.createCanvas(bufferSize, contentScale = 1.0)
         val ctx = canvas.context2d
-        ctx.translate(CACHE_PADDING.toDoubleVector()) // padding for anti-aliasing
-        ctx.translate(scaledElementPos.negate()) // move element to (0,0) in canvas space
-        ctx.translate(scaledElementPos.subtract(scaledElementIntPos)) // snapshot alignment for pixel grid
-        ctx.scale(contentScale)
-        ctx.transform(element.ctm) // apply element transform
+
+        // From Logical Screen Space -> Local Space
+        ctx.translate(physicalOrigin.floor().negate().toDoubleVector())
+        ctx.translate(CACHE_PADDING_SIZE.toDoubleVector())
+        ctx.scale(contentScale, contentScale)
+        ctx.transform(element.ctm)
+
         painter.invoke(ctx)
+
         val snapshot = canvas.takeSnapshot()
 
         elementCache[element] = CacheEntry(
             element = element,
             snapshot = snapshot,
-            snapshotPos = scaledElementIntPos.sub(CACHE_PADDING),
-            snapshotInverseCtm = snapshotInverseCtm
+            physicalOrigin = physicalOrigin.floor().sub(CACHE_PADDING_SIZE),
+            inverseCtm = inverseCtm,
+            bufferSize = bufferSize
         )
         ctx.dispose()
 
@@ -55,17 +67,19 @@ internal class RepaintManager(
         val cacheEntry = elementCache[element] ?: return
 
         ctx.save()
-        // While panning/zooming, we need to apply the inverse transform to keep the cached snapshot in place
-        ctx.transform(cacheEntry.snapshotInverseCtm)
-        // Scale to 1.0 - snapshot image and positions are in device pixels
+
+        // From Local Space -> Logical Screen Space
+        ctx.transform(cacheEntry.inverseCtm)
         ctx.scale(1.0 / ctx.contentScale)
+
         ctx.drawImage(
             snapshot = cacheEntry.snapshot,
-            x = cacheEntry.snapshotPos.x.toDouble(),
-            y = cacheEntry.snapshotPos.y.toDouble(),
-            dw = cacheEntry.snapshot.size.x.toDouble(),
-            dh = cacheEntry.snapshot.size.y.toDouble()
+            x = cacheEntry.physicalOrigin.x.toDouble(),
+            y = cacheEntry.physicalOrigin.y.toDouble(),
+            dw = cacheEntry.bufferSize.x.toDouble(),
+            dh = cacheEntry.bufferSize.y.toDouble()
         )
+
         ctx.restore()
     }
 
@@ -77,13 +91,13 @@ internal class RepaintManager(
     private class CacheEntry(
         val element: Element,
         val snapshot: Canvas.Snapshot,
-        val snapshotPos: Vector,
-        val snapshotInverseCtm: AffineTransform
+        val physicalOrigin: Vector,
+        val inverseCtm: AffineTransform,
+        val bufferSize: Vector
     )
 
     companion object {
-        private const val CACHE_PADDING_VALUE: Int = 2
-        private val CACHE_PADDING: Vector = Vector(CACHE_PADDING_VALUE, CACHE_PADDING_VALUE)
-        private const val OVERSCAN_FACTOR = 1.5
+        private const val CACHE_PADDING: Int = 2
+        private val CACHE_PADDING_SIZE = Vector(CACHE_PADDING, CACHE_PADDING)
     }
 }
