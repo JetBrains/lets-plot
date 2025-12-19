@@ -23,9 +23,7 @@ internal class RepaintManager(
         val snapshotInverseCtm = element.ctm.inverse() ?: return false
 
         val scaledElementPos = element.boundingClientRect.origin.mul(contentScale)
-
         val scaledElementIntPos = scaledElementPos.floor()
-        val scaledSubpixelOffset = scaledElementPos.subtract(scaledElementIntPos)
 
         val snapshotSize = element.boundingClientRect.dimension
             .add(2 * CACHE_PADDING_VALUE, 2 * CACHE_PADDING_VALUE)
@@ -36,7 +34,7 @@ internal class RepaintManager(
         val ctx = canvas.context2d
         ctx.translate(CACHE_PADDING.toDoubleVector()) // padding for anti-aliasing
         ctx.translate(scaledElementPos.negate()) // move element to (0,0) in canvas space
-        ctx.translate(scaledSubpixelOffset) // snapshot alignment for pixel grid
+        ctx.translate(scaledElementPos.subtract(scaledElementIntPos)) // snapshot alignment for pixel grid
         ctx.scale(contentScale)
         ctx.transform(element.ctm) // apply element transform
         painter.invoke(ctx)
