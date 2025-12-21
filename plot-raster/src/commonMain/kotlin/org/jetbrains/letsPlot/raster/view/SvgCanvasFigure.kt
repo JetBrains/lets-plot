@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.raster.view
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -27,8 +26,6 @@ import org.jetbrains.letsPlot.raster.shape.Container
 import org.jetbrains.letsPlot.raster.shape.Element
 import org.jetbrains.letsPlot.raster.shape.reversedDepthFirstTraversal
 import kotlin.math.ceil
-import kotlin.math.max
-import kotlin.math.min
 
 @Deprecated(
     "Migrate to SvgCanvasFigure and CanvasPane",
@@ -192,29 +189,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         if (needRestore) {
             ctx.restore()
         }
-    }
-
-
-    private fun DoubleRectangle.expand(w: Double, h: Double): DoubleRectangle {
-        val halfW = w / 2.0
-        val halfH = h / 2.0
-        return DoubleRectangle.XYWH(left - halfW, top - halfH, width + w, height + h)
-    }
-
-    private fun DoubleRectangle.intersect(other: DoubleRectangle): DoubleRectangle? {
-        val newLeft = max(left, other.left)
-        val newTop = max(top, other.top)
-        val newRight = min(right, other.right)
-        val newBottom = min(bottom, other.bottom)
-        if (newLeft >= newRight || newTop >= newBottom) return null
-        return DoubleRectangle.XYWH(newLeft, newTop, newRight - newLeft, newBottom - newTop)
-    }
-
-    private fun DoubleRectangle.contains(other: DoubleRectangle): Boolean {
-        return other.left >= this.left &&
-                other.right <= this.right &&
-                other.top >= this.top &&
-                other.bottom <= this.bottom
     }
 
     fun setOption(key: Any, value: Any) {

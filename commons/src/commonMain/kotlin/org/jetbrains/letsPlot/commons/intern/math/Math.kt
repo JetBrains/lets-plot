@@ -12,22 +12,6 @@ import kotlin.math.*
 fun toRadians(degrees: Double): Double = degrees * PI / 180.0
 fun toDegrees(radians: Double): Double = radians * 180.0 / PI
 
-fun round(v: DoubleVector) = round(v.x, v.y)
-
-fun DoubleVector.ceil(): Vector {
-    return Vector(
-        ceil(this.x).toInt(),
-        ceil(this.y).toInt()
-    )
-}
-
-fun DoubleVector.floor(): Vector {
-    return Vector(
-        floor(this.x).toInt(),
-        floor(this.y).toInt()
-    )
-}
-
 fun round(x: Double, y: Double): Vector {
     return Vector(
         round(x).toInt(),
@@ -53,26 +37,6 @@ fun floor(x: Double, y: Double): Vector {
 
 fun Int.ipow(e: Int): Double {
     return this.toDouble().pow(e)
-}
-
-fun DoubleVector.subtract(other: Vector): DoubleVector {
-    return DoubleVector(this.x - other.x, this.y - other.y)
-}
-
-fun DoubleVector.add(other: Vector): DoubleVector {
-    return DoubleVector(this.x + other.x, this.y + other.y)
-}
-
-fun DoubleVector.add(x: Number, y: Number): DoubleVector {
-    return DoubleVector(this.x + x.toDouble(), this.y + y.toDouble())
-}
-
-fun Vector.subtract(other: DoubleVector): DoubleVector {
-    return DoubleVector(this.x - other.x, this.y - other.y)
-}
-
-fun Vector.mul(d: Double): DoubleVector {
-    return DoubleVector(x * d, y * d)
 }
 
 fun areEqual(a: Double, b: Double, epsilon: Double = 0.00001) = abs(a - b) < epsilon

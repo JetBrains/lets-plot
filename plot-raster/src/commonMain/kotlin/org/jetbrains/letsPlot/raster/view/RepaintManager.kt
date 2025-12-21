@@ -1,11 +1,6 @@
 package org.jetbrains.letsPlot.raster.view
 
-import org.jetbrains.letsPlot.commons.geometry.AffineTransform
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.math.ceil
-import org.jetbrains.letsPlot.commons.intern.math.floor
-import org.jetbrains.letsPlot.commons.intern.math.mul
+import org.jetbrains.letsPlot.commons.geometry.*
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.raster.shape.Element
@@ -54,10 +49,10 @@ internal class RepaintManager(
         val physicalTargetOrigin = targetRect.origin.mul(contentScale)
         val physicalTargetDimension = targetRect.dimension.mul(contentScale)
 
-        val alignedOrigin = physicalTargetOrigin.floor()
+        val alignedOrigin = physicalTargetOrigin.floorToVector()
 
         val bufferSize = physicalTargetDimension
-            .ceil()
+            .ceilToVector()
             .add(CACHE_PADDING_SIZE.mul(2))
 
         if (bufferSize.x <= 0 || bufferSize.y <= 0) return false
