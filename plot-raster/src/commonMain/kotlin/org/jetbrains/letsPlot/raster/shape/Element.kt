@@ -42,8 +42,26 @@ internal abstract class Element {
 
     var peer: SvgCanvasPeer? by visualProp(null)
 
-    fun detached() {
-        onDetached()
+    // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
+    // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
+    val ctm: AffineTransform by computedProp(Element::parent, Element::transform) {
+        val parentCtm = parent?.ctm ?: AffineTransform.IDENTITY
+        parentCtm.concat(transform)
+    }
+
+    // Bounds in local coordinates without applying transform and stroke width
+    abstract val bBoxLocal: DoubleRectangle
+    // Bounds in global coordinates with applying transform and stroke width
+    abstract val bBoxGlobal: DoubleRectangle
+
+    open fun render(ctx: Context2d) {}
+
+    open fun repr(): String? {
+        return ", ctm: ${ctm.repr()}, $bBoxGlobal"
+    }
+
+    fun detach() {
+        onDetach()
     }
 
     fun <T> computedProp(
@@ -78,7 +96,7 @@ internal abstract class Element {
     }
 
     protected open fun onPropertyChanged(prop: KProperty<*>) {}
-    protected open fun onDetached() {}
+    protected open fun onDetach() {}
 
     // Set value from parent if not set explicitly
     internal fun <TValue> inheritValue(prop: KProperty<*>, value: TValue) {
@@ -117,34 +135,9 @@ internal abstract class Element {
         parent?.markDirty()
     }
 
-
-
     override fun toString(): String {
         val idStr = id?.let { "id: '$it' " } ?: ""
         return "class: ${this::class.simpleName}$idStr${repr()}"
-    }
-
-    // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
-    // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
-    val ctm: AffineTransform by computedProp(Element::parent, Element::transform) {
-        val parentCtm = parent?.ctm ?: AffineTransform.IDENTITY
-        parentCtm.concat(transform)
-    }
-
-    // Bounds in local coordinates without applying transform and stroke width
-    open val bBox: DoubleRectangle = DoubleRectangle.XYWH(0, 0, 0, 0)
-
-    open val absoluteBBox: DoubleRectangle
-        get() = ctm.transform(bBox)
-
-    // Bounds in local coordinates after applying transform and with stroke width considered
-    // Used for hit-testing and redraw region calculation
-    abstract val boundingClientRect: DoubleRectangle
-
-    open fun render(ctx: Context2d) {}
-
-    open fun repr(): String? {
-        return ", ctm: ${ctm.repr()}, $absoluteBBox"
     }
 }
 

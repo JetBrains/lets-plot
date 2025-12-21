@@ -28,7 +28,7 @@ internal class Ellipse : Figure() {
         strokePaint?.let { ctx.stroke(it) }
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() {
             return DoubleRectangle.XYWH(
                 centerX - radiusX,
@@ -38,12 +38,12 @@ internal class Ellipse : Figure() {
             )
         }
 
-    override val boundingClientRect: DoubleRectangle
+    override val bBoxGlobal: DoubleRectangle
         get() {
             if (radiusX <= 0 || radiusY <= 0) {
                 return DoubleRectangle.XYWH(centerX.toDouble(), centerY.toDouble(), 0.0, 0.0)
             }
 
-            return ctm.transform(bBox.inflate(strokeWidth / 2.0))
+            return ctm.transform(bBoxLocal.inflate(strokeWidth / 2.0))
         }
 }

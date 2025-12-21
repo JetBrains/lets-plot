@@ -27,8 +27,7 @@ internal class RepaintManager(
         }
 
         val viewportRect = DoubleRectangle.WH(viewportSize)
-        val elementBounds = element.boundingClientRect
-        val requiredScreenRect = viewportRect.intersect(elementBounds) ?: return true
+        val requiredScreenRect = viewportRect.intersect(element.bBoxGlobal) ?: return true
 
         val inverseCtm = element.ctm.inverse() ?: return false
         val requiredLocalRect = inverseCtm.transform(requiredScreenRect)
@@ -42,9 +41,9 @@ internal class RepaintManager(
         contentScale: Double,
         painter: (Context2d) -> Unit
     ): Boolean {
-        val elementInverseCtm = element.ctm.inverse() ?: return false
+        val screenToLocalTransform = element.ctm.inverse() ?: return false
 
-        val elementBounds = element.boundingClientRect
+        val elementBounds = element.bBoxGlobal
         val overscanAmount = viewportSize.mul((OVERSCAN_FACTOR - 1.0) / 2.0)
 
         val targetRect = DoubleRectangle.WH(viewportSize)
@@ -79,8 +78,8 @@ internal class RepaintManager(
         elementCache[element] = CacheEntry(
             snapshot = canvas.takeSnapshot(),
             snapshotPhysicalOrigin = alignedOrigin.sub(CACHE_PADDING_SIZE),
-            elementInverseCtm = elementInverseCtm,
-            snapshotLocalBounds = elementInverseCtm.transform(targetRect),
+            snapshotLocalBounds = screenToLocalTransform.transform(targetRect),
+            screenToLocalTransform = screenToLocalTransform,
             contentScale = contentScale
         )
 
@@ -93,7 +92,7 @@ internal class RepaintManager(
         val entry = elementCache[element] ?: return
 
         ctx.save()
-        ctx.transform(entry.elementInverseCtm) // to element local coords
+        ctx.transform(entry.screenToLocalTransform)
         ctx.scale(1.0 / entry.contentScale) // to physical pixel coords
         ctx.drawImage(
             snapshot = entry.snapshot,
@@ -111,8 +110,8 @@ internal class RepaintManager(
     private class CacheEntry(
         val snapshot: Canvas.Snapshot,
         val snapshotPhysicalOrigin: Vector, // in physical pixel coordinates (for context with scale = 1.0)
-        val elementInverseCtm: AffineTransform,
         val snapshotLocalBounds: DoubleRectangle,
+        val screenToLocalTransform: AffineTransform,
         val contentScale: Double
     )
 

@@ -30,36 +30,36 @@ class HierarchyTest {
             }
         }
 
-        val visBounds = LTRB(10f, 50f, 20f, 60f)
+        val visBounds = LTRB(9.5f, 49.5f, 20.5f, 60.5f)
 
         with(doc) {
-            val hiddenBounds = LTRB(5f, 20f, 15f, 25f)
-            assertThat(element("hidden_g").absoluteBBox).isEqualTo(hiddenBounds)
-            assertThat(element("hidden_sub_g").absoluteBBox).isEqualTo(hiddenBounds)
-            assertThat(element("hidden_rect").absoluteBBox).isEqualTo(hiddenBounds)
+            val hiddenBounds = LTRB(4.5f, 19.5f, 15.5f, 25.5f)
+            assertThat(element("hidden_g").bBoxGlobal).isEqualTo(hiddenBounds)
+            assertThat(element("hidden_sub_g").bBoxGlobal).isEqualTo(hiddenBounds)
+            assertThat(element("hidden_rect").bBoxGlobal).isEqualTo(hiddenBounds)
 
             // visible elements
-            assertThat(element("vis_g").absoluteBBox).isEqualTo(visBounds)
-            assertThat(element("vis_rect").absoluteBBox).isEqualTo(visBounds)
+            assertThat(element("vis_g").bBoxGlobal).isEqualTo(visBounds)
+            assertThat(element("vis_rect").bBoxGlobal).isEqualTo(visBounds)
 
             // outer group
-            assertThat(element("root_g").absoluteBBox).isEqualTo(LTRB(5f, 20f, 20f, 60f))
+            assertThat(element("root_g").bBoxGlobal).isEqualTo(LTRB(4.5f, 19.5f, 20.5f, 60.5f))
         }
 
         doc.element("hidden_g").transform = AffineTransform.makeTranslation(60f, 20f)
 
         with(doc) {
-            val hiddenBounds = LTRB(60f, 20f, 70f, 25f)
-            assertThat(element("hidden_g").absoluteBBox).isEqualTo(hiddenBounds)
-            assertThat(element("hidden_sub_g").absoluteBBox).isEqualTo(hiddenBounds)
-            assertThat(element("hidden_rect").absoluteBBox).isEqualTo(hiddenBounds)
+            val hiddenBounds = LTRB(59.5f, 19.5f, 70.5f, 25.5f)
+            assertThat(element("hidden_g").bBoxGlobal).isEqualTo(hiddenBounds)
+            assertThat(element("hidden_sub_g").bBoxGlobal).isEqualTo(hiddenBounds)
+            assertThat(element("hidden_rect").bBoxGlobal).isEqualTo(hiddenBounds)
 
             // visible elements
-            assertThat(element("vis_g").absoluteBBox).isEqualTo(visBounds)
-            assertThat(element("vis_rect").absoluteBBox).isEqualTo(visBounds)
+            assertThat(element("vis_g").bBoxGlobal).isEqualTo(visBounds)
+            assertThat(element("vis_rect").bBoxGlobal).isEqualTo(visBounds)
 
             // outer group
-            assertThat(element("root_g").absoluteBBox).isEqualTo(LTRB(10f, 20f, 70f, 60f))
+            assertThat(element("root_g").bBoxGlobal).isEqualTo(LTRB(9.5f, 19.5f, 70.5f, 60.5f))
         }
     }
 }

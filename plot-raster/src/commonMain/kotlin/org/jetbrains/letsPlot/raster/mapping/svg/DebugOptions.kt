@@ -35,7 +35,7 @@ internal object DebugOptions {
             ctx.setFillStyle(fillColor)
             ctx.setStrokeStyle(strokeColor)
 
-            val screenBounds = el.boundingClientRect
+            val screenBounds = el.bBoxGlobal
             ctx.fillRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
             ctx.strokeRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
         }

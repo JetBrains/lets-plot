@@ -39,7 +39,7 @@ internal class Path : Figure() {
         context2d.applyPath(path.getCommands())
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() {
             val path = pathData ?: return DoubleRectangle.XYWH(0, 0, 0, 0)
             val strokeWidth = strokePaint?.strokeWidth ?: return path.bounds
@@ -47,9 +47,9 @@ internal class Path : Figure() {
             return path.bounds.inflate(strokeWidth / 2.0)
         }
 
-    override val boundingClientRect: DoubleRectangle
+    override val bBoxGlobal: DoubleRectangle
         get() {
-            val bbox = bBox
+            val bbox = bBoxLocal
             if (bbox.dimension == DoubleVector.ZERO) {
                 return bbox
             }

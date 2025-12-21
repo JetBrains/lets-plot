@@ -138,13 +138,13 @@ internal class Text : Container() {
         invalidateLayout()
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() {
             if (needLayout) {
                 layoutChildren()
             }
 
-            return super.bBox
+            return super.bBoxLocal
         }
 
     enum class VerticalAlignment {

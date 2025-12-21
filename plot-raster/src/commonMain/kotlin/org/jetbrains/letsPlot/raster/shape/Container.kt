@@ -51,25 +51,25 @@ internal abstract class Container : Element() {
         }
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() = children
             .filterNot { it is Container && it.children.isEmpty() }
-            .map(Element::bBox)
+            .map(Element::bBoxLocal)
             .let(::union)
             ?: DoubleRectangle.XYWH(0, 0, 0, 0)
 
-    override val boundingClientRect: DoubleRectangle
+    override val bBoxGlobal: DoubleRectangle
         get() = children
             .filterNot { it is Container && it.children.isEmpty() }
-            .map(Element::boundingClientRect)
+            .map(Element::bBoxGlobal)
             .let(::union)
             ?: DoubleRectangle.XYWH(0, 0, 0, 0)
 
-    override val absoluteBBox: DoubleRectangle
+    val absoluteBBox: DoubleRectangle
         get() {
             return children
                 .filterNot { it is Container && it.children.isEmpty() }
-                .map(Element::absoluteBBox)
+                .map { it.bBoxGlobal }
                 .let(::union)
                 ?: DoubleRectangle.XYWH(ctm.tx, ctm.ty, 0, 0)
         }

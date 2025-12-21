@@ -105,7 +105,7 @@ internal class TSpan : Figure() {
         val strokePaint: Paint?,
     )
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() {
             val left = textBBox.left
             val top = textBBox.top
@@ -119,8 +119,8 @@ internal class TSpan : Figure() {
                 layoutY + bottom
             )
         }
-    override val boundingClientRect: DoubleRectangle
-        get() = ctm.transform(bBox)
+    override val bBoxGlobal: DoubleRectangle
+        get() = ctm.transform(bBoxLocal)
 
     override fun onPropertyChanged(prop: KProperty<*>) {
         if (

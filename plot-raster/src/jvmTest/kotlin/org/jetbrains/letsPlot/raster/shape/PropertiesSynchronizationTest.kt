@@ -17,7 +17,9 @@ class PropertiesSynchronizationTest {
             var foo: String by visualProp("")
             val bar: String by computedProp(C::foo) { foo + "bar" }
             val baz: String by computedProp(C::bar) { bar + "baz" }
-            override val boundingClientRect: DoubleRectangle
+            override val bBoxLocal: DoubleRectangle
+                get() = TODO("Not yet implemented")
+            override val bBoxGlobal: DoubleRectangle
                 get() = TODO("Not yet implemented")
         }
 
@@ -37,7 +39,9 @@ class PropertiesSynchronizationTest {
             val c: String by computedProp(C::b) { b + "c" }
             val d: String by computedProp(C::c) { c + "d" }
             val e: String by computedProp(C::d) { d + "e" }
-            override val boundingClientRect: DoubleRectangle
+            override val bBoxLocal: DoubleRectangle
+                get() = TODO("Not yet implemented")
+            override val bBoxGlobal: DoubleRectangle
                 get() = TODO("Not yet implemented")
         }
 
@@ -56,7 +60,9 @@ class PropertiesSynchronizationTest {
             val shared: String by computedProp(C::a) { a + "shared" }
             val c: String by computedProp(C::shared) { shared + "c" }
             val d: String by computedProp(C::shared) { shared + "d" }
-            override val boundingClientRect: DoubleRectangle
+            override val bBoxLocal: DoubleRectangle
+                get() = TODO("Not yet implemented")
+            override val bBoxGlobal: DoubleRectangle
                 get() = TODO("Not yet implemented")
         }
 
@@ -76,7 +82,9 @@ class PropertiesSynchronizationTest {
             var foo: String by visualProp("")
             val bar: String by computedProp(C::foo, C::baz) { foo + "bar" }
             val baz: String by computedProp(C::foo, C::bar) { bar + "baz" }
-            override val boundingClientRect: DoubleRectangle
+            override val bBoxLocal: DoubleRectangle
+                get() = TODO("Not yet implemented")
+            override val bBoxGlobal: DoubleRectangle
                 get() = TODO("Not yet implemented")
         }
 
