@@ -76,6 +76,12 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
     }
 
+    operator fun contains(other: DoubleRectangle): Boolean {
+        if (other.xRange() !in xRange()) return false
+        if (other.yRange() !in yRange()) return false
+        return true
+    }
+
     fun flip(): DoubleRectangle {
         return DoubleRectangle(
             origin.flip(),
@@ -167,10 +173,18 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return DoubleRectangle(newOrigin, newSize)
     }
 
-    fun inflate(delta: Double): DoubleRectangle {
+    fun inflate(amount: DoubleVector): DoubleRectangle {
+        return inflate(amount.x, amount.y)
+    }
+
+    fun inflate(amount: Double): DoubleRectangle {
+        return inflate(amount, amount)
+    }
+
+    fun inflate(amountX: Double, amountY: Double): DoubleRectangle {
         return DoubleRectangle(
-            origin.subtract(DoubleVector(delta, delta)),
-            dimension.add(DoubleVector(delta * 2, delta * 2))
+            origin.subtract(DoubleVector(amountX, amountY)),
+            dimension.add(DoubleVector(amountX * 2, amountY * 2))
         )
     }
 
@@ -196,6 +210,22 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     override fun toString(): String {
         return "[rect $origin, $dimension]"
+    }
+
+    fun include(p: DoubleVector): DoubleRectangle {
+        val x0 = min(left, p.x)
+        val x1 = max(right, p.x)
+        val y0 = min(top, p.y)
+        val y1 = max(bottom, p.y)
+        return DoubleRectangle(x0, y0, x1 - x0, y1 - y0)
+    }
+
+    fun include(points: List<DoubleVector>): DoubleRectangle {
+        var rect = this
+        for (p in points) {
+            rect = rect.include(p)
+        }
+        return rect
     }
 
     companion object {

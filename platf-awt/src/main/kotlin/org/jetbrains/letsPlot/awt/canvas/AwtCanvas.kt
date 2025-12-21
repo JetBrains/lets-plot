@@ -18,9 +18,10 @@ import kotlin.math.roundToInt
 
 class AwtCanvas private constructor(
     val image: BufferedImage,
-    override val size: Vector
+    override val size: Vector,
+    contentScale: Double
 ) : Canvas {
-    override val context2d: Context2d = AwtContext2d(image.createGraphics() as Graphics2D)
+    override val context2d: Context2d = AwtContext2d(image.createGraphics() as Graphics2D, contentScale)
 
     companion object {
         fun create(size: Vector, pixelDensity: Double): AwtCanvas {
@@ -28,7 +29,7 @@ class AwtCanvas private constructor(
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s).also {
+            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s, pixelDensity).also {
                 if (pixelDensity != 1.0) {
                     it.context2d.scale(pixelDensity, pixelDensity)
                 }

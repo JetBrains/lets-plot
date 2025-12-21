@@ -36,10 +36,13 @@ internal class Image : Element() {
         }
     }
 
-    override fun onDetached() {
+    override fun onDetach() {
         snapshot?.dispose()
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() = DoubleRectangle.XYWH(x, y, width, height)
+
+    override val bBoxGlobal: DoubleRectangle
+        get() = ctm.transform(bBoxLocal)
 }

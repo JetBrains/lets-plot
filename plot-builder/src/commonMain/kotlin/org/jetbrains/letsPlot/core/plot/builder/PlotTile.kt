@@ -108,6 +108,7 @@ internal class PlotTile constructor(
                 _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
+                layerComponent.rootGroup.setAttribute("buffered-rendering", "static")
                 geomInteractionGroup.add(layerComponent.rootGroup)
                 frameOfReference.setClip(clipGroup)
             }

@@ -18,8 +18,15 @@ import org.w3c.dom.*
 import kotlin.math.PI
 
 internal class DomContext2d(
-    private val ctx: CanvasRenderingContext2D
+    private val ctx: CanvasRenderingContext2D,
+    override val contentScale: Double
 ) : Context2d {
+
+    init {
+        if (contentScale != 1.0) {
+            ctx.scale(contentScale, contentScale)
+        }
+    }
 
     private val logEnabled = false
     private fun log(msg: () -> String) {
@@ -206,6 +213,7 @@ internal class DomContext2d(
         ctx.lineDashOffset = lineDashOffset
     }
     override fun measureTextWidth(str: String): Double = ctx.measureText(str).width
+
     override fun clearRect(rect: DoubleRectangle) = ctx.clearRect(rect.left, rect.top, rect.width, rect.height)
     override fun dispose() {
         // no-op

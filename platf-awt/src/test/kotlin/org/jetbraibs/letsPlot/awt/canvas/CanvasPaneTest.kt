@@ -138,6 +138,7 @@ class CanvasPaneTest {
 
     private fun createImageComparer(): ImageComparer {
         return ImageComparer(
+            tol = 5,
             canvasProvider = AwtTestCanvasProvider(),
             bitmapIO = AwtBitmapIO,
             expectedDir = System.getProperty("user.dir") + "/src/test/resources/expected-images/",

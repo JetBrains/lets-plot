@@ -19,7 +19,7 @@ class ShapesTest {
             strokeWidth = 10f
         }
 
-        assertThat(circle.boundingClientRect).isEqualTo(
+        assertThat(circle.bBoxGlobal).isEqualTo(
             DoubleRectangle.XYWH(45.0, 55.0, 50.0, 50.0)
         )
     }
@@ -33,7 +33,7 @@ class ShapesTest {
             strokeWidth = 10f
         }
 
-        assertThat(circle.bBox).isEqualTo(
+        assertThat(circle.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(70, 80, 0, 0)
         )
     }
@@ -48,7 +48,7 @@ class ShapesTest {
             strokeWidth = 8f
         }
 
-        assertThat(ellipse.boundingClientRect).isEqualTo(
+        assertThat(ellipse.bBoxGlobal).isEqualTo(
             DoubleRectangle.XYWH(66.0, 76.0, 68.0, 88.0)
         )
     }
@@ -63,7 +63,7 @@ class ShapesTest {
             strokeWidth = 8f
         }
 
-        assertThat(ellipse.bBox).isEqualTo(
+        assertThat(ellipse.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(100.0, 120.0, 0.0, 0.0)
         )
     }
@@ -77,7 +77,7 @@ class ShapesTest {
             height = 100f
         }
 
-        assertThat(image.bBox).isEqualTo(
+        assertThat(image.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(15.0, 25.0, 200.0, 100.0)
         )
     }
@@ -92,7 +92,7 @@ class ShapesTest {
             strokeWidth = 6f
         }
 
-        assertThat(line.boundingClientRect).isEqualTo(
+        assertThat(line.bBoxGlobal).isEqualTo(
             DoubleRectangle.XYWH(7.0, 17.0, 46.0, 66.0)
         )
     }
@@ -107,7 +107,7 @@ class ShapesTest {
             strokeWidth = 6f
         }
 
-        assertThat(line.bBox).isEqualTo(
+        assertThat(line.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(30, 40, 0.0, 0.0)
         )
     }
@@ -122,7 +122,7 @@ class ShapesTest {
             strokeWidth = 6f
         }
 
-        assertThat(line.boundingClientRect).isEqualTo(
+        assertThat(line.bBoxGlobal).isEqualTo(
             DoubleRectangle.XYWH(7.0, 17.0, 46.0, 66.0)
         )
     }
@@ -138,7 +138,7 @@ class ShapesTest {
             strokeWidth = 4f
         }
 
-        assertThat(path.boundingClientRect).isEqualTo(
+        assertThat(path.bBoxGlobal).isEqualTo(
             DoubleRectangle.XYWH(8.0, 8.0, 44.0, 74.0)
         )
     }
@@ -153,7 +153,7 @@ class ShapesTest {
             strokeWidth = 4f
         }
 
-        assertThat(path.bBox).isEqualTo(
+        assertThat(path.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(30.0, 40.0, 0.0, 0.0)
         )
     }
@@ -165,7 +165,7 @@ class ShapesTest {
             strokeWidth = 4f
         }
 
-        assertThat(path.bBox).isEqualTo(
+        assertThat(path.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(0.0, 0.0, 0.0, 0.0)
         )
     }
@@ -180,7 +180,7 @@ class ShapesTest {
             strokeWidth = 12f
         }
 
-        assertThat(rect.boundingClientRect).isEqualTo(
+        assertThat(rect.bBoxGlobal).isEqualTo(
             DoubleRectangle.XYWH(34.0, 54.0, 132.0, 92.0)
         )
     }
@@ -195,7 +195,7 @@ class ShapesTest {
             strokeWidth = 12f
         }
 
-        assertThat(rect.bBox).isEqualTo(
+        assertThat(rect.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(40.0, 60.0, 0.0, 0.0)
         )
     }
@@ -214,7 +214,7 @@ class ShapesTest {
             peer = svgCanvasPeer
         }
 
-        assertThat(tspan.bBox).isEqualTo(
+        assertThat(tspan.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(0.0, -9.0, 30.0, 12.0)
         )
     }
@@ -243,13 +243,13 @@ class ShapesTest {
             ))
         }
 
-        assertThat(text.bBox).isEqualTo(
+        assertThat(text.bBoxLocal).isEqualTo(
             DoubleRectangle.XYWH(0.0, -8.0, 50.0, 12.0)
         )
     }
 
     private fun withTextMeasurer(measurer: (String, ContextStateDelegate) -> TextMetrics) : SvgCanvasPeer {
-        val ctx = object : ContextStateDelegate() {
+        val ctx = object : ContextStateDelegate(contentScale = 1.0) {
             override fun measureText(str: String): TextMetrics = measurer(str, this)
         }
 
@@ -261,6 +261,7 @@ class ShapesTest {
 
         val canvasPeer: CanvasPeer = object : CanvasPeer {
             override fun createCanvas(size: Vector): Canvas = canvas
+            override fun createCanvas(size: Vector, contentScale: Double) = TODO("Not yet implemented")
             override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
             override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
             override fun decodePng(png: ByteArray) = TODO("Not yet implemented")

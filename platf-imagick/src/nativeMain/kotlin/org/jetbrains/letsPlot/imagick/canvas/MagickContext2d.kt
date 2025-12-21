@@ -23,7 +23,7 @@ import kotlin.math.tan
 
 
 class MagickContext2d(
-    pixelDensity: Double,
+    override val contentScale: Double,
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate, Disposable {
@@ -49,7 +49,7 @@ class MagickContext2d(
         currentFillRule = ImageMagick.FillRule.NonZeroRule
 
         ImageMagick.PixelSetColor(none, "none")
-        transform(wand, AffineTransform.makeScale(pixelDensity, pixelDensity))
+        transform(wand, AffineTransform.makeScale(contentScale, contentScale))
     }
 
     override fun clearRect(rect: DoubleRectangle) {
@@ -392,7 +392,7 @@ class MagickContext2d(
             height = metrics[5]
         }
 
-        return TextMetrics(ascent, descent, DoubleRectangle.XYWH(0, 0, width, height))
+        return TextMetrics(ascent, descent, DoubleRectangle.XYWH(0, -ascent, width, height))
     }
 
     override fun measureTextWidth(str: String): Double {

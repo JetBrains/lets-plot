@@ -247,7 +247,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |      "labels": { "formats": [], "lines": [ "Value: @y" ] }
             |    }
             |  ]
-            |}""".trimMargin()
+            |}
+            |""".trimMargin()
 
         val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
 

@@ -73,7 +73,7 @@ class ImageComparer(
 
         diffCanvas.context2d.setFillStyle(Color.RED)
 
-        var match = true
+        var diffPixelsCount = 0
 
         for (y in 0 until diffHeight) {
             for (x in 0 until diffWidth) {
@@ -86,20 +86,22 @@ class ImageComparer(
                         abs(expectedPixel.blue - actualPixel.blue) > tolerance ||
                         abs(expectedPixel.alpha - actualPixel.alpha) > tolerance
                     ) {
-                        match = false
+                        diffPixelsCount++
                         diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
                     }
                 } else {
                     // If one of the pixels is null, consider it a difference
-                    match = false
+                    diffPixelsCount++
                     diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
                 }
             }
         }
 
-        if (match) {
+        if (diffPixelsCount == 0) {
             return null // No differences found
         }
+
+        println("Total differing pixels: $diffPixelsCount")
 
         return diffCanvas.takeSnapshot().bitmap
     }
@@ -125,7 +127,7 @@ class ImageComparer(
 
         val expectedSnapshot = canvasProvider.createSnapshot(expectedBitmap)
         val actualSnapshot = canvasProvider.createSnapshot(actualBitmap)
-        val diffSnapshot = canvasProvider.createSnapshot(addBorderToBitmap(diffBitmap, 1, Color.GRAY))
+        val diffSnapshot = canvasProvider.createSnapshot(addBorderToBitmap(diffBitmap, 1, Color.BLACK))
 
         val vertSeparatorSnapshot = createZigZagPattern(separatorSize, height).takeSnapshot()
         val horizSeparatorSnapshot = createZigZagPattern(totalWidth, separatorSize).takeSnapshot()

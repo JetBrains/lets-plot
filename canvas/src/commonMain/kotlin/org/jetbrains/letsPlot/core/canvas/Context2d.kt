@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
@@ -14,6 +16,8 @@ import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
 interface Context2d : Disposable {
+    val contentScale: Double
+
     fun clearRect(rect: DoubleRectangle)
     fun drawImage(snapshot: Snapshot)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
@@ -109,13 +113,34 @@ interface Context2d : Disposable {
 
 }
 
-fun Context2d.affineTransform(matrix: AffineTransform) = transform(
+fun Context2d.translate(v: DoubleVector) {
+    translate(v.x, v.y)
+}
+
+fun Context2d.translate(v: Vector) {
+    translate(v.x.toDouble(), v.y.toDouble())
+}
+
+fun Context2d.translate(x: Int, y: Int) {
+    translate(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.transform(matrix: AffineTransform) = transform(
     sx = matrix.sx,
     ry = matrix.ry,
     rx = matrix.rx,
     sy = matrix.sy,
     tx = matrix.tx,
     ty = matrix.ty
+)
+
+fun Context2d.setTransform(matrix: AffineTransform) = setTransform(
+    m00 = matrix.sx,
+    m10 = matrix.ry,
+    m01 = matrix.rx,
+    m11 = matrix.sy,
+    m02 = matrix.tx,
+    m12 = matrix.ty
 )
 
 fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)

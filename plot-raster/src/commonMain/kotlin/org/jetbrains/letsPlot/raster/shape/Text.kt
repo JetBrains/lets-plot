@@ -15,9 +15,7 @@ import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import kotlin.reflect.KProperty
 
-internal class Text(
-    //private val fontManager: FontManager
-) : Container() {
+internal class Text : Container() {
     var textOrigin: VerticalAlignment? by visualProp(null)
     var textAlignment: HorizontalAlignment? by visualProp(null)
     var x: Float by visualProp(0f)
@@ -124,6 +122,8 @@ internal class Text(
     }
 
     override fun onChildAdded(event: CollectionItemEvent<out Element>) {
+        super.onChildAdded(event)
+
         val el = event.newItem as TSpan
         el.inheritValue(TSpan::fill, fill)
         el.inheritValue(TSpan::stroke, stroke)
@@ -138,13 +138,13 @@ internal class Text(
         invalidateLayout()
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() {
             if (needLayout) {
                 layoutChildren()
             }
 
-            return super.bBox
+            return super.bBoxLocal
         }
 
     enum class VerticalAlignment {

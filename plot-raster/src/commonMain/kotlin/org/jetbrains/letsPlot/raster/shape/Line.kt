@@ -25,7 +25,7 @@ internal class Line : Figure() {
         ctx.stroke(strokePaint)
     }
 
-    override val bBox: DoubleRectangle
+    override val bBoxLocal: DoubleRectangle
         get() {
             return DoubleRectangle.LTRB(
                 left = minOf(x0, x1),
@@ -35,13 +35,13 @@ internal class Line : Figure() {
             )
         }
 
-    override val boundingClientRect: DoubleRectangle
+    override val bBoxGlobal: DoubleRectangle
         get() {
             if (x0 == x1 && y0 == y1) {
                 return DoubleRectangle.XYWH(x0.toDouble(), y0.toDouble(), 0.0, 0.0)
             }
 
-            return bBox.inflate(strokeWidth / 2.0)
+            return ctm.transform(bBoxLocal.inflate(strokeWidth / 2.0))
         }
 }
 
