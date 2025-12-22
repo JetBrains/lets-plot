@@ -16,28 +16,13 @@ import org.jetbrains.letsPlot.core.plot.base.stat.regression.PolynomialRegressio
 import org.jetbrains.letsPlot.core.plot.base.util.SamplingUtil
 import kotlin.random.Random
 
-
 /**
- *
- * method - smoothing method: lm, glm, gam, loess, rlm
- * (For datasets with n < 1000 default is loess. For datasets with 1000 or more observations defaults to gam)
- * formula - formula to use in smoothing function
- * ( eg. y ~ x, y ~ poly(x, 2), y ~ log(x))
- * se (TRUE ) - display confidence interval around smooth?
- * n (80) - number of points to evaluate smoother at
- *
- *
- * span (0.75) - controls the amount of smoothing for the default loess smoother.
- * fullrange (FALSE) - should the fit span the full range of the plot, or just the data
- * level (0.95) - level of confidence interval to use
- * method.args - ist of additional arguments passed on to the modelling function defined by method
- *
- *
  * Adds columns:
  *
  * r2       -
  * formula  -
  */
+// TODO: fix duplication SmoothStat
 class SmoothStatInfo constructor(
     private val smootherPointCount: Int,
     private val smoothingMethod: Method,
