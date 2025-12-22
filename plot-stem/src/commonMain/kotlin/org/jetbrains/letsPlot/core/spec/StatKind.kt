@@ -16,6 +16,7 @@ enum class StatKind {
     BINHEX,
     DOTPLOT,
     SMOOTH,
+    SMOOTH2,
     CONTOUR,
     CONTOURF,
     BOXPLOT,

@@ -11,8 +11,10 @@ class LinearRegression private constructor (
     sumXX: Double,
     model: (Double) -> Double,
     standardErrorOfEstimate: Double,
-    tCritical: Double
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical) {
+    tCritical: Double,
+    formula: String,
+    r2: Double,
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, formula, r2) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -44,7 +46,9 @@ class LinearRegression private constructor (
                 sumXX,
                 model,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
-                calcTCritical(degreesOfFreedom, confidenceLevel)
+                calcTCritical(degreesOfFreedom, confidenceLevel),
+                "${slope}x + $intercept",
+                calcRSquared(xVals, yVals, model)
             )
         }
     }

@@ -115,6 +115,7 @@ class GeomProto(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE,
+            STAT_R2,
             BLANK -> Samplings.NONE
         }
     }
@@ -220,6 +221,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[BIN_2D] = bin2dDefaults()
             DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
+            DEFAULTS[STAT_R2] = statR2Defaults()
         }
 
         private fun commonDefaults(): Map<String, Any> {
@@ -397,6 +399,10 @@ class GeomProto(val geomKind: GeomKind) {
                 Layer.STAT to "count2d",
                 Geom.Pie.SPACER_COLOR to "paper"
             )
+        }
+
+        private fun statR2Defaults(): Map<String, Any> {
+            return mapOf(Layer.STAT to "smooth2")
         }
     }
 }
