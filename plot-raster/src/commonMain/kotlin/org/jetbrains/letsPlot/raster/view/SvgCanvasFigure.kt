@@ -50,7 +50,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             requestRedraw()
         }
 
-    private val options = mutableMapOf<Any, Any>()
+    private val renderingHints = mutableMapOf<Any, Any>()
     private var canvasSize: Vector? = null
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
@@ -66,7 +66,12 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
         svgCanvasPeer = SvgCanvasPeer(canvasPeer)
-        repaintManager = RepaintManager(canvasPeer)
+        repaintManager = RepaintManager(canvasPeer).also {
+            val overscanFactor = renderingHints[RenderingHints.KEY_OVERSCAN_FACTOR] as? Double
+            if (overscanFactor != null) {
+                it.overscanFactor = overscanFactor
+            }
+        }
         mapSvgSvgElement()
         return object : Registration() {
             override fun doRemove() {
@@ -82,7 +87,8 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     init {
-        setOption(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON)
+        setRenderingHint(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON)
+        setRenderingHint(RenderingHints.KEY_OVERSCAN_FACTOR, 2.5)
 
         eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
@@ -114,7 +120,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     override fun paint(context2d: Context2d) {
         renderElement(rootMapper.target, context2d)
 
-        if (options[RenderingHints.KEY_DEBUG_BBOXES] == RenderingHints.VALUE_DEBUG_BBOXES_ON) {
+        if (renderingHints[RenderingHints.KEY_DEBUG_BBOXES] == RenderingHints.VALUE_DEBUG_BBOXES_ON) {
             drawBoundingBoxes(rootMapper.target, context2d)
         }
     }
@@ -150,7 +156,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         }
 
         if (element.bufferedRendering && !ignoreCache
-            && options[RenderingHints.KEY_OFFSCREEN_BUFFERING] == RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON
+            && renderingHints[RenderingHints.KEY_OFFSCREEN_BUFFERING] == RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON
         ) {
             val repaintManager = repaintManager ?: return
 
@@ -191,7 +197,11 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         }
     }
 
-    fun setOption(key: Any, value: Any) {
-        options[key] = value
+    fun setRenderingHint(key: Any, value: Any) {
+        if (key == RenderingHints.KEY_OVERSCAN_FACTOR) {
+            val factor = (value as? Number)?.toDouble() ?: return
+            repaintManager?.overscanFactor = factor
+        }
+        renderingHints[key] = value
     }
 }

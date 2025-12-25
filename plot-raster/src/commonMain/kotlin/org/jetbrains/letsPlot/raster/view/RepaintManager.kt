@@ -8,6 +8,8 @@ import org.jetbrains.letsPlot.raster.shape.Element
 internal class RepaintManager(
     private val canvasPeer: CanvasPeer
 ) : Disposable {
+    var overscanFactor: Double = 2.5
+
     private val elementCache = mutableMapOf<Element, CacheEntry>()
 
     fun isCacheValid(element: Element, viewportSize: Vector, contentScale: Double): Boolean {
@@ -39,7 +41,7 @@ internal class RepaintManager(
         val screenToLocalTransform = element.ctm.inverse() ?: return false
 
         val elementBounds = element.bBoxGlobal
-        val overscanAmount = viewportSize.mul((OVERSCAN_FACTOR - 1.0) / 2.0)
+        val overscanAmount = viewportSize.mul((overscanFactor - 1.0) / 2.0)
 
         val targetRect = DoubleRectangle.WH(viewportSize)
             .inflate(overscanAmount)
@@ -113,6 +115,5 @@ internal class RepaintManager(
     companion object {
         private const val CACHE_PADDING: Int = 2
         private val CACHE_PADDING_SIZE = Vector(CACHE_PADDING, CACHE_PADDING)
-        private const val OVERSCAN_FACTOR = 2.5
     }
 }

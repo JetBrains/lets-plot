@@ -24,7 +24,7 @@ typealias PlotCanvasFigure2 = PlotCanvasFigure
 
 class PlotCanvasFigure : CanvasFigure2 {
     fun setRenderingHint(key: Any, value: Any) {
-        plotSvgFigure.setOption(key, value)
+        plotSvgFigure.setRenderingHint(key, value)
     }
     override val eventPeer: MouseEventPeer = MouseEventPeer()
     override val size: Vector get() {

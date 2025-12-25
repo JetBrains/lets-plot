@@ -39,7 +39,7 @@ open class VisualPlotTestBase {
 
     private fun createImageComparer(): ImageComparer {
         return ImageComparer(
-            tol = 15,
+            tol = 5,
             canvasProvider = AwtTestCanvasProvider(),
             bitmapIO = AwtBitmapIO,
             expectedDir = System.getProperty("user.dir") + "/src/test/resources/expected-images/",
@@ -47,7 +47,7 @@ open class VisualPlotTestBase {
         )
     }
 
-    private val imageComparer by lazy { createImageComparer() }
+    protected val imageComparer by lazy { createImageComparer() }
 
     fun assertPlot(
         expectedFileName: String,

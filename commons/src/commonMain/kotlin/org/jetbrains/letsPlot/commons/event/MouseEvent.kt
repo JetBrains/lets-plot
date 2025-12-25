@@ -16,16 +16,32 @@ open class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModi
 
     companion object {
 
+        fun noButton(x: Int, y: Int): MouseEvent {
+            return noButton(Vector(x, y))
+        }
+
         fun noButton(v: Vector): MouseEvent {
             return MouseEvent(v, Button.NONE, emptyModifiers())
+        }
+
+        fun leftButton(x: Int, y: Int): MouseEvent {
+            return leftButton(Vector(x, y))
         }
 
         fun leftButton(v: Vector): MouseEvent {
             return MouseEvent(v, Button.LEFT, emptyModifiers())
         }
 
+        fun middleButton(x: Int, y: Int): MouseEvent {
+            return middleButton(Vector(x, y))
+        }
+
         fun middleButton(v: Vector): MouseEvent {
             return MouseEvent(v, Button.MIDDLE, emptyModifiers())
+        }
+
+        fun rightButton(x: Int, y: Int): MouseEvent {
+            return rightButton(Vector(x, y))
         }
 
         fun rightButton(v: Vector): MouseEvent {
