@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.gis.tileprotocol
 
-data class TileLayer internal constructor(
+data class TileLayer(
     val name: String,
     val geometryCollection: GeometryCollection,
     val kinds: List<Int>,

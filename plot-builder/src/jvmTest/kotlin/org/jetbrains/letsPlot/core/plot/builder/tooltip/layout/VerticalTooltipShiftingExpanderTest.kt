@@ -304,8 +304,6 @@ class VerticalTooltipShiftingExpanderTest {
                             val y = myTarget.bottom - intersection.myDepth
                             return DoubleRectangle(x, y, step, intersectionLength)
                         }
-
-                        else -> throw IllegalStateException()
                     }
                 }
 

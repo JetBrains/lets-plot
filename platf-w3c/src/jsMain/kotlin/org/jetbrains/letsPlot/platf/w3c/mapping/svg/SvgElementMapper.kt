@@ -5,20 +5,20 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
-import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
 import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
-import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.on
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.on
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGElement
@@ -69,7 +69,7 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(
                     myHandlersRegs = mutableMapOf()
                 }
 
-                for (spec in SvgEventSpec.values()) {
+                for (spec in SvgEventSpec.entries) {
                     if (!value!!.contains(spec) && myHandlersRegs!!.containsKey(spec)) {
                         myHandlersRegs!!.remove(spec)!!.dispose()
                     }
@@ -82,7 +82,6 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(
                         SvgEventSpec.MOUSE_OVER -> DomEventType.MOUSE_OVER
                         SvgEventSpec.MOUSE_MOVE -> DomEventType.MOUSE_MOVE
                         SvgEventSpec.MOUSE_OUT -> DomEventType.MOUSE_OUT
-                        else -> throw IllegalStateException()
                     }
 
                     myHandlersRegs!![spec] = target.on(event, object : Function<Event, Boolean> {

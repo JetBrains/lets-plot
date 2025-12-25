@@ -43,7 +43,6 @@ class LocationCalculateSystem(
                                 MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
                                 MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
                                 MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
-                                else -> error("Unsupported geometry: $type")
                             }
                         }
                     }
@@ -53,7 +52,6 @@ class LocationCalculateSystem(
                                 MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
                                 MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
                                 MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
-                                else -> error("Unsupported geometry: $type")
                             }
                         }
                     }

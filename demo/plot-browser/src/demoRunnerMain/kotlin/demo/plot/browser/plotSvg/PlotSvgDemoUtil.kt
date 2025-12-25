@@ -8,8 +8,8 @@ package demo.plot.browser.plotSvg
 import demo.common.utils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import org.jetbrains.letsPlot.awt.plot.PlotSvgExport
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.util.PlotSvgExport
 import java.io.StringWriter
 
 object PlotSvgDemoUtil {

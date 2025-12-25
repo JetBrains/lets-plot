@@ -87,8 +87,6 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
                                 SvgEventSpec.MOUSE_OVER -> addMouseHandler(spec, MouseEventFx.MOUSE_ENTERED)
                                 SvgEventSpec.MOUSE_MOVE -> addMouseHandler(spec, MouseEventFx.MOUSE_MOVED)
                                 SvgEventSpec.MOUSE_OUT -> addMouseHandler(spec, MouseEventFx.MOUSE_EXITED)
-                                else -> {
-                                }
                             }
                         }
 

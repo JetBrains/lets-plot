@@ -62,7 +62,6 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
                 HitShape.Kind.RECT -> TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                 HitShape.Kind.POLYGON -> TipLayoutHint.Kind.CURSOR_TOOLTIP
                 HitShape.Kind.PATH -> TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                else -> error("Unkown hint shape kind")
             }
         }
 

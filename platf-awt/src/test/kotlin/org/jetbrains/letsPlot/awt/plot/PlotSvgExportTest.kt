@@ -9,6 +9,7 @@ import demoAndTestShared.*
 import junit.framework.TestCase.assertEquals
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgUID
+import org.jetbrains.letsPlot.core.util.PlotSvgExport
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test

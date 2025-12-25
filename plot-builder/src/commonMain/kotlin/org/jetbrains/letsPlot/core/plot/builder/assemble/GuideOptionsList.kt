@@ -36,7 +36,7 @@ class GuideOptionsList {
     }
 }
 
-data class GuideKey private constructor(
+data class GuideKey(
     private val key: String
 ) {
     companion object {

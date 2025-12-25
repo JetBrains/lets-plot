@@ -176,10 +176,6 @@ object BarAnnotation {
             }
     }
 
-    internal fun DoubleRectangle.contains(other: DoubleRectangle): Boolean {
-        return other.xRange() in xRange() && other.yRange() in yRange()
-    }
-
     private fun placeLabel(
         barRect: DoubleRectangle,
         index: Int,
