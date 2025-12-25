@@ -463,6 +463,12 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.STAT_R2 -> GeomProvider.statR2 {
+                val geom = StatR2Geom()
+
+                geom
+            }
+
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 PROVIDER.getValue(geomKind)

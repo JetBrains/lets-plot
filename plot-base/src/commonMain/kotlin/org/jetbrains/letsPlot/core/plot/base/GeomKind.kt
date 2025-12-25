@@ -59,5 +59,6 @@ enum class GeomKind {
     IMAGE,
     PIE,
     LOLLIPOP,
+    STAT_R2,
     BLANK,
 }

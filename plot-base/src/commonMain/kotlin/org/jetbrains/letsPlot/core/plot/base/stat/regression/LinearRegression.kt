@@ -5,14 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
+import org.jetbrains.letsPlot.core.plot.base.stat.math3.roundTo
+
 class LinearRegression private constructor (
     n: Int,
     meanX: Double,
     sumXX: Double,
     model: (Double) -> Double,
     standardErrorOfEstimate: Double,
-    tCritical: Double
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical) {
+    tCritical: Double,
+    formula: String,
+    r2: Double,
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, formula, r2) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -44,7 +48,9 @@ class LinearRegression private constructor (
                 sumXX,
                 model,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
-                calcTCritical(degreesOfFreedom, confidenceLevel)
+                calcTCritical(degreesOfFreedom, confidenceLevel),
+                "${slope.roundTo(6)}x ${if (intercept < 0 ) " - " else " + "} ${intercept.roundTo(6)}",
+                calcRSquared(xVals, yVals, model)
             )
         }
     }

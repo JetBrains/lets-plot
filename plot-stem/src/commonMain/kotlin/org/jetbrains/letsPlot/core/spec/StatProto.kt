@@ -124,6 +124,7 @@ object StatProto {
             }
 
             SMOOTH -> configureSmoothStat(options)
+            SMOOTH2 -> configureSmoothStat2(options)
 
             BOXPLOT -> {
                 Stats.boxplot(
@@ -215,6 +216,45 @@ object StatProto {
             polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStat.DEF_DEG),
             loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_LOESS_CRITICAL_SIZE),
             samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStat.DEF_SAMPLING_SEED)
+        )
+    }
+
+    private fun configureSmoothStat2(options: OptionsAccessor): SmoothStatInfo {
+        // Params:
+        //  method - smoothing method: lm, glm, gam, loess, rlm
+        //  n (80) - number of points to evaluate smoother at
+        //  se (TRUE ) - display confidence interval around smooth?
+        //  level (0.95) - level of confidence interval to use
+        //  deg ( >= 1 ) - degree of polynomial for regression
+        // seed  - random seed for LOESS sampling
+        // max_n (1000)  - maximum points in DF for LOESS
+
+        val smoothingMethod = options.getString(Smooth.METHOD)?.let {
+            when (it.lowercase()) {
+                "lm" -> SmoothStatInfo.Method.LM
+                "loess", "lowess" -> SmoothStatInfo.Method.LOESS
+                "glm" -> SmoothStatInfo.Method.GLM
+                "gam" -> SmoothStatInfo.Method.GAM
+                "rlm" -> SmoothStatInfo.Method.RLM
+                else -> throw IllegalArgumentException(
+                    "Unsupported smoother method: '$it'\n" +
+                            "Use one of: lm, loess, lowess, glm, gam, rlm."
+                )
+            }
+        }
+
+        return SmoothStatInfo(
+            smootherPointCount = options.getIntegerDef(Smooth.POINT_COUNT, SmoothStatInfo.DEF_EVAL_POINT_COUNT),
+            smoothingMethod = smoothingMethod ?: SmoothStatInfo.DEF_SMOOTHING_METHOD,
+            confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStatInfo.DEF_CONFIDENCE_LEVEL),
+            displayConfidenceInterval = options.getBoolean(
+                Smooth.DISPLAY_CONFIDENCE_INTERVAL,
+                SmoothStatInfo.DEF_DISPLAY_CONFIDENCE_INTERVAL
+            ),
+            span = options.getDoubleDef(Smooth.SPAN, SmoothStatInfo.DEF_SPAN),
+            polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStatInfo.DEF_DEG),
+            loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStatInfo.DEF_LOESS_CRITICAL_SIZE),
+            samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStatInfo.DEF_SAMPLING_SEED)
         )
     }
 

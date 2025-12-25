@@ -28,7 +28,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_segment', 'geom_curve', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_text_repel', 'geom_label_repel', 'geom_pie', 'geom_lollipop',
            'geom_count',
-           'geom_blank']
+           'geom_blank', 'geom_stat_r2']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
@@ -9102,6 +9102,48 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                  tooltips='none',
                  map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+def geom_stat_r2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
+                 tooltips=None,
+                 orientation=None,
+                 method=None,
+                 n=None,
+                 se=None,
+                 level=None,
+                 span=None,
+                 deg=None,
+                 seed=None,
+                 max_n=None,
+                 color_by=None, fill_by=None,
+                 labels=None,
+                 **other_args):
+    """
+    Show stat
+    """
+
+    return _geom('stat_r2',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
+                 method=method,
+                 n=n,
+                 se=se,
+                 level=level,
+                 span=span,
+                 deg=deg,
+                 seed=seed,
+                 max_n=max_n,
+                 color_by=color_by, fill_by=fill_by,
+                 labels=labels,
                  **other_args)
 
 

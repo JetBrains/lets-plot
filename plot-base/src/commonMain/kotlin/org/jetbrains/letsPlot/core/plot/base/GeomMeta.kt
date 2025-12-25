@@ -88,6 +88,12 @@ object GeomMeta {
                 Aes.ALPHA
             )
 
+            GeomKind.STAT_R2 -> listOf(
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.LABEL
+            )
+
             GeomKind.BAR -> listOf(
                 Aes.X,
                 Aes.Y,

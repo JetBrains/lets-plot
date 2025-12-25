@@ -425,6 +425,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun statR2(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.STAT_R2,
+                StatR2Geom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun blank(): GeomProvider {
             return GeomProvider(
                 GeomKind.BLANK,
