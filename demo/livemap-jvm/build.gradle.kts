@@ -5,7 +5,6 @@
 
 plugins {
     kotlin("jvm")
-    id ("org.openjfx.javafxplugin")
 }
 
 val batikVersion = project.extra["batik.version"] as String
@@ -13,12 +12,7 @@ val batikVersion = project.extra["batik.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
 val ktorVersion = project.extra["ktor.version"] as String
-val jfxVersion = extra["jfx.version"] as String
 
-javafx {
-    version = jfxVersion
-    modules = listOf("javafx.controls", "javafx.swing")
-}
 
 dependencies {
     implementation(kotlin("stdlib-common"))
@@ -35,7 +29,6 @@ dependencies {
     implementation(project(":gis"))
     implementation(project(":livemap"))
     implementation(project(":plot-livemap"))
-    implementation(project(":platf-jfx-swing"))
     implementation(project(":platf-batik"))
     implementation(project(":platf-awt"))
 

@@ -27,7 +27,6 @@ buildscript {
 plugins {
     kotlin("multiplatform") apply false
     kotlin("js") apply false
-    id("org.openjfx.javafxplugin") version "0.1.0" apply false
 }
 
 
@@ -321,7 +320,6 @@ subprojects {
 val jvmCoreModulesForPublish = listOf(
     "platf-awt",
     "platf-batik",
-    "platf-jfx-swing"
 )
 
 subprojects {
@@ -360,7 +358,6 @@ subprojects {
         val targetsToPublish = listOf(
             "platf-awt",
             "platf-batik",
-            "platf-jfx-swing",
             "jvm",
             "js",
             "kotlinMultiplatform",

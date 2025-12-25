@@ -21,9 +21,6 @@ import org.junit.Test
 import kotlin.math.round
 import kotlin.test.assertEquals
 
-/**
- * See: related demo: BoxPlotJfx.kt
- */
 class YOrientationGeomBuildingTest {
     @Test
     fun test() {
