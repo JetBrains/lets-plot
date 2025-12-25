@@ -23,7 +23,7 @@ class HttpTileTransport {
 
         coroutineScope.launch {
             try {
-                val response = client.get(url).readBytes()
+                val response = client.get(url).readRawBytes()
                 async.success(response)
             } catch (c: ResponseException) {
                 async.failure(Exception(c.response.status.toString()))
