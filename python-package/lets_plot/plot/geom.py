@@ -9117,6 +9117,7 @@ def geom_stat_r2(mapping=None, *, data=None, stat=None, position=None, show_lege
                  seed=None,
                  max_n=None,
                  color_by=None, fill_by=None,
+                 labels=None,
                  **other_args):
     """
     Show stat
@@ -9142,6 +9143,7 @@ def geom_stat_r2(mapping=None, *, data=None, stat=None, position=None, show_lege
                  seed=seed,
                  max_n=max_n,
                  color_by=color_by, fill_by=fill_by,
+                 labels=labels,
                  **other_args)
 
 

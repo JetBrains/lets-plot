@@ -24,8 +24,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.math3
 
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.round
+import kotlin.math.sign
 
 /**
  * Immutable representation of a real polynomial function with real coefficients.
@@ -210,9 +214,9 @@ class PolynomialFunction(c: DoubleArray?) {
             if (coefficients[i] != 0.0) {
 
                 if (!sb.isEmpty())
-                    sb.append(" + ")
+                    sb.append(if (sign(coefficients[i]) < 0 ) " - " else " + ")
 
-                sb.append(coefficients[i].toString())
+                sb.append(abs(coefficients[i]).roundTo(6).toString())
 
                 if (i > 0)
                     sb.append("x")
@@ -222,11 +226,16 @@ class PolynomialFunction(c: DoubleArray?) {
             }
         }
 
-        return sb.toString()
+        return "$sb"
     }
 }
 
 operator fun Double.times(p: PolynomialFunction): PolynomialFunction {
     return p.multiply(this)
+}
+
+fun Double.roundTo(digits: Int): Double {
+    val p = 10.0.pow(digits)
+    return round(this * p) / p
 }
 

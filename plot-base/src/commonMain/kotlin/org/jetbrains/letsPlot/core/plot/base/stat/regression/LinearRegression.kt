@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
+import org.jetbrains.letsPlot.core.plot.base.stat.math3.roundTo
+
 class LinearRegression private constructor (
     n: Int,
     meanX: Double,
@@ -47,7 +49,7 @@ class LinearRegression private constructor (
                 model,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
-                "${slope}x + $intercept",
+                "${slope.roundTo(6)}x ${if (intercept < 0 ) " - " else " + "} ${intercept.roundTo(6)}",
                 calcRSquared(xVals, yVals, model)
             )
         }
