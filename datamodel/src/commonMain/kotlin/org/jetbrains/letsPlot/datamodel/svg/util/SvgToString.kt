@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_PREFIX
 
-class SvgToString {
+object SvgToString {
     fun render(svg: SvgSvgElement): String {
         val buffer = StringBuilder()
         renderElement(svg, buffer, 0)
@@ -96,36 +96,34 @@ class SvgToString {
         buffer.append(htmlEscape(node.textContent().get()))
     }
 
-    companion object {
-        private const val TAB = 2
+    private const val TAB = 2
 
-        fun htmlEscape(str: String): String {
-            val escaped = StringBuilder()
-            str.forEach { ch ->
-                escaped.append(
-                    when (ch) {
-                        '&' -> "&amp;"
-                        '<' -> "&lt;"
-                        '>' -> "&gt;"
-                        '"' -> "&quot;"
-                        '\'' -> "&#39;"
-                        else -> ch
-                    }
-                )
-            }
-            return escaped.toString()
+    fun htmlEscape(str: String): String {
+        val escaped = StringBuilder()
+        str.forEach { ch ->
+            escaped.append(
+                when (ch) {
+                    '&' -> "&amp;"
+                    '<' -> "&lt;"
+                    '>' -> "&gt;"
+                    '"' -> "&quot;"
+                    '\'' -> "&#39;"
+                    else -> ch
+                }
+            )
+        }
+        return escaped.toString()
+    }
+
+    fun crlf(buffer: StringBuilder, level: Int?) {
+        if (level == null) {
+            return
         }
 
-        fun crlf(buffer: StringBuilder, level: Int?) {
-            if (level == null) {
-                return
-            }
+        buffer.append('\n')
 
-            buffer.append('\n')
-
-            for (i in 0 until level * TAB) {
-                buffer.append(' ')
-            }
+        for (i in 0 until level * TAB) {
+            buffer.append(' ')
         }
     }
 }

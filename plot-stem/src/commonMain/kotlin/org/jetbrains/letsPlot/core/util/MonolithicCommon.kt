@@ -36,14 +36,12 @@ object MonolithicCommon {
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         return buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
             sizeUnit = SizeUnit.PX,
-            svgToString = svgToString,
             computationMessagesHandler = computationMessagesHandler
         )
     }
@@ -55,7 +53,6 @@ object MonolithicCommon {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         sizeUnit: SizeUnit?,
-        svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         @Suppress("NAME_SHADOWING")
@@ -91,7 +88,7 @@ object MonolithicCommon {
             svg.setAttribute("viewBox", "0 0 $pixelWidth $pixelHeight")
         }
 
-        return svgToString.render(svg)
+        return SvgToString.render(svg)
     }
 
     /**
@@ -104,12 +101,11 @@ object MonolithicCommon {
     fun buildSvgImagesFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): List<String> {
         return listOf(
             buildSvgImageFromRawSpecs(
-                plotSpec, plotSize, svgToString, computationMessagesHandler
+                plotSpec, plotSize, computationMessagesHandler
             )
         )
     }
