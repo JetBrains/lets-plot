@@ -881,6 +881,39 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     }
 
     @Test
+    fun `coord_polar and clip path`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 ],
+            |    "y": [ 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6 ],
+            |    "g": [ 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" },
+            |      { "type": "int", "column": "g" }
+            |    ]
+            |  },
+            |  "theme": { "name": "grey" },
+            |  "coord": { "name": "polar", "ylim": [ 0.0, 1.5 ] },
+            |  "layers": [
+            |    {
+            |      "geom": "path",
+            |      "mapping": { "x": "x", "y": "y", "group": "g", "size": "g" }
+            |    }
+            |  ]
+            |}
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+
+        assertPlot("plot_polar_clip_path.png", plotSpec)
+    }
+
+    @Test
     fun `path with none coord polar`() {
         val spec = parsePlotSpec("""
             |{
