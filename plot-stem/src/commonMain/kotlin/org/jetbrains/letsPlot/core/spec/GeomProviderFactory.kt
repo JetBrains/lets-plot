@@ -54,6 +54,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
         PROVIDER[GeomKind.RECT] = GeomProvider.rect()
         PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
+        PROVIDER[GeomKind.P_VALUE] = GeomProvider.pValue()
         PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }
 

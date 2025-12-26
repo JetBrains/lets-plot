@@ -204,6 +204,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.RASTER,
                 GeomKind.IMAGE,
                 GeomKind.STAT_R2,
+                GeomKind.P_VALUE,
                 GeomKind.LIVE_MAP -> base(geomTheme)
             }
         }

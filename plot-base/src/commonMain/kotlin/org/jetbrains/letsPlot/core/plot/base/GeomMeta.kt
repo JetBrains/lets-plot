@@ -517,6 +517,26 @@ object GeomMeta {
                 Aes.SHAPE,
                 Aes.LINETYPE
             )
+
+            GeomKind.P_VALUE -> listOf(
+                Aes.XMIN,
+                Aes.XMAX,
+                Aes.Y,
+                Aes.LABEL,
+                Aes.SIZE,
+                Aes.LINETYPE,       // TODO
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,          // TODO
+                Aes.VJUST,          // TODO
+                Aes.ANGLE,          // TODO
+                Aes.LINEHEIGHT,     // TODO
+                Aes.SEGMENT_COLOR,  // TODO
+                Aes.SEGMENT_SIZE,   // TODO
+                Aes.SEGMENT_ALPHA   // TODO
+            )
         }
     }
 }

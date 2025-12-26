@@ -433,6 +433,13 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun pValue(): GeomProvider {
+            return GeomProvider(
+                GeomKind.P_VALUE,
+                PValueGeom.HANDLES_GROUPS
+            ) { PValueGeom() }
+        }
+
         fun blank(): GeomProvider {
             return GeomProvider(
                 GeomKind.BLANK,

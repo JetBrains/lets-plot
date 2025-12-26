@@ -82,7 +82,8 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.TEXT,
                 GeomKind.LABEL,
                 GeomKind.TEXT_REPEL,
-                GeomKind.LABEL_REPEL -> TEXT_SIZE
+                GeomKind.LABEL_REPEL,
+                GeomKind.P_VALUE -> TEXT_SIZE
 
                 GeomKind.PIE -> PIE_SIZE
 
