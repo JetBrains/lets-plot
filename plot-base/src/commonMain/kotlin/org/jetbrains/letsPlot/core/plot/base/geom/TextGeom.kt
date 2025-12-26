@@ -48,7 +48,7 @@ open class TextGeom : GeomBase() {
         for (dp in aesthetics.dataPoints()) {
             val text = toString(dp.label(), ctx)
             if (text.isEmpty()) continue
-            val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
+            val point = pointLocationOrNull(dp) ?: continue
             val loc = helper.toClient(point, dp) ?: continue
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
@@ -124,6 +124,9 @@ open class TextGeom : GeomBase() {
         SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
         return g
     }
+
+    open fun pointLocationOrNull(point: DataPointAesthetics): DoubleVector? =
+        point.finiteVectorOrNull(Aes.X, Aes.Y)
 
     open fun objectRectangle(
         location: DoubleVector,
