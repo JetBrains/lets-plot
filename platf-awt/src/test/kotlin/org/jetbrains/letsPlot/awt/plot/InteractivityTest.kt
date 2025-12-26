@@ -127,6 +127,11 @@ class InteractivityTest : VisualPlotTestBase() {
         plotCanvasFigure.eventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
         plotCanvasFigure.eventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
         plotCanvasFigure.eventPeer.dispatch(MOUSE_DRAGGED, leftButton(200, 200))
+
+        // Paint to create the initial buffer covering the range [20, 40]
+        plotCanvasFigure.takeSnapshot(awtCanvasPeer)
+
+        // Drag left by 200 px - this makes the buffer incomplete (visible range is now [30, 50])
         plotCanvasFigure.eventPeer.dispatch(MOUSE_DRAGGED, leftButton(0, 200))
 
         val snapshot = plotCanvasFigure.takeSnapshot(awtCanvasPeer)
