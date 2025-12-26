@@ -12,16 +12,21 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase.Companion.overallAesBounds
+import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelX
+import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelY
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object StatAnnotation {
+    const val PADDING = 20
 
     fun build(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
+        labelX: LabelX,
+        labelY: LabelY,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
@@ -47,7 +52,7 @@ object StatAnnotation {
             labels.add(label)
         }
 
-        val startLocation = getLocation(labels, viewPort)
+        val startLocation = getLocation(labels, labelX, labelY, viewPort)
 
         var verticalOffset = 0.0
         labels.forEach { label ->
@@ -59,16 +64,26 @@ object StatAnnotation {
         }
     }
 
-    private fun getLocation(labels: List<AnnotationLabel>, viewPort: DoubleRectangle): DoubleVector {
+    private fun getLocation(labels: List<AnnotationLabel>, labelX: LabelX, labelY: LabelY, viewPort: DoubleRectangle): DoubleVector {
         val blockSize = DoubleVector(
             labels.maxOf { it.textSize.x },
             labels.sumOf { it.textSize.y } // todo: paddings
         )
 
-        return DoubleVector(
-            viewPort.right - blockSize.x,
-            viewPort.bottom - blockSize.y
-        )
+        val x = when (labelX) {
+            LabelX.LEFT -> viewPort.left + PADDING
+            LabelX.CENTER -> viewPort.center.x - blockSize.x / 2
+            LabelX.RIGHT -> viewPort.right - blockSize.x
+
+        }
+
+        val y = when (labelY) {
+            LabelY.TOP -> viewPort.top + PADDING
+            LabelY.MIDDLE -> viewPort.center.y - blockSize.y / 2
+            LabelY.BOTTOM -> viewPort.bottom - blockSize.y
+        }
+
+        return DoubleVector(x, y)
     }
 
     private fun createAnnotationElement(

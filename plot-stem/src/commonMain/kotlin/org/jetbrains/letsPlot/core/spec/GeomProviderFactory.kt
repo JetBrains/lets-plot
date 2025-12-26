@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
+import org.jetbrains.letsPlot.core.spec.Option.Geom.StatR2.LABEL_X
+import org.jetbrains.letsPlot.core.spec.Option.Geom.StatR2.LABEL_Y
 import org.jetbrains.letsPlot.core.spec.config.ArrowSpecConfig
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
@@ -465,6 +467,8 @@ internal object GeomProviderFactory {
 
             GeomKind.STAT_R2 -> GeomProvider.statR2 {
                 val geom = StatR2Geom()
+                layerConfig.getString(LABEL_X)?.let { geom.labelX = it }
+                layerConfig.getString(LABEL_Y)?.let { geom.labelY = it }
 
                 geom
             }
