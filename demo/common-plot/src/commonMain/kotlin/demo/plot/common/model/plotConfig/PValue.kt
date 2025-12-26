@@ -31,7 +31,19 @@ class PValue {
                   'geom': 'boxplot'
                 },
                 {
-                  'geom': 'pvalue'
+                  'geom': 'pvalue',
+                  'mapping': {
+                    'xmin': 'min',
+                    'xmax': 'max',
+                    'y': 'y',
+                    'label': 'p'
+                  },
+                  'data': {
+                    'min': ['US', 'US'],
+                    'max': ['Asia', 'Europe'],
+                    'y': [48, 51],
+                    'p': [0.01, 0.02]
+                  }
                 }
               ]
             }
