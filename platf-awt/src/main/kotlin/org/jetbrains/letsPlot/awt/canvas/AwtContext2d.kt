@@ -314,10 +314,17 @@ internal class AwtContext2d(
     }
 
     override fun measureText(str: String): TextMetrics {
+        val logicalBounds = graphics.glyphVector(str).logicalBounds
+        val bbox = DoubleRectangle.XYWH(
+            logicalBounds.x,
+            logicalBounds.y,
+            logicalBounds.width,
+            logicalBounds.height
+        )
         return TextMetrics(
             ascent = graphics.fontMetrics.ascent.toDouble(),
             descent = graphics.fontMetrics.descent.toDouble(),
-            bbox = graphics.glyphVector(str).logicalBounds.let { DoubleRectangle.XYWH(it.x, it.y, it.width, it.height) }
+            bbox = bbox
         )
     }
 

@@ -12,31 +12,38 @@ internal class ComputedProperty<T>(
     private val valueProvider: () -> T,
     private val onPropertyChanged: (KProperty<*>, T, T) -> Unit
 ) : ReadOnlyProperty<Any, T> {
-    private var isDirty: Boolean = false
-    private var value: T = valueProvider()
+    private var isDirty: Boolean = true
+    private var value: T? = null
     private var computing = false
 
     fun invalidate() {
-        if (computing) {
-            return
-        }
+        if (computing) return // Prevent loops
         isDirty = true
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): T {
+        // Prevent recursive stack overflow / NPE during initialization
+        if (computing) {
+            return value ?: error("Circular dependency detected in '${property.name}'.")
+        }
+
         if (isDirty) {
             computing = true
+            try {
+                val oldValue = value
+                val newValue = valueProvider()
+                value = newValue
+                isDirty = false
 
-            isDirty = false
-            val oldValue = value
-            value = valueProvider()
-
-            if (oldValue != value) {
-                onPropertyChanged(property, oldValue, value)
+                // Only notify if value really changed (and it's not the first run)
+                if (oldValue != null && oldValue != newValue) {
+                    onPropertyChanged(property, oldValue as T, newValue)
+                }
+            } finally {
+                computing = false
             }
-
-            computing = false
         }
-        return value
+        @Suppress("UNCHECKED_CAST")
+        return value as T
     }
 }

@@ -87,6 +87,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     init {
+        //setRenderingHint(RenderingHints.KEY_DEBUG_BBOXES, RenderingHints.VALUE_DEBUG_BBOXES_ON)
         setRenderingHint(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON)
         setRenderingHint(RenderingHints.KEY_OVERSCAN_FACTOR, 2.5)
 

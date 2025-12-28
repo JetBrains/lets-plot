@@ -15,8 +15,14 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-
 internal abstract class Element {
+    // Version counters
+    var localTransformVersion = 0
+        private set
+    var geometryVersion = 0
+        private set
+
+    private val hierarchicalPropInstances = mutableMapOf<KProperty<*>, HierarchicalProperty<*, *>>()
     private val visualPropInstances = mutableMapOf<KProperty<*>, VisualProperty<*>>()
     private val computedPropInstances = mutableMapOf<KProperty<*>, ComputedProperty<*>>()
     private val computedPropDependencies = mutableMapOf<KProperty<*>, Set<KProperty<*>>>() // direct and transitive dependencies
@@ -30,29 +36,31 @@ internal abstract class Element {
     }
 
     var bufferedRendering: Boolean by visualProp(false)
-
-    // Internal dirty flag. Defaults to true so we render at least once.
     var isDirty: Boolean = true
 
     var href: String? = null
     var isVisible: Boolean by visualProp(true)
     var opacity: Float? by visualProp(null)
     var clipPath: Path2d? by visualProp(null)
-    var isMouseTransparent: Boolean = true // need proper hitTest for non-rectangular shapes for correct default "false"
-
+    var isMouseTransparent: Boolean = true
     var peer: SvgCanvasPeer? by visualProp(null)
 
-    // Not affected by org.jetbrains.skiko.SkiaLayer.getContentScale
-    // (see org.jetbrains.letsPlot.skia.svg.view.SvgSkikoView.onRender)
-    val ctm: AffineTransform by computedProp(Element::parent, Element::transform) {
-        val parentCtm = parent?.ctm ?: AffineTransform.IDENTITY
-        parentCtm.concat(transform)
+    // CTM depends on Transform Version
+    val ctm: AffineTransform by hierarchicalProp(Element::ctm, { localTransformVersion }) { parentCtm ->
+        (parentCtm ?: AffineTransform.IDENTITY).concat(transform)
     }
 
-    // Bounds in local coordinates without applying transform and stroke width
-    abstract val bBoxLocal: DoubleRectangle
-    // Bounds in global coordinates with applying transform and stroke width
-    abstract val bBoxGlobal: DoubleRectangle
+    // bBoxLocal is Computed (Cached)
+    val bBoxLocal: DoubleRectangle by computedProp(Element::transform) {
+        calculateLocalBBox()
+    }
+
+    // bBoxGlobal depends on CTM (Parent) AND Geometry/Transform (Local)
+    val bBoxGlobal: DoubleRectangle by hierarchicalProp(Element::ctm, { localTransformVersion + geometryVersion }) { _ ->
+        ctm.transform(bBoxLocal)
+    }
+
+    protected abstract fun calculateLocalBBox(): DoubleRectangle
 
     open fun render(ctx: Context2d) {}
 
@@ -64,6 +72,20 @@ internal abstract class Element {
         onDetach()
     }
 
+    protected open fun onDetach() {}
+
+    fun <T, P> hierarchicalProp(
+        dependencyProperty: KProperty<P>,
+        localVersionProvider: () -> Int,
+        compute: (P?) -> T
+    ): PropertyDelegateProvider<Element, ReadOnlyProperty<Element, T>> {
+        return PropertyDelegateProvider { thisRef, property ->
+            val hp = HierarchicalProperty(thisRef, dependencyProperty, localVersionProvider, compute)
+            thisRef.hierarchicalPropInstances[property] = hp
+            ReadOnlyProperty { _, _ -> hp.getValue() }
+        }
+    }
+
     fun <T> computedProp(
         vararg dependencies: KProperty<*>,
         valueProvider: () -> T,
@@ -72,16 +94,14 @@ internal abstract class Element {
             val computedProperty = ComputedProperty(valueProvider, thisRef::handlePropertyChange)
             computedPropInstances[property] = computedProperty
 
-            val fullDeps = dependencies.map { directDep ->
+            val fullDeps = dependencies.flatMap { directDep ->
                 when (directDep) {
                     in computedPropDependencies -> computedPropDependencies[directDep]!!
                     in visualPropInstances -> setOf(directDep)
-                    else -> error("Missing dependency: ${directDep.name}. All dependencies must be defines before")
+                    else -> error("Missing dependency: ${directDep.name}")
                 }
-            }.flatten()
-
+            }
             computedPropDependencies[property] = fullDeps.toSet()
-
             return@PropertyDelegateProvider computedProperty
         }
     }
@@ -90,18 +110,28 @@ internal abstract class Element {
         return PropertyDelegateProvider<Element, ReadWriteProperty<Element, T>> { thisRef, property ->
             val visualProperty = VisualProperty(initialValue, thisRef::handlePropertyChange)
             visualPropInstances[property] = visualProperty
-
             return@PropertyDelegateProvider visualProperty
         }
     }
 
-    protected open fun onPropertyChanged(prop: KProperty<*>) {}
-    protected open fun onDetach() {}
 
-    // Set value from parent if not set explicitly
+    fun getHierarchicalProperty(property: KProperty<*>): HierarchicalProperty<*, *> {
+        return hierarchicalPropInstances[property] ?: error {
+            "Class `${this::class.simpleName}` doesn't have hierarchicalProperty `${property.name}`"
+        }
+    }
+
+
+    protected open fun onPropertyChanged(prop: KProperty<*>) {
+        if (prop == Element::transform) {
+            localTransformVersion++
+            parent?.invalidateGeometry()
+            markDirty()
+        }
+    }
+
     internal fun <TValue> inheritValue(prop: KProperty<*>, value: TValue) {
         val (kProp, visProp) = visualPropInstances.entries.firstOrNull { it.key.name == prop.name } ?: return
-
         @Suppress("UNCHECKED_CAST")
         val theProp: VisualProperty<TValue> = (visProp as? VisualProperty<TValue>) ?: return
         if (theProp.isDefault) {
@@ -110,7 +140,8 @@ internal abstract class Element {
     }
 
     internal fun invalidateComputedProp(prop: KProperty<*>) {
-        val computedPropInstance = computedPropInstances[prop]  ?: error { "Class `${this::class.simpleName}` doesn't have computedProperty `${prop.name}`" }
+        val computedPropInstance = computedPropInstances[prop]
+            ?: error { "Class `${this::class.simpleName}` doesn't have computedProperty `${prop.name}`" }
         computedPropInstance.invalidate()
     }
 
@@ -118,21 +149,23 @@ internal abstract class Element {
         if (property != Element::ctm) {
             markDirty()
         }
-
         onPropertyChanged(property)
-
         computedPropDependencies
             .filter { (_, deps) -> property in deps }
             .forEach { (dependedProperty, _) -> invalidateComputedProp(dependedProperty) }
     }
 
-    // Marks this element as dirty and notifies parents if they are caching.
     internal fun markDirty() {
-        if (isDirty) return // Stop recursion, already dirty
+        if (isDirty) return
         isDirty = true
-
-        // Bubbling: If my parent is caching, it needs to know its content is invalid.
         parent?.markDirty()
+    }
+
+    // Call this when bBoxLocal changes (e.g., resizing)
+    internal fun invalidateGeometry() {
+        geometryVersion++
+        invalidateComputedProp(Element::bBoxLocal)
+        parent?.invalidateGeometry()
     }
 
     override fun toString(): String {
@@ -140,4 +173,3 @@ internal abstract class Element {
         return "class: ${this::class.simpleName}$idStr${repr()}"
     }
 }
-

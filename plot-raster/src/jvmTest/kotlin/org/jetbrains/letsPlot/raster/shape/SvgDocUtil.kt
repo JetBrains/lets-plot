@@ -5,19 +5,46 @@
 
 package org.jetbrains.letsPlot.raster.shape
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.ContextStateDelegate
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
+import kotlin.math.roundToInt
 
 
-internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
+internal object MeasuringCanvas : Canvas {
+    override val context2d: Context2d = MeasuringContext2D.INSTANCE
+    override val size: Vector get() = Vector(1, 1)
+    override fun takeSnapshot() = error("Not supported")
+
+    internal class MeasuringContext2D private constructor(
+        private val state: ContextStateDelegate = ContextStateDelegate()
+    ) : Context2d by state {
+        override fun measureTextWidth(str: String): Double {
+            return (str.length.toDouble() * state.getFont().fontSize * 0.6).roundToInt().toDouble()
+        }
+
+        override fun measureText(str: String): TextMetrics {
+            val width = measureTextWidth(str)
+            val fontSize = state.getFont().fontSize
+            return TextMetrics(
+                ascent = fontSize * 0.8,
+                descent = fontSize * 0.2,
+                bbox = DoubleRectangle.XYWH(x = 0.0, y = -fontSize * 0.8, width = width, height = fontSize)
+            )
+        }
+
+        companion object {
+            val INSTANCE = MeasuringContext2D()
+        }
+    }
+}
+
+internal fun mapSvg(textMeasuringCanvas: Canvas = MeasuringCanvas, builder: () -> SvgSvgElement): Pane {
     //val fontManager = FontManager()
     val svgDocument = builder()
 
@@ -25,25 +52,15 @@ internal fun mapSvg(builder: () -> SvgSvgElement): Pane {
     SvgNodeContainer(svgDocument)
 
     val canvasPeer = object : CanvasPeer {
-        override fun createCanvas(size: Vector) = createCanvas(size, contentScale = 1.0)
+        override fun createCanvas(size: Vector) = error("Not supported")
+        override fun createCanvas(size: Vector, contentScale: Double): Canvas = error("Not supported")
 
-        override fun createCanvas(
-            size: Vector,
-            contentScale: Double
-        ): Canvas {
-            return object : Canvas {
-                override val context2d: Context2d = DummyContext2D()
-                override val size: Vector = Vector.ZERO
-                override fun takeSnapshot(): Canvas.Snapshot = TODO("Not yet implemented")
-            }
-        }
-
-        override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
-        override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
-        override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
+        override fun createSnapshot(bitmap: Bitmap) = error("Not supported")
+        override fun decodeDataImageUrl(dataUrl: String) = error("Not supported")
+        override fun decodePng(png: ByteArray) = error("Not supported")
     }
 
-    val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer, textMeasuringCanvas)
 
     //val rootMapper = SvgSvgElementMapper(svgDocument, SvgSkiaPeer(fontManager))
     val rootMapper = SvgSvgElementMapper(svgDocument, svgCanvasPeer)
@@ -129,6 +146,7 @@ internal fun SvgNode.rect(
     y: Number? = null,
     width: Number? = null,
     height: Number? = null,
+    strokeWidth: Number? = null,
     stroke: SvgColor? = null,
     fill: SvgColor? = null,
     id: String? = null,
@@ -141,6 +159,7 @@ internal fun SvgNode.rect(
     width?.let { el.width().set(it.toDouble()) }
     height?.let { el.height().set(it.toDouble()) }
     stroke?.let { el.stroke().set(it) }
+    strokeWidth?.let { el.strokeWidth().set(it.toDouble()) }
     fill?.let { el.fill().set(it) }
 
     el.apply(config)
@@ -152,6 +171,7 @@ internal fun SvgNode.text(
     text: String? = null,
     x: Number? = null,
     y: Number? = null,
+    anchor: String? = null,
     styleClass: String? = null,
     id: String? = null,
     config: SvgTextElement.() -> Unit = {},
@@ -161,7 +181,26 @@ internal fun SvgNode.text(
     x?.let { el.x().set(it.toDouble()) }
     y?.let { el.y().set(it.toDouble()) }
     text?.let { el.setTextNode(it) }
+    anchor?.let { el.textAnchor().set(it) }
     styleClass?.let { el.addClass(it) }
+
+    el.apply(config)
+    children().add(el)
+    return el
+}
+
+internal fun SvgTextElement.tspan(
+    text: String? = null,
+    x: Number? = null,
+    y: Number? = null,
+    id: String? = null,
+    config: SvgTSpanElement.() -> Unit = {},
+): SvgTSpanElement {
+    val el = SvgTSpanElement()
+    id?.let { el.id().set(it) }
+    x?.let { el.x().set(it.toDouble()) }
+    y?.let { el.y().set(it.toDouble()) }
+    text?.let { el.setText(it) }
 
     el.apply(config)
     children().add(el)
@@ -180,10 +219,26 @@ internal fun Container.element(id: String): Element {
     return breadthFirstTraversal(this).first { it.id == id }
 }
 
-class DummyContext2D : Context2d by ContextStateDelegate(
 
-) {
-    override fun measureTextWidth(str: String): Double {
-        return str.length.toDouble() * 7.0 // approx.
+internal fun withTextMeasurer(measurer: (String, ContextStateDelegate) -> TextMetrics) : SvgCanvasPeer {
+    val ctx = object : ContextStateDelegate(contentScale = 1.0) {
+        override fun measureText(str: String): TextMetrics = measurer(str, this)
     }
+
+    val canvas: Canvas = object : Canvas {
+        override val context2d: Context2d = ctx
+        override val size get() = TODO("Not yet implemented")
+        override fun takeSnapshot() = TODO("Not yet implemented")
+    }
+
+    val canvasPeer: CanvasPeer = object : CanvasPeer {
+        override fun createCanvas(size: Vector): Canvas = canvas
+        override fun createCanvas(size: Vector, contentScale: Double) = TODO("Not yet implemented")
+        override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
+        override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
+        override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
+    }
+
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
+    return svgCanvasPeer
 }

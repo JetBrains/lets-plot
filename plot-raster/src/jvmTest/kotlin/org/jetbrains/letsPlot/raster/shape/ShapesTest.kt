@@ -2,10 +2,8 @@ package org.jetbrains.letsPlot.raster.shape
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Path2d
+import org.jetbrains.letsPlot.core.canvas.TextMetrics
 import kotlin.test.Test
 
 class ShapesTest {
@@ -248,27 +246,5 @@ class ShapesTest {
         )
     }
 
-    private fun withTextMeasurer(measurer: (String, ContextStateDelegate) -> TextMetrics) : SvgCanvasPeer {
-        val ctx = object : ContextStateDelegate(contentScale = 1.0) {
-            override fun measureText(str: String): TextMetrics = measurer(str, this)
-        }
-
-        val canvas: Canvas = object : Canvas {
-            override val context2d: Context2d = ctx
-            override val size get() = TODO("Not yet implemented")
-            override fun takeSnapshot() = TODO("Not yet implemented")
-        }
-
-        val canvasPeer: CanvasPeer = object : CanvasPeer {
-            override fun createCanvas(size: Vector): Canvas = canvas
-            override fun createCanvas(size: Vector, contentScale: Double) = TODO("Not yet implemented")
-            override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
-            override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
-            override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
-        }
-
-        val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
-        return svgCanvasPeer
-    }
 
 }

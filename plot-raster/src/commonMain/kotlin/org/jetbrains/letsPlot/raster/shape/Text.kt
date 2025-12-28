@@ -103,6 +103,8 @@ internal class Text : Container() {
             || prop == Text::textOrigin
         ) {
             invalidateLayout()
+
+            invalidateGeometry()
         }
 
         children.forEach { el ->
@@ -138,14 +140,13 @@ internal class Text : Container() {
         invalidateLayout()
     }
 
-    override val bBoxLocal: DoubleRectangle
-        get() {
-            if (needLayout) {
-                layoutChildren()
-            }
-
-            return super.bBoxLocal
+    override fun calculateLocalBBox(): DoubleRectangle {
+        if (needLayout) {
+            layoutChildren()
         }
+
+        return super.calculateLocalBBox()
+    }
 
     enum class VerticalAlignment {
         TOP,

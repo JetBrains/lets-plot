@@ -27,15 +27,10 @@ internal class Rectangle : Figure() {
         }
     }
 
-    override val bBoxLocal: DoubleRectangle
-        get() = DoubleRectangle.XYWH(x, y, width, height)
-
-    override val bBoxGlobal: DoubleRectangle
-        get() {
-            if (width <= 0 || height <= 0) {
-                return DoubleRectangle.XYWH(x.toDouble(), y.toDouble(), 0.0, 0.0)
-            }
-
-            return ctm.transform(bBoxLocal.inflate(strokeWidth / 2.0))
+    override fun calculateLocalBBox(): DoubleRectangle {
+        if (width <= 0 || height <= 0) {
+            return DoubleRectangle.XYWH(x.toDouble(), y.toDouble(), 0.0, 0.0)
         }
+        return DoubleRectangle.XYWH(x, y, width, height).inflate(strokeWidth / 2.0)
+    }
 }

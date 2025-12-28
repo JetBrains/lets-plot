@@ -18,7 +18,7 @@ internal object DebugOptions {
         //val strokePaint = Paint().setStroke(true)
         //val fillPaint = Paint().setStroke(false)
 
-        depthFirstTraversal(rootElement).forEach { el ->
+        depthFirstTraversal(rootElement, onlyVisible = false).forEach { el ->
             val color = when (el) {
                 is Pane -> Color.CYAN
                 is Group -> Color.YELLOW

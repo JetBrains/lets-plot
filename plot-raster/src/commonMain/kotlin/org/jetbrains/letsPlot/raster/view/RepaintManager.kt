@@ -29,7 +29,9 @@ internal class RepaintManager(
         val inverseCtm = element.ctm.inverse() ?: return false
         val requiredLocalRect = inverseCtm.transform(requiredScreenRect)
 
-        return entry.snapshotLocalBounds.contains(requiredLocalRect)
+        val contains = entry.snapshotLocalBounds.contains(requiredLocalRect)
+
+        return contains
     }
 
     fun cacheElement(
@@ -113,7 +115,7 @@ internal class RepaintManager(
     )
 
     companion object {
-        private const val CACHE_PADDING: Int = 2
+        private const val CACHE_PADDING: Int = 10  // for anti-aliasing artifacts and mitered joins
         private val CACHE_PADDING_SIZE = Vector(CACHE_PADDING, CACHE_PADDING)
     }
 }

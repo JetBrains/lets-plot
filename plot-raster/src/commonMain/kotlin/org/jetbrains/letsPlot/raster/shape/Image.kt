@@ -40,9 +40,7 @@ internal class Image : Element() {
         snapshot?.dispose()
     }
 
-    override val bBoxLocal: DoubleRectangle
-        get() = DoubleRectangle.XYWH(x, y, width, height)
-
-    override val bBoxGlobal: DoubleRectangle
-        get() = ctm.transform(bBoxLocal)
+    override fun calculateLocalBBox(): DoubleRectangle {
+        return DoubleRectangle.XYWH(x, y, width, height)
+    }
 }

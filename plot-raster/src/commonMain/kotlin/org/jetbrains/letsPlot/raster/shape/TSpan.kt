@@ -105,22 +105,19 @@ internal class TSpan : Figure() {
         val strokePaint: Paint?,
     )
 
-    override val bBoxLocal: DoubleRectangle
-        get() {
-            val left = textBBox.left
-            val top = textBBox.top
-            val right = textBBox.right
-            val bottom = textBBox.bottom
+    override fun calculateLocalBBox(): DoubleRectangle {
+        val left = textBBox.left
+        val top = textBBox.top
+        val right = textBBox.right
+        val bottom = textBBox.bottom
 
-            return DoubleRectangle.LTRB(
-                layoutX + left,
-                layoutY + top,
-                layoutX + right,
-                layoutY + bottom
-            )
-        }
-    override val bBoxGlobal: DoubleRectangle
-        get() = ctm.transform(bBoxLocal)
+        return DoubleRectangle.LTRB(
+            layoutX + left,
+            layoutY + top,
+            layoutX + right,
+            layoutY + bottom
+        )
+    }
 
     override fun onPropertyChanged(prop: KProperty<*>) {
         if (
@@ -132,9 +129,19 @@ internal class TSpan : Figure() {
         ) {
             (parent as? Text)?.invalidateLayout()
         }
+
+        if (
+            prop == TSpan::layoutX ||
+            prop == TSpan::layoutY ||
+            prop == TSpan::text ||
+            prop == TSpan::font ||
+            prop == TSpan::baselineShift
+        ) {
+            invalidateGeometry()
+        }
     }
 
-    override fun repr(): String? {
+    override fun repr(): String {
         return ", text: \"$text\"" + super.repr()
     }
 }

@@ -51,8 +51,12 @@ internal fun reversedBreadthFirstTraversal(element: Element): Sequence<Element> 
     return enumerate(element) + sequenceOf(element)
 }
 
-internal fun depthFirstTraversal(element: Element): Sequence<Element> {
+internal fun depthFirstTraversal(element: Element, onlyVisible: Boolean = false): Sequence<Element> {
     fun enumerate(el: Element): Sequence<Element> {
+        if (onlyVisible && !el.isVisible) {
+            return emptySequence()
+        }
+
         return when (el) {
             is Container -> sequenceOf(el) + el.children.asSequence().flatMap(::enumerate)
             else -> sequenceOf(el)

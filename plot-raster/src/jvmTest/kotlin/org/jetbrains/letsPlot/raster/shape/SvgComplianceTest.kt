@@ -23,7 +23,7 @@ class SvgComplianceTest {
         doc.element<Group>("g").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslation(10f, 20f))
             assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 0f, 0f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslation(10f, 20f))
         }
     }
@@ -34,19 +34,20 @@ class SvgComplianceTest {
         val doc = mapSvg {
             svgDocument(width = 400, height = 300) {
                 g(translate(x = 10, y = 20), id = "g") {
-                    rect(5, 16, 40, 15, fill = SvgColors.RED, id = "rect")
+                    rect(5, 16, 40, 15, strokeWidth = 0, fill = SvgColors.RED, id = "rect")
                 }
             }
         }
 
         doc.element<Rectangle>("rect").let {
-            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(14.5f, 35.5f, 41f, 16f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(15, 36, 40, 15))
         }
 
         doc.element<Group>("g").let {
-            assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
             assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(5f, 16f, 40f, 15f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(14.5f, 35.5f, 41f, 16f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(15, 36, 40, 15))
+
+            assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
         }
     }
@@ -62,7 +63,7 @@ class SvgComplianceTest {
         doc.element<Pane>("svg").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
             assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 0f, 0f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(10f, 20f, 0f, 0f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
         }
     }
@@ -72,20 +73,20 @@ class SvgComplianceTest {
         val doc = mapSvg {
             svgDocument(width = 400, height = 300) {
                 svg(x = 10, y = 20, width = 400, height = 300, id = "svg") {
-                    rect(5, 16, 40, 15, fill = SvgColors.RED, id = "rect")
+                    rect(5, 16, 40, 15, strokeWidth = 0, fill = SvgColors.RED, id = "rect")
                 }
             }
         }
 
         doc.element<Rectangle>("rect").let {
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
-            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(14.5f, 35.5f, 41f, 16f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(15, 36, 40, 15))
         }
 
         doc.element<Pane>("svg").let {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
             assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(5f, 16f, 40f, 15f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(14.5f, 35.5f, 41f, 16f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(15, 36, 40, 15))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(10f, 20f))
         }
     }
@@ -96,21 +97,26 @@ class SvgComplianceTest {
             svgDocument(width = 400, height = 300) {
                 g(id = "root_g") {
                     g(translate(50, 70), id = "sub_g") {
-                        rect(0, 0, 10, 20)
-                        g(translate(500, 500)) // no children - should be excluded from measurement
+                        rect(0, 0, 10, 20, strokeWidth = 0)
+                        g(translate(500, 500), id = "empty_g") // no children - should be excluded from measurement
                     }
                 }
             }
         }
 
         doc.element<Group>("root_g").let {
-            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 10f, 20f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(49.5f, 69.5f, 11f, 21f))
+            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(50, 70, 10, 20))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(50, 70, 10, 20))
         }
 
         doc.element<Group>("sub_g").let {
-            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(0f, 0f, 10f, 20f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(49.5f, 69.5f, 11f, 21f))
+            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(0, 0, 10, 20))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(50, 70, 10, 20))
+        }
+
+        doc.element<Group>("empty_g").let {
+            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(0, 0, 0, 0))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(550, 570, 0, 0))
         }
     }
 
@@ -120,7 +126,7 @@ class SvgComplianceTest {
             svgDocument(width = 400.0, height = 300.0) {
                 g(translate(10.0, 20.0)) {
                     g(translate(30.0, 50.0)) {
-                        rect(x = 3f, y = 5f, width = 10f, height = 10f, id = "rect")
+                        rect(x = 3f, y = 5f, width = 10f, height = 10f, strokeWidth = 0, id = "rect")
                     }
                 }
             }
@@ -128,9 +134,9 @@ class SvgComplianceTest {
 
         doc.element<Rectangle>("rect").let {
             assertThat(it.transform).isEqualTo(AffineTransform.IDENTITY)
-            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(3f, 5f, 10f, 10f))
-            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(42.5f, 74.5f, 11f, 11f))
-            assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(40f, 70f))
+            assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(3, 5, 10, 10))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(43, 75, 10, 10))
+            assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(40, 70))
         }
     }
 
@@ -140,7 +146,7 @@ class SvgComplianceTest {
             svgDocument(width = 400.0, height = 300.0) {
                 g(translate(10.0, 20.0)) {
                     svg(x = 13.0, y = 17.0, width = 180.0, height = 50.0, "svg") {
-                        rect(x = 1f, y = 3f, width = 10f, height = 10f, id = "rect")
+                        rect(x = 1f, y = 3f, width = 10f, height = 10f, strokeWidth = 0, id = "rect")
                     }
                 }
             }
@@ -150,14 +156,14 @@ class SvgComplianceTest {
             assertThat(it.transform).isEqualTo(AffineTransform.makeTranslate(13f, 17f))
             assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(1f, 3f, 10f, 10f))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(23f, 37f))
-            assertThat(it.absoluteBBox).isEqualTo(DoubleRectangle.XYWH(23.5f, 39.5f, 11f, 11f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(24, 40, 10, 10))
         }
 
 
         doc.element<Rectangle>("rect").let {
             assertThat(it.transform).isEqualTo(AffineTransform.IDENTITY)
             assertThat(it.bBoxLocal).isEqualTo(DoubleRectangle.XYWH(1f, 3f, 10f, 10f))
-            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(23.5f, 39.5f, 11f, 11f))
+            assertThat(it.bBoxGlobal).isEqualTo(DoubleRectangle.XYWH(24, 40, 10, 10))
             assertThat(it.ctm).isEqualTo(AffineTransform.makeTranslate(23f, 37f))
         }
     }
@@ -183,7 +189,7 @@ class SvgComplianceTest {
             }
         }
 
-        val elements = depthFirstTraversal(doc).toList()
+        val elements = depthFirstTraversal(doc,).toList()
 
         assertThat(elements.map(Element::id)).isEqualTo(listOf(null, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"))
     }

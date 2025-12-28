@@ -38,61 +38,36 @@ internal abstract class Container : Element() {
     }
 
     override fun onPropertyChanged(prop: KProperty<*>) {
-        if (prop == Element::transform) {
-            breadthFirstTraversal(this).forEach { it.invalidateComputedProp(Element::ctm) }
-        }
-
-        if (prop == Element::ctm) {
-            breadthFirstTraversal(this).forEach { it.invalidateComputedProp(Element::ctm) }
-        }
-
+        super.onPropertyChanged(prop)
         if (prop == Element::parent) {
-            invalidateHierarchy(this)
+            markDirty()
         }
     }
 
-    override val bBoxLocal: DoubleRectangle
-        get() = children
+    override fun calculateLocalBBox(): DoubleRectangle {
+        return children
             .filterNot { it is Container && it.children.isEmpty() }
-            .map(Element::bBoxLocal)
+            .map { child ->
+                // Transform child's local box into this container's space
+                // child.transform is fast, child.bBoxLocal is cached.
+                child.transform.transform(child.bBoxLocal)
+            }
             .let(::union)
-            ?: DoubleRectangle.XYWH(0, 0, 0, 0)
-
-    override val bBoxGlobal: DoubleRectangle
-        get() = children
-            .filterNot { it is Container && it.children.isEmpty() }
-            .map(Element::bBoxGlobal)
-            .let(::union)
-            ?: DoubleRectangle.XYWH(0, 0, 0, 0)
-
-    val absoluteBBox: DoubleRectangle
-        get() {
-            return children
-                .filterNot { it is Container && it.children.isEmpty() }
-                .map { it.bBoxGlobal }
-                .let(::union)
-                ?: DoubleRectangle.XYWH(ctm.tx, ctm.ty, 0, 0)
-        }
-
-
-    private fun invalidateHierarchy(e: Element) {
-        e.invalidateComputedProp(Element::parents)
-        e.invalidateComputedProp(Element::ctm)
-        breadthFirstTraversal(e).forEach {
-            it.invalidateComputedProp(Element::parents)
-            it.invalidateComputedProp(Element::ctm)
-        }
+            ?: DoubleRectangle.ZERO
     }
 
     protected open fun onChildSet(event: CollectionItemEvent<out Element>) {
-        markDirty() // Structure changed
+        markDirty()
+        invalidateGeometry()
     }
 
     protected open fun onChildAdded(event: CollectionItemEvent<out Element>) {
-        markDirty() // Structure changed
+        markDirty()
+        invalidateGeometry()
     }
 
     protected open fun onChildRemoved(event: CollectionItemEvent<out Element>) {
-        markDirty() // Structure changed
+        markDirty()
+        invalidateGeometry()
     }
 }

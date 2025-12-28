@@ -25,23 +25,19 @@ internal class Line : Figure() {
         ctx.stroke(strokePaint)
     }
 
-    override val bBoxLocal: DoubleRectangle
-        get() {
-            return DoubleRectangle.LTRB(
-                left = minOf(x0, x1),
-                top = minOf(y0, y1),
-                right = maxOf(x0, x1),
-                bottom = maxOf(y0, y1)
-            )
+    override fun calculateLocalBBox(): DoubleRectangle {
+        val minX = minOf(x0, x1).toDouble()
+        val minY = minOf(y0, y1).toDouble()
+        val maxX = maxOf(x0, x1).toDouble()
+        val maxY = maxOf(y0, y1).toDouble()
+
+        if (minX == maxX && minY == maxY) {
+            // Degenerate line (point)
+            return DoubleRectangle.XYWH(minX, minY, 0.0, 0.0)
         }
 
-    override val bBoxGlobal: DoubleRectangle
-        get() {
-            if (x0 == x1 && y0 == y1) {
-                return DoubleRectangle.XYWH(x0.toDouble(), y0.toDouble(), 0.0, 0.0)
-            }
+        return DoubleRectangle.LTRB(minX, minY, maxX, maxY).inflate(strokeWidth / 2.0)
+    }
 
-            return ctm.transform(bBoxLocal.inflate(strokeWidth / 2.0))
-        }
 }
 
