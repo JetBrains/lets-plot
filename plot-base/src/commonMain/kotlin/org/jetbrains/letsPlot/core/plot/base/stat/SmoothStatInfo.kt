@@ -129,7 +129,7 @@ class SmoothStatInfo constructor(
 
         return DataFrame.Builder()
             .put(Stats.R2, listOf(regression.r2))
-            .put(Stats.FORMULA, listOf(regression.formula))
+            .put(Stats.EQ, listOf(regression.eq))
             .build()
     }
 }

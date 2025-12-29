@@ -39,7 +39,7 @@ object Stats {
     val SUMPCT = DataFrame.Variable("..sumpct..", STAT, "sumpct")
 
     val R2 = DataFrame.Variable("..r2..", STAT, "r2")
-    val FORMULA = DataFrame.Variable("..formula..", STAT, "formula")
+    val EQ = DataFrame.Variable("..eq..", STAT, "eq")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -78,7 +78,7 @@ object Stats {
             SCALED,
             GROUP,
             R2,
-            FORMULA,
+            EQ,
         )
 
         val result = HashMap<String, DataFrame.Variable>()
