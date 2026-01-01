@@ -6,7 +6,8 @@ import java.awt.EventQueue.invokeLater
 
 fun main() {
     with(TooltipBoxDemo()) {
-        val models = listOf(createModels()[3])
+        //val models = listOf(createModels()[3])
+        val models = createModels()
         SvgViewerDemoWindowSwingCanvas(
             "Tooltip box",
             createSvgRoots(models.map { it.first })

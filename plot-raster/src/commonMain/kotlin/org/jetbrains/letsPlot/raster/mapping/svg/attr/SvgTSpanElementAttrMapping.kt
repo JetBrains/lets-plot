@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.toColor
-import org.jetbrains.letsPlot.raster.shape.TSpan
-import org.jetbrains.letsPlot.raster.shape.Text.BaselineShift
-import org.jetbrains.letsPlot.raster.shape.Text.Companion.DEFAULT_FONT_FAMILY
+import org.jetbrains.letsPlot.raster.scene.TSpan
+import org.jetbrains.letsPlot.raster.scene.Text.BaselineShift
+import org.jetbrains.letsPlot.raster.scene.Text.Companion.DEFAULT_FONT_FAMILY
 
 internal object SvgTSpanElementAttrMapping : SvgShapeMapping<TSpan>() {
     override fun setAttribute(target: TSpan, name: String, value: Any?) {

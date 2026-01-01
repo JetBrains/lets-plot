@@ -7,59 +7,60 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.*
-import org.jetbrains.letsPlot.raster.shape.*
+import org.jetbrains.letsPlot.raster.scene.*
 import kotlin.reflect.KClass
 
 
 internal object SvgUtils {
     @Suppress("UNCHECKED_CAST")
-    private val ATTR_MAPPINGS: Map<KClass<out Element>, SvgAttrMapping<Element>> = mapOf(
-        Pane::class to (SvgSvgAttrMapping as SvgAttrMapping<Element>),
+    private val ATTR_MAPPINGS: Map<KClass<out Node>, SvgAttrMapping<Node>> = mapOf(
+        Pane::class to (SvgSvgAttrMapping as SvgAttrMapping<Node>),
         //StackPane::class to (SvgSvgAttrMapping as SvgAttrMapping<Element>),
-        Group::class to (SvgGAttrMapping as SvgAttrMapping<Element>),
-        Rectangle::class to (SvgRectAttrMapping as SvgAttrMapping<Element>),
-        Line::class to (SvgLineAttrMapping as SvgAttrMapping<Element>),
-        Ellipse::class to (SvgEllipseAttrMapping as SvgAttrMapping<Element>),
-        Circle::class to (SvgCircleAttrMapping as SvgAttrMapping<Element>),
-        Text::class to (SvgTextElementAttrMapping as SvgAttrMapping<Element>),
-        Path::class to (SvgPathAttrMapping as SvgAttrMapping<Element>),
-        Image::class to (SvgImageAttrMapping as SvgAttrMapping<Element>),
-        TSpan::class to (SvgTSpanElementAttrMapping as SvgAttrMapping<Element>),
+        Group::class to (SvgGAttrMapping as SvgAttrMapping<Node>),
+        Rectangle::class to (SvgRectAttrMapping as SvgAttrMapping<Node>),
+        Line::class to (SvgLineAttrMapping as SvgAttrMapping<Node>),
+        Ellipse::class to (SvgEllipseAttrMapping as SvgAttrMapping<Node>),
+        Circle::class to (SvgCircleAttrMapping as SvgAttrMapping<Node>),
+        Text::class to (SvgTextElementAttrMapping as SvgAttrMapping<Node>),
+        Path::class to (SvgPathAttrMapping as SvgAttrMapping<Node>),
+        Image::class to (SvgImageAttrMapping as SvgAttrMapping<Node>),
+        TSpan::class to (SvgTSpanElementAttrMapping as SvgAttrMapping<Node>),
     )
 
-    fun elementChildren(e: Element): MutableList<Element> {
-        return object : AbstractMutableList<Element>() {
+    fun elementChildren(e: Node): MutableList<Node> {
+        return object : AbstractMutableList<Node>() {
             override val size: Int
                 get() = getChildren(e).size
 
-            override fun get(index: Int): Element {
+            override fun get(index: Int): Node {
                 return getChildren(e)[index]
             }
 
-            override fun set(index: Int, element: Element): Element {
+            override fun set(index: Int, element: Node): Node {
                 if (element.parent != null) {
                     throw IllegalStateException()
                 }
                 return getChildren(e).set(index, element)
             }
 
-            override fun add(index: Int, element: Element) {
+            override fun add(index: Int, element: Node) {
                 if (element.parent != null) {
                     throw IllegalStateException()
                 }
                 getChildren(e).add(index, element)
             }
 
-            override fun removeAt(index: Int): Element {
+            override fun removeAt(index: Int): Node {
                 return getChildren(e).removeAt(index)
             }
         }
     }
 
-    fun getChildren(parent: Element): MutableList<Element> {
+    fun getChildren(parent: Node): MutableList<Node> {
         return when (parent) {
             is Group -> parent.children
             is Pane -> parent.children
@@ -68,7 +69,7 @@ internal object SvgUtils {
         }
     }
 
-    fun newElement(source: SvgNode, peer: SvgCanvasPeer): Element {
+    fun newElement(source: SvgNode, peer: SvgCanvasPeer): Node {
         return when (source) {
             is SvgEllipseElement -> Ellipse()
             is SvgCircleElement -> Circle()
@@ -91,7 +92,7 @@ internal object SvgUtils {
         }
     }
 
-    fun setAttribute(target: Element, name: String, value: Any?) {
+    fun setAttribute(target: Node, name: String, value: Any?) {
         val attrMapping = ATTR_MAPPINGS[target::class]
         attrMapping?.setAttribute(target, name, value)
         //?: throw IllegalArgumentException("Unsupported target: ${target::class}")
@@ -112,19 +113,23 @@ internal object SvgUtils {
     fun toColor(value: Any?): Color? {
         require(value != SvgColors.CURRENT_COLOR) { "currentColor is not supported" }
 
-        return when (value) {
-            null, SvgColors.NONE -> null
-            else -> {
-                val colorString = value.toString().lowercase()
-                namedColors[colorString]
-                    ?: Color.parseOrNull(colorString)
-                    ?: error("Unsupported color value: $colorString")
-            }
+        if (value is Color) {
+            return value
         }
-    }
 
+        if (value == SvgColors.NONE) {
+            return null
+        }
+
+        val colorString = value.toString()
+
+        if (Colors.isColorName(colorString)) {
+            return Colors.forName(colorString)
+        }
+
+        return Color.parseOrNull(colorString) ?: error("Unsupported color value: $colorString")
+    }
 }
 
 val TextStyle.safeColor: Color? get() = if (isNoneColor) null else color
 val TextStyle.safeSize: Double? get() = if (isNoneSize) null else size
-val TextStyle.safeFamily: List<String>? get() = if (isNoneFamily) null else family.split(",").map { it.trim(' ', '"') }

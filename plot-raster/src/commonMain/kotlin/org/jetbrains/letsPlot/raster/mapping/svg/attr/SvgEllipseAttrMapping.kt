@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgEllipseElement
-import org.jetbrains.letsPlot.raster.shape.Ellipse
+import org.jetbrains.letsPlot.raster.scene.Ellipse
 
 internal object SvgEllipseAttrMapping : SvgShapeMapping<Ellipse>() {
     override fun setAttribute(target: Ellipse, name: String, value: Any?) {

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.toColor
-import org.jetbrains.letsPlot.raster.shape.Figure
+import org.jetbrains.letsPlot.raster.scene.Figure
 
 internal abstract class SvgShapeMapping<TargetT : Figure> : SvgAttrMapping<TargetT>() {
     override fun setAttribute(target: TargetT, name: String, value: Any?) {

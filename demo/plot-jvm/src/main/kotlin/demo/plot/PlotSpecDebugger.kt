@@ -9,13 +9,17 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.event.DocumentEvent
@@ -146,8 +150,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         isRepeats = false // Make it a single-shot timer
     }
 
-    // Screenshot Button
-    private val screenshotButton = JButton("Screenshot").apply {
+    private val exportPngButton = JButton("Export PNG").apply {
         addActionListener {
             if (plotPanel.width > 0 && plotPanel.height > 0) {
                 try {
@@ -166,6 +169,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     if (fileChooser.showSaveDialog(this@PlotSpecDebugger) == JFileChooser.APPROVE_OPTION) {
                         ImageIO.write(image, "png", fileChooser.selectedFile)
                     }
+                    Desktop.getDesktop().open(fileChooser.selectedFile)
                 } catch (ex: Exception) {
                     JOptionPane.showMessageDialog(
                         this@PlotSpecDebugger,
@@ -179,6 +183,39 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         }
     }
 
+    private val exportSvgButton = JButton("Export SVG").apply {
+        addActionListener {
+            if (plotPanel.width > 0 && plotPanel.height > 0) {
+                try {
+                    val canvaPanel = plotPanel.components.first() as DefaultPlotPanelCanvas
+                    val canvasPane = canvaPanel.components.first() as CanvasPane
+                    val svgCanvasFigure = canvasPane.figure as SvgCanvasFigure
+                    val svgString = SvgToString.render(svgCanvasFigure.svgSvgElement)
+
+                    // Show Save Dialog
+                    val fileChooser = JFileChooser().apply {
+                        dialogTitle = "Save SVG"
+                        selectedFile = File("plot_screenshot.svg")
+                    }
+
+                    if (fileChooser.showSaveDialog(this@PlotSpecDebugger) == JFileChooser.APPROVE_OPTION) {
+                        Files.write(fileChooser.selectedFile.toPath(), svgString.toByteArray(StandardCharsets.UTF_8))
+                    }
+                    Desktop.getDesktop().open(fileChooser.selectedFile)
+                } catch (ex: Exception) {
+                    JOptionPane.showMessageDialog(
+                        this@PlotSpecDebugger,
+                        "Failed to save screenshot: ${ex.message}",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                    )
+                    ex.printStackTrace()
+                }
+            }
+        }
+    }
+
+
     // Frontend panel
     private val frontendPanel = JPanel().apply {
         layout = FlowLayout(FlowLayout.LEFT)
@@ -187,7 +224,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         add(pixelDensityLabel)
         add(pixelDensitySpinner)
         add(Box.createHorizontalStrut(10))
-        add(screenshotButton) // Added the button here
+        add(exportPngButton) // Added the button here
+        add(exportSvgButton)
     }
 
     // Favorites components
