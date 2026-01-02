@@ -40,16 +40,16 @@ def _hex2rgb(hex_c, alpha):
 
 def _hex2rgb_arr_uint8(hex_c, alpha=None):
     """
-    Create 'palette' for PyPNG PNG writer
+    Create a palette entry for PyPNG PNG writer.
     """
     return numpy.array(_hex2rgb(hex_c, alpha), dtype=numpy.uint8)
 
 
 def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     """
-    Take numpy 2D array of float or int-s and
-    return 2D array of ints with the target range [0..255].
-    Values outside the target range will be later clipped.
+    Take a numpy 2D array of floats or ints and
+    return a 2D array of ints with the target range [0..255].
+    Values outside the target range will be clipped later.
     """
     min_lum = max(0, min_lum)
     max_lum = 255 - min_lum
@@ -57,13 +57,13 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     vmin = float(vmin if vmin is not None else numpy.nanmin(image_data))
     vmax = float(vmax if vmax is not None else numpy.nanmax(image_data))
     if vmin > vmax:
-        raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
+        raise ValueError("vmin value must be less than vmax value, was: {} > {}".format(vmin, vmax))
 
     normalize = as_boolean(norm, default=True)
 
     # Make a copy via `numpy.copy()` or via `arr.astype()`
     #   - prevent modification of the original image
-    #   - work around read-only flag in the original image
+    #   - work around a read-only flag in the original image
 
     if normalize:
         if vmin == vmax:
@@ -101,20 +101,20 @@ def geom_imshow(image_data, cmap=None, *,
                 color_by="paint_c",
                 ):
     """
-    Display image specified by ndarray with shape.
+    Display an image specified by an ndarray with shape:
 
-    - (M, N) - grey-scale image
+    - (M, N) - greyscale image
     - (M, N, 3) - color RGB image
-    - (M, N, 4) - color RGB image with alpha channel
+    - (M, N, 4) - color RGBA image with an alpha channel
 
     This geom is not as flexible as `geom_raster() <https://lets-plot.org/python/pages/api/lets_plot.geom_raster.html>`__
     or `geom_tile() <https://lets-plot.org/python/pages/api/lets_plot.geom_tile.html>`__
-    but vastly superior in the terms of rendering efficiency.   
+    but vastly superior in terms of rendering efficiency.   
 
     Parameters
     ----------
     image_data : ndarray
-        Specify image type, size and pixel values.
+        Specify image type, size, and pixel values.
         Supported array shapes are:
 
         - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization. See parameters ``norm``, ``cmap``, ``vmin``, ``vmax``.
@@ -124,23 +124,23 @@ def geom_imshow(image_data, cmap=None, *,
         The first two dimensions (M, N) define the rows and columns of the image.
         Out-of-range values are clipped.
     cmap : str, optional
-        Name of colormap. For example "viridis", "magma", "plasma", "inferno", or any other colormap
-        which is supported by the Palettable package (https://github.com/jiffyclub/palettable)
+        Name of colormap. For example, "viridis", "magma", "plasma", "inferno", or any other colormap
+        that is supported by the Palettable package (https://github.com/jiffyclub/palettable).
         This parameter is ignored for RGB(A) images.
-    norm : bool, default=True
-        True - luminance values in grey-scale image will be scaled to [0-255] range using a linear scaler.
-        False - disables scaling of luminance values in grey-scale image.
+    norm : bool
+        True (default) - luminance values in greyscale images will be scaled to [0-255] range using a linear scaler.
+        False - disables scaling of luminance values in greyscale images.
         This parameter is ignored for RGB(A) images.
-    alpha: float, optional
-        The alpha blending value, between 0 (transparent) and 1 (opaque).    
+    alpha : float, optional
+        The alpha blending value, between 0 (transparent) and 1 (opaque).
     vmin, vmax : number, optional
-        Define the data range used for luminance normalization in grey-scale images.
+        Define the data range used for luminance normalization in greyscale images.
         This parameter is ignored for RGB(A) images or if parameter ``norm=False``.
     extent : list of 4 numbers: [left, right, bottom, top], optional
-        Define image's bounding box in terms of the "data coordinates".
+        Define the image's bounding box in terms of the "data coordinates".
 
-        - ``left``, ``right``: coordinates of pixels' outer edge along the x-axis for pixels in the 1-st and the last column.
-        - ``bottom``, ``top``: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
+        - ``left``, ``right``: coordinates of the pixels' outer edges along the x-axis for pixels in the 1st and the last column.
+        - ``bottom``, ``top``: coordinates of the pixels' outer edges along the y-axis for pixels in the 1st and the last row.
 
         The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
     compression : int, optional
@@ -150,7 +150,7 @@ def geom_imshow(image_data, cmap=None, *,
         the default level of compression (which is generally acceptable).
     show_legend : bool, default=True
         Greyscale images only.
-        False - do not show legend for this layer.
+        False - do not show the legend for this layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='paint_c'
         Define the color aesthetic used by the legend shown for a greyscale image.
 
