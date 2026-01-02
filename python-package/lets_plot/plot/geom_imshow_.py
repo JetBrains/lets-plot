@@ -291,6 +291,9 @@ def geom_imshow(image_data, cmap=None, *,
             image_data = numpy.dstack((image_data, alpha_ch))
         elif nchannels == 4 and alpha is not None:
             # RGBA image: apply alpha scaling
+            # Convert to float if needed to avoid casting errors when multiplying by alpha
+            if image_data.dtype.kind != 'f':
+                image_data = image_data.astype(numpy.float32)
             image_data[:, :, 3] *= alpha
 
     # Make sure all values are ints in range 0-255.
