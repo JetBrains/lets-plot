@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
@@ -383,16 +381,6 @@ internal object GeomProviderFactory {
                 }
                 ImageGeom(
                     imageUrl = layerConfig.getString(Option.Geom.Image.HREF)!!,
-                    bbox = DoubleRectangle.span(
-                        DoubleVector(
-                            layerConfig.getDoubleSafe(Option.Geom.Image.XMIN),
-                            layerConfig.getDoubleSafe(Option.Geom.Image.YMIN)
-                        ),
-                        DoubleVector(
-                            layerConfig.getDoubleSafe(Option.Geom.Image.XMAX),
-                            layerConfig.getDoubleSafe(Option.Geom.Image.YMAX)
-                        ),
-                    )
                 )
             }
 
