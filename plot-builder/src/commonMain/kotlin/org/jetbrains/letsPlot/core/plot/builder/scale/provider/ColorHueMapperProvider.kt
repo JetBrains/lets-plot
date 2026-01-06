@@ -13,6 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
+import kotlin.math.max
 
 class ColorHueMapperProvider(
     hueRange: DoubleSpan,
@@ -21,15 +23,16 @@ class ColorHueMapperProvider(
     startHue: Double,
     private val reversed: Boolean,
     naValue: Color
-) : HclColorMapperProvider(
-    naValue = naValue,
-) {
+) : HclColorMapperProvider(naValue),
+    PaletteGenerator {
+
     private val hueRange = DoubleSpan(hueRange.lowerEnd + startHue, hueRange.upperEnd + startHue)
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
-        val n = discreteTransform.effectiveDomain.size
+        // 'n' must be at least 2.
+        val n = max(discreteTransform.effectiveDomain.size, 2)
 
-        // if full circle prevent first and last colors to be the same
+        // if full circle, prevent first and last colors to be the same
         val hueRange = hueRange.takeUnless { it.length % 360 < 1.0 }
             ?: DoubleSpan(hueRange.lowerEnd, hueRange.upperEnd - 360.0 / n)
 
@@ -56,6 +59,17 @@ class ColorHueMapperProvider(
             domain = domain,
             from = from.takeUnless { reversed } ?: to,
             to = to.takeUnless { reversed } ?: from
+        )
+    }
+
+    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
+//        return createContinuousMapper(domain, Transforms.IDENTITY)
+        // Use a discrete mapper here because it handles the 'full circle' case better.
+        return createDiscreteMapper(
+            discreteTransform = DiscreteTransform(
+                domainValues = (domain.lowerEnd.toInt()..domain.upperEnd.toInt()).toList(),
+                domainLimits = emptyList()
+            )
         )
     }
 

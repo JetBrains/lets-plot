@@ -13,7 +13,9 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 import kotlin.math.abs
@@ -22,7 +24,8 @@ import kotlin.math.min
 class ColorGradientnMapperProvider(
     private val colors: List<Color>,
     naValue: Color
-) : MapperProviderBase<Color>(naValue) {
+) : MapperProviderBase<Color>(naValue),
+    PaletteGenerator {
 
     init {
         require(colors.size > 1) { "gradient requires colors list with two or more elements" }
@@ -42,6 +45,9 @@ class ColorGradientnMapperProvider(
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
+    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
+        return createContinuousMapper(domain, Transforms.IDENTITY)
+    }
 
     companion object {
         internal fun createGradient(

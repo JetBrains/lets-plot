@@ -11,16 +11,23 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.ContinuousOnlyMapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 import kotlin.math.max
 import kotlin.math.min
 
 class ColorGradient2MapperProvider(
-    low: Color?, mid: Color?, high: Color?, midpoint: Double?, naValue: Color
-) : ContinuousOnlyMapperProvider<Color>(naValue) {
+    low: Color?,
+    mid: Color?,
+    high: Color?,
+    midpoint: Double?,
+    naValue: Color
+) : ContinuousOnlyMapperProvider<Color>(naValue),
+    PaletteGenerator {
 
     private val myLow: Color
     private val myMid: Color
@@ -81,6 +88,10 @@ class ColorGradient2MapperProvider(
             }
         }
         return GuideMappers.asContinuous(scaleMapper)
+    }
+
+    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
+        return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 
     companion object {

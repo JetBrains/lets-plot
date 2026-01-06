@@ -13,7 +13,9 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 
 
@@ -42,7 +44,8 @@ class ColormapMapperProvider(
     end: Double?,
     private val direction: Double?,
     naValue: Color
-) : MapperProviderBase<Color>(naValue) {
+) : MapperProviderBase<Color>(naValue),
+    PaletteGenerator {
 
     private val cmapName = cmapName ?: VIRIDIS
     private val alpha = alpha ?: 1.0
@@ -78,5 +81,9 @@ class ColormapMapperProvider(
             true -> colors.reversed()
             false -> colors
         }
+    }
+
+    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
+        return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 }

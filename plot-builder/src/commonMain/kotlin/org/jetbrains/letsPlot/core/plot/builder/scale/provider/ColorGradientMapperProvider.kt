@@ -13,12 +13,19 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 
 
-class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: Color) : MapperProviderBase<Color>(naValue) {
+class ColorGradientMapperProvider(
+    low: Color?,
+    high: Color?,
+    naValue: Color
+) : MapperProviderBase<Color>(naValue),
+    PaletteGenerator {
 
     private val low: Color = low ?: ColorMapper.DEF_GRADIENT_LOW
     private val high: Color = high ?: ColorMapper.DEF_GRADIENT_HIGH
@@ -35,6 +42,10 @@ class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: Color) : M
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
         val gradient = ColorMapper.gradient(domain, low, high, naValue)
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
+    }
+
+    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
+        return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 
     companion object {
