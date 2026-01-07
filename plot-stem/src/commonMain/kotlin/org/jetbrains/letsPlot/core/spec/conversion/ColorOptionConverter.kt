@@ -10,9 +10,9 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 
 class ColorOptionConverter constructor(
-    private val pen: Color,
-    private val paper: Color,
-    private val brush: Color,
+    private val pen: Color?,
+    private val paper: Color?,
+    private val brush: Color?,
 ) : Function<Any?, Color?> {
     override fun apply(value: Any?): Color? {
         if (value == null) {
@@ -28,9 +28,9 @@ class ColorOptionConverter constructor(
         val str = value.toString()
         if (SystemColor.canParse(str)) {
             return when (SystemColor.parse(str)) {
-                SystemColor.PEN -> pen
-                SystemColor.PAPER -> paper
-                SystemColor.BRUSH -> brush
+                SystemColor.PEN -> pen ?: throw IllegalArgumentException("No 'pen' color defined")
+                SystemColor.PAPER -> paper ?: throw IllegalArgumentException("No 'paper' color defined")
+                SystemColor.BRUSH -> brush ?: throw IllegalArgumentException("No 'brush' color defined")
             }
         }
 

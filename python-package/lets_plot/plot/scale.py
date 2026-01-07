@@ -2,7 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from .core import FeatureSpec, FeatureSpecArray
+from .core import FeatureSpec, FeatureSpecArray, ColorScaleFeatureSpec
 from .util import as_boolean
 
 #
@@ -3566,13 +3566,20 @@ def _scale(aesthetic, *,
             args['breaks'] = new_breaks + breaks_without_label
             args['labels'] = new_labels
 
+    # Color aesthetics that support palette generation
+    _COLOR_AESTHETICS = {'color', 'fill', 'paint_a', 'paint_b', 'paint_c'}
+
     specs = []
     if isinstance(aesthetic, list):
         args.pop('aesthetic')
         for aes in aesthetic:
             specs.append(FeatureSpec('scale', aesthetic=aes, **args, **kwargs))
     else:
-        specs.append(FeatureSpec('scale', **args, **kwargs))
+        # Use ColorScaleFeatureSpec for color aesthetics when creating a single spec
+        if aesthetic in _COLOR_AESTHETICS:
+            specs.append(ColorScaleFeatureSpec('scale', **args, **kwargs))
+        else:
+            specs.append(FeatureSpec('scale', **args, **kwargs))
 
     if len(specs) == 1:
         return specs[0]
