@@ -14,6 +14,8 @@
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
 - [wip] Added warning messages about the removal of invalid points during geometry construction for geom_point(), geom_path(), and geom_line() layers. [[#81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)]
+- [**BREAKING**]: ColorBrewer palettes: when the requested number of colors exceeds the palette's maximum size, colors are now interpolated to generate unique colors. \
+  Previously, depending on the palette type, this either resulted in duplicate colors or random additional colors.
 
 ### Fixed
 

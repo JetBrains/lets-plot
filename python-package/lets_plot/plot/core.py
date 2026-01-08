@@ -952,7 +952,13 @@ class ColorScaleFeatureSpec(FeatureSpec):
         Returns
         -------
         List of hex color codes.
+
+        Notes
+        -----
+        For ColorBrewer palettes, if the requested number of colors exceeds the palette's
+        maximum size, colors will be interpolated to generate the required number of unique colors.
         """
+
         from .. import _kbridge
         return _kbridge._generate_palette_from_color_scale_spec(self.as_dict(), n)
 
