@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.ContinuousOnlyMapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults.Gradient2
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 import kotlin.math.max
 import kotlin.math.min
@@ -35,9 +36,9 @@ class ColorGradient2MapperProvider(
     private val myMidpoint: Double?
 
     init {
-        myLow = low ?: DEF_GRADIENT_LOW
-        myMid = mid ?: DEF_GRADIENT_MID
-        myHigh = high ?: DEF_GRADIENT_HIGH
+        myLow = low ?: Gradient2.DEF_LOW
+        myMid = mid ?: Gradient2.DEF_MID
+        myHigh = high ?: Gradient2.DEF_HIGH
         myMidpoint = midpoint ?: 0.0
     }
 
@@ -93,12 +94,5 @@ class ColorGradient2MapperProvider(
     override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
         val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
         return createContinuousMapper(domain, Transforms.IDENTITY)
-    }
-
-    companion object {
-        // https://ggplot2.tidyverse.org/current/scale_gradient.html
-        private val DEF_GRADIENT_LOW = Color.parseHex("#964540") // muted("red")
-        private val DEF_GRADIENT_MID = Color.WHITE
-        private val DEF_GRADIENT_HIGH = Color.parseHex("#3B3D96") // muted("blue")
     }
 }

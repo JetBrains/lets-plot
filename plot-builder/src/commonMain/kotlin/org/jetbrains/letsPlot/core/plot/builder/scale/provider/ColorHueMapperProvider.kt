@@ -71,12 +71,4 @@ class ColorHueMapperProvider(
             )
         )
     }
-
-    companion object {
-        // defaults from ggplot2
-        const val DEF_CHROMA = 100.0
-        const val DEF_LUMINANCE = 65.0
-        const val DEF_START_HUE = 0.0
-        val DEF_HUE_RANGE = DoubleSpan(15.0, 375.0)
-    }
 }

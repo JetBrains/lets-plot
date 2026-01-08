@@ -52,9 +52,4 @@ class GreyscaleLightnessMapperProvider(
         val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
         return createContinuousMapper(domain, Transforms.IDENTITY)
     }
-
-    companion object {
-        const val DEF_START = 0.2
-        const val DEF_END = 0.8
-    }
 }

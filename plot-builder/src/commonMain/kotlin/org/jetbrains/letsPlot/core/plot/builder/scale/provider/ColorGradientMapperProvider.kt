@@ -17,7 +17,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults.Gradient
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 
 
@@ -28,8 +29,8 @@ class ColorGradientMapperProvider(
 ) : MapperProviderBase<Color>(naValue),
     PaletteGenerator {
 
-    private val low: Color = low ?: ColorMapper.DEF_GRADIENT_LOW
-    private val high: Color = high ?: ColorMapper.DEF_GRADIENT_HIGH
+    private val low: Color = low ?: Gradient.DEF_LOW
+    private val high: Color = high ?: Gradient.DEF_HIGH
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         val transformedDomain = discreteTransform.effectiveDomainTransformed
@@ -54,7 +55,7 @@ class ColorGradientMapperProvider(
         val DEFAULT = ColorGradientMapperProvider(
             null,
             null,
-            ColorMapper.NA_VALUE
+            ColorMapperDefaults.NA_VALUE
         )
     }
 }
