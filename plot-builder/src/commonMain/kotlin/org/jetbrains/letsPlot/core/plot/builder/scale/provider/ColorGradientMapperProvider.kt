@@ -44,7 +44,8 @@ class ColorGradientMapperProvider(
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
-    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
         return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 

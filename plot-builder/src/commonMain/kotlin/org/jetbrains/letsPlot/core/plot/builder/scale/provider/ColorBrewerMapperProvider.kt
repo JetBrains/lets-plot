@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
@@ -95,8 +94,14 @@ class ColorBrewerMapperProvider(
         }
     }
 
-    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
-        return createContinuousMapper(domain, Transforms.IDENTITY)
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        // The discrete mapper here handles palette size better.
+        return createDiscreteMapper(
+            discreteTransform = DiscreteTransform(
+                domainValues = (0 until colorCount).toList(),
+                domainLimits = emptyList()
+            )
+        )
     }
 
     companion object {

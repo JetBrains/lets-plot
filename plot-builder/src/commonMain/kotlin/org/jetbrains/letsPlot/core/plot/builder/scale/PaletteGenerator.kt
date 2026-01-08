@@ -5,20 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 
 interface PaletteGenerator {
-    fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color>
+    fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color>
 
     fun generatePalette(colorCount: Int): List<String> {
         if (colorCount <= 0) {
             return emptyList()
         }
 
-        val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
-        val scaleMapper = createPaletteGeneratorScaleMapper(domain)
+        val scaleMapper = createPaletteGeneratorScaleMapper(colorCount)
         return (0 until colorCount).map { i ->
             scaleMapper(i.toDouble())?.toHexColor()
                 ?: throw IllegalStateException("Can't generate a palette color for index: $i")

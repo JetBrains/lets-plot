@@ -62,12 +62,11 @@ class ColorHueMapperProvider(
         )
     }
 
-    override fun createPaletteGeneratorScaleMapper(domain: DoubleSpan): ScaleMapper<Color> {
-//        return createContinuousMapper(domain, Transforms.IDENTITY)
-        // Use a discrete mapper here because it handles the 'full circle' case better.
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        // Discrete mapper here handles the 'full circle' case better.
         return createDiscreteMapper(
             discreteTransform = DiscreteTransform(
-                domainValues = (domain.lowerEnd.toInt()..domain.upperEnd.toInt()).toList(),
+                domainValues = (0 until colorCount).toList(),
                 domainLimits = emptyList()
             )
         )
