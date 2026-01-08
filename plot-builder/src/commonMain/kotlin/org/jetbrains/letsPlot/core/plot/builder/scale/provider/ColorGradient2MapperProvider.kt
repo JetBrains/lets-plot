@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -15,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.ContinuousOnlyMapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 import kotlin.math.max
 import kotlin.math.min
@@ -51,8 +51,8 @@ class ColorGradient2MapperProvider(
         val lowDomain = DoubleSpan(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
         val highDomain = DoubleSpan(min(myMidpoint, domain.upperEnd), domain.upperEnd)
 
-        val lowMapper = ColorMapper.gradient(lowDomain, myLow, myMid, naValue)
-        val highMapper = ColorMapper.gradient(highDomain, myMid, myHigh, naValue)
+        val lowMapper = GradientUtil.gradient(lowDomain, myLow, myMid, naValue)
+        val highMapper = GradientUtil.gradient(highDomain, myMid, myHigh, naValue)
 
         val rangeMap = mapOf(
             lowDomain to lowMapper,

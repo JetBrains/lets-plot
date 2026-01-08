@@ -53,4 +53,23 @@ class ColorBrewerPaletteGeneratorTest {
         assertEquals("#e31a1c", palette[5])
         assertEquals("#fdbf6f", palette[6])
     }
+
+    @Test
+    fun `no color duplication when requesting more colors than palette size`() {
+        val provider = ColorBrewerMapperProvider(
+            paletteTypeName = "qual",
+            paletteNameOrIndex = "Paired",
+            direction = 1.0,
+            naValue = Color.GRAY
+        )
+
+        // Paired palette has max 12 colors, request 15
+        val palette = provider.generatePalette(15)
+
+        assertEquals(15, palette.size)
+
+        // Check that all colors are unique (no wrapping/duplication)
+        val uniqueColors = palette.toSet()
+        assertEquals(15, uniqueColors.size, "Palette should not contain duplicate colors")
+    }
 }

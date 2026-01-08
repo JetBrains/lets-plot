@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil.createGradient
 import org.jetbrains.letsPlot.core.commons.colormap.ColorMaps
 import org.jetbrains.letsPlot.core.commons.colormap.ColorMaps.VIRIDIS
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -70,8 +71,7 @@ class ColormapMapperProvider(
 
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
-//        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
-        val gradient = ColorGradientnMapperProvider.createGradient(domain, colors, naValue, alpha)
+        val gradient = createGradient(domain, colors, naValue, alpha)
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
