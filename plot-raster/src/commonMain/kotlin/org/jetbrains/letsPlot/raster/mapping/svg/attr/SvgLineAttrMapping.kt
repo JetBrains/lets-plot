@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
-import org.jetbrains.letsPlot.raster.shape.Line
+import org.jetbrains.letsPlot.raster.scene.Line
 
 internal object SvgLineAttrMapping : SvgShapeMapping<Line>() {
     override fun setAttribute(target: Line, name: String, value: Any?) {

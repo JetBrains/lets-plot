@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.shape.Pane
+import org.jetbrains.letsPlot.raster.scene.Pane
 
 internal object SvgSvgAttrMapping : SvgAttrMapping<Pane>() {
 

@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
-import org.jetbrains.letsPlot.raster.shape.Image
+import org.jetbrains.letsPlot.raster.scene.Image
 
 
 internal object SvgImageAttrMapping : SvgAttrMapping<Image>() {

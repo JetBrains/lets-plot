@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.raster.shape.*
+import org.jetbrains.letsPlot.raster.scene.*
 import kotlin.math.roundToInt
 
 
@@ -18,7 +18,8 @@ internal object DebugOptions {
         //val strokePaint = Paint().setStroke(true)
         //val fillPaint = Paint().setStroke(false)
 
-        depthFirstTraversal(rootElement, onlyVisible = false).forEach { el ->
+        depthFirstTraversal(rootElement, onlyVisible = false)
+            .forEach { el ->
             val color = when (el) {
                 is Pane -> Color.CYAN
                 is Group -> Color.YELLOW

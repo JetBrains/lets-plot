@@ -18,16 +18,16 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPlatformPeer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
-import org.jetbrains.letsPlot.raster.shape.Container
-import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.Text
-import org.jetbrains.letsPlot.raster.shape.breadthFirstTraversal
+import org.jetbrains.letsPlot.raster.scene.Container
+import org.jetbrains.letsPlot.raster.scene.Node
+import org.jetbrains.letsPlot.raster.scene.Text
+import org.jetbrains.letsPlot.raster.scene.breadthFirstTraversal
 
 internal class SvgCanvasPeer(
     val canvasPeer: CanvasPeer,
     private val textMeasuringCanvas: Canvas = canvasPeer.createCanvas(1, 1)
 ) : SvgPlatformPeer, Disposable {
-    private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Element>>()
+    private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
     var styleSheet: StyleSheet? = null
         private set
 
@@ -41,7 +41,7 @@ internal class SvgCanvasPeer(
         }
     }
 
-    fun registerMapper(source: SvgNode, mapper: SvgNodeMapper<out SvgNode, out Element>) {
+    fun registerMapper(source: SvgNode, mapper: SvgNodeMapper<out SvgNode, out Node>) {
         myMappingMap[source] = mapper
     }
 
