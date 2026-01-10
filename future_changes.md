@@ -23,6 +23,8 @@
 - [wip] Added warning messages about the removal of invalid points during geometry construction for geom_point(), geom_path(), and geom_line() layers. [[#81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)]
 - [**BREAKING**]: ColorBrewer palettes: when the requested number of colors exceeds the palette's maximum size, colors are now interpolated to generate unique colors. \
   Previously, depending on the palette type, this either resulted in duplicate colors or random additional colors.
+- Discrete color scales (Brewer, Manual) now produce a 'colorbar' guide when used with continuous data. \
+  Previously they produced a 'legend' guide regardless of the data type.
 
 ### Fixed
 

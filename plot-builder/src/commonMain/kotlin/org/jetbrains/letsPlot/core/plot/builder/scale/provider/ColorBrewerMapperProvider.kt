@@ -62,7 +62,7 @@ class ColorBrewerMapperProvider(
 
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
-        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
+        return GuideMappers.continuousToQuantizedContinuous(domain, colors, naValue)
     }
 
     private fun colors(colorScheme: ColorScheme, count: Int): List<Color> {

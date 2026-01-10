@@ -92,8 +92,16 @@ class ScaleConfig<T> constructor(
         // all 'manual' scales
         if (has(OUTPUT_VALUES)) {
             val outputValues = getList(OUTPUT_VALUES)
-            val mapperOutputValues = aopConversion.applyToList(aes, outputValues)
-            mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(mapperOutputValues, naValue)
+            mapperProvider = if (aes.isColor) {
+                val outputColors = aopConversion.applyToList(Aes.COLOR, outputValues)
+                ColorManualMapperProvider(
+                    colors = outputColors.filterNotNull(),
+                    naValue = naValue as Color
+                )
+            } else {
+                val convertedValues = aopConversion.applyToList(aes, outputValues)
+                DefaultMapperProviderUtil.createWithDiscreteOutput(convertedValues, naValue)
+            }
         }
 
         if (aes == Aes.SHAPE) {
