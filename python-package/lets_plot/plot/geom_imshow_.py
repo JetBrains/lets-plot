@@ -9,6 +9,7 @@ from .core import aes
 from .geom import _geom
 from .scale import scale_gradientn
 from .scale import scale_grey
+from .scale import scale_manual
 from .util import as_boolean
 from .._type_utils import is_ndarray
 
@@ -30,19 +31,79 @@ except ImportError:
 __all__ = ['geom_imshow']
 
 
-def _hex2rgb(hex_c, alpha):
+def _parse_hex_color(hex_c, alpha=None) -> 'numpy.ndarray':
+    """
+    Parse hex color format ('#RRGGBB' or '#RGB') to a numpy array.
+    """
     hex_s = hex_c.lstrip('#')
+    if len(hex_s) == 3:
+        # Short format: #RGB -> #RRGGBB
+        hex_s = ''.join(c + c for c in hex_s)
     list_rgb = [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
     if alpha is not None:
         list_rgb.append(int(alpha + 0.5))
-    return list_rgb
+    return numpy.array(list_rgb, dtype=numpy.uint8)
 
 
-def _hex2rgb_arr_uint8(hex_c, alpha=None):
+def _parse_rgb_rgba_color(color_string, alpha=None) -> 'numpy.ndarray':
     """
-    Create a palette entry for PyPNG PNG writer.
+    Parse 'rgb(r, g, b)' or 'rgba(r, g, b, a)' format to a numpy array.
+
+    All components are expected to be integers in 0-255 range.
+    The alpha parameter (0-255) is multiplied with rgba's alpha if present.
     """
-    return numpy.array(_hex2rgb(hex_c, alpha), dtype=numpy.uint8)
+    if color_string.startswith('rgba('):
+        inner = color_string[5:-1]
+    else:
+        inner = color_string[4:-1]
+
+    parts = [x.strip() for x in inner.split(',')]
+
+    if len(parts) == 3:
+        r, g, b = [int(x) for x in parts]
+        result = [r, g, b]
+        if alpha is not None:
+            result.append(int(alpha + 0.5))
+    elif len(parts) == 4:
+        r, g, b, color_alpha = [int(x) for x in parts]
+        if alpha is not None:
+            # Multiply both alphas: color_alpha (0-255) * alpha (0-255) / 255
+            result = [r, g, b, int(color_alpha * alpha / 255 + 0.5)]
+        else:
+            result = [r, g, b, color_alpha]
+    else:
+        raise ValueError("Invalid rgb/rgba format: {}".format(color_string))
+
+    return numpy.array(result, dtype=numpy.uint8)
+
+
+def _parse_color(color_string, alpha=None) -> 'numpy.ndarray':
+    """
+    Parse a color string (hex, rgb(), or rgba()) to an RGBA numpy array.
+
+    Parameters
+    ----------
+    color_string : str
+        Color in one of the formats:
+        - '#RRGGBB' or '#RGB' (hex)
+        - 'rgb(r, g, b)' with int components (0-255)
+        - 'rgba(r, g, b, a)' with int components (0-255)
+    alpha : optional
+        Alpha value (0-255) to apply. Multiplied with existing alpha for rgba.
+
+    Returns
+    -------
+    numpy.ndarray
+        RGBA array with dtype uint8.
+    """
+    color_string = color_string.strip()
+
+    if color_string.startswith('#'):
+        return _parse_hex_color(color_string, alpha)
+    elif color_string.startswith('rgb'):
+        return _parse_rgb_rgba_color(color_string, alpha)
+    else:
+        raise ValueError("Unsupported color format: {}. Expected hex (#RRGGBB), rgb(), or rgba()".format(color_string))
 
 
 def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
@@ -123,9 +184,14 @@ def geom_imshow(image_data, cmap=None, *,
 
         The first two dimensions (M, N) define the rows and columns of the image.
         Out-of-range values are clipped.
-    cmap : str, optional
-        Name of colormap. For example, "viridis", "magma", "plasma", "inferno", or any other colormap
-        that is supported by the Palettable package (https://github.com/jiffyclub/palettable).
+    cmap : str or list, optional
+        Name of colormap or a list of colors.
+        If a string, it should be the name of a colormap supported by the
+        Palettable package (https://github.com/jiffyclub/palettable),
+        for example, "viridis", "magma", "plasma", "inferno".
+        If a list, it should contain color strings in hex ('#RRGGBB'),
+        'rgb(r, g, b)', or 'rgba(r, g, b, a)' format with int components (0-255).
+        The greyscale values will be quantized to map to the provided colors.
         This parameter is ignored for RGB(A) images.
     norm : bool
         True (default) - luminance values in greyscale images will be scaled to [0-255] range using a linear scaler.
@@ -237,26 +303,46 @@ def geom_imshow(image_data, cmap=None, *,
         height, width = image_data.shape
         has_nan = numpy.isnan(image_data.max())
 
-        if cmap:
-            # colormap via palettable
-            if not palettable:
-                raise ValueError(
-                    "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your "
-                    "Python environment. "
-                )
+        cmap_list = isinstance(cmap, list)
+        cmap_palettable = isinstance(cmap, str)
+        if cmap and not cmap_list and not cmap_palettable:
+            raise ValueError("cmap must be a string (colormap name) or a list of colors, but was {}".format(type(cmap).__name__))
 
-            # prepare palette
-            palette = None
-            if not has_nan:
-                alpha_ch_val = 255 if alpha is None else 255 * alpha
-                cmap_256 = palettable.get_map(cmap + "_256")
-                palette = [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in cmap_256.hex_colors]
+        if cmap:
+            alpha_ch_val = 255 if alpha is None else 255 * alpha
+
+            if cmap_palettable:
+                # colormap via palettable
+                if not palettable:
+                    raise ValueError(
+                        "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your "
+                        "Python environment. "
+                    )
+
+                # prepare palette
+                if not has_nan:
+                    cmap_256 = palettable.get_map(cmap + "_256")
+                    palette = [_parse_hex_color(c, alpha_ch_val) for c in cmap_256.hex_colors]
+                else:
+                    cmap_255 = palettable.get_map(cmap + "_255")
+                    # transparent color at index 0
+                    palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] \
+                              + [_parse_hex_color(c, alpha_ch_val) for c in cmap_255.hex_colors]
             else:
-                alpha_ch_val = 255 if alpha is None else 255 * alpha
-                cmap_255 = palettable.get_map(cmap + "_255")
-                # transparent color at index 0
-                palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] \
-                          + [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in cmap_255.hex_colors]
+                # custom color list - build expanded palette with quantization
+                n_colors = len(cmap)
+                if n_colors == 0:
+                    raise ValueError("cmap list must contain at least one color")
+
+                if not has_nan:
+                    # 256 entries: values 0-255 map to indices 0-255
+                    palette = [_parse_color(cmap[min(i * n_colors // 256, n_colors - 1)], alpha_ch_val)
+                               for i in range(256)]
+                else:
+                    # transparent at index 0, then 255 entries for values 1-255
+                    palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] \
+                              + [_parse_color(cmap[min(i * n_colors // 255, n_colors - 1)], alpha_ch_val)
+                                 for i in range(255)]
 
             # replace indexes with palette colors
             if has_nan:
@@ -354,26 +440,26 @@ def geom_imshow(image_data, cmap=None, *,
     if greyscale and show_legend:
         # aes(color=[greyscale_data_min, greyscale_data_max])
         color_scale_mapping = aes(**{color_by: [greyscale_data_min, greyscale_data_max]})
-        if cmap and normalize:
+        if cmap_palettable and normalize:
             cmap_32 = palettable.get_map(cmap + "_32")
-            # color_scale = scale_color_gradientn(colors=cmap_32.hex_colors, name=legend_title)
             color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name=legend_title)
-        elif cmap and not normalize:
+        elif cmap_palettable and not normalize:
             cmap_256 = palettable.get_map(cmap + "_256")
             start = max(0, round(greyscale_data_min))
             end = min(255, round(greyscale_data_max))
             cmap_hex_colors = cmap_256.hex_colors[start:end]
             if len(cmap_hex_colors) > 32:
-                # reduce number of colors to 32
+                # reduce the number of colors to 32
                 indices = numpy.linspace(0, len(cmap_hex_colors) - 1, 32, dtype=int)
                 cmap_hex_colors = [cmap_hex_colors[i] for i in indices]
 
-            # color_scale = scale_color_gradientn(colors=cmap_hex_colors, name=legend_title)
             color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_hex_colors, name=legend_title)
+        elif cmap_list:
+            # custom color list - a 'binned' colorbar
+            color_scale = scale_manual(aesthetic=color_by, values=cmap, name=legend_title)
         else:
             start = 0 if normalize else greyscale_data_min / 255.
             end = 1 if normalize else greyscale_data_max / 255.
-            # color_scale = scale_color_grey(start=start, end=end, name=legend_title)
             color_scale = scale_grey(aesthetic=color_by, start=start, end=end, name=legend_title)
 
     # Image geom layer
