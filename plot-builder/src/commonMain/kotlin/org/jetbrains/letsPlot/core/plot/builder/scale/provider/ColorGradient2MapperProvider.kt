@@ -33,7 +33,7 @@ class ColorGradient2MapperProvider(
     private val myLow: Color
     private val myMid: Color
     private val myHigh: Color
-    private val myMidpoint: Double?
+    private val myMidpoint: Double
 
     init {
         myLow = low ?: Gradient2.DEF_LOW
@@ -46,11 +46,19 @@ class ColorGradient2MapperProvider(
         domain: DoubleSpan,
         trans: ContinuousTransform
     ): GuideMapper<Color> {
+        return createContinuousMapper(domain, trans, myMidpoint)
+    }
+
+    private fun createContinuousMapper(
+        domain: DoubleSpan,
+        trans: ContinuousTransform,
+        midpoint: Double,
+    ): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
 
-        val lowDomain = DoubleSpan(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
-        val highDomain = DoubleSpan(min(myMidpoint, domain.upperEnd), domain.upperEnd)
+        val lowDomain = DoubleSpan(domain.lowerEnd, max(midpoint, domain.lowerEnd))
+        val highDomain = DoubleSpan(min(midpoint, domain.upperEnd), domain.upperEnd)
 
         val lowMapper = GradientUtil.gradient(lowDomain, myLow, myMid, naValue)
         val highMapper = GradientUtil.gradient(highDomain, myMid, myHigh, naValue)
@@ -93,6 +101,12 @@ class ColorGradient2MapperProvider(
 
     override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
         val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
-        return createContinuousMapper(domain, Transforms.IDENTITY)
+
+        // When generating a palette, the user-defined midpoint must be in range -1..1
+        require(myMidpoint in -1.0..1.0) {
+            "Midpoint for palette generation must be in range [-1, 1]: $myMidpoint"
+        }
+        val midpoint = (myMidpoint + 1) / 2.0 * (colorCount - 1)
+        return createContinuousMapper(domain, Transforms.IDENTITY, midpoint)
     }
 }
