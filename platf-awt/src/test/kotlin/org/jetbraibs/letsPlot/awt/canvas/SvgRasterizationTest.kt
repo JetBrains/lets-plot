@@ -9,9 +9,11 @@ import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.plot.VisualPlotTestBase
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class SvgRasterizationTest : VisualPlotTestBase() {
+    @Ignore("Use embedded Noto Sans font for cross-platform consistency")
     @Test
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
