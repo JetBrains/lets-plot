@@ -23,7 +23,7 @@ object TestUtil {
             plotSpecProcessed,
             containerSize = DoubleVector(600, 400),
             sizingPolicy = SizingPolicy.notebookCell()
-        ) {}
+        )
 
         if (buildResult.isError) {
             val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error

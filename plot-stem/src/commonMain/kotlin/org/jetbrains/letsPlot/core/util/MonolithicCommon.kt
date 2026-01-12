@@ -60,9 +60,7 @@ object MonolithicCommon {
 
         val (sizingPolicy, _, unit) = computeExportParameters(plotSize = plotSize, unit = sizeUnit)
 
-        val frontMessages: MutableList<String> = ArrayList()
-
-        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy, frontMessages::add)
+        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, containerSize = null, sizingPolicy)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
@@ -73,8 +71,8 @@ object MonolithicCommon {
         val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
 
         val computationMessages = success.buildInfo.computationMessages
-        if (computationMessages.isNotEmpty() || frontMessages.isNotEmpty()) {
-            computationMessagesHandler(computationMessages + frontMessages)
+        if (computationMessages.isNotEmpty()) {
+            computationMessagesHandler(computationMessages)
         }
 
         if (plotSize != null && unit.isPhysicalUnit) {
@@ -114,7 +112,6 @@ object MonolithicCommon {
         plotSpec: Map<String, Any>,
         containerSize: DoubleVector?,
         sizingPolicy: SizingPolicy,
-        messageConsumer: (String) -> Unit
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
 
@@ -131,7 +128,6 @@ object MonolithicCommon {
                         plotSpec,
                         containerSize,
                         sizingPolicy,
-                        messageConsumer
                     )
                 )
             }
@@ -141,7 +137,6 @@ object MonolithicCommon {
                     plotSpec,
                     containerSize,
                     sizingPolicy,
-                    messageConsumer,
                 )
             )
 
@@ -152,8 +147,7 @@ object MonolithicCommon {
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         containerSize: DoubleVector?,
-        sizingPolicy: SizingPolicy,
-        messageConsumer: (String) -> Unit
+        sizingPolicy: SizingPolicy
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val config = PlotConfigFrontend.create(
@@ -171,7 +165,7 @@ object MonolithicCommon {
             sharedContinuousDomainY = null,
             computationMessages,
             detachedLegendsCollector = null,
-            messageConsumer
+            computationMessages::add
         )
     }
 
@@ -205,15 +199,14 @@ object MonolithicCommon {
             assembler,
             config.toMap(),
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
-            computationMessages
+            computationMessages,
         )
     }
 
     private fun buildCompositeFigureFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         containerSize: DoubleVector?,
-        sizingPolicy: SizingPolicy,
-        messageConsumer: (String) -> Unit
+        sizingPolicy: SizingPolicy
     ): CompositeFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val compositeFigureConfig = CompositeFigureConfig(plotSpec, containerTheme = null) {
@@ -232,7 +225,6 @@ object MonolithicCommon {
             computationMessages,
             containerGuidesSharing = AUTO,
             containerDetachedLegendsCollector = null,
-            messageConsumer,
         )
     }
 
@@ -242,7 +234,6 @@ object MonolithicCommon {
         computationMessages: MutableList<String>,
         containerGuidesSharing: GuidesSharingMode,
         containerDetachedLegendsCollector: DetachedLegendsCollector?,
-        messageConsumer: (String) -> Unit
     ): CompositeFigureBuildInfo {
 
         val compositeFigureLayout = config.layout
@@ -288,7 +279,7 @@ object MonolithicCommon {
                         sharedContinuousDomainY = sharedYDomains?.get(index),
                         computationMessages = emptyList(),  // No "own messages" when a part of a composite.
                         detachedLegendsCollector = ownDetachedLegendsCollector,
-                        messageConsumer = messageConsumer,
+                        computationMessages::add
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
@@ -304,7 +295,6 @@ object MonolithicCommon {
                             computationMessages,
                             containerGuidesSharing = containerGuidesSharing,
                             containerDetachedLegendsCollector = ownDetachedLegendsCollector,
-                            messageConsumer = messageConsumer,
                         )
                     }
 

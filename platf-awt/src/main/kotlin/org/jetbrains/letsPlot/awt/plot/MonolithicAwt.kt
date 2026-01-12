@@ -63,13 +63,10 @@ object MonolithicAwt {
                 )
             }
 
-            val frontMessages: MutableList<String> = ArrayList()
-
             val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
                 plotSpec,
                 containerSizeDV,
                 sizingPolicy,
-                frontMessages::add
             )
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
@@ -85,7 +82,7 @@ object MonolithicAwt {
                 executor
             ).eval()
 
-            computationMessagesHandler(computationMessages + frontMessages)
+            computationMessagesHandler(computationMessages)
 
             return figure
         } catch (e: RuntimeException) {
