@@ -160,6 +160,7 @@ def geom_imshow(image_data, cmap=None, *,
                 compression=None,
                 show_legend=True,
                 color_by="paint_c",
+                cguide=None
                 ):
     """
     Display an image specified by an ndarray with shape:
@@ -219,6 +220,9 @@ def geom_imshow(image_data, cmap=None, *,
         False - do not show the legend for this layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='paint_c'
         Define the color aesthetic used by the legend shown for a greyscale image.
+    cguide : optional
+        A result of `guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__ call.
+        Use to customize the colorbar for greyscale images.
 
     Returns
     -------
@@ -306,7 +310,8 @@ def geom_imshow(image_data, cmap=None, *,
         cmap_list = isinstance(cmap, list)
         cmap_palettable = isinstance(cmap, str)
         if cmap and not cmap_list and not cmap_palettable:
-            raise ValueError("cmap must be a string (colormap name) or a list of colors, but was {}".format(type(cmap).__name__))
+            raise ValueError(
+                "cmap must be a string (colormap name) or a list of colors, but was {}".format(type(cmap).__name__))
 
         if cmap:
             alpha_ch_val = 255 if alpha is None else 255 * alpha
@@ -358,7 +363,7 @@ def geom_imshow(image_data, cmap=None, *,
             alpha_ch[is_nan == False] = 255 * alpha_ch_scaler
             image_data[is_nan] = 0
             image_data = numpy.repeat(image_data[:, :, numpy.newaxis], 3, axis=2)  # convert to RGB
-            image_data = numpy.dstack((image_data, alpha_ch)) # convert to RGBA
+            image_data = numpy.dstack((image_data, alpha_ch))  # convert to RGBA
     else:
         # Color RGB/RGBA image
         # Make a copy:
@@ -434,7 +439,6 @@ def geom_imshow(image_data, cmap=None, *,
     # The Legend (colorbar)
     show_legend = as_boolean(show_legend, default=True)
     normalize = as_boolean(norm, default=True)
-    legend_title = ""
     color_scale = None
     color_scale_mapping = None
     if greyscale and show_legend:
@@ -442,7 +446,7 @@ def geom_imshow(image_data, cmap=None, *,
         color_scale_mapping = aes(**{color_by: [greyscale_data_min, greyscale_data_max]})
         if cmap_palettable and normalize:
             cmap_32 = palettable.get_map(cmap + "_32")
-            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name=legend_title)
+            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name="", guide=cguide)
         elif cmap_palettable and not normalize:
             cmap_256 = palettable.get_map(cmap + "_256")
             start = max(0, round(greyscale_data_min))
@@ -453,14 +457,14 @@ def geom_imshow(image_data, cmap=None, *,
                 indices = numpy.linspace(0, len(cmap_hex_colors) - 1, 32, dtype=int)
                 cmap_hex_colors = [cmap_hex_colors[i] for i in indices]
 
-            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_hex_colors, name=legend_title)
+            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_hex_colors, name="", guide=cguide)
         elif cmap_list:
             # custom color list - a 'binned' colorbar
-            color_scale = scale_manual(aesthetic=color_by, values=cmap, name=legend_title)
+            color_scale = scale_manual(aesthetic=color_by, values=cmap, name="", guide=cguide)
         else:
             start = 0 if normalize else greyscale_data_min / 255.
             end = 1 if normalize else greyscale_data_max / 255.
-            color_scale = scale_grey(aesthetic=color_by, start=start, end=end, name=legend_title)
+            color_scale = scale_grey(aesthetic=color_by, start=start, end=end, name="", guide=cguide)
 
     # Image geom layer
     geom_image_layer = _geom(

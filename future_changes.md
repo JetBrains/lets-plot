@@ -14,6 +14,7 @@
 
 - `geom_imshow()`: 
   - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot-kotlin/issues/780)].
+  - New `cguide` parameter: use to customize the colorbar for greyscale images.
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
