@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.gradle.internal.os.OperatingSystem
+
 plugins {
     kotlin("multiplatform")
     `maven-publish`
@@ -14,9 +16,20 @@ val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
+val os: OperatingSystem = OperatingSystem.current()
+val arch = rootProject.project.extra["architecture"]
+
 kotlin {
     jvm()
-    macosArm64()
+
+    when {
+        os.isMacOsX && arch == "arm64" -> macosArm64()
+        os.isMacOsX && arch == "x86_64" -> macosX64()
+        os.isLinux && arch == "arm64" -> linuxArm64()
+        os.isLinux && arch == "x86_64" -> linuxX64()
+        os.isWindows -> mingwX64()
+        else -> throw Exception("Unsupported platform! Check project settings.")
+    }
 
     sourceSets {
         commonMain {
@@ -35,17 +48,6 @@ kotlin {
                 api("org.jetbrains.kotlin:kotlin-test")
             }
         }
-
-        jvmMain {
-            dependencies {
-                compileOnly("junit:junit:4.13.2")
-                compileOnly("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
-                api("org.jetbrains.kotlin:kotlin-test")
-            }
-        }
-    }
-    sourceSets.commonMain.dependencies {
-        implementation(kotlin("test"))
     }
 }
 
