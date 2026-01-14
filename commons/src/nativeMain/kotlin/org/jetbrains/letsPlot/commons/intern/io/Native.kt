@@ -34,20 +34,12 @@ object Native {
 
     fun writeToFile(path: String, data: ByteArray) {
         if (data.isEmpty()) {
-            val file = fopen(path, "wb")
-            if (file == null) {
-                perror("fopen")
-                throw Error("Failed to open file for writing (empty): $path")
-            }
+            val file = fopen(path, "wb") ?: throw Error("Failed to open file for writing (empty): $path")
             fclose(file)
             return
         }
 
-        val file: CPointer<FILE>? = fopen(path, "wb")
-        if (file == null) {
-            perror("fopen")
-            throw Error("Failed to open file for writing: $path")
-        }
+        val file: CPointer<FILE> = fopen(path, "wb") ?: throw Error("Failed to open file for writing: $path")
         try {
             val written = data.usePinned { pinned ->
                 // fwrite(ptr, size_of_element, number_of_elements, stream)
@@ -57,27 +49,19 @@ object Native {
             @Suppress("RemoveRedundantCallsOfConversionMethods")
             if (written.toLong() != data.size.toLong()) {
                 val errorNum = ferror(file)
-                if (errorNum != 0) {
-                    println("fwrite error: ferror returned $errorNum")
-                }
-                throw Error("Failed to write all data to file: $path. Wrote $written of ${data.size} bytes.")
+                throw Error("Failed to write all data to file: $path. Wrote $written of ${data.size} bytes. ferror=$errorNum")
             }
         } finally {
             fclose(file)
         }
     }
     fun readFromFile(path: String): ByteArray {
-        val file: CPointer<FILE>? = fopen(path, "rb")
-        if (file == null) {
-            perror("fopen")
-            throw Error("Failed to open file for reading: $path")
-        }
+        val file: CPointer<FILE> = fopen(path, "rb") ?: throw Error("Failed to open file for reading: $path")
         try {
             fseek(file, 0, SEEK_END)
             @Suppress("RemoveRedundantCallsOfConversionMethods")
             val fileSize = ftell(file).toLong()
             if (fileSize < 0L) { // ftell returns -1 on error
-                perror("ftell")
                 throw Error("Failed to determine file size: $path")
             }
             rewind(file)
@@ -92,14 +76,7 @@ object Native {
             @Suppress("RemoveRedundantCallsOfConversionMethods") // on Windows readBytes has type Int
             if (readBytes.toLong() != fileSize) {
                 val errorNum = ferror(file)
-                if (errorNum != 0) {
-                    println("fread error: ferror returned $errorNum")
-                }
-                val atEof = feof(file)
-                if (atEof != 0) {
-                    println("fread error: End-of-file reached prematurely.")
-                }
-                throw Error("Failed to read all data from file: $path. Read $readBytes of $fileSize bytes.")
+                throw Error("Failed to read all data from file: $path. Read $readBytes of $fileSize bytes. ferror=$errorNum")
             }
             return buffer
         } finally {

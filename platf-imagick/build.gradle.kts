@@ -79,6 +79,8 @@ kotlin {
         nativeTest {
             dependencies {
                 implementation(project(":demo-and-test-shared"))
+                implementation(project(":visual-testing"))
+                implementation(kotlin("test"))
             }
         }
     }

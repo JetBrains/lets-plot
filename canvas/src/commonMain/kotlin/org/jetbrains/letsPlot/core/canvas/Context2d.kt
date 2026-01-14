@@ -111,39 +111,8 @@ interface Context2d : Disposable {
         lineTo(points.last().x, points.last().y)
     }
 
+
 }
-
-fun Context2d.translate(v: DoubleVector) {
-    translate(v.x, v.y)
-}
-
-fun Context2d.translate(v: Vector) {
-    translate(v.x.toDouble(), v.y.toDouble())
-}
-
-fun Context2d.translate(x: Int, y: Int) {
-    translate(x.toDouble(), y.toDouble())
-}
-
-fun Context2d.transform(matrix: AffineTransform) = transform(
-    sx = matrix.sx,
-    ry = matrix.ry,
-    rx = matrix.rx,
-    sy = matrix.sy,
-    tx = matrix.tx,
-    ty = matrix.ty
-)
-
-fun Context2d.setTransform(matrix: AffineTransform) = setTransform(
-    m00 = matrix.sx,
-    m10 = matrix.ry,
-    m01 = matrix.rx,
-    m11 = matrix.sy,
-    m02 = matrix.tx,
-    m12 = matrix.ty
-)
-
-fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
 
 enum class TextBaseline {
     ALPHABETIC, BOTTOM, MIDDLE, TOP
@@ -181,4 +150,130 @@ fun Context2d.applyPath(commands: List<PathCommand>) {
             }
         }
     }
+}
+
+
+fun Context2d.translate(v: DoubleVector) {
+    translate(v.x, v.y)
+}
+
+fun Context2d.translate(v: Vector) {
+    translate(v.x.toDouble(), v.y.toDouble())
+}
+
+fun Context2d.translate(x: Int, y: Int) {
+    translate(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.transform(matrix: AffineTransform) = transform(
+    sx = matrix.sx,
+    ry = matrix.ry,
+    rx = matrix.rx,
+    sy = matrix.sy,
+    tx = matrix.tx,
+    ty = matrix.ty
+)
+
+fun Context2d.setTransform(matrix: AffineTransform) = setTransform(
+    m00 = matrix.sx,
+    m10 = matrix.ry,
+    m01 = matrix.rx,
+    m11 = matrix.sy,
+    m02 = matrix.tx,
+    m12 = matrix.ty
+)
+
+fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
+
+fun Context2d.moveTo(x: Number, y: Number) {
+    moveTo(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.lineTo(x: Number, y: Number) {
+    lineTo(x.toDouble(), y.toDouble())
+}
+
+
+fun Context2d.bezierCurveTo(
+    cp1x: Number,
+    cp1y: Number,
+    cp2x: Number,
+    cp2y: Number,
+    x: Number,
+    y: Number
+) {
+    bezierCurveTo(
+        cp1x.toDouble(),
+        cp1y.toDouble(),
+        cp2x.toDouble(),
+        cp2y.toDouble(),
+        x.toDouble(),
+        y.toDouble()
+    )
+}
+
+fun Context2d.ellipse(
+    x: Number,
+    y: Number,
+    radiusX: Number,
+    radiusY: Number,
+    rotation: Number,
+    startAngle: Number,
+    endAngle: Number,
+    anticlockwise: Boolean = false
+) {
+    ellipse(
+        x.toDouble(),
+        y.toDouble(),
+        radiusX.toDouble(),
+        radiusY.toDouble(),
+        rotation.toDouble(),
+        startAngle.toDouble(),
+        endAngle.toDouble(),
+        anticlockwise
+    )
+}
+
+fun Context2d.translate(x: Number, y: Number) {
+    translate(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.arc(
+    x: Number,
+    y: Number,
+    radius: Number,
+    startAngle: Number,
+    endAngle: Number,
+    anticlockwise: Boolean = false
+) {
+    arc(
+        x.toDouble(),
+        y.toDouble(),
+        radius.toDouble(),
+        startAngle.toDouble(),
+        endAngle.toDouble(),
+        anticlockwise
+    )
+}
+
+fun Context2d.transform(
+    sx: Number,
+    ry: Number,
+    rx: Number,
+    sy: Number,
+    tx: Number,
+    ty: Number
+) {
+    transform(
+        sx.toDouble(),
+        ry.toDouble(),
+        rx.toDouble(),
+        sy.toDouble(),
+        tx.toDouble(),
+        ty.toDouble()
+    )
+}
+
+fun Context2d.fillRect(x: Number, y: Number, width: Number, height: Number) {
+    fillRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
 }

@@ -41,6 +41,7 @@ include("jvm-package:jvm-publish-batik")
 include("jvm-package:jvm-publish-gis")
 include("jvm-package:jvm-publish-idea-plugin")
 
+include("visual-testing")
 
 include("demo-and-test-shared")
 project(":demo-and-test-shared").projectDir = File("./demo/demo-and-test-shared")

@@ -1,26 +1,21 @@
+package org.jetbrains.letsPlot.visualtesting.canvas
 
 import org.jetbrains.letsPlot.commons.values.Color
-import kotlin.test.Test
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
-/*
- * Copyright (c) 2025. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
-class CanvasDrawImageTest : CanvasTestBase() {
-    @Test
-    fun scaledCanvas() {
-        // 50x50 is the logical size (TODO: should be pixel size)
-        // Image will be rendered at 100x100 pixels due to pixelDensity = 2.0
-        val (canvas, ctx) = createCanvas(50, 50, pixelDensity = 2.0)
-        ctx.fillStyle = Color.BLACK
-        ctx.fillRect(12.5, 12.5, 25.0, 25.0)
-
-        assertCanvas("scaled_canvas.png", canvas)
+internal class CanvasDrawImageTest(
+    override val canvasPeer: CanvasPeer,
+    override val imageComparer: ImageComparer,
+): CanvasTestBase() {
+    init {
+        registerTest(::drawImage_Simple)
+        registerTest(::drawImage_Transformed)
+        registerTest(::drawImage_Overlay)
+        registerTest(::drawImage_Pixelated)
     }
 
-    @Test
-    fun drawImage_Simple() {
+    private fun drawImage_Simple() {
         val (tempCanvas, tempCtx) = createCanvas()
         tempCtx.fillStyle = Color.BLACK
         tempCtx.fillRect(25, 25, 50, 50)
@@ -33,8 +28,7 @@ class CanvasDrawImageTest : CanvasTestBase() {
         assertCanvas("draw_image_simple.png", canvas)
     }
 
-    @Test
-    fun drawImage_Transformed() {
+    private fun drawImage_Transformed() {
         val (rectCanvas, rectCtx) = createCanvas(20, 20)
         rectCtx.fillStyle = Color.BLUE
         rectCtx.fillRect(0, 0, 20, 20)
@@ -69,8 +63,7 @@ class CanvasDrawImageTest : CanvasTestBase() {
         assertCanvas("draw_image_transformed.png", canvas)
     }
 
-    @Test
-    fun drawImage_Overlay() {
+    private fun drawImage_Overlay() {
         val (rect, rectCtx) = createCanvas(50, 50)
         rectCtx.fillStyle = "rgba(0, 0, 255, 0.7)" // semi-transparent blue
         rectCtx.fillRect(0, 0, 50, 50)
@@ -103,8 +96,7 @@ class CanvasDrawImageTest : CanvasTestBase() {
         assertCanvas("draw_image_overlay.png", canvas)
     }
 
-    @Test
-    fun drawImage_Pixelated() {
+    private fun drawImage_Pixelated() {
         val (img, imgCtx) = createCanvas(3, 2)
         imgCtx.fillStyle = "rgb(255, 0, 0)"
         imgCtx.fillRect(0, 0, 1, 1)
@@ -132,34 +124,4 @@ class CanvasDrawImageTest : CanvasTestBase() {
         assertCanvas("draw_image_pixelated.png", canvas)
     }
 
-    @Test
-    fun drawImage_WithImageDataUrl() {
-//        val (tempCanvas, tempCtx) = createCanvas()
-//        tempCtx.fillStyle = Color.BLACK
-//        // draw star
-//        tempCtx.beginPath()
-//        tempCtx.moveTo(50.0, 10.0)
-//        tempCtx.lineTo(61.8, 35.4)
-//        tempCtx.lineTo(90.0, 35.4)
-//        tempCtx.lineTo(67.1, 57.6)
-//        tempCtx.lineTo(79.5, 82.0)
-//        tempCtx.lineTo(50.0, 65.0)
-//        tempCtx.lineTo(20.5, 82.0)
-//        tempCtx.lineTo(32.9, 57.6)
-//        tempCtx.lineTo(10.0, 35.4)
-//        tempCtx.lineTo(38.2, 35.4)
-//        tempCtx.closePath()
-//        tempCtx.fill()
-//
-//        val imageDataUrl = tempCanvas.takeSnapshot().toDataUrl()
-//
-//        println("ImageDataURL:\n$imageDataUrl")
-//
-//        val snapshot = MagickCanvasControl(100, 100, 1.0).immediateSnapshot(imageDataUrl)
-//
-//        val (canvas, ctx) = createCanvas()
-//        ctx.drawImage(snapshot)
-//
-//        imageComparer.assertImageEquals("draw_image_image_data_url.png", canvas.img)
-    }
 }

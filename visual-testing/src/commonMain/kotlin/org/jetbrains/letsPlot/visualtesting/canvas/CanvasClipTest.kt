@@ -1,15 +1,32 @@
-
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Font
-import kotlin.math.PI
-import kotlin.test.Test
-
 /*
  * Copyright (c) 2025. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-class CanvasClipTest : CanvasTestBase() {
+package org.jetbrains.letsPlot.visualtesting.canvas
+
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import kotlin.math.PI
+
+
+internal class CanvasClipTest(
+    override val canvasPeer: CanvasPeer,
+    override val imageComparer: ImageComparer,
+): CanvasTestBase() {
+    init {
+        registerTest(::clip_and_fill)
+        registerTest(::clip_path)
+        registerTest(::clip_with_two_polygons)
+        registerTest(::clip_restore)
+        registerTest(::clip_after_transform)
+        registerTest(::clip_before_transform)
+        registerTest(::clip_text)
+        registerTest(::clip_text_before_transform)
+        registerTest(::clip_text_with_translates_before_transform)
+        registerTest(::clip_text_after_transform)
+        registerTest(::clip_text_with_translates_after_transform)
+    }
 
     private fun nwRect(ctx: Context2d) {
         ctx.moveTo(0, 0)
@@ -37,8 +54,7 @@ class CanvasClipTest : CanvasTestBase() {
         ctx.lineTo(50, 100)
     }
 
-    @Test
-    fun clip_and_fill() {
+    private fun clip_and_fill() {
         // Clip and fill without rebuilding a path
         val (canvas, ctx) = createCanvas()
 
@@ -49,13 +65,11 @@ class CanvasClipTest : CanvasTestBase() {
         ctx.clip()
 
         ctx.fill()
-        
+
         assertCanvas("clip_and_fill.png", canvas)
     }
 
-
-    @Test
-    fun clip_path() {
+    private fun clip_path() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -70,8 +84,7 @@ class CanvasClipTest : CanvasTestBase() {
         assertCanvas("clip_path.png", canvas)
     }
 
-    @Test
-    fun clip_with_two_polygons() {
+    private fun clip_with_two_polygons() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -91,8 +104,7 @@ class CanvasClipTest : CanvasTestBase() {
         assertCanvas("clip_with_two_polygons.png", canvas)
     }
 
-    @Test
-    fun clip_restore() {
+    private fun clip_restore() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)"
@@ -120,8 +132,7 @@ class CanvasClipTest : CanvasTestBase() {
         assertCanvas("clip_restore.png", canvas)
     }
 
-    @Test
-    fun clip_after_transform() {
+    private fun clip_after_transform() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -139,8 +150,7 @@ class CanvasClipTest : CanvasTestBase() {
         assertCanvas("clip_after_transform.png", canvas)
     }
 
-    @Test
-    fun clip_before_transform() {
+    private fun clip_before_transform() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -159,13 +169,12 @@ class CanvasClipTest : CanvasTestBase() {
         assertCanvas("clip_before_transform.png", canvas)
     }
 
-    @Test
-    fun clip_text() {
+    private fun clip_text() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "Noto Serif", fontSize = 50.0))
 
         ctx.beginPath()
         nwRect(ctx)
@@ -177,8 +186,7 @@ class CanvasClipTest : CanvasTestBase() {
         assertCanvas("clip_text.png", canvas)
     }
 
-    @Test
-    fun clip_text_before_transform() {
+    private fun clip_text_before_transform() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -199,13 +207,12 @@ class CanvasClipTest : CanvasTestBase() {
     }
 
 
-    @Test
-    fun clip_text_with_translates_before_transform() {
+    private fun clip_text_with_translates_before_transform() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "Noto Serif", fontSize = 50.0))
 
         ctx.beginPath()
         nwRectWithTranslates(ctx)
@@ -221,13 +228,12 @@ class CanvasClipTest : CanvasTestBase() {
     }
 
 
-    @Test
-    fun clip_text_after_transform() {
+    private fun clip_text_after_transform() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "Noto Serif", fontSize = 50.0))
 
         ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
 
@@ -243,13 +249,12 @@ class CanvasClipTest : CanvasTestBase() {
     }
 
 
-    @Test
-    fun clip_text_with_translates_after_transform() {
+    private fun clip_text_with_translates_after_transform() {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "Noto Serif", fontSize = 50.0))
 
         ctx.transform(sx = 1, ry = 0, rx = -0.33, sy = 1, tx = 25, ty = 0)
 
@@ -263,5 +268,4 @@ class CanvasClipTest : CanvasTestBase() {
 
         assertCanvas("clip_text_with_translates_after_transform.png", canvas)
     }
-
 }
