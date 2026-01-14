@@ -417,7 +417,7 @@ def test_polars_categorical_variable():
     # Fix me in future versions of Polars, maybe.
     df = pl.DataFrame({
         'v': pl.Series('v', ['ch4', 'ch5', 'ch1', 'ch2'],
-                       dtype=pl.Categorical(['ch5', 'ch4', 'ch2', 'ch1']))
+                       dtype=pl.Categorical)
     })
 
     p = ggplot(df) + geom_point()
