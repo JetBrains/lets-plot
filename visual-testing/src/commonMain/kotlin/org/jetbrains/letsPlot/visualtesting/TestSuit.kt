@@ -10,10 +10,10 @@ internal open class TestSuit {
         tests.add(test)
     }
 
-    internal fun runTests() {
+    internal fun runTests(): Int {
         var failedTestsCount = 0
         println("'$name' - running ${tests.size} tests...")
-        for ((i, test) in tests.withIndex()) {
+        for (test in tests) {
             val res = runCatching { test.invoke() }
             if (res.isFailure) {
                 println("[FAILED]: '${test.name}' - ${res.exceptionOrNull()?.message}")
@@ -23,9 +23,6 @@ internal open class TestSuit {
             }
         }
 
-        if (failedTestsCount > 0) {
-            error("$failedTestsCount tests failed!")
-        }
+        return failedTestsCount
     }
-
 }
