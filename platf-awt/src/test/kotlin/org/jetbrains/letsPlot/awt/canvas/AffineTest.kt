@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbraibs.letsPlot.awt.canvas
+package org.jetbrains.letsPlot.awt.canvas
 
 import java.awt.geom.AffineTransform
 import kotlin.test.Test

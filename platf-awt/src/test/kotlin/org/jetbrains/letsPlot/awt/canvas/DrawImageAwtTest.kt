@@ -3,10 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbraibs.letsPlot.awt.canvas
+package org.jetbrains.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvas
-import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.junit.Test

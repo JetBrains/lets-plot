@@ -1,10 +1,9 @@
-package org.jetbraibs.letsPlot.awt.canvas
+package org.jetbrains.letsPlot.awt.canvas
 
 import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
 import demoAndTestShared.ImageComparer
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getMap

@@ -1,8 +1,7 @@
-package org.jetbraibs.letsPlot.visualtesting
+package org.jetbrains.letsPlot.visualtesting
 
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
-import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import java.io.File
 import javax.imageio.ImageIO
 

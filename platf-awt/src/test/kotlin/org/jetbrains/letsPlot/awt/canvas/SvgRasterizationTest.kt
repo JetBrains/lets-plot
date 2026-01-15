@@ -3,10 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbraibs.letsPlot.awt.canvas
+package org.jetbrains.letsPlot.awt.canvas
 
 import demo.svgMapping.model.ReferenceSvgModel
-import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.plot.VisualPlotTestBase
 import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
 import kotlin.test.Ignore

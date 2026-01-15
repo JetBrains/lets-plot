@@ -1,16 +1,15 @@
-package org.jetbraibs.letsPlot.visualtesting.canvas
+package org.jetbrains.letsPlot.visualtesting
 
-import org.jetbraibs.letsPlot.visualtesting.AwtBitmapIO
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC
 import org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD
-import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.canvas.CanvasTck
+import java.awt.Font
 import java.io.IOException
 import kotlin.test.Test
 
-typealias AwtFont = java.awt.Font
+typealias AwtFont = Font
 
 class AwtCanvasTck {
 
