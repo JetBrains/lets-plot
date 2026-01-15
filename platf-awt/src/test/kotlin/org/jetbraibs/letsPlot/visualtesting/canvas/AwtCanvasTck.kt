@@ -40,6 +40,7 @@ class AwtCanvasTck {
                 createFont("fonts/NotoSerif-BoldItalic.ttf")
 
             it[Font(fontFamily = "Noto Sans Mono", fontSize = 1.0)] = createFont("fonts/NotoSansMono-Regular.ttf")
+            it[Font(fontFamily = "Noto Sans Mono", fontStyle = ITALIC, fontSize = 1.0)] = createFont("fonts/NotoSansMono-Regular.ttf")
             it[Font(fontFamily = "Noto Sans Mono", fontWeight = BOLD, fontSize = 1.0)] = createFont("fonts/NotoSansMono-Bold.ttf")
             it[Font(fontFamily = "Noto Sans Mono", fontWeight = BOLD, fontStyle = ITALIC, fontSize = 1.0)] = createFont("fonts/NotoSansMono-Bold.ttf")
         }
