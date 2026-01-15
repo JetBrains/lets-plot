@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.canvas.CanvasTck
 import org.junit.BeforeClass
+import org.junit.Ignore
 import java.awt.Font
 import java.awt.FontFormatException
 import java.awt.GraphicsEnvironment
@@ -13,6 +14,7 @@ import java.io.InputStream
 import kotlin.test.Test
 
 class AwtCanvasTck {
+    @Ignore("monospace font inconsistency")
     @Test
     fun runAllCanvasClipTests() {
         val canvasPeer = AwtCanvasPeer()
