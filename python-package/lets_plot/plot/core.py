@@ -5,7 +5,7 @@
 import io
 import json
 import os
-from typing import Union
+from typing import Union, List
 
 __all__ = ['aes', 'layer']
 
@@ -935,6 +935,34 @@ class DummySpec(FeatureSpec):
         return other
 
 
+class ColorScaleFeatureSpec(FeatureSpec):
+    """
+    A scale specification for color aesthetics with palette generation support.
+    """
+
+    def palette(self, n) -> List[str]:
+        """
+        Generate a list of hex color codes from a color scale specification.
+
+        Parameters
+        ----------
+        n : int
+            Number of colors to generate.
+
+        Returns
+        -------
+        List of hex color codes.
+
+        Notes
+        -----
+        For ColorBrewer palettes, if the requested number of colors exceeds the palette's
+        maximum size, colors will be interpolated to generate the required number of unique colors.
+        """
+
+        from .. import _kbridge
+        return _kbridge._generate_palette_from_color_scale_spec(self.as_dict(), n)
+
+
 def _generate_data(size):
     """ For testing reasons only """
     # return FeatureSpec('dummy', name=None, data='x' * size)
@@ -997,7 +1025,8 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
+    str, None]:
     import base64
     from .. import _kbridge
 

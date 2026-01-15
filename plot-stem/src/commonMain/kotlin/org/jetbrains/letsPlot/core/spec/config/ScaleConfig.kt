@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
 import org.jetbrains.letsPlot.core.spec.Option
@@ -91,8 +92,16 @@ class ScaleConfig<T> constructor(
         // all 'manual' scales
         if (has(OUTPUT_VALUES)) {
             val outputValues = getList(OUTPUT_VALUES)
-            val mapperOutputValues = aopConversion.applyToList(aes, outputValues)
-            mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(mapperOutputValues, naValue)
+            mapperProvider = if (aes.isColor) {
+                val outputColors = aopConversion.applyToList(Aes.COLOR, outputValues)
+                ColorManualMapperProvider(
+                    colors = outputColors.filterNotNull(),
+                    naValue = naValue as Color
+                )
+            } else {
+                val convertedValues = aopConversion.applyToList(aes, outputValues)
+                DefaultMapperProviderUtil.createWithDiscreteOutput(convertedValues, naValue)
+            }
         }
 
         if (aes == Aes.SHAPE) {
@@ -155,18 +164,18 @@ class ScaleConfig<T> constructor(
 
             COLOR_HUE ->
                 mapperProvider = ColorHueMapperProvider(
-                    hueRange = getRangeOrNull(HUE_RANGE) ?: ColorHueMapperProvider.DEF_HUE_RANGE,
-                    chroma = (getDouble(CHROMA) ?: ColorHueMapperProvider.DEF_CHROMA),
-                    luminance = (getDouble(LUMINANCE) ?: ColorHueMapperProvider.DEF_LUMINANCE),
-                    startHue = getDouble(START_HUE) ?: ColorHueMapperProvider.DEF_START_HUE,
+                    hueRange = getRangeOrNull(HUE_RANGE) ?: ColorMapperDefaults.Hue.DEF_HUE_RANGE,
+                    chroma = (getDouble(CHROMA) ?: ColorMapperDefaults.Hue.DEF_CHROMA),
+                    luminance = (getDouble(LUMINANCE) ?: ColorMapperDefaults.Hue.DEF_LUMINANCE),
+                    startHue = getDouble(START_HUE) ?: ColorMapperDefaults.Hue.DEF_START_HUE,
                     reversed = getDouble(DIRECTION)?.let { it < 0 } ?: false,
                     naValue = naValue as Color
                 )
 
             COLOR_GREY ->
                 mapperProvider = GreyscaleLightnessMapperProvider(
-                    getDouble(START) ?: GreyscaleLightnessMapperProvider.DEF_START,
-                    getDouble(END) ?: GreyscaleLightnessMapperProvider.DEF_END,
+                    getDouble(START) ?: ColorMapperDefaults.GreyscaleLightness.DEF_START,
+                    getDouble(END) ?: ColorMapperDefaults.GreyscaleLightness.DEF_END,
                     naValue as Color
                 )
 

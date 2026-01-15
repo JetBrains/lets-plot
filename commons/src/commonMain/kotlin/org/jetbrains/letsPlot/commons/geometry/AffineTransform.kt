@@ -136,7 +136,15 @@ class AffineTransform(
         if (m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0) {
             return "IDENTITY"
         }
-        return """sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty"""
+
+        return listOfNotNull(
+            sx.takeIf { it != 1.0 }?.let { "sx=$it" },
+            sy.takeIf { it != 1.0 }?.let { "sy=$it" },
+            rx.takeIf { it != 0.0 }?.let { "rx=$it" },
+            ry.takeIf { it != 0.0 }?.let { "ry=$it" },
+            tx.takeIf { it != 0.0 }?.let { "tx=$it" },
+            ty.takeIf { it != 0.0 }?.let { "ty=$it" }
+        ).joinToString(", ")
     }
 
     override fun toString(): String {

@@ -19,7 +19,7 @@ class ColorHueMapperProviderTest {
         const val DEF_C = 100.0
         const val DEF_L = 65.0
 
-        // all colors are in HCL model with C=65, L=100
+        // all colors are in the HCL model with C=65, L=100
         // Generated with R:
         // grDevices::hcl(h, 100, 65)
         private val HCL_COLOR_0 = Color.parseHex("#FF6C91")

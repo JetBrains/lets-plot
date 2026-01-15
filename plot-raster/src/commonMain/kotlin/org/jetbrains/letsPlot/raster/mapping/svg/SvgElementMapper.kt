@@ -6,16 +6,15 @@
 package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
 import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
-import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.scene.Node
 
-internal open class SvgElementMapper<SourceT : SvgElement, TargetT : Element>(
+internal open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
     source: SourceT,
     target: TargetT,
     peer: SvgCanvasPeer
@@ -29,7 +28,7 @@ internal open class SvgElementMapper<SourceT : SvgElement, TargetT : Element>(
 
     open fun applyStyle() {}
 
-    override fun registerSynchronizers(conf: Mapper.SynchronizersConfiguration) {
+    override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
 
         conf.add(object : Synchronizer {

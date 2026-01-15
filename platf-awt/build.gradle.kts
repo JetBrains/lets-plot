@@ -24,7 +24,7 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":canvas"))
     testImplementation(project(":plot-raster"))
-    testImplementation(project(":plot-raster"))
+    testImplementation(project(":visual-testing"))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
 }

@@ -12,13 +12,16 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 
 class GreyscaleLightnessMapperProvider(
     start: Double,
     end: Double,
     naValue: Color
-) : HclColorMapperProvider(naValue) {
+) : HclColorMapperProvider(naValue),
+    PaletteGenerator {
 
     private val from: HCL
     private val to: HCL
@@ -45,8 +48,8 @@ class GreyscaleLightnessMapperProvider(
         )
     }
 
-    companion object {
-        const val DEF_START = 0.2
-        const val DEF_END = 0.8
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
+        return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 }

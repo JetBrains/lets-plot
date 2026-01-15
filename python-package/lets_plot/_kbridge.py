@@ -2,7 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 # noinspection PyUnresolvedReferences
-from typing import Dict
+from typing import Dict, List
 
 import lets_plot_kotlin_bridge
 
@@ -26,13 +26,15 @@ def _generate_dynamic_display_html(plot_spec: Dict) -> str:
 
 
 def _generate_svg(plot_spec: Dict, w: float = None, h: float = None, unit: str = None) -> str:
-    plot_spec  = _standardize_plot_spec(plot_spec)
+    plot_spec = _standardize_plot_spec(plot_spec)
     w = -1.0 if w is None else float(w)
     h = -1.0 if h is None else float(h)
     unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
     return lets_plot_kotlin_bridge.export_svg(plot_spec, w, h, unit)
 
-def _generate_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
+
+def _generate_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int,
+                  scale: float) -> str:
     """
     Export a plot to PNG format. Returns base64 encoded string of the PNG image.
     """
@@ -45,7 +47,8 @@ def _generate_png(bytestring: Dict, output_width: float, output_height: float, u
     return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, unit, dpi, scale)
 
 
-def _generate_mvg(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int, scale: float) -> str:
+def _generate_mvg(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int,
+                  scale: float) -> str:
     """
     Export a plot to MVG format. For internal use.
     """
@@ -195,3 +198,23 @@ def _generate_display_html_for_raw_spec(
         responsive,
         height100pct
     )
+
+
+def _generate_palette_from_color_scale_spec(scale_spec: Dict, n: int) -> List[str]:
+    """
+    Generate a list of hex color codes from a color scale specification.
+
+    Parameters
+    ----------
+    scale_spec : Dict
+        Dictionary containing the scale specification.
+    n : int
+        Number of colors to generate.
+
+    Returns
+    -------
+    List of hex color codes.
+
+    """
+    scale_spec = standardize_dict(scale_spec)
+    return lets_plot_kotlin_bridge.get_palette_from_color_scale_spec(scale_spec, n)

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.SvgNodeSubtreeGeneratingSynchronizer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.raster.shape.Group
+import org.jetbrains.letsPlot.raster.scene.Group
 
 internal class SvgGElementMapper(
     source: SvgGElement,

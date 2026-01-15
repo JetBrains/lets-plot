@@ -9,7 +9,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.shape.Pane
+import org.jetbrains.letsPlot.raster.scene.Pane
 
 internal class SvgSvgElementMapper(
     source: SvgSvgElement,

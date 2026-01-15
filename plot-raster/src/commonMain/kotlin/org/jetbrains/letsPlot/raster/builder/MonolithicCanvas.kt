@@ -22,10 +22,7 @@ object MonolithicCanvas {
         computationMessagesHandler: (List<String>) -> Unit,
         containerSize: DoubleVector? = null,
     ): ViewModel {
-
-        val frontMessages: MutableList<String> = ArrayList()
-
-        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy, frontMessages::add)
+        val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, containerSize = containerSize, sizingPolicy)
         if (buildResult is MonolithicCommon.PlotsBuildResult.Error) {
             return SimpleModel(createErrorSvgText(buildResult.error), UnsupportedToolEventDispatcher())
         }
@@ -35,7 +32,7 @@ object MonolithicCanvas {
         val figure = FigureToViewModel.eval(success.buildInfo)
 
         val computationMessages = success.buildInfo.computationMessages
-        computationMessagesHandler(computationMessages + frontMessages)
+        computationMessagesHandler(computationMessages)
 
         return figure
     }

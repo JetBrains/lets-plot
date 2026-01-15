@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.ColorBrewerMapperProvider
 import org.jetbrains.letsPlot.core.spec.Option
 import org.junit.Test
@@ -72,7 +72,7 @@ internal class ScaleConfigDiscreteScaleTest(
 
     companion object {
         private val CAT_DATA = listOf("A", "B", "C")
-        private val NA_COLOR = ColorMapper.NA_VALUE
+        private val NA_COLOR = ColorMapperDefaults.NA_VALUE
 
         @JvmStatic
         @Parameterized.Parameters

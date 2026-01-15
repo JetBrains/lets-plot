@@ -40,6 +40,7 @@ object TestUtil {
 
         override fun showLine() = TODO("Not yet implemented")
         override fun showTickMarks() = TODO("Not yet implemented")
+        override fun showMinorTickMarks() = TODO("Not yet implemented")
         override fun showLabels() = TODO("Not yet implemented")
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
@@ -49,8 +50,10 @@ object TestUtil {
         override fun lineWidth() = 1.0
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
+        override fun minorTickMarkColor() = TODO("Not yet implemented")
         override fun lineType() = NamedLineType.SOLID
         override fun tickMarkLineType() = NamedLineType.SOLID
+        override fun minorTickMarkLineType() = NamedLineType.BLANK
         override fun labelStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun rotateLabels() = TODO("Not yet implemented")
         override fun labelAngle(): Double = TODO("Not yet implemented")
@@ -58,6 +61,8 @@ object TestUtil {
         override fun labelVJust(): Double = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
+        override fun minorTickMarkWidth() = TODO("Not yet implemented")
+        override fun minorTickMarkLength() = TODO("Not yet implemented")
         override fun tickLabelMargins() = Thickness()
         override fun labelSpacing(): Double = TODO("Not yet implemented")
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR

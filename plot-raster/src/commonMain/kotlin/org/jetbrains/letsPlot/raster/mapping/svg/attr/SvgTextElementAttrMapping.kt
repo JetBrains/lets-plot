@@ -14,11 +14,11 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.toColor
-import org.jetbrains.letsPlot.raster.shape.Text
-import org.jetbrains.letsPlot.raster.shape.Text.Companion.DEFAULT_FONT_FAMILY
-import org.jetbrains.letsPlot.raster.shape.Text.Companion.DEFAULT_FONT_SIZE
-import org.jetbrains.letsPlot.raster.shape.Text.HorizontalAlignment
-import org.jetbrains.letsPlot.raster.shape.Text.VerticalAlignment
+import org.jetbrains.letsPlot.raster.scene.Text
+import org.jetbrains.letsPlot.raster.scene.Text.Companion.DEFAULT_FONT_FAMILY
+import org.jetbrains.letsPlot.raster.scene.Text.Companion.DEFAULT_FONT_SIZE
+import org.jetbrains.letsPlot.raster.scene.Text.HorizontalAlignment
+import org.jetbrains.letsPlot.raster.scene.Text.VerticalAlignment
 
 internal object SvgTextElementAttrMapping : SvgAttrMapping<Text>() {
     override fun setAttribute(target: Text, name: String, value: Any?) {

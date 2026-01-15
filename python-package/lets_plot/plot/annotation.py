@@ -9,7 +9,7 @@ from lets_plot.plot.core import FeatureSpec, _filter_none
 # Annotations
 #
 
-__all__ = ['layer_labels']
+__all__ = ['layer_labels', "smooth_labels"]
 
 
 class layer_labels(FeatureSpec):
@@ -288,3 +288,47 @@ class layer_labels(FeatureSpec):
 
         self._useLayerColor = True
         return self
+
+# todo docs
+class smooth_labels(FeatureSpec):
+
+    def __init__(self, variables: List[str] = None):
+        self._base = layer_labels(list(variables) if variables is not None else None).inherit_color()
+
+        super().__init__("labels", name=None)
+
+    def format(self, field=None, format=None) -> "smooth_labels":
+        self._base.format(field, format)
+        return self
+
+    def line(self, value: str) -> "smooth_labels":
+        self._base.line(value)
+        return self
+
+    def size(self, value: float) -> "smooth_labels":
+        self._base.size(value)
+        return self
+
+    def eq(
+            self,
+            *,
+            with_lhs: str = "y",
+    ) -> "smooth_labels":
+
+        lhs = with_lhs + '=' if with_lhs is not None else ''
+
+        self._base.line('\(' + lhs + '@{..eq..}\)')
+        return self
+
+    def rr(
+            self
+    ) -> "smooth_labels":
+        self._base.line('\(R\\^2 = @{..r2..}\)')
+        return self
+
+    def as_dict(self):
+        if self._base._lines is None:
+            self._base._lines = []
+            self._base.line('\(R\\^2 = @{..r2..}\)')
+
+        return self._base.as_dict()

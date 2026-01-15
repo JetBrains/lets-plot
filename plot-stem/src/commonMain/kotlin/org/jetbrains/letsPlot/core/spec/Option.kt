@@ -494,6 +494,11 @@ object Option {
             const val MIN = "min"
             const val MAX = "max"
         }
+
+        object StatR2 {
+            const val LABEL_X = "label_x"
+            const val LABEL_Y = "label_y"
+        }
     }
 
     object Stat {

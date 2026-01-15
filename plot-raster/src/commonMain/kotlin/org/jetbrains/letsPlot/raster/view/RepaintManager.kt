@@ -3,44 +3,46 @@ package org.jetbrains.letsPlot.raster.view
 import org.jetbrains.letsPlot.commons.geometry.*
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.scene.Node
 
 internal class RepaintManager(
     private val canvasPeer: CanvasPeer
 ) : Disposable {
     var overscanFactor: Double = 2.5
 
-    private val elementCache = mutableMapOf<Element, CacheEntry>()
+    private val nodeCache = mutableMapOf<Node, CacheEntry>()
 
-    fun isCacheValid(element: Element, viewportSize: Vector, contentScale: Double): Boolean {
-        if (element.isDirty) {
+    fun isCacheValid(node: Node, viewportSize: Vector, contentScale: Double): Boolean {
+        if (node.isDirty) {
             return false
         }
 
-        val entry = elementCache[element] ?: return false
+        val entry = nodeCache[node] ?: return false
 
         if (entry.contentScale != contentScale) {
             return false
         }
 
         val viewportRect = DoubleRectangle.WH(viewportSize)
-        val requiredScreenRect = viewportRect.intersect(element.bBoxGlobal) ?: return true
+        val requiredScreenRect = viewportRect.intersect(node.bBoxGlobal) ?: return true
 
-        val inverseCtm = element.ctm.inverse() ?: return false
+        val inverseCtm = node.ctm.inverse() ?: return false
         val requiredLocalRect = inverseCtm.transform(requiredScreenRect)
 
-        return entry.snapshotLocalBounds.contains(requiredLocalRect)
+        val contains = entry.snapshotLocalBounds.contains(requiredLocalRect)
+
+        return contains
     }
 
     fun cacheElement(
-        element: Element,
+        node: Node,
         viewportSize: Vector,
         contentScale: Double,
         painter: (Context2d) -> Unit
     ): Boolean {
-        val screenToLocalTransform = element.ctm.inverse() ?: return false
+        val screenToLocalTransform = node.ctm.inverse() ?: return false
 
-        val elementBounds = element.bBoxGlobal
+        val elementBounds = node.bBoxGlobal
         val overscanAmount = viewportSize.mul((overscanFactor - 1.0) / 2.0)
 
         val targetRect = DoubleRectangle.WH(viewportSize)
@@ -67,12 +69,12 @@ internal class RepaintManager(
         ctx.translate(alignedOrigin.negate())
         ctx.translate(CACHE_PADDING_SIZE)
         ctx.scale(contentScale)
-        ctx.transform(element.ctm)
+        ctx.transform(node.ctm)
 
         painter.invoke(ctx)
 
-        elementCache[element]?.snapshot?.dispose()
-        elementCache[element] = CacheEntry(
+        nodeCache[node]?.snapshot?.dispose()
+        nodeCache[node] = CacheEntry(
             snapshot = canvas.takeSnapshot(),
             snapshotPhysicalOrigin = alignedOrigin.sub(CACHE_PADDING_SIZE),
             snapshotLocalBounds = screenToLocalTransform.transform(targetRect),
@@ -85,8 +87,8 @@ internal class RepaintManager(
         return true
     }
 
-    fun paintElement(element: Element, ctx: Context2d) {
-        val entry = elementCache[element] ?: return
+    fun paintElement(node: Node, ctx: Context2d) {
+        val entry = nodeCache[node] ?: return
 
         ctx.save()
         ctx.transform(entry.screenToLocalTransform)
@@ -100,8 +102,8 @@ internal class RepaintManager(
     }
 
     override fun dispose() {
-        elementCache.values.forEach { it.snapshot.dispose() }
-        elementCache.clear()
+        nodeCache.values.forEach { it.snapshot.dispose() }
+        nodeCache.clear()
     }
 
     private class CacheEntry(
@@ -113,7 +115,7 @@ internal class RepaintManager(
     )
 
     companion object {
-        private const val CACHE_PADDING: Int = 2
+        private const val CACHE_PADDING: Int = 10  // for anti-aliasing artifacts and mitered joins
         private val CACHE_PADDING_SIZE = Vector(CACHE_PADDING, CACHE_PADDING)
     }
 }

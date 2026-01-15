@@ -581,6 +581,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                 seed=None,
                 max_n=None,
                 color_by=None, fill_by=None,
+                labels=None,
+                label_x=None,
+                label_y=None,
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -738,7 +741,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                         method='loess', span=.3, level=.7, seed=42)
 
     """
-    return _geom('smooth',
+    # todo: docs
+    smooth_layer = _geom('smooth',
                  mapping=mapping,
                  data=data,
                  stat=stat,
@@ -759,6 +763,34 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  max_n=max_n,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
+
+    if labels is not None:
+        smooth_layer += _geom('stat_r2',
+                              mapping=mapping,
+                              data=data,
+                              stat=stat,
+                              position=position,
+                              show_legend=show_legend,
+                              inherit_aes=inherit_aes,
+                              manual_key=manual_key,
+                              sampling=sampling,
+                              tooltips=tooltips,
+                              orientation=orientation,
+                              method=method,
+                              n=n,
+                              se=se,
+                              level=level,
+                              span=span,
+                              deg=deg,
+                              seed=seed,
+                              max_n=max_n,
+                              color_by=color_by, fill_by=fill_by,
+                              labels=labels,
+                              label_x=label_x,
+                              label_y=label_y,
+                              **other_args)
+
+    return smooth_layer
 
 
 def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
@@ -9118,6 +9150,8 @@ def geom_stat_r2(mapping=None, *, data=None, stat=None, position=None, show_lege
                  max_n=None,
                  color_by=None, fill_by=None,
                  labels=None,
+                 label_x=None,
+                 label_y=None,
                  **other_args):
     """
     Show stat
@@ -9144,6 +9178,8 @@ def geom_stat_r2(mapping=None, *, data=None, stat=None, position=None, show_lege
                  max_n=max_n,
                  color_by=color_by, fill_by=fill_by,
                  labels=labels,
+                 label_x=label_x,
+                 label_y=label_y,
                  **other_args)
 
 

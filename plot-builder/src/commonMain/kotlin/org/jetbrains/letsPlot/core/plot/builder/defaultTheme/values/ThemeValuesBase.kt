@@ -9,8 +9,9 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.*
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_MINOR_TICKS
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_MINOR_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_SPACING
@@ -118,6 +119,8 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_ONTOP to true,
             AXIS_TICKS_LENGTH to 4.0,
+            AXIS_MINOR_TICKS_LENGTH to 2.0,
+            AXIS_MINOR_TICKS to ELEMENT_BLANK,
 
             AXIS_TEXT to mapOf(
                 Elem.Margin.TOP to 0.0,

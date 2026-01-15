@@ -11,10 +11,10 @@ import org.jetbrains.letsPlot.core.canvas.Path2d
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.PointerEvents
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgTransformParser.parseSvgTransform
-import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.scene.Node
 import kotlin.math.PI
 
-internal abstract class SvgAttrMapping<in TargetT : Element> {
+internal abstract class SvgAttrMapping<in TargetT : Node> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
             SvgGraphicsElement.VISIBILITY.name -> target.isVisible = visibilityAsBoolean(value)
@@ -80,7 +80,7 @@ internal abstract class SvgAttrMapping<in TargetT : Element> {
     }
 
     companion object {
-        private fun setTransform(value: String, target: Element) {
+        private fun setTransform(value: String, target: Node) {
             target.transform = parseSvgTransform(value).fold(AffineTransform.IDENTITY, AffineTransform::concat)
         }
 

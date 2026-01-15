@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
@@ -21,14 +22,13 @@ import org.jetbrains.letsPlot.core.plot.base.stat.DensityStat
 import org.jetbrains.letsPlot.core.plot.builder.PosProviderContext
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class LinesHelperResamplingTest {
     private fun colorMapper(values: Iterable<Double>): (Double?) -> Color {
-        return ColorMapper.gradient(DoubleSpan.encloseAll(values), Color.DARK_BLUE, Color.LIGHT_BLUE, Color.GRAY)
+        return GradientUtil.gradient(DoubleSpan.encloseAll(values), Color.DARK_BLUE, Color.LIGHT_BLUE, Color.GRAY)
     }
 
     private fun toColors(values: Iterable<Double>): List<Color> {
@@ -56,7 +56,8 @@ class LinesHelperResamplingTest {
     @Test
     fun resampling_in_polar_coords_by_group() {
         val x = listOf(1.0, 1.0, 1.5, 1.5, 2.0, 1.0, 1.0, 1.5, 1.5, 2.0)
-        val y = listOf(0.3989422804014327,
+        val y = listOf(
+            0.3989422804014327,
             0.3989422804014327,
             0.3520653267642995,
             0.3520653267642995,
@@ -65,7 +66,8 @@ class LinesHelperResamplingTest {
             0.5287675721190984,
             0.450988942775473,
             0.450988942775473,
-            0.5287675721190984)
+            0.5287675721190984
+        )
         val fill = list(toColors(listOf(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0)))
         val group = listOf(0, 0, 0, 0, 0, 1, 1, 1, 1, 1)
         val aes = AestheticsBuilder(10)
@@ -104,8 +106,10 @@ class LinesHelperResamplingTest {
             setResamplingPrecision(1.0)
         }
 
-        val quantilesHelper = QuantilesHelper(PositionAdjustments.identity(), coordinateSystem,
-            BogusContext, DensityStat.DEF_QUANTILES)
+        val quantilesHelper = QuantilesHelper(
+            PositionAdjustments.identity(), coordinateSystem,
+            BogusContext, DensityStat.DEF_QUANTILES
+        )
 
         val dataPoints = GeomUtil.withDefined(GeomUtil.ordered_X(aes.dataPoints()), Aes.X, Aes.Y)
 
@@ -124,15 +128,15 @@ class LinesHelperResamplingTest {
             }
 
         val expected0 = listOf(
-             DoubleVector(100.14385987378398, 75.00041391669224),
-             DoubleVector(100.14385987378398, 75.00041391669224),
-             DoubleVector(100.16925996079176, 68.75045838631112),
-             DoubleVector(100.19043407200877, 62.50048353826122),
-             DoubleVector(100.19043407200877, 62.50048353826122),
-             DoubleVector(100.1874353635747, 56.25040151059119),
-             DoubleVector(100.17451145710753, 50.000304543414074),
-             DoubleVector(100.17333681283097, 62.50040061081563),
-             DoubleVector(100.14385987378398, 75.00041391669224)
+            DoubleVector(100.14385987378398, 75.00041391669224),
+            DoubleVector(100.14385987378398, 75.00041391669224),
+            DoubleVector(100.16925996079176, 68.75045838631112),
+            DoubleVector(100.19043407200877, 62.50048353826122),
+            DoubleVector(100.19043407200877, 62.50048353826122),
+            DoubleVector(100.1874353635747, 56.25040151059119),
+            DoubleVector(100.17451145710753, 50.000304543414074),
+            DoubleVector(100.17333681283097, 62.50040061081563),
+            DoubleVector(100.14385987378398, 75.00041391669224)
         )
 
         val expected1 = listOf(

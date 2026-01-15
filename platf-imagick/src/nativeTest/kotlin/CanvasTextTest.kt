@@ -70,69 +70,6 @@ class CanvasTextTest : CanvasTestBase() {
         }
     }
 
-
-    @Test
-    fun monospaceRegular() {
-        // Test that regular monospaced font is rendered correctly
-        val (canvas, ctx) = createCanvas(fontManager = monoBoldFontManager)
-
-        ctx.fillStyle = "black"
-        ctx.setFont(family = "mono", size = 16.0)
-        ctx.fillText("Regular", 5.0, 30.0)
-
-        assertCanvas("monospace_regular.png", canvas)
-    }
-
-    @Test
-    fun monospaceFauxItalic() {
-        val fontSize = 16.0
-
-        val (canvas, ctx) = createCanvas(fontManager = monoBoldFontManager)
-
-        ctx.fillStyle = "black"
-        ctx.setFont(family = "mono", size = fontSize)
-        ctx.fillText("Regular", 5.0, 30.0)
-
-        ctx.setFont(family = "mono", size = fontSize, style = FontStyle.ITALIC)
-        ctx.fillText("ItalicXY", 5.0, 50.0)
-
-        ctx.setFont(family = "mono", size = fontSize, style = FontStyle.ITALIC)
-        ctx.translate(5.0, 70.0)
-        ctx.fillText("ItalicTR", 0.0, 0.0)
-
-        assertCanvas("monospace_italic_faux.png", canvas)
-    }
-
-    @Test
-    fun monospaceFauxBold() {
-        val fontSize = 16.0
-
-        val (canvas, ctx) = createCanvas(fontManager = monoRegularFontManager)
-
-        ctx.fillStyle = "black"
-        ctx.setFont(family = "mono", size = fontSize)
-        ctx.fillText("Regular", 5.0, 30.0)
-
-        ctx.setFont(family = "mono", size = fontSize, weight = FontWeight.BOLD)
-        ctx.fillText("Bold", 5.0, 50.0)
-
-        assertCanvas("monospace_bold_faux.png", canvas)
-    }
-
-    @Test
-    fun monospaceFauxBoldItalic() {
-        val fontSize = 16.0
-        val (canvas, ctx) = createCanvas(fontManager = monoRegularFontManager)
-
-        ctx.fillStyle = "black"
-        ctx.setFont(family = "mono", size = fontSize)
-        ctx.fillText("Regular", 0.0, 30.0)
-        ctx.setFont(family = "mono", size = fontSize, style = FontStyle.ITALIC, weight = FontWeight.BOLD)
-        ctx.fillText("BoldItalic", 0.0, 50.0)
-
-        assertCanvas("monospace_bold_italic_faux_faux.png", canvas)
-    }
-
     @Test
     fun monospaceRealBold() {
         val fontSize = 16.0

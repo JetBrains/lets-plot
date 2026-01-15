@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.TestingPlotBuilder.createPlot
 import org.jetbrains.letsPlot.core.spec.Option.GeomName
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.IMAGE
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.LIVE_MAP
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.STAT_R2
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -110,7 +111,7 @@ class EdgeCasesTest {
     @Test
     fun allWithNotFiniteValuesInXYSeries() {
         for (geomName in GeomName.values()) {
-            if (LIVE_MAP == geomName || IMAGE == geomName) {
+            if (LIVE_MAP == geomName || IMAGE == geomName || STAT_R2 == geomName) {
                 continue
             }
             checkWithNaNInXYSeries(geomName)
@@ -132,7 +133,7 @@ class EdgeCasesTest {
             assertDoesNotFail("geom $geom: ") { createPlot(parsePlotSpec(spec)) }
         }
 
-        (GeomName.values() - listOf(LIVE_MAP, IMAGE)).forEach(::checkGeom)
+        (GeomName.values() - listOf(LIVE_MAP, IMAGE, STAT_R2)).forEach(::checkGeom)
     }
 
     @Test

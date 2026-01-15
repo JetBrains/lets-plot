@@ -20,6 +20,8 @@ interface AxisTheme {
 
     fun showTickMarks(): Boolean
 
+    fun showMinorTickMarks(): Boolean
+
     fun showLabels(): Boolean
 
     fun showTitle(): Boolean
@@ -38,9 +40,13 @@ interface AxisTheme {
 
     fun tickMarkColor(): Color
 
+    fun minorTickMarkColor(): Color
+
     fun lineType(): LineType
 
     fun tickMarkLineType(): LineType
+
+    fun minorTickMarkLineType(): LineType
 
     fun labelStyle(): ThemeTextStyle
 
@@ -54,7 +60,11 @@ interface AxisTheme {
 
     fun tickMarkWidth(): Double
 
+    fun minorTickMarkWidth(): Double
+
     fun tickMarkLength(): Double
+
+    fun minorTickMarkLength(): Double
 
     fun tickLabelMargins(): Thickness
 

@@ -191,6 +191,20 @@ static PyObject* get_static_html_page_for_raw_spec(PyObject* self, PyObject* arg
     return html;
 }
 
+static PyObject* get_palette_from_color_scale_spec(PyObject* self, PyObject* args) {
+    T_(ColorScalePaletteGenerator) paletteGen = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.ColorScalePaletteGenerator._instance();
+
+    PyObject *scaleSpecDict;
+    int n;
+    if (!PyArg_ParseTuple(args, "Oi", &scaleSpecDict, &n)) {
+        PyErr_SetString(PyExc_TypeError, "get_palette_from_color_scale_spec: failed to parse arguments");
+        return NULL;
+    }
+
+    PyObject* palette = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.ColorScalePaletteGenerator.generatePalette(paletteGen, scaleSpecDict, n);
+    return palette;
+}
+
 static PyMethodDef module_methods[] = {
 // { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },  // Deprecated: use get_display_html_for_raw_spec
    { "export_svg", (PyCFunction)export_svg, METH_VARARGS, "Generates SVG representing plot." },
@@ -200,6 +214,7 @@ static PyMethodDef module_methods[] = {
    { "get_static_configure_html", (PyCFunction)get_static_configure_html, METH_O, "Generates static HTML configuration." },
    { "get_display_html_for_raw_spec", (PyCFunction)get_display_html_for_raw_spec, METH_VARARGS, "Generates display HTML for raw plot spec." },
    { "get_static_html_page_for_raw_spec", (PyCFunction)get_static_html_page_for_raw_spec, METH_VARARGS, "Generates static HTML page for raw plot spec." },
+   { "get_palette_from_color_scale_spec", (PyCFunction)get_palette_from_color_scale_spec, METH_VARARGS, "Generates color palette for a scale." },
    { NULL }
 };
 

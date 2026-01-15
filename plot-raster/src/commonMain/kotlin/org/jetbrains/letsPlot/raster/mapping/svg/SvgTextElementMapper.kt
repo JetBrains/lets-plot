@@ -16,11 +16,12 @@ import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgTSpanElementAttrMapping
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgTextElementAttrMapping
-import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.TSpan
-import org.jetbrains.letsPlot.raster.shape.Text
+import org.jetbrains.letsPlot.raster.scene.Node
+import org.jetbrains.letsPlot.raster.scene.TSpan
+import org.jetbrains.letsPlot.raster.scene.Text
 
 internal class SvgTextElementMapper(
     source: SvgTextElement,
@@ -69,9 +70,9 @@ internal class SvgTextElementMapper(
         }
     }
 
-    private fun targetTextRunProperty(text: Text): WritableProperty<List<Element>?> {
-        return object : WritableProperty<List<Element>?> {
-            override fun set(value: List<Element>?) {
+    private fun targetTextRunProperty(text: Text): WritableProperty<List<Node>?> {
+        return object : WritableProperty<List<Node>?> {
+            override fun set(value: List<Node>?) {
                 text.children.clear()
                 value?.forEach { text.children.add(it) }
                 text.layoutChildren()
@@ -194,5 +195,8 @@ internal class SvgTextElementMapper(
                 true -> FontWeight.BOLD
                 false -> FontWeight.NORMAL
             }
+
+        val TextStyle.safeFamily: List<String>? get() = if (isNoneFamily) null else family.split(",").map { it.trim(' ', '"') }
+
     }
 }

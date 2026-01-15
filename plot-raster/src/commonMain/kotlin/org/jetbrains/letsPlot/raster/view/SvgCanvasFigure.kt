@@ -22,9 +22,9 @@ import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.raster.mapping.svg.DebugOptions.drawBoundingBoxes
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
-import org.jetbrains.letsPlot.raster.shape.Container
-import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.reversedDepthFirstTraversal
+import org.jetbrains.letsPlot.raster.scene.Container
+import org.jetbrains.letsPlot.raster.scene.Node
+import org.jetbrains.letsPlot.raster.scene.reversedDepthFirstTraversal
 import kotlin.math.ceil
 
 @Deprecated(
@@ -87,6 +87,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     init {
+        //setRenderingHint(RenderingHints.KEY_DEBUG_BBOXES, RenderingHints.VALUE_DEBUG_BBOXES_ON)
         setRenderingHint(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON)
         setRenderingHint(RenderingHints.KEY_OVERSCAN_FACTOR, 2.5)
 
@@ -94,12 +95,14 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             override fun onEvent(event: MouseEvent) {
                 val hrefClickHandler = onHrefClick ?: return
                 val coord = event.location.toDoubleVector()
-                val linkElement = reversedDepthFirstTraversal(rootMapper.target)
+                val linkNode = reversedDepthFirstTraversal(
+                    rootMapper.target
+                )
                     .filter { it.href != null }
-                    .filterNot(Element::isMouseTransparent)
+                    .filterNot(Node::isMouseTransparent)
                     .firstOrNull { coord in it.bBoxGlobal }
 
-                val href = linkElement?.href ?: return
+                val href = linkNode?.href ?: return
                 hrefClickHandler(href)
             }
         })
@@ -139,40 +142,40 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         repaintRequestListeners.forEach { it() }
     }
 
-    private fun render(elements: List<Element>, ctx: Context2d, ignoreCache: Boolean) {
-        elements.forEach { element ->
+    private fun render(nodes: List<Node>, ctx: Context2d, ignoreCache: Boolean) {
+        nodes.forEach { element ->
             renderElement(element, ctx, ignoreCache)
         }
     }
 
-    private fun renderElement(element: Element, ctx: Context2d, ignoreCache: Boolean = false) {
-        if (!element.isVisible) return
+    private fun renderElement(node: Node, ctx: Context2d, ignoreCache: Boolean = false) {
+        if (!node.isVisible) return
 
         var needRestore = false
-        if (!element.transform.isIdentity) {
+        if (!node.transform.isIdentity) {
             needRestore = true
             ctx.save()
-            ctx.transform(element.transform)
+            ctx.transform(node.transform)
         }
 
-        if (element.bufferedRendering && !ignoreCache
+        if (node.bufferedRendering && !ignoreCache
             && renderingHints[RenderingHints.KEY_OFFSCREEN_BUFFERING] == RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON
         ) {
             val repaintManager = repaintManager ?: return
 
-            if (!repaintManager.isCacheValid(element, size, ctx.contentScale)) {
-                repaintManager.cacheElement(element, size, ctx.contentScale) {
-                    renderElement(element, it, ignoreCache = true)
+            if (!repaintManager.isCacheValid(node, size, ctx.contentScale)) {
+                repaintManager.cacheElement(node, size, ctx.contentScale) {
+                    renderElement(node, it, ignoreCache = true)
                 }
-                element.isDirty = false
+                node.isDirty = false
             }
 
-            repaintManager.paintElement(element, ctx)
+            repaintManager.paintElement(node, ctx)
             if (needRestore) ctx.restore()
             return
         }
 
-        element.clipPath?.let { clipPath ->
+        node.clipPath?.let { clipPath ->
             if (!needRestore) {
                 ctx.save()
                 needRestore = true
@@ -184,12 +187,12 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             ctx.save()
         }
 
-        element.render(ctx)
-        if (element is Container) {
-            render(element.children, ctx, ignoreCache)
+        node.render(ctx)
+        if (node is Container) {
+            render(node.children, ctx, ignoreCache)
         }
 
-        if (element.clipPath != null) {
+        if (node.clipPath != null) {
             ctx.restore()
         }
         if (needRestore) {
