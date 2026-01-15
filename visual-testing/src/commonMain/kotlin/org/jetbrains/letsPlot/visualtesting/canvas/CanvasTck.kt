@@ -5,9 +5,15 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
 object CanvasTck {
     fun runAllTests(canvasPeer: CanvasPeer, imageComparer: ImageComparer) {
-        CanvasClipTest(canvasPeer, imageComparer).runTests()
-        CanvasPathTest(canvasPeer, imageComparer).runTests()
-        CanvasDrawImageTest(canvasPeer, imageComparer).runTests()
-        CanvasTextTest(canvasPeer, imageComparer).runTests()
+        var failedTestsCount = 0
+
+        failedTestsCount += CanvasClipTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += CanvasPathTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += CanvasDrawImageTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += CanvasTextTest(canvasPeer, imageComparer).runTests()
+
+        if (failedTestsCount > 0) {
+            error("$failedTestsCount tests failed!")
+        }
     }
 }

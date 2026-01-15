@@ -2,55 +2,50 @@ package org.jetbraibs.letsPlot.visualtesting.canvas
 
 import org.jetbraibs.letsPlot.visualtesting.AwtBitmapIO
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.awt.canvas.FontManager
+import org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC
+import org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.canvas.CanvasTck
-import org.junit.BeforeClass
-import org.junit.Ignore
-import java.awt.Font
-import java.awt.FontFormatException
-import java.awt.GraphicsEnvironment
 import java.io.IOException
-import java.io.InputStream
 import kotlin.test.Test
 
+typealias AwtFont = java.awt.Font
+
 class AwtCanvasTck {
-    @Ignore("monospace font inconsistency")
+
     @Test
     fun runAllCanvasClipTests() {
-        val canvasPeer = AwtCanvasPeer()
+        val canvasPeer = AwtCanvasPeer(fontManager = fontManager)
         val imageComparer = ImageComparer(canvasPeer, AwtBitmapIO, silent = true)
 
         CanvasTck.runAllTests(canvasPeer, imageComparer)
     }
 
     companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            registerFont("fonts/NotoSans-Regular.ttf")
-            registerFont("fonts/NotoSans-Bold.ttf")
-            registerFont("fonts/NotoSans-Italic.ttf")
-            registerFont("fonts/NotoSans-BoldItalic.ttf")
-            registerFont("fonts/NotoSerif-Regular.ttf")
-            registerFont("fonts/NotoSerif-Bold.ttf")
-            registerFont("fonts/NotoSerif-Italic.ttf")
-            registerFont("fonts/NotoSerif-BoldItalic.ttf")
-            registerFont("fonts/NotoSansMono-Regular.ttf")
+        val fontManager = FontManager().apply { 
+            register("Noto Sans", createFont("fonts/NotoSans-Regular.ttf"))
+            register("Noto Sans", createFont("fonts/NotoSans-Bold.ttf"), weight = BOLD)
+            register("Noto Sans", createFont("fonts/NotoSans-Italic.ttf"), style = ITALIC)
+            register("Noto Sans", createFont("fonts/NotoSans-BoldItalic.ttf"), weight = BOLD, style = ITALIC)
+                
+            register("Noto Serif", createFont("fonts/NotoSerif-Regular.ttf"))
+            register("Noto Serif", createFont("fonts/NotoSerif-Bold.ttf"), weight = BOLD)
+            register("Noto Serif", createFont("fonts/NotoSerif-Italic.ttf"), style = ITALIC)
+            register("Noto Serif", createFont("fonts/NotoSerif-BoldItalic.ttf"), weight = BOLD, style = ITALIC)
 
-            // We don't use bold monospace to check how missing fonts are handled.
-            //registerFont("fonts/NotoSansMono-Bold.ttf")
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Regular.ttf"))
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Regular.ttf"), style = ITALIC)
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Bold.ttf"), weight = BOLD)
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Bold.ttf"), weight = BOLD, style = ITALIC)
         }
 
-        private fun registerFont(resourceName: String) {
-            val fontStream: InputStream = AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName) ?: error("Font resource not found: $resourceName")
+        private fun createFont(resourceName: String): AwtFont {
+            val fontStream = AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName)
+                    ?: error("Font resource not found: $resourceName")
             try {
-                val customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream)
-                val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                ge.registerFont(customFont)
-            } catch (e: FontFormatException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
+                return AwtFont.createFont(AwtFont.TRUETYPE_FONT, fontStream)
+                    ?: error("Cannot create font from resource: $resourceName")
             } finally {
                 try {
                     fontStream.close()
@@ -60,5 +55,4 @@ class AwtCanvasTck {
             }
         }
     }
-
 }
