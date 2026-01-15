@@ -34,9 +34,7 @@ class AwtCanvasTck {
             registerFont("fonts/NotoSerif-Italic.ttf")
             registerFont("fonts/NotoSerif-BoldItalic.ttf")
             registerFont("fonts/NotoSansMono-Regular.ttf")
-
-            // We don't use bold monospace to check how missing fonts are handled.
-            //registerFont("fonts/NotoSansMono-Bold.ttf")
+            registerFont("fonts/NotoSansMono-Bold.ttf")
         }
 
         private fun registerFont(resourceName: String) {
