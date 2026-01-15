@@ -6,12 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -28,8 +27,6 @@ open class TextGeom : GeomBase() {
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
 
-    private val myRestrictions = mutableListOf<List<DoubleVector>>()
-
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
 
@@ -40,59 +37,28 @@ open class TextGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
-        val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
 
-        for (dp in aesthetics.dataPoints()) {
-            val text = toString(dp.label(), ctx)
-            if (text.isEmpty()) continue
-            val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-            val loc = helper.toClient(point, dp) ?: continue
-
-            // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, ::buildTextComponent)
+        textHelper.createTexts(formatter, naValue, sizeUnit, checkOverlap) { p, svgElement, _ ->
+            root.add(svgElement)
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y)!!
+            val loc = textHelper.toClient(point, p)!!
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
-
-            if (checkOverlap && hasOverlaps(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
-                continue
-            }
-
-            val tc = buildTextComponent(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
-            root.add(tc)
-
-            // The geom_text tooltip is similar to the geom_tile:
-            // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
             targetCollector.addPoint(
-                dp.index(),
+                p.index(),
                 loc,
-                sizeUnitRatio * AesScaling.textSize(dp) / 2,
+                sizeUnitRatio * AesScaling.textSize(p) / 2,
                 GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(dp)
+                    markerColors = colorsByDataPoint(p)
                 ),
                 TipLayoutHint.Kind.CURSOR_TOOLTIP
             )
         }
     }
 
-    private fun hasOverlaps(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ): Boolean {
-        val rectangle = getRect(p, location, text, sizeUnitRatio, ctx, boundsCenter)
-
-        if (myRestrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
-            return true
-        }
-        myRestrictions.add(rectangle)
-
-        return false
-    }
-
+    // TODO: Move to helper - will be used for TextGeom, TextRepelGeom, ...
     open fun buildTextComponent(
         p: DataPointAesthetics,
         location: DoubleVector,
@@ -125,6 +91,7 @@ open class TextGeom : GeomBase() {
         return g
     }
 
+    // TODO: Delete after refactor
     open fun objectRectangle(
         location: DoubleVector,
         textSize: DoubleVector,
@@ -133,6 +100,7 @@ open class TextGeom : GeomBase() {
         vAnchor: Text.VerticalAnchor,
     ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
+    // TODO: Delete after refactor
     fun getRect(
         p: DataPointAesthetics,
         location: DoubleVector,
@@ -151,6 +119,7 @@ open class TextGeom : GeomBase() {
             .rotate(angle, location)
     }
 
+    // TODO: Delete after refactor
     fun toString(label: Any?, geomContext: GeomContext): String {
         if (label == null) return naValue
 
