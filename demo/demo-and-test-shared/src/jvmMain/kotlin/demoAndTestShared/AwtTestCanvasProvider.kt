@@ -11,7 +11,7 @@ class AwtTestCanvasProvider(
     val pixelDensity: Double = 1.0 // Default pixel density for testing
 ) : CanvasProvider {
     override fun createCanvas(size: Vector): Canvas {
-        return AwtCanvas.create(size, pixelDensity, org.jetbrains.letsPlot.awt.canvas.FontManager.EMPTY)
+        return AwtCanvas.create(size, pixelDensity)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {

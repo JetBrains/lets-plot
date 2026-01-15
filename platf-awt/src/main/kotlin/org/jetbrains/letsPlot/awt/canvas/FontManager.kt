@@ -1,10 +1,23 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 
 class FontManager(
-    private val fonts: Map<Font, AwtFont> = emptyMap()
 ) {
+    private val fonts: MutableMap<Font, AwtFont> = mutableMapOf()
+
+    fun register(family: String, awtFont: AwtFont, weight: FontWeight = FontWeight.NORMAL, style: FontStyle = FontStyle.NORMAL) {
+        val fontKey = Font(
+            fontFamily = family,
+            fontWeight = weight,
+            fontStyle = style,
+            fontSize = 1.0
+        )
+        fonts[fontKey] = awtFont
+    }
+
     fun isFontRegistered(f: Font): Boolean {
         return fonts.containsKey(f.copy(fontSize = 1.0))
     }

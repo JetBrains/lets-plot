@@ -7,7 +7,6 @@ package org.jetbraibs.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvas
 import org.jetbrains.letsPlot.awt.canvas.AwtContext2d
-import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.junit.Test
@@ -22,7 +21,7 @@ class DrawImageAwtTest {
     private val strokedFillColor = "#FFC000"
 
     private fun createCanvas(width: Number = w, height: Number = h, pixelDensity: Double = 1.0): Pair<AwtCanvas, AwtContext2d> {
-        val canvas = AwtCanvas.create(pixelDensity = pixelDensity, size = Vector(width.toInt(), height.toInt()), fontManager = FontManager.EMPTY)
+        val canvas = AwtCanvas.create(pixelDensity = pixelDensity, size = Vector(width.toInt(), height.toInt()))
         val context2d = canvas.context2d as AwtContext2d
         return canvas to context2d
     }

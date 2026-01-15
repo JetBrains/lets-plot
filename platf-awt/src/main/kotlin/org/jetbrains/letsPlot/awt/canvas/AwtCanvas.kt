@@ -25,7 +25,7 @@ class AwtCanvas private constructor(
     override val context2d: Context2d = AwtContext2d(image.createGraphics() as Graphics2D, contentScale, fontManager = fontManager)
 
     companion object {
-        fun create(size: Vector, pixelDensity: Double, fontManager: FontManager): AwtCanvas {
+        fun create(size: Vector, pixelDensity: Double, fontManager: FontManager = FontManager.EMPTY): AwtCanvas {
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size

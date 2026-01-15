@@ -3,20 +3,17 @@ package org.jetbraibs.letsPlot.visualtesting.canvas
 import org.jetbraibs.letsPlot.visualtesting.AwtBitmapIO
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
-import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC
 import org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.canvas.CanvasTck
-import org.junit.BeforeClass
 import java.io.IOException
-import java.io.InputStream
 import kotlin.test.Test
 
 typealias AwtFont = java.awt.Font
 
 class AwtCanvasTck {
-    //@Ignore("monospace font inconsistency")
+
     @Test
     fun runAllCanvasClipTests() {
         val canvasPeer = AwtCanvasPeer(fontManager = fontManager)
@@ -26,34 +23,25 @@ class AwtCanvasTck {
     }
 
     companion object {
-        val fontManager = FontManager(mutableMapOf<Font, AwtFont>().also {
-            it[Font(fontFamily = "Noto Sans", fontSize = 1.0)] = createFont("fonts/NotoSans-Regular.ttf")
-            it[Font(fontFamily = "Noto Sans", fontWeight = BOLD, fontSize = 1.0)] = createFont("fonts/NotoSans-Bold.ttf")
-            it[Font(fontFamily = "Noto Sans", fontStyle = ITALIC, fontSize = 1.0)] = createFont("fonts/NotoSans-Italic.ttf")
-            it[Font(fontFamily = "Noto Sans", fontWeight = BOLD, fontStyle = ITALIC, fontSize = 1.0)] =
-                createFont("fonts/NotoSans-BoldItalic.ttf")
+        val fontManager = FontManager().apply { 
+            register("Noto Sans", createFont("fonts/NotoSans-Regular.ttf"))
+            register("Noto Sans", createFont("fonts/NotoSans-Bold.ttf"), weight = BOLD)
+            register("Noto Sans", createFont("fonts/NotoSans-Italic.ttf"), style = ITALIC)
+            register("Noto Sans", createFont("fonts/NotoSans-BoldItalic.ttf"), weight = BOLD, style = ITALIC)
+                
+            register("Noto Serif", createFont("fonts/NotoSerif-Regular.ttf"))
+            register("Noto Serif", createFont("fonts/NotoSerif-Bold.ttf"), weight = BOLD)
+            register("Noto Serif", createFont("fonts/NotoSerif-Italic.ttf"), style = ITALIC)
+            register("Noto Serif", createFont("fonts/NotoSerif-BoldItalic.ttf"), weight = BOLD, style = ITALIC)
 
-            it[Font(fontFamily = "Noto Serif", fontSize = 1.0)] = createFont("fonts/NotoSerif-Regular.ttf")
-            it[Font(fontFamily = "Noto Serif", fontWeight = BOLD, fontSize = 1.0)] = createFont("fonts/NotoSerif-Bold.ttf")
-            it[Font(fontFamily = "Noto Serif", fontStyle = ITALIC, fontSize = 1.0)] = createFont("fonts/NotoSerif-Italic.ttf")
-            it[Font(fontFamily = "Noto Serif", fontWeight = BOLD, fontStyle = ITALIC, fontSize = 1.0)] =
-                createFont("fonts/NotoSerif-BoldItalic.ttf")
-
-            it[Font(fontFamily = "Noto Sans Mono", fontSize = 1.0)] = createFont("fonts/NotoSansMono-Regular.ttf")
-            it[Font(fontFamily = "Noto Sans Mono", fontStyle = ITALIC, fontSize = 1.0)] = createFont("fonts/NotoSansMono-Regular.ttf")
-            it[Font(fontFamily = "Noto Sans Mono", fontWeight = BOLD, fontSize = 1.0)] = createFont("fonts/NotoSansMono-Bold.ttf")
-            it[Font(fontFamily = "Noto Sans Mono", fontWeight = BOLD, fontStyle = ITALIC, fontSize = 1.0)] = createFont("fonts/NotoSansMono-Bold.ttf")
-        }
-        )
-
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Regular.ttf"))
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Regular.ttf"), style = ITALIC)
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Bold.ttf"), weight = BOLD)
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Bold.ttf"), weight = BOLD, style = ITALIC)
         }
 
         private fun createFont(resourceName: String): AwtFont {
-            val fontStream: InputStream =
-                AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName)
+            val fontStream = AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName)
                     ?: error("Font resource not found: $resourceName")
             try {
                 return AwtFont.createFont(AwtFont.TRUETYPE_FONT, fontStream)

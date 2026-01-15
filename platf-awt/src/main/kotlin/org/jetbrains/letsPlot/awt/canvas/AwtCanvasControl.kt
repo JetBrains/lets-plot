@@ -83,7 +83,7 @@ class AwtCanvasControl(
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return AwtCanvas.create(size, pixelDensity, FontManager.EMPTY)
+        return AwtCanvas.create(size, pixelDensity)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
