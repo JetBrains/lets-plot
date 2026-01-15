@@ -8,16 +8,12 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
@@ -38,23 +34,11 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
 
         val textHelper = TextHelper(aesthetics, pos, coord, ctx, ::buildTextComponent)
         textHelper.createTexts(formatter, naValue, sizeUnit, checkOverlap) { p, svgElement, _ ->
             root.add(svgElement)
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y)!!
-            val loc = textHelper.toClient(point, p)!!
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
-            targetCollector.addPoint(
-                p.index(),
-                loc,
-                sizeUnitRatio * AesScaling.textSize(p) / 2,
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
-                ),
-                TipLayoutHint.Kind.CURSOR_TOOLTIP
-            )
+            textHelper.buildHint(targetCollector, p, sizeUnit)
         }
     }
 

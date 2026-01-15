@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
@@ -22,6 +24,9 @@ class TextHelper(
     ctx: GeomContext,
     private val labelFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgElement
 ) : GeomHelper(pos, coord, ctx) {
+
+    private val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
+
     fun createTexts(
         formatter: ((Any) -> String)?,
         naValue: String,
@@ -52,6 +57,25 @@ class TextHelper(
                 handler(p, svgElement, rectangle)
             }
         }
+    }
+
+    fun buildHint(
+        targetCollector: GeomTargetCollector,
+        p: DataPointAesthetics,
+        sizeUnit: String?
+    ) {
+        val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return
+        val loc = toClient(point, p) ?: return
+        val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
+        targetCollector.addPoint(
+            p.index(),
+            loc,
+            sizeUnitRatio * AesScaling.textSize(p) / 2,
+            GeomTargetCollector.TooltipParams(
+                markerColors = colorsByDataPoint(p)
+            ),
+            TipLayoutHint.Kind.CURSOR_TOOLTIP
+        )
     }
 
     private fun objectRectangle(
