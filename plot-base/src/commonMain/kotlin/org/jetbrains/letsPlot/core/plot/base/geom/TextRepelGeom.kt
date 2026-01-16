@@ -127,7 +127,7 @@ open class TextRepelGeom: TextGeom() {
             val pointLocation = coord.toClient(point) ?: continue
             val text = toString(dp.label(), ctx)
 
-            val tc = buildTextComponent(toLabelAes(dp), result.position, text, 1.0, ctx, aesBoundsCenter)
+            val tc = componentFactory(toLabelAes(dp), result.position, text, 1.0, ctx, aesBoundsCenter)
             root.add(tc)
 
             val pointDp = toPointAes(dp)

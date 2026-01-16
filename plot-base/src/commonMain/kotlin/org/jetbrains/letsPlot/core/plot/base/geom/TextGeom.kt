@@ -12,10 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -35,15 +33,14 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, ::buildTextComponent)
-        textHelper.createTexts(formatter, naValue, sizeUnit, checkOverlap).forEach { svgElement ->
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::componentFactory)
+        textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
-        textHelper.buildHints(targetCollector, sizeUnit)
+        textHelper.buildHints(targetCollector)
     }
 
-    // TODO: Move to helper - will be used for TextGeom, TextRepelGeom, ...
-    open fun buildTextComponent(
+    open fun componentFactory(
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
@@ -51,28 +48,7 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): SvgGElement {
-        val label = Label(text)
-        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-        label.setHorizontalAnchor(hAnchor)
-
-        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
-        //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
-
-        val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
-            Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
-            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
-            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
-        }
-
-        val textLocation = DoubleVector(location.x, yPosition)
-        label.moveTo(textLocation)
-
-        val g = SvgGElement()
-        g.children().add(label.rootGroup)
-        SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
-        return g
+        return TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter)
     }
 
     // TODO: Delete after refactor

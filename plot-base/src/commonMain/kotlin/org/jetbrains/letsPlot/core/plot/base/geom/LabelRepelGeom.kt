@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 class LabelRepelGeom() : TextRepelGeom() {
     val labelOptions = LabelOptions()
 
-    override fun buildTextComponent(
+    override fun componentFactory(
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,

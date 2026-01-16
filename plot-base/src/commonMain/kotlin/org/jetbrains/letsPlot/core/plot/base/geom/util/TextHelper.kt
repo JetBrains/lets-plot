@@ -11,37 +11,38 @@ import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class TextHelper(
     private val myAesthetics: Aesthetics,
     pos: PositionAdjustment,
     coord: CoordinateSystem,
     ctx: GeomContext,
-    private val labelFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgElement
+    private val formatter: ((Any) -> String)?,
+    private val naValue: String,
+    private val sizeUnit: String?,
+    private val checkOverlap: Boolean,
+    private val componentFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgGElement
 ) : GeomHelper(pos, coord, ctx) {
 
-    internal fun createTexts(
-        formatter: ((Any) -> String)?,
-        naValue: String,
-        sizeUnit: String?,
-        checkOverlap: Boolean,
-    ): List<SvgElement> {
+    internal fun createSvgComponents(): List<SvgGElement> {
         val restrictions = mutableListOf<List<DoubleVector>>()
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         return myAesthetics.dataPoints().mapNotNull { p ->
-            val text = toString(p.label(), naValue, formatter)
+            val text = toString(p.label())
             if (text.isEmpty()) return@mapNotNull null
             val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return@mapNotNull null
-            val loc = toClient(point, p) ?: return@mapNotNull null
+            val location = toClient(point, p) ?: return@mapNotNull null
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
 
-            val rectangle = getRect(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            val rectangle = getRect(p, location, text, sizeUnitRatio, ctx, aesBoundsCenter)
             if (checkOverlap) {
                 if (restrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
                     return@mapNotNull null
@@ -49,23 +50,20 @@ class TextHelper(
                 restrictions.add(rectangle)
             }
 
-            labelFactory(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            componentFactory(p, location, text, sizeUnitRatio, ctx, aesBoundsCenter)
         }
     }
 
-    internal fun buildHints(
-        targetCollector: GeomTargetCollector,
-        sizeUnit: String?
-    ) {
+    internal fun buildHints(targetCollector: GeomTargetCollector) {
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
 
         myAesthetics.dataPoints().forEach { p ->
             val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return
-            val loc = toClient(point, p) ?: return
+            val location = toClient(point, p) ?: return
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
             targetCollector.addPoint(
                 p.index(),
-                loc,
+                location,
                 sizeUnitRatio * AesScaling.textSize(p) / 2,
                 GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(p)
@@ -101,10 +99,44 @@ class TextHelper(
             .rotate(angle, location)
     }
 
-    private fun toString(label: Any?, naValue: String, formatter: ((Any) -> String)?): String {
+    private fun toString(label: Any?): String {
         if (label == null) return naValue
 
         val formatter = formatter ?: ctx.getDefaultFormatter(Aes.LABEL)
         return formatter(label)
+    }
+
+    companion object {
+        internal fun textComponentFactory(
+            p: DataPointAesthetics,
+            location: DoubleVector,
+            text: String,
+            sizeUnitRatio: Double,
+            ctx: GeomContext,
+            boundsCenter: DoubleVector?
+        ): SvgGElement {
+            val label = Label(text)
+            TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
+            val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+            label.setHorizontalAnchor(hAnchor)
+
+            val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
+            val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
+            //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
+
+            val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
+                Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
+                Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
+                Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
+            }
+
+            val textLocation = DoubleVector(location.x, yPosition)
+            label.moveTo(textLocation)
+
+            val g = SvgGElement()
+            g.children().add(label.rootGroup)
+            SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
+            return g
+        }
     }
 }
