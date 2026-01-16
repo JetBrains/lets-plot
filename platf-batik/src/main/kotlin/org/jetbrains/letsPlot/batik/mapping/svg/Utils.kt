@@ -68,6 +68,10 @@ internal object Utils {
     }
 
     fun newBatikNode(source: SvgNode, myDoc: AbstractDocument): Node {
+        if (source is SvgElement && source.elementName == "livemap") {
+            return SVGOMGElement(null, myDoc)
+        }
+
         return when (source) {
             is SvgEllipseElement -> SVGOMEllipseElement(null, myDoc)
             is SvgCircleElement -> SVGOMCircleElement(null, myDoc)

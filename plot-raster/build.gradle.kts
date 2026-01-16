@@ -14,6 +14,9 @@ val assertjVersion = extra["assertj.version"] as String
 
 kotlin {
     jvm()
+    js() {
+        browser()
+    }
 
     sourceSets {
         commonMain {

@@ -83,8 +83,8 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
-            //println(e.message)
-            //e.printStackTrace()
+            println(e.message)
+            e.printStackTrace()
             Py_BuildValue("s", svgStr)
         }
     }

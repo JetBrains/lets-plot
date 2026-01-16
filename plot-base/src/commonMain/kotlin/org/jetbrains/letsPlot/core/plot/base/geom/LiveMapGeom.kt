@@ -6,14 +6,17 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.GenericLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgStylableElement
 
 
 class LiveMapGeom : Geom {
-    private lateinit var myMapProvider: LiveMapProvider
+    private var liveMapProvider: LiveMapProvider? = null
+    private var liveMapData: LiveMapProvider.LiveMapData? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()
@@ -25,18 +28,25 @@ class LiveMapGeom : Geom {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        throw IllegalStateException("Not applicable to live map")
+        val livemapCanvasFigure = liveMapData?.canvasFigure ?: error("LiveMap data missing")
+        root.add(SvgLiveMapElement(livemapCanvasFigure))
     }
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
-        myMapProvider = liveMapProvider
+        this.liveMapProvider = liveMapProvider
     }
 
-    fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
-        return myMapProvider.createLiveMap(bounds)
+    fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData? {
+        val liveMapProvider = liveMapProvider ?: error("LiveMapProvider not initialized")
+        liveMapData = liveMapProvider.createLiveMap(bounds)
+        return liveMapData
     }
 
     companion object {
         const val HANDLES_GROUPS = false
+    }
+
+    class SvgLiveMapElement(canvasFigure: SomeFig) : SvgStylableElement() {
+        override val elementName: String = "livemap"
     }
 }

@@ -19,7 +19,9 @@ import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure, CanvasFigure2 {
+class LiveMapCanvasFigure(
+    private val liveMap: LiveMap
+) : CanvasFigure, CanvasFigure2 {
     private val myBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val myLiveMapPresenter = LiveMapPresenter()
 

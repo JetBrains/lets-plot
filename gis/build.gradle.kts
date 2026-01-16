@@ -35,6 +35,12 @@ kotlin {
             }
         }
 
+        nativeMain {
+            dependencies {
+                compileOnly("io.ktor:ktor-client-cio:${ktorVersion}")
+            }
+        }
+
         named("jsMain") {
             dependencies {
                 compileOnly("io.ktor:ktor-client-js:$ktorVersion")

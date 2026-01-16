@@ -6,6 +6,7 @@
 val jsvgVersion = project.extra["weisj.jsvg.version"] as String
 val assertjVersion = extra["assertj.version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
+val ktorVersion = project.extra["ktor.version"] as String
 
 dependencies {
     compileOnly(project(":commons"))
@@ -24,7 +25,13 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     testImplementation(project(":canvas"))
     testImplementation(project(":plot-raster"))
+    testImplementation(project(":plot-livemap"))
+    testImplementation(project(":livemap"))
+    testImplementation(project(":gis"))
     testImplementation(project(":visual-testing"))
+
+    testImplementation("io.ktor:ktor-client-cio:${ktorVersion}")
+
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
 }
