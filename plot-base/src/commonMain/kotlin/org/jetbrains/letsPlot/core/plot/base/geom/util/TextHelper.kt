@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class TextHelper(
     private val myAesthetics: Aesthetics,
@@ -25,22 +24,19 @@ class TextHelper(
     private val labelFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgElement
 ) : GeomHelper(pos, coord, ctx) {
 
-    private val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
-
-    fun createTexts(
+    internal fun createTexts(
         formatter: ((Any) -> String)?,
         naValue: String,
         sizeUnit: String?,
         checkOverlap: Boolean,
-        handler: (DataPointAesthetics, SvgNode, List<DoubleVector>) -> Unit
-    ) {
+    ): List<SvgElement> {
         val restrictions = mutableListOf<List<DoubleVector>>()
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
-        myAesthetics.dataPoints().forEach { p ->
+        return myAesthetics.dataPoints().mapNotNull { p ->
             val text = toString(p.label(), naValue, formatter)
-            if (text.isEmpty()) return@forEach
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return@forEach
-            val loc = toClient(point, p) ?: return@forEach
+            if (text.isEmpty()) return@mapNotNull null
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return@mapNotNull null
+            val loc = toClient(point, p) ?: return@mapNotNull null
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
@@ -48,34 +44,35 @@ class TextHelper(
             val rectangle = getRect(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
             if (checkOverlap) {
                 if (restrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
-                    return@forEach
+                    return@mapNotNull null
                 }
                 restrictions.add(rectangle)
             }
 
-            labelFactory(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter).let { svgElement ->
-                handler(p, svgElement, rectangle)
-            }
+            labelFactory(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
         }
     }
 
-    fun buildHint(
+    internal fun buildHints(
         targetCollector: GeomTargetCollector,
-        p: DataPointAesthetics,
         sizeUnit: String?
     ) {
-        val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return
-        val loc = toClient(point, p) ?: return
-        val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
-        targetCollector.addPoint(
-            p.index(),
-            loc,
-            sizeUnitRatio * AesScaling.textSize(p) / 2,
-            GeomTargetCollector.TooltipParams(
-                markerColors = colorsByDataPoint(p)
-            ),
-            TipLayoutHint.Kind.CURSOR_TOOLTIP
-        )
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
+
+        myAesthetics.dataPoints().forEach { p ->
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return
+            val loc = toClient(point, p) ?: return
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
+            targetCollector.addPoint(
+                p.index(),
+                loc,
+                sizeUnitRatio * AesScaling.textSize(p) / 2,
+                GeomTargetCollector.TooltipParams(
+                    markerColors = colorsByDataPoint(p)
+                ),
+                TipLayoutHint.Kind.CURSOR_TOOLTIP
+            )
+        }
     }
 
     private fun objectRectangle(

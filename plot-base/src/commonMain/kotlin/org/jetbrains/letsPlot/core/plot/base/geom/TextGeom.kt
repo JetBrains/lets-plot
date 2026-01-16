@@ -36,10 +36,10 @@ open class TextGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
 
         val textHelper = TextHelper(aesthetics, pos, coord, ctx, ::buildTextComponent)
-        textHelper.createTexts(formatter, naValue, sizeUnit, checkOverlap) { p, svgElement, _ ->
+        textHelper.createTexts(formatter, naValue, sizeUnit, checkOverlap).forEach { svgElement ->
             root.add(svgElement)
-            textHelper.buildHint(targetCollector, p, sizeUnit)
         }
+        textHelper.buildHints(targetCollector, sizeUnit)
     }
 
     // TODO: Move to helper - will be used for TextGeom, TextRepelGeom, ...
