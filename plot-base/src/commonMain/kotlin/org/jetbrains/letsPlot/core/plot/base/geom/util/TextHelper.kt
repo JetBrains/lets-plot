@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
@@ -16,6 +17,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class TextHelper(
@@ -27,6 +30,7 @@ class TextHelper(
     private val naValue: String,
     private val sizeUnit: String?,
     private val checkOverlap: Boolean,
+    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Text.VerticalAnchor) -> DoubleRectangle,
     private val componentFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgGElement
 ) : GeomHelper(pos, coord, ctx) {
 
@@ -73,15 +77,14 @@ class TextHelper(
         }
     }
 
-    private fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Text.VerticalAnchor,
-    ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
+    internal fun toString(label: Any?): String {
+        if (label == null) return naValue
 
-    private fun getRect(
+        val formatter = formatter ?: ctx.getDefaultFormatter(Aes.LABEL)
+        return formatter(label)
+    }
+
+    internal fun getRect(
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
@@ -97,13 +100,6 @@ class TextHelper(
 
         return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
             .rotate(angle, location)
-    }
-
-    private fun toString(label: Any?): String {
-        if (label == null) return naValue
-
-        val formatter = formatter ?: ctx.getDefaultFormatter(Aes.LABEL)
-        return formatter(label)
     }
 
     companion object {
@@ -137,6 +133,115 @@ class TextHelper(
             g.children().add(label.rootGroup)
             SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
             return g
+        }
+
+        internal fun labelComponentFactory(
+            p: DataPointAesthetics,
+            location: DoubleVector,
+            text: String,
+            sizeUnitRatio: Double,
+            ctx: GeomContext,
+            boundsCenter: DoubleVector?,
+            labelOptions: LabelOptions
+        ): SvgGElement {
+            // text size estimation
+            val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
+
+            val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+            val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
+
+            // Background rectangle
+            val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
+            val rectangle = labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
+            val backgroundRect = SvgPathElement().apply {
+                d().set(
+                    roundedRectangle(rectangle, labelOptions.radiusFactor * rectangle.height).build()
+                )
+            }
+            GeomHelper.decorate(backgroundRect, p, applyAlphaToAll = labelOptions.alphaStroke)
+            backgroundRect.strokeWidth().set(labelOptions.borderWidth)
+
+            // Text element
+            val label = Label(text)
+            TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
+
+            val padding = fontSize * labelOptions.paddingFactor
+            val xPosition = when (hAnchor) {
+                Text.HorizontalAnchor.LEFT -> location.x + padding
+                Text.HorizontalAnchor.RIGHT -> location.x - padding
+                Text.HorizontalAnchor.MIDDLE -> location.x
+            }
+            val textPosition = DoubleVector(
+                xPosition,
+                rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
+            )
+            label.setHorizontalAnchor(hAnchor)
+            label.moveTo(textPosition)
+
+            // group elements and apply rotation
+            val g = SvgGElement()
+            g.children().add(backgroundRect)
+            g.children().add(label.rootGroup)
+
+            // rotate all
+            SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
+
+            return g
+        }
+
+        internal fun textRectangle(
+            location: DoubleVector,
+            textSize: DoubleVector,
+            hAnchor: Text.HorizontalAnchor,
+            vAnchor: Text.VerticalAnchor,
+        ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
+
+        internal fun labelRectangle(
+            location: DoubleVector,
+            textSize: DoubleVector,
+            fontSize: Double,
+            hAnchor: Text.HorizontalAnchor,
+            vAnchor: Text.VerticalAnchor,
+            labelOptions: LabelOptions
+        ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
+
+        private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
+            return SvgPathDataBuilder().apply {
+                with(rect) {
+                    // Ensure normal radius
+                    val r = minOf(radius, width / 2, height / 2)
+
+                    moveTo(right - r, bottom)
+                    curveTo(
+                        right - r, bottom,
+                        right, bottom,
+                        right, bottom - r
+                    )
+
+                    lineTo(right, top + r)
+                    curveTo(
+                        right, top + r,
+                        right, top,
+                        right - r, top
+                    )
+
+                    lineTo(left + r, top)
+                    curveTo(
+                        left + r, top,
+                        left, top,
+                        left, top + r
+                    )
+
+                    lineTo(left, bottom - r)
+                    curveTo(
+                        left, bottom - r,
+                        left, bottom,
+                        left + r, bottom
+                    )
+
+                    closePath()
+                }
+            }
         }
     }
 }

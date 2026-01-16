@@ -6,14 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -33,7 +30,7 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::objectRectangle, ::componentFactory)
         textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
@@ -47,45 +44,15 @@ open class TextGeom : GeomBase() {
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ): SvgGElement {
-        return TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter)
-    }
+    ) = TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter)
 
-    // TODO: Delete after refactor
     open fun objectRectangle(
         location: DoubleVector,
         textSize: DoubleVector,
         fontSize: Double,
         hAnchor: Text.HorizontalAnchor,
         vAnchor: Text.VerticalAnchor,
-    ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
-
-    // TODO: Delete after refactor
-    fun getRect(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ): List<DoubleVector> {
-        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
-        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val angle = toRadians(TextUtil.angle(p))
-
-        return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
-            .rotate(angle, location)
-    }
-
-    // TODO: Delete after refactor
-    fun toString(label: Any?, geomContext: GeomContext): String {
-        if (label == null) return naValue
-
-        val formatter = formatter ?: geomContext.getDefaultFormatter(Aes.LABEL)
-        return formatter(label)
-    }
+    ) = TextHelper.textRectangle(location, textSize, hAnchor, vAnchor)
 
     companion object {
         const val DEF_NA_VALUE = "n/a"

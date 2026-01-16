@@ -57,7 +57,7 @@ open class TextRepelGeom: TextGeom() {
             return coord.toClient(point)
         }
 
-        val helper = GeomHelper(pos, coord, ctx)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::objectRectangle, ::componentFactory)
         val svgHelper = GeomHelper.SvgElementHelper(::toClient)
             .setStrokeAlphaEnabled(true)
             .setArrowSpec(arrowSpec)
@@ -74,12 +74,12 @@ open class TextRepelGeom: TextGeom() {
 
         for (dp in aesthetics.dataPoints()) {
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-            val loc = helper.toClient(point, dp) ?: continue
+            val loc = textHelper.toClient(point, dp) ?: continue
 
             val pointLocation = coord.toClient(point) ?: continue
             if (!bounds.contains(pointLocation)) continue
 
-            val text = toString(dp.label(), ctx)
+            val text = textHelper.toString(dp.label())
             if (text.isEmpty()) continue
 
             val pointDp = toPointAes(dp)
@@ -91,7 +91,7 @@ open class TextRepelGeom: TextGeom() {
             val hjust = TextUtil.hAnchor(dp, loc, aesBoundsCenter).toDouble()
             val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter).toDouble()
 
-            val box = TransformedRectangle(getRect(dp, loc, text, 1.0 , ctx, aesBoundsCenter))
+            val box = TransformedRectangle(textHelper.getRect(dp, loc, text, 1.0 , ctx, aesBoundsCenter))
 
             boxes[dp.index()] = box
             hjusts[dp.index()] = hjust
@@ -125,7 +125,7 @@ open class TextRepelGeom: TextGeom() {
             val dp = aesthetics.dataPointAt(result.dpIndex)
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val pointLocation = coord.toClient(point) ?: continue
-            val text = toString(dp.label(), ctx)
+            val text = textHelper.toString(dp.label())
 
             val tc = componentFactory(toLabelAes(dp), result.position, text, 1.0, ctx, aesBoundsCenter)
             root.add(tc)
