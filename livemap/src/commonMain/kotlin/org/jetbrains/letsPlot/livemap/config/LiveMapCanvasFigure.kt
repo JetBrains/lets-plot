@@ -5,16 +5,21 @@
 
 package org.jetbrains.letsPlot.livemap.config
 
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure {
+class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure, CanvasFigure2 {
     private val myBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val myLiveMapPresenter = LiveMapPresenter()
 
@@ -34,4 +39,26 @@ class LiveMapCanvasFigure (private val liveMap: LiveMap) : CanvasFigure {
 
         return Registration.from(myLiveMapPresenter)
     }
+
+    override val size: Vector
+        get() = myBounds.get().dimension
+
+    override fun paint(context2d: Context2d) {
+        myLiveMapPresenter.paint(context2d)
+    }
+
+    override fun onRepaintRequested(listener: () -> Unit): Registration {
+        TODO("Not yet implemented")
+    }
+
+    override fun resize(width: Number, height: Number) {
+        TODO("Not yet implemented")
+    }
+
+    override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
+        TODO("Not yet implemented")
+    }
+
+    override val eventPeer: MouseEventPeer
+        get() = TODO("Not yet implemented")
 }

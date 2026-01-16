@@ -27,7 +27,7 @@ class PlotFigureBuildInfo constructor(
         get() = _layoutInfo
 
     private lateinit var _layoutInfo: PlotFigureLayoutInfo
-    private lateinit var liveMapCursorServiceConfig: Any
+    private var liveMapCursorServiceConfig: Any? = null
 
     /**
      * This method should be called before 'createSvgRoot()'
@@ -88,7 +88,7 @@ class PlotFigureBuildInfo constructor(
             computationMessages,
         )
 
-        if (this::liveMapCursorServiceConfig.isInitialized) {
+        if (this::liveMapCursorServiceConfig != null) {
             newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
         }
 
