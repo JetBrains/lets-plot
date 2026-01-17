@@ -48,4 +48,24 @@ internal class DurationInterval(
         }
         return result
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as DurationInterval
+
+        if (timeUnit != other.timeUnit) return false
+        if (duration != other.duration) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = timeUnit.hashCode()
+        result = 31 * result + duration.hashCode()
+        return result
+    }
+
+
 }

@@ -71,6 +71,9 @@ object Transforms {
         private val transform: ContinuousTransform,
         val breaksGenerator: BreaksGenerator
     ) : BreaksGenerator {
+        override val fixedBreakWidth: Boolean
+            get() = breaksGenerator.fixedBreakWidth
+
         override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)

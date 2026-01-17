@@ -682,6 +682,7 @@ object Option {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
+        const val BREAK_WIDTH = "break_width"
         const val LABELS = "labels"
         const val LABLIM = "lablim"
         const val EXPAND = "expand"
