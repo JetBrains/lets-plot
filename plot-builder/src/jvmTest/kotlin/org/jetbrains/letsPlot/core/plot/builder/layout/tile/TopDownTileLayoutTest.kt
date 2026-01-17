@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.testing.doubleRectangleComparator
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.coord.FixedRatioCoordProvider
@@ -142,12 +143,11 @@ class TopDownTileLayoutTest {
 
         val breaksProviderFactory: AxisBreaksProviderFactory =
             AxisBreaksProviderFactory.AdaptableBreaksProviderFactory(
-                Transforms.createBreaksGeneratorForTransformedDomain(
+                TransformedDomainBreaksGenerator.forTransform(
                     Transforms.IDENTITY,
                     providedFormatter = null,
                     expFormat = StringFormat.ExponentFormat(ExponentNotationType.E)
                 )
-
             )
 
         val left = AxisLayout(

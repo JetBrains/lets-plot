@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.core.plot.base.scale
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms.createBreaksGeneratorForTransformedDomain
 
 internal class ContinuousScale : AbstractScale<Double> {
 
@@ -44,9 +44,9 @@ internal class ContinuousScale : AbstractScale<Double> {
 
     override fun getBreaksGenerator(): BreaksGenerator {
         return if (customBreaksGenerator != null) {
-            Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
+            TransformedDomainBreaksGenerator(continuousTransform, customBreaksGenerator)
         } else {
-            createBreaksGeneratorForTransformedDomain(continuousTransform, providedFormatter, expFormat)
+            TransformedDomainBreaksGenerator.forTransform(continuousTransform, providedFormatter, expFormat)
         }
     }
 

@@ -5,15 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isBeyondPrecision
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.LinearBreaksGen
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NonlinearBreaksGen
 
 object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
@@ -25,24 +19,6 @@ object Transforms {
 
     fun continuousWithLimits(actual: ContinuousTransform, limits: Pair<Double?, Double?>): ContinuousTransform {
         return ContinuousTransformWithLimits(actual, limits.first, limits.second)
-    }
-
-    fun createBreaksGeneratorForTransformedDomain(
-        transform: ContinuousTransform,
-        providedFormatter: ((Any) -> String)? = null,
-        expFormat: ExponentFormat
-    ): BreaksGenerator {
-        val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
-            IDENTITY -> LinearBreaksGen(providedFormatter, expFormat)
-            REVERSE -> LinearBreaksGen(providedFormatter, expFormat)
-            SQRT -> NonlinearBreaksGen(SQRT, providedFormatter, expFormat)
-            LOG10 -> NonlinearBreaksGen(LOG10, providedFormatter, expFormat)
-            LOG2 -> NonlinearBreaksGen(LOG2, providedFormatter, expFormat)
-            SYMLOG -> NonlinearBreaksGen(SYMLOG, providedFormatter, expFormat)
-            else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
-        }
-
-        return BreaksGeneratorForTransformedDomain(transform, breaksGenerator)
     }
 
     /**
@@ -64,25 +40,6 @@ object Transforms {
         return when (isBeyondPrecision(domain)) {
             true -> transform.createApplicableDomain(domain.upperEnd)
             false -> domain
-        }
-    }
-
-    class BreaksGeneratorForTransformedDomain(
-        private val transform: ContinuousTransform,
-        val breaksGenerator: BreaksGenerator
-    ) : BreaksGenerator {
-        override val fixedBreakWidth: Boolean
-            get() = breaksGenerator.fixedBreakWidth
-
-        override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
-            return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)
-        }
-
-        override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
-            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
-            val breaksNoTransform = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
-            return breaksNoTransform.withTransform(transform)
         }
     }
 }

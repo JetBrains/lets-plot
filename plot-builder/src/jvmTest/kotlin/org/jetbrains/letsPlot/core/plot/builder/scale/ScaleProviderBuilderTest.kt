@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.Test
 import kotlin.test.assertSame
@@ -45,10 +46,10 @@ internal class ScaleProviderBuilderTest {
 
         fun actual(scale: Scale): BreaksGenerator {
             assertTrue(
-                scale.getBreaksGenerator() is Transforms.BreaksGeneratorForTransformedDomain,
-                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.getBreaksGenerator()::class.simpleName}"
+                scale.getBreaksGenerator() is TransformedDomainBreaksGenerator,
+                "Expected TransformedDomainBreaksGen but was ${scale.getBreaksGenerator()::class.simpleName}"
             )
-            return (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+            return (scale.getBreaksGenerator() as TransformedDomainBreaksGenerator).originalDomainBreaksGen
         }
 
         assertSame(bg, actual(scale), "Scale must be created with 'breaksGenerator' object")
