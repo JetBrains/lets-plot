@@ -3,14 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.base.scale.breaks
+package org.jetbrains.letsPlot.core.plot.base.scale
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.LinearBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NonlinearBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
 /**
@@ -18,19 +17,19 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
  */
 class TransformedDomainBreaksGenerator(
     private val transform: ContinuousTransform,
-    val originalDomainBreaksGen: BreaksGenerator
-) : BreaksGenerator {
+    val originalDomainBreaksGen: OriginalDomainBreaksGenerator
+) {
 
-    override val fixedBreakWidth: Boolean
+    val fixedBreakWidth: Boolean
         get() = originalDomainBreaksGen.fixedBreakWidth
 
-    override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
+    fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
         val breaksNoTransform = originalDomainBreaksGen.generateBreaks(domainBeforeTransform, targetCount)
         return breaksNoTransform.withTransform(transform)
     }
 
-    override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
+    fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
         return originalDomainBreaksGen.defaultFormatter(domainBeforeTransform, targetCount)
     }
@@ -39,9 +38,9 @@ class TransformedDomainBreaksGenerator(
         fun forTransform(
             transform: ContinuousTransform,
             providedFormatter: ((Any) -> String)? = null,
-            expFormat: ExponentFormat
+            expFormat: StringFormat.ExponentFormat
         ): TransformedDomainBreaksGenerator {
-            val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
+            val breaksGenerator: OriginalDomainBreaksGenerator = when (transform.unwrap()) {
                 Transforms.IDENTITY -> LinearBreaksGen(providedFormatter, expFormat)
                 Transforms.REVERSE -> LinearBreaksGen(providedFormatter, expFormat)
                 Transforms.SQRT -> NonlinearBreaksGen(Transforms.SQRT, providedFormatter, expFormat)

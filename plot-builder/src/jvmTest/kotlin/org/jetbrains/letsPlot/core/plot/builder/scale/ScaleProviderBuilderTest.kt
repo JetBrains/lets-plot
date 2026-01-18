@@ -9,18 +9,16 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.Test
 import kotlin.test.assertSame
-import kotlin.test.assertTrue
 
 internal class ScaleProviderBuilderTest {
     @Test
     fun withBreaksGenerator() {
-        val bg = object : BreaksGenerator {
+        val bg = object : OriginalDomainBreaksGenerator {
             override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
                 return ScaleBreaks.EMPTY
             }
@@ -44,12 +42,8 @@ internal class ScaleProviderBuilderTest {
             guideTitle = null
         )
 
-        fun actual(scale: Scale): BreaksGenerator {
-            assertTrue(
-                scale.getBreaksGenerator() is TransformedDomainBreaksGenerator,
-                "Expected TransformedDomainBreaksGen but was ${scale.getBreaksGenerator()::class.simpleName}"
-            )
-            return (scale.getBreaksGenerator() as TransformedDomainBreaksGenerator).originalDomainBreaksGen
+        fun actual(scale: Scale): OriginalDomainBreaksGenerator {
+            return scale.getBreaksGenerator().originalDomainBreaksGen
         }
 
         assertSame(bg, actual(scale), "Scale must be created with 'breaksGenerator' object")

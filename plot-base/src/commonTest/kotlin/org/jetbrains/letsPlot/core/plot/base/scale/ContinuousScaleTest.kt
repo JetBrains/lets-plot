@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -112,7 +111,7 @@ class ContinuousScaleTest {
     fun withBreaksGenerator() {
         val scale = createScale()
 
-        val bg = object : BreaksGenerator {
+        val bg = object : OriginalDomainBreaksGenerator {
             override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
                 return ScaleBreaks.EMPTY
             }
@@ -122,12 +121,8 @@ class ContinuousScaleTest {
             }
         }
 
-        fun actual(scale: Scale): BreaksGenerator {
-            assertTrue(
-                scale.getBreaksGenerator() is TransformedDomainBreaksGenerator,
-                "Expected TransformedDomainBreaksGen but was ${scale.getBreaksGenerator()::class.simpleName}"
-            )
-            return (scale.getBreaksGenerator() as TransformedDomainBreaksGenerator).originalDomainBreaksGen
+        fun actual(scale: Scale): OriginalDomainBreaksGenerator {
+            return scale.getBreaksGenerator().originalDomainBreaksGen
         }
 
         val scale1 = scale.with().breaksGenerator(bg).build()

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
-interface BreaksGenerator {
+interface OriginalDomainBreaksGenerator {
     val fixedBreakWidth: Boolean
         get() = false
 

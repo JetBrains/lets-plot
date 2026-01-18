@@ -9,7 +9,6 @@ import demoAndTestShared.TestingGeomLayersBuilder
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.spec.Option
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -38,7 +37,7 @@ internal object ScaleFomateDateTimeTestUtil {
             assertTrue(scale.isContinuous != isDiscreteScale)
             if (scale.isContinuous) {
                 val breaksGenerator =
-                    (scale.getBreaksGenerator() as TransformedDomainBreaksGenerator).originalDomainBreaksGen
+                    scale.getBreaksGenerator().originalDomainBreaksGen
                 val range = DoubleSpan.encloseAllQ(dataValues)
                 assertNotNull(range)
                 val scaleLabels = breaksGenerator.generateBreaks(range, dataValues.size).labels

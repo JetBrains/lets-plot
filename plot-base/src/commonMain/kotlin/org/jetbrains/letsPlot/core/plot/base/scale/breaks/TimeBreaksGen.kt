@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
 /**
@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
  */
 class TimeBreaksGen(
     private val providedFormatter: ((Any) -> String)? = null,
-) : BreaksGenerator {
+) : OriginalDomainBreaksGenerator {
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = TimeBreaksHelper(
             domain.lowerEnd,

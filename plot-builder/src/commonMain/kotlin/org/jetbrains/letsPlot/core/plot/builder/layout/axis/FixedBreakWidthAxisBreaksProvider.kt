@@ -6,12 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.axis
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 
 internal class FixedBreakWidthAxisBreaksProvider(
     private val domainAfterTransform: DoubleSpan,
-    private val breaksGenerator: BreaksGenerator
+    private val breaksGenerator: TransformedDomainBreaksGenerator
 ) : AxisBreaksProvider {
 
     override val isFixedBreaks: Boolean = true

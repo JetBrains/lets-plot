@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.Transform
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 
 internal class BogusScale : Scale {
     override val name: String
@@ -44,7 +44,7 @@ internal class BogusScale : Scale {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
-    override fun getBreaksGenerator(): BreaksGenerator {
+    override fun getBreaksGenerator(): TransformedDomainBreaksGenerator {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 

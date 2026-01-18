@@ -8,13 +8,13 @@ package org.jetbrains.letsPlot.core.plot.base.scale
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TransformedDomainBreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
 internal class ContinuousScale : AbstractScale<Double> {
 
     private val continuousTransform: ContinuousTransform
-    private val customBreaksGenerator: BreaksGenerator?
+    private val customBreaksGenerator: OriginalDomainBreaksGenerator?
 
     override val isContinuous: Boolean
     override val isContinuousDomain: Boolean = true
@@ -42,7 +42,7 @@ internal class ContinuousScale : AbstractScale<Double> {
         isContinuous = b.myContinuousOutput
     }
 
-    override fun getBreaksGenerator(): BreaksGenerator {
+    override fun getBreaksGenerator(): TransformedDomainBreaksGenerator {
         return if (customBreaksGenerator != null) {
             TransformedDomainBreaksGenerator(continuousTransform, customBreaksGenerator)
         } else {
@@ -80,7 +80,7 @@ internal class ContinuousScale : AbstractScale<Double> {
 
     private class MyBuilder(scale: ContinuousScale) : AbstractBuilder<Double>(scale) {
         var myContinuousTransform: ContinuousTransform = scale.continuousTransform
-        var myCustomBreaksGenerator: BreaksGenerator? = scale.customBreaksGenerator
+        var myCustomBreaksGenerator: OriginalDomainBreaksGenerator? = scale.customBreaksGenerator
 
         val myContinuousOutput: Boolean = scale.isContinuous
 
@@ -94,7 +94,7 @@ internal class ContinuousScale : AbstractScale<Double> {
             return this
         }
 
-        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
+        override fun breaksGenerator(v: OriginalDomainBreaksGenerator): Scale.Builder {
             myCustomBreaksGenerator = v
             return this
         }

@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.Transform
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 
 internal class DiscreteScale : AbstractScale<Any> {
 
@@ -36,7 +37,7 @@ internal class DiscreteScale : AbstractScale<Any> {
         discreteTransform = b.discreteTransform
     }
 
-    override fun getBreaksGenerator(): BreaksGenerator {
+    override fun getBreaksGenerator(): TransformedDomainBreaksGenerator {
         throw IllegalStateException("No breaks generator for discrete scale '$name'")
     }
 
@@ -93,7 +94,7 @@ internal class DiscreteScale : AbstractScale<Any> {
     private class MyBuilder(scale: DiscreteScale) : AbstractBuilder<Any>(scale) {
         var discreteTransform: DiscreteTransform = scale.discreteTransform
 
-        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
+        override fun breaksGenerator(v: OriginalDomainBreaksGenerator): Scale.Builder {
             throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 

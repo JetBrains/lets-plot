@@ -8,8 +8,9 @@ package org.jetbrains.letsPlot.core.plot.base
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 
 interface Scale {
     val name: String
@@ -31,7 +32,7 @@ interface Scale {
 
     fun hasBreaks(): Boolean
 
-    fun getBreaksGenerator(): BreaksGenerator
+    fun getBreaksGenerator(): TransformedDomainBreaksGenerator
 
     fun getScaleBreaks(): ScaleBreaks
 
@@ -67,7 +68,7 @@ interface Scale {
 
         fun discreteTransform(v: DiscreteTransform): Builder
 
-        fun breaksGenerator(v: BreaksGenerator): Builder
+        fun breaksGenerator(v: OriginalDomainBreaksGenerator): Builder
 
         fun build(): Scale
     }

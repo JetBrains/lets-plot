@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.cre
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
@@ -20,7 +20,7 @@ class DateTimeFixedBreaksGen(
     private val breakWidth: TimeInterval,
     private val providedFormatter: ((Any) -> String)? = null,
     private val tz: TimeZone? = null
-) : BreaksGenerator {
+) : OriginalDomainBreaksGenerator {
     override val fixedBreakWidth: Boolean
         get() = true
 
