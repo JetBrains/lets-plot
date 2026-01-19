@@ -125,7 +125,7 @@ internal object AnnotationUtil {
         textParams: TextParams,
         geomContext: GeomContext,
     ): SvgGElement {
-        return TextGeom().buildTextComponent(
+        return TextGeom().componentFactory(
             toTextDataPointAesthetics(textParams = textParams),
             location,
             text,
@@ -143,7 +143,7 @@ internal object AnnotationUtil {
     ): SvgGElement {
         return LabelGeom()
             .apply { labelOptions.borderWidth = 0.0; labelOptions.paddingFactor = 0.0 }
-            .buildTextComponent(
+            .componentFactory(
                 toTextDataPointAesthetics(textParams),
                 location,
                 text,
