@@ -25,7 +25,8 @@ import org.jetbrains.letsPlot.raster.scene.breadthFirstTraversal
 
 internal class SvgCanvasPeer(
     val canvasPeer: CanvasPeer,
-    private val textMeasuringCanvas: Canvas = canvasPeer.createCanvas(1, 1)
+    private val textMeasuringCanvas: Canvas = canvasPeer.createCanvas(1, 1),
+    private val onRepaintRequested: () -> Unit
 ) : SvgPlatformPeer, Disposable {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
     var styleSheet: StyleSheet? = null
@@ -33,6 +34,11 @@ internal class SvgCanvasPeer(
 
     fun applyStyleSheet(styleSheet: StyleSheet) {
         this.styleSheet = styleSheet
+    }
+
+    fun requestRepaint() {
+        println("SvgCanvasPeer: requestRepaint")
+        onRepaintRequested()
     }
 
     private fun ensureSourceRegistered(source: SvgNode) {

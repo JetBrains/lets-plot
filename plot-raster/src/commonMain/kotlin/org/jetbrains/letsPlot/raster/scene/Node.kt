@@ -51,10 +51,17 @@ internal abstract class Node : AttributeObject() { // Version counters
         attributes.inheritValue(this, attrSpec, value)
     }
 
+    internal fun invalidate(attrSpec: AttributeSpec) {
+        attributes.invalidateDerivedAttribute(attrSpec)
+    }
+
     internal fun markDirty() {
-        if (isDirty) return
         isDirty = true
         parent?.markDirty()
+    }
+
+    protected fun requestRepaint() {
+        peer?.requestRepaint()
     }
 
     override fun onAttributeChangedInternal(attrSpec: AttributeSpec, oldValue: Any?, newValue: Any?) {

@@ -10,10 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyBinding
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.livemap.LiveMap
 
 class LiveMapPresenter : Disposable {
@@ -64,14 +61,5 @@ class LiveMapPresenter : Disposable {
         errorHandlerRegistration.dispose()
         isLoadingLiveMapRegistration.dispose()
         contentPresenter.clear()
-    }
-
-    fun paint(context2d: Context2d) {
-        //error("LiveMapPresenter is not intended to be used for direct painting. Use CanvasContentPresenter instead.")
-        context2d.save()
-        context2d.setFillStyle(Color.GREEN)
-        context2d.setFont(Font(fontSize = 46.0, fontFamily = "monospace"))
-        context2d.fillText("LiveMapPresenter: unexpected direct paint call", 10.0, 60.0)
-        context2d.restore()
     }
 }

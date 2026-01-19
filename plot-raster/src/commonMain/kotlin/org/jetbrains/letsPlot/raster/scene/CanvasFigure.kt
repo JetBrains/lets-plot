@@ -1,6 +1,7 @@
 package org.jetbrains.letsPlot.raster.scene
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
@@ -15,7 +16,13 @@ internal class CanvasFigure : Node() {
         val peer = peer ?: return@derivedAttr null
 
         reg.remove()
-        reg = canvasFigure.mapToCanvas(peer.canvasPeer)
+        reg = CompositeRegistration(
+            canvasFigure.mapToCanvas(peer.canvasPeer),
+            canvasFigure.onRepaintRequested {
+                markDirty()
+                requestRepaint()
+            }
+        )
 
         canvasFigure
     }

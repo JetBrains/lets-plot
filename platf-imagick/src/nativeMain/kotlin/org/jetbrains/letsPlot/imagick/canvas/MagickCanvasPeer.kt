@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 
@@ -21,10 +22,6 @@ class MagickCanvasPeer(
         return MagickCanvas.create(size.x, size.y, contentScale, fontManager, antialiasing)
     }
 
-    fun createCanvas(width: Number, height: Number): MagickCanvas {
-        return MagickCanvas.create(width, height, pixelDensity, fontManager, antialiasing)
-    }
-
     override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
         return MagickSnapshot.fromBitmap(bitmap)
     }
@@ -35,6 +32,10 @@ class MagickCanvasPeer(
     }
 
     override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+        TODO("Not yet implemented")
+    }
+
+    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
         TODO("Not yet implemented")
     }
 }

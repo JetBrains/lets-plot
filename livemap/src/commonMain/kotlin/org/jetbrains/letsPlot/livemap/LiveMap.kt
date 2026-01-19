@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.DeltaTime
 import org.jetbrains.letsPlot.livemap.Diagnostics.LiveMapDiagnostics
 import org.jetbrains.letsPlot.livemap.api.FeatureLayerBuilder
@@ -105,6 +106,13 @@ class LiveMap(
     var isAttached = false
         private set
 
+    private val repaintRequestListeners = mutableListOf<() -> Unit>()
+
+    fun addRepaintListener(listener: () -> Unit): Registration {
+        repaintRequestListeners.add(listener)
+        return Registration.onRemove { repaintRequestListeners.remove(listener) }
+    }
+
     fun addErrorHandler(handler: (Throwable) -> Unit): Registration {
         return errorEvent.addHandler(
             object : EventHandler<Throwable> {
@@ -120,8 +128,6 @@ class LiveMap(
             return
         }
 
-        isAttached = true
-
         val camera = MutableCamera(myComponentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
@@ -129,7 +135,7 @@ class LiveMap(
             }
 
         myLayerManager = when (myRenderTarget) {
-            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasControl.canvasPeer, canvasControl.size)
+            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasControl)
             OWN_SCREEN_CANVAS -> ScreenLayerManager(canvasControl)
         }
 
@@ -155,6 +161,8 @@ class LiveMap(
             canvasControl,
             AnimationEventHandler.toHandler(updateController::onTime)
         )
+
+        isAttached = true
     }
 
     fun hoverObjects(): List<HoverObject> {
@@ -166,7 +174,13 @@ class LiveMap(
 
         myDiagnostics.update(dt)
 
-        return myLayerRenderingSystem.updated
+        val updated = myLayerRenderingSystem.updated
+        if (updated) {
+            val livemapObjId = this.hashCode().toULong().toString(16)
+            println("LiveMap($livemapObjId): requesting repaint, repaintRequestListeners.size=${repaintRequestListeners.size}")
+            repaintRequestListeners.forEach { it() }
+        }
+        return updated
     }
 
     private fun init(componentManager: EcsComponentManager) {
@@ -359,8 +373,6 @@ class LiveMap(
             return Registration.EMPTY
         }
 
-        isAttached = true
-
         val camera = MutableCamera(myComponentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
@@ -368,7 +380,7 @@ class LiveMap(
             }
 
         myLayerManager = when (myRenderTarget) {
-            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasPeer, size)
+            OWN_OFFSCREEN_CANVAS -> OffscreenCanvasLayerManager(canvasPeer, size)
             OWN_SCREEN_CANVAS -> error("OWN_SCREEN_CANVAS is not supported for CanvasPeer")
         }
 
@@ -395,7 +407,16 @@ class LiveMap(
             AnimationEventHandler.toHandler(updateController::onTime)
         )
 
-        return Registration.EMPTY
+        isAttached = true
+
+        return Registration.onRemove { dispose() }
+    }
+
+    fun paint(context2d: Context2d) {
+        println("LiveMap.paint()")
+        myLayerManager.layers.forEach { layer ->
+            context2d.drawImage(layer.snapshot())
+        }
     }
 
     private class UpdateController(
