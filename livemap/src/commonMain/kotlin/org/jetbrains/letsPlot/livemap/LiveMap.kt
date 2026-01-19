@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap
 
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
@@ -21,6 +22,7 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.DeltaTime
 import org.jetbrains.letsPlot.livemap.Diagnostics.LiveMapDiagnostics
 import org.jetbrains.letsPlot.livemap.api.FeatureLayerBuilder
@@ -99,6 +101,9 @@ class LiveMap(
 
     private val errorEvent = SimpleEventSource<Throwable>()
     val isLoading: Property<Boolean> = ValueProperty(true)
+    val mouseEventPeer: MouseEventPeer = MouseEventPeer()
+    var isAttached = false
+        private set
 
     fun addErrorHandler(handler: (Throwable) -> Unit): Registration {
         return errorEvent.addHandler(
@@ -111,6 +116,12 @@ class LiveMap(
     private val myComponentManager = EcsComponentManager()
 
     fun draw(canvasControl: CanvasControl) {
+        if (isAttached) {
+            return
+        }
+
+        isAttached = true
+
         val camera = MutableCamera(myComponentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
@@ -118,7 +129,7 @@ class LiveMap(
             }
 
         myLayerManager = when (myRenderTarget) {
-            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasControl)
+            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasControl.canvasPeer, canvasControl.size)
             OWN_SCREEN_CANVAS -> ScreenLayerManager(canvasControl)
         }
 
@@ -341,6 +352,50 @@ class LiveMap(
     override fun dispose() {
         myTimerReg.dispose()
         myEcsController.dispose()
+    }
+
+    fun attachToCanvasPeer(canvasPeer: CanvasPeer, size: Vector, pixelDensity: Double = 1.0): Registration {
+        if (isAttached) {
+            return Registration.EMPTY
+        }
+
+        isAttached = true
+
+        val camera = MutableCamera(myComponentManager)
+            .apply {
+                requestZoom(viewport.zoom.toDouble())
+                requestPosition(viewport.position)
+            }
+
+        myLayerManager = when (myRenderTarget) {
+            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasPeer, size)
+            OWN_SCREEN_CANVAS -> error("OWN_SCREEN_CANVAS is not supported for CanvasPeer")
+        }
+
+        myContext = LiveMapContext(
+            mapProjection = myMapProjection,
+            mouseEventSource = mouseEventPeer,
+            mapRenderContext = MapRenderContext(viewport, canvasPeer, pixelDensity),
+            errorHandler = { println("LiveMap error: $it") },
+            camera = camera,
+            layerManager = myLayerManager
+        )
+        myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+        myUiService = UiService(myComponentManager, myTextMeasurer)
+        init(myComponentManager)
+
+        val updateController = UpdateController(
+            { dt -> animationHandler(dt) },
+            myDevParams.read(UPDATE_PAUSE_MS).toLong(),
+            myDevParams.read(UPDATE_TIME_MULTIPLIER)
+        )
+
+        myTimerReg = setAnimationHandler(
+            canvasPeer,
+            AnimationEventHandler.toHandler(updateController::onTime)
+        )
+
+        return Registration.EMPTY
     }
 
     private class UpdateController(

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.*
@@ -29,6 +30,7 @@ internal object SvgUtils {
         Path::class to (SvgPathAttrMapping as SvgAttrMapping<Node>),
         Image::class to (SvgImageAttrMapping as SvgAttrMapping<Node>),
         TSpan::class to (SvgTSpanElementAttrMapping as SvgAttrMapping<Node>),
+        CanvasFigure::class to (SvgCanvasAttrMapping as SvgAttrMapping<Node>)
     )
 
     fun elementChildren(e: Node): MutableList<Node> {
@@ -86,6 +88,7 @@ internal object SvgUtils {
             is SvgDefsElement -> Group()
 //            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> Image()
+            is LiveMapGeom.SvgCanvasFigureElement -> CanvasFigure()
             else -> Group().also { println("SvgUtils.newElement: Unsupported source type: ${source::class.simpleName}") }
         }.also {
             it.peer = peer

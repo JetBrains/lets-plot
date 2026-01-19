@@ -27,7 +27,7 @@ fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async
     val canvasControl = AwtCanvasControl(
         size = dim,
         animationTimerPeer = AwtAnimationTimerPeer(),
-        mouseEventSource = AwtMouseEventMapper(panel)
+        mouseEventSource = AwtMouseEventMapper(panel),
     )
 
     panel.add(canvasControl.component())

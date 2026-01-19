@@ -28,7 +28,6 @@ kotlin {
                 compileOnly(project(":plot-base"))
                 compileOnly(project(":plot-builder"))
                 compileOnly(project(":plot-stem"))
-                compileOnly(project(":plot-raster"))
             }
         }
 

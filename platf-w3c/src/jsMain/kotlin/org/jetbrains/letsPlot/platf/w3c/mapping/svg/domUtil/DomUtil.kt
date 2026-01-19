@@ -32,7 +32,7 @@ object DomUtil {
     }
 
     fun nodeChildren(n: Node): MutableList<Node?> {
-        return object: AbstractMutableList<Node?>() {
+        return object : AbstractMutableList<Node?>() {
 
             override val size: Int
                 get() = n.childCount
@@ -73,7 +73,7 @@ object DomUtil {
     fun <NodeT, ElementT : With<out NodeT>> withElementChildren(base: MutableList<NodeT?>): List<ElementT?> {
         val items: MutableList<ElementT?> = mutableListOf()
 
-        return object: AbstractMutableList<ElementT?>() {
+        return object : AbstractMutableList<ElementT?>() {
             override val size: Int
                 get() = items.size
 
@@ -215,7 +215,7 @@ object DomUtil {
             private var myTimer: Int = -1
 
             override fun doAddListeners() {
-                myTimer = window.setInterval({update()}, period)
+                myTimer = window.setInterval({ update() }, period)
             }
 
             override fun doRemoveListeners() {
@@ -226,38 +226,52 @@ object DomUtil {
         }
     }
 
-    fun generateElement(source: SvgElement): SVGElement =
-            when(source) {
-                is SvgEllipseElement -> createSVGElement("ellipse")
-                is SvgCircleElement -> createSVGElement("circle")
-                is SvgRectElement -> createSVGElement("rect")
-                is SvgTextElement -> createSVGElement("text")
-                is SvgPathElement -> createSVGElement("path")
-                is SvgLineElement -> createSVGElement("line")
-                is SvgSvgElement -> createSVGElement("svg")
-                is SvgGElement -> createSVGElement("g")
-                is SvgStyleElement -> createSVGElement("style")
-                is SvgTSpanElement -> createSVGElement("tspan")
-                is SvgDefsElement -> createSVGElement("defs")
-                is SvgClipPathElement -> createSVGElement("clipPath")
-                is SvgImageElement -> createSVGElement("image")
-                is SvgAElement -> createSVGElement("a")
-                else -> throw IllegalStateException("Unsupported svg element ${source::class.simpleName}")
-            }
+    fun generateElement(source: SvgElement): SVGElement {
+        val el = when (source) {
+            is SvgEllipseElement -> createSVGElement("ellipse")
+            is SvgCircleElement -> createSVGElement("circle")
+            is SvgRectElement -> createSVGElement("rect")
+            is SvgTextElement -> createSVGElement("text")
+            is SvgPathElement -> createSVGElement("path")
+            is SvgLineElement -> createSVGElement("line")
+            is SvgSvgElement -> createSVGElement("svg")
+            is SvgGElement -> createSVGElement("g")
+            is SvgStyleElement -> createSVGElement("style")
+            is SvgTSpanElement -> createSVGElement("tspan")
+            is SvgDefsElement -> createSVGElement("defs")
+            is SvgClipPathElement -> createSVGElement("clipPath")
+            is SvgImageElement -> createSVGElement("image")
+            is SvgAElement -> createSVGElement("a")
+            else -> null
+        }
+        if (el != null) {
+            return el
+        }
+
+        if (source::class.simpleName == "SvgCanvasFigureElement") {
+            return createSVGElement("canvas")
+        }
+
+        throw IllegalStateException("Unsupported svg element ${source::class.simpleName}")
+    }
+
 
     fun generateSlimNode(source: SvgSlimNode): Element =
-            when(source.elementName) {
-                SvgSlimElements.GROUP -> createSVGElement("g")
-                SvgSlimElements.LINE -> createSVGElement("line")
-                SvgSlimElements.CIRCLE -> createSVGElement("circle")
-                SvgSlimElements.RECT -> createSVGElement("rect")
-                SvgSlimElements.PATH -> createSVGElement("path")
-                else -> throw IllegalStateException("Unsupported SvgSlimNode ${source::class}")
-            }
+        when (source.elementName) {
+            SvgSlimElements.GROUP -> createSVGElement("g")
+            SvgSlimElements.LINE -> createSVGElement("line")
+            SvgSlimElements.CIRCLE -> createSVGElement("circle")
+            SvgSlimElements.RECT -> createSVGElement("rect")
+            SvgSlimElements.PATH -> createSVGElement("path")
+            else -> throw IllegalStateException("Unsupported SvgSlimNode ${source::class}")
+        }
 
     @Suppress("UNUSED_PARAMETER")
     fun generateTextElement(source: SvgTextNode): Text = document.createTextNode("")
 
     private fun createSVGElement(name: String): SVGElement =
-            document.createElementNS(SVG_NAMESPACE_URI, name) as SVGElement
+        document.createElementNS(SVG_NAMESPACE_URI, name) as SVGElement
+
+    private fun createHTMLElement(name: String): HTMLElement =
+        document.createElement(name) as HTMLElement
 }

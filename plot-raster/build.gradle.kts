@@ -27,6 +27,8 @@ kotlin {
                 compileOnly(project(":plot-base"))
                 compileOnly(project(":plot-stem"))
                 compileOnly(project(":plot-builder"))
+                compileOnly(project(":livemap"))
+                compileOnly(project(":plot-livemap"))
                 implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
         }

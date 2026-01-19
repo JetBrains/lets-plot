@@ -116,6 +116,7 @@ open class CanvasControlDelegate(
     height: Int,
     override val pixelDensity: Double = 1.0,
 ) : CanvasControl {
+    override val canvasPeer: CanvasPeer get() = TODO("Not yet implemented")
     override val size: Vector = Vector(width, height)
     override fun addChild(canvas: Canvas) {}
     override fun addChild(index: Int, canvas: Canvas) {}

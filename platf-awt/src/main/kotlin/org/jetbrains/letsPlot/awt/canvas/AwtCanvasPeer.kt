@@ -6,6 +6,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import java.awt.image.BufferedImage
@@ -18,16 +20,15 @@ class AwtCanvasPeer(
     private val pixelDensity: Double = 1.0,
     private val fontManager: FontManager = FontManager.EMPTY,
 ) : CanvasPeer {
+    private val animationTimerPeer: AwtAnimationTimerPeer = AwtAnimationTimerPeer()
+
+
     override fun createCanvas(size: Vector): AwtCanvas {
         return AwtCanvas.create(size, pixelDensity, fontManager)
     }
 
     override fun createCanvas(size: Vector, contentScale: Double): Canvas {
         return AwtCanvas.create(size, contentScale, fontManager)
-    }
-
-    fun createCanvas(width: Number, height: Number): AwtCanvas {
-        return AwtCanvas.create(Vector(width.toInt(), height.toInt()), pixelDensity, fontManager)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
@@ -51,5 +52,24 @@ class AwtCanvasPeer(
         val bitmap = Png.decodeDataImage(dataUrl)
         val bufferedImage = BitmapUtil.toBufferedImage(bitmap)
         return bufferedImage
+    }
+
+    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
+        return object : AnimationTimer {
+            override fun start() {
+                animationTimerPeer.addHandler(::handle)
+            }
+
+            override fun stop() {
+                animationTimerPeer.removeHandler(::handle)
+            }
+
+            fun handle(millisTime: Long) {
+                if (eventHandler.onEvent(millisTime)) {
+                    println("Requesting repaint at $millisTime ms")
+                }
+            }
+        }
+
     }
 }

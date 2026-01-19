@@ -10,10 +10,10 @@ package org.jetbrains.letsPlot.commons.intern.concurrent
  */
 actual class Lock actual constructor() {
     actual fun lock() {
-        throw IllegalStateException("'Lock' is not supported in any 'native' target.")
+        //throw IllegalStateException("'Lock' is not supported in any 'native' target.")
     }
 
     actual fun unlock() {
-        throw IllegalStateException("'Lock' is not supported in any 'native' target.")
+        //throw IllegalStateException("'Lock' is not supported in any 'native' target.")
     }
 }

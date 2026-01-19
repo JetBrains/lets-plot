@@ -58,7 +58,7 @@ class LiveMapCanvasFigure(
     }
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
-        TODO("Not yet implemented")
+        return liveMap.attachToCanvasPeer(canvasPeer, bounds().get().dimension)
     }
 
     override val eventPeer: MouseEventPeer

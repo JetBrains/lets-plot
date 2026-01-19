@@ -72,7 +72,7 @@ internal object Utils {
             return SVGOMGElement(null, myDoc)
         }
 
-        return when (source) {
+        val el = when (source) {
             is SvgEllipseElement -> SVGOMEllipseElement(null, myDoc)
             is SvgCircleElement -> SVGOMCircleElement(null, myDoc)
             is SvgRectElement -> SVGOMRectElement(null, myDoc)
@@ -88,8 +88,18 @@ internal object Utils {
             is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> SVGOMImageElement(null, myDoc)
             is SvgAElement -> SVGOMAElement(null, myDoc)
-            else -> throw IllegalStateException("Unsupported SvgElement $source")
+            else -> null
         }
+
+        if (el != null) {
+            return el
+        }
+
+        if (source::class.simpleName == "SvgCanvasFigureElement") {
+            return SVGOMForeignObjectElement(null, myDoc)
+        }
+
+        throw IllegalStateException("Unsupported SvgElement $source")
     }
 
     fun getButton(evt: DOMMouseEvent): Button {
