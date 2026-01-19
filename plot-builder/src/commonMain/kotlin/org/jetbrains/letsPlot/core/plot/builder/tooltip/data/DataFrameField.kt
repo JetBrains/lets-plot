@@ -15,17 +15,17 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
-class DataFrameField(
+open class DataFrameField(
     private val name: String,
     private val format: String? = null
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
-    private lateinit var myDataFrame: DataFrame
-    private lateinit var myVariable: DataFrame.Variable
-    private var myFormatter: ((Any) -> String)? = null
+    protected lateinit var myDataFrame: DataFrame
+    protected lateinit var myVariable: DataFrame.Variable
+    protected var myFormatter: ((Any) -> String)? = null
 
-    private fun initFormatter(expFormat: StringFormat.ExponentFormat, tz: TimeZone?): (Any) -> String {
+    protected fun initFormatter(expFormat: StringFormat.ExponentFormat, tz: TimeZone?): (Any) -> String {
         require(myFormatter == null)
 
         myFormatter = when (format) {

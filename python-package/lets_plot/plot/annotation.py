@@ -296,13 +296,19 @@ class smooth_labels(layer_labels):
         super().__init__(variables)
         self.inherit_color()
 
-    def eq(self, *, with_lhs: str = "y") -> "smooth_labels":
+    def eq(self, *, with_lhs: str = "y", format=None) -> "smooth_labels":
+        if format is not None:
+            self.format('..eq..', format=format)
+
         lhs = with_lhs + '=' if with_lhs is not None else ''
 
         self.line('\(' + lhs + '@{..eq..}\)')
         return self
 
-    def rr(self) -> "smooth_labels":
+    def rr(self, format=None) -> "smooth_labels":
+        if format is not None:
+            self.format('..r2..', format=format)
+
         self.line('\(R\\^2 = @{..r2..}\)')
         return self
 
@@ -310,5 +316,4 @@ class smooth_labels(layer_labels):
         d = super().as_dict()
 
         d['lines'] = d['lines'] if 'lines' in d else ['\(R\\^2 = @{..r2..}\)']
-
         return _filter_none(d)
