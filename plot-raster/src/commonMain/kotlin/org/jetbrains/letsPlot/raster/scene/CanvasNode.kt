@@ -6,37 +6,37 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 
-internal class CanvasFigure : Node() {
-    var canvasFigure: CanvasFigure2? by variableAttr(null)
+internal class CanvasNode : Node() {
+    var content: CanvasFigure2? by variableAttr(null)
 
     private var reg = Registration.EMPTY
 
-    private val attachedFigure by derivedAttr {
-        val canvasFigure = canvasFigure ?: return@derivedAttr null
+    private val attachedContent by derivedAttr {
+        val content = this@CanvasNode.content ?: return@derivedAttr null
         val peer = peer ?: return@derivedAttr null
 
         reg.remove()
         reg = CompositeRegistration(
-            canvasFigure.mapToCanvas(peer.canvasPeer),
-            canvasFigure.onRepaintRequested {
+            content.mapToCanvas(peer.canvasPeer),
+            content.onRepaintRequested {
                 markDirty()
                 requestRepaint()
             }
         )
 
-        canvasFigure
+        content
     }
 
     override fun render(ctx: Context2d) {
-        attachedFigure?.paint(ctx)
+        content?.paint(ctx)
     }
 
     override fun calculateLocalBBox(): DoubleRectangle {
-        if (canvasFigure == null) {
+        if (content == null) {
             return DoubleRectangle.ZERO
         }
 
-        return DoubleRectangle.WH(canvasFigure!!.size)
+        return DoubleRectangle.WH(content!!.size)
     }
 
     override fun onDetach() {
@@ -44,9 +44,9 @@ internal class CanvasFigure : Node() {
     }
 
     companion object {
-        val CLASS = ATTRIBUTE_REGISTRY.addClass(CanvasFigure::class)
+        val CLASS = ATTRIBUTE_REGISTRY.addClass(CanvasNode::class)
 
-        val CanvasFigureAttrSpec = CLASS.registerVariableAttr(CanvasFigure::canvasFigure, affectsBBox = true)
-        val AttachedFigureAttrSpec = CLASS.registerDerivedAttr(CanvasFigure::attachedFigure, setOf(CanvasFigureAttrSpec, PeerAttrSpec))
+        val CanvasNodeAttrSpec = CLASS.registerVariableAttr(CanvasNode::content, affectsBBox = true)
+        val AttachedFigureAttrSpec = CLASS.registerDerivedAttr(CanvasNode::attachedContent, setOf(CanvasNodeAttrSpec, PeerAttrSpec))
     }
 }

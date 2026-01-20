@@ -30,7 +30,7 @@ internal object SvgUtils {
         Path::class to (SvgPathAttrMapping as SvgAttrMapping<Node>),
         Image::class to (SvgImageAttrMapping as SvgAttrMapping<Node>),
         TSpan::class to (SvgTSpanElementAttrMapping as SvgAttrMapping<Node>),
-        CanvasFigure::class to (SvgCanvasAttrMapping as SvgAttrMapping<Node>)
+        CanvasNode::class to (SvgCanvasAttrMapping as SvgAttrMapping<Node>)
     )
 
     fun elementChildren(e: Node): MutableList<Node> {
@@ -88,7 +88,7 @@ internal object SvgUtils {
             is SvgDefsElement -> Group()
 //            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> Image()
-            is LiveMapGeom.SvgCanvasFigureElement -> CanvasFigure()
+            is LiveMapGeom.SvgCanvasFigureElement -> CanvasNode()
             else -> Group().also { println("SvgUtils.newElement: Unsupported source type: ${source::class.simpleName}") }
         }.also {
             it.peer = peer
