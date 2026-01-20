@@ -22,12 +22,18 @@ interface CanvasFigure : SomeFig {
 
 }
 
-interface CanvasFigure2 : SomeFig {
+interface CanvasFigure2 : SomeFig, AsyncRenderer {
     // V2 API. Default impl. to not break existing implementations
     val size: Vector
+    val mouseEventPeer: MouseEventPeer
+
     fun paint(context2d: Context2d)
     fun onRepaintRequested(listener: () -> Unit): Registration
     fun resize(width: Number, height: Number)
     fun mapToCanvas(canvasPeer: CanvasPeer): Registration
-    val eventPeer: MouseEventPeer
+}
+
+interface AsyncRenderer {
+    fun isReady(): Boolean
+    fun onReady(listener: () -> Unit): Registration
 }

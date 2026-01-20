@@ -34,7 +34,7 @@ class CanvasPane(
             figureRegistration.remove()
             if (canvasFigure != null) {
                 canvasFigure.resize(width, height)
-                canvasFigure.eventPeer.addEventSource(mouseEventSource)
+                canvasFigure.mouseEventPeer.addEventSource(mouseEventSource)
                 figureRegistration = CompositeRegistration(
                     canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequested(::repaint),

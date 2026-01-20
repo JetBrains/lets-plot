@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.livemap.config
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
@@ -82,6 +84,27 @@ class LiveMapCanvasFigure(
         TODO("Not yet implemented")
     }
 
-    override val eventPeer: MouseEventPeer
+    override val mouseEventPeer: MouseEventPeer
         get() = TODO("Not yet implemented")
+
+    override fun isReady(): Boolean {
+        return !liveMap.isLoading.get()
+    }
+
+    override fun onReady(listener: () -> Unit): Registration {
+        if (isReady()) {
+            listener()
+            return Registration.EMPTY
+        } else {
+            val isLoading = liveMap.isLoading
+            return isLoading.addHandler(object : EventHandler<PropertyChangeEvent<out Boolean>> {
+                override fun onEvent(event: PropertyChangeEvent<out Boolean>) {
+                    println("LiveMapCanvasFigure: onReady: isLoading=${event.newValue}")
+                    if (!isLoading.get()) {
+                        listener()
+                    }
+                }
+            })
+        }
+    }
 }

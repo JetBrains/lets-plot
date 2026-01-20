@@ -4,10 +4,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvasFigure.AsyncRenderer
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 
-internal class CanvasNode : Node() {
+internal class CanvasNode : Node(), AsyncRenderer {
     var content: CanvasFigure2? by variableAttr(null)
+    private var onReadyListeners = mutableListOf<() -> Unit>()
 
     private var reg = Registration.EMPTY
 
@@ -18,6 +20,7 @@ internal class CanvasNode : Node() {
         reg.remove()
         reg = CompositeRegistration(
             content.mapToCanvas(peer.canvasPeer),
+            content.onReady { onContentReady() },
             content.onRepaintRequested {
                 markDirty()
                 requestRepaint()
@@ -28,19 +31,34 @@ internal class CanvasNode : Node() {
     }
 
     override fun render(ctx: Context2d) {
-        content?.paint(ctx)
+        attachedContent?.paint(ctx)
     }
 
     override fun calculateLocalBBox(): DoubleRectangle {
-        if (content == null) {
+        if (attachedContent == null) {
             return DoubleRectangle.ZERO
         }
 
-        return DoubleRectangle.WH(content!!.size)
+        return DoubleRectangle.WH(attachedContent!!.size)
     }
 
     override fun onDetach() {
         reg.remove()
+    }
+
+    override fun isReady(): Boolean {
+        return attachedContent?.isReady() ?: true
+    }
+
+    override fun onReady(listener: () -> Unit): Registration {
+        onReadyListeners.add(listener)
+        return Registration.onRemove {
+            onReadyListeners.remove(listener)
+        }
+    }
+
+    private fun onContentReady() {
+        onReadyListeners.forEach { it() }
     }
 
     companion object {
