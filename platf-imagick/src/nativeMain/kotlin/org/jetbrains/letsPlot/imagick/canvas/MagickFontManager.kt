@@ -81,7 +81,7 @@ class MagickFontManager private constructor(
         if (cache.isEmpty()) {
             val fonts = findFonts("*")
             if (fonts.isEmpty()) {
-                error { "No fonts found." }
+                error("No fonts found.")
             }
 
             val sansFont = resolveFont(sansFonts)
