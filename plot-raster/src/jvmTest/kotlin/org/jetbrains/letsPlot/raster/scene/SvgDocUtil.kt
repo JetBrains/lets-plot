@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
@@ -58,9 +59,10 @@ internal fun mapSvg(textMeasuringCanvas: Canvas = MeasuringCanvas, builder: () -
         override fun createSnapshot(bitmap: Bitmap) = error("Not supported")
         override fun decodeDataImageUrl(dataUrl: String) = error("Not supported")
         override fun decodePng(png: ByteArray) = error("Not supported")
+        override fun createAnimationTimer(eventHandler: AnimationEventHandler) = error("Not supported")
     }
 
-    val svgCanvasPeer = SvgCanvasPeer(canvasPeer, textMeasuringCanvas)
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer, textMeasuringCanvas) {}
 
     //val rootMapper = SvgSvgElementMapper(svgDocument, SvgSkiaPeer(fontManager))
     val rootMapper = SvgSvgElementMapper(svgDocument, svgCanvasPeer)
@@ -266,8 +268,9 @@ internal fun withTextMeasurer(measurer: (String, ContextStateDelegate) -> TextMe
         override fun createSnapshot(bitmap: Bitmap) = TODO("Not yet implemented")
         override fun decodeDataImageUrl(dataUrl: String) = TODO("Not yet implemented")
         override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
+        override fun createAnimationTimer(eventHandler: AnimationEventHandler) = TODO("Not yet implemented")
     }
 
-    val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer) {}
     return svgCanvasPeer
 }

@@ -84,6 +84,8 @@ open class VisualPlotTestBase {
             registerFont("fonts/NotoSans-Italic.ttf")
             registerFont("fonts/NotoSans-BoldItalic.ttf")
             registerFont("fonts/NotoSerif-Regular.ttf")
+            registerFont("fonts/NotoSansMono-Regular.ttf")
+            registerFont("fonts/NotoSansMono-Bold.ttf")
         }
 
         private fun registerFont(resourceName: String) {
