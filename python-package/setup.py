@@ -27,7 +27,7 @@ python_package = 'lets_plot'
 
 
 def update_js():
-    js_relative_path = ['js-package', 'kotlin-webpack', 'js', 'productionExecutable']
+    js_relative_path = ['js-package', 'build', 'kotlin-webpack', 'js', 'productionExecutable']
     js_libs = [
         'lets-plot',
     ]
