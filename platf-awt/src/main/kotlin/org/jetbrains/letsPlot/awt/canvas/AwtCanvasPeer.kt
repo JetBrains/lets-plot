@@ -54,7 +54,7 @@ class AwtCanvasPeer(
         return bufferedImage
     }
 
-    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
+    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationTimer {
         return object : AnimationTimer {
             override fun start() {
                 animationTimerPeer.addHandler(::handle)
@@ -65,9 +65,7 @@ class AwtCanvasPeer(
             }
 
             fun handle(millisTime: Long) {
-                if (eventHandler.onEvent(millisTime)) {
-                    println("Requesting repaint at $millisTime ms")
-                }
+                eventHandler.onEvent(millisTime)
             }
         }
 

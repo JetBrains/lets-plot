@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.awt.plot
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvasFigure.AsyncRenderer
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
@@ -129,7 +128,6 @@ object PlotImageExport {
         // Note: the scale is already applied in AwtCanvas constructor
         // canvas.context2d.scale(scaleFactor, scaleFactor)
 
-        println("PlotImageExport: plotFigure.isReady=${(plotFigure as? AsyncRenderer)?.isReady() == true}")
         plotFigure.paint(canvas.context2d)
 
         val outputStream = ByteArrayOutputStream()

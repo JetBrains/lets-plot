@@ -37,7 +37,6 @@ internal class SvgCanvasPeer(
     }
 
     fun requestRepaint() {
-        println("SvgCanvasPeer: requestRepaint")
         onRepaintRequested()
     }
 

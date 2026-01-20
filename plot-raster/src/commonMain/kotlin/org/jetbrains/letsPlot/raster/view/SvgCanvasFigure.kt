@@ -159,7 +159,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     private fun requestRedraw() {
-        println("SvgCanvasFigure: requestRedraw. repaintRequestListeners.size=${repaintRequestListeners.size}")
         repaintRequestListeners.forEach { it() }
     }
 
@@ -185,7 +184,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             val repaintManager = repaintManager ?: return
 
             if (!repaintManager.isCacheValid(node, size, ctx.contentScale)) {
-                println("SvgCanvasFigure: rendering to cache for node=${node.repr()}")
                 repaintManager.cacheElement(node, size, ctx.contentScale) {
                     renderElement(node, it, ignoreCache = true)
                 }

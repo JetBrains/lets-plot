@@ -43,6 +43,7 @@ import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.TILE_CACHE_LIMI
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
 import org.jetbrains.letsPlot.livemap.config.DevParams.MicroTaskExecutor.*
+import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.MapRuler
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.graphics.Rectangle
@@ -101,6 +102,7 @@ class LiveMap(
     private lateinit var myTextMeasurer: TextMeasurer
 
     private val errorEvent = SimpleEventSource<Throwable>()
+    private var started = false
     val isLoading: Property<Boolean> = ValueProperty(true)
     val mouseEventPeer: MouseEventPeer = MouseEventPeer()
     var isAttached = false
@@ -170,14 +172,19 @@ class LiveMap(
     }
 
     private fun animationHandler(dt: Long): Boolean {
+        if (started) {
+            isLoading.set(myComponentManager.containsEntity<BusyStateComponent>())
+        } else {
+            started = true
+            isLoading.set(true)
+        }
+
         myEcsController.update(dt.toDouble())
 
         myDiagnostics.update(dt)
 
         val updated = myLayerRenderingSystem.updated
         if (updated) {
-            val livemapObjId = this.hashCode().toULong().toString(16)
-            println("LiveMap($livemapObjId): requesting repaint, repaintRequestListeners.size=${repaintRequestListeners.size}")
             repaintRequestListeners.forEach { it() }
         }
         return updated
@@ -413,7 +420,6 @@ class LiveMap(
     }
 
     fun paint(context2d: Context2d) {
-        println("LiveMap.paint()")
         myLayerManager.layers.forEach { layer ->
             context2d.drawImage(layer.snapshot())
         }

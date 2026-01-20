@@ -91,7 +91,6 @@ class LiveMapCanvasFigure(
             val isLoading = liveMap.isLoading
             return isLoading.addHandler(object : EventHandler<PropertyChangeEvent<out Boolean>> {
                 override fun onEvent(event: PropertyChangeEvent<out Boolean>) {
-                    println("LiveMapCanvasFigure: onReady: isLoading=${event.newValue}")
                     if (!isLoading.get()) {
                         listener()
                     }
