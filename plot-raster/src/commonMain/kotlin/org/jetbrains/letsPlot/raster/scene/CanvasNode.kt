@@ -14,7 +14,7 @@ internal class CanvasNode : Node(), AsyncRenderer {
     private var reg = Registration.EMPTY
 
     private val attachedContent by derivedAttr {
-        val content = this@CanvasNode.content ?: return@derivedAttr null
+        val content = content ?: return@derivedAttr null
         val peer = peer ?: return@derivedAttr null
 
         reg.remove()
@@ -23,7 +23,7 @@ internal class CanvasNode : Node(), AsyncRenderer {
             content.onReady { onContentReady() },
             content.onRepaintRequested {
                 markDirty()
-                requestRepaint()
+                peer.requestRepaint()
             }
         )
 
