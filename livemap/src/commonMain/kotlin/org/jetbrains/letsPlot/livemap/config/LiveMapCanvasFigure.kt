@@ -14,11 +14,9 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
 import org.jetbrains.letsPlot.livemap.LiveMap
@@ -63,12 +61,6 @@ class LiveMapCanvasFigure(
 
     override fun paint(context2d: Context2d) {
         liveMap.paint(context2d)
-        context2d.save()
-        context2d.setFillStyle(Color.GREEN)
-        context2d.setFont(Font(fontSize = 46.0, fontFamily = "Noto Sans Mono"))
-        context2d.fillText("LiveMapPresenter: unexpected direct paint call", 10.0, 60.0)
-        context2d.restore()
-
     }
 
     override fun onRepaintRequested(listener: () -> Unit): Registration {

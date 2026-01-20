@@ -118,7 +118,7 @@ object PlotImageExport {
                 try {
                     // 4. Block current thread until ready (with Timeout safety)
                     // Use a reasonable timeout (e.g., 30 seconds) to prevent hanging the server
-                    val completed = latch.await(10, java.util.concurrent.TimeUnit.SECONDS)
+                    val completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
                     if (!completed) {
                         println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
                     }
