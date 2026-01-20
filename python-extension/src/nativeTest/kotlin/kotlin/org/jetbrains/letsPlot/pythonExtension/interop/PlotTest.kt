@@ -878,6 +878,9 @@ class PlotTest {
 
     @Test
     fun perf() {
+        println("=".repeat(25))
+        println("perf test start")
+        println("=".repeat(25))
         val rnd = Random(42)
         val n = 10_000
         val xs = List(n) { rnd.nextDouble() * 1000 }
@@ -903,7 +906,6 @@ class PlotTest {
         println(mvg)
         println("Time for plotting $n points: ${times.joinToString()} ms")
         //assertPlot("perf.png", plotSpec)
-
     }
 
     @Test
