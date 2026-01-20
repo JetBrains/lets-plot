@@ -47,6 +47,6 @@ class LiveMapTest : VisualPlotTestBase() {
 
         val plotSpec = spec.themeTextNotoSans()
 
-        assertPlot("geom_livemap_minard.png", plotSpec)
+        assertPlot("geom_livemap_minard.png", plotSpec, fontManager = fontManager)
     }
 }

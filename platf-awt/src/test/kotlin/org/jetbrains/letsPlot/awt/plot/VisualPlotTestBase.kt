@@ -8,11 +8,16 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
 import demoAndTestShared.ImageComparer
+import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
+import org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC
+import org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.visualtesting.AwtCanvasTck
+import org.jetbrains.letsPlot.visualtesting.AwtFont
 import org.junit.BeforeClass
 import java.awt.Font
 import java.awt.FontFormatException
@@ -56,17 +61,19 @@ open class VisualPlotTestBase {
         height: Number? = null,
         unit: SizeUnit? = null,
         dpi: Number? = null,
-        scale: Number? = null
+        scale: Number? = null,
+        fontManager: FontManager = FontManager.EMPTY
     ) {
         val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
-        val imageData = PlotImageExport.buildImageFromRawSpecs(
+        val imageData = PlotImageExport.buildImageFromRawSpecsInternal(
             plotSpec = plotSpec,
             format = PlotImageExport.Format.PNG,
             scalingFactor = scale ?: 1.0,
             targetDPI = dpi,
             plotSize = plotSize,
-            unit = unit
+            unit = unit,
+            fontManager = fontManager
         )
         val image = ImageIO.read(imageData.bytes.inputStream())
         val bitmap = BitmapUtil.fromBufferedImage(image)
@@ -86,6 +93,38 @@ open class VisualPlotTestBase {
             registerFont("fonts/NotoSerif-Regular.ttf")
             registerFont("fonts/NotoSansMono-Regular.ttf")
             registerFont("fonts/NotoSansMono-Bold.ttf")
+        }
+
+        val fontManager = FontManager().apply {
+            register("Noto Sans", createFont("fonts/NotoSans-Regular.ttf"))
+            register("Noto Sans", createFont("fonts/NotoSans-Bold.ttf"), weight = BOLD)
+            register("Noto Sans", createFont("fonts/NotoSans-Italic.ttf"), style = ITALIC)
+            register("Noto Sans", createFont("fonts/NotoSans-BoldItalic.ttf"), weight = BOLD, style = ITALIC)
+
+            register("Noto Serif", createFont("fonts/NotoSerif-Regular.ttf"))
+            register("Noto Serif", createFont("fonts/NotoSerif-Bold.ttf"), weight = BOLD)
+            register("Noto Serif", createFont("fonts/NotoSerif-Italic.ttf"), style = ITALIC)
+            register("Noto Serif", createFont("fonts/NotoSerif-BoldItalic.ttf"), weight = BOLD, style = ITALIC)
+
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Regular.ttf"))
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Regular.ttf"), style = ITALIC)
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Bold.ttf"), weight = BOLD)
+            register("Noto Sans Mono", createFont("fonts/NotoSansMono-Bold.ttf"), weight = BOLD, style = ITALIC)
+        }
+
+        private fun createFont(resourceName: String): AwtFont {
+            val fontStream = AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName)
+                ?: error("Font resource not found: $resourceName")
+            try {
+                return AwtFont.createFont(AwtFont.TRUETYPE_FONT, fontStream)
+                    ?: error("Cannot create font from resource: $resourceName")
+            } finally {
+                try {
+                    fontStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
         }
 
         private fun registerFont(resourceName: String) {

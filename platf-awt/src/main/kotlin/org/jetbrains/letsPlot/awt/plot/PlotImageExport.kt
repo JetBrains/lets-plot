@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
@@ -62,6 +63,25 @@ object PlotImageExport {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
     ): ImageData {
+        return buildImageFromRawSpecsInternal(
+            plotSpec = plotSpec,
+            format = format,
+            scalingFactor = scalingFactor,
+            targetDPI = targetDPI,
+            plotSize = plotSize,
+            unit = unit
+        )
+    }
+
+    internal fun buildImageFromRawSpecsInternal(
+        plotSpec: MutableMap<String, Any>,
+        format: Format,
+        scalingFactor: Number? = null,
+        targetDPI: Number? = null,
+        plotSize: DoubleVector? = null,
+        unit: SizeUnit? = null,
+        fontManager: FontManager = FontManager.EMPTY
+    ): ImageData {
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
         val plotFigure = PlotCanvasFigure()
@@ -71,7 +91,7 @@ object PlotImageExport {
             computationMessagesHandler = {}
         )
 
-        val awtCanvasPeer = AwtCanvasPeer(scaleFactor)
+        val awtCanvasPeer = AwtCanvasPeer(scaleFactor, fontManager = fontManager)
         plotFigure.mapToCanvas(awtCanvasPeer)
 
         val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
@@ -102,4 +122,5 @@ object PlotImageExport {
             )
         )
     }
+
 }
