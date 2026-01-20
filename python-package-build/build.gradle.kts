@@ -57,21 +57,10 @@ if (enablePythonPackage) {
 
         workingDir(pythonPackagePath)
 
-        if (System.getenv("IMAGICK_LIB_PATH").isEmpty()) {
-            println("=".repeat(25))
-            println("IMAGICK_LIB_PATH is empty.")
-            val imagickLibPath = (rootProject.project.extra.getOrNull("imagemagick_lib_path") as? String) ?: ""
-            if (imagickLibPath.isNotBlank()) {
-                environment("IMAGICK_LIB_PATH", imagickLibPath)
-            }
-            println("IMAGICK_LIB_PATH was set to $imagickLibPath.")
+        val imagickLibPath = (rootProject.project.extra.getOrNull("imagemagick_lib_path") as? String) ?: ""
+        if (imagickLibPath.isNotBlank()) {
+            environment("IMAGICK_LIB_PATH", imagickLibPath)
         }
-        else {
-            println("=".repeat(25))
-            println("IMAGICK_LIB_PATH is not empty.")
-        }
-
-        println(System.getenv("IMAGICK_LIB_PATH").toString())
 
         commandLine(commandLine)
     }
