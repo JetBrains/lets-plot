@@ -95,44 +95,35 @@ object PlotImageExport {
         val awtCanvasPeer = AwtCanvasPeer(scaleFactor, fontManager = fontManager)
         plotFigure.mapToCanvas(awtCanvasPeer)
 
-        // --- START ASYNC HANDLING ---
+        // "Dry Run" Paint (CRITICAL) to trigger map loading
+        val dummyCanvas = awtCanvasPeer.createCanvas(plotFigure.size)
+        plotFigure.paint(dummyCanvas.context2d)
 
-        // 1. Validate if we need to wait
-        if (plotFigure is AsyncRenderer) {
+        // Check loading status
+        if (!plotFigure.isReady()) {
+            val latch = java.util.concurrent.CountDownLatch(1)
 
-            // 2. "Dry Run" Paint (CRITICAL)
-            // Some maps lazy-load tiles only when they realize they are visible
-            // and have a specific viewport. A dummy paint triggers this calculation.
-            val dummyCanvas = awtCanvasPeer.createCanvas(plotFigure.size)
-            plotFigure.paint(dummyCanvas.context2d)
+            // Register callback to release the lock
+            val registration = plotFigure.onReady {
+                latch.countDown()
+            }
 
-            // 3. Check loading status
-            if (!plotFigure.isReady()) {
-                val latch = java.util.concurrent.CountDownLatch(1)
-
-                // Register callback to release the lock
-                val registration = plotFigure.onReady {
-                    latch.countDown()
+            try {
+                // Block current thread until ready (with Timeout safety)
+                // Use a reasonable timeout (e.g., 30 seconds) to prevent hanging the server
+                val completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
+                if (!completed) {
+                    println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
                 }
-
-                try {
-                    // 4. Block current thread until ready (with Timeout safety)
-                    // Use a reasonable timeout (e.g., 30 seconds) to prevent hanging the server
-                    val completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
-                    if (!completed) {
-                        println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-                    }
-                } catch (e: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    // Proceed to save whatever we have
-                } finally {
-                    registration.remove()
-                }
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+                // Proceed to save whatever we have
+            } finally {
+                registration.remove()
             }
         }
-        // --- END ASYNC HANDLING ---
 
-        // 5. Final Paint (The actual export)
+        // Final Paint (The actual export)
         val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
 
         // Note: the scale is already applied in AwtCanvas constructor
@@ -144,7 +135,6 @@ object PlotImageExport {
         val outputStream = ByteArrayOutputStream()
 
         if (format.defFileExt == "jpg") {
-            // ... JPEG handling ...
             val rgbBufferedImage = BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
             val g = rgbBufferedImage.createGraphics()
             g.drawImage(canvas.image, 0, 0, Color.WHITE, null)
