@@ -271,7 +271,4 @@ object DomUtil {
 
     private fun createSVGElement(name: String): SVGElement =
         document.createElementNS(SVG_NAMESPACE_URI, name) as SVGElement
-
-    private fun createHTMLElement(name: String): HTMLElement =
-        document.createElement(name) as HTMLElement
 }

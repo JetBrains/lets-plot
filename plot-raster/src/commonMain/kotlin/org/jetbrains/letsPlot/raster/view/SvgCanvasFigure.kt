@@ -188,8 +188,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
                     renderElement(node, it, ignoreCache = true)
                 }
                 node.isDirty = false
-            } else {
-                println("SvgCanvasFigure: using cache for node=${node.repr()}")
             }
 
             repaintManager.paintElement(node, ctx)
