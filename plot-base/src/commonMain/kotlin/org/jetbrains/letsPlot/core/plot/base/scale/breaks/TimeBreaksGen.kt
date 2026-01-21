@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DurationFormatter.DEFAULT_DURATION_FORMATTER
 
 /**
  * Timescale doesn't need a time zone.
@@ -26,17 +27,12 @@ class TimeBreaksGen(
         val labels = helper.formatBreaks(ticks)
         return ScaleBreaks.ContinuousFlex.noTransform(
             ticks,
-            formatter = helper.formatter,
+            formatter = DEFAULT_DURATION_FORMATTER,     // doesn't matter here since we have alternative labels
             alternativeLabels = labels
         )
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return TimeBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
-            targetCount,
-            providedFormatter = null,
-        ).formatter
+        return DEFAULT_DURATION_FORMATTER
     }
 }
