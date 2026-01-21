@@ -22,6 +22,7 @@ class BracketGeom : TextGeom() {
         ctx: GeomContext
     ) {
         val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::coordOrNull, ::objectRectangle, ::componentFactory)
+        val strokeScaler: (DataPointAesthetics) -> Double = { p -> AesScaling.strokeWidth(p, DataPointAesthetics::stroke) }
         val svgHelper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
             .setStrokeAlphaEnabled(true)
@@ -33,18 +34,18 @@ class BracketGeom : TextGeom() {
             val xMax = p.finiteOrNull(Aes.XMAX) ?: continue
             val y = p.finiteOrNull(Aes.Y) ?: continue
             val tickLength = 5.0 * textHelper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
-            listOf(
+            val bracket = listOf(
                 DoubleSegment(DoubleVector(xMin, y - tickLength), DoubleVector(xMin, y)),
                 DoubleSegment(DoubleVector(xMin, y), DoubleVector(xMax, y)),
                 DoubleSegment(DoubleVector(xMax, y), DoubleVector(xMax, y - tickLength)),
-            ).forEach { segment ->
-                val (svg, geometry) = svgHelper.createLine(segment, p) { p -> AesScaling.strokeWidth(p, DataPointAesthetics::stroke) } ?: continue
-                root.add(svg)
+            ).mapNotNull { segment ->
+                svgHelper.createLine(segment, p, strokeScaler)?.first
+            }
+            if (bracket.size == 3) {
+                bracket.forEach(root::add)
             }
         }
-        textHelper.createSvgComponents().forEach { svg ->
-            root.add(svg)
-        }
+        textHelper.createSvgComponents().forEach(root::add)
     }
 
     override fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
