@@ -12,7 +12,9 @@ import kotlin.math.sign
 
 class EqDataFrameField(
     private val name: String,
-    private val format: String? = null
+    private val format: String? = null,
+    private val lhs: String? = null,
+    private val rhs: String?,
 ) : DataFrameField(name, format) {
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
@@ -31,7 +33,7 @@ class EqDataFrameField(
     }
 
     override fun copy(): EqDataFrameField {
-        return EqDataFrameField(name, format)
+        return EqDataFrameField(name, format, lhs, rhs)
     }
 
     fun makeEq(coefficients: List<Double>, ctx: PlotContext): String {
@@ -48,13 +50,15 @@ class EqDataFrameField(
                 sb.append(formatter.invoke(abs(coefficients[i])))
 
                 if (i > 0)
-                    sb.append("x")
+                    sb.append(rhs ?: "x")
 
                 if (i > 1)
                     sb.append("^").append(i)
             }
         }
 
-        return "$sb"
+        sb.insert(0, if (lhs != null) "$lhs=" else "")
+
+        return "\\($sb\\)"
     }
 }

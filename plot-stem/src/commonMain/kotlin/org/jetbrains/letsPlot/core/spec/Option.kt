@@ -257,6 +257,8 @@ object Option {
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
+        const val LHS = "lhs"
+        const val RHS = "rhs"
 
         object Format {
             const val FIELD = "field"
