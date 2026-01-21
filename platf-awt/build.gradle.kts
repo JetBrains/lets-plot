@@ -18,6 +18,7 @@ dependencies {
     compileOnly(project(":plot-stem"))
     compileOnly(project(":plot-raster"))
 
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     compileOnly("com.github.weisj:jsvg:${jsvgVersion}")
 
     testImplementation(project(":demo-and-test-shared"))

@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
+import kotlinx.coroutines.*
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.JPEG
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
@@ -16,6 +18,7 @@ import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
+import kotlin.coroutines.resume
 
 object PlotImageExport {
     sealed class Format {
@@ -63,17 +66,19 @@ object PlotImageExport {
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
     ): ImageData {
-        return buildImageFromRawSpecsInternal(
-            plotSpec = plotSpec,
-            format = format,
-            scalingFactor = scalingFactor,
-            targetDPI = targetDPI,
-            plotSize = plotSize,
-            unit = unit
-        )
+        return runBlocking {
+            buildImageFromRawSpecsInternal(
+                plotSpec = plotSpec,
+                format = format,
+                scalingFactor = scalingFactor,
+                targetDPI = targetDPI,
+                plotSize = plotSize,
+                unit = unit
+            )
+        }
     }
 
-    internal fun buildImageFromRawSpecsInternal(
+    internal suspend fun buildImageFromRawSpecsInternal(
         plotSpec: MutableMap<String, Any>,
         format: Format,
         scalingFactor: Number? = null,
@@ -94,52 +99,34 @@ object PlotImageExport {
         val awtCanvasPeer = AwtCanvasPeer(scaleFactor, fontManager = fontManager)
         plotFigure.mapToCanvas(awtCanvasPeer)
 
-        // "Dry Run" Paint (CRITICAL) to trigger map loading
+        // Start loading tiles by painting to a dummy canvas
         val dummyCanvas = awtCanvasPeer.createCanvas(plotFigure.size)
         plotFigure.paint(dummyCanvas.context2d)
 
-        // Check loading status
-        if (!plotFigure.isReady()) {
-            val latch = java.util.concurrent.CountDownLatch(1)
-
-            // Register callback to release the lock
-            val registration = plotFigure.onReady {
-                latch.countDown()
+        try {
+            withTimeout(5000L) {
+                plotFigure.awaitLoading()
             }
-
-            try {
-                // Block current thread until ready (with Timeout safety)
-                // Use a reasonable timeout (e.g., 30 seconds) to prevent hanging the server
-                val completed = latch.await(5, java.util.concurrent.TimeUnit.SECONDS)
-                if (!completed) {
-                    println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-                }
-            } catch (e: InterruptedException) {
-                Thread.currentThread().interrupt()
-                // Proceed to save whatever we have
-            } finally {
-                registration.remove()
-            }
+        } catch (e: TimeoutCancellationException) {
+            println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
         }
 
-        // Final Paint (The actual export)
         val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
-
-        // Note: the scale is already applied in AwtCanvas constructor
-        // canvas.context2d.scale(scaleFactor, scaleFactor)
-
         plotFigure.paint(canvas.context2d)
 
-        val outputStream = ByteArrayOutputStream()
-
-        if (format.defFileExt == "jpg") {
+        val image = if (format is JPEG) {
             val rgbBufferedImage = BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
             val g = rgbBufferedImage.createGraphics()
             g.drawImage(canvas.image, 0, 0, Color.WHITE, null)
             g.dispose()
-            ImageIO.write(rgbBufferedImage, format.defFileExt, outputStream)
+            rgbBufferedImage
         } else {
-            ImageIO.write(canvas.image, format.defFileExt, outputStream)
+            canvas.image
+        }
+
+        val outputStream = ByteArrayOutputStream()
+        withContext(Dispatchers.IO) {
+            ImageIO.write(image, format.defFileExt, outputStream)
         }
 
         return ImageData(
@@ -149,5 +136,21 @@ object PlotImageExport {
                 y = plotFigure.size.y.toDouble()
             )
         )
+    }}
+
+
+suspend fun PlotCanvasFigure.awaitLoading() {
+    if (this.isReady()) return
+
+    suspendCancellableCoroutine { continuation ->
+        val registration = this.onReady {
+            if (continuation.isActive) {
+                continuation.resume(Unit)
+            }
+        }
+
+        continuation.invokeOnCancellation {
+            registration.remove()
+        }
     }
 }

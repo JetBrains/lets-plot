@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
 import demoAndTestShared.ImageComparer
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
@@ -66,15 +67,17 @@ open class VisualPlotTestBase {
     ) {
         val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
-        val imageData = PlotImageExport.buildImageFromRawSpecsInternal(
-            plotSpec = plotSpec,
-            format = PlotImageExport.Format.PNG,
-            scalingFactor = scale ?: 1.0,
-            targetDPI = dpi,
-            plotSize = plotSize,
-            unit = unit,
-            fontManager = fontManager
-        )
+        val imageData = runBlocking {
+            PlotImageExport.buildImageFromRawSpecsInternal(
+                plotSpec = plotSpec,
+                format = PlotImageExport.Format.PNG,
+                scalingFactor = scale ?: 1.0,
+                targetDPI = dpi,
+                plotSize = plotSize,
+                unit = unit,
+                fontManager = fontManager
+            )
+        }
         val image = ImageIO.read(imageData.bytes.inputStream())
         val bitmap = BitmapUtil.fromBufferedImage(image)
 
