@@ -104,13 +104,16 @@ class TextHelper(
     }
 
     companion object {
+        val DEF_NUDGE: (DoubleVector, DoubleVector) -> DoubleVector = { location, _ -> location }
+
         internal fun textComponentFactory(
             p: DataPointAesthetics,
             location: DoubleVector,
             text: String,
             sizeUnitRatio: Double,
             ctx: GeomContext,
-            boundsCenter: DoubleVector?
+            boundsCenter: DoubleVector?,
+            nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
         ): SvgGElement {
             val label = Label(text)
             TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
@@ -118,17 +121,17 @@ class TextHelper(
             label.setHorizontalAnchor(hAnchor)
 
             val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-            val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
+            val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
             //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
             val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
                 Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
-                Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
-                Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
+                Text.VerticalAnchor.BOTTOM -> location.y - textSize.y + fontSize
+                Text.VerticalAnchor.CENTER -> location.y - textSize.y / 2 + fontSize * 0.8
             }
 
             val textLocation = DoubleVector(location.x, yPosition)
-            label.moveTo(textLocation)
+            label.moveTo(nudge(textLocation, textSize))
 
             val g = SvgGElement()
             g.children().add(label.rootGroup)
@@ -143,7 +146,8 @@ class TextHelper(
             sizeUnitRatio: Double,
             ctx: GeomContext,
             boundsCenter: DoubleVector?,
-            labelOptions: LabelOptions
+            labelOptions: LabelOptions,
+            nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
         ): SvgGElement {
             // text size estimation
             val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
@@ -177,7 +181,7 @@ class TextHelper(
                 rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
             )
             label.setHorizontalAnchor(hAnchor)
-            label.moveTo(textPosition)
+            label.moveTo(nudge(textPosition, textSize))
 
             // group elements and apply rotation
             val g = SvgGElement()

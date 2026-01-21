@@ -53,7 +53,19 @@ class BracketGeom : TextGeom() {
         return DoubleVector((xmin + xmax) / 2.0, y)
     }
 
+    override fun componentFactory(
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        text: String,
+        sizeUnitRatio: Double,
+        ctx: GeomContext,
+        boundsCenter: DoubleVector?
+    ) = TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter, ::labelNudge)
+
     companion object {
         const val HANDLES_GROUPS = false
+
+        private fun labelNudge(location: DoubleVector, textSize: DoubleVector): DoubleVector =
+            location.add(DoubleVector(0.0, -textSize.y / 2.0))
     }
 }
