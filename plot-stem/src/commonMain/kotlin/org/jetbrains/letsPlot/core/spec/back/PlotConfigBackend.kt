@@ -432,8 +432,7 @@ open class PlotConfigBackend(
                 ?.let { doubleList -> DoubleSpan.encloseAllQ(doubleList) }
                 ?.let { range ->
                     DateTimeBreaksHelper(
-                        range.lowerEnd,
-                        range.upperEnd,
+                        range,
                         distinctValues.size,
                         providedFormatter = null,
                         minInterval = NiceTimeInterval.minIntervalOf(dataType),

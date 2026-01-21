@@ -19,8 +19,7 @@ class DateTimeBreaksGen constructor(
 ) : OriginalDomainBreaksGenerator {
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = DateTimeBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
+            domain,
             targetCount,
             providedFormatter,
             minInterval = minInterval,
@@ -36,8 +35,7 @@ class DateTimeBreaksGen constructor(
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return DateTimeBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
+            domain,
             targetCount,
             providedFormatter = null,
             minInterval = minInterval,

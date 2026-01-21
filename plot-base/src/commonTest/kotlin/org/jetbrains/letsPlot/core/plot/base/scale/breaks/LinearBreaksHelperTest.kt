@@ -146,7 +146,13 @@ class LinearBreaksHelperTest {
         }
 
         private fun computeBreaks(domainStart: Double, domainEnd: Double, targetCount: Int): Array<Double> {
-            val helper = LinearBreaksHelper(domainStart, domainEnd, targetCount, null, DEF_EXPONENT_FORMAT)
+            val helper = LinearBreaksHelper(
+                domainStart,
+                domainEnd,
+                targetCount,
+                null,
+                DEF_EXPONENT_FORMAT
+            )
             return helper.breaks.toTypedArray()
         }
 

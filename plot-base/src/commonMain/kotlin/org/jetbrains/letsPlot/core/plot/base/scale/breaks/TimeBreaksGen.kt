@@ -31,7 +31,7 @@ class TimeBreaksGen(
                 domain.lowerEnd,
                 domain.upperEnd,
                 targetCount,
-                providedFormatter = null,
+                providedFormatter = DUMMY_FORMATTER,
                 expFormat = DEF_EXPONENT_FORMAT,
             ).breaks
 
