@@ -365,7 +365,7 @@ class LayerConfig constructor(
             return false
         }
 
-        // TODO: Add p-value
+        // TODO: Add bracket
         val isYOriented = when {
             statKind in listOf(
                 StatKind.COUNT,

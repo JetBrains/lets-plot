@@ -518,7 +518,7 @@ object GeomMeta {
                 Aes.LINETYPE
             )
 
-            GeomKind.P_VALUE -> listOf(
+            GeomKind.BRACKET -> listOf(
                 Aes.XMIN,
                 Aes.XMAX,
                 Aes.Y,

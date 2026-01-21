@@ -8,7 +8,7 @@ package demo.plot.common.model.plotConfig
 import demo.plot.common.data.AutoMpg
 import demoAndTestShared.parsePlotSpec
 
-class PValue {
+class Bracket {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
@@ -31,7 +31,7 @@ class PValue {
                   'geom': 'boxplot'
                 },
                 {
-                  'geom': 'pvalue',
+                  'geom': 'bracket',
                   'mapping': {
                     'xmin': 'min',
                     'xmax': 'max',

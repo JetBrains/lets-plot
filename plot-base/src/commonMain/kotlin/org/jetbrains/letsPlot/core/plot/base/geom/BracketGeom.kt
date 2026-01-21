@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 
-class PValueGeom : TextGeom() {
+class BracketGeom : TextGeom() {
     override fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
         val (xmin, xmax, y) = p.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
         return DoubleVector((xmin + xmax) / 2.0, y)

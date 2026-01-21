@@ -6,10 +6,10 @@
 package demo.plot.batik.plotConfig
 
 import demo.common.utils.batik.PlotSpecsDemoWindowBatik
-import demo.plot.common.model.plotConfig.PValue
+import demo.plot.common.model.plotConfig.Bracket
 
 fun main() {
-    with(PValue()) {
+    with(Bracket()) {
         PlotSpecsDemoWindowBatik(
             "Significance annotations",
             plotSpecList()

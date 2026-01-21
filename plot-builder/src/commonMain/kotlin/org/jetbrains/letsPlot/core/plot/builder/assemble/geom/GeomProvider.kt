@@ -433,11 +433,11 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun pValue(): GeomProvider {
+        fun bracket(): GeomProvider {
             return GeomProvider(
-                GeomKind.P_VALUE,
-                PValueGeom.HANDLES_GROUPS
-            ) { PValueGeom() }
+                GeomKind.BRACKET,
+                BracketGeom.HANDLES_GROUPS
+            ) { BracketGeom() }
         }
 
         fun blank(): GeomProvider {
