@@ -22,7 +22,7 @@ kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_br
 
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
                                    kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
-imagemagick_lib_path = os.environ.get('LP_IMAGEMAGICK_PATH')
+imagemagick_lib_path = os.environ.get('IMAGICK_LIB_PATH')
 python_package = 'lets_plot'
 
 
