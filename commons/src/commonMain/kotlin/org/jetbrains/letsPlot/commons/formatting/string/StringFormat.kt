@@ -15,8 +15,8 @@ class StringFormat private constructor(
     private val pattern: String,
     private val fields: List<FormatField>
 ) {
-    fun format(value: Any): String {
-        return format(listOf(value))
+    fun format(vararg args: Any): String {
+        return format(args.toList())
     }
 
     fun format(values: List<Any>): String {

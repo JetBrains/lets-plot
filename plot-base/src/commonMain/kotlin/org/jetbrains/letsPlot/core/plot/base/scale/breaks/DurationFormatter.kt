@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.DAY
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
@@ -17,13 +16,13 @@ internal object DurationFormatter {
         formatDuration((v as Number).toLong())
     }
 
-    private val dayFormat = newStringFormat("{d}d")
-    private val hmsFormat = newStringFormat("{d}:{02d}:{02d}")
-    private val hmFormat = newStringFormat("{d}:{02d}")
+    private val DAY_FORMAT = FormatterUtil.byPattern("{d}d")
+    private val HMS_FORMAT = FormatterUtil.byPattern("{d}:{02d}:{02d}")
+    private val HM_FORMAT = FormatterUtil.byPattern("{d}:{02d}")
 
-    private fun formatTotalDays(duration: Duration) = dayFormat.apply(duration.totalDays)
-    private fun formatHms(duration: Duration) = hmsFormat.apply(duration.hour, duration.minute, duration.second)
-    private fun formatHm(duration: Duration) = hmFormat.apply(duration.hour, duration.minute)
+    private fun formatTotalDays(duration: Duration) = DAY_FORMAT.format(duration.totalDays)
+    private fun formatHms(duration: Duration) = HMS_FORMAT.format(duration.hour, duration.minute, duration.second)
+    private fun formatHm(duration: Duration) = HM_FORMAT.format(duration.hour, duration.minute)
 
     fun formatBreaks(
         breaks: List<Double>,
@@ -86,9 +85,4 @@ internal object DurationFormatter {
         val sign = "-".takeIf { v < 0 } ?: ""
         return parts.joinToString(prefix = sign, separator = " ")
     }
-
-    private fun newStringFormat(format: String): StringFormat =
-        FormatterUtil.byPattern(format, tz = null)
-
-    private fun StringFormat.apply(vararg args: Any): String = format(args.toList())
 }

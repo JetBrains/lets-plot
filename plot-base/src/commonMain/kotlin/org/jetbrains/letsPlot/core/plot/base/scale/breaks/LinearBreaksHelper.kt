@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.*
 
@@ -80,35 +81,44 @@ internal class LinearBreaksHelper(
             val startE = start - delta
             val endE = end + delta
 
-            val breaks = ArrayList<Double>()
+            if (startE <= 0 && endE >= 0) {
+                // The domain includes zero.
+                val neg = generateSequence(0.0) { it - step }
+                    .takeWhile { it >= startE }
+                    .map { if (it == -0.0) 0.0 else it }
+                    .map { max(it, start) }
+                    .toList()
+                    .reversed()
 
-            if (startE <= 0.0 && endE >= 0.0) {
-                var tick = -step
-                while (tick >= startE) {
-                    // don't allow ticks to go beyond the range
-                    tick = max(tick, start)
-                    breaks.add(0, tick) // add in reverse order to keep the breaks sorted
-                    tick -= step
-                }
+                val pos = generateBreaks(DoubleSpan(0.0, end), step)
 
-                tick = 0.0
-                while (tick <= endE) {
-                    // don't allow ticks to go beyond the range
-                    tick = min(tick, end)
-                    breaks.add(tick)
-                    tick += step
-                }
-
+                return (neg + pos).distinct()
             } else {
-                var tick = ceil(startE / step) * step
-                while (tick <= endE) {
-                    // don't allow ticks to go beyond the range
-                    tick = min(tick, end)
-                    breaks.add(tick)
-                    tick += step
-                }
+                return generateBreaks(DoubleSpan(start, end), step)
             }
-            return breaks
+        }
+
+        internal fun generateBreaks(
+            domain: DoubleSpan,
+            step: Double
+        ): List<Double> {
+            check(step > 0) { "Step must be positive: $step" }
+
+            val start = domain.lowerEnd
+            val end = domain.upperEnd
+
+            // extend range to allow for FP errors
+            val delta = step / 10000
+            val startE = start - delta
+            val endE = end + delta
+
+            val startTick = ceil(startE / step) * step
+            return generateSequence(startTick) { it + step }
+                .takeWhile { it <= endE }
+                .map { if (it == -0.0) 0.0 else it }
+                .map { min(it, end) }  // Do not allow ticks to go beyond the range
+                .distinct()
+                .toList()
         }
 
         private fun createFormatter(breakValues: List<Double>, expFormat: ExponentFormat): (Any) -> String {

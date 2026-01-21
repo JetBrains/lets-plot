@@ -24,11 +24,11 @@ class TimeFixedBreaksGen(
         get() = true
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
-        val breaks = TimeBreaksHelper.makeBreaks(
-            start = domain.lowerEnd,
-            end = domain.upperEnd,
-            step = breakWidth.totalMillis,
+        val breaks = LinearBreaksHelper.generateBreaks(
+            domain,
+            breakWidth.totalMillis.toDouble()
         )
+
         val labels = DurationFormatter.formatBreaks(
             breaks,
             breakWidth = breakWidth.totalMillis.toDouble(),
