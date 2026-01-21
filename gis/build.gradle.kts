@@ -37,7 +37,7 @@ kotlin {
 
         nativeMain {
             dependencies {
-                compileOnly("io.ktor:ktor-client-cio:${ktorVersion}")
+                implementation("io.ktor:ktor-client-curl:${ktorVersion}")
             }
         }
 

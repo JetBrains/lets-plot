@@ -36,6 +36,6 @@ class MagickCanvasPeer(
     }
 
     override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationProvider.AnimationTimer {
-        TODO("Not yet implemented")
+        return NativeAnimationProvider().createAnimationTimer(eventHandler)
     }
 }

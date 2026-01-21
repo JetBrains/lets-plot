@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.gis.tileprotocol.Request.ConfigureConnectionReques
 import org.jetbrains.letsPlot.gis.tileprotocol.Request.GetBinaryGeometryRequest
 import org.jetbrains.letsPlot.gis.tileprotocol.TileService.SocketStatus.*
 import org.jetbrains.letsPlot.gis.tileprotocol.binary.ResponseTileDecoder
-import org.jetbrains.letsPlot.gis.tileprotocol.json.MapStyleJsonParser
 import org.jetbrains.letsPlot.gis.tileprotocol.json.RequestFormatter
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SafeSocketHandler
@@ -41,6 +40,7 @@ open class TileService(url: String, private val myTheme: Theme) {
     private var myStatus = NOT_CONNECTED
 
     open fun getTileData(bbox: Rect<LonLat>, zoom: Int): Async<List<TileLayer>> {
+        println("Requesting tile data for zoom=$zoom, bbox=$bbox")
         val key = myIncrement++.toString()
         val async = ThreadSafeAsync<List<TileLayer>>()
 
@@ -105,8 +105,9 @@ open class TileService(url: String, private val myTheme: Theme) {
         }
 
         override fun onTextMessage(message: String) {
+            //println("TileService: received text message $message")
             if (mapConfig == null) {
-                mapConfig = MapStyleJsonParser.parse(JsonSupport.parseJson(message))
+                //mapConfig = MapStyleJsonParser.parse(JsonSupport.parseJson(message))
             }
             myStatus = CONFIGURED
             myMessageQueue.run { forEach(mySocket::send); clear() }

@@ -1,17 +1,22 @@
 package org.jetbrains.letsPlot.gis
 
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.*
 
-actual fun newHttpClient(): io.ktor.client.HttpClient {
-    return HttpClient(CIO)
+actual fun newHttpClient(): HttpClient {
+    return HttpClient()
 }
 
 actual fun newWebSocketClient(): HttpClient {
-    return HttpClient(CIO) {
-        install(WebSockets)
+    return HttpClient() {
+        install(WebSockets) {
+            maxFrameSize = 10L * 1024 * 1024
+        }
+
+        engine {
+            pipelining
+        }
     }
 }
 

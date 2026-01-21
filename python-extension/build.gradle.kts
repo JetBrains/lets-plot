@@ -9,6 +9,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+val ktorVersion = project.extra["ktor.version"] as String
+
 val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
@@ -87,6 +89,11 @@ kotlin {
                 implementation(project(":plot-stem"))
                 implementation(project(":platf-imagick"))
                 implementation(project(":plot-raster"))
+                implementation(project(":plot-livemap"))
+                implementation(project(":livemap"))
+                implementation(project(":gis"))
+
+                implementation("io.ktor:ktor-client-curl:${ktorVersion}")
             }
         }
 

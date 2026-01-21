@@ -15,6 +15,10 @@ import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeout
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -29,6 +33,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import org.jetbrains.letsPlot.raster.view.RenderingHints
+import kotlin.coroutines.resume
 import kotlin.time.TimeSource
 
 object PlotReprGenerator {
@@ -205,46 +210,65 @@ object PlotReprGenerator {
         scale: Number? = null,
         antialiasing: Boolean = true
     ): Pair<Bitmap, Double> {
-        var canvasReg: Registration? = null
-        try {
-            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
+        println("PlotReprGenerator.exportBitmap(): plotSize=$plotSize, sizeUnit=$sizeUnit, dpi=$dpi, scale=$scale")
+        return runBlocking {
+            var canvasReg: Registration? = null
+            try {
+                val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
-            @Suppress("UNCHECKED_CAST")
-            val rawPlotSpec = plotSpec as MutableMap<String, Any>
+                @Suppress("UNCHECKED_CAST")
+                val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-            val plotCanvasFigure = PlotCanvasFigure()
-            // There is no interactive rendering in export - so offscreen buffering is not needed and just wastes memory
-            plotCanvasFigure.setRenderingHint(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF)
+                val plotCanvasFigure = PlotCanvasFigure()
+                // There is no interactive rendering in export - so offscreen buffering is not needed and just wastes memory
+                plotCanvasFigure.setRenderingHint(
+                    RenderingHints.KEY_OFFSCREEN_BUFFERING,
+                    RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
+                )
 
-            plotCanvasFigure.update(
-                processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
-                sizingPolicy = exportParameters.sizingPolicy,
-                computationMessagesHandler = { }
-            )
+                plotCanvasFigure.update(
+                    processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
+                    sizingPolicy = exportParameters.sizingPolicy,
+                    computationMessagesHandler = { }
+                )
 
-            val magickCanvasPeer = MagickCanvasPeer(
-                pixelDensity = exportParameters.scaleFactor,
-                fontManager = fontManager,
-                antialiasing = antialiasing
-            )
+                val magickCanvasPeer = MagickCanvasPeer(
+                    pixelDensity = exportParameters.scaleFactor,
+                    fontManager = fontManager,
+                    antialiasing = antialiasing
+                )
 
-            canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+                canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
-            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size, contentScale = exportParameters.scaleFactor)
-            val ctx = canvas.context2d
+                // Start loading tiles by painting to a dummy canvas
+                val dummyCanvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+                plotCanvasFigure.paint(dummyCanvas.context2d)
 
-            plotCanvasFigure.paint(ctx)
+                try {
+                    withTimeout(15_000L) {
+                        plotCanvasFigure.awaitLoading()
+                    }
+                } catch (e: TimeoutCancellationException) {
+                    println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
+                }
 
-            // Save the image to a file
-            val snapshot = canvas.takeSnapshot()
-            val bitmap = snapshot.bitmap
+                val canvas =
+                    magickCanvasPeer.createCanvas(plotCanvasFigure.size, contentScale = exportParameters.scaleFactor)
+                val ctx = canvas.context2d
 
-            ctx.dispose()
-            snapshot.dispose()
+                plotCanvasFigure.paint(ctx)
 
-            return bitmap to exportParameters.dpi
-        } finally {
-            canvasReg?.dispose()
+                // Save the image to a file
+                val snapshot = canvas.takeSnapshot()
+                val bitmap = snapshot.bitmap
+
+                ctx.dispose()
+                snapshot.dispose()
+
+                bitmap to exportParameters.dpi
+            } finally {
+                canvasReg?.dispose()
+            }
         }
     }
 
@@ -390,3 +414,20 @@ object PlotReprGenerator {
     }
 
 }
+
+suspend fun PlotCanvasFigure.awaitLoading() {
+    if (this.isReady()) return
+
+    suspendCancellableCoroutine { continuation ->
+        val registration = this.onReady {
+            if (continuation.isActive) {
+                continuation.resume(Unit)
+            }
+        }
+
+        continuation.invokeOnCancellation {
+            registration.remove()
+        }
+    }
+}
+
