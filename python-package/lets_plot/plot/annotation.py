@@ -290,45 +290,40 @@ class layer_labels(FeatureSpec):
         return self
 
 # todo docs
-class smooth_labels(FeatureSpec):
+class smooth_labels(layer_labels):
 
     def __init__(self, variables: List[str] = None):
-        self._base = layer_labels(list(variables) if variables is not None else None).inherit_color()
+        super().__init__(variables)
 
-        super().__init__("labels", name=None)
+        self._rhs = None
+        self._lhs = None
 
-    def format(self, field=None, format=None) -> "smooth_labels":
-        self._base.format(field, format)
+        self.inherit_color()
+
+    def eq(self, *, with_lhs="y", rhs=None, format=None) -> "smooth_labels":
+        if format is not None:
+            self.format('..eq..', format=format)
+
+        self.line('@{..eq..}')
+
+        if rhs is not None:
+            self._rhs = rhs
+
+        self._lhs = with_lhs
+
         return self
 
-    def line(self, value: str) -> "smooth_labels":
-        self._base.line(value)
-        return self
+    def rr(self, format=None) -> "smooth_labels":
+        if format is not None:
+            self.format('..r2..', format=format)
 
-    def size(self, value: float) -> "smooth_labels":
-        self._base.size(value)
-        return self
-
-    def eq(
-            self,
-            *,
-            with_lhs: str = "y",
-    ) -> "smooth_labels":
-
-        lhs = with_lhs + '=' if with_lhs is not None else ''
-
-        self._base.line('\(' + lhs + '@{..eq..}\)')
-        return self
-
-    def rr(
-            self
-    ) -> "smooth_labels":
-        self._base.line('\(R\\^2 = @{..r2..}\)')
+        self.line('\(R\\^2 = @{..r2..}\)')
         return self
 
     def as_dict(self):
-        if self._base._lines is None:
-            self._base._lines = []
-            self._base.line('\(R\\^2 = @{..r2..}\)')
+        d = super().as_dict()
 
-        return self._base.as_dict()
+        d['lines'] = d['lines'] if 'lines' in d else ['\(R\\^2 = @{..r2..}\)']
+        d['rhs'] = self._rhs
+        d['lhs'] = self._lhs
+        return _filter_none(d)

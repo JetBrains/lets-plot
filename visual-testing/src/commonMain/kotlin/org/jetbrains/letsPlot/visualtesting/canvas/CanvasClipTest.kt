@@ -191,7 +191,7 @@ internal class CanvasClipTest(
 
         ctx.fillStyle = "black"
         ctx.strokeStyle = "black"
-        ctx.setFont(Font(fontFamily = "serif", fontSize = 50.0))
+        ctx.setFont(Font(fontFamily = "Noto Serif", fontSize = 50.0))
 
         ctx.beginPath()
         nwRect(ctx)

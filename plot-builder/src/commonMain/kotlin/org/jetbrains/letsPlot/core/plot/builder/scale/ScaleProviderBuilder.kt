@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.scale
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
@@ -30,7 +30,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<Any?>? = null
     private var myContinuousTransform: ContinuousTransform = Transforms.IDENTITY
-    private var myBreaksGenerator: BreaksGenerator? = null
+    private var myBreaksGenerator: OriginalDomainBreaksGenerator? = null
 
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
@@ -106,12 +106,12 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun breaksGenerator(v: BreaksGenerator): ScaleProviderBuilder<T> {
+    fun breaksGenerator(v: OriginalDomainBreaksGenerator): ScaleProviderBuilder<T> {
         myBreaksGenerator = v
         return this
     }
 
-    fun breaksGeneratorIfNone(v: BreaksGenerator): ScaleProviderBuilder<T> {
+    fun breaksGeneratorIfNone(v: OriginalDomainBreaksGenerator): ScaleProviderBuilder<T> {
         if (myBreaksGenerator == null) {
             myBreaksGenerator = v
         }
@@ -148,7 +148,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val tz: TimeZone? = b.tz
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
-        private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
+        private val myBreaksGenerator: OriginalDomainBreaksGenerator? = b.myBreaksGenerator
         private val myExpFormat: ExponentFormat = b.myExpFormat
         private val myAes: Aes<T> = b.aes
 

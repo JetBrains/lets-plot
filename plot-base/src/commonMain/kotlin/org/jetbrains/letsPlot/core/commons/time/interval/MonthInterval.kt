@@ -30,4 +30,17 @@ internal class MonthInterval(
             dateTime.date.addMonths(count),
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as MonthInterval
+        if (count != other.count) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return count
+    }
 }

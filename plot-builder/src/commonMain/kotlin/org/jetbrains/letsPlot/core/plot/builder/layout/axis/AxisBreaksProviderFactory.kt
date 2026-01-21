@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 
 abstract class AxisBreaksProviderFactory {
     abstract fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider
@@ -17,7 +17,12 @@ abstract class AxisBreaksProviderFactory {
             return if (scale.hasBreaks()) {
                 FixedBreaksProviderFactory(FixedAxisBreaksProvider(scale.getShortenedScaleBreaks()))
             } else {
-                AdaptableBreaksProviderFactory(scale.getBreaksGenerator())
+                val breaksGenerator = scale.getBreaksGenerator()
+                if (breaksGenerator.fixedBreakWidth) {
+                    FixedBreakWidthAxisBreaksProviderFactory(breaksGenerator)
+                } else {
+                    AdaptableBreaksProviderFactory(breaksGenerator)
+                }
             }
         }
     }
@@ -29,9 +34,17 @@ abstract class AxisBreaksProviderFactory {
         }
     }
 
-    class AdaptableBreaksProviderFactory(private val breaksGenerator: BreaksGenerator) : AxisBreaksProviderFactory() {
+    class AdaptableBreaksProviderFactory(private val breaksGenerator: TransformedDomainBreaksGenerator) : AxisBreaksProviderFactory() {
         override fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider {
             return AdaptableAxisBreaksProvider(axisDomain, breaksGenerator)
+        }
+    }
+
+    class FixedBreakWidthAxisBreaksProviderFactory(
+        private val breaksGenerator: TransformedDomainBreaksGenerator
+    ) : AxisBreaksProviderFactory() {
+        override fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider {
+            return FixedBreakWidthAxisBreaksProvider(axisDomain, breaksGenerator)
         }
     }
 }

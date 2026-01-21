@@ -257,6 +257,8 @@ object Option {
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
+        const val LHS = "lhs"
+        const val RHS = "rhs"
 
         object Format {
             const val FIELD = "field"
@@ -682,6 +684,7 @@ object Option {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
+        const val BREAK_WIDTH = "break_width"
         const val LABELS = "labels"
         const val LABLIM = "lablim"
         const val EXPAND = "expand"

@@ -9,19 +9,20 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 
-internal class AdaptableAxisBreaksProvider(
+internal class FixedBreakWidthAxisBreaksProvider(
     private val domainAfterTransform: DoubleSpan,
     private val breaksGenerator: TransformedDomainBreaksGenerator
 ) : AxisBreaksProvider {
 
-    override val isFixedBreaks: Boolean = false
-
+    override val isFixedBreaks: Boolean = true
     override val fixedBreaks: ScaleBreaks
-        get() = throw IllegalStateException("Not a fixed breaks provider")
+
+    init {
+        fixedBreaks = breaksGenerator.generateBreaks(domainAfterTransform, targetCount = -1)
+        check(fixedBreaks.fixed) { "Expected 'fixed' scale breaks." }
+    }
 
     override fun getBreaks(targetCount: Int): ScaleBreaks {
-        val scaleBreaks = breaksGenerator.generateBreaks(domainAfterTransform, targetCount)
-        check(!scaleBreaks.fixed) { "Unexpected 'fixed' scale breaks." }
-        return scaleBreaks
+        return fixedBreaks
     }
 }

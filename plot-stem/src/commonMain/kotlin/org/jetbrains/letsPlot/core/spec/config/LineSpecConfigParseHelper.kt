@@ -6,11 +6,13 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ConstantField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.EqDataFrameField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 import org.jetbrains.letsPlot.core.spec.Option
@@ -32,6 +34,8 @@ open class LineSpecConfigParser(
             },
             formats = getList(Option.LinesSpec.FORMATS),
             variables = getStringList(Option.LinesSpec.VARIABLES),
+            lhs = getString(Option.LinesSpec.LHS),
+            rhs = getString(Option.LinesSpec.RHS),
             titleLine = getString(Option.LinesSpec.TITLE)
         ).parse()
     }
@@ -40,6 +44,8 @@ open class LineSpecConfigParser(
         private val lines: List<String>?,
         formats: List<*>,
         variables: List<String>,
+        private val lhs: String?,
+        private val rhs: String?,
         private val titleLine: String?
     ) {
         private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(formats)
@@ -113,6 +119,10 @@ open class LineSpecConfigParser(
                         null -> MappingField(aes, format = format)
                         else -> ConstantField(aes, constant, format)
                     }
+               }
+
+                fieldName == Stats.EQ.name -> {
+                    EqDataFrameField(fieldName, format, lhs, rhs)
                 }
 
                 else -> {

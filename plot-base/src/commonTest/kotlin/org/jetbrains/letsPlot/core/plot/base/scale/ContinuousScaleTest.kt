@@ -74,7 +74,7 @@ class ContinuousScaleTest {
                 TODO("Not yet implemented")
             }
 
-            override fun apply(v: Double?): Double? {
+            override fun apply(v: Double?): Double {
                 TODO("Not yet implemented")
             }
 
@@ -111,7 +111,7 @@ class ContinuousScaleTest {
     fun withBreaksGenerator() {
         val scale = createScale()
 
-        val bg = object : BreaksGenerator {
+        val bg = object : OriginalDomainBreaksGenerator {
             override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
                 return ScaleBreaks.EMPTY
             }
@@ -121,12 +121,8 @@ class ContinuousScaleTest {
             }
         }
 
-        fun actual(scale: Scale): BreaksGenerator {
-            assertTrue(
-                scale.getBreaksGenerator() is Transforms.BreaksGeneratorForTransformedDomain,
-                "Expected BreaksGeneratorForTransformedDomain bu was ${scale.getBreaksGenerator()::class.simpleName}"
-            )
-            return (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+        fun actual(scale: Scale): OriginalDomainBreaksGenerator {
+            return scale.getBreaksGenerator().originalDomainBreaksGen
         }
 
         val scale1 = scale.with().breaksGenerator(bg).build()
@@ -141,8 +137,6 @@ class ContinuousScaleTest {
     fun withDomainLimits() {
         var scale = createScale()
         scale = scale.with()
-//            .lowerLimit(-10.0)
-//            .upperLimit(10.0)
             .continuousTransform(transWithLims(-10.0, 10.0))
             .build()
 
@@ -155,7 +149,6 @@ class ContinuousScaleTest {
     fun withDomainLimits_Lower() {
         var scale = createScale()
         scale = scale.with()
-//            .lowerLimit(-10.0)
             .continuousTransform(transWithLims(lower = -10.0))
             .build()
 
@@ -168,7 +161,6 @@ class ContinuousScaleTest {
     fun withDomainLimits_Upper() {
         var scale = createScale()
         scale = scale.with()
-//            .upperLimit(10.0)
             .continuousTransform(transWithLims(upper = 10.0))
             .build()
 
@@ -181,13 +173,10 @@ class ContinuousScaleTest {
     fun withDomainLimits_SameInCopy() {
         var scale = createScale()
         scale = scale.with()
-//            .lowerLimit(-10.0)
-//            .upperLimit(10.0)
             .continuousTransform(transWithLims(-10.0, 10.0))
             .build()
 
         scale as ContinuousScale
-//        val domainLimits = scale.continuousDomainLimits
         val domainLimits = scale.transform.definedLimits()
 
         val copy = scale.with().build() as ContinuousScale

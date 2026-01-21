@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage
 import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage.LAYER
 import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage.PLOT
@@ -300,7 +299,7 @@ class SeriesAnnotationTest {
         val scale = createScales().getValue(aes)
         if (scale.isContinuous) {
             val breaksGenerator =
-                (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
+                scale.getBreaksGenerator().originalDomainBreaksGen
             assertTrue(breaksGenerator is DateTimeBreaksGen == isDateTime, "Scale '${aes.name}' should be date-time")
         } else {
             assertFalse(isDateTime)

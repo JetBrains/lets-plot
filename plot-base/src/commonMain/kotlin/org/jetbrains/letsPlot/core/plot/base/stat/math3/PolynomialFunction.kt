@@ -195,6 +195,10 @@ class PolynomialFunction(c: DoubleArray?) {
         return d1.compareTo(d2)
     }
 
+    fun getCoefficients(): DoubleArray {
+        return coefficients
+    }
+
     override operator fun equals(other: Any?): Boolean {
         if (other == null || other !is PolynomialFunction)
             return false
@@ -216,7 +220,7 @@ class PolynomialFunction(c: DoubleArray?) {
                 if (!sb.isEmpty())
                     sb.append(if (sign(coefficients[i]) < 0 ) " - " else " + ")
 
-                sb.append(abs(coefficients[i]).roundTo(6).toString())
+                sb.append(abs(coefficients[i]).toString())
 
                 if (i > 0)
                     sb.append("x")
@@ -232,10 +236,5 @@ class PolynomialFunction(c: DoubleArray?) {
 
 operator fun Double.times(p: PolynomialFunction): PolynomialFunction {
     return p.multiply(this)
-}
-
-fun Double.roundTo(digits: Int): Double {
-    val p = 10.0.pow(digits)
-    return round(this * p) / p
 }
 

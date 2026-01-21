@@ -24,6 +24,7 @@ internal class AwtContext2d(
     initialGraphics: Graphics2D,
     contentScale: Double,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(contentScale = contentScale),
+    private val fontManager: FontManager = FontManager()
 ) : Context2d by stateDelegate {
     private var graphics: Graphics2D = (initialGraphics.create() as Graphics2D).apply {
         stroke = BasicStroke()
@@ -169,7 +170,13 @@ internal class AwtContext2d(
     override fun setFont(f: Font) {
         stateDelegate.setFont(f)
 
-        graphics.font = f.toAwtFont()
+        val awtFont = if (fontManager.isFontRegistered(f)) {
+            fontManager.getFont(f)
+        } else {
+            f.toAwtFont()
+        }
+
+        graphics.font = awtFont
     }
 
     override fun setGlobalAlpha(alpha: Double) {

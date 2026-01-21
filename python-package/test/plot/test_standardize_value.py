@@ -179,7 +179,7 @@ def test_standardize_value_polars_enum_and_categorical():
         'enum_col': pl.Series('enum_col', ['a', 'b', 'c', 'a', 'b'],
                               dtype=pl.Enum(['a', 'c', 'b'])),
         'categorical_col': pl.Series('categorical_col', ['x', 'y', 'z', 'x', 'y'],
-                                     dtype=pl.Categorical(['x', 'z', 'y']))
+                                     dtype=pl.Categorical)
     })
 
     # Standardize the DataFrame

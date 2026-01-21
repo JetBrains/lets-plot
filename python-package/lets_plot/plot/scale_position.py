@@ -1003,6 +1003,7 @@ def scale_y_discrete_reversed(name=None, *,
 
 def scale_x_datetime(name=None, *,
                      breaks=None,
+                     break_width=None,
                      labels=None,
                      lablim=None,
                      limits=None,
@@ -1025,6 +1026,10 @@ def scale_x_datetime(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : str
+        A string giving the distance between breaks, e.g., "2 weeks", "3 months", "12 hours".
+        Supported units: ms/millisecond(s), sec/second(s), min/minute(s),
+        hour(s), day(s), week(s), month(s), year(s).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -1080,6 +1085,7 @@ def scale_x_datetime(name=None, *,
     return _scale('x',
                   name=name,
                   breaks=breaks,
+                  break_width=break_width,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
@@ -1094,7 +1100,10 @@ def scale_x_datetime(name=None, *,
 
 
 def scale_y_datetime(name=None, *,
-                     breaks=None, labels=None, lablim=None,
+                     breaks=None,
+                     break_width=None,
+                     labels=None,
+                     lablim=None,
                      limits=None,
                      expand=None,
                      na_value=None,
@@ -1115,6 +1124,10 @@ def scale_y_datetime(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : str
+        A string giving the distance between breaks, e.g., "2 weeks", "3 months", "12 hours".
+        Supported units: ms/millisecond(s), sec/second(s), min/minute(s),
+        hour(s), day(s), week(s), month(s), year(s).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -1171,6 +1184,7 @@ def scale_y_datetime(name=None, *,
     return _scale('y',
                   name=name,
                   breaks=breaks,
+                  break_width=break_width,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,

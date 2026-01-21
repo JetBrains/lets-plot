@@ -49,7 +49,7 @@ class PolynomialRegression private constructor (
                 model,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
-                polynomial.toString(),
+                polynomial.getCoefficients().joinToString(";"),
                 calcRSquared(xVals, yVals, model)
             )
         }
