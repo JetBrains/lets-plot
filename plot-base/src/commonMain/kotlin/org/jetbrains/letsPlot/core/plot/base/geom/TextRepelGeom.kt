@@ -57,7 +57,7 @@ open class TextRepelGeom: TextGeom() {
             return coord.toClient(point)
         }
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::coordOrNull, ::objectRectangle, ::componentFactory)
         val svgHelper = GeomHelper.SvgElementHelper(::toClient)
             .setStrokeAlphaEnabled(true)
             .setArrowSpec(arrowSpec)

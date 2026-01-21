@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 
 class PValueGeom : TextGeom() {
-    override fun pointLocationOrNull(point: DataPointAesthetics): DoubleVector? {
-        val (xmin, xmax, y) = point.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
+    override fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
+        val (xmin, xmax, y) = p.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
         return DoubleVector((xmin + xmax) / 2.0, y)
     }
 

@@ -30,12 +30,14 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::coordOrNull, ::objectRectangle, ::componentFactory)
         textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
         textHelper.buildHints(targetCollector)
     }
+
+    open fun coordOrNull(p: DataPointAesthetics): DoubleVector? = p.finiteVectorOrNull(Aes.X, Aes.Y)
 
     open fun componentFactory(
         p: DataPointAesthetics,

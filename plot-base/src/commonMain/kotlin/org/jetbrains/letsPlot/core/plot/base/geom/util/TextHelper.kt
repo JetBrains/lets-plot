@@ -30,6 +30,7 @@ class TextHelper(
     private val naValue: String,
     private val sizeUnit: String?,
     private val checkOverlap: Boolean,
+    private val coordOrNull: (DataPointAesthetics) -> DoubleVector?,
     private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Text.VerticalAnchor) -> DoubleRectangle,
     private val componentFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgGElement
 ) : GeomHelper(pos, coord, ctx) {
@@ -40,7 +41,7 @@ class TextHelper(
         return myAesthetics.dataPoints().mapNotNull { p ->
             val text = toString(p.label())
             if (text.isEmpty()) return@mapNotNull null
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return@mapNotNull null
+            val point = coordOrNull(p) ?: return@mapNotNull null
             val location = toClient(point, p) ?: return@mapNotNull null
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
@@ -62,7 +63,7 @@ class TextHelper(
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
 
         myAesthetics.dataPoints().forEach { p ->
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return
+            val point = coordOrNull(p) ?: return
             val location = toClient(point, p) ?: return
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
             targetCollector.addPoint(
