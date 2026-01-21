@@ -524,6 +524,7 @@ object GeomMeta {
                 Aes.Y,
                 Aes.LABEL,
                 Aes.SIZE,
+                Aes.STROKE,
                 Aes.LINETYPE,       // TODO
                 Aes.COLOR,
                 Aes.ALPHA,
