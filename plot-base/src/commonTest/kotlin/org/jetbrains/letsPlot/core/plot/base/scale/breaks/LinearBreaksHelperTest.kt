@@ -88,6 +88,37 @@ class LinearBreaksHelperTest {
         assertEquals(1.0, breaks[0])
     }
 
+    @Test
+    fun nearZeroToNearOneShouldProduceCleanBreaks() {
+        // Real data with FP noise: domain is almost [0, 1] but with tiny artifacts
+        val breaks = computeBreaks(
+            domainStart = 4.8174916649430757e-144,
+            domainEnd = 0.9999999999998934,
+            targetCount = 5
+        )
+        // Should produce clean breaks: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+        // or almost clean breaks within error tolerance, like: [0.0, 0.2, 0.4, 0.6000000000000001, 0.8, 0.9999999999998934]
+        assertEquals(6, breaks.size, "Expected 6 breaks, got ${breaks.toList()}")
+
+        assertEquals(0.0, breaks[0], ERROR_TOLERANCE)
+        assertEquals(0.2, breaks[1], ERROR_TOLERANCE)
+        assertEquals(0.4, breaks[2], ERROR_TOLERANCE)
+        assertEquals(0.6, breaks[3], ERROR_TOLERANCE)
+        assertEquals(0.8, breaks[4], ERROR_TOLERANCE)
+        assertEquals(1.0, breaks[5], ERROR_TOLERANCE)
+
+        // Breaks should be formatted nicely.
+        val formatter = createBreakFormatter(
+            domainStart = 4.8174916649430757e-144,
+            domainEnd = 0.9999999999998934,
+            targetCount = 5
+        )
+
+        val expectedLabels = listOf("0", "0.2", "0.4", "0.6", "0.8", "1")
+        val actualLabels = breaks.map { formatter(it) }
+        assertEquals(expectedLabels, actualLabels)
+    }
+
     companion object {
 
         private val DOMAINS = arrayOf(
@@ -153,6 +184,17 @@ class LinearBreaksHelperTest {
                 DEF_EXPONENT_FORMAT
             )
             return helper.breaks.toTypedArray()
+        }
+
+        private fun createBreakFormatter(domainStart: Double, domainEnd: Double, targetCount: Int): (Any) -> String {
+            val domain = DoubleSpan(domainStart, domainEnd)
+            val helper = LinearBreaksHelper(
+                domain,
+                targetCount,
+                null,
+                DEF_EXPONENT_FORMAT
+            )
+            return helper.formatter
         }
 
         private fun multiply(values: DoubleArray, factor: Double): DoubleArray {

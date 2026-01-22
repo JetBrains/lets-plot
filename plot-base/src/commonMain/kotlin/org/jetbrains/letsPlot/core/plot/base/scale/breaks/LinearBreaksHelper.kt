@@ -74,17 +74,17 @@ internal class LinearBreaksHelper constructor(
             val endE = end + delta
 
             if (startE <= 0 && endE >= 0) {
-                // The domain includes zero.
-                val neg = generateSequence(0.0) { it - step }
+                // The domain includes zero - make sure that 0.0 is included in the breaks
+                val positives = generateBreaks(DoubleSpan(0.0, end), step)
+
+                val negatives = generateSequence(-step) { it - step }
                     .takeWhile { it >= startE }
                     .map { if (it == -0.0) 0.0 else it }
-                    .map { max(it, start) }
+                    .map { max(it, start) }  // Keep breaks within the domain
                     .toList()
                     .reversed()
 
-                val pos = generateBreaks(DoubleSpan(0.0, end), step)
-
-                return (neg + pos).distinct()
+                return (negatives + positives).distinct()
             } else {
                 return generateBreaks(DoubleSpan(start, end), step)
             }
@@ -108,7 +108,7 @@ internal class LinearBreaksHelper constructor(
             return generateSequence(startTick) { it + step }
                 .takeWhile { it <= endE }
                 .map { if (it == -0.0) 0.0 else it }
-                .map { min(it, end) }  // Do not allow ticks to go beyond the range
+                .map { min(it, end) }  // Keep breaks within the domain
                 .distinct()
                 .toList()
         }
