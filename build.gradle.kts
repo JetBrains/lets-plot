@@ -74,6 +74,9 @@ fun readPropertiesFromParameters() {
     if (!os.isWindows) {
         properties["architecture"] = project.property("architecture")
     }
+    if (project.hasProperty("imagemagick_lib_path")) {
+        properties["imagemagick_lib_path"] = project.property("imagemagick_lib_path")
+    }
     for (property in properties) {
         extra[property.key as String] = property.value
     }
