@@ -525,15 +525,15 @@ object GeomMeta {
                 Aes.LABEL,
                 Aes.SIZE,
                 Aes.STROKE,
-                Aes.LINETYPE,       // TODO
+                Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.ALPHA,
                 Aes.FAMILY,
                 Aes.FONTFACE,
                 Aes.HJUST,          // TODO
                 Aes.VJUST,          // TODO
-                Aes.ANGLE,          // TODO
-                Aes.LINEHEIGHT,     // TODO
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
                 Aes.SEGMENT_COLOR,  // TODO
                 Aes.SEGMENT_SIZE,   // TODO
                 Aes.SEGMENT_ALPHA   // TODO
