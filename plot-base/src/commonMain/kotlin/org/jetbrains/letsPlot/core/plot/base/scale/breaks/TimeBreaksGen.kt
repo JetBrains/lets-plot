@@ -28,8 +28,7 @@ class TimeBreaksGen(
         val targetStep = domain.length / targetCount
         val breaks: List<Double> = when {
             targetStep < 1000 -> LinearBreaksHelper(
-                domain.lowerEnd,
-                domain.upperEnd,
+                domain,
                 targetCount,
                 providedFormatter = DUMMY_FORMATTER,
                 expFormat = DEF_EXPONENT_FORMAT,

@@ -35,8 +35,7 @@ class DateTimeBreaksHelper constructor(
         pattern = if (step < 1000) {        // milliseconds
             // regular nice breaks
             breaks = LinearBreaksHelper(
-                rangeStart = domain.lowerEnd,
-                rangeEnd = domain.upperEnd,
+                domain,
                 targetCount = count,
                 providedFormatter = DUMMY_FORMATTER,
                 DEF_EXPONENT_FORMAT
@@ -72,9 +71,8 @@ class DateTimeBreaksHelper constructor(
                 }
                 val endYear = DateTime.ofEpochMilliseconds(end, timeZone).year
                 val helper = LinearBreaksHelper(
-                    startYear.toDouble(),
-                    endYear.toDouble(),
-                    count,
+                    domain = DoubleSpan(startYear.toDouble(), endYear.toDouble()),
+                    targetCount = count,
                     providedFormatter = DUMMY_FORMATTER,
                     expFormat = DEF_EXPONENT_FORMAT,
                 )

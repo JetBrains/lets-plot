@@ -10,53 +10,45 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.*
 
-internal class LinearBreaksHelper(
-    rangeStart: Double,
-    rangeEnd: Double,
+internal class LinearBreaksHelper constructor(
+    domain: DoubleSpan,
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
     expFormat: ExponentFormat,
-    precise: Boolean = false
-) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
+) {
 
-    override val breaks: List<Double>
+    val breaks: List<Double>
     val formatter: (Any) -> String
 
     init {
-        check(targetCount > 0) { "Can't compute breaks for count: $targetCount" }
+        check(targetCount > 0) { "'count' must be positive: $targetCount" }
 
-        val step = if (precise) {
-            this.targetStep
-        } else {
-            computeNiceStep(this.span, targetCount)
-        }
-
+        val step = computeNiceStep(domain.length, targetCount)
+        val start = domain.lowerEnd
+        val end = domain.upperEnd
         val breaks =
-            if (SeriesUtil.isBeyondPrecision(normalStart, step) || SeriesUtil.isBeyondPrecision(normalEnd, step)) {
+            if (SeriesUtil.isBeyondPrecision(start, step) ||
+                SeriesUtil.isBeyondPrecision(end, step)
+            ) {
                 emptyList()
-            } else if (precise) {
-                (0 until targetCount).map { normalStart + step / 2 + it * step }
             } else {
-                computeNiceBreaks(normalStart, normalEnd, step)
+                computeNiceBreaks(start, end, step)
             }
 
-        this.breaks = if (breaks.isEmpty()) {
-            listOf(normalStart)
-        } else if (isReversed) {
-            breaks.asReversed()
-        } else {
-            breaks
+        this.breaks = breaks.ifEmpty {
+            listOf(start)
         }
 
         this.formatter = providedFormatter ?: createFormatter(this.breaks, expFormat)
     }
 
     companion object {
+
         private fun computeNiceStep(
             span: Double,
             count: Int
         ): Double {
-            // compute step so that it is multiple of 10, 5 or 2.
+            // compute a step so that it is multiple of 10, 5 or 2.
             val stepRaw = span / count
             val step10Power = floor(log10(stepRaw))
             val step = 10.0.pow(step10Power)
