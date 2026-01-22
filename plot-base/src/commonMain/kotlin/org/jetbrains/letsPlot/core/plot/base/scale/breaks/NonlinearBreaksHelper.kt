@@ -17,21 +17,18 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 
 internal class NonlinearBreaksHelper(
-    rangeStart: Double,
-    rangeEnd: Double,
+    domain: DoubleSpan,
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
     expFormat: ExponentFormat,
     transform: ContinuousTransform,
     niceLogBreaks: Boolean,
-) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
+) {
 
-    override val breaks: List<Double>
+    val breaks: List<Double>
     val formatter: (Any) -> String
 
     init {
-        val domain = DoubleSpan(rangeStart, rangeEnd)
-
         val transformedDomain = ScaleUtil.applyTransform(
             domain,
             transform
