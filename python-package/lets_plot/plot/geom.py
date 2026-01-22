@@ -27,7 +27,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
            'geom_segment', 'geom_curve', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_text_repel', 'geom_label_repel', 'geom_pie', 'geom_lollipop',
-           'geom_count',
+           'geom_count', 'geom_bracket',
            'geom_blank', 'geom_stat_r2']
 
 
@@ -8995,6 +8995,26 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 """
     stat = 'sum' if stat is None else stat
     return _geom('point',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=False,
+                 manual_key=None,
+                 sampling=None,
+                 tooltips=None,
+                 color_by=None, fill_by=None,
+                 **other_args):
+    return _geom('bracket',
                  mapping=mapping,
                  data=data,
                  stat=stat,
