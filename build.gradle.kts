@@ -76,6 +76,9 @@ fun readPropertiesFromParameters() {
     }
     if (project.hasProperty("imagemagick_lib_path")) {
         properties["imagemagick_lib_path"] = project.property("imagemagick_lib_path")
+        // TODO: remove debug print
+        val testImagickProperty = project.property("imagemagick_lib_path")
+        println("======= $testImagickProperty =======")
     }
     for (property in properties) {
         extra[property.key as String] = property.value
