@@ -14,7 +14,8 @@ interface OriginalDomainBreaksGenerator {
     fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks
 
     /**
-     * Formatting arbitrary datapoints excluding user-defined options; the formatter is used for labels and tooltips.
+     * Formatting arbitrary datapoints excluding user-defined options.
+     * The formatter is used for labels and tooltips.
      */
     fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String
 }

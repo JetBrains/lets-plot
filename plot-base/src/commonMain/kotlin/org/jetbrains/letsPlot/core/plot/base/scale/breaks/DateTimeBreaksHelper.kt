@@ -9,32 +9,38 @@ import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.cre
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
 import kotlin.math.round
 
 class DateTimeBreaksHelper constructor(
-    rangeStart: Double,
-    rangeEnd: Double,
+    domain: DoubleSpan,
     count: Int,
     private val providedFormatter: ((Any) -> String)?,
     minInterval: NiceTimeInterval?,
     maxInterval: NiceTimeInterval?,
     private val tz: TimeZone?,
-) : BreaksHelperBase(rangeStart, rangeEnd, count) {
-
-    override val breaks: List<Double>
+) {
+    val breaks: List<Double>
     val formatter: (Any) -> String
     val pattern: String
     private val timeZone: TimeZone get() = tz ?: TimeZone.UTC
 
     init {
-        val step = targetStep
+        check(count > 0) { "'count' must be positive: $count" }
+        val step = domain.length / count
 
         pattern = if (step < 1000) {        // milliseconds
             // regular nice breaks
-            breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
+            breaks = LinearBreaksHelper(
+                domain,
+                targetCount = count,
+                providedFormatter = DUMMY_FORMATTER,
+                DEF_EXPONENT_FORMAT
+            ).breaks
+
             // milliseconds formatter
             if (minInterval != null) {
                 minInterval.tickFormatPattern
@@ -44,8 +50,8 @@ class DateTimeBreaksHelper constructor(
 
         } else {
 
-            val start = normalStart
-            val end = normalEnd
+            val start = domain.lowerEnd
+            val end = domain.upperEnd
 
             var ticks: MutableList<Double>? = null
             if (minInterval != null) {
@@ -65,11 +71,10 @@ class DateTimeBreaksHelper constructor(
                 }
                 val endYear = DateTime.ofEpochMilliseconds(end, timeZone).year
                 val helper = LinearBreaksHelper(
-                    startYear.toDouble(),
-                    endYear.toDouble(),
-                    count,
+                    domain = DoubleSpan(startYear.toDouble(), endYear.toDouble()),
+                    targetCount = count,
+                    providedFormatter = DUMMY_FORMATTER,
                     expFormat = DEF_EXPONENT_FORMAT,
-                    providedFormatter = DUMMY_FORMATTER
                 )
                 for (tickYear in helper.breaks) {
                     val tickDate = DateTime.ofYearStart(round(tickYear).toInt())
@@ -88,9 +93,6 @@ class DateTimeBreaksHelper constructor(
                 interval.tickFormatPattern
             }
 
-            if (isReversed) {
-                ticks.reverse()
-            }
             breaks = ticks
 
             pattern

@@ -5,16 +5,18 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeFixedBreaksGen
-import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
@@ -252,7 +254,23 @@ class ScaleConfig<T> constructor(
                 )
             }
         } else if (getBoolean(Option.Scale.TIME)) {
-            b.breaksGenerator(TimeBreaksGen())
+            val timeFormatter = getString(FORMAT)?.let { pattern ->
+                val stringFormat = FormatterUtil.byPattern(pattern, tz = null)
+                return@let { value: Any -> stringFormat.format(value) }
+            }
+
+            val breakWidthSpec = getString(BREAK_WIDTH)
+            if (breakWidthSpec != null) {
+                val breakWidth = Duration.parse(breakWidthSpec)
+                b.breaksGenerator(
+                    TimeFixedBreaksGen(
+                        breakWidth = breakWidth,
+                        providedFormatter = timeFormatter
+                    )
+                )
+            } else {
+                b.breaksGenerator(TimeBreaksGen(timeFormatter))
+            }
         } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
             val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
             val transform = when (transformName.lowercase()) {

@@ -52,8 +52,7 @@ internal class NonlinearBreaksHelper(
         }
         val transformedBreakValues: List<Double> =
             LinearBreaksHelper(
-                transformedDomain.lowerEnd,
-                transformedDomain.upperEnd,
+                transformedDomain,
                 targetCount,
                 providedFormatter = DUMMY_FORMATTER,
                 expFormat = expFormat

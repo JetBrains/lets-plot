@@ -34,6 +34,8 @@ open class LineSpecConfigParser(
             },
             formats = getList(Option.LinesSpec.FORMATS),
             variables = getStringList(Option.LinesSpec.VARIABLES),
+            lhs = getString(Option.LinesSpec.LHS),
+            rhs = getString(Option.LinesSpec.RHS),
             titleLine = getString(Option.LinesSpec.TITLE)
         ).parse()
     }
@@ -42,6 +44,8 @@ open class LineSpecConfigParser(
         private val lines: List<String>?,
         formats: List<*>,
         variables: List<String>,
+        private val lhs: String?,
+        private val rhs: String?,
         private val titleLine: String?
     ) {
         private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(formats)
@@ -118,7 +122,7 @@ open class LineSpecConfigParser(
                }
 
                 fieldName == Stats.EQ.name -> {
-                    EqDataFrameField(fieldName, format)
+                    EqDataFrameField(fieldName, format, lhs, rhs)
                 }
 
                 else -> {

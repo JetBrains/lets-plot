@@ -2,6 +2,8 @@
 
 ### Added
 
+- Python 3.14 support
+
 - Plot Theme:
   - Support of axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
 

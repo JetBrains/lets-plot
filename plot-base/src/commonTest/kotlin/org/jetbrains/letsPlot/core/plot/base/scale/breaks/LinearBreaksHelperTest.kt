@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import demoAndTestShared.assertArrayEquals
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.math.sign
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -95,7 +96,6 @@ class LinearBreaksHelperTest {
             doubleArrayOf(49.5, 100.5),
             doubleArrayOf(90.0, 100.0),
             doubleArrayOf(-20.0, 20.0),
-            doubleArrayOf(100.0, 0.0)
         )
         private val EXPECTED_BREAKS = arrayOf(
             doubleArrayOf(0.0, 20.0, 40.0, 60.0, 80.0, 100.0),
@@ -103,7 +103,6 @@ class LinearBreaksHelperTest {
             doubleArrayOf(50.0, 60.0, 70.0, 80.0, 90.0, 100.0),
             doubleArrayOf(90.0, 92.0, 94.0, 96.0, 98.0, 100.0),
             doubleArrayOf(-20.0, -10.0, 0.0, 10.0, 20.0),
-            doubleArrayOf(100.0, 80.0, 60.0, 40.0, 20.0, 0.0)
         )
 
         private const val ERROR_TOLERANCE = 1e-10
@@ -146,7 +145,13 @@ class LinearBreaksHelperTest {
         }
 
         private fun computeBreaks(domainStart: Double, domainEnd: Double, targetCount: Int): Array<Double> {
-            val helper = LinearBreaksHelper(domainStart, domainEnd, targetCount, null, DEF_EXPONENT_FORMAT)
+            val domain = DoubleSpan(domainStart, domainEnd)
+            val helper = LinearBreaksHelper(
+                domain,
+                targetCount,
+                null,
+                DEF_EXPONENT_FORMAT
+            )
             return helper.breaks.toTypedArray()
         }
 
