@@ -16,7 +16,7 @@ class LocalPolynomialRegression private constructor (
     standardErrorOfEstimate: Double,
     tCritical: Double,
     r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, null, r2) {
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, emptyList(), r2) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, bandwidth: Double): LocalPolynomialRegression? {
             check(xs, ys, confidenceLevel)

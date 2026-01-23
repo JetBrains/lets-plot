@@ -244,13 +244,8 @@ object StatProto {
         }
 
         return SmoothStatInfo(
-            smootherPointCount = options.getIntegerDef(Smooth.POINT_COUNT, SmoothStatInfo.DEF_EVAL_POINT_COUNT),
             smoothingMethod = smoothingMethod ?: SmoothStatInfo.DEF_SMOOTHING_METHOD,
             confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStatInfo.DEF_CONFIDENCE_LEVEL),
-            displayConfidenceInterval = options.getBoolean(
-                Smooth.DISPLAY_CONFIDENCE_INTERVAL,
-                SmoothStatInfo.DEF_DISPLAY_CONFIDENCE_INTERVAL
-            ),
             span = options.getDoubleDef(Smooth.SPAN, SmoothStatInfo.DEF_SPAN),
             polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStatInfo.DEF_DEG),
             loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStatInfo.DEF_LOESS_CRITICAL_SIZE),

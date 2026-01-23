@@ -195,8 +195,8 @@ class PolynomialFunction(c: DoubleArray?) {
         return d1.compareTo(d2)
     }
 
-    fun getCoefficients(): DoubleArray {
-        return coefficients
+    fun getCoefficients(): List<Double> {
+        return coefficients.toList()
     }
 
     override operator fun equals(other: Any?): Boolean {

@@ -16,7 +16,7 @@ abstract class RegressionEvaluator protected constructor(
     private val model: (Double) -> Double,
     private val standardErrorOfEstimate: Double,
     private val tCritical: Double,
-    val eq: String?,
+    val eq: List<Double>,
     val r2: Double,
 ) {
     fun value(x: Double): Double {

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.stat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable.Source.STAT
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LinearRegression
@@ -23,16 +24,16 @@ import kotlin.random.Random
  * formula  -
  */
 // TODO: fix duplication SmoothStat
-class SmoothStatInfo constructor(
-    private val smootherPointCount: Int,
+class SmoothStatInfo(
     private val smoothingMethod: Method,
     private val confidenceLevel: Double,
-    private val displayConfidenceInterval: Boolean,
     private val span: Double,
     private val polynomialDegree: Int,
     private val loessCriticalSize: Int,
     private val samplingSeed: Long
 ) : BaseStat(DEF_MAPPING) {
+
+    private var myVariables: List<DataFrame.Variable>? = null
 
     enum class Method {
         LM, // linear model
@@ -127,10 +128,25 @@ class SmoothStatInfo constructor(
             )
         } ?: return DataFrame.Builder.emptyFrame()
 
-        return DataFrame.Builder()
+        val dfb = DataFrame.Builder()
             .put(Stats.R2, listOf(regression.r2))
-            .put(Stats.EQ, listOf(regression.eq))
-            .build()
+
+        val vars = myVariables ?: initVariables(regression.eq.size)
+        regression.eq.forEachIndexed { index, coef ->
+            dfb.put(vars[index], listOf(coef)) }
+
+        return dfb.build()
+    }
+
+    private fun initVariables(size: Int): List<DataFrame.Variable> {
+        require(myVariables == null)
+
+        myVariables = (0 until size).map {
+            val varName = "smooth_eq_coef_$it"
+            DataFrame.Variable("..$varName..", STAT, varName)
+        }
+
+        return myVariables!!
     }
 }
 

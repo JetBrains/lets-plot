@@ -21,11 +21,11 @@ open class DataFrameField(
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
-    protected lateinit var myDataFrame: DataFrame
-    protected lateinit var myVariable: DataFrame.Variable
-    protected var myFormatter: ((Any) -> String)? = null
+    private lateinit var myDataFrame: DataFrame
+    private lateinit var myVariable: DataFrame.Variable
+    private var myFormatter: ((Any) -> String)? = null
 
-    protected fun initFormatter(expFormat: StringFormat.ExponentFormat, tz: TimeZone?): (Any) -> String {
+    private fun initFormatter(expFormat: StringFormat.ExponentFormat, tz: TimeZone?): (Any) -> String {
         require(myFormatter == null)
 
         myFormatter = when (format) {
