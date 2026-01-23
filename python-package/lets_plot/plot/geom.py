@@ -9008,7 +9008,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=False,
+def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                  manual_key=None,
                  sampling=None,
                  tooltips=None,
