@@ -524,19 +524,18 @@ object GeomMeta {
                 Aes.Y,
                 Aes.LABEL,
                 Aes.SIZE,
-                Aes.STROKE,
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.ALPHA,
                 Aes.FAMILY,
                 Aes.FONTFACE,
-                Aes.HJUST,          // TODO
-                Aes.VJUST,          // TODO
+                Aes.HJUST,
+                Aes.VJUST,
                 Aes.ANGLE,
                 Aes.LINEHEIGHT,
-                Aes.SEGMENT_COLOR,  // TODO
-                Aes.SEGMENT_SIZE,   // TODO
-                Aes.SEGMENT_ALPHA   // TODO
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
             )
         }
     }

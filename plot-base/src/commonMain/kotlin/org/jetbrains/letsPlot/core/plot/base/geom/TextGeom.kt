@@ -7,6 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
+import org.jetbrains.letsPlot.core.plot.base.geom.util.DataPointAestheticsDelegate
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -63,6 +66,22 @@ open class TextGeom : GeomBase() {
         // Current implementation works for label_format ='.2f'
         // and values between -1.0 and 1.0.
         const val BASELINE_TEXT_WIDTH = 6.0
+
+        internal fun toSegmentAes(p: DataPointAesthetics): DataPointAesthetics {
+            return object : DataPointAestheticsDelegate(p) {
+
+                override operator fun <T> get(aes: Aes<T>): T? {
+                    val value: Any? = when (aes) {
+                        Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
+                        Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
+                        Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
+                        else -> super.get(aes)
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    return value as T?
+                }
+            }
+        }
     }
 }
 

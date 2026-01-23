@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -22,7 +21,6 @@ class BracketGeom : TextGeom() {
         ctx: GeomContext
     ) {
         val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
-        val strokeScaler: (DataPointAesthetics) -> Double = { p -> AesScaling.strokeWidth(p, DataPointAesthetics::stroke) }
         val svgHelper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
             .setStrokeAlphaEnabled(true)
@@ -39,7 +37,7 @@ class BracketGeom : TextGeom() {
                 DoubleSegment(DoubleVector(xMin, y), DoubleVector(xMax, y)),
                 DoubleSegment(DoubleVector(xMax, y), DoubleVector(xMax, y - tickLength)),
             ).mapNotNull { segment ->
-                svgHelper.createLine(segment, p, strokeScaler)?.first
+                svgHelper.createLine(segment, toSegmentAes(p))?.first
             }
             if (bracket.size == 3) {
                 bracket.forEach(root::add)
