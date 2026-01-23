@@ -54,7 +54,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
         PROVIDER[GeomKind.RECT] = GeomProvider.rect()
         PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
-        PROVIDER[GeomKind.BRACKET] = GeomProvider.bracket()
         PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }
 
@@ -451,6 +450,12 @@ internal object GeomProviderFactory {
                         )
                     }
                 }
+                geom
+            }
+
+            GeomKind.BRACKET -> GeomProvider.bracket {
+                val geom = BracketGeom()
+                applyTextOptions(layerConfig, geom, expFormat, tz)
                 geom
             }
 

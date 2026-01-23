@@ -21,7 +21,7 @@ class BracketGeom : TextGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::coordOrNull, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
         val strokeScaler: (DataPointAesthetics) -> Double = { p -> AesScaling.strokeWidth(p, DataPointAesthetics::stroke) }
         val svgHelper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
