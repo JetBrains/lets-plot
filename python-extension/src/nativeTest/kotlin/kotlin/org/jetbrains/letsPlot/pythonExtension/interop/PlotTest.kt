@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
 import kotlin.random.Random
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.time.measureTime
@@ -900,7 +901,7 @@ class PlotTest {
                 mvg = PlotReprGenerator.generateMvg(plotSpec)
             }.inWholeMilliseconds
         }
-        println(mvg)
+        //println(mvg)
         println("Time for plotting $n points: ${times.joinToString()} ms")
         //assertPlot("perf.png", plotSpec)
 
@@ -1040,6 +1041,8 @@ class PlotTest {
         assertPlot("plot_layout_scheme_example_test.png", plotSpec, antialiasing = false)
     }
 
+    // blocked by https://youtrack.jetbrains.com/issue/KTOR-9267 - on Linux CURl is the only available client engine
+    @Ignore()
     @Test
     fun `minard with default tiles`() {
         val spec = """
@@ -1070,7 +1073,8 @@ class PlotTest {
             |        {
             |            "geom": "livemap", 
             |            "tiles": { "kind": "vector_lets_plot", "url": "wss://tiles.datalore.jetbrains.com", "theme": "color", "attribution": "<a href=\"https://lets-plot.org\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>." }, 
-            |            "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
+            |            "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" },
+            |            "dev_params": { "microtask_executor": "ui_thread", "computation_projection_quant": 100000, "computation_frame_time": 1000 }
             |        }, 
             |        {
             |            "geom": "path", 
@@ -1082,7 +1086,6 @@ class PlotTest {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec)
-
         assertPlot("geom_livemap_minard.png", plotSpec)
     }
 

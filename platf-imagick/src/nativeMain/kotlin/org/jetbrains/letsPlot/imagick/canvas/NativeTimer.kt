@@ -24,18 +24,14 @@ class NativeAnimationProvider(
         private val startTime = timeSource.markNow()
 
         override fun start() {
-            println("AnimationTimer started")
             if (job?.isActive == true) return
 
-            // FIX: Removed Dispatchers.Main.
-            // The coroutine will now run on the dispatcher defined in 'scope'.
             job = scope.launch {
                 while (isActive) {
                     val nowMillis = startTime.elapsedNow().inWholeMilliseconds
 
                     val continueAnimation = try {
-                        println("onEvent($nowMillis) called - ${timeSource.markNow()}")
-                        handler.onEvent(nowMillis).also { println("onEvent completed - ${timeSource.markNow()}") }
+                        handler.onEvent(nowMillis)
                     } catch (e: Exception) {
                         println("Error in animation loop: ${e.message}")
                         false
@@ -47,7 +43,6 @@ class NativeAnimationProvider(
                     //    break
                     //}
 
-                    println("Delaying next frame")
                     delay(16)
                 }
             }

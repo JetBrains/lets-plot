@@ -50,7 +50,11 @@ internal class AwtContext2d(
     }
 
     override fun clearRect(rect: DoubleRectangle) {
-        graphics.clearRect(rect.left.toInt(), rect.top.toInt(), rect.width.toInt(), rect.height.toInt())
+        clearRect(rect.left, rect.top, rect.width, rect.height)
+    }
+
+    override fun clearRect(x: Double, y: Double, w: Double, h: Double) {
+        graphics.clearRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {

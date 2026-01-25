@@ -93,7 +93,14 @@ kotlin {
                 implementation(project(":livemap"))
                 implementation(project(":gis"))
 
-                implementation("io.ktor:ktor-client-curl:${ktorVersion}")
+                implementation("io.ktor:ktor-client-core:${ktorVersion}")
+
+                if (os.isMacOsX) {
+                    implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
+                } else {
+                    // Uses CIO for Linux and Windows
+                    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+                }
             }
         }
 

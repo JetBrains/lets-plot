@@ -23,13 +23,11 @@ class TileWebSocket(
     fun connect() {
         coroutineScope.launch {
             try {
-                println("TileWebSocket.connect(): connecting to $myUrl")
                 client.webSocket(urlString = myUrl) {
                     session = this
                     myHandler.onOpen()
 
                     for (frame in incoming) {
-                        println("frameType: ${frame.frameType}, frameSize: ${frame.data.size}, fin: ${frame.fin}")
                         when (frame) {
                             is Frame.Text -> myHandler.onTextMessage(frame.readText())
                             is Frame.Binary -> myHandler.onBinaryMessage(frame.readBytes())
@@ -53,7 +51,6 @@ class TileWebSocket(
     }
 
     fun send(msg: String) {
-        println("TileWebSocket.send: $msg")
         coroutineScope.launch {
             session?.let {
                 try {

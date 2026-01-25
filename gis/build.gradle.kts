@@ -37,7 +37,7 @@ kotlin {
 
         nativeMain {
             dependencies {
-                implementation("io.ktor:ktor-client-curl:${ktorVersion}")
+                implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
             }
         }
 

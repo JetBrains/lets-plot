@@ -75,7 +75,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                 }
                 MicroTaskUtil
                     .join(microThreads)
-                    .map<Unit, List<TileFeature>> { tileFeatures }
+                    .map { tileFeatures }
             }
     }
 

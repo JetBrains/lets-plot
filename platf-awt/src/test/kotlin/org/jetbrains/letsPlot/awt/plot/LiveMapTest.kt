@@ -34,7 +34,8 @@ class LiveMapTest : VisualPlotTestBase() {
             |        {
             |            "geom": "livemap", 
             |            "tiles": { "kind": "vector_lets_plot", "url": "wss://tiles.datalore.jetbrains.com", "theme": "color", "attribution": "<a href=\"https://lets-plot.org\">© Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>." }, 
-            |            "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
+            |            "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" },
+            |            "dev_params": { "microtask_executor": "ui_thread", "computation_projection_quant": 100000, "computation_frame_time": 1000 }
             |        }, 
             |        {
             |            "geom": "path", 
