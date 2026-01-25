@@ -89,6 +89,41 @@ class LinearBreaksHelperTest {
     }
 
     @Test
+    fun generateBreaksWithFixedStep() {
+        val breaks = LinearBreaksHelper.generateBreaks(DoubleSpan(0.0, 10.0), step = 2.0)
+        assertEquals(listOf(0.0, 2.0, 4.0, 6.0, 8.0, 10.0), breaks)
+    }
+
+    @Test
+    fun generateBreaksWithFixedStepNotAlignedToStart() {
+        val breaks = LinearBreaksHelper.generateBreaks(DoubleSpan(0.5, 10.5), step = 2.0)
+        assertEquals(listOf(2.0, 4.0, 6.0, 8.0, 10.0), breaks)
+    }
+
+    @Test
+    fun generateBreaksWithFixedStepNegativeRange() {
+        val breaks = LinearBreaksHelper.generateBreaks(DoubleSpan(-10.0, -2.0), step = 2.0)
+        assertEquals(listOf(-10.0, -8.0, -6.0, -4.0, -2.0), breaks)
+    }
+
+    @Test
+    fun generateBreaksWithFixedStepCrossingZero() {
+        val breaks = LinearBreaksHelper.generateBreaks(DoubleSpan(-5.0, 5.0), step = 2.0)
+        assertEquals(listOf(-4.0, -2.0, 0.0, 2.0, 4.0), breaks)
+    }
+
+    @Test
+    fun generateBreaksWithFixedStepFractional() {
+        val breaks = LinearBreaksHelper.generateBreaks(DoubleSpan(0.0, 1.0), step = 0.25)
+        assertEquals(5, breaks.size)
+        assertEquals(0.0, breaks[0], ERROR_TOLERANCE)
+        assertEquals(0.25, breaks[1], ERROR_TOLERANCE)
+        assertEquals(0.5, breaks[2], ERROR_TOLERANCE)
+        assertEquals(0.75, breaks[3], ERROR_TOLERANCE)
+        assertEquals(1.0, breaks[4], ERROR_TOLERANCE)
+    }
+
+    @Test
     fun nearZeroToNearOneShouldProduceCleanBreaks() {
         // Real data with FP noise: domain is almost [0, 1] but with tiny artifacts
         val breaks = computeBreaks(

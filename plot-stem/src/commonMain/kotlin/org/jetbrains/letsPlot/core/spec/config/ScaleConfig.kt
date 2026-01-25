@@ -14,12 +14,12 @@ import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.createDateTimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
@@ -239,9 +239,10 @@ class ScaleConfig<T> constructor(
             if (breakWidthSpec != null) {
                 val breakWidth = TimeInterval.parse(breakWidthSpec)
                 b.breaksGenerator(
-                    DateTimeFixedBreaksGen(
+                    createDateTimeFixedBreaksGen(
                         breakWidth = breakWidth,
-                        providedFormatter = dateTimeFormatter,
+                        dateTimeFormatter = dateTimeFormatter,
+                        dataType = dataType,
                         tz = tz
                     )
                 )

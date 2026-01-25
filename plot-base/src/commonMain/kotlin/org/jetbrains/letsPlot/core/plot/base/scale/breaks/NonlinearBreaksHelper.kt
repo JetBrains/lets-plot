@@ -57,14 +57,23 @@ internal class NonlinearBreaksHelper(
 
         // Transform back to data space.
         this.breaks = transform.applyInverse(transformedBreakValues).filterNotNull()
-        this.formatter = providedFormatter ?: let {
-            val breakFormatters = createFormatters(this.breaks, expFormat)
-            MultiFormatter(this.breaks, breakFormatters)::apply
-        }
+        this.formatter = providedFormatter ?: createMultiFormatter(this.breaks, expFormat)
     }
 
     companion object {
         private const val MIN_BREAKS_COUNT = 3
+
+        /**
+         * Creates a multi-formatter for unevenly spaced breaks.
+         * Each break gets its own formatter based on local step to adjacent break.
+         */
+        internal fun createMultiFormatter(
+            breaks: List<Double>,
+            expFormat: ExponentFormat
+        ): (Any) -> String {
+            val breakFormatters = createFormatters(breaks, expFormat)
+            return MultiFormatter(breaks, breakFormatters)::apply
+        }
 
         private fun recalculateBreaksCount(
             breaksCount: Int,

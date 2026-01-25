@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeFixedBreaksGen
 
 object ScaleProviderHelper {
     fun <T> createDefault(aes: Aes<T>): ScaleProvider {
@@ -51,6 +53,21 @@ object ScaleProviderHelper {
         tz: TimeZone?
     ): DateTimeBreaksGen {
         return DateTimeBreaksGen(
+            providedFormatter = dateTimeFormatter,
+            minInterval = NiceTimeInterval.minIntervalOf(dataType),
+            maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
+            tz = tz,
+        )
+    }
+
+    fun createDateTimeFixedBreaksGen(
+        breakWidth: TimeInterval,
+        dateTimeFormatter: ((Any) -> String)?,
+        dataType: DataType,
+        tz: TimeZone?
+    ): DateTimeFixedBreaksGen {
+        return DateTimeFixedBreaksGen(
+            breakWidth = breakWidth,
             providedFormatter = dateTimeFormatter,
             minInterval = NiceTimeInterval.minIntervalOf(dataType),
             maxInterval = NiceTimeInterval.maxIntervalOf(dataType),
