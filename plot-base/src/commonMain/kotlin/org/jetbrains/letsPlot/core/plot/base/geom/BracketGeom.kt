@@ -5,10 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
@@ -20,29 +19,26 @@ class BracketGeom : TextGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
-        val svgHelper = GeomHelper(pos, coord, ctx)
-            .createSvgElementHelper()
-            .setStrokeAlphaEnabled(true)
-            .setSpacer(0.0) // TODO
-            .setResamplingEnabled(false) // TODO
-            .setArrowSpec(null) // TODO
-        for (p in aesthetics.dataPoints()) {
-            val xMin = p.finiteOrNull(Aes.XMIN) ?: continue
-            val xMax = p.finiteOrNull(Aes.XMAX) ?: continue
-            val y = p.finiteOrNull(Aes.Y) ?: continue
-            val tickLength = 5.0 * textHelper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
-            val bracket = listOf(
-                DoubleSegment(DoubleVector(xMin, y - tickLength), DoubleVector(xMin, y)),
-                DoubleSegment(DoubleVector(xMin, y), DoubleVector(xMax, y)),
-                DoubleSegment(DoubleVector(xMax, y), DoubleVector(xMax, y - tickLength)),
-            ).mapNotNull { segment ->
-                svgHelper.createLine(segment, toSegmentAes(p))?.first
-            }
-            if (bracket.size == 3) {
-                bracket.forEach(root::add)
-            }
+        // Bracket
+        val linesHelper = LinesHelper(pos, coord, ctx)
+        linesHelper.setResamplingEnabled(false) // TODO
+        val pathData = linesHelper.createPathData(aesthetics.dataPoints().map(::toSegmentAes)) { p ->
+            val xMin = p.finiteOrNull(Aes.XMIN) ?: return@createPathData null
+            val xMax = p.finiteOrNull(Aes.XMAX) ?: return@createPathData null
+            val y = p.finiteOrNull(Aes.Y) ?: return@createPathData null
+            val tickLength = 5.0 * linesHelper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
+            listOf(
+                DoubleVector(xMin, y - tickLength),
+                DoubleVector(xMin, y),
+                DoubleVector(xMax, y),
+                DoubleVector(xMax, y - tickLength),
+            )
         }
+        val svgPath = linesHelper.renderPaths(pathData, filled = false)
+        root.appendNodes(svgPath)
+
+        // Label
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
         textHelper.createSvgComponents().forEach(root::add)
     }
 

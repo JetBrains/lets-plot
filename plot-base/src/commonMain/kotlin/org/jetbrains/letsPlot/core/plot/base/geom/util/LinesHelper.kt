@@ -78,6 +78,14 @@ open class LinesHelper(
 
     fun createPathData(
         dataPoints: Iterable<DataPointAesthetics>,
+        locationTransform: (DataPointAesthetics) -> List<DoubleVector>?,
+    ): List<PathData> {
+        val domainData = createPaths(dataPoints, locationTransform)
+        return toClientPaths(domainData)
+    }
+
+    fun createPathData(
+        dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
         closePath: Boolean = false,
     ): List<PathData> {

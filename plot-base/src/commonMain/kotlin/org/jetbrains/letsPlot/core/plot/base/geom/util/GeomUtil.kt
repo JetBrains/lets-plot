@@ -205,6 +205,17 @@ object GeomUtil {
             }
     }
 
+    fun createPaths(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointToPath: ((DataPointAesthetics) -> List<DoubleVector>?)
+    ): List<PathData> {
+        return dataPoints.mapNotNull { p ->
+            pointToPath(p)?.
+                map { coord -> PathPoint(p, coord) }?.
+                let { pathPoints -> PathData.create(pathPoints) }
+        }
+    }
+
     // Builds a list of PathData splitting by group and null points.
     fun createPaths(
         dataPoints: Iterable<DataPointAesthetics>,
