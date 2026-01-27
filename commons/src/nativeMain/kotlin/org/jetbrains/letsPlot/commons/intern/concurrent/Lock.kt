@@ -5,15 +5,17 @@
 
 package org.jetbrains.letsPlot.commons.intern.concurrent
 
-/**
- * We don't use it in 'native' code.
- */
+import kotlinx.atomicfu.locks.ReentrantLock
+import kotlinx.atomicfu.locks.reentrantLock
+
 actual class Lock actual constructor() {
+    private val delegate: ReentrantLock = reentrantLock()
+
     actual fun lock() {
-        //throw IllegalStateException("'Lock' is not supported in any 'native' target.")
+        delegate.lock()
     }
 
     actual fun unlock() {
-        //throw IllegalStateException("'Lock' is not supported in any 'native' target.")
+        delegate.unlock()
     }
 }

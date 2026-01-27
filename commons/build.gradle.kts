@@ -12,6 +12,7 @@ val mockkVersion = project.extra["mockk.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val kotlinxAtomicfuVersion = project.extra["kotlinx.atomicfu.version"] as String
 val hamcrestVersion = project.extra["hamcrest.version"] as String
 val mockitoVersion = project.extra["mockito.version"] as String
 val assertjVersion = project.extra["assertj.version"] as String
@@ -27,6 +28,7 @@ kotlin {
             dependencies {
                 compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                compileOnly("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
             }
         }
 

@@ -20,6 +20,7 @@
 
 ### Changed
 
+- [**BREAKING**]: New dependency `kotlinx-atomicfu` version 0.31.0 is required.
 - [**BREAKING**]: Removed JavaFX artifacts.
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
