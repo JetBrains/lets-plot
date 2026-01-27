@@ -174,11 +174,7 @@ internal class AwtContext2d(
     override fun setFont(f: Font) {
         stateDelegate.setFont(f)
 
-        val awtFont = if (fontManager.isFontRegistered(f)) {
-            fontManager.getFont(f)
-        } else {
-            f.toAwtFont()
-        }
+        val awtFont = fontManager.getFont(f) ?: f.toAwtFont()
 
         graphics.font = awtFont
     }

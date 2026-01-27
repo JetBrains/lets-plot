@@ -12,8 +12,9 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
-import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getMap
@@ -83,20 +84,20 @@ open class VisualPlotTestBase {
 
     companion object {
         val fonts = mapOf(
-            Font(fontSize = 1.0, fontFamily = "Noto Sans") to createFont("fonts/NotoSans-Regular.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Sans", fontWeight = BOLD) to createFont("fonts/NotoSans-Bold.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Sans", fontStyle = ITALIC) to createFont("fonts/NotoSans-Italic.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Sans", fontWeight = BOLD, fontStyle = ITALIC) to createFont("fonts/NotoSans-BoldItalic.ttf"),
+            Triple("Noto Sans", FontWeight.NORMAL, FontStyle.NORMAL) to createFont("fonts/NotoSans-Regular.ttf"),
+            Triple("Noto Sans", BOLD, FontStyle.NORMAL) to createFont("fonts/NotoSans-Bold.ttf"),
+            Triple("Noto Sans", FontWeight.NORMAL, ITALIC) to createFont("fonts/NotoSans-Italic.ttf"),
+            Triple("Noto Sans", BOLD, ITALIC) to createFont("fonts/NotoSans-BoldItalic.ttf"),
 
-            Font(fontSize = 1.0, fontFamily = "Noto Serif") to createFont("fonts/NotoSerif-Regular.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Serif", fontWeight = BOLD) to createFont("fonts/NotoSerif-Bold.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Serif", fontStyle = ITALIC) to createFont("fonts/NotoSerif-Italic.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Serif", fontWeight = BOLD, fontStyle = ITALIC) to createFont("fonts/NotoSerif-BoldItalic.ttf"),
+            Triple("Noto Serif", FontWeight.NORMAL, FontStyle.NORMAL) to createFont("fonts/NotoSerif-Regular.ttf"),
+            Triple("Noto Serif", BOLD, FontStyle.NORMAL) to createFont("fonts/NotoSerif-Bold.ttf"),
+            Triple("Noto Serif", FontWeight.NORMAL, ITALIC) to createFont("fonts/NotoSerif-Italic.ttf"),
+            Triple("Noto Serif", BOLD, ITALIC) to createFont("fonts/NotoSerif-BoldItalic.ttf"),
 
-            Font(fontSize = 1.0, fontFamily = "Noto Sans Mono") to createFont("fonts/NotoSansMono-Regular.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Sans Mono", fontStyle = ITALIC) to createFont("fonts/NotoSansMono-Regular.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Sans Mono", fontWeight = BOLD) to createFont("fonts/NotoSansMono-Bold.ttf"),
-            Font(fontSize = 1.0, fontFamily = "Noto Sans Mono", fontWeight = BOLD, fontStyle = ITALIC) to createFont("fonts/NotoSansMono-Bold.ttf"),
+            Triple("Noto Sans Mono", FontWeight.NORMAL, FontStyle.NORMAL) to createFont("fonts/NotoSansMono-Regular.ttf"),
+            Triple("Noto Sans Mono", FontWeight.NORMAL, ITALIC) to createFont("fonts/NotoSansMono-Regular.ttf"),
+            Triple("Noto Sans Mono", BOLD, FontStyle.NORMAL) to createFont("fonts/NotoSansMono-Bold.ttf"),
+            Triple("Noto Sans Mono", BOLD, ITALIC) to createFont("fonts/NotoSansMono-Bold.ttf"),
         )
         val regularFont = createFont("fonts/NotoSans-Regular.ttf")
         val boldFont = createFont("fonts/NotoSans-Bold.ttf")
@@ -104,8 +105,8 @@ open class VisualPlotTestBase {
         val boldItalicFont = createFont("fonts/NotoSans-BoldItalic.ttf")
 
         val fontManager = FontManager(
-            onFontResolve = { font ->
-                val resolvedFont = fonts[font]
+            fontResolver = { font ->
+                val resolvedFont = fonts[Triple(font.fontFamily, font.fontWeight, font.fontStyle)]
                 if (resolvedFont != null) {
                     return@FontManager resolvedFont
                 }
