@@ -22,18 +22,10 @@ class BracketGeom : TextGeom() {
         // Bracket
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(false) // TODO
-        val pathData = linesHelper.createPathData(aesthetics.dataPoints().map(::toSegmentAes)) { p ->
-            val xMin = p.finiteOrNull(Aes.XMIN) ?: return@createPathData null
-            val xMax = p.finiteOrNull(Aes.XMAX) ?: return@createPathData null
-            val y = p.finiteOrNull(Aes.Y) ?: return@createPathData null
-            val tickLength = 5.0 * linesHelper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
-            listOf(
-                DoubleVector(xMin, y - tickLength),
-                DoubleVector(xMin, y),
-                DoubleVector(xMax, y),
-                DoubleVector(xMax, y - tickLength),
-            )
-        }
+        val pathData = linesHelper.createPathData(
+            aesthetics.dataPoints().map(::toSegmentAes),
+            bracketBuilder(linesHelper)
+        )
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
 
@@ -58,6 +50,19 @@ class BracketGeom : TextGeom() {
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        private fun bracketBuilder(helper: LinesHelper): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
+            val xMin = p.finiteOrNull(Aes.XMIN) ?: return@builder null
+            val xMax = p.finiteOrNull(Aes.XMAX) ?: return@builder null
+            val y = p.finiteOrNull(Aes.Y) ?: return@builder null
+            val tickLength = 5.0 * helper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
+            listOf(
+                DoubleVector(xMin, y - tickLength),
+                DoubleVector(xMin, y),
+                DoubleVector(xMax, y),
+                DoubleVector(xMax, y - tickLength),
+            )
+        }
 
         private fun labelNudge(location: DoubleVector, textSize: DoubleVector): DoubleVector =
             location.add(DoubleVector(0.0, -textSize.y / 2.0))
