@@ -115,7 +115,7 @@ object PlotExportCommon {
     }
 
 
-    suspend fun AsyncRenderer.waitForReady(timeout: Duration) {
+    suspend fun AsyncRenderer.waitForReady(timeout: Duration): Boolean {
         val timeSource = TimeSource.Monotonic
         val startMark = timeSource.markNow()
 
@@ -126,8 +126,7 @@ object PlotExportCommon {
 
         do {
             if (now() > timeout.inWholeMilliseconds) {
-                println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-                break
+                return false
             }
 
             onFrame(now())
@@ -137,5 +136,6 @@ object PlotExportCommon {
 
         delay(16.milliseconds)
         onFrame(now())
+        return true
     }
 }

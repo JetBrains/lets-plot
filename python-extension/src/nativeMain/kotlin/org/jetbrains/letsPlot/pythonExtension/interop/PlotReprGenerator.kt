@@ -15,10 +15,7 @@ import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withTimeout
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -35,7 +32,6 @@ import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import org.jetbrains.letsPlot.raster.view.RenderingHints.KEY_OFFSCREEN_BUFFERING
 import org.jetbrains.letsPlot.raster.view.RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
-import kotlin.coroutines.resume
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
@@ -91,8 +87,8 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
-            println(e.message)
-            e.printStackTrace()
+            //println(e.message)
+            //e.printStackTrace()
             Py_BuildValue("s", svgStr)
         }
     }
@@ -237,7 +233,9 @@ object PlotReprGenerator {
         var canvasReg: Registration? = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
         runBlocking() {
-            plotCanvasFigure.waitForReady(15.seconds)
+            if (!plotCanvasFigure.waitForReady(15.seconds)) {
+                println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
+            }
         }
 
         try {
@@ -339,110 +337,83 @@ object PlotReprGenerator {
         scale: Number? = null,
     ): String {
         var canvasReg: Registration? = null
-        return runBlocking {
-            try {
-                val start = TimeSource.Monotonic.markNow()
+            val start = TimeSource.Monotonic.markNow()
 
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotSpec parsed")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotSpec parsed")
 
-                val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
+            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): exportParameters(dpi=${exportParameters.dpi}, scaleFactor=${exportParameters.scaleFactor}, sizingPolicy=${exportParameters.sizingPolicy})")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): exportParameters(dpi=${exportParameters.dpi}, scaleFactor=${exportParameters.scaleFactor}, sizingPolicy=${exportParameters.sizingPolicy})")
 
-                @Suppress("UNCHECKED_CAST")
-                val rawPlotSpec = plotSpec as MutableMap<String, Any>
+            @Suppress("UNCHECKED_CAST")
+            val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-                val plotCanvasFigure = PlotCanvasFigure()
-                plotCanvasFigure.update(
-                    processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
-                    sizingPolicy = exportParameters.sizingPolicy,
-                    computationMessagesHandler = { }
-                )
+            val plotCanvasFigure = PlotCanvasFigure()
+            plotCanvasFigure.update(
+                processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
+                sizingPolicy = exportParameters.sizingPolicy,
+                computationMessagesHandler = { }
+            )
 
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure built, size=${plotCanvasFigure.size}")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure built, size=${plotCanvasFigure.size}")
 
-                val magickCanvasPeer = MagickCanvasPeer(
-                    pixelDensity = exportParameters.scaleFactor,
-                    fontManager = defaultFontManager,
-                )
+            val magickCanvasPeer = MagickCanvasPeer(
+                pixelDensity = exportParameters.scaleFactor,
+                fontManager = defaultFontManager,
+            )
 
-                canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+            canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
 
-                // Start loading tiles by painting to a dummy canvas
-                val dummyCanvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
-                plotCanvasFigure.paint(dummyCanvas.context2d)
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): dummy canvas painted, starting to wait for loading")
-
-                try {
-                    withTimeout(15_000L) {
-                        plotCanvasFigure.awaitLoading()
-                    }
-                } catch (e: TimeoutCancellationException) {
+            runBlocking() {
+                if (!plotCanvasFigure.waitForReady(15.seconds)) {
                     println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
                 }
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure loaded")
-
-                val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
-                val ctx = canvas.context2d
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}")
-
-                plotCanvasFigure.paint(ctx)
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot painted")
-
-                // Save the image to a file
-                val snapshot = canvas.takeSnapshot()
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): snapshot taken")
-
-                // bitmap is a getter property that does on read. Read it to measure the time.
-                snapshot.bitmap
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): bitmap extracted")
-
-                val wand = canvas.context2d.wand
-                val mvg = DrawGetVectorGraphics(wand)?.toKString() ?: "MagicWand: MVG is null"
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): MVG extracted, length=${mvg.length}")
-
-                ctx.dispose()
-                snapshot.dispose()
-
-                println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): resources disposed")
-
-                val contentPosStart = mvg.indexOf("<vector-graphics>")
-                val contentPosEnd = mvg.indexOf("</vector-graphics>")
-                if (contentPosStart in 0..<contentPosEnd) {
-                    mvg.substring(contentPosStart + "<vector-graphics>".length, contentPosEnd)
-                } else {
-                    ""
-                }
-            } finally {
-                canvasReg?.dispose()
             }
-        }
-    }
 
-}
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure loaded")
 
-suspend fun PlotCanvasFigure.awaitLoading() {
-    if (this.isReady()) return
+        try {
+            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+            val ctx = canvas.context2d
 
-    suspendCancellableCoroutine { continuation ->
-        val registration = this.onReady {
-            if (continuation.isActive) {
-                continuation.resume(Unit)
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}")
+
+            plotCanvasFigure.paint(ctx)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot painted")
+
+            // Save the image to a file
+            val snapshot = canvas.takeSnapshot()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): snapshot taken")
+
+            // bitmap is a getter property that does on read. Read it to measure the time.
+            snapshot.bitmap
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): bitmap extracted")
+
+            val wand = canvas.context2d.wand
+            val mvg = DrawGetVectorGraphics(wand)?.toKString() ?: "MagicWand: MVG is null"
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): MVG extracted, length=${mvg.length}")
+
+            ctx.dispose()
+            snapshot.dispose()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): resources disposed")
+
+            val contentPosStart = mvg.indexOf("<vector-graphics>")
+            val contentPosEnd = mvg.indexOf("</vector-graphics>")
+
+            if (contentPosStart < 0 || contentPosEnd < 0 || contentPosEnd <= contentPosStart) {
+                return ""
             }
-        }
 
-        continuation.invokeOnCancellation {
-            registration.remove()
+            return mvg.substring(contentPosStart + "<vector-graphics>".length, contentPosEnd)
+        } finally {
+            canvasReg.dispose()
         }
     }
 }
-

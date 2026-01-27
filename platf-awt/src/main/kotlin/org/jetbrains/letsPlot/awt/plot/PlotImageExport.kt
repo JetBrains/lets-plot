@@ -104,7 +104,9 @@ object PlotImageExport {
         val canvasReg = plotFigure.mapToCanvas(awtCanvasPeer)
 
         try {
-            plotFigure.waitForReady(15.seconds)
+            if (!plotFigure.waitForReady(15.seconds)) {
+                println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
+            }
 
             val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
             val ctx = canvas.context2d

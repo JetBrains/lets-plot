@@ -11,11 +11,6 @@ actual fun newHttpClient(): HttpClient {
 actual fun newWebSocketClient(): HttpClient {
     return HttpClient() {
         install(WebSockets) {
-            maxFrameSize = 10L * 1024 * 1024
-        }
-
-        engine {
-            pipelining
         }
     }
 }

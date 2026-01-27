@@ -96,6 +96,9 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:${ktorVersion}")
 
                 if (os.isMacOsX) {
+                    // The Darwin client supports WSS and is unaffected by the frame fragmentation issue
+                    // documented here: https://youtrack.jetbrains.com/issue/KTOR-9267.
+                    // This allows for the development and testing of the LiveMap export feature.
                     implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
                 } else {
                     // Uses CIO for Linux and Windows
