@@ -98,4 +98,8 @@ class LiveMapCanvasFigure(
             })
         }
     }
+
+    override fun onFrame(millisTime: Long) {
+        liveMap.onFrame(millisTime)
+    }
 }

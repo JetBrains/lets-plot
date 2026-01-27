@@ -121,4 +121,8 @@ class PlotCanvasFigure : CanvasFigure2 {
     override fun onReady(listener: () -> Unit): Registration {
         return plotSvgFigure.onReady(listener)
     }
+
+    override fun onFrame(millisTime: Long) {
+        plotSvgFigure.onFrame(millisTime)
+    }
 }

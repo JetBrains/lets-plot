@@ -27,13 +27,16 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.util.*
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.waitForReady
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
-import org.jetbrains.letsPlot.raster.view.RenderingHints
+import org.jetbrains.letsPlot.raster.view.RenderingHints.KEY_OFFSCREEN_BUFFERING
+import org.jetbrains.letsPlot.raster.view.RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 object PlotReprGenerator {
@@ -210,71 +213,53 @@ object PlotReprGenerator {
         scale: Number? = null,
         antialiasing: Boolean = true
     ): Pair<Bitmap, Double> {
-        return runBlocking {
-            var canvasReg: Registration? = null
-            try {
-                val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
+        val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
-                @Suppress("UNCHECKED_CAST")
-                val rawPlotSpec = plotSpec as MutableMap<String, Any>
+        @Suppress("UNCHECKED_CAST")
+        val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-                val plotCanvasFigure = PlotCanvasFigure()
-                // There is no interactive rendering in export - so offscreen buffering is not needed and just wastes memory
-                plotCanvasFigure.setRenderingHint(
-                    RenderingHints.KEY_OFFSCREEN_BUFFERING,
-                    RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
-                )
+        val plotCanvasFigure = PlotCanvasFigure()
 
-                plotCanvasFigure.update(
-                    processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
-                    sizingPolicy = exportParameters.sizingPolicy,
-                    computationMessagesHandler = { }
-                )
+        plotCanvasFigure.setRenderingHint(KEY_OFFSCREEN_BUFFERING, VALUE_OFFSCREEN_BUFFERING_OFF)
 
-                val magickCanvasPeer = MagickCanvasPeer(
-                    pixelDensity = exportParameters.scaleFactor,
-                    fontManager = fontManager,
-                    antialiasing = antialiasing
-                )
+        plotCanvasFigure.update(
+            processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
+            sizingPolicy = exportParameters.sizingPolicy,
+            computationMessagesHandler = { }
+        )
 
-                canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+        val magickCanvasPeer = MagickCanvasPeer(
+            pixelDensity = exportParameters.scaleFactor,
+            fontManager = fontManager,
+            antialiasing = antialiasing
+        )
 
-                // Start loading tiles by painting
-                val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size, contentScale = exportParameters.scaleFactor)
-                val ctx = canvas.context2d
+        var canvasReg: Registration? = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
-                plotCanvasFigure.paint(ctx)
+        runBlocking() {
+            plotCanvasFigure.waitForReady(15.seconds)
+        }
 
-                try {
-                    withTimeout(5_000L) {
-                        val waitFullTime = false
-                        if (!waitFullTime) {
-                            plotCanvasFigure.awaitLoading()
-                        } else {
-                            // Just untill timeout - for testing purposes
-                            suspendCancellableCoroutine {  }
-                        }
-                    }
-                } catch (e: TimeoutCancellationException) {
-                    println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-                }
+        try {
+            val canvas = magickCanvasPeer.createCanvas(
+                plotCanvasFigure.size,
+                contentScale = exportParameters.scaleFactor
+            )
+            val ctx = canvas.context2d
+            plotCanvasFigure.paint(ctx)
 
-                plotCanvasFigure.paint(ctx)
+            val snapshot = canvas.takeSnapshot()
+            val bitmap = snapshot.bitmap
 
-                // Save the image to a file
-                val snapshot = canvas.takeSnapshot()
-                val bitmap = snapshot.bitmap
+            canvasReg?.dispose()
+            canvasReg = null
 
-                canvasReg.dispose()
-                canvasReg = null
+            ctx.dispose()
+            snapshot.dispose()
 
-                ctx.dispose()
-                snapshot.dispose()
-
-                bitmap to exportParameters.dpi
-            } finally {
-                canvasReg?.dispose()
-            }
+            return bitmap to exportParameters.dpi
+        } finally {
+            canvasReg?.dispose()
         }
     }
 

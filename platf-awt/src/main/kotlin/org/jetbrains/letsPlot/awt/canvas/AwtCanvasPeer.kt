@@ -6,8 +6,6 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider
-import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import java.awt.image.BufferedImage
@@ -52,22 +50,5 @@ class AwtCanvasPeer(
         val bitmap = Png.decodeDataImage(dataUrl)
         val bufferedImage = BitmapUtil.toBufferedImage(bitmap)
         return bufferedImage
-    }
-
-    override fun createAnimationTimer(eventHandler: AnimationProvider.AnimationEventHandler): AnimationTimer {
-        return object : AnimationTimer {
-            override fun start() {
-                animationTimerPeer.addHandler(::handle)
-            }
-
-            override fun stop() {
-                animationTimerPeer.removeHandler(::handle)
-            }
-
-            fun handle(millisTime: Long) {
-                eventHandler.onEvent(millisTime)
-            }
-        }
-
     }
 }

@@ -90,6 +90,7 @@ class LiveMap(
     private val myShowCoordPickTools: Boolean,
     private val myCursorService: CursorService
 ) : Disposable {
+    private var lastFrameTime = 0L
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
     private lateinit var myEcsController: EcsController
@@ -121,6 +122,15 @@ class LiveMap(
                 override fun onEvent(event: Throwable) = handler(event)
             }
         )
+    }
+
+    fun onFrame(millisTime: Long) {
+        if (lastFrameTime == 0L) {
+            lastFrameTime = millisTime
+        }
+
+        val dt = millisTime - lastFrameTime
+        animationHandler(dt)
     }
 
     private val myComponentManager = EcsComponentManager()
@@ -402,17 +412,6 @@ class LiveMap(
         myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         myUiService = UiService(myComponentManager, myTextMeasurer)
         init(myComponentManager)
-
-        val updateController = UpdateController(
-            { dt -> animationHandler(dt) },
-            myDevParams.read(UPDATE_PAUSE_MS).toLong(),
-            myDevParams.read(UPDATE_TIME_MULTIPLIER)
-        )
-
-        myTimerReg = setAnimationHandler(
-            canvasPeer,
-            AnimationEventHandler.toHandler(updateController::onTime)
-        )
 
         isAttached = true
 

@@ -57,6 +57,10 @@ internal class CanvasNode : Node(), AsyncRenderer {
         }
     }
 
+    override fun onFrame(millisTime: Long) {
+        attachedContent?.onFrame(millisTime)
+    }
+
     private fun onContentReady() {
         onReadyListeners.forEach { it() }
     }

@@ -250,4 +250,8 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             return Registration.from(*regs.toTypedArray())
         }
     }
+
+    override fun onFrame(millisTime: Long) {
+        asyncRenderers.forEach { it.onFrame(millisTime) }
+    }
 }

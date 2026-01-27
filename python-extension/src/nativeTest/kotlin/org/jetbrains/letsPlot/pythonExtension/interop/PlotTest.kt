@@ -3,14 +3,16 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalNativeApi::class)
+
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.random.Random
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.fail
 import kotlin.time.measureTime
@@ -1042,10 +1044,12 @@ class PlotTest {
     }
 
     // blocked by https://youtrack.jetbrains.com/issue/KTOR-9267 - on Linux CURl is the only available client engine
-    @Ignore()
     @Test
     fun `minard with default tiles`() {
-        val spec = """
+        // only ktor-client-darwin and ktor-client-curl are able to work with wss://
+        // But due to critical issue https://youtrack.jetbrains.com/issue/KTOR-9267 we can't use ktor-client-curl
+        if (Platform.osFamily == OsFamily.MACOSX) {
+            val spec = """
             |{
             |    "data": {
             |        "long": [24.0, 24.5, 25.5, 26.0, 27.0, 28.0, 28.5, 29.0, 30.0, 30.3, 32.0, 33.2, 34.4, 35.5, 36.0, 37.6, 37.7, 37.5, 37.0, 36.8, 35.4, 34.3, 33.3, 32.0, 30.4, 29.2, 28.5, 28.3, 27.5, 26.8, 26.4, 25.0, 24.4, 24.2, 24.1, 24.0, 24.5, 25.5, 26.6, 27.4, 28.7, 28.7, 29.2, 28.5, 28.3, 24.0, 24.5, 24.6, 24.6, 24.2, 24.1 ], 
@@ -1085,8 +1089,60 @@ class PlotTest {
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_livemap_minard.png", plotSpec)
+            val plotSpec = parsePlotSpec(spec)
+            assertPlot("geom_livemap_minard.png", plotSpec)
+        }
+    }
+
+    @Test
+    fun minimal_livemap() {
+        // only ktor-client-darwin and ktor-client-curl are able to work with wss://
+        // But due to critical issue https://youtrack.jetbrains.com/issue/KTOR-9267 we can't use ktor-client-curl
+        if (Platform.osFamily == OsFamily.MACOSX) {
+            val spec = """
+            |{
+            |  "ggsize": {
+            |    "width": 300.0,
+            |    "height": 300.0
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "tiles": {
+            |        "kind": "vector_lets_plot",
+            |        "url": "wss://tiles.datalore.jetbrains.com",
+            |        "theme": "color",
+            |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |      },
+            |      "geocoding": {
+            |        "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding"
+            |      }
+            |    },
+            |    {
+            |      "geom": "point",
+            |      "map": { 
+            |        "city": [ "New York", "Boston", "san Francisco" ],
+            |        "found name": [ "New York", "Boston", "San Francisco" ],
+            |        "geometry": [
+            |          "{\"type\": \"Point\", \"coordinates\": [-73.8673749469137, 40.6847005337477]}",
+            |          "{\"type\": \"Point\", \"coordinates\": [-71.0884755326693, 42.3110405355692]}",
+            |          "{\"type\": \"Point\", \"coordinates\": [-122.447027491874, 37.7586284279823]}"
+            |        ]
+            |      },
+            |      "map_data_meta": {
+            |        "geodataframe": {
+            |          "geometry": "geometry"
+            |        }
+            |      }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+            val plotSpec = parsePlotSpec(spec)
+            assertPlot("geom_livemap_minimal.png", plotSpec)
+        }
     }
 
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {

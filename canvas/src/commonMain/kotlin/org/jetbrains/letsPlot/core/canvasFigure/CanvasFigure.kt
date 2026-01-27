@@ -36,4 +36,5 @@ interface CanvasFigure2 : SomeFig, AsyncRenderer {
 interface AsyncRenderer {
     fun isReady(): Boolean
     fun onReady(listener: () -> Unit): Registration
+    fun onFrame(millisTime: Long)
 }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.JPEG
@@ -13,12 +15,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
+import org.jetbrains.letsPlot.core.util.PlotExportCommon.waitForReady
 import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
-import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.seconds
 
 object PlotImageExport {
     sealed class Format {
@@ -97,60 +100,43 @@ object PlotImageExport {
         )
 
         val awtCanvasPeer = AwtCanvasPeer(scaleFactor, fontManager = fontManager)
-        plotFigure.mapToCanvas(awtCanvasPeer)
 
-        // Start loading tiles by painting to a dummy canvas
-        val dummyCanvas = awtCanvasPeer.createCanvas(plotFigure.size)
-        plotFigure.paint(dummyCanvas.context2d)
+        val canvasReg = plotFigure.mapToCanvas(awtCanvasPeer)
 
         try {
-            withTimeout(5000L) {
-                plotFigure.awaitLoading()
+            plotFigure.waitForReady(15.seconds)
+
+            val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
+            val ctx = canvas.context2d
+
+            plotFigure.paint(ctx)
+
+            val image = if (format is JPEG) {
+                // JPEGs require no transparency (Alpha), so we composite over White
+                val rgbBufferedImage =
+                    BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
+                val g = rgbBufferedImage.createGraphics()
+                g.drawImage(canvas.image, 0, 0, Color.WHITE, null)
+                g.dispose()
+                rgbBufferedImage
+            } else {
+                canvas.image
             }
-        } catch (e: TimeoutCancellationException) {
-            println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-        }
 
-        val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
-        plotFigure.paint(canvas.context2d)
+            val outputStream = ByteArrayOutputStream()
+            withContext(Dispatchers.IO) {
+                ImageIO.write(image, format.defFileExt, outputStream)
+            }
 
-        val image = if (format is JPEG) {
-            val rgbBufferedImage = BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
-            val g = rgbBufferedImage.createGraphics()
-            g.drawImage(canvas.image, 0, 0, Color.WHITE, null)
-            g.dispose()
-            rgbBufferedImage
-        } else {
-            canvas.image
-        }
-
-        val outputStream = ByteArrayOutputStream()
-        withContext(Dispatchers.IO) {
-            ImageIO.write(image, format.defFileExt, outputStream)
-        }
-
-        return ImageData(
-            bytes = outputStream.toByteArray(),
-            plotSize = DoubleVector(
-                x = plotFigure.size.x.toDouble(),
-                y = plotFigure.size.y.toDouble()
+            return ImageData(
+                bytes = outputStream.toByteArray(),
+                plotSize = DoubleVector(
+                    x = plotFigure.size.x.toDouble(),
+                    y = plotFigure.size.y.toDouble()
+                )
             )
-        )
-    }}
-
-
-suspend fun PlotCanvasFigure.awaitLoading() {
-    if (this.isReady()) return
-
-    suspendCancellableCoroutine { continuation ->
-        val registration = this.onReady {
-            if (continuation.isActive) {
-                continuation.resume(Unit)
-            }
-        }
-
-        continuation.invokeOnCancellation {
-            registration.remove()
+        } finally {
+            canvasReg.dispose()
         }
     }
 }
