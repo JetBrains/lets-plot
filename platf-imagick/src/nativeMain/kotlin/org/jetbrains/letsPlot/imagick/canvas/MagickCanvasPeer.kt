@@ -21,10 +21,6 @@ class MagickCanvasPeer(
         return MagickCanvas.create(size.x, size.y, contentScale, fontManager, antialiasing)
     }
 
-    fun createCanvas(width: Number, height: Number): MagickCanvas {
-        return MagickCanvas.create(width, height, pixelDensity, fontManager, antialiasing)
-    }
-
     override fun createSnapshot(bitmap: Bitmap): MagickSnapshot {
         return MagickSnapshot.fromBitmap(bitmap)
     }

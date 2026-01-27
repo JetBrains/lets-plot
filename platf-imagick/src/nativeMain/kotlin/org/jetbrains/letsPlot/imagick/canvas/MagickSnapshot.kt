@@ -33,7 +33,7 @@ class MagickSnapshot(
     }
 
     override fun copy(): Canvas.Snapshot {
-        val copiedImg = cloneMagickWand(img)
+        val copiedImg = cloneMagickWand(img, "MagickSnapshot.copy.copiedImg")
         return MagickSnapshot(copiedImg)
     }
 

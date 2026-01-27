@@ -27,13 +27,14 @@ class MagickContext2d(
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
 ) : Context2d by stateDelegate, Disposable {
-    private val img: CPointer<ImageMagick.MagickWand> = newMagickWand()
-    private val none = newPixelWand()
-    private val pixelWand = newPixelWand()
-    private val currentFillWand = newPixelWand()
-    private val currentStrokeWand = newPixelWand()
+    private val img: CPointer<ImageMagick.MagickWand> = newMagickWand("MagickContext2d.img")
+    private val none = newPixelWand("MagickContext2d.none")
+    private val pixelWand = newPixelWand("MagickContext2d.pixelWand")
+    private val eraser = newMagickWand("MagickContext2d.eraser")
+    private val currentFillWand = newPixelWand("MagickContext2d.currentFillWand")
+    private val currentStrokeWand = newPixelWand("MagickContext2d.currentStrokeWand")
 
-    val wand = newDrawingWand()
+    val wand = newDrawingWand("MagickContext2d.wand")
     private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
 
     private var dirtyFont = true
@@ -43,26 +44,29 @@ class MagickContext2d(
     private var emulateItalicStyle: Boolean = false
 
     init {
+        ImageMagick.PixelSetColor(none, "none")
         ImageMagick.MagickNewImage(img, 1.convert(), 1.convert(), none)
 
         ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
+        ImageMagick.DrawSetFillColor(wand, none) // default fill color to make DrawRectangle work with transparent fill
+
         currentFillRule = ImageMagick.FillRule.NonZeroRule
 
-        ImageMagick.PixelSetColor(none, "none")
+        ImageMagick.MagickNewImage(eraser, 1.convert(), 1.convert(), none)
+        ImageMagick.MagickSetImageAlphaChannel(eraser, ImageMagick.AlphaChannelOption.SetAlphaChannel)
+
+
         transform(wand, AffineTransform.makeScale(contentScale, contentScale))
     }
 
     override fun clearRect(rect: DoubleRectangle) {
-        ImageMagick.DrawGetFillColor(wand, currentFillWand)
-        ImageMagick.DrawGetStrokeColor(wand, currentStrokeWand)
+        clearRect(rect.left, rect.top, rect.width, rect.height)
+    }
 
-        ImageMagick.DrawSetFillColor(wand, none)
-        ImageMagick.DrawSetStrokeColor(wand, none)
-
-        ImageMagick.DrawRectangle(wand, rect.left, rect.top, rect.right, rect.bottom)
-
-        ImageMagick.DrawSetFillColor(wand, currentFillWand)
-        ImageMagick.DrawSetStrokeColor(wand, currentStrokeWand)
+    override fun clearRect(x: Double, y: Double, w: Double, h: Double) {
+        // CopyCompositeOp ignores blending and replaces the destination pixels
+        // with the source (eraserWand), which is transparent.
+        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.CopyCompositeOp, x, y, w, h, eraser)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
@@ -79,12 +83,47 @@ class MagickContext2d(
         require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
         if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
             // Resize the image if the dimensions do not match
-            val scaledImage = cloneMagickWand(snapshot.img)
+            val scaledImage = cloneMagickWand(snapshot.img, "MagickContext2d.drawImage.scaledImage")
             ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
             destroyMagickWand(scaledImage)
         } else {
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, snapshot.img)
+        }
+    }
+
+    override fun drawImage(
+        snapshot: Canvas.Snapshot,
+        sx: Double,
+        sy: Double,
+        sw: Double,
+        sh: Double,
+        dx: Double,
+        dy: Double,
+        dw: Double,
+        dh: Double
+    ) {
+        require(snapshot is MagickSnapshot) { "Snapshot must be of type MagickSnapshot" }
+
+        if (sw == snapshot.size.x.toDouble() && sh == snapshot.size.y.toDouble() && dw == sw && dh == sh) {
+            // No need to crop or scale
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, dx, dy, dw, dh, snapshot.img)
+        } else {
+            // Crop the source image
+            val croppedImage = cloneMagickWand(snapshot.img, "MagickContext2d.drawImage.croppedImage")
+            ImageMagick.MagickCropImage(croppedImage, sw.toULong(), sh.toULong(), sx.toULong().convert(), sy.toULong().convert())
+
+            if (dw != sw || dh != sh) {
+                // Resize the cropped image if needed
+                val scaledImage = cloneMagickWand(croppedImage, "MagickContext2d.drawImage.scaledImage")
+                ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
+                ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, dx, dy, dw, dh, scaledImage)
+                destroyMagickWand(scaledImage)
+            } else {
+                ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, dx, dy, dw, dh, croppedImage)
+            }
+
+            destroyMagickWand(croppedImage)
         }
     }
 
@@ -418,6 +457,7 @@ class MagickContext2d(
     override fun dispose() {
         //destroyMagickWand(img)  DO NOT destroy img here - MagickCanvas is the owner of it.
         destroyMagickWand(img)
+        destroyMagickWand(eraser)
         destroyPixelWand(pixelWand)
         destroyPixelWand(currentFillWand)
         destroyPixelWand(currentStrokeWand)

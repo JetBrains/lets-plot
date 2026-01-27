@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
@@ -37,6 +38,8 @@ class AwtCanvasControl(
     private val myMappedCanvases = HashMap<Canvas, JComponent>()
 
     fun component(): JComponent = myComponent
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer()
 
     override fun addChild(canvas: Canvas) {
         addChild(myComponent.componentCount, canvas)

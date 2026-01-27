@@ -56,7 +56,7 @@ class InteractivityTest : VisualPlotTestBase() {
         val awtCanvasPeer = AwtCanvasPeer()
         plotCanvasFigure.mapToCanvas(awtCanvasPeer)
 
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_MOVED, noButton(200, 100))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 100))
 
         val snapshot = plotCanvasFigure.takeSnapshot(awtCanvasPeer)
 
@@ -124,15 +124,15 @@ class InteractivityTest : VisualPlotTestBase() {
         // IMPORTANT: should be set after mapping to canvas
         plotFigureModel.toolEventDispatcher = plotCanvasFigure.toolEventDispatcher
 
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_DRAGGED, leftButton(200, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_DRAGGED, leftButton(200, 200))
 
         // Paint to create the initial buffer covering the range [20, 40]
         plotCanvasFigure.takeSnapshot(awtCanvasPeer)
 
         // Drag left by 200 px - this makes the buffer incomplete (visible range is now [30, 50])
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_DRAGGED, leftButton(0, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_DRAGGED, leftButton(0, 200))
 
         val snapshot = plotCanvasFigure.takeSnapshot(awtCanvasPeer)
         imageComparer.assertBitmapEquals("interactivity_pan_in_progress_with_incomplete_buffer.png", snapshot.bitmap)

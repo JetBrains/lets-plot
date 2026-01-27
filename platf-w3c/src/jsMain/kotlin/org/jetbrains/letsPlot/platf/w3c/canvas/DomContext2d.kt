@@ -214,7 +214,11 @@ internal class DomContext2d(
     }
     override fun measureTextWidth(str: String): Double = ctx.measureText(str).width
 
-    override fun clearRect(rect: DoubleRectangle) = ctx.clearRect(rect.left, rect.top, rect.width, rect.height)
+    override fun clearRect(rect: DoubleRectangle) = clearRect(rect.left, rect.top, rect.width, rect.height)
+    override fun clearRect(x: Double, y: Double, w: Double, h: Double) {
+        ctx.clearRect(x, y, w, h)
+    }
+
     override fun dispose() {
         // no-op
     }

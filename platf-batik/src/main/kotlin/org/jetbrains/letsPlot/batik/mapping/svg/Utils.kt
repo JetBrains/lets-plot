@@ -68,7 +68,11 @@ internal object Utils {
     }
 
     fun newBatikNode(source: SvgNode, myDoc: AbstractDocument): Node {
-        return when (source) {
+        if (source is SvgElement && source.elementName == "livemap") {
+            return SVGOMGElement(null, myDoc)
+        }
+
+        val el = when (source) {
             is SvgEllipseElement -> SVGOMEllipseElement(null, myDoc)
             is SvgCircleElement -> SVGOMCircleElement(null, myDoc)
             is SvgRectElement -> SVGOMRectElement(null, myDoc)
@@ -84,8 +88,18 @@ internal object Utils {
             is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> SVGOMImageElement(null, myDoc)
             is SvgAElement -> SVGOMAElement(null, myDoc)
-            else -> throw IllegalStateException("Unsupported SvgElement $source")
+            else -> null
         }
+
+        if (el != null) {
+            return el
+        }
+
+        if (source::class.simpleName == "SvgCanvasFigureElement") {
+            return SVGOMForeignObjectElement(null, myDoc)
+        }
+
+        throw IllegalStateException("Unsupported SvgElement $source")
     }
 
     fun getButton(evt: DOMMouseEvent): Button {

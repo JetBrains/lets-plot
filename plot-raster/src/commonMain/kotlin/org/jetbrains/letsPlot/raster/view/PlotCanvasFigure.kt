@@ -26,7 +26,7 @@ class PlotCanvasFigure : CanvasFigure2 {
     fun setRenderingHint(key: Any, value: Any) {
         plotSvgFigure.setRenderingHint(key, value)
     }
-    override val eventPeer: MouseEventPeer = MouseEventPeer()
+    override val mouseEventPeer: MouseEventPeer = MouseEventPeer()
     override val size: Vector get() {
         val (w, h) = sizingPolicy.resize(
             figureSizeDefault = plotSvgFigure.size.toDoubleVector(),
@@ -36,7 +36,7 @@ class PlotCanvasFigure : CanvasFigure2 {
         return Vector(ceil(w).toInt(), ceil(h).toInt())
     }
     private val plotSvgFigure: SvgCanvasFigure = SvgCanvasFigure().also {
-        it.eventPeer.addEventSource(eventPeer)
+        it.mouseEventPeer.addEventSource(mouseEventPeer)
     }
 
     private var eventReg: Registration = Registration.EMPTY
@@ -109,8 +109,20 @@ class PlotCanvasFigure : CanvasFigure2 {
         )
 
         plotSvgFigure.svgSvgElement = vm.svg
-        eventReg = vm.eventDispatcher.addEventSource(eventPeer)
+        eventReg = vm.eventDispatcher.addEventSource(mouseEventPeer)
 
         viewModel = vm
+    }
+
+    override fun isReady(): Boolean {
+        return plotSvgFigure.isReady()
+    }
+
+    override fun onReady(listener: () -> Unit): Registration {
+        return plotSvgFigure.onReady(listener)
+    }
+
+    override fun onFrame(millisTime: Long) {
+        plotSvgFigure.onFrame(millisTime)
     }
 }

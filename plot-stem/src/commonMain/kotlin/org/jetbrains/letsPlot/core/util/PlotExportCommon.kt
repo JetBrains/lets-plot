@@ -1,7 +1,12 @@
 package org.jetbrains.letsPlot.core.util
 
+import kotlinx.coroutines.delay
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.canvasFigure.AsyncRenderer
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.TimeSource
 
 object PlotExportCommon {
     data class ExportParameters(
@@ -109,4 +114,28 @@ object PlotExportCommon {
         return ExportParameters(sizingPolicy, finalScaleFactor, exportUnit, exportDpi)
     }
 
+
+    suspend fun AsyncRenderer.waitForReady(timeout: Duration): Boolean {
+        val timeSource = TimeSource.Monotonic
+        val startMark = timeSource.markNow()
+
+        fun now() = startMark.elapsedNow().inWholeMilliseconds
+
+        onFrame(now())
+        delay(16.milliseconds)
+
+        do {
+            if (now() > timeout.inWholeMilliseconds) {
+                return false
+            }
+
+            onFrame(now())
+
+            delay(4.milliseconds)
+        } while (!isReady())
+
+        delay(16.milliseconds)
+        onFrame(now())
+        return true
+    }
 }

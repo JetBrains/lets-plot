@@ -8,17 +8,20 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.AwtBitmapIO
 import demoAndTestShared.AwtTestCanvasProvider
 import demoAndTestShared.ImageComparer
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC
+import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.junit.BeforeClass
-import java.awt.Font
-import java.awt.FontFormatException
-import java.awt.GraphicsEnvironment
+import org.jetbrains.letsPlot.visualtesting.AwtCanvasTck
+import org.jetbrains.letsPlot.visualtesting.AwtFont
 import java.io.IOException
-import java.io.InputStream
 import javax.imageio.ImageIO
 
 open class VisualPlotTestBase {
@@ -56,18 +59,22 @@ open class VisualPlotTestBase {
         height: Number? = null,
         unit: SizeUnit? = null,
         dpi: Number? = null,
-        scale: Number? = null
+        scale: Number? = null,
+        fontManager: FontManager = FontManager.EMPTY
     ) {
         val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
-        val imageData = PlotImageExport.buildImageFromRawSpecs(
-            plotSpec = plotSpec,
-            format = PlotImageExport.Format.PNG,
-            scalingFactor = scale ?: 1.0,
-            targetDPI = dpi,
-            plotSize = plotSize,
-            unit = unit
-        )
+        val imageData = runBlocking {
+            PlotImageExport.buildImageFromRawSpecsInternal(
+                plotSpec = plotSpec,
+                format = PlotImageExport.Format.PNG,
+                scalingFactor = scale ?: 1.0,
+                targetDPI = dpi,
+                plotSize = plotSize,
+                unit = unit,
+                fontManager = fontManager
+            )
+        }
         val image = ImageIO.read(imageData.bytes.inputStream())
         val bitmap = BitmapUtil.fromBufferedImage(image)
 
@@ -76,33 +83,56 @@ open class VisualPlotTestBase {
     }
 
     companion object {
-        @JvmStatic
-        @BeforeClass
-        fun setUp() {
-            registerFont("fonts/NotoSans-Regular.ttf")
-            registerFont("fonts/NotoSans-Bold.ttf")
-            registerFont("fonts/NotoSans-Italic.ttf")
-            registerFont("fonts/NotoSans-BoldItalic.ttf")
-            registerFont("fonts/NotoSerif-Regular.ttf")
-        }
+        val fonts = mapOf(
+            Triple("Noto Sans", FontWeight.NORMAL, FontStyle.NORMAL) to createFont("fonts/NotoSans-Regular.ttf"),
+            Triple("Noto Sans", BOLD, FontStyle.NORMAL) to createFont("fonts/NotoSans-Bold.ttf"),
+            Triple("Noto Sans", FontWeight.NORMAL, ITALIC) to createFont("fonts/NotoSans-Italic.ttf"),
+            Triple("Noto Sans", BOLD, ITALIC) to createFont("fonts/NotoSans-BoldItalic.ttf"),
 
-        private fun registerFont(resourceName: String) {
-            val fontStream: InputStream? = PlotImageExportVisualTest::class.java.getClassLoader().getResourceAsStream(resourceName)
+            Triple("Noto Serif", FontWeight.NORMAL, FontStyle.NORMAL) to createFont("fonts/NotoSerif-Regular.ttf"),
+            Triple("Noto Serif", BOLD, FontStyle.NORMAL) to createFont("fonts/NotoSerif-Bold.ttf"),
+            Triple("Noto Serif", FontWeight.NORMAL, ITALIC) to createFont("fonts/NotoSerif-Italic.ttf"),
+            Triple("Noto Serif", BOLD, ITALIC) to createFont("fonts/NotoSerif-BoldItalic.ttf"),
+
+            Triple("Noto Sans Mono", FontWeight.NORMAL, FontStyle.NORMAL) to createFont("fonts/NotoSansMono-Regular.ttf"),
+            Triple("Noto Sans Mono", FontWeight.NORMAL, ITALIC) to createFont("fonts/NotoSansMono-Regular.ttf"),
+            Triple("Noto Sans Mono", BOLD, FontStyle.NORMAL) to createFont("fonts/NotoSansMono-Bold.ttf"),
+            Triple("Noto Sans Mono", BOLD, ITALIC) to createFont("fonts/NotoSansMono-Bold.ttf"),
+        )
+        val regularFont = createFont("fonts/NotoSans-Regular.ttf")
+        val boldFont = createFont("fonts/NotoSans-Bold.ttf")
+        val italicFont = createFont("fonts/NotoSans-Italic.ttf")
+        val boldItalicFont = createFont("fonts/NotoSans-BoldItalic.ttf")
+
+        val fontManager = FontManager(
+            fontResolver = { font ->
+                val resolvedFont = fonts[Triple(font.fontFamily, font.fontWeight, font.fontStyle)]
+                if (resolvedFont != null) {
+                    return@FontManager resolvedFont
+                }
+
+                when {
+                    font.isBold && font.isItalic -> return@FontManager boldItalicFont
+                    font.isBold -> return@FontManager boldFont
+                    font.isItalic -> return@FontManager italicFont
+                    else -> return@FontManager regularFont
+                }
+
+                return@FontManager null
+            }
+        )
+
+        private fun createFont(resourceName: String): AwtFont {
+            val fontStream = AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName)
+                ?: error("Font resource not found: $resourceName")
             try {
-                val customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream)
-                val ge = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                ge.registerFont(customFont)
-            } catch (e: FontFormatException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
+                return AwtFont.createFont(AwtFont.TRUETYPE_FONT, fontStream)
+                    ?: error("Cannot create font from resource: $resourceName")
             } finally {
-                if (fontStream != null) {
-                    try {
-                        fontStream.close()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
+                try {
+                    fontStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
             }
         }

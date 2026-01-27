@@ -60,7 +60,7 @@ internal fun mapSvg(textMeasuringCanvas: Canvas = MeasuringCanvas, builder: () -
         override fun decodePng(png: ByteArray) = error("Not supported")
     }
 
-    val svgCanvasPeer = SvgCanvasPeer(canvasPeer, textMeasuringCanvas)
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer, textMeasuringCanvas) {}
 
     //val rootMapper = SvgSvgElementMapper(svgDocument, SvgSkiaPeer(fontManager))
     val rootMapper = SvgSvgElementMapper(svgDocument, svgCanvasPeer)
@@ -268,6 +268,6 @@ internal fun withTextMeasurer(measurer: (String, ContextStateDelegate) -> TextMe
         override fun decodePng(png: ByteArray) = TODO("Not yet implemented")
     }
 
-    val svgCanvasPeer = SvgCanvasPeer(canvasPeer)
+    val svgCanvasPeer = SvgCanvasPeer(canvasPeer) {}
     return svgCanvasPeer
 }

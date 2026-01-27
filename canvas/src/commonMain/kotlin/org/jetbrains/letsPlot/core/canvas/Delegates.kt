@@ -38,6 +38,7 @@ class Context2dDelegate(
     }
 
     override fun clearRect(rect: DoubleRectangle) { log("clearRect: $rect") }
+    override fun clearRect(x: Double, y: Double, w: Double, h: Double) { log("clearRect: x=$x, y=$y, w=$w, h=$h") }
     override fun drawImage(snapshot: Canvas.Snapshot) { log("drawImage: $snapshot") }
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) { log("drawImage: $snapshot, x=$x, y=$y") }
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) { log("drawImage: $snapshot, x=$x, y=$y, dw=$dw, dh=$dh") }
@@ -116,6 +117,7 @@ open class CanvasControlDelegate(
     height: Int,
     override val pixelDensity: Double = 1.0,
 ) : CanvasControl {
+    override val canvasPeer: CanvasPeer get() = TODO("Not yet implemented")
     override val size: Vector = Vector(width, height)
     override fun addChild(canvas: Canvas) {}
     override fun addChild(index: Int, canvas: Canvas) {}

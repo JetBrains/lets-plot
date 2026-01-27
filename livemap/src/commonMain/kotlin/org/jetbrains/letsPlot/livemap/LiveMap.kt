@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap
 
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
@@ -21,6 +22,8 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.DeltaTime
 import org.jetbrains.letsPlot.livemap.Diagnostics.LiveMapDiagnostics
 import org.jetbrains.letsPlot.livemap.api.FeatureLayerBuilder
@@ -40,6 +43,7 @@ import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.TILE_CACHE_LIMI
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
 import org.jetbrains.letsPlot.livemap.config.DevParams.MicroTaskExecutor.*
+import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.MapRuler
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.graphics.Rectangle
@@ -86,6 +90,7 @@ class LiveMap(
     private val myShowCoordPickTools: Boolean,
     private val myCursorService: CursorService
 ) : Disposable {
+    private var lastFrameTime = 0L
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
     private lateinit var myEcsController: EcsController
@@ -98,7 +103,18 @@ class LiveMap(
     private lateinit var myTextMeasurer: TextMeasurer
 
     private val errorEvent = SimpleEventSource<Throwable>()
+    private var started = false
     val isLoading: Property<Boolean> = ValueProperty(true)
+    val mouseEventPeer: MouseEventPeer = MouseEventPeer()
+    var isAttached = false
+        private set
+
+    private val repaintRequestListeners = mutableListOf<() -> Unit>()
+
+    fun addRepaintListener(listener: () -> Unit): Registration {
+        repaintRequestListeners.add(listener)
+        return Registration.onRemove { repaintRequestListeners.remove(listener) }
+    }
 
     fun addErrorHandler(handler: (Throwable) -> Unit): Registration {
         return errorEvent.addHandler(
@@ -108,9 +124,22 @@ class LiveMap(
         )
     }
 
+    fun onFrame(millisTime: Long) {
+        if (lastFrameTime == 0L) {
+            lastFrameTime = millisTime
+        }
+
+        val dt = millisTime - lastFrameTime
+        animationHandler(dt)
+    }
+
     private val myComponentManager = EcsComponentManager()
 
     fun draw(canvasControl: CanvasControl) {
+        if (isAttached) {
+            return
+        }
+
         val camera = MutableCamera(myComponentManager)
             .apply {
                 requestZoom(viewport.zoom.toDouble())
@@ -144,6 +173,8 @@ class LiveMap(
             canvasControl,
             AnimationEventHandler.toHandler(updateController::onTime)
         )
+
+        isAttached = true
     }
 
     fun hoverObjects(): List<HoverObject> {
@@ -151,11 +182,22 @@ class LiveMap(
     }
 
     private fun animationHandler(dt: Long): Boolean {
+        if (started) {
+            isLoading.set(myComponentManager.containsEntity<BusyStateComponent>())
+        } else {
+            started = true
+            isLoading.set(true)
+        }
+
         myEcsController.update(dt.toDouble())
 
         myDiagnostics.update(dt)
 
-        return myLayerRenderingSystem.updated
+        val updated = myLayerRenderingSystem.updated
+        if (updated) {
+            repaintRequestListeners.forEach { it() }
+        }
+        return updated
     }
 
     private fun init(componentManager: EcsComponentManager) {
@@ -341,6 +383,45 @@ class LiveMap(
     override fun dispose() {
         myTimerReg.dispose()
         myEcsController.dispose()
+    }
+
+    fun attachToCanvasPeer(canvasPeer: CanvasPeer, size: Vector, pixelDensity: Double = 1.0): Registration {
+        if (isAttached) {
+            return Registration.EMPTY
+        }
+
+        val camera = MutableCamera(myComponentManager)
+            .apply {
+                requestZoom(viewport.zoom.toDouble())
+                requestPosition(viewport.position)
+            }
+
+        myLayerManager = when (myRenderTarget) {
+            OWN_OFFSCREEN_CANVAS -> OffscreenCanvasLayerManager(canvasPeer, size)
+            OWN_SCREEN_CANVAS -> error("OWN_SCREEN_CANVAS is not supported for CanvasPeer")
+        }
+
+        myContext = LiveMapContext(
+            mapProjection = myMapProjection,
+            mouseEventSource = mouseEventPeer,
+            mapRenderContext = MapRenderContext(viewport, canvasPeer, pixelDensity),
+            errorHandler = { println("LiveMap error: $it") },
+            camera = camera,
+            layerManager = myLayerManager
+        )
+        myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
+        myUiService = UiService(myComponentManager, myTextMeasurer)
+        init(myComponentManager)
+
+        isAttached = true
+
+        return Registration.onRemove { dispose() }
+    }
+
+    fun paint(context2d: Context2d) {
+        myLayerManager.layers.forEach { layer ->
+            context2d.drawImage(layer.snapshot())
+        }
     }
 
     private class UpdateController(

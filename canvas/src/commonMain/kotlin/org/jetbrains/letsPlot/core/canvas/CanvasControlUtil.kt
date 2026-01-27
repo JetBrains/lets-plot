@@ -24,8 +24,8 @@ object CanvasControlUtil {
             })
     }
 
-    fun setAnimationHandler(canvasControl: CanvasControl, eventHandler: AnimationEventHandler): Registration {
-        val animationTimer = canvasControl.createAnimationTimer(eventHandler)
+    fun setAnimationHandler(animationProvider: AnimationProvider, eventHandler: AnimationEventHandler): Registration {
+        val animationTimer = animationProvider.createAnimationTimer(eventHandler)
         animationTimer.start()
         return Registration.from(object : Disposable {
             override fun dispose() {
