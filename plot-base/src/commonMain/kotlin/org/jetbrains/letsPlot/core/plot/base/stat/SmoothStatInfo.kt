@@ -130,6 +130,7 @@ class SmoothStatInfo(
 
         val dfb = DataFrame.Builder()
             .put(Stats.R2, listOf(regression.r2))
+            .put(Stats.R2_ADJ, listOf(regression.adjR2))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->

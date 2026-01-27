@@ -19,6 +19,15 @@ abstract class RegressionEvaluator protected constructor(
     val eq: List<Double>,
     val r2: Double,
 ) {
+    val adjR2: Double
+        get() {
+            val predictorsCount = (eq.size - 1).coerceAtLeast(0)
+            if (n <= predictorsCount + 1 || r2.isNaN()) {
+                return Double.NaN
+            }
+            return 1.0 - (1.0 - r2) * ((n - 1.0) / (n - predictorsCount - 1.0))
+        }
+
     fun value(x: Double): Double {
         return model(x)
     }

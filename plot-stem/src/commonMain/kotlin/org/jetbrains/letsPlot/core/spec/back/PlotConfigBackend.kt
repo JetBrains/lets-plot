@@ -334,6 +334,7 @@ open class PlotConfigBackend(
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
+            varsToKeep.addAll(listOf(Stats.R2, Stats.R2_ADJ))
             varsToKeep.addAll(layerConfig.ownData.variables().filter { it.label.contains("smooth_eq_coef_") })
 
             return HashSet<String>() +
