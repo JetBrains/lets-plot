@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 
 class FontManager(
+    private val onFontResolve: ((Font) -> java.awt.Font?)? = null
 ) {
     private val fonts: MutableMap<Font, AwtFont> = mutableMapOf()
 
@@ -23,6 +24,13 @@ class FontManager(
     }
 
     fun getFont(f: Font): java.awt.Font? {
+        if (onFontResolve != null) {
+            val resolvedFont = onFontResolve.invoke(f)
+            if (resolvedFont != null) {
+                return resolvedFont
+            }
+        }
+
         val fontBase = fonts[f.copy(fontSize = 1.0)] ?: return null
         val style = when {
             f.isBoldItalic -> java.awt.Font.BOLD or java.awt.Font.ITALIC

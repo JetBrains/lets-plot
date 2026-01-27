@@ -7,6 +7,7 @@ plugins {
     kotlin("multiplatform")
 }
 
+val os: org.gradle.internal.os.OperatingSystem = org.gradle.internal.os.OperatingSystem.current()
 
 val ktorVersion = project.extra["ktor.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
@@ -37,7 +38,12 @@ kotlin {
 
         nativeMain {
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
+                if (os.isMacOsX) {
+                    implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
+                } else {
+                    // Uses CIO for Linux and Windows
+                    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+                }
             }
         }
 
