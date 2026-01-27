@@ -10,12 +10,6 @@ class FontManager(
     private val fonts: MutableMap<Triple<String, FontWeight, FontStyle>, AwtFont> = mutableMapOf()
 
     fun register(family: String, awtFont: AwtFont, weight: FontWeight = FontWeight.NORMAL, style: FontStyle = FontStyle.NORMAL) {
-        val fontKey = Font(
-            fontFamily = family,
-            fontWeight = weight,
-            fontStyle = style,
-            fontSize = 1.0
-        )
         fonts[Triple(family, weight, style)] = awtFont
     }
 

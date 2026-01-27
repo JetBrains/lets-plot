@@ -1,10 +1,12 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LiveMapTest : VisualPlotTestBase() {
     @Test
+    @Ignore("Need local tile server")
     fun `minard with default tiles`() {
         val spec = parsePlotSpec("""
             |{
