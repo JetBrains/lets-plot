@@ -20,7 +20,8 @@
 
 ### Changed
 
-- [**BREAKING**]: New dependency `kotlinx-atomicfu` version 0.31.0 is required.
+- [**BREAKING**]: Added `kotlinx-atomicfu`(v0.31.0) as a new dependency to support LiveMap export.
+- [**BREAKING**]: Added `ktor-client-curl`(v3.1.3) as a new dependency is to support LiveMap export.
 - [**BREAKING**]: Removed JavaFX artifacts.
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
