@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.registration.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
@@ -12,6 +13,7 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.JComponent
+import javax.swing.Timer
 
 @Deprecated("Migrate to CanvasPane", ReplaceWith("CanvasPane", "org.jetbrains.letsPlot.awt.canvas.CanvasPane"))
 typealias CanvasPane2 = CanvasPane
@@ -24,6 +26,7 @@ class CanvasPane(
     private var figureRegistration: Registration = Registration.EMPTY
     private val canvasPeer: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    private val systemTime: SystemTime = SystemTime()
 
     var figure: CanvasFigure2? = null
         set(canvasFigure) {
@@ -35,7 +38,13 @@ class CanvasPane(
             if (canvasFigure != null) {
                 canvasFigure.resize(width, height)
                 canvasFigure.mouseEventPeer.addEventSource(mouseEventSource)
+                val animationTimer = Timer(1000 / 60) {
+                    canvasFigure.onFrame(systemTime.getTimeMs())
+                }
+                animationTimer.start()
+
                 figureRegistration = CompositeRegistration(
+                    Registration.onRemove(animationTimer::stop),
                     canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequested(::repaint),
                 )

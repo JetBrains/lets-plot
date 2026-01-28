@@ -25,6 +25,7 @@ import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.raster.mapping.svg.DebugOptions.drawBoundingBoxes
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
+import org.jetbrains.letsPlot.raster.scene.CanvasNode
 import org.jetbrains.letsPlot.raster.scene.Container
 import org.jetbrains.letsPlot.raster.scene.Node
 import org.jetbrains.letsPlot.raster.scene.reversedDepthFirstTraversal
@@ -127,6 +128,10 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
                 val node = mapper.target
                 if (node is AsyncRenderer) {
                     asyncRenderers += node
+                }
+
+                if (node is CanvasNode) {
+                    node.mouseEventPeer.addEventSource(mouseEventPeer)
                 }
             }
 

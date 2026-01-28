@@ -18,9 +18,6 @@ class AwtCanvasPeer(
     private val pixelDensity: Double = 1.0,
     private val fontManager: FontManager = FontManager.EMPTY,
 ) : CanvasPeer {
-    private val animationTimerPeer: AwtAnimationTimerPeer = AwtAnimationTimerPeer()
-
-
     override fun createCanvas(size: Vector): AwtCanvas {
         return AwtCanvas.create(size, pixelDensity, fontManager)
     }

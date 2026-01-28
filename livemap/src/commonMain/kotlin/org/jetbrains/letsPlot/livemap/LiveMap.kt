@@ -90,6 +90,8 @@ class LiveMap(
     private val myShowCoordPickTools: Boolean,
     private val myCursorService: CursorService
 ) : Disposable {
+    private var isDisposed = false
+    private var startFrameTime: Long = 0
     private var lastFrameTime = 0L
     private val myRenderTarget: RenderTarget = myDevParams.read(RENDER_TARGET)
     private var myTimerReg = Registration.EMPTY
@@ -125,11 +127,14 @@ class LiveMap(
     }
 
     fun onFrame(millisTime: Long) {
-        if (lastFrameTime == 0L) {
-            lastFrameTime = millisTime
+        if (startFrameTime == 0L) {
+            startFrameTime = millisTime
         }
 
-        val dt = millisTime - lastFrameTime
+        val dt = maxOf(0, millisTime - lastFrameTime)
+
+        lastFrameTime = millisTime
+
         animationHandler(dt)
     }
 
@@ -381,6 +386,11 @@ class LiveMap(
     }
 
     override fun dispose() {
+        if (isDisposed) {
+            return
+        }
+
+        isDisposed = true
         myTimerReg.dispose()
         myEcsController.dispose()
     }

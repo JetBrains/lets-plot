@@ -76,8 +76,7 @@ class LiveMapCanvasFigure(
         TODO("Not yet implemented")
     }
 
-    override val mouseEventPeer: MouseEventPeer
-        get() = TODO("Not yet implemented")
+    override val mouseEventPeer: MouseEventPeer = liveMap.mouseEventPeer
 
     override fun isReady(): Boolean {
         return !liveMap.isLoading.get()
