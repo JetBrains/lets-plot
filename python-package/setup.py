@@ -95,6 +95,7 @@ elif this_system == 'Windows':
             '-lurlmon',
             '-lgdi32',
             '-lws2_32',
+            '-liconv',
             '-lz'
         ]
 

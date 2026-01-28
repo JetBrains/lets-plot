@@ -60,6 +60,7 @@ kotlin {
                     "-lurlmon",
                     "-lgdi32",
                     "-lws2_32",
+                    "-liconv"
                 )
             }
         }
