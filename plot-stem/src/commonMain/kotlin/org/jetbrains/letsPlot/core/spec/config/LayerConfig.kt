@@ -85,7 +85,7 @@ class LayerConfig constructor(
     val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
     val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
     val isLegendDisabled: Boolean
-        get() = when (hasOwn(SHOW_LEGEND)) {
+        get() = when (has(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
         }
