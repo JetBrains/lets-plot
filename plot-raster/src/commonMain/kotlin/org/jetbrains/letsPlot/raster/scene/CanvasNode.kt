@@ -1,7 +1,7 @@
 package org.jetbrains.letsPlot.raster.scene
 
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
-import org.jetbrains.letsPlot.commons.event.withViewport
+import org.jetbrains.letsPlot.commons.event.child
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -21,11 +21,12 @@ internal class CanvasNode : Node(), AsyncRenderer {
         val peer = peer ?: return@derivedAttr null
 
         reg.remove()
-        val contentMouseEventPeer = mouseEventPeer.withViewport { bBoxGlobal }
+        val localEventSource = mouseEventPeer.child(::bBoxGlobal)
 
         reg = CompositeRegistration(
+            content.mouseEventPeer.addEventSource(localEventSource),
+            Registration.from(localEventSource),
             content.mapToCanvas(peer.canvasPeer),
-            content.mouseEventPeer.addEventSource(contentMouseEventPeer),
             content.onReady { onContentReady() },
             content.onRepaintRequested {
                 markDirty()
