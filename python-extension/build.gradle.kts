@@ -58,7 +58,8 @@ kotlin {
             if (os.isWindows) {
                 it.linkerOpts += listOf(
                     "-lurlmon",
-                    "-lgdi32"
+                    "-lgdi32",
+                    "-lws2_32",
                 )
             }
         }
