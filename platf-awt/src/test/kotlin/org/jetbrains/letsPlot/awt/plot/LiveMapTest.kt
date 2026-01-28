@@ -52,4 +52,30 @@ class LiveMapTest : VisualPlotTestBase() {
 
         assertPlot("geom_livemap_minard.png", plotSpec, fontManager = fontManager)
     }
+
+    @Test
+    @Ignore("Need local tile server")
+    fun `geom_livemap nasa tiles`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "tiles": {
+            |        "kind": "raster_zxy",
+            |        "url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_CityLights_2012/default//GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",
+            |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs\">\u00a9 NASA Global Imagery Browse Services (GIBS)</a>",
+            |        "min_zoom": 1.0,
+            |        "max_zoom": 8.0
+            |      },
+            |      "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin())
+
+        val plotSpec = spec.themeTextNotoSans()
+        assertPlot("geom_livemap_nasa_tiles.png", plotSpec, fontManager = fontManager)
+    }
 }

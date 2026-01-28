@@ -62,9 +62,8 @@ class TileLoadingSystem(
 
             createEntity("tile_$cellKey")
                 .addComponents {
-                    + BasemapCellComponent(cellKey)
-                    + tileResponseComponent
-                    + BusyStateComponent()
+                    +BasemapCellComponent(cellKey)
+                    +tileResponseComponent
                 }
 
             myTileDataFetcher.fetch(cellKey).onResult(
@@ -78,24 +77,24 @@ class TileLoadingSystem(
             val tileData = responseComponent.tileData ?: return@onEachEntity
 
             downloadedEntities.add(entity)
-            entity.remove<BusyStateComponent>()
 
             val cellKey = entity.get<BasemapCellComponent>().cellKey
             val tileEntities = getTileLayerEntities(cellKey)
 
-            entity.setMicroThread(myQuantumIterations, myTileDataParser
-                .parse(cellKey, tileData)
-                .flatMap { tileFeatures ->
-                    val microThreads = ArrayList<MicroTask<Unit>>()
-                    tileEntities.forEach { tileLayerEntity ->
-                        tileLayerEntity.add(BusyStateComponent())
+            entity.setMicroThread(
+                myQuantumIterations, myTileDataParser
+                    .parse(cellKey, tileData)
+                    .flatMap { tileFeatures ->
+                        val microThreads = ArrayList<MicroTask<Unit>>()
+                        tileEntities.forEach { tileLayerEntity ->
                             val canvas = myCanvasSupplier()
                             val tileLoadingTask = myTileDataRenderer
                                 .render(canvas, tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
                                 .map {
                                     runLaterBySystem(tileLayerEntity) { theEntity ->
                                         val snapshot = canvas.takeSnapshot()
-                                        theEntity.get<BasemapTileComponent>().tile = SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
+                                        theEntity.get<BasemapTileComponent>().tile =
+                                            SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
                                         theEntity.remove<BusyStateComponent>()
                                         ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                     }
@@ -103,9 +102,9 @@ class TileLoadingSystem(
                                 }
 
                             microThreads.add(tileLoadingTask)
+                        }
+                        MicroTaskUtil.join(microThreads)
                     }
-                    MicroTaskUtil.join(microThreads)
-                }
             )
         }
 
