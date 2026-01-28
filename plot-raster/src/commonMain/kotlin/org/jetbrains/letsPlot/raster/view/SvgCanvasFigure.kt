@@ -59,7 +59,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
     private var repaintManager: RepaintManager? = null
-    private var asyncRenderers: MutableList<AsyncRenderer> = mutableListOf()
+    private var canvasNodes: MutableMap<CanvasNode, Registration> = mutableMapOf()
 
     internal lateinit var rootMapper: SvgSvgElementMapper
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
@@ -126,19 +126,16 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         ctx.addListener(object : MappingContextListener {
             override fun onMapperRegistered(mapper: Mapper<*, *>) {
                 val node = mapper.target
-                if (node is AsyncRenderer) {
-                    asyncRenderers += node
-                }
-
                 if (node is CanvasNode) {
-                    node.mouseEventPeer.addEventSource(mouseEventPeer)
+                    canvasNodes[node] = node.mouseEventPeer.addEventSource(mouseEventPeer)
                 }
             }
 
             override fun onMapperUnregistered(mapper: Mapper<*, *>) {
                 val node = mapper.target
                 if (node is AsyncRenderer) {
-                    asyncRenderers -= node
+                    val reg = canvasNodes.remove(node)
+                    reg?.remove()
                 }
             }
         })
@@ -234,7 +231,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     override fun isReady(): Boolean {
-        return asyncRenderers.all(AsyncRenderer::isReady)
+        return canvasNodes.keys.all(AsyncRenderer::isReady)
     }
 
     override fun onReady(listener: () -> Unit): Registration {
@@ -242,7 +239,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             listener()
             return Registration.EMPTY
         } else {
-            val notReadyRenderers = asyncRenderers.filterNot(AsyncRenderer::isReady).toMutableSet()
+            val notReadyRenderers = canvasNodes.keys.filterNot(AsyncRenderer::isReady).toMutableSet()
             val regs = notReadyRenderers.map { renderer ->
                 renderer.onReady {
                     notReadyRenderers.remove(renderer)
@@ -257,6 +254,6 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     override fun onFrame(millisTime: Long) {
-        asyncRenderers.forEach { it.onFrame(millisTime) }
+        canvasNodes.forEach { (canvasNode, _) -> canvasNode.onFrame(millisTime) }
     }
 }
