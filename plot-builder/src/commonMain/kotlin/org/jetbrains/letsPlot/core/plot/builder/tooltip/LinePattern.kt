@@ -87,6 +87,12 @@ class LinePattern(
             fields = listOf(valueSource)
         )
 
+        fun defaultLineForSmoothLabels(valueSource: ValueSource): LinePattern = LinePattern(
+            label = DEFAULT_LABEL_SPECIFIER,
+            pattern = "\\(R^2 = {}\\)",
+            fields = listOf(valueSource)
+        )
+
         private const val DEFAULT_LABEL_SPECIFIER = "@"
 
 

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
@@ -27,6 +28,11 @@ open class LineSpecConfigParser(
 
     fun create(): LinesContentSpecification {
         return LineSpecConfigParserHelper(
+            kind = if (has(Option.LinesSpec.KIND)) {
+                getString(Option.LinesSpec.KIND)
+            } else {
+                null
+            },
             lines = if (has(Option.LinesSpec.LINES)) {
                 getStringList(Option.LinesSpec.LINES)
             } else {
@@ -41,6 +47,7 @@ open class LineSpecConfigParser(
     }
 
     internal inner class LineSpecConfigParserHelper(
+        private val kind: String?,
         private val lines: List<String>?,
         formats: List<*>,
         variables: List<String>,
@@ -62,10 +69,7 @@ open class LineSpecConfigParser(
             }.toMutableMap()
 
         // Create lines from the given variable list
-        private val myLinesForVariableList: List<LinePattern> = variables.map { variableName ->
-            val valueSource = getValueSource(varField(variableName))
-            LinePattern.defaultLineForValueSource(valueSource)
-        }
+        private val myLinesForVariableList: List<LinePattern> = prepareVariables(variables)
 
         internal fun parse(): LinesContentSpecification {
             val allLines = parseLines()
@@ -168,6 +172,18 @@ open class LineSpecConfigParser(
                 }
             }
             return allFormats
+        }
+
+        private fun prepareVariables(variables: List<String>): List<LinePattern> {
+            if (kind == "smooth" && variables.isEmpty() && lines == null) {
+                val valueSource = getValueSource(varField(R2.name))
+                return listOf(LinePattern.defaultLineForSmoothLabels(valueSource))
+            }
+
+            return variables.map { variableName ->
+                val valueSource = getValueSource(varField(variableName))
+                LinePattern.defaultLineForValueSource(valueSource)
+            }
         }
 
         private fun getAesValueSourceForVariable(

@@ -253,6 +253,7 @@ object Option {
     }
 
     object LinesSpec {
+        const val KIND = "kind"
         const val LINES = "lines"
         const val FORMATS = "formats"
         const val VARIABLES = "variables"

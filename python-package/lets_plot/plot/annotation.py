@@ -295,35 +295,31 @@ class smooth_labels(layer_labels):
     def __init__(self, variables: List[str] = None):
         super().__init__(variables)
 
-        self._rhs = None
-        self._lhs = None
+        self._kind = "smooth"
+        self._eq = {}
 
         self.inherit_color()
 
-    def eq(self, *, with_lhs="y", rhs=None, format=None) -> "smooth_labels":
+    def eq(self, *, lhs="y", rhs=None, format=None, threshold=None) -> "smooth_labels":
         if format is not None:
-            self.format('..eq..', format=format)
-
-        self.line('@{..eq..}')
+            if isinstance(format, list):
+                self._eq.format = format
+            else:
+                self._eq.format = [format]
 
         if rhs is not None:
-            self._rhs = rhs
+            self._eq._rhs = rhs
 
-        self._lhs = with_lhs
+        self._eq._lhs = lhs
 
-        return self
+        if threshold is not None:
+            self._eq.threshold = threshold
 
-    def rr(self, format=None) -> "smooth_labels":
-        if format is not None:
-            self.format('..r2..', format=format)
-
-        self.line('\(R\\^2 = @{..r2..}\)')
         return self
 
     def as_dict(self):
         d = super().as_dict()
 
-        d['lines'] = d['lines'] if 'lines' in d else ['\(R\\^2 = @{..r2..}\)']
-        d['rhs'] = self._rhs
-        d['lhs'] = self._lhs
+        d["kind"] = self._kind
+        d['eq'] = self._eq
         return _filter_none(d)
