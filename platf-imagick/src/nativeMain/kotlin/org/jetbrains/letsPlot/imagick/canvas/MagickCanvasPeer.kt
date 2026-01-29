@@ -31,7 +31,7 @@ class MagickCanvasPeer(
     }
 
     override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
-        println("Decoding PNG image of size: ${png.size} bytes")
-        TODO("Implement PNG decoding using ImageMagick or another suitable library")
+        val bitmap = Png.decode(png)
+        return Asyncs.constant(MagickSnapshot.fromBitmap(bitmap))
     }
 }

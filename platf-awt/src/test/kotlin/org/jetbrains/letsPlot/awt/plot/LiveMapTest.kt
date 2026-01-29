@@ -1,6 +1,7 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.visualtesting.runTileServerTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -78,4 +79,28 @@ class LiveMapTest : VisualPlotTestBase() {
         val plotSpec = spec.themeTextNotoSans()
         assertPlot("geom_livemap_nasa_tiles.png", plotSpec, fontManager = fontManager)
     }
+
+    @Test
+    fun `geom_livemap png tiles`() {
+        runTileServerTest("png") { url ->
+            val spec = parsePlotSpec("""
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "livemap",
+                |      "zoom": 1,
+                |      "tiles": { "kind": "raster_zxy", "url": "$url", "attribution": "Lets-Plot" }
+                |    },
+                |    { "geom": "point", "x": 0, "y": 0 }
+                |  ]
+                |}            
+            """.trimMargin()
+            )
+
+            val plotSpec = spec.themeTextNotoSans()
+            assertPlot("geom_livemap_png_tiles.png", plotSpec, fontManager = fontManager)
+        }
+    }
+
 }

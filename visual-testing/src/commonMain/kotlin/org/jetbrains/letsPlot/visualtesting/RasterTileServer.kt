@@ -1,86 +1,27 @@
-import io.ktor.client.*
-import io.ktor.client.request.*
+package org.jetbrains.letsPlot.visualtesting
+
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.cio.* // Server CIO
+import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeoutOrNull
-import okio.FileSystem
-import okio.Path.Companion.toPath
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.letsPlot.commons.encoding.Base64
 
-class RasterTileServer(
-    private val tilesRoot: String,
-    private val fileSystem: FileSystem
-) {
+class RasterTileServer {
     private var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
 
-    /**
-     * Tries to start the server on a free port starting from [startPort].
-     * Returns the port that was successfully bound and verified.
-     * Throws an exception if no server could be started after [maxRetries].
-     */
-    suspend fun start(startPort: Int = 8080, maxRetries: Int = 10): Int {
-        val client = HttpClient(io.ktor.client.engine.cio.CIO)
-
-        try {
-            for (i in 0 until maxRetries) {
-                val port = startPort + i
-
-                try {
-                    // 1. Create and Start Server
-                    val candidateServer = embeddedServer(CIO, port = port) {
-                        setupRouting()
-                    }
-
-                    // Attempt to start. If port is hard-locked, CIO might throw here immediately.
-                    candidateServer.start(wait = false)
-
-                    // 2. Health Check: Verify it is actually responding
-                    if (isServerAlive(client, port)) {
-                        this.server = candidateServer
-                        return port // Success!
-                    } else {
-                        // Started but not responding? Stop and try next.
-                        candidateServer.stop(0, 0)
-                    }
-
-                } catch (e: Exception) {
-                    // Port likely in use (BindException), ignore and try next
-                    // Print for debugging if needed: println("Port $port failed: ${e.message}")
-                    server?.stop(0, 0)
-                    server = null
-                }
-            }
-        } finally {
-            client.close()
+    fun start(): Int {
+        val serverInstance = embeddedServer(CIO, port = 0) {
+            setupRouting()
         }
+        serverInstance.start(wait = false)
 
-        throw IllegalStateException("Failed to find a free port between $startPort and ${startPort + maxRetries}")
-    }
-
-    /**
-     * Polls the server root or status endpoint to ensure it's up.
-     */
-    private suspend fun isServerAlive(client: HttpClient, port: Int): Boolean {
-        // Try for up to 1 second for the server to bind and respond
-        return withTimeoutOrNull(1000) {
-            while (true) {
-                try {
-                    // We hit the internal health check route
-                    val response = client.get("http://localhost:$port/status-check")
-                    if (response.status == HttpStatusCode.OK) {
-                        return@withTimeoutOrNull true
-                    }
-                } catch (e: Exception) {
-                    // Connection refused, wait a bit and retry
-                }
-                delay(50)
-            }
-            false
-        } ?: false
+        // Get the resolved random port
+        val port = runBlocking { serverInstance.engine.resolvedConnectors().first().port }
+        server = serverInstance
+        return port
     }
 
     fun stop() {
@@ -90,34 +31,47 @@ class RasterTileServer(
 
     private fun Application.setupRouting() {
         routing {
-            // Internal health check endpoint
-            get("/status-check") {
-                call.respond(HttpStatusCode.OK, "OK")
-            }
-
-            get("/{z}/{y}/{x}.png") {
+            get("/{z}/{y}/{x}/{ext}") {
                 val z = call.parameters["z"]
                 val y = call.parameters["y"]
                 val x = call.parameters["x"]
+                val ext = call.parameters["ext"]
 
-                if (z == null || y == null || x == null) {
-                    call.respond(HttpStatusCode.BadRequest)
+                val tile = tiles["$z/$y/$x/$ext"]
+
+                if (tile == null) {
+                    call.respond(HttpStatusCode.NotFound, "Tile not found: ${call.parameters}")
                     return@get
                 }
 
-                val path = "$tilesRoot/$z/$y/$x.png".toPath()
-
-                if (fileSystem.exists(path)) {
-                    try {
-                        val bytes = fileSystem.read(path) { readByteArray() }
-                        call.respondBytes(bytes, ContentType.Image.PNG)
-                    } catch (e: Exception) {
-                        call.respond(HttpStatusCode.InternalServerError)
-                    }
-                } else {
-                    call.respond(HttpStatusCode.NotFound)
-                }
+                call.respondBytes(tile, ContentType.Image.PNG)
             }
         }
+    }
+}
+
+val tile0png = Base64.decode("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")
+val tile1png = Base64.decode("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")
+val tile2png = Base64.decode("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")
+val tile3png = Base64.decode("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")
+
+val tiles = mapOf(
+    "1/0/0/png" to tile0png,
+    "1/0/1/png" to tile1png,
+    "1/1/0/png" to tile2png,
+    "1/1/1/png" to tile3png
+)
+
+fun runTileServerTest(ext: String, block: (url: String) -> Unit) {
+    val server = RasterTileServer()
+    val port = server.start()
+    val url = "http://localhost:$port/{z}/{y}/{x}/$ext"
+
+    try {
+        runBlocking {
+            block(url)
+        }
+    } finally {
+        server.stop()
     }
 }

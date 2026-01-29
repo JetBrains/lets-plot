@@ -8,19 +8,14 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
-import org.jetbrains.letsPlot.visualtesting.RasterTileServer
+import org.jetbrains.letsPlot.visualtesting.runTileServerTest
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.random.Random
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.measureTime
 
@@ -1189,18 +1184,25 @@ class PlotTest {
     }
 
     @Test
-    fun testServerReturns404ForMissingTile() {
-        val server = RasterTileServer("test-data", okio.FileSystem.SYSTEM)
-        server.start(8000)
+    fun `geom_livemap png tiles`() {
+        runTileServerTest("png") { url ->
+            val spec = parsePlotSpec("""
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "livemap",
+                |      "zoom": 1,
+                |      "tiles": { "kind": "raster_zxy", "url": "$url", "attribution": "Lets-Plot" }
+                |    },
+                |    { "geom": "point", "x": 0, "y": 0 }
+                |  ]
+                |}            
+            """.trimMargin()
+            )
 
-        val client = HttpClient()
-        runBlocking {
-            val response = client.get("http://0.0.0.0:8000/99/99/99.png")
-            assertEquals(HttpStatusCode.NotFound, response.status)
+            assertPlot("geom_livemap_png_tiles.png", spec)
         }
-
-        client.close()
-        server.stop()
     }
 
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {
