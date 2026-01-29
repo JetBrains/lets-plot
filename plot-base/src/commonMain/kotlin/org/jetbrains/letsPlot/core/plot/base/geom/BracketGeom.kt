@@ -25,7 +25,7 @@ class BracketGeom : TextGeom() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(false) // TODO
         val pathData = linesHelper.createPathData(
-            aesthetics.dataPoints().map(::toSegmentAes),
+            aesthetics.dataPoints().map(TextHelper::toSegmentAes),
             bracketBuilder(linesHelper, bracketShorten)
         )
         val svgPath = linesHelper.renderPaths(pathData, filled = false)

@@ -137,7 +137,7 @@ open class TextRepelGeom: TextGeom() {
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
-                root.add(buildSegmentComponent(toSegmentAes(dp), segment, svgHelper))
+                root.add(buildSegmentComponent(TextHelper.toSegmentAes(dp), segment, svgHelper))
             }
 
             targetCollector.addPoint(

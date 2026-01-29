@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
@@ -105,6 +107,22 @@ class TextHelper(
 
     companion object {
         val DEF_NUDGE: (DoubleVector, DoubleVector) -> DoubleVector = { location, _ -> location }
+
+        internal fun toSegmentAes(p: DataPointAesthetics): DataPointAesthetics {
+            return object : DataPointAestheticsDelegate(p) {
+
+                override operator fun <T> get(aes: Aes<T>): T? {
+                    val value: Any? = when (aes) {
+                        Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
+                        Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
+                        Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
+                        else -> super.get(aes)
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    return value as T?
+                }
+            }
+        }
 
         internal fun textComponentFactory(
             p: DataPointAesthetics,
