@@ -149,7 +149,7 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, BRACKET -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
                     Geom.Text.NUDGE_Y
                 )
             ) {
