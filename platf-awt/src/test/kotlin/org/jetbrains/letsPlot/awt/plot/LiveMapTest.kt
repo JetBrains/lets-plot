@@ -54,7 +54,7 @@ class LiveMapTest : VisualPlotTestBase() {
     }
 
     @Test
-    @Ignore("Need local tile server")
+    //@Ignore("Need local tile server")
     fun `geom_livemap nasa tiles`() {
         val spec = parsePlotSpec("""
             |{

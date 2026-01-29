@@ -23,11 +23,15 @@ class HttpTileTransport {
 
         coroutineScope.launch {
             try {
+                println("HTTP GET: $url")
                 val response = client.get(url).readRawBytes()
+                println("HTTP GET success: $url, ${response.size} bytes")
                 async.success(response)
             } catch (c: ResponseException) {
+                println("HTTP GET failure: $url, ${c.response.status}")
                 async.failure(Exception(c.response.status.toString()))
             } catch (c: Throwable) {
+                println("HTTP GET failure: $url, ${c.message}")
                 async.failure(c)
             }
         }

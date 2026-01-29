@@ -113,6 +113,7 @@ kotlin {
                 dependencies {
                     implementation(project(":demo-and-test-shared"))
                     implementation(project(":demo-common-svg"))
+                    implementation(project(":visual-testing"))
                 }
             }
     }

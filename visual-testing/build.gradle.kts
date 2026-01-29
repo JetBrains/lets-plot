@@ -15,6 +15,7 @@ val mockkVersion = project.extra["mockk.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val ktorVersion = project.extra["ktor.version"] as String
 
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
@@ -34,16 +35,23 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(project(":commons"))
-                api(project(":canvas"))
-                api(project(":datamodel"))
-                api(project(":plot-base"))
-                api(project(":plot-builder"))
-                api(project(":plot-stem"))
-                api(project(":plot-raster"))
+                implementation(project(":commons"))
+                implementation(project(":canvas"))
+                implementation(project(":datamodel"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-builder"))
+                implementation(project(":plot-stem"))
+                implementation(project(":plot-raster"))
 
-                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-                compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+                implementation("io.ktor:ktor-server-core:$ktorVersion")
+                implementation("io.ktor:ktor-server-cio:$ktorVersion")
+                implementation("ch.qos.logback:logback-classic:1.4.14") // Logging
+                implementation("com.squareup.okio:okio:3.7.0") // KMP File System
 
                 api("org.jetbrains.kotlin:kotlin-test")
             }

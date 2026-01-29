@@ -17,10 +17,28 @@ val hamcrestVersion = project.extra["hamcrest.version"] as String
 val mockitoVersion = project.extra["mockito.version"] as String
 val assertjVersion = project.extra["assertj.version"] as String
 
+val os: org.gradle.internal.os.OperatingSystem = org.gradle.internal.os.OperatingSystem.current()
+val arch = rootProject.project.extra["architecture"]
+
 kotlin {
     jvm()
     js {
         browser()
+    }
+
+    val target = when {
+        os.isMacOsX && arch == "arm64" -> macosArm64()
+        os.isMacOsX && arch == "x86_64" -> macosX64()
+        os.isLinux && arch == "arm64" -> linuxArm64()
+        os.isLinux && arch == "x86_64" -> linuxX64()
+        os.isWindows -> mingwX64()
+        else -> throw Exception("Unsupported platform! Check project settings.")
+    }
+
+    target.compilations.getByName("main") {
+        val stb_image by cinterops.creating {
+            includeDirs(project.file("src/nativeInterop/cinterop"))
+        }
     }
 
     sourceSets {

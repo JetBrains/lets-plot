@@ -8,13 +8,19 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
+import org.jetbrains.letsPlot.visualtesting.RasterTileServer
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.random.Random
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.measureTime
 
@@ -1155,6 +1161,46 @@ class PlotTest {
             val plotSpec = parsePlotSpec(spec)
             assertPlot("geom_livemap_minimal.png", plotSpec)
         }
+    }
+
+    @Test
+    //@Ignore
+    fun `geom_livemap nasa tiles`() {
+        val spec = parsePlotSpec("""
+            |{
+            |  "ggsize": { "width": 300.0, "height": 300.0 },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "tiles": {
+            |        "kind": "raster_zxy",
+            |        "url": "http://localhost:8080/{z}/{y}/{x}.png",
+            |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>",
+            |      },
+            |      "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin())
+
+        val plotSpec = spec
+        assertPlot("geom_livemap_nasa_tiles.png", plotSpec)
+    }
+
+    @Test
+    fun testServerReturns404ForMissingTile() {
+        val server = RasterTileServer("test-data", okio.FileSystem.SYSTEM)
+        server.start(8000)
+
+        val client = HttpClient()
+        runBlocking {
+            val response = client.get("http://0.0.0.0:8000/99/99/99.png")
+            assertEquals(HttpStatusCode.NotFound, response.status)
+        }
+
+        client.close()
+        server.stop()
     }
 
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {

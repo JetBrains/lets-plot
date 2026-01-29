@@ -31,6 +31,7 @@ class MagickCanvasPeer(
     }
 
     override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
-        TODO("Not yet implemented")
+        println("Decoding PNG image of size: ${png.size} bytes")
+        TODO("Implement PNG decoding using ImageMagick or another suitable library")
     }
 }
