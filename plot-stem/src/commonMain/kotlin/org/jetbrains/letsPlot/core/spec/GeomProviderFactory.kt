@@ -456,6 +456,9 @@ internal object GeomProviderFactory {
             GeomKind.BRACKET -> GeomProvider.bracket {
                 val geom = BracketGeom()
                 applyTextOptions(layerConfig, geom, expFormat, tz)
+                if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
+                    geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
+                }
                 geom
             }
 

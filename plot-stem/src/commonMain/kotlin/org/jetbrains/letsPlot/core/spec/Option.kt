@@ -454,6 +454,10 @@ object Option {
             const val PIVOT = "pivot"
         }
 
+        object Bracket {
+            const val BRACKET_SHORTEN = "bracket_shorten"
+        }
+
         object LiveMap {
             const val INTERACTIVE = "interactive"
             const val LOCATION = "location"

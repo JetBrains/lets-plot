@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 class BracketGeom : TextGeom() {
+    var bracketShorten: Double = 1.0
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -24,7 +26,7 @@ class BracketGeom : TextGeom() {
         linesHelper.setResamplingEnabled(false) // TODO
         val pathData = linesHelper.createPathData(
             aesthetics.dataPoints().map(::toSegmentAes),
-            bracketBuilder(linesHelper)
+            bracketBuilder(linesHelper, bracketShorten)
         )
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
@@ -51,16 +53,20 @@ class BracketGeom : TextGeom() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun bracketBuilder(helper: LinesHelper): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
+        private fun bracketBuilder(helper: LinesHelper, bracketShorten: Double): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
             val xMin = p.finiteOrNull(Aes.XMIN) ?: return@builder null
             val xMax = p.finiteOrNull(Aes.XMAX) ?: return@builder null
             val y = p.finiteOrNull(Aes.Y) ?: return@builder null
+            val x = (xMin + xMax) / 2.0
+            val bracketLength = xMax - xMin
+            val xStart = x - bracketShorten * bracketLength / 2.0
+            val xEnd = x + bracketShorten * bracketLength / 2.0
             val tickLength = 5.0 * helper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
             listOf(
-                DoubleVector(xMin, y - tickLength),
-                DoubleVector(xMin, y),
-                DoubleVector(xMax, y),
-                DoubleVector(xMax, y - tickLength),
+                DoubleVector(xStart, y - tickLength),
+                DoubleVector(xStart, y),
+                DoubleVector(xEnd, y),
+                DoubleVector(xEnd, y - tickLength),
             )
         }
 
