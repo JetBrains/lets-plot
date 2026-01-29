@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling.POINT_UNIT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.CompositeLegendKeyElementFactory
-import org.jetbrains.letsPlot.core.plot.base.geom.legend.TextRepelSegmentLegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleCircle
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle
@@ -40,7 +40,7 @@ open class TextRepelGeom: TextGeom() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(
             TextLegendKeyElementFactory(),
-            TextRepelSegmentLegendKeyElementFactory()
+            HLineLegendKeyElementFactory(TextHelper::toSegmentAes)
         )
 
     override fun buildIntern(
