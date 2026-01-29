@@ -7,12 +7,17 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 class BracketGeom : TextGeom() {
     var bracketShorten: Double = 1.0
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = HLineLegendKeyElementFactory(TextHelper::toSegmentAes)
 
     override fun buildIntern(
         root: SvgRoot,
