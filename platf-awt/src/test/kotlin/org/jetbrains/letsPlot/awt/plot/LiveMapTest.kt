@@ -7,7 +7,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LiveMapTest : VisualPlotTestBase() {
-    @Ignore("For debugging purposes only")
+    //@Ignore("For debugging purposes only")
     @Test
     fun `geom_livemap prod vector tiles`() {
         val spec = """

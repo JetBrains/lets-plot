@@ -24,7 +24,6 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
 
         val zoom = cellKey.length
 
-        println("Fetching tile data for CellKey: ${cellKey.key}, Zoom: $zoom, BBox: $bbox, QuadKeys: ${quadKeys.map { it.key }}")
         return myTileService.getTileData(bbox, zoom)
     }
 

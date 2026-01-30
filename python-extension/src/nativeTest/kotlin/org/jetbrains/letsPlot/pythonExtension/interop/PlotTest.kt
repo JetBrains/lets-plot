@@ -1183,7 +1183,7 @@ class PlotTest {
 
 
     // For debugging purposes only
-    @Ignore
+    //@Ignore
     @Test
     fun `geom_livemap prod vector tiles`() {
         val spec = """

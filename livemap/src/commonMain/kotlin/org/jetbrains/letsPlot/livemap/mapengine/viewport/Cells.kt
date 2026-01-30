@@ -20,7 +20,6 @@ fun convertCellKeyToQuadKeys(mapProjection: MapProjection, cellKey: CellKey): Se
     val cellRect = cellKey.computeRect(mapProjection.mapRect)
     val geoRect = transform(cellRect, mapProjection::invert) ?: return emptySet()
 
-    println("CellKey: ${cellKey.key}, cellRect: $cellRect, GeoRect: $geoRect, Zoom: ${cellKey.length}")
     return calculateQuadKeys(geoRect, cellKey.length)
 }
 
