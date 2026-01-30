@@ -49,11 +49,9 @@ class RasterTileLoadingSystem(
 
             myTileTransport.get(replacePlaceholders(cellKey, nextDomain())).onResult(
                 successHandler = {
-                    println("Raster tile downloaded: $cellKey, ${it.size} bytes")
                     tileResponseComponent.imageData = it
                 },
                 failureHandler = {
-                    println("Raster tile download error: $cellKey, $it")
                     tileResponseComponent.imageData = ByteArray(0)
                     tileResponseComponent.errorCode = it
                 }

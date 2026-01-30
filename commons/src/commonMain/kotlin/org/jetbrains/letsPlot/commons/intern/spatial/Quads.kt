@@ -5,10 +5,9 @@
 
 package org.jetbrains.letsPlot.commons.intern.spatial
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.math.ipow
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.math.max
 import kotlin.math.min
 
@@ -22,7 +21,7 @@ fun <GeometryT, QuadT> calculateQuadKeys(
     zoom: Int,
     quadKeyFactory: (String) -> QuadT
 ): Set<QuadT> {
-    val quadKeys = HashSet<QuadT>()
+    val quadKeys = LinkedHashSet<QuadT>()
     val tileCount = calulateQuadsCount(zoom)
 
     fun calcQuadNum(value: Double, range: DoubleSpan, tileCount: Int): Int {
