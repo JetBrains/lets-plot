@@ -184,7 +184,7 @@ class TextHelper(
                     roundedRectangle(rectangle, labelOptions.radiusFactor * rectangle.height).build()
                 )
             }
-            GeomHelper.decorate(backgroundRect, p, applyAlphaToAll = labelOptions.alphaStroke)
+            decorate(backgroundRect, p, applyAlphaToAll = labelOptions.alphaStroke)
             backgroundRect.strokeWidth().set(labelOptions.borderWidth)
 
             // Text element
