@@ -37,7 +37,7 @@ class BracketGeom : TextGeom() {
         root.appendNodes(svgPath)
 
         // Label
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, flipAngle = true, ::coordOrNull, ::objectRectangle, ::componentFactory)
         textHelper.createSvgComponents().forEach(root::add)
     }
 
@@ -50,10 +50,11 @@ class BracketGeom : TextGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
+        flipAngle: Boolean,
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter, ::labelNudge)
+    ) = TextHelper.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, ::labelNudge)
 
     companion object {
         const val HANDLES_GROUPS = false

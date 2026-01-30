@@ -30,7 +30,7 @@ internal class TextLegendKeyElementFactory :
         label.setLineHeight(fontSize(p, 1.0))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.rotate(angle(p))
+        label.rotate(angle(p.angle()!!))
         label.moveTo(size.x / 2, size.y / 2)
 
         val g = SvgGElement()

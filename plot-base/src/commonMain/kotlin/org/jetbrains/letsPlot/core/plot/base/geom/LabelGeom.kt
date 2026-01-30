@@ -4,6 +4,7 @@
  */
 
 package org.jetbrains.letsPlot.core.plot.base.geom
+
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -18,10 +19,11 @@ open class LabelGeom : TextGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
+        flipAngle: Boolean,
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.labelComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter, labelOptions)
+    ) = TextHelper.labelComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, labelOptions)
 
     override fun objectRectangle(
         location: DoubleVector,

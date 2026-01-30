@@ -32,9 +32,10 @@ class TextHelper(
     private val naValue: String,
     private val sizeUnit: String?,
     private val checkOverlap: Boolean,
+    private val flipAngle: Boolean,
     private val coordOrNull: (DataPointAesthetics) -> DoubleVector?,
     private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Text.VerticalAnchor) -> DoubleRectangle,
-    private val componentFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgGElement
+    private val componentFactory: (DataPointAesthetics, DoubleVector, String, Boolean, Double, GeomContext, DoubleVector?) -> SvgGElement
 ) : GeomHelper(pos, coord, ctx) {
 
     internal fun createSvgComponents(): List<SvgGElement> {
@@ -57,7 +58,7 @@ class TextHelper(
                 restrictions.add(rectangle)
             }
 
-            componentFactory(p, location, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            componentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, aesBoundsCenter)
         }
     }
 
@@ -99,7 +100,7 @@ class TextHelper(
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val angle = toRadians(TextUtil.angle(p))
+        val angle = toRadians(toAngle(p, flipAngle, ctx))
 
         return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
             .rotate(angle, location)
@@ -128,6 +129,7 @@ class TextHelper(
             p: DataPointAesthetics,
             location: DoubleVector,
             text: String,
+            flipAngle: Boolean,
             sizeUnitRatio: Double,
             ctx: GeomContext,
             boundsCenter: DoubleVector?,
@@ -153,7 +155,7 @@ class TextHelper(
 
             val g = SvgGElement()
             g.children().add(label.rootGroup)
-            SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
+            SvgUtils.transformRotate(g, toAngle(p, flipAngle, ctx), location.x, location.y)
             return g
         }
 
@@ -161,6 +163,7 @@ class TextHelper(
             p: DataPointAesthetics,
             location: DoubleVector,
             text: String,
+            flipAngle: Boolean,
             sizeUnitRatio: Double,
             ctx: GeomContext,
             boundsCenter: DoubleVector?,
@@ -207,7 +210,7 @@ class TextHelper(
             g.children().add(label.rootGroup)
 
             // rotate all
-            SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
+            SvgUtils.transformRotate(g, toAngle(p, flipAngle, ctx), location.x, location.y)
 
             return g
         }
@@ -263,6 +266,18 @@ class TextHelper(
                     )
 
                     closePath()
+                }
+            }
+        }
+
+        private fun toAngle(p: DataPointAesthetics, flipAngle: Boolean, ctx: GeomContext): Double {
+            return p.angle()!!.let { angle ->
+                if (flipAngle && ctx.flipped) {
+                    // ggplot angle: counter-clockwise
+                    // SVG angle: clockwise
+                    TextUtil.angle(angle - 90)
+                } else {
+                    TextUtil.angle(angle)
                 }
             }
         }

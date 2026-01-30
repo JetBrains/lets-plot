@@ -129,6 +129,7 @@ internal object AnnotationUtil {
             toTextDataPointAesthetics(textParams = textParams),
             location,
             text,
+            flipAngle = false,
             sizeUnitRatio = 1.0,
             geomContext,
             boundsCenter = null
@@ -147,6 +148,7 @@ internal object AnnotationUtil {
                 toTextDataPointAesthetics(textParams),
                 location,
                 text,
+                flipAngle = false,
                 sizeUnitRatio = 1.0,
                 geomContext,
                 boundsCenter = null

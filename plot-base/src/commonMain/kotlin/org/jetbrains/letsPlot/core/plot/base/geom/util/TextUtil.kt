@@ -114,14 +114,14 @@ object TextUtil {
         return family
     }
 
-    fun angle(p: DataPointAesthetics): Double {
-        var angle = p.angle()!!
-        if (angle != 0.0) {
+    fun angle(angle: Double): Double {
+        return if (angle == 0.0) {
+            0.0
+        } else {
             // ggplot angle: counter-clockwise
             // SVG angle: clockwise
-            angle = 360 - angle % 360
+            360 - angle % 360
         }
-        return angle
     }
 
     fun fontSize(p: DataPointAesthetics, scale: Double): Double {

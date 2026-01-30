@@ -20,10 +20,11 @@ class LabelRepelGeom() : TextRepelGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
+        flipAngle: Boolean,
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.labelComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter, labelOptions)
+    ) = TextHelper.labelComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, labelOptions)
 
     override fun objectRectangle(
         location: DoubleVector,

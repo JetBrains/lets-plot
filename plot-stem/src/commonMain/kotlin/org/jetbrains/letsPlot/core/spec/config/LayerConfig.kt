@@ -365,7 +365,6 @@ class LayerConfig constructor(
             return false
         }
 
-        // TODO: Add bracket
         val isYOriented = when {
             statKind in listOf(
                 StatKind.COUNT,
@@ -390,6 +389,10 @@ class LayerConfig constructor(
 
             geomProto.geomKind == GeomKind.BOX_PLOT -> {
                 isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
+            }
+
+            geomProto.geomKind == GeomKind.BRACKET -> {
+                isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
             }
 
             geomProto.geomKind in listOf(

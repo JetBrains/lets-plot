@@ -30,7 +30,7 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::coordOrNull, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
         textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
@@ -43,10 +43,11 @@ open class TextGeom : GeomBase() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
+        flipAngle: Boolean,
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter)
+    ) = TextHelper.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter)
 
     open fun objectRectangle(
         location: DoubleVector,
