@@ -46,6 +46,7 @@ kotlin {
         target.binaries.forEach {
             it.linkerOpts += listOf(
                 "-L${imageMagickLibPath}/lib",
+                "-Wl,-rpath,${imageMagickLibPath}/lib",
                 "-lMagickWand-7.Q16HDRI",
                 "-lMagickCore-7.Q16HDRI",
                 "-lfontconfig",
@@ -53,17 +54,6 @@ kotlin {
                 "-lexpat",
                 "-lz"
             )
-            // Adds rpath to linker for conda-build on macOS:
-            if (os.isMacOsX) {
-                val condaPrefix = System.getenv("PREFIX") ?: ""
-                if (condaPrefix.isNotEmpty()) {
-                    it.linkerOpts += listOf(
-                        "-rpath",
-                        "${condaPrefix}/lib",
-                        "-L${condaPrefix}/lib"
-                    )
-                }
-            }
             if (os.isWindows) {
                 it.linkerOpts += listOf(
                     "-lurlmon",
