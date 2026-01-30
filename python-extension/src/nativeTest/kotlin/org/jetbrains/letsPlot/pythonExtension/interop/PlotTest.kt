@@ -11,7 +11,7 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
-import org.jetbrains.letsPlot.visualtesting.runTileServerTest
+import org.jetbrains.letsPlot.visualtesting.plot.runRasterTileServer
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.random.Random
 import kotlin.test.Ignore
@@ -1185,7 +1185,7 @@ class PlotTest {
 
     @Test
     fun `geom_livemap png tiles`() {
-        runTileServerTest("png") { url ->
+        runRasterTileServer("png") { url ->
             val spec = parsePlotSpec("""
                 |{
                 |  "kind": "plot",

@@ -36,6 +36,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":commons"))
+                implementation(project(":gis"))
                 implementation(project(":canvas"))
                 implementation(project(":datamodel"))
                 implementation(project(":plot-base"))
@@ -49,8 +50,9 @@ kotlin {
 
                 implementation("io.ktor:ktor-server-core:$ktorVersion")
                 implementation("io.ktor:ktor-server-cio:$ktorVersion")
+                implementation("io.ktor:ktor-server-websockets:$ktorVersion")
+
                 implementation("ch.qos.logback:logback-classic:1.4.14") // Logging
-                implementation("com.squareup.okio:okio:3.7.0") // KMP File System
 
                 api("org.jetbrains.kotlin:kotlin-test")
             }

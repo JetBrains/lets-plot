@@ -1,7 +1,8 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.visualtesting.runTileServerTest
+import org.jetbrains.letsPlot.visualtesting.plot.runRasterTileServer
+import org.jetbrains.letsPlot.visualtesting.plot.runVectorTileServer
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -82,7 +83,7 @@ class LiveMapTest : VisualPlotTestBase() {
 
     @Test
     fun `geom_livemap png tiles`() {
-        runTileServerTest("png") { url ->
+        runRasterTileServer("png") { url ->
             val spec = parsePlotSpec("""
                 |{
                 |  "kind": "plot",
@@ -100,6 +101,29 @@ class LiveMapTest : VisualPlotTestBase() {
 
             val plotSpec = spec.themeTextNotoSans()
             assertPlot("geom_livemap_png_tiles.png", plotSpec, fontManager = fontManager)
+        }
+    }
+
+    @Test
+    fun `geom_livemap vector tiles`() {
+        runVectorTileServer { url ->
+            val spec = parsePlotSpec("""
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "livemap",
+                |      "zoom": 1,
+                |      "tiles": { "kind": "vector_lets_plot", "url": "$url", "attribution": "Lets-Plot" }
+                |    },
+                |    { "geom": "point", "x": 0, "y": 0 }
+                |  ]
+                |}            
+            """.trimMargin()
+            )
+
+            val plotSpec = spec.themeTextNotoSans()
+            assertPlot("geom_livemap_vector_tiles.png", plotSpec, fontManager = fontManager)
         }
     }
 

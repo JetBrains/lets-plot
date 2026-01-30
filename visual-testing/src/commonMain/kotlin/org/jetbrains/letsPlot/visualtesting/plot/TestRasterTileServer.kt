@@ -1,4 +1,4 @@
-package org.jetbrains.letsPlot.visualtesting
+package org.jetbrains.letsPlot.visualtesting.plot
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -9,7 +9,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.encoding.Base64
 
-class RasterTileServer {
+class TestRasterTileServer {
     private var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
 
     fun start(): Int {
@@ -62,8 +62,8 @@ val tiles = mapOf(
     "1/1/1/png" to tile3png
 )
 
-fun runTileServerTest(ext: String, block: (url: String) -> Unit) {
-    val server = RasterTileServer()
+fun runRasterTileServer(ext: String, block: (url: String) -> Unit) {
+    val server = TestRasterTileServer()
     val port = server.start()
     val url = "http://localhost:$port/{z}/{y}/{x}/$ext"
 
