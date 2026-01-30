@@ -116,7 +116,10 @@ open class TileService(url: String, private val myTheme: Theme) {
         override fun onBinaryMessage(message: ByteArray) {
             try {
                 ResponseTileDecoder(message)
-                    .let { (key, tiles) -> pendingRequests.poll(key).success(tiles) }
+                    .let { (key, tiles) ->
+                        println("TileService: received tile for key=$key, size=${message.size}")
+                        pendingRequests.poll(key).success(tiles)
+                    }
             } catch (e: Throwable) {
                 failPending(e)
             }

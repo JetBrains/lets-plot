@@ -4,6 +4,10 @@
  */
 
 package org.jetbrains.letsPlot.visualtesting.plot
+
+//internal abstract class PlotTestBase : TestSuit() {
+//
+//}
 /*
 
 

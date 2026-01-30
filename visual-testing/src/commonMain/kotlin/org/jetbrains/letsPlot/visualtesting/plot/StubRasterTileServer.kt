@@ -9,7 +9,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.encoding.Base64
 
-class TestRasterTileServer {
+class StubRasterTileServer {
     private var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
 
     fun start(): Int {
@@ -62,8 +62,8 @@ val tiles = mapOf(
     "1/1/1/png" to tile3png
 )
 
-fun runRasterTileServer(ext: String, block: (url: String) -> Unit) {
-    val server = TestRasterTileServer()
+fun runStubRasterTileServer(ext: String, block: (url: String) -> Unit) {
+    val server = StubRasterTileServer()
     val port = server.start()
     val url = "http://localhost:$port/{z}/{y}/{x}/$ext"
 

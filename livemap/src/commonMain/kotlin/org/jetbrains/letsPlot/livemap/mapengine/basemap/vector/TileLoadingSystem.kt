@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import org.jetbrains.letsPlot.commons.intern.math.round
@@ -93,6 +94,8 @@ class TileLoadingSystem(
                                 .map {
                                     runLaterBySystem(tileLayerEntity) { theEntity ->
                                         val snapshot = canvas.takeSnapshot()
+                                        println("Tile loaded: $cellKey, layer=${tileLayerEntity.get<KindComponent>().layerKind}")
+                                        println(Png.encodeDataImage(snapshot.bitmap))
                                         theEntity.get<BasemapTileComponent>().tile =
                                             SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
                                         theEntity.remove<BusyStateComponent>()

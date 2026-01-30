@@ -1,15 +1,42 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.visualtesting.plot.runRasterTileServer
-import org.jetbrains.letsPlot.visualtesting.plot.runVectorTileServer
+import org.jetbrains.letsPlot.visualtesting.plot.runStubRasterTileServer
+import org.jetbrains.letsPlot.visualtesting.plot.runStubVectorTileServer
 import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LiveMapTest : VisualPlotTestBase() {
+    @Ignore("For debugging purposes only")
+    @Test
+    fun `geom_livemap prod vector tiles`() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "zoom": 1.0,
+            |      "tiles": {
+            |        "kind": "vector_lets_plot",
+            |        "url": "wss://tiles.datalore.jetbrains.com",
+            |        "theme": "color",
+            |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |      },
+            |      "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
+            |    },
+            |    { "geom": "point", "x": 0.0, "y": 0.0 }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        assertPlot("geom_livemap_prod_vector_tiles.png", plotSpec, fontManager = fontManager)
+    }
+
     @Test
     @Ignore("Need local tile server")
-    fun `minard with default tiles`() {
+    fun `geom_livemap prod minard`() {
         val spec = parsePlotSpec("""
             |{
             |    "data": {
@@ -52,7 +79,7 @@ class LiveMapTest : VisualPlotTestBase() {
 
         val plotSpec = spec.themeTextNotoSans()
 
-        assertPlot("geom_livemap_minard.png", plotSpec, fontManager = fontManager)
+        assertPlot("geom_livemap_prod_minard.png", plotSpec, fontManager = fontManager)
     }
 
     @Test
@@ -74,7 +101,7 @@ class LiveMapTest : VisualPlotTestBase() {
             |      "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
             |    }
             |  ]
-            |}            
+            |}
         """.trimMargin())
 
         val plotSpec = spec.themeTextNotoSans()
@@ -82,8 +109,8 @@ class LiveMapTest : VisualPlotTestBase() {
     }
 
     @Test
-    fun `geom_livemap png tiles`() {
-        runRasterTileServer("png") { url ->
+    fun `geom_livemap test png tiles`() {
+        runStubRasterTileServer("png") { url ->
             val spec = parsePlotSpec("""
                 |{
                 |  "kind": "plot",
@@ -95,18 +122,18 @@ class LiveMapTest : VisualPlotTestBase() {
                 |    },
                 |    { "geom": "point", "x": 0, "y": 0 }
                 |  ]
-                |}            
+                |}
             """.trimMargin()
             )
 
             val plotSpec = spec.themeTextNotoSans()
-            assertPlot("geom_livemap_png_tiles.png", plotSpec, fontManager = fontManager)
+            assertPlot("geom_livemap_test_png_tiles.png", plotSpec, fontManager = fontManager)
         }
     }
 
     @Test
-    fun `geom_livemap vector tiles`() {
-        runVectorTileServer { url ->
+    fun `geom_livemap test vector tiles`() {
+        runStubVectorTileServer { url ->
             val spec = parsePlotSpec("""
                 |{
                 |  "kind": "plot",
@@ -118,13 +145,12 @@ class LiveMapTest : VisualPlotTestBase() {
                 |    },
                 |    { "geom": "point", "x": 0, "y": 0 }
                 |  ]
-                |}            
+                |}
             """.trimMargin()
             )
 
             val plotSpec = spec.themeTextNotoSans()
-            assertPlot("geom_livemap_vector_tiles.png", plotSpec, fontManager = fontManager)
+            assertPlot("geom_livemap_test_vector_tiles.png", plotSpec, fontManager = fontManager)
         }
     }
-
 }
