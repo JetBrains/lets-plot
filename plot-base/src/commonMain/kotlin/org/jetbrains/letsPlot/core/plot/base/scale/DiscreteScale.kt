@@ -98,6 +98,11 @@ internal class DiscreteScale : AbstractScale<Any> {
             throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 
+        override fun breakWidth(v: Double): Scale.Builder {
+            // ignore
+            return this
+        }
+
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder {
             // ignore
             return this

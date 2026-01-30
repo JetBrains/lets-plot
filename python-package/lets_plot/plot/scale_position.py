@@ -25,7 +25,9 @@ __all__ = ['scale_x_discrete', 'scale_y_discrete',
 #
 
 def scale_x_continuous(name=None, *,
-                       breaks=None, labels=None, lablim=None,
+                       breaks=None,
+                       break_width=None,
+                       labels=None, lablim=None,
                        limits=None,
                        expand=None,
                        na_value=None,
@@ -44,6 +46,10 @@ def scale_x_continuous(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks in transformed space.
+        For example, break_width=1 for log10 means breaks at every power of 10;
+        break_width=2 for log2 means breaks at every 2nd power of 2 (1, 4, 16, ...).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -96,6 +102,7 @@ def scale_x_continuous(name=None, *,
     return _scale('x',
                   name=name,
                   breaks=breaks,
+                  break_width=break_width,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
@@ -109,7 +116,9 @@ def scale_x_continuous(name=None, *,
 
 
 def scale_y_continuous(name=None, *,
-                       breaks=None, labels=None, lablim=None,
+                       breaks=None,
+                       break_width=None,
+                       labels=None, lablim=None,
                        limits=None,
                        expand=None,
                        na_value=None,
@@ -128,6 +137,10 @@ def scale_y_continuous(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks in transformed space.
+        For example, break_width=1 for log10 means breaks at every power of 10;
+        break_width=2 for log2 means breaks at every 2nd power of 2 (1, 4, 16, ...).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -180,6 +193,7 @@ def scale_y_continuous(name=None, *,
     return _scale('y',
                   name=name,
                   breaks=breaks,
+                  break_width=break_width,
                   labels=labels,
                   lablim=lablim,
                   limits=limits,
@@ -193,7 +207,10 @@ def scale_y_continuous(name=None, *,
 
 
 def scale_x_log10(name=None, *,
-                  breaks=None, labels=None, lablim=None,
+                  breaks=None,
+                  break_width=None,
+                  labels=None,
+                  lablim=None,
                   limits=None,
                   expand=None,
                   na_value=None,
@@ -211,6 +228,10 @@ def scale_x_log10(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks in log10-transformed space.
+        For example, break_width=1 means breaks at every power of 10 (1, 10, 100, ...);
+        break_width=2 means breaks at every 2nd power of 10 (1, 100, 10000, ...).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -258,6 +279,7 @@ def scale_x_log10(name=None, *,
     """
     return scale_x_continuous(name,
                               breaks=breaks,
+                              break_width=break_width,
                               labels=labels,
                               lablim=lablim,
                               limits=limits,
@@ -270,7 +292,10 @@ def scale_x_log10(name=None, *,
 
 
 def scale_y_log10(name=None, *,
-                  breaks=None, labels=None, lablim=None,
+                  breaks=None,
+                  break_width=None,
+                  labels=None,
+                  lablim=None,
                   limits=None,
                   expand=None,
                   na_value=None,
@@ -288,6 +313,10 @@ def scale_y_log10(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks in log10-transformed space.
+        For example, break_width=1 means breaks at every power of 10 (1, 10, 100, ...);
+        break_width=2 means breaks at every 2nd power of 10 (1, 100, 10000, ...).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -335,6 +364,7 @@ def scale_y_log10(name=None, *,
     """
     return scale_y_continuous(name,
                               breaks=breaks,
+                              break_width=break_width,
                               labels=labels,
                               lablim=lablim,
                               limits=limits,
@@ -347,7 +377,10 @@ def scale_y_log10(name=None, *,
 
 
 def scale_x_log2(name=None, *,
-                 breaks=None, labels=None, lablim=None,
+                 breaks=None,
+                 break_width=None,
+                 labels=None,
+                 lablim=None,
                  limits=None,
                  expand=None,
                  na_value=None,
@@ -365,6 +398,10 @@ def scale_x_log2(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks in log2-transformed space.
+        For example, break_width=1 means breaks at every power of 2 (1, 2, 4, 8, ...);
+        break_width=2 means breaks at every 2nd power of 2 (1, 4, 16, ...).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -412,6 +449,7 @@ def scale_x_log2(name=None, *,
     """
     return scale_x_continuous(name,
                               breaks=breaks,
+                              break_width=break_width,
                               labels=labels,
                               lablim=lablim,
                               limits=limits,
@@ -424,7 +462,10 @@ def scale_x_log2(name=None, *,
 
 
 def scale_y_log2(name=None, *,
-                 breaks=None, labels=None, lablim=None,
+                 breaks=None,
+                 break_width=None,
+                 labels=None,
+                 lablim=None,
                  limits=None,
                  expand=None,
                  na_value=None,
@@ -442,6 +483,10 @@ def scale_y_log2(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks in log2-transformed space.
+        For example, break_width=1 means breaks at every power of 2 (1, 2, 4, 8, ...);
+        break_width=2 means breaks at every 2nd power of 2 (1, 4, 16, ...).
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -489,6 +534,7 @@ def scale_y_log2(name=None, *,
     """
     return scale_y_continuous(name,
                               breaks=breaks,
+                              break_width=break_width,
                               labels=labels,
                               lablim=lablim,
                               limits=limits,
@@ -501,7 +547,10 @@ def scale_y_log2(name=None, *,
 
 
 def scale_x_reverse(name=None, *,
-                    breaks=None, labels=None, lablim=None,
+                    breaks=None,
+                    break_width=None,
+                    labels=None,
+                    lablim=None,
                     limits=None,
                     expand=None,
                     na_value=None,
@@ -519,6 +568,8 @@ def scale_x_reverse(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -566,6 +617,7 @@ def scale_x_reverse(name=None, *,
 
     return scale_x_continuous(name,
                               breaks=breaks,
+                              break_width=break_width,
                               labels=labels,
                               lablim=lablim,
                               limits=limits,
@@ -578,7 +630,10 @@ def scale_x_reverse(name=None, *,
 
 
 def scale_y_reverse(name=None, *,
-                    breaks=None, labels=None, lablim=None,
+                    breaks=None,
+                    break_width=None,
+                    labels=None,
+                    lablim=None,
                     limits=None,
                     expand=None,
                     na_value=None,
@@ -596,6 +651,8 @@ def scale_y_reverse(name=None, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    break_width : float
+        A numeric value specifying the distance between breaks.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     lablim : int, default=None
@@ -643,6 +700,7 @@ def scale_y_reverse(name=None, *,
 
     return scale_y_continuous(name,
                               breaks=breaks,
+                              break_width=break_width,
                               labels=labels,
                               lablim=lablim,
                               limits=limits,

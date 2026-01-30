@@ -31,6 +31,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLimits: List<Any?>? = null
     private var myContinuousTransform: ContinuousTransform = Transforms.IDENTITY
     private var myBreaksGenerator: OriginalDomainBreaksGenerator? = null
+    private var myBreakWidth: Double? = null
 
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
@@ -111,6 +112,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
+    fun breakWidth(v: Double): ScaleProviderBuilder<T> {
+        myBreakWidth = v
+        return this
+    }
+
     fun breaksGeneratorIfNone(v: OriginalDomainBreaksGenerator): ScaleProviderBuilder<T> {
         if (myBreaksGenerator == null) {
             myBreaksGenerator = v
@@ -149,6 +155,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: OriginalDomainBreaksGenerator? = b.myBreaksGenerator
+        private val myBreakWidth: Double? = b.myBreakWidth
         private val myExpFormat: ExponentFormat = b.myExpFormat
         private val myAes: Aes<T> = b.aes
 
@@ -223,6 +230,12 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             if (myBreaksGenerator != null) {
                 scale = scale.with()
                     .breaksGenerator(myBreaksGenerator)
+                    .build()
+            }
+
+            if (myBreakWidth != null) {
+                scale = scale.with()
+                    .breakWidth(myBreakWidth)
                     .build()
             }
 

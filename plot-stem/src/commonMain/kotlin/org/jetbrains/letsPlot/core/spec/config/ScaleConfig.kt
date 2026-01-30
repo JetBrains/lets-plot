@@ -234,7 +234,6 @@ class ScaleConfig<T> constructor(
                 return@let { value: Any -> stringFormat.format(value) }
             }
 
-            // Check if 'break_width' is specified
             val breakWidthSpec = getString(BREAK_WIDTH)
             if (breakWidthSpec != null) {
                 val breakWidth = TimeInterval.parse(breakWidthSpec)
@@ -272,29 +271,36 @@ class ScaleConfig<T> constructor(
             } else {
                 b.breaksGenerator(TimeBreaksGen(timeFormatter))
             }
-        } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
-            val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
-            val transform = when (transformName.lowercase()) {
-                TransformName.IDENTITY -> Transforms.IDENTITY
-                TransformName.LOG10 -> Transforms.LOG10
-                TransformName.LOG2 -> Transforms.LOG2
-                TransformName.SYMLOG -> Transforms.SYMLOG
-                TransformName.REVERSE -> Transforms.REVERSE
-                TransformName.SQRT -> Transforms.SQRT
-                else -> throw IllegalArgumentException(
-                    "Unknown transform name: '$transformName'. Supported: ${
-                        listOf(
-                            TransformName.IDENTITY,
-                            TransformName.LOG10,
-                            TransformName.LOG2,
-                            TransformName.SYMLOG,
-                            TransformName.REVERSE,
-                            TransformName.SQRT
-                        ).joinToString(transform = { "'$it'" })
-                    }."
-                )
+        } else if (!discreteDomain) {
+            if (has(Option.Scale.CONTINUOUS_TRANSFORM)) {
+                val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
+                val transform = when (transformName.lowercase()) {
+                    TransformName.IDENTITY -> Transforms.IDENTITY
+                    TransformName.LOG10 -> Transforms.LOG10
+                    TransformName.LOG2 -> Transforms.LOG2
+                    TransformName.SYMLOG -> Transforms.SYMLOG
+                    TransformName.REVERSE -> Transforms.REVERSE
+                    TransformName.SQRT -> Transforms.SQRT
+                    else -> throw IllegalArgumentException(
+                        "Unknown transform name: '$transformName'. Supported: ${
+                            listOf(
+                                TransformName.IDENTITY,
+                                TransformName.LOG10,
+                                TransformName.LOG2,
+                                TransformName.SYMLOG,
+                                TransformName.REVERSE,
+                                TransformName.SQRT
+                            ).joinToString(transform = { "'$it'" })
+                        }."
+                    )
+                }
+                b.continuousTransform(transform)
             }
-            b.continuousTransform(transform)
+
+            val breakWidth = getDouble(BREAK_WIDTH)
+            if (breakWidth != null) {
+                b.breakWidth(breakWidth)
+            }
         }
 
         if (aes in listOf<Aes<*>>(Aes.X, Aes.Y) && has(Option.Scale.POSITION)) {
