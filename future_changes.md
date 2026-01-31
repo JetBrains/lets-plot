@@ -14,6 +14,14 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_color_palette.html).
 
+- Positional Scales:
+  - New `break_width` parameter specifying a fixed distance between axis breaks.
+
+    See examples:
+    - [datetime scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_datetime.html)
+    - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
+    - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
+
 - `geom_imshow()`: 
   - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot-kotlin/issues/780)].
   - New `cguide` parameter: use to customize the colorbar for greyscale images.
