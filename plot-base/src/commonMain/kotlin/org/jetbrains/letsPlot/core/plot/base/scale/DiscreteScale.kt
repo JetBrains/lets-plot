@@ -81,7 +81,7 @@ internal class DiscreteScale : AbstractScale<Any> {
         return ScaleBreaks.Fixed.withTransform(
             breaksEffective,
             transform = transform,
-            formatter = ::formatValue,
+            formatter = formatter,
             alternativeLabels = labels,
             labelLengthLimit = if (shortenLabels) labelLengthLimit else null
         )
