@@ -105,6 +105,7 @@ open class TileService(url: String, private val myTheme: Theme) {
         }
 
         override fun onTextMessage(message: String) {
+            //println("TileService: received text message $message")
             if (mapConfig == null) {
                 mapConfig = MapStyleJsonParser.parse(JsonSupport.parseJson(message))
             }
