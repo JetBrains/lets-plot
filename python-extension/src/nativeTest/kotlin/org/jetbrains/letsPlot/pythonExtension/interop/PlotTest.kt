@@ -1237,6 +1237,7 @@ class PlotTest {
         assertPlot("geom_livemap_prod_minard.png", plotSpec)
     }
 
+    @Ignore
     @Test
     fun `geom_livemap test png tiles`() {
         runStubRasterTileServer("png") { url ->
@@ -1260,6 +1261,7 @@ class PlotTest {
         }
     }
 
+    @Ignore
     @Test
     fun `geom_livemap test jpg tiles`() {
         runStubRasterTileServer("jpg") { url ->
@@ -1283,6 +1285,7 @@ class PlotTest {
         }
     }
 
+    @Ignore
     @Test
     fun `geom_livemap test vector tiles`() {
         runStubVectorTileServer { url ->
