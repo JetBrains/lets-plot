@@ -88,7 +88,7 @@ class PlotFigureBuildInfo constructor(
             computationMessages,
         )
 
-        if (this::liveMapCursorServiceConfig != null) {
+        if (this.liveMapCursorServiceConfig != null) {
             newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
         }
 
