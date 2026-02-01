@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.gis.tileprotocol
 
-import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
@@ -46,8 +45,6 @@ open class TileService(url: String, private val myTheme: Theme) {
         val async = ThreadSafeAsync<List<TileLayer>>()
 
         pendingRequests.put(key, async)
-
-        println("TileService: requesting tile data for key=$key, zoom=$zoom, bbox=$bbox")
 
         try {
             GetBinaryGeometryRequest(key, zoom, bbox)
@@ -108,7 +105,6 @@ open class TileService(url: String, private val myTheme: Theme) {
         }
 
         override fun onTextMessage(message: String) {
-            //println("TileService: received text message $message")
             if (mapConfig == null) {
                 mapConfig = MapStyleJsonParser.parse(JsonSupport.parseJson(message))
             }
@@ -120,8 +116,6 @@ open class TileService(url: String, private val myTheme: Theme) {
             try {
                 ResponseTileDecoder(message)
                     .let { (key, tiles) ->
-                        println("TileService: received tile for key=$key, size=${message.size}")
-                        println(Base64.encode(message))
                         pendingRequests.poll(key).success(tiles)
                     }
             } catch (e: Throwable) {
