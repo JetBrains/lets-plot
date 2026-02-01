@@ -7,7 +7,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 class LiveMapTest : VisualPlotTestBase() {
-    //@Ignore("For debugging purposes only")
+    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     @Test
     fun `geom_livemap prod vector tiles`() {
         val spec = """
@@ -35,7 +35,7 @@ class LiveMapTest : VisualPlotTestBase() {
     }
 
     @Test
-    @Ignore("Need local tile server")
+    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     fun `geom_livemap prod minard`() {
         val spec = parsePlotSpec("""
             |{
@@ -83,7 +83,7 @@ class LiveMapTest : VisualPlotTestBase() {
     }
 
     @Test
-    //@Ignore("Need local tile server")
+    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     fun `geom_livemap nasa tiles`() {
         val spec = parsePlotSpec("""
             |{
@@ -128,6 +128,29 @@ class LiveMapTest : VisualPlotTestBase() {
 
             val plotSpec = spec.themeTextNotoSans()
             assertPlot("geom_livemap_test_png_tiles.png", plotSpec, fontManager = fontManager)
+        }
+    }
+
+    @Test
+    fun `geom_livemap test jpg tiles`() {
+        runStubRasterTileServer("jpg") { url ->
+            val spec = parsePlotSpec("""
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "livemap",
+                |      "zoom": 1,
+                |      "tiles": { "kind": "raster_zxy", "url": "$url", "attribution": "Lets-Plot" }
+                |    },
+                |    { "geom": "point", "x": 0, "y": 0 }
+                |  ]
+                |}
+            """.trimMargin()
+            )
+
+            val plotSpec = spec.themeTextNotoSans()
+            assertPlot("geom_livemap_test_jpg_tiles.png", plotSpec, fontManager = fontManager)
         }
     }
 

@@ -72,7 +72,6 @@ class RasterTileLoadingSystem(
                             null -> drawImageTile(imageData, context)
                             else -> drawErrorTile(response.errorCode, context)
                         }.onSuccess { tile ->
-                            println("Raster tile loaded: $cellKey")
                             runLaterBySystem(httpTileEntity) { theEntity ->
                                 theEntity.remove<BusyStateComponent>()
                                 theEntity.get<BasemapTileComponent>().also {

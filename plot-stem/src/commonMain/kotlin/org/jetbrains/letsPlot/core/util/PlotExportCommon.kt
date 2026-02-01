@@ -136,8 +136,6 @@ object PlotExportCommon {
             i++
         } while (!isReady())
 
-        println("Plot rendering ready in ${now()} ms, frames: $i")
-
         delay(16.milliseconds)
         onFrame(now())
         return true

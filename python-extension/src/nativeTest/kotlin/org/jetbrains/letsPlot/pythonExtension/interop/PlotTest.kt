@@ -1050,7 +1050,7 @@ class PlotTest {
         }
     }
 
-    // blocked by https://youtrack.jetbrains.com/issue/KTOR-9267 - on Linux CURl is the only available client engine
+    // External service - may cause test instability. Enable for debugging purposes only
     @Ignore
     @Test
     fun `minard with default tiles`() {
@@ -1107,8 +1107,9 @@ class PlotTest {
         }
     }
 
-    @Test
+    // External service - may cause test instability. Enable for debugging purposes only
     @Ignore
+    @Test
     fun minimal_livemap() {
         // only ktor-client-darwin and ktor-client-curl are able to work with wss://
         // But due to critical issue https://youtrack.jetbrains.com/issue/KTOR-9267 we can't use ktor-client-curl
@@ -1159,31 +1160,8 @@ class PlotTest {
         }
     }
 
-    @Test
-    fun `geom_livemap png tiles`() {
-        runStubRasterTileServer("png") { url ->
-            val spec = parsePlotSpec("""
-                |{
-                |  "kind": "plot",
-                |  "layers": [
-                |    {
-                |      "geom": "livemap",
-                |      "zoom": 1,
-                |      "tiles": { "kind": "raster_zxy", "url": "$url", "attribution": "Lets-Plot" }
-                |    },
-                |    { "geom": "point", "x": 0, "y": 0 }
-                |  ]
-                |}            
-            """.trimMargin()
-            )
-
-            assertPlot("geom_livemap_png_tiles.png", spec)
-        }
-    }
-
-
-    // For debugging purposes only
-    //@Ignore
+    // External service - may cause test instability. Enable for debugging purposes only
+    @Ignore
     @Test
     fun `geom_livemap prod vector tiles`() {
         val spec = """
@@ -1210,7 +1188,7 @@ class PlotTest {
         assertPlot("geom_livemap_prod_vector_tiles.png", plotSpec)
     }
 
-    //For debugging purposes only
+    // External service - may cause test instability. Enable for debugging purposes only
     @Ignore
     @Test
     fun `geom_livemap prod minard`() {
@@ -1279,6 +1257,29 @@ class PlotTest {
 
             val plotSpec = spec
             assertPlot("geom_livemap_test_png_tiles.png", plotSpec)
+        }
+    }
+
+    @Test
+    fun `geom_livemap test jpg tiles`() {
+        runStubRasterTileServer("jpg") { url ->
+            val spec = parsePlotSpec("""
+                |{
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "livemap",
+                |      "zoom": 1,
+                |      "tiles": { "kind": "raster_zxy", "url": "$url", "attribution": "Lets-Plot" }
+                |    },
+                |    { "geom": "point", "x": 0, "y": 0 }
+                |  ]
+                |}
+            """.trimMargin()
+            )
+
+            val plotSpec = spec
+            assertPlot("geom_livemap_test_jpg_tiles.png", plotSpec)
         }
     }
 
