@@ -21,7 +21,7 @@ fun <GeometryT, QuadT> calculateQuadKeys(
     zoom: Int,
     quadKeyFactory: (String) -> QuadT
 ): Set<QuadT> {
-    val quadKeys = LinkedHashSet<QuadT>()
+    val quadKeys = HashSet<QuadT>()
     val tileCount = calulateQuadsCount(zoom)
 
     fun calcQuadNum(value: Double, range: DoubleSpan, tileCount: Int): Int {

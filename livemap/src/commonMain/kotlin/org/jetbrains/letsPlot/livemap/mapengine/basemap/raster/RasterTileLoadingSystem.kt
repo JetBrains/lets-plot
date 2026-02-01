@@ -48,9 +48,7 @@ class RasterTileLoadingSystem(
                 }
 
             myTileTransport.get(replacePlaceholders(cellKey, nextDomain())).onResult(
-                successHandler = {
-                    tileResponseComponent.imageData = it
-                },
+                successHandler = { tileResponseComponent.imageData = it },
                 failureHandler = {
                     tileResponseComponent.imageData = ByteArray(0)
                     tileResponseComponent.errorCode = it
