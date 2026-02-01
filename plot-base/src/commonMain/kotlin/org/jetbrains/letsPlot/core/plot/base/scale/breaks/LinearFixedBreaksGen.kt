@@ -7,11 +7,11 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms.IDENTITY
-import kotlin.math.abs
-import kotlin.math.max
 
 /**
  * Generates breaks at fixed intervals for linear scales (identity/reverse transforms).
@@ -28,7 +28,7 @@ internal class LinearFixedBreaksGen(
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val breaks = LinearBreaksHelper.generateBreaks(domain, breakWidth)
 
-        val formatter = providedFormatter ?: createFormatter(breaks)
+        val formatter = providedFormatter ?: FormatterUtil.byDataType(DataType.FLOATING, expFormat, tz = null)
 
         return ScaleBreaks.Fixed.withTransform(
             domainValues = breaks,
@@ -45,21 +45,5 @@ internal class LinearFixedBreaksGen(
             expFormat
         )
         return helper.formatter
-    }
-
-    private fun createFormatter(breaks: List<Double>): (Any) -> String {
-        val (referenceValue, step) = when {
-            breaks.isEmpty() -> Pair(0.0, breakWidth)
-            else -> {
-                val v = max(abs(breaks.first()), abs(breaks.last()))
-                Pair(v, breakWidth)
-            }
-        }
-
-        return NumericBreakFormatter(
-            referenceValue,
-            step,
-            expFormat = expFormat
-        )::apply
     }
 }

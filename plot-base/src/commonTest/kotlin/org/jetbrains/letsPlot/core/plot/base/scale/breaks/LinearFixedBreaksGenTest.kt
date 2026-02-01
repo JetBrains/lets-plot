@@ -46,10 +46,7 @@ class LinearFixedBreaksGenTest {
         assertEquals(0.75, breaks[3], 1e-10)
         assertEquals(1.0, breaks[4], 1e-10)
 
-        // NumericBreakFormatter uses "g" format with precision based on step vs value magnitude.
-        // For step=0.25 and value=1.0, precision=1 significant digit, so 0.25 rounds to 0.3.
-        // Ideally, we expect: listOf("0", "0.25", "0.5", "0.75", "1")
-        val expectedLabels = listOf("0", "0.3", "0.5", "0.8", "1")
+        val expectedLabels = listOf("0", "0.25", "0.5", "0.75", "1")
         assertEquals(expectedLabels, scaleBreaks.labels)
     }
 
