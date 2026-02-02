@@ -10,6 +10,9 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.*
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.*
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.has
 
@@ -34,8 +37,7 @@ open class LineSpecConfigParser(
             },
             formats = getList(Option.LinesSpec.FORMATS),
             variables = getStringList(Option.LinesSpec.VARIABLES),
-            lhs = getString(Option.LinesSpec.LHS),
-            rhs = getString(Option.LinesSpec.RHS),
+            eqSpec = getMap(Option.LinesSpec.EQ),
             titleLine = getString(Option.LinesSpec.TITLE)
         ).parse()
     }
@@ -45,8 +47,7 @@ open class LineSpecConfigParser(
         private val lines: List<String>?,
         formats: List<*>,
         variables: List<String>,
-        private val lhs: String?,
-        private val rhs: String?,
+        private val eqSpec: Map<String, Any>,
         private val titleLine: String?
     ) {
         private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(formats)
@@ -120,7 +121,7 @@ open class LineSpecConfigParser(
                }
 
                 fieldName == Stats.EQ.name -> {
-                    EqDataFrameField(fieldName, format, lhs, rhs)
+                    EqDataFrameField(fieldName, format, EqSpecConfigParser(eqSpec).create())
                 }
 
                 else -> {

@@ -125,7 +125,7 @@ object StatProto {
             }
 
             SMOOTH -> configureSmoothStat(options)
-            SMOOTH2 -> configureSmoothStat2(options)
+            SMOOTH_SUMMARY -> configureSmoothStat2(options)
 
             BOXPLOT -> {
                 Stats.boxplot(

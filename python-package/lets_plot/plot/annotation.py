@@ -300,26 +300,29 @@ class smooth_labels(layer_labels):
 
         self.inherit_color()
 
-    def eq(self, *, lhs="y", rhs=None, format=None, threshold=None) -> "smooth_labels":
+    def eq(self, *, lhs=None, rhs=None, format=None, threshold=None) -> "smooth_labels":
         if format is not None:
             if isinstance(format, list):
-                self._eq.format = format
+                self._eq["format"] = format
             else:
-                self._eq.format = [format]
+                self._eq["format"] = [format]
 
         if rhs is not None:
-            self._eq._rhs = rhs
-
-        self._eq._lhs = lhs
+            self._eq["rhs"] = rhs
+        if lhs is not None:
+            self._eq["lhs"] = lhs
 
         if threshold is not None:
-            self._eq.threshold = threshold
+            self._eq["threshold"] = threshold
 
         return self
 
     def as_dict(self):
         d = super().as_dict()
 
+        if self._eq:
+            d['eq'] = self._eq
+
         d["kind"] = self._kind
-        d['eq'] = self._eq
+
         return _filter_none(d)

@@ -259,8 +259,14 @@ object Option {
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
-        const val LHS = "lhs"
-        const val RHS = "rhs"
+        const val EQ = "eq"
+
+        object Eq {
+            const val LHS = "lhs"
+            const val RHS = "rhs"
+            const val FORMAT = "format"
+            const val THRESHOLD = "threshold"
+        }
 
         object Format {
             const val FIELD = "field"
