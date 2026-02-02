@@ -14,9 +14,7 @@ object AwtBitmapIO : ImageComparer.BitmapIO {
 
     override fun read(fileName: String): Bitmap {
         val img = ImageIO.read(File(getReadFilePath(fileName)))
-        if (img == null) {
-            throw RuntimeException("Failed to read image from $fileName")
-        }
+            ?: throw RuntimeException("Failed to read image from $fileName")
         return BitmapUtil.fromBufferedImage(img)
     }
 

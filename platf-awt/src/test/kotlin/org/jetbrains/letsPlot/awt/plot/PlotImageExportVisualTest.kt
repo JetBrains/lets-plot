@@ -22,8 +22,8 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         val ys = mutableListOf<String>()
         val cs = mutableListOf<String>()
 
-        (0..dim).map {
-            (0..dim).map {
+        repeat((0..dim).count()) {
+            repeat((0..dim).count()) {
                 xs.add(rand.nextDouble().toString())
                 ys.add(rand.nextDouble().toString())
                 cs.add(rand.nextDouble().toString())
@@ -683,10 +683,8 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
         // dpi is NaN, so the bitmap will be exported with the default scaling factor of 1.0
-        assertPlot("plot_dpi_nan_test.png", plotSpec, dpi = Double.NaN)
+        assertPlot("plot_dpi_nan_test.png", spec, dpi = Double.NaN)
     }
 
     @Test
@@ -890,9 +888,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("path_with_none.png", plotSpec)
+        assertPlot("path_with_none.png", spec)
     }
 
     @Test
@@ -925,9 +921,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("plot_polar_clip_path.png", plotSpec)
+        assertPlot("plot_polar_clip_path.png", spec)
     }
 
     @Test
@@ -977,9 +971,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("path_with_none_coord_polar.png", plotSpec)
+        assertPlot("path_with_none_coord_polar.png", spec)
     }
 
     @Test
@@ -1034,9 +1026,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("variadic_path_with_none.png", plotSpec)
+        assertPlot("variadic_path_with_none.png", spec)
     }
 
     @Test
@@ -1206,9 +1196,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("line_with_none.png", plotSpec)
+        assertPlot("line_with_none.png", spec)
     }
 
     @Test
@@ -1258,9 +1246,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("area_ridges_with_none.png", plotSpec)
+        assertPlot("area_ridges_with_none.png", spec)
     }
 
     @Test
@@ -1308,9 +1294,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("smooth_with_none.png", plotSpec)
+        assertPlot("smooth_with_none.png", spec)
     }
 
     @Test
@@ -1351,9 +1335,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("violin_with_none.png", plotSpec)
+        assertPlot("violin_with_none.png", spec)
     }
 
     @Test
@@ -1523,9 +1505,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("step_with_none.png", plotSpec)
+        assertPlot("step_with_none.png", spec)
     }
 
     @Test
@@ -1581,9 +1561,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("polygon_with_none.png", plotSpec)
+        assertPlot("polygon_with_none.png", spec)
     }
 
     @Test
@@ -1624,9 +1602,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("density_with_none.png", plotSpec)
+        assertPlot("density_with_none.png", spec)
     }
 
     @Test
@@ -1669,9 +1645,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("density_identity_with_none.png", plotSpec)
+        assertPlot("density_identity_with_none.png", spec)
     }
 
     @Test
@@ -1726,9 +1700,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("map_with_none.png", plotSpec)
+        assertPlot("map_with_none.png", spec)
     }
 
     @Test
@@ -1777,9 +1749,7 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         """.trimMargin()
         )
 
-        val plotSpec = spec
-
-        assertPlot("contour_with_none.png", plotSpec)
+        assertPlot("contour_with_none.png", spec)
     }
 
     @Test

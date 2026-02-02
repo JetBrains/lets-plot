@@ -78,9 +78,7 @@ class LiveMapTest : VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec
-
-        assertPlot("geom_livemap_prod_minard.png", plotSpec)
+        assertPlot("geom_livemap_prod_minard.png", spec)
     }
 
     @Test
@@ -105,8 +103,7 @@ class LiveMapTest : VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec
-        assertPlot("geom_livemap_nasa_tiles.png", plotSpec)
+        assertPlot("geom_livemap_nasa_tiles.png", spec)
     }
 
     @Test
@@ -127,8 +124,7 @@ class LiveMapTest : VisualPlotTestBase() {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_png_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_png_tiles.png", spec)
         }
     }
 
@@ -150,8 +146,7 @@ class LiveMapTest : VisualPlotTestBase() {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_jpg_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_jpg_tiles.png", spec)
         }
     }
 
@@ -173,8 +168,7 @@ class LiveMapTest : VisualPlotTestBase() {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_vector_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_vector_tiles.png", spec)
         }
     }
 }
