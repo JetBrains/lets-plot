@@ -17,7 +17,7 @@ class SvgRasterizationTest : VisualPlotTestBase() {
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
         val fig = SvgCanvasFigure(svg)
-        val canvasPeer = AwtCanvasPeer()
+        val canvasPeer = AwtCanvasPeer(FontManager.DEFAULT, pixelDensity = 1.0)
         fig.mapToCanvas(canvasPeer)
 
         val w = svg.width().get()?.toInt() ?: error("SVG width is not specified")

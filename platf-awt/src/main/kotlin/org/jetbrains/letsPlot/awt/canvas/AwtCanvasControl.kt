@@ -39,7 +39,7 @@ class AwtCanvasControl(
 
     fun component(): JComponent = myComponent
 
-    override val canvasPeer: CanvasPeer = AwtCanvasPeer()
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(FontManager.DEFAULT, pixelDensity)
 
     override fun addChild(canvas: Canvas) {
         addChild(myComponent.componentCount, canvas)

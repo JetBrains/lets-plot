@@ -24,7 +24,7 @@ internal class AwtContext2d(
     initialGraphics: Graphics2D,
     contentScale: Double,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(contentScale = contentScale),
-    private val fontManager: FontManager = FontManager()
+    private val fontManager: FontManager
 ) : Context2d by stateDelegate {
     private var graphics: Graphics2D = (initialGraphics.create() as Graphics2D).apply {
         stroke = BasicStroke()

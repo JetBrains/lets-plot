@@ -15,8 +15,8 @@ import javax.imageio.ImageIO
 typealias AwtFont = java.awt.Font
 
 class AwtCanvasPeer(
+    val fontManager: FontManager,
     private val pixelDensity: Double = 1.0,
-    private val fontManager: FontManager = FontManager.EMPTY,
 ) : CanvasPeer {
     override fun createCanvas(size: Vector): AwtCanvas {
         return AwtCanvas.create(size, pixelDensity, fontManager)

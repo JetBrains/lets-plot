@@ -114,7 +114,7 @@ class CanvasPaneTest {
 
     private fun paneWithNotoFonts(): CanvasPane {
         val pane = CanvasPane()
-        pane.canvasPeer = AwtCanvasPeer(pixelDensity = 1.0, fontManager = NotoFontManager.INSTANCE)
+        pane.canvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
         return pane
     }
 

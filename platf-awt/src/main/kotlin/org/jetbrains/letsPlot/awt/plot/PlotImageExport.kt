@@ -88,7 +88,7 @@ object PlotImageExport {
         targetDPI: Number? = null,
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
-        fontManager: FontManager = FontManager.EMPTY
+        fontManager: FontManager = FontManager.DEFAULT
     ): ImageData {
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
@@ -99,7 +99,7 @@ object PlotImageExport {
             computationMessagesHandler = {}
         )
 
-        val awtCanvasPeer = AwtCanvasPeer(scaleFactor, fontManager = fontManager)
+        val awtCanvasPeer = AwtCanvasPeer(fontManager = fontManager, scaleFactor)
 
         val canvasReg = plotFigure.mapToCanvas(awtCanvasPeer)
 

@@ -24,6 +24,6 @@ class FontManager(
     }
 
     companion object {
-        val EMPTY = FontManager()
+        val DEFAULT = FontManager()
     }
 }
