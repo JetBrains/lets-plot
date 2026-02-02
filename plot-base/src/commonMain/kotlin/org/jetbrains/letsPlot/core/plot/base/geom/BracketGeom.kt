@@ -63,16 +63,18 @@ class BracketGeom : TextGeom() {
             val xMin = p.finiteOrNull(Aes.XMIN) ?: return@builder null
             val xMax = p.finiteOrNull(Aes.XMAX) ?: return@builder null
             val y = p.finiteOrNull(Aes.Y) ?: return@builder null
+            val tipLengthStart = p.finiteOrNull(Aes.TIP_LENGTH_START) ?: return@builder null
+            val tipLengthEnd = p.finiteOrNull(Aes.TIP_LENGTH_END) ?: return@builder null
             val x = (xMin + xMax) / 2.0
             val bracketLength = xMax - xMin
             val xStart = x - bracketShorten * bracketLength / 2.0
             val xEnd = x + bracketShorten * bracketLength / 2.0
-            val tickLength = 5.0 * helper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
+            val tipLengthUnit = helper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
             listOf(
-                DoubleVector(xStart, y - tickLength),
+                DoubleVector(xStart, y - tipLengthStart * tipLengthUnit),
                 DoubleVector(xStart, y),
                 DoubleVector(xEnd, y),
-                DoubleVector(xEnd, y - tickLength),
+                DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnit),
             )
         }
 

@@ -522,6 +522,8 @@ object GeomMeta {
                 Aes.XMIN,
                 Aes.XMAX,
                 Aes.Y,
+                Aes.TIP_LENGTH_START,
+                Aes.TIP_LENGTH_END,
                 Aes.LABEL,
                 Aes.SIZE,
                 Aes.LINETYPE,
