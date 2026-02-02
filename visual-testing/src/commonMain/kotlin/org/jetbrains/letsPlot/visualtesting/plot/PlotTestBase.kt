@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.visualtesting.plot
 
-//internal abstract class PlotTestBase : TestSuit() {
-//
-//}
+import org.jetbrains.letsPlot.visualtesting.TestSuit
+
+internal abstract class PlotTestBase : TestSuit() {
+
+}
 /*
 
 

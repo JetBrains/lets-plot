@@ -32,7 +32,7 @@ class LiveMapTest : VisualPlotTestBase() {
         """.trimMargin()
 
         val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
-        assertPlot("geom_livemap_prod_vector_tiles.png", plotSpec, fontManager = fontManager)
+        assertPlot("geom_livemap_prod_vector_tiles.png", plotSpec)
     }
 
     @Test
@@ -80,7 +80,7 @@ class LiveMapTest : VisualPlotTestBase() {
 
         val plotSpec = spec.themeTextNotoSans()
 
-        assertPlot("geom_livemap_prod_minard.png", plotSpec, fontManager = fontManager)
+        assertPlot("geom_livemap_prod_minard.png", plotSpec)
     }
 
     @Test
@@ -106,7 +106,7 @@ class LiveMapTest : VisualPlotTestBase() {
         """.trimMargin())
 
         val plotSpec = spec.themeTextNotoSans()
-        assertPlot("geom_livemap_nasa_tiles.png", plotSpec, fontManager = fontManager)
+        assertPlot("geom_livemap_nasa_tiles.png", plotSpec)
     }
 
     @Test
@@ -128,7 +128,7 @@ class LiveMapTest : VisualPlotTestBase() {
             )
 
             val plotSpec = spec.themeTextNotoSans()
-            assertPlot("geom_livemap_test_png_tiles.png", plotSpec, fontManager = fontManager)
+            assertPlot("geom_livemap_test_png_tiles.png", plotSpec)
         }
     }
 
@@ -151,7 +151,7 @@ class LiveMapTest : VisualPlotTestBase() {
             )
 
             val plotSpec = spec.themeTextNotoSans()
-            assertPlot("geom_livemap_test_jpg_tiles.png", plotSpec, fontManager = fontManager)
+            assertPlot("geom_livemap_test_jpg_tiles.png", plotSpec)
         }
     }
 
@@ -174,7 +174,7 @@ class LiveMapTest : VisualPlotTestBase() {
             )
 
             val plotSpec = spec.themeTextNotoSans()
-            assertPlot("geom_livemap_test_vector_tiles.png", plotSpec, fontManager = fontManager)
+            assertPlot("geom_livemap_test_vector_tiles.png", plotSpec)
         }
     }
 }

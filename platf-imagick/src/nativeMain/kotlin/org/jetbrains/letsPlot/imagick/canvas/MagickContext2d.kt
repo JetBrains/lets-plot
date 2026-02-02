@@ -264,29 +264,27 @@ class MagickContext2d(
             dirtyFont = false
             val fontSet = fontManager.resolveFont(font.fontFamily)
 
-            val (path, emulateBold, emulateItalic) = when {
-                font.isNormal -> when {
+            val (path, emulateBold, emulateItalic) = when(font.variant) {
+                Font.FontVariant.NORMAL -> when {
                     fontSet.regularFontPath != null -> Triple(fontSet.regularFontPath, false, false)
                     else -> error("No regular font path found for family: ${fontSet.familyName}")
                 }
-                font.isItalic -> when {
+                Font.FontVariant.ITALIC -> when {
                     fontSet.italicFontPath != null -> Triple(fontSet.italicFontPath, false, false)
                     fontSet.obliqueFontPath != null -> Triple(fontSet.obliqueFontPath, false, false)
                     else -> Triple(fontSet.regularFontPath, false, true) // take regular, emulate italic
                 }
-                font.isBold -> when {
+                Font.FontVariant.BOLD -> when {
                     fontSet.boldFontPath != null -> Triple(fontSet.boldFontPath, false, false)
                     else -> Triple(fontSet.regularFontPath, true, false) // take regular, emulate bold
                 }
-                font.isBoldItalic -> when {
+                Font.FontVariant.BOLD_ITALIC -> when {
                     fontSet.boldItalicFontPath != null -> Triple(fontSet.boldItalicFontPath, false, false)
                     fontSet.boldFontPath != null -> Triple(fontSet.boldFontPath, false, true) // take bold, emulate italic
                     fontSet.italicFontPath != null -> Triple(fontSet.italicFontPath, true, false) // take italic, emulate bold
                     fontSet.obliqueFontPath != null -> Triple(fontSet.obliqueFontPath, true, false) // take oblique, emulate bold
                     else -> Triple(fontSet.regularFontPath, true, true)
                 }
-
-                else -> Triple(fontSet.regularFontPath, false, false)
             }
 
             emulateBoldWeight = emulateBold

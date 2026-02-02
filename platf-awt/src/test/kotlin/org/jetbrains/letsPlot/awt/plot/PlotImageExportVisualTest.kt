@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 import kotlin.time.measureTime
 
 
-class PlotImageExportVisualTest: VisualPlotTestBase() {
+class PlotImageExportVisualTest : VisualPlotTestBase() {
 
     @Test
     fun `with a long rendering time the race condition should not occur`() {
@@ -375,7 +375,7 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |    "line": "blank",
             |    "axis": "blank",
             |    "plot_title": { "markdown": true },
-            |    "text": { "family": "Noto Serif Regular" }
+            |    "text": { "family": "Noto Sans Regular" }
             |  }
             |}            
         """.trimMargin()
@@ -508,7 +508,15 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
         val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
 
         // 5x2cm is the size in centimeters, dpi = 300 and scale = 2 means the bitmap will be 1181x475 pixels (5 * 300 / 2.54 * 2 = 1182, 2 * 300 / 2.54 * 2 = 472).
-        assertPlot("plot_${w}x${h}cm${dpi}dpi2Xscale_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi, scale=2)
+        assertPlot(
+            "plot_${w}x${h}cm${dpi}dpi2Xscale_test.png",
+            plotSpec,
+            width = w,
+            height = h,
+            unit = CM,
+            dpi = dpi,
+            scale = 2
+        )
     }
 
     @Test
@@ -601,14 +609,14 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
         val plotSpec = parsePlotSpec(spec).themeTextNotoSans()
 
-        assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale=2)
+        assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
     }
-
 
 
     @Test
     fun `geom_raster() should not fail on image export`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             {
               "data": {
                 "x": [ -1.0, 1.0, -1.0, 1.0 ],
@@ -632,7 +640,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
                 }
               ]
             }
-        """.trimIndent())
+        """.trimIndent()
+        )
             .themeTextNotoSans()
 
         assertPlot("geom_raster_export_test.png", spec)
@@ -640,7 +649,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `geom_imshow() should not fail on image export`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |    "kind": "plot",
             |    "layers": [
@@ -654,7 +664,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |        }
             |    ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
             .themeTextNotoSans()
 
         assertPlot("geom_imshow_export_test.png", spec)
@@ -662,7 +673,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `with dpi=NaN`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "plot",
             |  "data": { "x": [1, 2, 3], "y": [4, 5, 6] },
@@ -670,7 +682,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  "layers": [ { "geom": "point" } ],
             |  "ggsize": { "width": 200, "height": 200 }
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -681,7 +694,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
     @Test
     fun `shape with 90 degree rotation`() {
         // Was a bug caused by multiplying stroke by the transform.sx (which is 0.0 for 90-degree rotation)
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "plot",
             |  "data": {
@@ -704,7 +718,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
             |  "ggsize": { "width": 200.0, "height": 200.0 }
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         // stroke size should remain the same (3 pixels) at any scaling factor
         assertPlot("plot_constant_stroke_size_test.png", spec, scale = 1.0)
@@ -712,7 +727,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `path with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "subplots",
             |  "layout": {
@@ -873,7 +889,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |    }
             |  ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -882,7 +899,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `coord_polar and clip path`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "plot",
             |  "data": {
@@ -906,7 +924,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |    }
             |  ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -915,7 +934,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `path with none coord polar`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, null, 0.0, null, 1.0, 2.0, null, 4.0, 5.0, 6.0 ],
@@ -956,7 +976,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -965,7 +986,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `variadic path with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             | "data": {
             |    "x": [ null, null, 0.0, null, 1.0, 2.0, null, 4.0, 5.0, 6.0 ],
@@ -1011,7 +1033,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1020,7 +1043,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `line with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "subplots",
             |  "layout": {
@@ -1181,7 +1205,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |    }
             |  ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1190,7 +1215,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `area ridges with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, -1.0, -0.5, 0.0, 0.5, 1.0, null, -1.0, -0.5, 0.0, null, 0.5, 1.0, 2.0 ],
@@ -1231,7 +1257,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1240,7 +1267,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `smooth with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, -2.0, -1.0, 0.0, 1.0, 2.0, null, 3.0, 4.0, 5.0, null, 6.0 ],
@@ -1279,7 +1307,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1288,7 +1317,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `violin with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "grp": [ null, "A", "A", "A", "A", "B", "B", "B", "C", "C", "C", "D" ],
@@ -1320,7 +1350,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1329,7 +1360,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `step with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "subplots",
             |  "layout": {
@@ -1490,7 +1522,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |    }
             |  ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1499,7 +1532,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `polygon with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, 0.0, 1.0, 1.0, 0.0, 2.0, 3.0, null, null, 4.0, 5.0, null, 5.0, 4.0 ],
@@ -1546,7 +1580,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1555,7 +1590,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `density with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, -3.0, -2.9, -2.8, null, -1.0, -1.0, -0.8, null, 0.5, 0.6, 0.7, null, 3.0, 10.0, null ],
@@ -1587,7 +1623,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1596,7 +1633,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `density identity with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, -3.0, -2.9, -2.8, null, -1.0, -1.0, -0.8, null, 0.5, 0.6, 0.7, null, 3.0, 10.0, null ],
@@ -1630,7 +1668,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1639,7 +1678,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `map with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "data": {
             |    "x": [ null, 0.0, 1.0, 1.0, 0.0, 2.0, 3.0, null, null, 4.0, 5.0, null, 5.0, 4.0 ],
@@ -1685,7 +1725,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |  ],
             |  "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 
@@ -1694,7 +1735,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
 
     @Test
     fun `contour with none`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |    "data": {
             |    "x": [ 0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0 ],
@@ -1734,7 +1776,8 @@ class PlotImageExportVisualTest: VisualPlotTestBase() {
             |    ],
             |    "metainfo_list": []
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         val plotSpec = spec.themeTextNotoSans()
 

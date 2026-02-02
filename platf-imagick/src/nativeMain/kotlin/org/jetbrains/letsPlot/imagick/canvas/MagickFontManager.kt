@@ -9,6 +9,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.Font.FontVariant
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import platform.posix.size_t
@@ -133,10 +134,10 @@ class MagickFontManager private constructor(
         val current = cache[font.fontFamily] ?: FontSet(embedded = true, familyName = font.fontFamily)
 
         cache[font.fontFamily] = current.copy(
-            regularFontPath = if (font.isNormal) filePath else current.regularFontPath,
-            italicFontPath = if (font.isItalic) filePath else current.italicFontPath,
-            boldFontPath = if (font.isBold) filePath else current.boldFontPath,
-            boldItalicFontPath = if (font.isBoldItalic) filePath else current.boldItalicFontPath,
+            regularFontPath = if (font.variant == FontVariant.NORMAL) filePath else current.regularFontPath,
+            italicFontPath = if (font.variant == FontVariant.ITALIC) filePath else current.italicFontPath,
+            boldFontPath = if (font.variant == FontVariant.BOLD) filePath else current.boldFontPath,
+            boldItalicFontPath = if (font.variant == FontVariant.BOLD_ITALIC) filePath else current.boldItalicFontPath,
         )
     }
 
