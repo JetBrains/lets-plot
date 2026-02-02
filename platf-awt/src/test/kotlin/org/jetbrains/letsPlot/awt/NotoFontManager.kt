@@ -17,15 +17,16 @@ object NotoFontManager {
                 "Noto Serif Regular" -> notoSerif[NORMAL]
                 "Noto Sans Mono Regular" -> notoMono[NORMAL]
 
-                else -> {
-                    val fontFamily = when {
-                        "mono" in font.fontFamily -> notoMono
-                        "sans-serif" in font.fontFamily -> notoSerif
-                        else ->notoSans // default font family
-                    }
-
-                    fontFamily[font.variant]
-                }
+                else -> notoSans[font.variant]
+//                else -> {
+//                    val fontFamily = when {
+//                        "mono" in font.fontFamily -> notoMono
+//                        "sans-serif" in font.fontFamily -> notoSerif
+//                        else -> notoSans // default font family
+//                    }
+//
+//                    fontFamily[font.variant]
+//                }
             } ?: error("Font not found: $font")
         }
     )
