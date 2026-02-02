@@ -13,26 +13,10 @@ import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
-import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import javax.imageio.ImageIO
 
 open class VisualPlotTestBase {
-
-    protected fun MutableMap<String, Any>.themeTextNotoSans(): MutableMap<String, Any> {
-        val theme = getMap("theme") ?: emptyMap()
-        this[Option.Plot.THEME] =  theme + mapOf(
-            //"text" to mapOf(
-            //    "blank" to false,
-            //    "family" to "Noto Sans"
-            //),
-            "axis_title_y" to mapOf(
-                "blank" to true // hide rotated text - antialiasing may cause image differences
-            )
-        )
-        return this
-    }
 
     private fun createImageComparer(): ImageComparer {
         return ImageComparer(

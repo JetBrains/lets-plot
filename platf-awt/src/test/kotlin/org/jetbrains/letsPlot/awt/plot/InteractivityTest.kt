@@ -45,7 +45,7 @@ class InteractivityTest : VisualPlotTestBase() {
             |}            
         """.trimMargin()
 
-        val rawPlotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        val rawPlotSpec = parsePlotSpec(spec)
         val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
         val plotCanvasFigure = PlotCanvasFigure()
         plotCanvasFigure.update(
@@ -94,7 +94,7 @@ class InteractivityTest : VisualPlotTestBase() {
             |}
         """.trimMargin()
 
-        val rawPlotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        val rawPlotSpec = parsePlotSpec(spec)
         val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
 
         var specOverrideList = emptyList<Map<String, Any>>()

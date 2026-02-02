@@ -68,7 +68,7 @@ class AreaRidgesGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_ridges_geom_1.png", plotSpec)
     }
@@ -110,7 +110,7 @@ class AreaRidgesGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_ridges_geom_2.png", plotSpec)
     }
@@ -162,7 +162,7 @@ class AreaRidgesGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_ridges_geom_3.png", plotSpec)
     }
@@ -217,7 +217,7 @@ class AreaRidgesGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_ridges_geom_4.png", plotSpec)
     }

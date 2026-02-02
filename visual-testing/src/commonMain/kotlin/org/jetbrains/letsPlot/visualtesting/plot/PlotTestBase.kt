@@ -29,20 +29,6 @@ class PlotTestBase(
     val expectedDir: String
 ) {
 
-    protected fun MutableMap<String, Any>.themeTextNotoSans(): MutableMap<String, Any> {
-        val theme = getMap("theme") ?: emptyMap()
-        this[Option.Plot.THEME] =  theme + mapOf(
-            "text" to mapOf(
-                "blank" to false,
-                "family" to "Noto Sans"
-            ),
-            "axis_title_y" to mapOf(
-                "blank" to true // hide rotated text - antialiasing may cause image differences
-            )
-        )
-        return this
-    }
-
     private fun createImageComparer(): ImageComparer {
         return ImageComparer(
             tol = 5,

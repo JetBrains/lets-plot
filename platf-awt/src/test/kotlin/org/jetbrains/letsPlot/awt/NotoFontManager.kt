@@ -1,28 +1,21 @@
 package org.jetbrains.letsPlot.awt
 
 import org.jetbrains.letsPlot.awt.canvas.FontManager
-import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.Font.FontVariant.*
 import org.jetbrains.letsPlot.visualtesting.AwtCanvasTck
 import org.jetbrains.letsPlot.visualtesting.AwtFont
 import java.io.IOException
 
 object NotoFontManager {
-    fun custom(resolver: (Font) -> java.awt.Font?): FontManager {
-        return FontManager { font ->
-            resolver(font) ?: INSTANCE.getFont(font)
-        }
-    }
-
     val INSTANCE = FontManager(
         fontResolver = { font ->
             when (font.fontFamily) {
                 "Noto Sans" -> notoSans[font.variant]
                 "Noto Serif" -> notoSerif[font.variant]
                 "Noto Sans Mono" -> notoMono[font.variant]
-                "Noto Sans Regular" -> notoSans[Font.FontVariant.NORMAL]
-                "Noto Serif Regular" -> notoSerif[Font.FontVariant.NORMAL]
-                "Noto Sans Mono Regular" -> notoMono[Font.FontVariant.NORMAL]
+                "Noto Sans Regular" -> notoSans[NORMAL]
+                "Noto Serif Regular" -> notoSerif[NORMAL]
+                "Noto Sans Mono Regular" -> notoMono[NORMAL]
 
                 else -> notoSans[font.variant] // default font family
             } ?: error("Font not found: $font")

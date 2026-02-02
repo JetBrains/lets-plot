@@ -53,7 +53,7 @@ class AreaGeomTest : VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_geom_1.png", plotSpec)
     }
@@ -95,7 +95,7 @@ class AreaGeomTest : VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_geom_2.png", plotSpec)
     }
@@ -188,7 +188,7 @@ class AreaGeomTest : VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_geom_3.png", plotSpec)
     }
@@ -304,7 +304,7 @@ class AreaGeomTest : VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("area_geom_4.png", plotSpec)
     }

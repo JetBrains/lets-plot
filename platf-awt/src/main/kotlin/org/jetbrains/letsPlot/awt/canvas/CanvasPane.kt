@@ -22,9 +22,16 @@ class CanvasPane(
     figure: CanvasFigure2? = null,
     pixelDensity: Double = 1.0
 ) : DisposingHub, Disposable, JComponent() {
+    private var isFigureAttached = false
     private val registrations = CompositeRegistration()
     private var figureRegistration: Registration = Registration.EMPTY
-    private val canvasPeer: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
+    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
+        set(value) {
+            if (isFigureAttached) {
+                throw IllegalStateException("Can't change canvasPeer after figure is attached")
+            }
+            field = value
+        }
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
     private val systemTime: SystemTime = SystemTime()
 
@@ -36,6 +43,7 @@ class CanvasPane(
 
             figureRegistration.remove()
             if (canvasFigure != null) {
+                isFigureAttached = true
                 canvasFigure.resize(width, height)
                 canvasFigure.mouseEventPeer.addEventSource(mouseEventSource)
                 val animationTimer = Timer(1000 / 60) {

@@ -70,7 +70,7 @@ class SmoothGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("smooth_geom_1.png", plotSpec)
     }
@@ -123,7 +123,7 @@ class SmoothGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("smooth_geom_2.png", plotSpec)
     }
@@ -170,7 +170,7 @@ class SmoothGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("smooth_geom_3.png", plotSpec)
     }
@@ -220,7 +220,7 @@ class SmoothGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("smooth_geom_4.png", plotSpec)
     }
@@ -284,7 +284,7 @@ class SmoothGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
+        val plotSpec = spec
 
         assertPlot("smooth_geom_5.png", plotSpec)
     }
