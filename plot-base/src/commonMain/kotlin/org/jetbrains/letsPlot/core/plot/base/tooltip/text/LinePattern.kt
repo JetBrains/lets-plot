@@ -79,7 +79,7 @@ class LinePattern(
 
         fun defaultLineForSmoothLabels(valueSource: ValueSource): LinePattern = LinePattern(
             label = DEFAULT_LABEL_SPECIFIER,
-            pattern = "\\(R^2 = {}\\)",
+            pattern = "R^2 = {}",
             fields = listOf(valueSource)
         )
 

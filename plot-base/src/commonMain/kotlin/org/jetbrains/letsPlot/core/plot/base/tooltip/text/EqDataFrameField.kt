@@ -86,8 +86,6 @@ class EqDataFrameField(
         val formatters = (myFormatters ?: initFormatters(ctx.expFormat, ctx.tz))
             .reversed()     //Adjust the order of formatters to match the coefficients
 
-//        if (formatters.isNotEmpty()) {}
-
         for (i in coefficients.lastIndex downTo 0) {
             var coef = coefficients[i]
 
@@ -102,16 +100,20 @@ class EqDataFrameField(
 
                 sb.append(formatters[i].invoke(abs(coef)))
 
-                if (i > 0)
+                if (i > 0) {
+                    sb.append("\\(")
                     sb.append(eq.rhs ?: "x")
 
-                if (i > 1)
-                    sb.append("^").append(i)
+                    if (i > 1) {
+                        sb.append("^").append(i)
+                    }
+                    sb.append("\\)")
+                }
             }
         }
 
-        sb.insert(0, if (lhs != "") "$lhs=" else "")
+        sb.insert(0, if (lhs != "") "\\($lhs=\\)" else "")
 
-        return "\\($sb\\)"
+        return "$sb"
     }
 }
