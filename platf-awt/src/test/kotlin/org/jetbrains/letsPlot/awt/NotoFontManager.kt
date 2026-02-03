@@ -10,17 +10,19 @@ object NotoFontManager {
     val INSTANCE = FontManager(
         fontResolver = { font ->
             when (font.fontFamily) {
-                "Noto Sans" -> notoSans[font.variant]
-                "Noto Serif" -> notoSerif[font.variant]
-                "Noto Sans Mono" -> notoMono[font.variant]
                 "Noto Sans Regular" -> notoSans[NORMAL]
                 "Noto Serif Regular" -> notoSerif[NORMAL]
                 "Noto Sans Mono Regular" -> notoMono[NORMAL]
 
                 else -> {
                     val fontFamily = when {
+                        "Noto Sans" == font.fontFamily -> notoSans
+                        "Noto Serif" == font.fontFamily -> notoSerif
+                        "Noto Sans Mono" == font.fontFamily -> notoMono
                         "mono" in font.fontFamily -> notoMono
-                        "sans-serif" in font.fontFamily -> notoSerif
+                        "sans-serif" in font.fontFamily -> notoSans
+                        "sans" in font.fontFamily -> notoSans
+                        "serif" in font.fontFamily -> notoSerif
                         else -> notoSans // default font family
                     }
 
