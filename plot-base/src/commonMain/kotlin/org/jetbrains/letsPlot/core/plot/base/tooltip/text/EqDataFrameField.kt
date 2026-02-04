@@ -45,10 +45,11 @@ class EqDataFrameField(
 
         myFormatters = myVariables.mapIndexed { i, variable ->
             val coefFormat = eq.formats.getOrNull(i)
+                ?: eq.formats.lastOrNull()
+                ?: format
+
             if (coefFormat != null) {
                 FormatterUtil.byPattern(coefFormat, expFormat = expFormat, tz = tz)::format
-            } else if (format != null) {
-                FormatterUtil.byPattern(format, expFormat = expFormat, tz = tz)::format
             } else {
                 TooltipFormatting.createFormatter(
                     variable,
