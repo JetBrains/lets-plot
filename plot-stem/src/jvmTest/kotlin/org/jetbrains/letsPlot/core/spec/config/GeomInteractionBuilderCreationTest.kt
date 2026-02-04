@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappingField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
@@ -24,12 +25,12 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.SCALE_MAPPER_KIND
 import org.jetbrains.letsPlot.core.spec.Option.Theme.TOOLTIP_RECT
-import org.jetbrains.letsPlot.core.spec.front.GeomInteractionUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+// TODO: rewrite without using transformToClientPlotConfig and move to plot-base module
 class GeomInteractionBuilderCreationTest {
 
     private val data = mapOf(
@@ -195,7 +196,7 @@ class GeomInteractionBuilderCreationTest {
         val scaleMap = plotConfig.createScales()
         plotConfig.layerConfigs.forEach { layerConfig ->
             val builder = GeomInteractionUtil.createGeomInteractionBuilder(
-                layerConfig = layerConfig,
+                bindings = layerConfig.varBindings.associate { it.aes to it.variable },
                 scaleMap = scaleMap,
                 multilayerWithTooltips = false,
                 isLiveMap = false,
@@ -206,7 +207,8 @@ class GeomInteractionBuilderCreationTest {
                 tooltipSpecification1 = layerConfig.tooltips,
                 isYOrientation = layerConfig.isYOrientation,
                 constantsMap = layerConfig.constantsMap,
-                renderedAes = layerConfig.renderedAes
+                renderedAes = layerConfig.renderedAes,
+                getOriginalVariableName = layerConfig::getOriginalVariableName
             )
             val tooltipLines = builder.tooltipLines
             val aesListForTooltip = getAesListInTooltip(tooltipLines)
@@ -434,7 +436,7 @@ class GeomInteractionBuilderCreationTest {
 
         val layerConfig = plotConfig.layerConfigs.first()
         return GeomInteractionUtil.createGeomInteractionBuilder(
-            layerConfig = layerConfig,
+            bindings = layerConfig.varBindings.associate { it.aes to it.variable },
             scaleMap = scaleMap,
             multilayerWithTooltips = false,
             isLiveMap = false,
@@ -445,7 +447,8 @@ class GeomInteractionBuilderCreationTest {
             layerConfig.tooltips,
             layerConfig.isYOrientation,
             layerConfig.constantsMap,
-            layerConfig.renderedAes
+            layerConfig.renderedAes,
+            layerConfig::getOriginalVariableName
         )
     }
 

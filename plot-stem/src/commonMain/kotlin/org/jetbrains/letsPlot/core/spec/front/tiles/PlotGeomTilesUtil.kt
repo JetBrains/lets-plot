@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
@@ -23,7 +24,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler.Companion
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
-import org.jetbrains.letsPlot.core.spec.front.GeomInteractionUtil
 
 internal object PlotGeomTilesUtil {
 
@@ -106,7 +106,7 @@ internal object PlotGeomTilesUtil {
                 }
 
                 GeomInteractionUtil.createGeomInteractionBuilder(
-                    layerConfig,
+                    layerConfig.varBindings.associate { it.aes to it.variable },
                     scaleMapByLayer[layerIndex],
                     otherLayerWithTooltips,
                     isLiveMap,
@@ -117,7 +117,8 @@ internal object PlotGeomTilesUtil {
                     layerConfig.tooltips,
                     layerConfig.isYOrientation,
                     layerConfig.constantsMap,
-                    layerConfig.renderedAes
+                    layerConfig.renderedAes,
+                    layerConfig::getOriginalVariableName
                 ).build()
             }
         }
