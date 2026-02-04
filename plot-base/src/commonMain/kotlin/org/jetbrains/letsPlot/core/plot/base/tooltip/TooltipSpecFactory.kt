@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 
 class TooltipSpecFactory(
     private val contextualMapping: ContextualMapping,

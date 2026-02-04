@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec.Line
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.spec.Option

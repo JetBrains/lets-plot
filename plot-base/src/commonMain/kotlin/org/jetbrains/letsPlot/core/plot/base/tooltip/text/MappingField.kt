@@ -3,13 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.base.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 
 class MappingField(
     val aes: Aes<*>,
@@ -79,7 +78,7 @@ class MappingField(
         }
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
+    override fun getDataPoint(index: Int, ctx: PlotContext): LineSpec.DataPoint {
         val formatter = myFormatter ?: initFormatter(ctx)
 
         val originalValue = myDataAccess.getOriginalValue(aes, index) ?: run {
@@ -101,7 +100,7 @@ class MappingField(
             formatter.invoke(originalValue)
         }
 
-        return DataPoint(
+        return LineSpec.DataPoint(
             label = myDataLabel,
             value = formattedValue,
             aes = aes,

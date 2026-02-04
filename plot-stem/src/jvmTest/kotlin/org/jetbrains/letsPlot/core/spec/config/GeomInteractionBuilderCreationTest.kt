@@ -8,10 +8,10 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LinePattern
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappingField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP

@@ -7,9 +7,13 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.tooltip.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification.TooltipProperties
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
     ContextualMappingProvider {

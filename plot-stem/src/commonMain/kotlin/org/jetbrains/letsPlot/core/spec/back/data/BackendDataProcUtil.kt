@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import org.jetbrains.letsPlot.core.plot.base.tooltip.DataFrameField
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.DataFrameField
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupingContext
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil

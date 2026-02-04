@@ -1,4 +1,4 @@
-package org.jetbrains.letsPlot.core.plot.base.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
@@ -12,11 +12,11 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 object TooltipFormatting {
     private val FALLBACK_NUMBER_FORMATTER: (v: Number) -> String =
-        StringFormat.Companion.of("{.2f}", tz = null)::format
+        StringFormat.of("{.2f}", tz = null)::format
 
     fun fromScale(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
         // expect only X, Y or not positional
-        check(!Aes.Companion.isPositionalXY(aes) || aes == Aes.Companion.X || aes == Aes.Companion.Y) {
+        check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {
             "Positional aesthetic should be either X or Y but was $aes"
         }
 
@@ -65,8 +65,8 @@ object TooltipFormatting {
         tz: TimeZone?,
     ): (Any) -> String {
         return when (variable) {
-            Stats.PROP, Stats.SUMPROP -> StringFormat.Companion.of("{.2f}", expFormat = expFormat, tz = tz)::format
-            Stats.PROPPCT, Stats.SUMPCT -> StringFormat.Companion.of("{.1f} %", expFormat = expFormat, tz = tz)::format
+            Stats.PROP, Stats.SUMPROP -> StringFormat.of("{.2f}", expFormat = expFormat, tz = tz)::format
+            Stats.PROPPCT, Stats.SUMPCT -> StringFormat.of("{.1f} %", expFormat = expFormat, tz = tz)::format
             else -> formatters[variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat, tz = tz)
         }
     }

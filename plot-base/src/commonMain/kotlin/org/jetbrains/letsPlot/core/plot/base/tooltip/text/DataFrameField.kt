@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.base.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 
 open class DataFrameField(
     private val name: String,
@@ -53,10 +52,10 @@ open class DataFrameField(
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
+    override fun getDataPoint(index: Int, ctx: PlotContext): LineSpec.DataPoint? {
         val formatter = myFormatter ?: initFormatter(ctx.expFormat, ctx.tz)
         val originalValue = myDataFrame[myVariable][index] ?: return null
-        return DataPoint(
+        return LineSpec.DataPoint(
             label = name,
             value = formatter.invoke(originalValue),
             aes = null,

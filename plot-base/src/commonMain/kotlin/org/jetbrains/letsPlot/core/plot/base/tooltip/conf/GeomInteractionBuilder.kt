@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilderUtil.createTooltipLines
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 
 class GeomInteractionBuilder constructor(
     val locatorLookupSpace: LookupSpace,

@@ -3,13 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.base.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 
 class ConstantField(
     val aes: Aes<*>,
@@ -34,9 +33,9 @@ class ConstantField(
         }
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
+    override fun getDataPoint(index: Int, ctx: PlotContext): LineSpec.DataPoint {
         val presentation = formattedValue ?: initFormattedValue(ctx)
-        return DataPoint(
+        return LineSpec.DataPoint(
             label = myDataLabel,
             value = presentation,
             aes = null,

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -23,9 +24,9 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun shouldNotDuplicateAesFromHintsToBigTooltip() {
-        val widthMapping = addMappedData(MappedDataAccessMock.Companion.variable().name("type").value("sedan").mapping(AES_WIDTH))
+        val widthMapping = addMappedData(MappedDataAccessMock.variable().name("type").value("sedan").mapping(AES_WIDTH))
         val colorMapping =
-            addMappedData(MappedDataAccessMock.Companion.variable().name("cyl").value("4").mapping(Aes.COLOR))
+            addMappedData(MappedDataAccessMock.variable().name("cyl").value("4").mapping(Aes.COLOR))
 
         createTooltipSpecs(
             geomTargetBuilder.withPathHitShape()
@@ -45,7 +46,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun shouldNotAddSemicolonIfLabelIsEmpty() {
-        val widthMapping = addMappedData(MappedDataAccessMock.Companion.variable().value("sedan").mapping(AES_WIDTH))
+        val widthMapping = addMappedData(MappedDataAccessMock.variable().value("sedan").mapping(AES_WIDTH))
 
         buildTooltipSpecs()
 
@@ -55,7 +56,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun checkIfTooltipIsSide() {
-        val widthMapping = addMappedData(MappedDataAccessMock.Companion.variable().name("type").value("sedan").mapping(AES_WIDTH))
+        val widthMapping = addMappedData(MappedDataAccessMock.variable().name("type").value("sedan").mapping(AES_WIDTH))
         createTooltipSpecs(
             geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
@@ -72,7 +73,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun shouldUseShortTextInFormatLine() {
-        val widthMapping = addMappedData(MappedDataAccessMock.Companion.variable().name("type").value("sedan").mapping(AES_WIDTH))
+        val widthMapping = addMappedData(MappedDataAccessMock.variable().name("type").value("sedan").mapping(AES_WIDTH))
         // set line format -> short text will be used
         val widthAes = MappingField(
             AES_WIDTH,

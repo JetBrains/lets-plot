@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
-import org.jetbrains.letsPlot.core.plot.base.tooltip.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.*
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.has

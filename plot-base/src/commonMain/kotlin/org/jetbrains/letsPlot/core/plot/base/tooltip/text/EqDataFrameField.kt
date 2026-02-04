@@ -3,14 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.base.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -59,11 +58,11 @@ class EqDataFrameField(
         return myFormatters!!
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
+    override fun getDataPoint(index: Int, ctx: PlotContext): LineSpec.DataPoint? {
         val coefficients = myVariables.map { myDataFrame.getNumeric(it)[index] ?: return null }
         val formattedValue = makeEq(coefficients, ctx)
 
-        return DataPoint(
+        return LineSpec.DataPoint(
             label = name,
             value = formattedValue,
             aes = null,

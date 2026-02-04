@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 import kotlin.test.assertEquals
 
 open class TooltipSpecTestHelper {

@@ -11,9 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 
-private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
-    scaleMap[aes]?.isContinuousDomain ?: false
-
 
 object GeomInteractionUtil {
     fun createGeomInteractionBuilder(
@@ -423,4 +420,8 @@ object GeomInteractionUtil {
         val factors = scaleMap[aes]?.getScaleBreaks()?.domainValues ?: return false
         return factors.size >= MIN_FACTORS_TO_SHOW_TOOLTIPS
     }
+
+    private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
+        scaleMap[aes]?.isContinuousDomain ?: false
 }
+

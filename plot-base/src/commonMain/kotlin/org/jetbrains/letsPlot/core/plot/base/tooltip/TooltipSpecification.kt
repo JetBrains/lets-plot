@@ -1,5 +1,8 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
+
 class TooltipSpecification(
     val valueSources: List<ValueSource>,
     val tooltipLinePatterns: List<LinePattern>?,

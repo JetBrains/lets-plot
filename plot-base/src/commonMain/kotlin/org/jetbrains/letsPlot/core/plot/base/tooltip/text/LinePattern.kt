@@ -1,4 +1,4 @@
-package org.jetbrains.letsPlot.core.plot.base.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
@@ -23,7 +23,7 @@ class LinePattern(
 
         // Do not use FormatterUtil.byPattern here - it will transform pattern-like ",.2f" to "{,.2f}"
         // But for the tooltip line it is unnecessary.
-        myLineFormatter = StringFormat.Companion.of(pattern, expFormat = expFormat, tz = tz)::format
+        myLineFormatter = StringFormat.of(pattern, expFormat = expFormat, tz = tz)::format
         return myLineFormatter!!
     }
 

@@ -6,7 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ConstantField
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
 internal object GeomInteractionBuilderUtil {
 
