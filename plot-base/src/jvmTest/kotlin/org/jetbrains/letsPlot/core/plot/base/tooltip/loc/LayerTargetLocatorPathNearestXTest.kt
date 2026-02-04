@@ -1,0 +1,83 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
+
+import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
+import kotlin.test.Test
+
+class LayerTargetLocatorPathNearestXTest : TargetLocatorPathXTestBase() {
+
+    override val strategy: LookupStrategy
+        get() = LookupStrategy.NEAREST
+
+    @Test
+    fun nearestX_WhenCloserToLeft() {
+        assertThat(
+            findTargets(
+                rightFrom(
+                    p1,
+                    THIS_POINT_DISTANCE
+                )
+            )
+        ).first().has(TestUtil.HitIndex.Companion.equalTo(p1.hitIndex))
+    }
+
+
+    @Test
+    fun nearestX_WhenCloserToRight() {
+        assertThat(
+            findTargets(
+                rightFrom(
+                    p1,
+                    NEXT_POINT_DISTANCE
+                )
+            )
+        ).first().has(TestUtil.HitIndex.Companion.equalTo(p2.hitIndex))
+    }
+
+    @Test
+    fun nearestX_WhenInTheMiddle_ShouldSelectSecondPoint() {
+        assertThat(
+            findTargets(
+                rightFrom(
+                    p1,
+                    MIDDLE_POINTS_DISTANCE
+                )
+            )
+        ).first().has(TestUtil.HitIndex.Companion.equalTo(p1.hitIndex))
+    }
+
+
+    @Test
+    fun nearestX_WhenOutOfPath_ShouldFindNothing() {
+        assertThat(
+            findTargets(
+                leftFrom(
+                    p0,
+                    NEXT_POINT_DISTANCE
+                )
+            )
+        ).isEmpty()
+    }
+
+
+    private fun leftFrom(p: TestUtil.PathPoint, distance: Double): DoubleVector {
+        return DoubleVector(p.x - distance, p.y)
+    }
+
+    private fun rightFrom(p: TestUtil.PathPoint, distance: Double): DoubleVector {
+        return DoubleVector(p.x + distance, p.y)
+    }
+
+
+    private fun findTargets(p: DoubleVector): List<GeomTarget> {
+        return TestUtil.findTargets(locator, p)
+    }
+}

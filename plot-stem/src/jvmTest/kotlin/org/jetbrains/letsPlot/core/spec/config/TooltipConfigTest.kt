@@ -9,9 +9,9 @@ import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec.Line
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer.DISABLE_SPLITTING
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM

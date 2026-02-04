@@ -5,17 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomTooltipSetup
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomTooltipSetup
-import org.jetbrains.letsPlot.core.spec.StatKind
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 
 private fun <T> Map<Aes<*>, Scale>.safeGet(aes: Aes<T>) = if (containsKey(aes)) get(aes) else null
@@ -31,12 +27,18 @@ object GeomInteractionUtil {
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         isPolarCoordSystem: Boolean,
-        theme: Theme
+        theme: Theme,
+        geomKind: GeomKind,
+        statKind: StatKind,
+        tooltipSpecification1: TooltipSpecification,
+        isYOrientation: Boolean,
+        constantsMap: Map<Aes<*>, Any>,
+        renderedAes: List<Aes<*>>
     ): GeomInteractionBuilder {
         val tooltipSetup = createGeomTooltipSetup(
-            geomKind = layerConfig.geomProto.geomKind,
-            statKind = layerConfig.statKind,
-            isCrosshairEnabled = isCrosshairEnabled(layerConfig),
+            geomKind = geomKind,
+            statKind = statKind,
+            isCrosshairEnabled = isCrosshairEnabled(geomKind, tooltipSpecification1),
             isPolarCoordSystem = isPolarCoordSystem,
             multilayerWithTooltips = multilayerWithTooltips
         )
@@ -49,21 +51,25 @@ object GeomInteractionUtil {
         val axisWithNoLabels = HashSet<Aes<*>>()
         if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.X)
         if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.Y)
-        val yOrientation = layerConfig.isYOrientation
         val axisAesFromFunctionKind = tooltipSetup.axisAesFromFunctionKind
         val isAxisTooltipEnabled = tooltipSetup.axisTooltipEnabled
-        val hiddenAesList = createHiddenAesList(layerConfig, axisAesFromFunctionKind)
-            .afterOrientation(yOrientation) + axisWithoutTooltip
-        val axisAes = createAxisAesList(isAxisTooltipEnabled, axisAesFromFunctionKind, layerConfig.geomProto.geomKind,)
-            .afterOrientation(yOrientation) - hiddenAesList - axisWithNoLabels
+        val hiddenAesList = createHiddenAesList(
+            axisAesFromFunctionKind,
+            geomKind,
+            tooltipSpecification1,
+            renderedAes
+        )
+            .afterOrientation(isYOrientation) + axisWithoutTooltip
+        val axisAes = createAxisAesList(isAxisTooltipEnabled, axisAesFromFunctionKind, geomKind,)
+            .afterOrientation(isYOrientation) - hiddenAesList - axisWithNoLabels
 
         val tooltipAes: List<Aes<*>>
         val sideTooltipAes: List<Aes<*>>
         val tooltipSpecification: TooltipSpecification
 
         if (theme.tooltips().show()) {
-            val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
-            val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
+            val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(isYOrientation)
+            val layerRendersAesAfterOrientation = renderedAes.afterOrientation(isYOrientation)
             tooltipAes = createTooltipAesList(
                 layerConfig,
                 scaleMap,
@@ -71,14 +77,14 @@ object GeomInteractionUtil {
                 axisAesFromFunctionTypeAfterOrientation,
                 hiddenAesList
             )
-            sideTooltipAes = createSideTooltipAesList(layerConfig, yOrientation)
-            tooltipSpecification = layerConfig.tooltips
+            sideTooltipAes = createSideTooltipAesList(geomKind, isYOrientation)
+            tooltipSpecification = tooltipSpecification1
         } else {
             tooltipAes = emptyList()
             sideTooltipAes = emptyList()
             // Need to keep specified formats to use for non-hidden tooltips:
             tooltipSpecification = TooltipSpecification(
-                valueSources = layerConfig.tooltips.valueSources,
+                valueSources = tooltipSpecification1.valueSources,
                 tooltipLinePatterns = null,
                 tooltipProperties = TooltipSpecification.TooltipProperties.NONE,
                 tooltipTitle = null,
@@ -95,8 +101,8 @@ object GeomInteractionUtil {
         )
         return builder
             .tooltipLinesSpec(tooltipSpecification)
-            .tooltipConstants(createConstantAesList(layerConfig))
-            .enableCrosshair(isCrosshairEnabled(layerConfig))
+            .tooltipConstants(createConstantAesList(geomKind, constantsMap))
+            .enableCrosshair(isCrosshairEnabled(geomKind, tooltipSpecification1))
     }
 
     private fun createGeomTooltipSetup(
@@ -238,8 +244,13 @@ object GeomInteractionUtil {
         }
     }
 
-    private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
-        return when (layerConfig.geomProto.geomKind) {
+    private fun createHiddenAesList(
+        axisAes: List<Aes<*>>,
+        geomKind: GeomKind,
+        tooltipSpecification: TooltipSpecification,
+        renderedAes: List<Aes<*>>
+    ): List<Aes<*>> {
+        return when (geomKind) {
             GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.HEX -> listOf(Aes.WIDTH, Aes.HEIGHT)
@@ -258,10 +269,10 @@ object GeomInteractionUtil {
             GeomKind.TEXT, GeomKind.LABEL, GeomKind.TEXT_REPEL, GeomKind.LABEL_REPEL -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
-                if (layerConfig.tooltips.tooltipLinePatterns.isNullOrEmpty()) {
-                    layerConfig.renderedAes
+                if (tooltipSpecification.tooltipLinePatterns.isNullOrEmpty()) {
+                    renderedAes
                 } else {
-                    layerConfig.renderedAes - axisAes
+                    renderedAes - axisAes
                 }
             }
 
@@ -340,8 +351,8 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createSideTooltipAesList(layerConfig: LayerConfig, yOrientation: Boolean): List<Aes<*>> {
-        return when (layerConfig.geomProto.geomKind) {
+    private fun createSideTooltipAesList(geomKind: GeomKind, yOrientation: Boolean): List<Aes<*>> {
+        return when (geomKind) {
             GeomKind.CROSS_BAR,
             GeomKind.SMOOTH -> when (yOrientation) {
                 true -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
@@ -360,22 +371,22 @@ object GeomInteractionUtil {
         }
     }
 
-    private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
-        return when (layerConfig.geomProto.geomKind) {
+    private fun createConstantAesList(geomKind: GeomKind, constants: Map<Aes<*>, Any>): Map<Aes<*>, Any> {
+        return when (geomKind) {
             GeomKind.H_LINE,
-            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+            GeomKind.V_LINE -> constants.filter { (aes, _) -> Aes.isPositional(aes) }
 
             else -> emptyMap()
         }
     }
 
-    private fun isCrosshairEnabled(layerConfig: LayerConfig): Boolean {
+    private fun isCrosshairEnabled(geomKind: GeomKind, tooltipSpecification: TooltipSpecification): Boolean {
         // Crosshair is enabled if the general tooltip is moved to the specified position
-        if (layerConfig.tooltips.tooltipProperties.anchor == null) {
+        if (tooltipSpecification.tooltipProperties.anchor == null) {
             return false
         }
 
-        return when (layerConfig.geomProto.geomKind) {
+        return when (geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,
             GeomKind.SINA,

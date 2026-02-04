@@ -8,12 +8,12 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec.Line
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpecFactory
 import kotlin.test.assertEquals
 
 object TooltipTestUtil {

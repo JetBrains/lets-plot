@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -22,7 +23,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.SimplePlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,

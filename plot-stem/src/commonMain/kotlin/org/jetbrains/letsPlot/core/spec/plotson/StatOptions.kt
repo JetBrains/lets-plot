@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.plotson
 
+import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.StatKind
 
 open class StatOptions(statKind: StatKind): InlineOptions() {
     var kind: StatKind? by map(Option.Layer.STAT)

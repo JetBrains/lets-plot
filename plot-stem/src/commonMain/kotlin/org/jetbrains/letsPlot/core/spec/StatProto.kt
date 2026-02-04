@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Stat
+import org.jetbrains.letsPlot.core.plot.base.StatKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind.*
 import org.jetbrains.letsPlot.core.plot.base.stat.*
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin
@@ -25,7 +27,6 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
-import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
 object StatProto {
