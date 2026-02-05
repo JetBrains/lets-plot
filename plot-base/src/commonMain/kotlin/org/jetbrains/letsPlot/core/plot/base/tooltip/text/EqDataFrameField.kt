@@ -10,10 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.EqSpecification
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 import kotlin.math.abs
 import kotlin.math.sign
 

@@ -6,13 +6,9 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.*
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.*
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.has
 

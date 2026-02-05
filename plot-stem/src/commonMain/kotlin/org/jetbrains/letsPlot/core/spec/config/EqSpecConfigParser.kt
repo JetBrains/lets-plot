@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.EqSpecification
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.EqSpecification
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.FORMAT
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.LHS
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.RHS
