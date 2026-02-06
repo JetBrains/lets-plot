@@ -218,34 +218,20 @@ static PyMethodDef module_methods[] = {
    { NULL }
 };
 
-// Ensure compatibility for Python versions older than 3.13.
-#ifndef Py_MOD_GIL_NOT_USED
-#  define Py_MOD_GIL_NOT_USED NULL
-#endif
-#ifndef Py_mod_gil
-#  define Py_mod_gil 4
-#endif
-
-// Disable GIL (Free-threading)
-static PyModuleDef_Slot module_slots [] = {
-    { Py_mod_gil, Py_MOD_GIL_NOT_USED },
-    { 0, NULL }
-};
 
 static struct PyModuleDef module_def = {
         PyModuleDef_HEAD_INIT,
         "lets_plot_kotlin_bridge",
         NULL,
-        0,     // m_size: must be non-negative when using m_slots.
+        -1,     // m_size: -1 => module does not support sub-interpreters, has global state
         module_methods,
-        module_slots,
+        NULL,   // m_slots: using single-phase initialization
         NULL,   // m_traverse
         NULL,   // m_clear
         NULL    // m_free
 };
 
 PyMODINIT_FUNC PyInit_lets_plot_kotlin_bridge(void) {
-// Use PyModuleDef_Init to support slots (Multi-phase initialization)
-   PyObject *module = PyModuleDef_Init(&module_def);
+   PyObject *module = PyModule_Create(&module_def);
    return module;
 }
