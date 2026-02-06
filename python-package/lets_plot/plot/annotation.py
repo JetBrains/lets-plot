@@ -297,8 +297,18 @@ class smooth_labels(layer_labels):
 
         self._kind = "smooth"
         self._eq = {}
+        self._label_x = None
+        self._label_y = None
 
         self.inherit_color()
+
+    def label_x(self, position=None) -> "smooth_labels":
+        self._label_x = position
+        return self
+
+    def label_y(self, position=None) -> "smooth_labels":
+        self._label_y = position
+        return self
 
     def eq(self, *, lhs=None, rhs=None, format=None, threshold=None) -> "smooth_labels":
         if format is not None:
@@ -320,9 +330,11 @@ class smooth_labels(layer_labels):
     def as_dict(self):
         d = super().as_dict()
 
+        d["kind"] = self._kind
+        d['label_x'] = self._label_x
+        d['label_y'] = self._label_y
+
         if self._eq:
             d['eq'] = self._eq
-
-        d["kind"] = self._kind
 
         return _filter_none(d)

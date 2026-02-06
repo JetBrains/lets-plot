@@ -260,6 +260,8 @@ object Option {
         const val VARIABLES = "variables"
         const val TITLE = "title"
         const val EQ = "eq"
+        const val LABEL_X = "label_x"
+        const val LABEL_Y = "label_y"
 
         object Eq {
             const val LHS = "lhs"
@@ -503,11 +505,6 @@ object Option {
             const val Y = "y"
             const val MIN = "min"
             const val MAX = "max"
-        }
-
-        object StatR2 {
-            const val LABEL_X = "label_x"
-            const val LABEL_Y = "label_y"
         }
     }
 
