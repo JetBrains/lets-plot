@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 import kotlin.experimental.ExperimentalNativeApi
 
-val logEnabled = true
+val logEnabled = false
 
 fun log(msg: () -> String) {
     if (logEnabled) {

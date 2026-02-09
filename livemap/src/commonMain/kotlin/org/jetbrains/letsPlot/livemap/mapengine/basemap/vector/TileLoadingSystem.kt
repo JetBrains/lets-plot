@@ -33,7 +33,7 @@ class TileLoadingSystem(
     private val myTileService: TileService,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
-    private val logEnabled = true
+    private val logEnabled = false
     private fun log(message: () -> String) {
         if (logEnabled) {
             println(message())

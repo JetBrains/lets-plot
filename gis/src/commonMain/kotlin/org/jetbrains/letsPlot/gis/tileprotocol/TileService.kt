@@ -42,6 +42,13 @@ open class TileService(url: String, private val myTheme: Theme) {
         BW
     }
 
+    private val logEnabled = false
+    private fun log(message: () -> String) {
+        if (logEnabled) {
+            println(message())
+        }
+    }
+
     private val mySocket: TileWebSocket = TileWebSocket(url, SafeSocketHandler(TileSocketHandler()))
     private val myMessageQueue = ThreadSafeMessageQueue<String>()
     private val pendingRequests = RequestMap()
@@ -128,17 +135,19 @@ open class TileService(url: String, private val myTheme: Theme) {
                 ResponseTileDecoder(message)
                     .let { (key, tiles) ->
                         val (rect, async) = pendingRequests.poll(key)
-                        println("$rect -> ${formatByteSize(message.size)}")
+                        log { "$rect -> ${formatByteSize(message.size)}" }
 
-                        // Open a sink to the file, and buffer it
-                        val className = "TileX${rect.origin.x}Y${rect.origin.y}W${rect.dimension.x}H${rect.dimension.y}"
-                            .replace('.', '_')
-                            .replace('-', 'm')
-                        val fileName = "$className.kt"
-                        val path = Path(fileName)
-                        SystemFileSystem.sink(path).buffered().use { sink ->
-                            sink.writeString(
-                                """|import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+                        try {
+                            // Open a sink to the file, and buffer it
+                            val className =
+                                "TileX${rect.origin.x}Y${rect.origin.y}W${rect.dimension.x}H${rect.dimension.y}"
+                                    .replace('.', '_')
+                                    .replace('-', 'm')
+                            val fileName = "$className.kt"
+                            val path = Path(fileName)
+                            SystemFileSystem.sink(path).buffered().use { sink ->
+                                sink.writeString(
+                                    """|import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
                                    |import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
                                    |import org.jetbrains.letsPlot.commons.encoding.Base64
                                    |
@@ -147,10 +156,14 @@ open class TileService(url: String, private val myTheme: Theme) {
                                    |    val rect = Rect.XYWH<LonLat>(${rect.left}, ${rect.top}, ${rect.width}, ${rect.height})
                                    |    val data = ${"\"\"\""}${Base64.encode(message)}${"\"\"\""}
                                    |    val entry = rect to Base64.decode(data)
-                                   |}""".trimMargin())
-                        }
+                                   |}""".trimMargin()
+                                )
+                            }
 
-                        println(SystemFileSystem.resolve(path))
+                            log { SystemFileSystem.resolve(path).toString() }
+                        } catch (err: Throwable) {
+                            log { "Failed to write tile data to file: ${err.message}" }
+                        }
 
                         async.success(tiles)
                     }

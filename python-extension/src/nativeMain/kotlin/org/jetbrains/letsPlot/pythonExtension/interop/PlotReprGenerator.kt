@@ -280,7 +280,7 @@ object PlotReprGenerator {
                 sizeUnit = SizeUnit.fromName(unit.toKString()),
                 dpi = if (dpi >= 0) dpi.toDouble() else null,
                 scale = if (scale >= 0) scale.toDouble() else null,
-                timeoutSeconds = timeoutSeconds,
+                timeoutSeconds = if (timeoutSeconds >= 0) timeoutSeconds else null,
                 fontManager = defaultFontManager
             )
             // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):

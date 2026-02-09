@@ -11,7 +11,7 @@ class MicroTaskCooperativeExecutor(
     private val myClock: EcsClock,
     private val myFrameDurationLimit: Long
 ) : MicroTaskExecutor {
-    private val logEnabled = true
+    private val logEnabled = false
     private fun log(message: () -> String) {
         if (logEnabled) {
             println(message())
