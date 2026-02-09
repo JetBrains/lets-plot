@@ -38,6 +38,7 @@ object Stats {
     val SUMPROP = DataFrame.Variable("..sumprop..", STAT, "sumprop")
     val SUMPCT = DataFrame.Variable("..sumpct..", STAT, "sumpct")
 
+    val R2_ADJ = DataFrame.Variable("..adjr2..", STAT, "adjr2")
     val R2 = DataFrame.Variable("..r2..", STAT, "r2")
     val EQ = DataFrame.Variable("..eq..", STAT, "eq")
 
@@ -78,6 +79,7 @@ object Stats {
             SCALED,
             GROUP,
             R2,
+            R2_ADJ,
             EQ,
         )
 

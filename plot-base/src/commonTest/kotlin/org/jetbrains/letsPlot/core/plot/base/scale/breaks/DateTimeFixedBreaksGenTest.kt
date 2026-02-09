@@ -18,6 +18,8 @@ class DateTimeFixedBreaksGenTest {
     fun twoWeeksInterval() {
         val gen = DateTimeFixedBreaksGen(
             breakWidth = TimeInterval.weeks(2),
+            minInterval = null,
+            maxInterval = null,
             tz = TZ_UTC
         )
 
@@ -50,6 +52,8 @@ class DateTimeFixedBreaksGenTest {
     fun threeMonthsInterval() {
         val gen = DateTimeFixedBreaksGen(
             breakWidth = TimeInterval.months(3),
+            minInterval = null,
+            maxInterval = null,
             tz = TZ_UTC
         )
 
@@ -86,6 +90,8 @@ class DateTimeFixedBreaksGenTest {
     fun sixHoursInterval() {
         val gen = DateTimeFixedBreaksGen(
             breakWidth = TimeInterval.hours(6),
+            minInterval = null,
+            maxInterval = null,
             tz = TZ_UTC
         )
 
@@ -126,6 +132,8 @@ class DateTimeFixedBreaksGenTest {
     fun oneYearInterval() {
         val gen = DateTimeFixedBreaksGen(
             breakWidth = TimeInterval.years(1),
+            minInterval = null,
+            maxInterval = null,
             tz = TZ_UTC
         )
 
@@ -159,6 +167,8 @@ class DateTimeFixedBreaksGenTest {
     fun breaksHaveLabels() {
         val gen = DateTimeFixedBreaksGen(
             breakWidth = TimeInterval.weeks(1),
+            minInterval = null,
+            maxInterval = null,
             tz = TZ_UTC
         )
 
@@ -187,6 +197,8 @@ class DateTimeFixedBreaksGenTest {
         val gen = DateTimeFixedBreaksGen(
             breakWidth = TimeInterval.days(1),
             providedFormatter = customFormatter,
+            minInterval = null,
+            maxInterval = null,
             tz = TZ_UTC
         )
 

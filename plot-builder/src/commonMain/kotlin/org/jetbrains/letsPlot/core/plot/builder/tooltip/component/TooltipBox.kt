@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
@@ -30,7 +31,6 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.HORIZONTAL
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.VERTICAL
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.PointerDirection.*
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import kotlin.math.max
@@ -556,13 +556,14 @@ class TooltipBox(
             val defaultLineHeight = lineHeights.maxOrNull() ?: 0.0
 
             val labelWidths = lines.zip(components).map { (line, component) ->
+                val label = line.label
                 when {
-                    line.label == null -> {
+                    label == null -> {
                         // label null - the value component will be centered
                         0.0
                     }
 
-                    line.label.isEmpty() && component.second.linesCount() == 1 -> {
+                    label.isEmpty() && component.second.linesCount() == 1 -> {
                         // label is not null, but empty - add space for the label, the value will be moved to the right;
                         // also value should not be multiline for right alignment
                         maxLabelWidth

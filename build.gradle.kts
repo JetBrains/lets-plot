@@ -250,12 +250,15 @@ fun getJarJavaDocsTask(distributeName: String): TaskProvider<Jar> {
 subprojects {
     val pythonExtensionModules = listOf(
         "commons",
+        "gis",
+        "livemap",
         "canvas",
         "datamodel",
         "plot-base",
         "plot-builder",
         "plot-stem",
         "plot-raster",
+        "plot-livemap",
 
         "demo-and-test-shared",
         "demo-common-svg",

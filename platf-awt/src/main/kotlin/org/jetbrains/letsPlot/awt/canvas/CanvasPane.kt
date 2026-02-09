@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.registration.*
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
@@ -12,6 +13,7 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
 import javax.swing.JComponent
+import javax.swing.Timer
 
 @Deprecated("Migrate to CanvasPane", ReplaceWith("CanvasPane", "org.jetbrains.letsPlot.awt.canvas.CanvasPane"))
 typealias CanvasPane2 = CanvasPane
@@ -20,10 +22,18 @@ class CanvasPane(
     figure: CanvasFigure2? = null,
     pixelDensity: Double = 1.0
 ) : DisposingHub, Disposable, JComponent() {
+    private var isFigureAttached = false
     private val registrations = CompositeRegistration()
     private var figureRegistration: Registration = Registration.EMPTY
-    private val canvasPeer: AwtCanvasPeer = AwtCanvasPeer(pixelDensity)
+    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT, pixelDensity)
+        set(value) {
+            if (isFigureAttached) {
+                throw IllegalStateException("Can't change canvasPeer after figure is attached")
+            }
+            field = value
+        }
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    private val systemTime: SystemTime = SystemTime()
 
     var figure: CanvasFigure2? = null
         set(canvasFigure) {
@@ -33,9 +43,16 @@ class CanvasPane(
 
             figureRegistration.remove()
             if (canvasFigure != null) {
+                isFigureAttached = true
                 canvasFigure.resize(width, height)
-                canvasFigure.eventPeer.addEventSource(mouseEventSource)
+                canvasFigure.mouseEventPeer.addEventSource(mouseEventSource)
+                val animationTimer = Timer(1000 / 60) {
+                    canvasFigure.onFrame(systemTime.getTimeMs())
+                }
+                animationTimer.start()
+
                 figureRegistration = CompositeRegistration(
+                    Registration.onRemove(animationTimer::stop),
                     canvasFigure.mapToCanvas(canvasPeer),
                     canvasFigure.onRepaintRequested(::repaint),
                 )
@@ -73,7 +90,7 @@ class CanvasPane(
         val g2d = g!!.create() as Graphics2D
 
         if (figure != null) {
-            val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX)
+            val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
             figure!!.paint(ctx)
         }
     }

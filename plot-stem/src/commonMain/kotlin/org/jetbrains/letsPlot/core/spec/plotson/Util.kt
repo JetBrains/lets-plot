@@ -8,12 +8,12 @@ package org.jetbrains.letsPlot.core.spec.plotson
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
-import org.jetbrains.letsPlot.core.spec.StatKind
 import org.jetbrains.letsPlot.core.spec.typed
 
 fun PlotOptions.toJson(): MutableMap<String, Any> {

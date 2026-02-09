@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Type.*
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
+import org.jetbrains.letsPlot.core.commons.color.PaletteOverflow
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.colorSchemeByIndex
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -27,13 +28,16 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
  * If a number, then will index into a list of palettes of the appropriate type.
  * @param direction - Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
  * If -1, the order of colors is reversed
+ * @param overflow - How to handle the case when more colors are needed than the palette provides.
+ * AUTO (default): 'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
  * @param naValue
  */
 class ColorBrewerMapperProvider(
     private val paletteTypeName: String?,
     private val paletteNameOrIndex: Any?,
     private val direction: Double?,
-    naValue: Color
+    private val overflow: PaletteOverflow = PaletteOverflow.AUTO,
+    naValue: Color,
 ) : MapperProviderBase<Color>(naValue),
     PaletteGenerator {
 
@@ -66,7 +70,7 @@ class ColorBrewerMapperProvider(
     }
 
     private fun colors(colorScheme: ColorScheme, count: Int): List<Color> {
-        val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count)
+        val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count, overflow)
         return when (direction?.let { direction < 0 } ?: false) {
             true -> colors.reversed()
             false -> colors

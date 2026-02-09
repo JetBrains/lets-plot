@@ -35,3 +35,33 @@ class TestWithListAndDictArgs:
     def test_aes(self, args_list, args_dict, expected):
         spec = _geom(*args_list, **args_dict)
         assert spec.as_dict() == expected
+
+
+def test_empty_layer_tooltips():
+    spec = gg.ggplot() + gg.geom_point(tooltips=gg.layer_tooltips())
+    assert spec.as_dict()['layers'][0]['tooltips'] == {'formats': []}
+
+
+def test_simple_layer_tooltips():
+    spec = gg.ggplot() + gg.geom_point(tooltips=gg.layer_tooltips(['a', 'b', 'c']))
+    assert spec.as_dict()['layers'][0]['tooltips'] == {'formats': [], 'variables': ['a', 'b', 'c']}
+
+
+def test_layer_tooltips_with_str_list():
+    spec = gg.ggplot() + gg.geom_point(tooltips=['a', 'b', 'c'])
+    assert spec.as_dict()['layers'][0]['tooltips'] == {'formats': [], 'variables': ['a', 'b', 'c']}
+
+
+def test_layer_tooltips_with_str_tuple():
+    spec = gg.ggplot() + gg.geom_point(tooltips=('a', 'b', 'c'))
+    assert spec.as_dict()['layers'][0]['tooltips'] == {'formats': [], 'variables': ('a', 'b', 'c')}
+
+
+def test_layer_tooltips_none():
+    spec = gg.ggplot() + gg.geom_point(tooltips='none')
+    assert spec.as_dict()['layers'][0]['tooltips'] == 'none'
+
+
+def test_layer_tooltips_geom_blank():
+    spec = gg.ggplot() + gg.geom_blank()
+    assert spec.as_dict()['layers'][0] == { 'geom': 'blank', 'data_meta': {}, 'mapping': {}, 'inherit_aes': False,  'tooltips': 'none'}

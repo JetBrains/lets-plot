@@ -1,6 +1,7 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.leftButton
 import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.noButton
@@ -44,7 +45,7 @@ class InteractivityTest : VisualPlotTestBase() {
             |}            
         """.trimMargin()
 
-        val rawPlotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        val rawPlotSpec = parsePlotSpec(spec)
         val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
         val plotCanvasFigure = PlotCanvasFigure()
         plotCanvasFigure.update(
@@ -53,10 +54,10 @@ class InteractivityTest : VisualPlotTestBase() {
             computationMessagesHandler = { }
         )
 
-        val awtCanvasPeer = AwtCanvasPeer()
+        val awtCanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
         plotCanvasFigure.mapToCanvas(awtCanvasPeer)
 
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_MOVED, noButton(200, 100))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 100))
 
         val snapshot = plotCanvasFigure.takeSnapshot(awtCanvasPeer)
 
@@ -93,7 +94,7 @@ class InteractivityTest : VisualPlotTestBase() {
             |}
         """.trimMargin()
 
-        val rawPlotSpec = parsePlotSpec(spec).themeTextNotoSans()
+        val rawPlotSpec = parsePlotSpec(spec)
         val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
 
         var specOverrideList = emptyList<Map<String, Any>>()
@@ -118,21 +119,21 @@ class InteractivityTest : VisualPlotTestBase() {
 
         plotCanvasFigure.update(processedPlotSpec, keepFigureDefaultSize(), computationMessagesHandler = { })
 
-        val awtCanvasPeer = AwtCanvasPeer()
+        val awtCanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
         plotCanvasFigure.mapToCanvas(awtCanvasPeer)
 
         // IMPORTANT: should be set after mapping to canvas
         plotFigureModel.toolEventDispatcher = plotCanvasFigure.toolEventDispatcher
 
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_DRAGGED, leftButton(200, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_DRAGGED, leftButton(200, 200))
 
         // Paint to create the initial buffer covering the range [20, 40]
         plotCanvasFigure.takeSnapshot(awtCanvasPeer)
 
         // Drag left by 200 px - this makes the buffer incomplete (visible range is now [30, 50])
-        plotCanvasFigure.eventPeer.dispatch(MOUSE_DRAGGED, leftButton(0, 200))
+        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_DRAGGED, leftButton(0, 200))
 
         val snapshot = plotCanvasFigure.takeSnapshot(awtCanvasPeer)
         imageComparer.assertBitmapEquals("interactivity_pan_in_progress_with_incomplete_buffer.png", snapshot.bitmap)

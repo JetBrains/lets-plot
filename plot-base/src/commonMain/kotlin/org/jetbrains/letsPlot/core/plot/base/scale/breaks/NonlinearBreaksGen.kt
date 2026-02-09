@@ -19,8 +19,7 @@ internal class NonlinearBreaksGen(
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = NonlinearBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
+            domain,
             targetCount,
             providedFormatter,
             expFormat,
@@ -35,8 +34,7 @@ internal class NonlinearBreaksGen(
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         val helper = NonlinearBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
+            domain,
             targetCount,
             providedFormatter = null,
             expFormat,

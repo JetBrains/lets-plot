@@ -1,0 +1,73 @@
+package org.jetbrains.letsPlot.core.plot.base.tooltip.text
+
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+
+object TooltipFormatting {
+    private val FALLBACK_NUMBER_FORMATTER: (v: Number) -> String =
+        StringFormat.of("{.2f}", tz = null)::format
+
+    fun fromScale(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
+        // expect only X, Y or not positional
+        check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {
+            "Positional aesthetic should be either X or Y but was $aes"
+        }
+
+        val scale = ctx.getScale(aes)
+
+        val formatter = if (scale.isContinuousDomain) {
+            if (scale.userFormatter != null) {
+                scale.userFormatter!!
+            } else {
+                val domain = ctx.overallTransformedDomain(aes)
+                scale.getBreaksGenerator().defaultFormatter(domain, 100)
+            }
+        } else {
+            val labelsMap = ScaleUtil.labelByBreak(scale);
+//            labelsMap::get
+
+            { v ->
+                when (v) {
+                    in labelsMap -> {
+                        labelsMap.getValue(v)
+                    }
+
+                    is Number -> {
+                        // The case when numeric data is mapped to discrete axis.
+                        FALLBACK_NUMBER_FORMATTER(v)
+                    }
+
+                    else -> {
+                        null
+                    }
+                }
+            }
+        }
+
+        return { value ->
+            value?.let {
+                formatter.invoke(it)
+            } ?: "n/a"
+        }
+    }
+
+    fun createFormatter(
+        variable: DataFrame.Variable,
+        formatters: Map<Any, (Any) -> String>,
+        expFormat: StringFormat.ExponentFormat,
+        tz: TimeZone?,
+    ): (Any) -> String {
+        return when (variable) {
+            Stats.PROP, Stats.SUMPROP -> StringFormat.of("{.2f}", expFormat = expFormat, tz = tz)::format
+            Stats.PROPPCT, Stats.SUMPCT -> StringFormat.of("{.1f} %", expFormat = expFormat, tz = tz)::format
+            else -> formatters[variable.name] ?: FormatterUtil.byDataType(DataType.UNKNOWN, expFormat, tz = tz)
+        }
+    }
+}

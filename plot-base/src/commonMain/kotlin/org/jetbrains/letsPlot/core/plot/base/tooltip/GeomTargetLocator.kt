@@ -37,7 +37,13 @@ interface GeomTargetLocator {
         open val distance: Double,
         open val geomKind: GeomKind,
         open val contextualMapping: ContextualMapping,
+        val hasGeneralTooltip: Boolean,
+        val hasAxisTooltip: Boolean,
         val isCrosshairEnabled: Boolean,
         val hitShapeKind: HitShape.Kind
     )
+
+    object NullGeomTargetLocator : GeomTargetLocator {
+        override fun search(coord: DoubleVector): LookupResult? = null
+    }
 }

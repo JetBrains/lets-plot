@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.Companion.DEVICE_PIXEL_RATIO
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setPosition
@@ -117,6 +118,9 @@ class DomCanvasControl(
 
         consumer(snapshot)
     }
+
+    override val canvasPeer: CanvasPeer
+        get() = TODO("canvasPeer not implemented")
 
     override fun addChild(canvas: Canvas) {
         myRootElement.appendChild((canvas as DomCanvas).canvasElement)

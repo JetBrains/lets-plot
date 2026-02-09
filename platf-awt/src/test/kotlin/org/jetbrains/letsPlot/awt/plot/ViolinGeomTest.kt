@@ -77,9 +77,7 @@ class ViolinGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("violin_geom_1.png", plotSpec)
+        assertPlot("violin_geom_1.png", spec)
     }
 
     @Test
@@ -119,9 +117,7 @@ class ViolinGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("violin_geom_2.png", plotSpec)
+        assertPlot("violin_geom_2.png", spec)
     }
 
     @Test
@@ -172,9 +168,7 @@ class ViolinGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("violin_geom_3.png", plotSpec)
+        assertPlot("violin_geom_3.png", spec)
     }
 
     @Test
@@ -223,9 +217,7 @@ class ViolinGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("violin_geom_4.png", plotSpec)
+        assertPlot("violin_geom_4.png", spec)
     }
 
     @Test
@@ -288,9 +280,7 @@ class ViolinGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("violin_geom_5.png", plotSpec)
+        assertPlot("violin_geom_5.png", spec)
     }
 
     @Test
@@ -349,8 +339,6 @@ class ViolinGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("violin_geom_6.png", plotSpec)
+        assertPlot("violin_geom_6.png", spec)
     }
 }

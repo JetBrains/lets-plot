@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 
-class NullGeomTargetCollector : GeomTargetCollector {
+object NullGeomTargetCollector : GeomTargetCollector {
     override fun addPoint(
         index: Int,
         point: DoubleVector,

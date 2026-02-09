@@ -5,6 +5,7 @@ import demoAndTestShared.NativeBitmapIO
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.image.loadImage
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.io.Native
@@ -168,7 +169,9 @@ class MagickCanvasProvider(
     }
 
     override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
-        val img = MagickUtil.fromBitmap(Png.decode(png))
+        val bitmap = loadImage(png)
+        //val bitmap = Png.decode(png)
+        val img = MagickUtil.fromBitmap(bitmap)
         return Asyncs.constant(MagickSnapshot(img))
     }
 }

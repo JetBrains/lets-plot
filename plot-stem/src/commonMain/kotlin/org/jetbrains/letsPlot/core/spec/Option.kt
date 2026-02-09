@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
 
@@ -253,6 +254,7 @@ object Option {
     }
 
     object LinesSpec {
+        const val KIND = "kind"
         const val LINES = "lines"
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
@@ -739,6 +741,7 @@ object Option {
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
+        const val OVERFLOW = "overflow"
 
         // range
         const val RANGE = "range"

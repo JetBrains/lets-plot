@@ -27,7 +27,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -58,7 +58,7 @@ class GeomLayerBuilder(
 
     private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
-    private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
+    private var myContextualMappingProvider: ContextualMappingProvider? = null
 
     private var myIsLegendDisabled: Boolean = false
     private var myCustomLegendOptions: CustomLegendOptions? = null
@@ -271,7 +271,7 @@ class GeomLayerBuilder(
         override val scaleMap: Map<Aes<*>, Scale>,
         override val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
-        private val contextualMappingProvider: ContextualMappingProvider,
+        private val contextualMappingProvider: ContextualMappingProvider?,
         override val isLegendDisabled: Boolean,
         override val customLegendOptions: CustomLegendOptions?,
         override val isYOrientation: Boolean,
@@ -367,9 +367,9 @@ class GeomLayerBuilder(
             }
         }
 
-        override fun createContextualMapping(): ContextualMapping {
+        override fun createContextualMapping(): ContextualMapping? {
             val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, defaultFormatters)
-            return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
+            return contextualMappingProvider?.createContextualMapping(dataAccess, dataFrame)
         }
 
         override fun createAnnotation(): Annotation? {

@@ -52,7 +52,6 @@ internal abstract class Node : AttributeObject() { // Version counters
     }
 
     internal fun markDirty() {
-        if (isDirty) return
         isDirty = true
         parent?.markDirty()
     }

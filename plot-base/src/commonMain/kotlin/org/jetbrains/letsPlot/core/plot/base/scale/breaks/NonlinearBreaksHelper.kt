@@ -17,21 +17,18 @@ import kotlin.math.floor
 import kotlin.math.roundToInt
 
 internal class NonlinearBreaksHelper(
-    rangeStart: Double,
-    rangeEnd: Double,
+    domain: DoubleSpan,
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
     expFormat: ExponentFormat,
     transform: ContinuousTransform,
     niceLogBreaks: Boolean,
-) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
+) {
 
-    override val breaks: List<Double>
+    val breaks: List<Double>
     val formatter: (Any) -> String
 
     init {
-        val domain = DoubleSpan(rangeStart, rangeEnd)
-
         val transformedDomain = ScaleUtil.applyTransform(
             domain,
             transform
@@ -52,8 +49,7 @@ internal class NonlinearBreaksHelper(
         }
         val transformedBreakValues: List<Double> =
             LinearBreaksHelper(
-                transformedDomain.lowerEnd,
-                transformedDomain.upperEnd,
+                transformedDomain,
                 targetCount,
                 providedFormatter = DUMMY_FORMATTER,
                 expFormat = expFormat
@@ -61,14 +57,23 @@ internal class NonlinearBreaksHelper(
 
         // Transform back to data space.
         this.breaks = transform.applyInverse(transformedBreakValues).filterNotNull()
-        this.formatter = providedFormatter ?: let {
-            val breakFormatters = createFormatters(this.breaks, expFormat)
-            MultiFormatter(this.breaks, breakFormatters)::apply
-        }
+        this.formatter = providedFormatter ?: createMultiFormatter(this.breaks, expFormat)
     }
 
     companion object {
         private const val MIN_BREAKS_COUNT = 3
+
+        /**
+         * Creates a multi-formatter for unevenly spaced breaks.
+         * Each break gets its own formatter based on local step to adjacent break.
+         */
+        internal fun createMultiFormatter(
+            breaks: List<Double>,
+            expFormat: ExponentFormat
+        ): (Any) -> String {
+            val breakFormatters = createFormatters(breaks, expFormat)
+            return MultiFormatter(breaks, breakFormatters)::apply
+        }
 
         private fun recalculateBreaksCount(
             breaksCount: Int,

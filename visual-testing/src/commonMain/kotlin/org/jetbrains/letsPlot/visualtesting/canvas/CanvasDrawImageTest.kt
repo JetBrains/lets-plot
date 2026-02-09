@@ -1,5 +1,8 @@
+@file:Suppress("FunctionName")
+
 package org.jetbrains.letsPlot.visualtesting.canvas
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
@@ -13,6 +16,63 @@ internal class CanvasDrawImageTest(
         registerTest(::drawImage_Transformed)
         registerTest(::drawImage_Overlay)
         registerTest(::drawImage_Pixelated)
+        registerTest(::drawImage_snapshotSeries)
+        registerTest(::drawImage_srcToDstMatchingSizes)
+        registerTest(::drawImage_cropFromSourceStretchToDest)
+        registerTest(::drawImage_cropFromSourceToDest)
+    }
+
+    private fun drawImage_cropFromSourceStretchToDest() {
+        val (tempCanvas, tempCtx) = createCanvas()
+        tempCtx.fillStyle = Color.GREEN
+        tempCtx.fillRect(x = 0, y = 0, width = 100, height = 100)
+
+        tempCtx.fillStyle = Color.BLACK
+        tempCtx.fillRect(x = 25, y = 25, width = 50, height = 50)
+
+        val snapshot100x100 = tempCanvas.takeSnapshot()
+
+        val (canvas, ctx) = createCanvas()
+        ctx.drawImage(
+            snapshot = snapshot100x100,
+            sx = 20.0, sy = 20.0, sw = 60.0, sh = 60.0, // crop the central 60x60 part (black square with green border)
+            dx = 5.0, dy = 5.0, dw = 90.0, dh = 90.0 // draw it stretched
+        )
+
+        assertCanvas("draw_image_crop_from_source_stretch_to_dest.png", canvas)
+    }
+
+    private fun drawImage_cropFromSourceToDest() {
+        val (tempCanvas, tempCtx) = createCanvas()
+        tempCtx.fillStyle = Color.GREEN
+        tempCtx.fillRect(x = 0, y = 0, width = 100, height = 100)
+
+        tempCtx.fillStyle = Color.BLACK
+        tempCtx.fillRect(x = 25, y = 25, width = 50, height = 50)
+
+        val snapshot = tempCanvas.takeSnapshot()
+
+        val (canvas, ctx) = createCanvas()
+        ctx.drawImage(
+            snapshot = snapshot,
+            sx = 20.0, sy = 20.0, sw = 60.0, sh = 60.0, // crop the central 60x60 part (black square with green border)
+            dx = 5.0, dy = 5.0, dw = 60.0, dh = 60.0 // draw it without stretching
+        )
+
+        assertCanvas("draw_image_crop_from_source_to_dest.png", canvas)
+    }
+
+    private fun drawImage_srcToDstMatchingSizes() {
+        val (tempCanvas, tempCtx) = createCanvas()
+        tempCtx.fillStyle = Color.BLACK
+        tempCtx.fillRect(25, 25, 50, 50)
+
+        val snapshot = tempCanvas.takeSnapshot()
+
+        val (canvas, ctx) = createCanvas()
+        ctx.drawImage(snapshot, 0.0, 0.0, 100.0, 100.0, 0.0, 0.0, 100.0, 100.0)
+
+        assertCanvas("draw_image_src_to_dst_matching_sizes.png", canvas)
     }
 
     private fun drawImage_Simple() {
@@ -26,6 +86,29 @@ internal class CanvasDrawImageTest(
         ctx.drawImage(snapshot)
 
         assertCanvas("draw_image_simple.png", canvas)
+    }
+
+    private fun drawImage_snapshotSeries() {
+        val (tempCanvas, tempCtx) = createCanvas()
+        tempCtx.fillStyle = Color.BLACK.changeAlpha(0.5)
+        tempCtx.fillRect(0, 0, 50, 50)
+
+        tempCanvas.takeSnapshot()
+
+        tempCtx.fillStyle = Color.RED.changeAlpha(0.5)
+        tempCtx.fillRect(25, 25, 50, 50)
+
+        tempCanvas.takeSnapshot()
+
+        tempCtx.fillStyle = Color.BLUE.changeAlpha(0.5)
+        tempCtx.fillRect(50, 50, 50, 50)
+        val snapshot = tempCanvas.takeSnapshot()
+
+        val (canvas, ctx) = createCanvas()
+        ctx.drawImage(snapshot)
+        ctx.clearRect(DoubleRectangle.WH(100, 100))
+        ctx.drawImage(snapshot)
+        assertCanvas("draw_image_snapshot_series.png", canvas)
     }
 
     private fun drawImage_Transformed() {

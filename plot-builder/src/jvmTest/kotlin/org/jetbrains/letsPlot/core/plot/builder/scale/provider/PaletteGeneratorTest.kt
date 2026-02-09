@@ -18,7 +18,7 @@ class PaletteGeneratorTest {
     fun `all providers handle n=1 correctly`() {
         val providers = listOf<PaletteGenerator>(
             ColorHueMapperProvider(DoubleSpan(0.0, 360.0), 100.0, 65.0, 0.0, false, Color.GRAY),
-            ColorBrewerMapperProvider("seq", 0, 1.0, Color.GRAY),
+            ColorBrewerMapperProvider("seq", 0, 1.0, naValue = Color.GRAY),
             ColorGradientMapperProvider(Color.BLUE, Color.RED, Color.GRAY),
             ColorGradient2MapperProvider(Color.BLUE, Color.WHITE, Color.RED, 0.0, Color.GRAY),
             ColorGradientnMapperProvider(listOf(Color.BLUE, Color.RED), Color.GRAY),
@@ -37,7 +37,7 @@ class PaletteGeneratorTest {
     fun `all providers handle large n correctly`() {
         val providers = listOf<PaletteGenerator>(
             ColorHueMapperProvider(DoubleSpan(0.0, 360.0), 100.0, 65.0, 0.0, false, Color.GRAY),
-            ColorBrewerMapperProvider("seq", 0, 1.0, Color.GRAY),
+            ColorBrewerMapperProvider("seq", 0, 1.0, naValue = Color.GRAY),
             ColorGradientMapperProvider(Color.BLUE, Color.RED, Color.GRAY),
             ColorGradient2MapperProvider(Color.BLUE, Color.WHITE, Color.RED, 0.0, Color.GRAY),
             ColorGradientnMapperProvider(listOf(Color.BLUE, Color.RED), Color.GRAY),

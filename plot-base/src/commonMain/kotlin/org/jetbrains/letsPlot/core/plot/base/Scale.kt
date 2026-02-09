@@ -70,6 +70,8 @@ interface Scale {
 
         fun breaksGenerator(v: OriginalDomainBreaksGenerator): Builder
 
+        fun breakWidth(v: Double): Builder
+
         fun build(): Scale
     }
 }

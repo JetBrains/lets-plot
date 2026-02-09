@@ -24,6 +24,7 @@ kotlin {
         commonMain {
             dependencies {
                 compileOnly(project(":commons"))
+                compileOnly(project(":canvas"))
                 compileOnly(project(":datamodel"))
             }
         }

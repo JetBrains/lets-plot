@@ -76,6 +76,10 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
     }
 
+    operator fun contains(v: Vector): Boolean {
+        return this.contains(DoubleVector(v.x, v.y))
+    }
+
     operator fun contains(other: DoubleRectangle): Boolean {
         if (other.xRange() !in xRange()) return false
         if (other.yRange() !in yRange()) return false

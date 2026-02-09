@@ -2537,7 +2537,8 @@ def _greyscale_check_parameters(start=None, end=None):
 
 
 def scale_brewer(aesthetic, *,
-                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+                 type=None, palette=None, direction=None, overflow=None,
+                 name=None, breaks=None, labels=None, lablim=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for the specified aesthetics.
@@ -2555,6 +2556,15 @@ def scale_brewer(aesthetic, *,
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
+    overflow : {'interpolate', 'cycle', 'generate'} or {'i', 'c', 'g'}
+        How to handle the case when more colors are needed than the palette provides:
+
+        - 'interpolate' ('i') - interpolate between existing palette colors.
+        - 'cycle' ('c') - cyclically repeat palette colors.
+        - 'generate' ('g') - generate new colors similar to the original palette colors by varying their luminance.
+
+        If None, the default, the method is chosen based on the palette type:
+        'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2640,10 +2650,12 @@ def scale_brewer(aesthetic, *,
                   type=type,
                   palette=palette,
                   direction=direction,
+                  overflow=overflow,
                   scale_mapper_kind='color_brewer')
 
 
-def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+def scale_fill_brewer(type=None, palette=None, direction=None, overflow=None,
+                      name=None, breaks=None, labels=None, lablim=None, limits=None,
                       na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for ``fill`` aesthetic.
@@ -2659,6 +2671,15 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
+    overflow : {'interpolate', 'cycle', 'generate'} or {'i', 'c', 'g'}
+        How to handle the case when more colors are needed than the palette provides:
+
+        - 'interpolate' ('i') - interpolate between existing palette colors.
+        - 'cycle' ('c') - cyclically repeat palette colors.
+        - 'generate' ('g') - generate new colors similar to the original palette colors by varying their luminance.
+
+        If None, the default, the method is chosen based on the palette type:
+        'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2734,6 +2755,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         type=type,
                         palette=palette,
                         direction=direction,
+                        overflow=overflow,
                         name=name,
                         breaks=breaks,
                         labels=labels,
@@ -2745,7 +2767,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         format=format)
 
 
-def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+def scale_color_brewer(type=None, palette=None, direction=None, overflow=None,
+                       name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for ``color``  aesthetic.
@@ -2761,6 +2784,15 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
+    overflow : {'interpolate', 'cycle', 'generate'} or {'i', 'c', 'g'}
+        How to handle the case when more colors are needed than the palette provides:
+
+        - 'interpolate' ('i') - interpolate between existing palette colors.
+        - 'cycle' ('c') - cyclically repeat palette colors.
+        - 'generate' ('g') - generate new colors similar to the original palette colors by varying their luminance.
+
+        If None, the default, the method is chosen based on the palette type:
+        'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2834,6 +2866,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                         type=type,
                         palette=palette,
                         direction=direction,
+                        overflow=overflow,
                         name=name,
                         breaks=breaks,
                         labels=labels,

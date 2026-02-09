@@ -86,7 +86,7 @@ class ErrorBarGeomTest {
             ),
             ctx = object : GeomContext by BogusContext {
                 override val flipped: Boolean = false
-                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
+                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
                 override fun getResolution(aes: Aes<Double>): Double = 10.0
                 override fun isMappedAes(aes: Aes<*>) = aes == Aes.X || aes == Aes.YMIN || aes == Aes.YMAX
                 override fun consumeMessages(messages: List<String>) {}
@@ -166,7 +166,7 @@ class ErrorBarGeomTest {
             ),
             ctx = object : GeomContext by BogusContext {
                 override val flipped: Boolean = false
-                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
+                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
                 override fun getResolution(aes: Aes<Double>): Double = 10.0
                 override fun isMappedAes(aes: Aes<*>) = aes == Aes.X || aes == Aes.YMIN || aes == Aes.YMAX
             },

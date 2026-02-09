@@ -22,7 +22,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var aesthetics: Aesthetics? = null
     private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
     private var aesBounds: DoubleRectangle? = null
-    private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotation: Annotation? = null
     private var defaultFormatters: Map<Any, (Any) -> String> = emptyMap()

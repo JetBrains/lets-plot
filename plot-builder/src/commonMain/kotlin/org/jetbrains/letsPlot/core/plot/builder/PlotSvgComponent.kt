@@ -24,6 +24,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
+import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.createTextRectangle
@@ -42,8 +44,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLay
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement

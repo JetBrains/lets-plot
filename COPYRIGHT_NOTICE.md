@@ -72,3 +72,8 @@ Licensed under MIT License.
 ### WeisJ/jsvg Java SVG Renderer
 
 Copyright © 2021-2024, Jannis Weis. Licensed under MIT License.
+
+### stb_image
+
+Copyright (c) 2017 Sean Barrett
+Licensed under MIT License: https://github.com/nothings/stb/blob/master/LICENSE

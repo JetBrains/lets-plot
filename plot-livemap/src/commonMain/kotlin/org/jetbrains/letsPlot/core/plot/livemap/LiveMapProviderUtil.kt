@@ -223,7 +223,14 @@ object LiveMapProviderUtil {
                 private val layerIndex: Int,
                 private val layer: LayerRendererData
             ) : GeomTargetLocator {
-                override fun search(coord: DoubleVector) = search(layerIndex, coord)
+                private val contextualMapping = layer.contextualMapping
+
+                override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+                    if (contextualMapping == null) {
+                        return null
+                    }
+                    return search(layerIndex, coord)
+                }
 
                 private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(
                     layer.geomKind,
@@ -247,8 +254,10 @@ object LiveMapProviderUtil {
                         },
                         distance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
-                        contextualMapping = layer.contextualMapping,
-                        isCrosshairEnabled = false, // no crosshair on livemap,
+                        contextualMapping = contextualMapping!!,
+                        isCrosshairEnabled = contextualMapping.isCrosshairEnabled,
+                        hasGeneralTooltip = contextualMapping.hasGeneralTooltip,
+                        hasAxisTooltip = contextualMapping.hasAxisTooltip,
                         hitShapeKind = when (hoverObjects.first().kind) {
                             HoverObjectKind.POINT -> HitShape.Kind.POINT
                             HoverObjectKind.PATH -> HitShape.Kind.PATH

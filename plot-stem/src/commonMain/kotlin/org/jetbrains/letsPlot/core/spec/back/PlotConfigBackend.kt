@@ -17,12 +17,12 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksHelper
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.DataFrameField
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
@@ -334,6 +334,9 @@ open class PlotConfigBackend(
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
+            varsToKeep.addAll(listOf(Stats.R2, Stats.R2_ADJ))
+            varsToKeep.addAll(layerConfig.ownData.variables().filter { it.label.contains("smooth_eq_coef_") })
+
             return HashSet<String>() +
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
@@ -432,8 +435,7 @@ open class PlotConfigBackend(
                 ?.let { doubleList -> DoubleSpan.encloseAllQ(doubleList) }
                 ?.let { range ->
                     DateTimeBreaksHelper(
-                        range.lowerEnd,
-                        range.upperEnd,
+                        range,
                         distinctValues.size,
                         providedFormatter = null,
                         minInterval = NiceTimeInterval.minIntervalOf(dataType),

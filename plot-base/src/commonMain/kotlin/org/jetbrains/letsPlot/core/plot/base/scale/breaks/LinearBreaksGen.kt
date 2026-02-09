@@ -17,8 +17,7 @@ internal class LinearBreaksGen(
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = LinearBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
+            domain,
             targetCount,
             providedFormatter,
             expFormat
@@ -31,8 +30,7 @@ internal class LinearBreaksGen(
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         val helper = LinearBreaksHelper(
-            domain.lowerEnd,
-            domain.upperEnd,
+            domain,
             targetCount,
             providedFormatter = null,
             expFormat

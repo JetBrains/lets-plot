@@ -17,24 +17,20 @@ import org.jetbrains.letsPlot.core.commons.data.DataType.*
 object FormatterUtil {
 
     fun byDataType(dataType: DataType, expFormat: ExponentFormat, tz: TimeZone?): (Any) -> String {
-        fun stringFormatter() = StringFormat.of("{}", tz = tz)
-        fun numberFormatter() = StringFormat.of("{,~g}", expFormat = expFormat, tz = tz)
+        val stringFormatter by lazy { StringFormat.of("{}", tz = tz) }
+        val numberFormatter by lazy { StringFormat.of("{,~g}", expFormat = expFormat, tz = tz) }
 
         return when (dataType) {
-            FLOATING, INTEGER -> numberFormatter()::format
-            STRING, BOOLEAN -> stringFormatter()::format
+            FLOATING, INTEGER -> numberFormatter::format
+            STRING, BOOLEAN -> stringFormatter::format
             DATETIME_MILLIS -> StringFormat.of("{%Y-%m-%dT%H:%M:%S}", tz = tz)::format
             DATE_MILLIS -> StringFormat.of("{%Y-%m-%d}", tz = tz)::format
             TIME_MILLIS -> StringFormat.of("{%H:%M:%S}", tz = tz)::format
             UNKNOWN -> {
-                // Outside the unknownFormatter to avoid creating of the same formatters multiple times
-                val numberFormatter = numberFormatter()
-                val nonNumberFormatter = stringFormatter()
-
                 ({ value: Any ->
                     when (value) {
                         is Number -> numberFormatter.format(value)
-                        else -> nonNumberFormatter.format(value)
+                        else -> stringFormatter.format(value)
                     }
                 })
             }

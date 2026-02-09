@@ -12,7 +12,7 @@ class LinearRegression private constructor (
     model: (Double) -> Double,
     standardErrorOfEstimate: Double,
     tCritical: Double,
-    eq: String,
+    eq: List<Double>,
     r2: Double,
 ) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2) {
     companion object {
@@ -47,7 +47,7 @@ class LinearRegression private constructor (
                 model,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
-                "${slope};${intercept}",
+                listOf(intercept, slope),
                 calcRSquared(xVals, yVals, model)
             )
         }

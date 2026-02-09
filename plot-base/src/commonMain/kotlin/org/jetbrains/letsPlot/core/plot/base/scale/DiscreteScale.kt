@@ -81,7 +81,7 @@ internal class DiscreteScale : AbstractScale<Any> {
         return ScaleBreaks.Fixed.withTransform(
             breaksEffective,
             transform = transform,
-            formatter = ::formatValue,
+            formatter = formatter,
             alternativeLabels = labels,
             labelLengthLimit = if (shortenLabels) labelLengthLimit else null
         )
@@ -96,6 +96,11 @@ internal class DiscreteScale : AbstractScale<Any> {
 
         override fun breaksGenerator(v: OriginalDomainBreaksGenerator): Scale.Builder {
             throw IllegalStateException("Not applicable to scale with discrete domain")
+        }
+
+        override fun breakWidth(v: Double): Scale.Builder {
+            // ignore
+            return this
         }
 
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder {

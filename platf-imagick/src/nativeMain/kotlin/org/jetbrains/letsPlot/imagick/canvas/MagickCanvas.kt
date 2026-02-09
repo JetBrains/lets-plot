@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.imagick.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.checkError
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
@@ -21,12 +22,13 @@ class MagickCanvas(
     override val context2d: MagickContext2d = magickContext2d
 
     override fun takeSnapshot(): MagickSnapshot {
-        val img = newMagickWand()
-        ImageMagick.MagickSetImageAlphaChannel(img, ImageMagick.AlphaChannelOption.OnAlphaChannel)
-        val background = newPixelWand()
-        ImageMagick.PixelSetColor(background, "transparent")
+        val background = newPixelWand("MagickCanvas.takeSnapshot.background")
+        ImageMagick.PixelSetColor(background, "none")
+
+        val img = newMagickWand("MagickCanvas.takeSnapshot.img")
+
         ImageMagick.MagickNewImage(img, (size.x * pixelDensity.toFloat()).toULong(), (size.y * pixelDensity.toFloat()).toULong(), background)
-        destroyPixelWand(background)
+        ImageMagick.MagickSetImageAlphaChannel(img, ImageMagick.AlphaChannelOption.SetAlphaChannel)
 
         if (antialiasing) {
             ImageMagick.MagickSetAntialias(img, ImageMagick.MagickTrue)
@@ -34,7 +36,13 @@ class MagickCanvas(
             ImageMagick.MagickSetAntialias(img, ImageMagick.MagickFalse)
         }
 
+        destroyPixelWand(background)
+
+        img.checkError()
+        context2d.wand.checkError()
+
         ImageMagick.MagickDrawImage(img, context2d.wand)
+
         return MagickSnapshot(img)
     }
 

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
 
 interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, Dispatcher {
+    val canvasPeer: CanvasPeer
     val pixelDensity: Double
 
     val size: Vector

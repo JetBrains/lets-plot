@@ -13,13 +13,22 @@ from lets_plot.plot.core import FeatureSpec, _filter_none
 __all__ = ['layer_tooltips']
 
 
-class layer_tooltips(FeatureSpec):
+def layer_tooltips(variables=None) -> 'LayerTooltipsSpec':
     """
-    Configure tooltips.
+    Create layer tooltips specification.
 
-    Notes
-    -----
-    Set tooltips='none' to hide tooltips from this layer.
+    Parameters
+    ----------
+    variables : list of str, optional
+        List of variable names to be shown in the tooltips.
+        Each variable will be placed on its own line.
+        If None (default), the list of variables is defined automatically
+        based on the layer aesthetic mappings.
+
+    Returns
+    -------
+    ``LayerTooltipsSpec``
+        Layer tooltips specification.
 
     Examples
     --------
@@ -67,6 +76,16 @@ class layer_tooltips(FeatureSpec):
         ggplot(data, aes('x', 'y')) + \\
             geom_point(aes(color='c'), tooltips='none')
 
+    """
+    return LayerTooltipsSpec(variables=variables)
+
+
+class LayerTooltipsSpec(FeatureSpec):
+    """
+        A class of the layer tooltip object.
+
+        Do not use this class explicitly.
+        Instead, you should construct its objects with the function `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`
     """
 
     def __init__(self, variables: List[str] = None):
@@ -145,7 +164,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        ``layer_tooltips``
+        ``LayerTooltipsSpec``
             Layer tooltips specification.
 
         Notes
@@ -234,7 +253,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        ``layer_tooltips``
+        ``LayerTooltipsSpec``
             Layer tooltips specification.
 
         Notes
@@ -329,7 +348,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        ``layer_tooltips``
+        ``LayerTooltipsSpec``
             Layer tooltips specification.
 
         Examples
@@ -364,7 +383,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        ``layer_tooltips``
+        ``LayerTooltipsSpec``
             Layer tooltips specification.
 
         Examples
@@ -410,7 +429,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        ``layer_tooltips``
+        ``LayerTooltipsSpec``
             Layer tooltips specification.
 
         Notes
@@ -454,7 +473,7 @@ class layer_tooltips(FeatureSpec):
 
         Returns
         -------
-        ``layer_tooltips``
+        ``LayerTooltipsSpec``
             Layer tooltips specification.
 
         Notes

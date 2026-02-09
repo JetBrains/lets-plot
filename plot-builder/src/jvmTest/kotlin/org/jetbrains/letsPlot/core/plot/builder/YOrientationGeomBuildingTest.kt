@@ -53,7 +53,7 @@ class YOrientationGeomBuildingTest {
                 )
             },
             flippedAxis = false,
-            targetCollector = NullGeomTargetCollector()
+            targetCollector = NullGeomTargetCollector
         )
 
         // Do all checks inside the GeomStub.

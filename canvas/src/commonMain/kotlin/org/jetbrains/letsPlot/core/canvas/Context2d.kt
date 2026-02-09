@@ -19,6 +19,7 @@ interface Context2d : Disposable {
     val contentScale: Double
 
     fun clearRect(rect: DoubleRectangle)
+    fun clearRect(x: Double, y: Double, w: Double, h: Double)
     fun drawImage(snapshot: Snapshot)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double)

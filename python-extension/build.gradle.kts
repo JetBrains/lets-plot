@@ -9,6 +9,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+val ktorVersion = project.extra["ktor.version"] as String
+
 val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
@@ -56,7 +58,9 @@ kotlin {
             if (os.isWindows) {
                 it.linkerOpts += listOf(
                     "-lurlmon",
-                    "-lgdi32"
+                    "-lgdi32",
+                    "-lws2_32",
+                    "-liconv"
                 )
             }
         }
@@ -87,6 +91,21 @@ kotlin {
                 implementation(project(":plot-stem"))
                 implementation(project(":platf-imagick"))
                 implementation(project(":plot-raster"))
+                implementation(project(":plot-livemap"))
+                implementation(project(":livemap"))
+                implementation(project(":gis"))
+
+                implementation("io.ktor:ktor-client-core:${ktorVersion}")
+
+                if (os.isMacOsX) {
+                    // The Darwin client supports WSS and is unaffected by the frame fragmentation issue
+                    // documented here: https://youtrack.jetbrains.com/issue/KTOR-9267.
+                    // This allows for the development and testing of the LiveMap export feature.
+                    implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
+                } else {
+                    // Uses CIO for Linux and Windows
+                    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+                }
             }
         }
 
@@ -94,6 +113,7 @@ kotlin {
                 dependencies {
                     implementation(project(":demo-and-test-shared"))
                     implementation(project(":demo-common-svg"))
+                    implementation(project(":visual-testing"))
                 }
             }
     }

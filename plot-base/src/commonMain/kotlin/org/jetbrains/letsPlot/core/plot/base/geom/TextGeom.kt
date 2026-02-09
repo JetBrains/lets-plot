@@ -54,7 +54,7 @@ open class TextGeom : GeomBase() {
         textSize: DoubleVector,
         fontSize: Double,
         hAnchor: Text.HorizontalAnchor,
-        vAnchor: Text.VerticalAnchor,
+        vAnchor: Double,
     ) = TextHelper.textRectangle(location, textSize, hAnchor, vAnchor)
 
     companion object {

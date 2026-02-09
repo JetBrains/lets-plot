@@ -20,7 +20,12 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.provider.IdentityMapperPro
 object DefaultMapperProviderUtil {
 
     internal fun createColorMapperProvider(): MapperProvider<Color> {
-        val discrete = ColorBrewerMapperProvider(null, null, null, Color.GRAY)
+        val discrete = ColorBrewerMapperProvider(
+            null,
+            null,
+            null,
+            naValue = Color.GRAY
+        )
         val continuous = ColorGradientMapperProvider.DEFAULT
         return object : MapperProvider<Color> {
             override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {

@@ -58,8 +58,6 @@ interface TimeInterval {
          * @param spec A string in format "<count> <unit>", e.g., "2 weeks", "3 months", "12 hours".
          *             Supported units: ms/millisecond(s), sec/second(s), min/minute(s),
          *             hour(s), day(s), week(s), month(s), year(s).
-         * @return A TimeInterval representing the specified duration.
-         * @throws IllegalArgumentException if the format is invalid or the unit is unknown.
          */
         fun parse(spec: String): TimeInterval {
             val trimmed = spec.trim()
@@ -83,7 +81,7 @@ interface TimeInterval {
             }
 
             return when (val unit = parts[1].lowercase()) {
-                "ms", "millisecond", "milliseconds" -> milliseconds(count)
+                "ms", "millis", "millisecond", "milliseconds" -> milliseconds(count)
                 "sec", "second", "seconds" -> seconds(count)
                 "min", "minute", "minutes" -> minutes(count)
                 "hour", "hours" -> hours(count)

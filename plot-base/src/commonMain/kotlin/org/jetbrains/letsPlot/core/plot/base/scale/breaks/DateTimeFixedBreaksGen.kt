@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.createInstantFormatter
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.plot.base.scale.OriginalDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -19,7 +20,9 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 class DateTimeFixedBreaksGen(
     private val breakWidth: TimeInterval,
     private val providedFormatter: ((Any) -> String)? = null,
-    private val tz: TimeZone? = null
+    private val minInterval: NiceTimeInterval?,
+    private val maxInterval: NiceTimeInterval?,
+    private val tz: TimeZone?
 ) : OriginalDomainBreaksGenerator {
     override val fixedBreakWidth: Boolean
         get() = true
@@ -40,7 +43,13 @@ class DateTimeFixedBreaksGen(
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return providedFormatter
-            ?: createInstantFormatter(breakWidth.tickFormatPattern, timeZone)
+        return DateTimeBreaksHelper(
+            domain,
+            targetCount,
+            providedFormatter = null,
+            minInterval = minInterval,
+            maxInterval = maxInterval,
+            tz = tz
+        ).formatter
     }
 }

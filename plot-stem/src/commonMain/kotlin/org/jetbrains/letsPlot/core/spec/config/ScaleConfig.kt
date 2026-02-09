@@ -5,19 +5,21 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeFixedBreaksGen
-import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.createDateTimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
@@ -54,6 +56,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.SIZE_AREA
 import org.jetbrains.letsPlot.core.spec.Option.Scale.NAME
 import org.jetbrains.letsPlot.core.spec.Option.Scale.NA_VALUE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.OUTPUT_VALUES
+import org.jetbrains.letsPlot.core.spec.Option.Scale.OVERFLOW
 import org.jetbrains.letsPlot.core.spec.Option.Scale.PALETTE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.PALETTE_TYPE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.RANGE
@@ -63,6 +66,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.START
 import org.jetbrains.letsPlot.core.spec.Option.Scale.START_HUE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.Viridis
 import org.jetbrains.letsPlot.core.spec.Option.TransformName
+import org.jetbrains.letsPlot.core.commons.color.PaletteOverflow
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMappers
 
@@ -187,6 +191,7 @@ class ScaleConfig<T> constructor(
                     getString(PALETTE_TYPE),
                     get(PALETTE),
                     getDouble(DIRECTION),
+                    parseOverflow(getString(OVERFLOW)),
                     naValue as Color
                 )
 
@@ -232,14 +237,14 @@ class ScaleConfig<T> constructor(
                 return@let { value: Any -> stringFormat.format(value) }
             }
 
-            // Check if 'break_width' is specified
             val breakWidthSpec = getString(BREAK_WIDTH)
             if (breakWidthSpec != null) {
                 val breakWidth = TimeInterval.parse(breakWidthSpec)
                 b.breaksGenerator(
-                    DateTimeFixedBreaksGen(
+                    createDateTimeFixedBreaksGen(
                         breakWidth = breakWidth,
-                        providedFormatter = dateTimeFormatter,
+                        dateTimeFormatter = dateTimeFormatter,
+                        dataType = dataType,
                         tz = tz
                     )
                 )
@@ -252,30 +257,53 @@ class ScaleConfig<T> constructor(
                 )
             }
         } else if (getBoolean(Option.Scale.TIME)) {
-            b.breaksGenerator(TimeBreaksGen())
-        } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
-            val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
-            val transform = when (transformName.lowercase()) {
-                TransformName.IDENTITY -> Transforms.IDENTITY
-                TransformName.LOG10 -> Transforms.LOG10
-                TransformName.LOG2 -> Transforms.LOG2
-                TransformName.SYMLOG -> Transforms.SYMLOG
-                TransformName.REVERSE -> Transforms.REVERSE
-                TransformName.SQRT -> Transforms.SQRT
-                else -> throw IllegalArgumentException(
-                    "Unknown transform name: '$transformName'. Supported: ${
-                        listOf(
-                            TransformName.IDENTITY,
-                            TransformName.LOG10,
-                            TransformName.LOG2,
-                            TransformName.SYMLOG,
-                            TransformName.REVERSE,
-                            TransformName.SQRT
-                        ).joinToString(transform = { "'$it'" })
-                    }."
-                )
+            val timeFormatter = getString(FORMAT)?.let { pattern ->
+                val stringFormat = FormatterUtil.byPattern(pattern, tz = null)
+                return@let { value: Any -> stringFormat.format(value) }
             }
-            b.continuousTransform(transform)
+
+            val breakWidthSpec = getString(BREAK_WIDTH)
+            if (breakWidthSpec != null) {
+                val breakWidth = Duration.parse(breakWidthSpec)
+                b.breaksGenerator(
+                    TimeFixedBreaksGen(
+                        breakWidth = breakWidth,
+                        providedFormatter = timeFormatter
+                    )
+                )
+            } else {
+                b.breaksGenerator(TimeBreaksGen(timeFormatter))
+            }
+        } else if (!discreteDomain) {
+            if (has(Option.Scale.CONTINUOUS_TRANSFORM)) {
+                val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
+                val transform = when (transformName.lowercase()) {
+                    TransformName.IDENTITY -> Transforms.IDENTITY
+                    TransformName.LOG10 -> Transforms.LOG10
+                    TransformName.LOG2 -> Transforms.LOG2
+                    TransformName.SYMLOG -> Transforms.SYMLOG
+                    TransformName.REVERSE -> Transforms.REVERSE
+                    TransformName.SQRT -> Transforms.SQRT
+                    else -> throw IllegalArgumentException(
+                        "Unknown transform name: '$transformName'. Supported: ${
+                            listOf(
+                                TransformName.IDENTITY,
+                                TransformName.LOG10,
+                                TransformName.LOG2,
+                                TransformName.SYMLOG,
+                                TransformName.REVERSE,
+                                TransformName.SQRT
+                            ).joinToString(transform = { "'$it'" })
+                        }."
+                    )
+                }
+                b.continuousTransform(transform)
+            }
+
+            val breakWidth = getDouble(BREAK_WIDTH)
+            if (breakWidth != null) {
+                b.breakWidth(breakWidth)
+            }
         }
 
         if (aes in listOf<Aes<*>>(Aes.X, Aes.Y) && has(Option.Scale.POSITION)) {
@@ -353,6 +381,18 @@ class ScaleConfig<T> constructor(
             val accessor = OptionsAccessor(options)
             require(accessor.has(AES)) { "Required parameter '$AES' is missing" }
             return Option.Mapping.toAes(accessor.getStringSafe(AES))
+        }
+
+        private fun parseOverflow(value: String?): PaletteOverflow {
+            if (value == null) return PaletteOverflow.AUTO
+            return when (value.lowercase()) {
+                "interpolate", "i" -> PaletteOverflow.INTERPOLATE
+                "cycle", "c" -> PaletteOverflow.CYCLE
+                "generate", "g" -> PaletteOverflow.GENERATE
+                else -> throw IllegalArgumentException(
+                    "overflow: expected one of 'interpolate' ('i'), 'cycle' ('c'), 'generate' ('g') but was: '$value'"
+                )
+            }
         }
 
         fun <T> createIdentityMapperProvider(

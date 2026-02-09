@@ -22,12 +22,12 @@ kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_br
 
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
                                    kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
-imagemagick_lib_path = os.environ.get('LP_IMAGEMAGICK_PATH')
+imagemagick_lib_path = os.environ.get('IMAGICK_LIB_PATH')
 python_package = 'lets_plot'
 
 
 def update_js():
-    js_relative_path = ['js-package', 'build', 'dist', 'js', 'productionExecutable']
+    js_relative_path = ['js-package', 'build', 'kotlin-webpack', 'js', 'productionExecutable']
     js_libs = [
         'lets-plot',
     ]
@@ -94,6 +94,8 @@ elif this_system == 'Windows':
             '-lexpat',
             '-lurlmon',
             '-lgdi32',
+            '-lws2_32',
+            '-liconv',
             '-lz'
         ]
 
@@ -146,6 +148,7 @@ setup(name='lets-plot',
           "Programming Language :: Python :: 3.11",
           "Programming Language :: Python :: 3.12",
           "Programming Language :: Python :: 3.13",
+          "Programming Language :: Python :: 3.14",
           "Framework :: IPython",
           "Framework :: Jupyter",
           "Operating System :: MacOS",

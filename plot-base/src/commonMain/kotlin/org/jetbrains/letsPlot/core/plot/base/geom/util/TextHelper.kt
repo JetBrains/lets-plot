@@ -34,7 +34,7 @@ class TextHelper(
     private val checkOverlap: Boolean,
     private val flipAngle: Boolean,
     private val coordOrNull: (DataPointAesthetics) -> DoubleVector?,
-    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Text.VerticalAnchor) -> DoubleRectangle,
+    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Double) -> DoubleRectangle,
     private val componentFactory: (DataPointAesthetics, DoubleVector, String, Boolean, Double, GeomContext, DoubleVector?) -> SvgGElement
 ) : GeomHelper(pos, coord, ctx) {
 
@@ -144,10 +144,8 @@ class TextHelper(
             val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
             //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
-            val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
-                Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
-                Text.VerticalAnchor.BOTTOM -> location.y - textSize.y + fontSize
-                Text.VerticalAnchor.CENTER -> location.y - textSize.y / 2 + fontSize * 0.8
+            val yPosition = TextUtil.vAnchor(p, location, boundsCenter).let { vjust ->
+                location.y + (vjust - 1) * textSize.y + (1 - 0.3 * vjust) * fontSize
             }
 
             val textLocation = DoubleVector(location.x, yPosition)
@@ -219,7 +217,7 @@ class TextHelper(
             location: DoubleVector,
             textSize: DoubleVector,
             hAnchor: Text.HorizontalAnchor,
-            vAnchor: Text.VerticalAnchor,
+            vAnchor: Double,
         ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
         internal fun labelRectangle(
@@ -227,7 +225,7 @@ class TextHelper(
             textSize: DoubleVector,
             fontSize: Double,
             hAnchor: Text.HorizontalAnchor,
-            vAnchor: Text.VerticalAnchor,
+            vAnchor: Double,
             labelOptions: LabelOptions
         ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
 

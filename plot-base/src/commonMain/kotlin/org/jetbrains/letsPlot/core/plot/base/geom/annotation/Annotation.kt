@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.annotation
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 @Suppress("RedundantConstructorKeyword")

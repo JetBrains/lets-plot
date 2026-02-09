@@ -15,6 +15,11 @@ import org.jetbrains.letsPlot.core.plot.base.Scale
 internal abstract class AbstractScale<DomainT> : Scale {
 
     final override val name: String
+    final override var multiplicativeExpand = 0.0
+        protected set
+    final override var additiveExpand = 0.0
+        protected set
+    final override val userFormatter: ((Any) -> String)? get() = providedFormatter
 
     protected val providedBreaks: List<DomainT>?
     protected val providedLabels: List<String>?
@@ -24,15 +29,15 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val labelLengthLimit: Int
     protected val expFormat: ExponentFormat
 
+    protected val formatter: (Any) -> String by lazy {
+        providedFormatter ?: FormatterUtil.byDataType(dataType, expFormat, tz = tz)
+    }
+
     private val tz: TimeZone?
 
     private var createdScaleBreaks: ScaleBreaks? = null
     private var createdScaleBreaksShortened: Boolean = false
 
-    final override var multiplicativeExpand = 0.0
-        protected set
-    final override var additiveExpand = 0.0
-        protected set
 
     protected constructor(name: String) {
         this.name = name
@@ -67,8 +72,6 @@ internal abstract class AbstractScale<DomainT> : Scale {
         additiveExpand = b.myAdditiveExpand
     }
 
-    override val userFormatter: ((Any) -> String)? get() = providedFormatter
-
     override fun hasBreaks(): Boolean {
         return providedBreaks != null || providedScaleBreaks != null
     }
@@ -92,13 +95,6 @@ internal abstract class AbstractScale<DomainT> : Scale {
     }
 
     protected abstract fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks
-
-    protected fun formatValue(value: Any): String {
-        val formatter = providedFormatter
-            ?: FormatterUtil.byDataType(dataType, expFormat, tz = tz)
-
-        return formatter.invoke(value)
-    }
 
     companion object {
         fun alignLablesAndBreaks(breaks: List<Any>, labels: List<String>): List<String> {

@@ -20,12 +20,150 @@ import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.plaf.basic.BasicButtonUI
 import javax.swing.undo.UndoManager
+
+// --- START OF PYTHON INTEGRATION ---
+object PythonRunner {
+    private const val PREFS_FILE = "python_config.json"
+
+    data class PythonConfig(val pythonPath: String)
+
+
+    fun getPythonPath(): String? {
+        val file = getConfigFile()
+        if (file.exists()) {
+            try {
+                val json = file.readText()
+                val map = JsonSupport.parseJson(json) as Map<*, *>
+                return map["pythonPath"] as? String
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+        return null
+    }
+
+    fun setPythonPath(path: String) {
+        val file = getConfigFile()
+        file.parentFile.mkdirs()
+        val json = JsonSupport.formatJson(mapOf("pythonPath" to path))
+        file.writeText(json)
+    }
+
+    private fun getConfigFile(): File {
+        val homeDir = System.getProperty("user.home")
+        val appDir = File(homeDir, ".lets-plot-debugger")
+        return File(appDir, PREFS_FILE)
+    }
+
+    /**
+     * returns Pair(JsonString?, ErrorMessage?)
+     */
+    fun runPythonScript(userCode: String, pythonPath: String): Pair<String?, String?> {
+        // Wrapper script that executes user code and extracts the plot
+        // remove LetsPlot.setup_html() from user code
+        // For terminal use, we force offline mode with no JS to avoid any network calls.
+        val userCode = userCode.replace(Regex("""LetsPlot\.setup_html\([^)]*\)\s*"""), "")
+
+        val wrapperScript = """
+            |import sys
+            |import json
+            |import os
+            |
+            |try:
+            |    from lets_plot import *
+            |    from lets_plot._type_utils import standardize_dict
+            |    LetsPlot.setup_html(offline=True, no_js=True)
+            |except ImportError:
+            |    print("Error: 'lets-plot' library is not installed in this Python environment.", file=sys.stderr)
+            |    sys.exit(1)
+            |
+            |def run_user_code():
+            |    # User code will be injected here via execution
+            |    user_code_path = sys.argv[1]
+            |    
+            |    with open(user_code_path, 'r', encoding='utf-8') as f:
+            |        code = f.read()
+            |
+            |    local_scope = {}
+            |    
+            |    try:
+            |        lp_init = "from lets_plot import *; LetsPlot.setup_html(offline=True, no_js=True)\n"
+            |        exec(lp_init + code, {}, local_scope)
+            |    except Exception as e:
+            |        import traceback
+            |        traceback.print_exc(file=sys.stderr)
+            |        sys.exit(1)
+            |
+            |    # Strategy: 
+            |    # 1. Look for variable named 'p' (convention)
+            |    # 2. Look for any variable that has 'as_dict' method (lets-plot object)
+            |    
+            |    plot_obj = local_scope.get('p')
+            |    
+            |    if plot_obj is None:
+            |        # Fallback: find the last defined object that looks like a plot
+            |        candidates = [v for k, v in local_scope.items() if hasattr(v, 'as_dict')]
+            |        if candidates:
+            |            plot_obj = candidates[-1]
+            |
+            |    if plot_obj and hasattr(plot_obj, 'as_dict'):
+            |        plot_dict = standardize_dict(plot_obj.as_dict())
+            |        plot_json = json.dumps(plot_dict, indent=2)
+            |        print(plot_json)
+            |    else:
+            |        print("Error: No plot object found. Please assign your plot to a variable named 'p'.", file=sys.stderr)
+            |        sys.exit(1)
+            |
+            |if __name__ == "__main__":
+            |    run_user_code()
+            |""".trimMargin()
+
+        try {
+            val wrapperFile = File.createTempFile("lets_plot_wrapper", ".py")
+            wrapperFile.writeText(wrapperScript)
+
+            val userCodeFile = File.createTempFile("user_code", ".py")
+            userCodeFile.writeText(userCode)
+
+            val pb = ProcessBuilder(pythonPath, wrapperFile.absolutePath, userCodeFile.absolutePath)
+            pb.environment()["PYTHONIOENCODING"] = "utf-8"
+
+            val process = pb.start()
+
+            // Read stdout (JSON)
+            val output = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
+            // Read stderr (Errors)
+            val errors = process.errorStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
+
+            val exited = process.waitFor(10, TimeUnit.SECONDS)
+
+            wrapperFile.delete()
+            userCodeFile.delete()
+
+            if (!exited) {
+                process.destroy()
+                return Pair(null, "Timeout: Python script took too long to execute.")
+            }
+
+            if (process.exitValue() != 0) {
+                return Pair(null, errors.ifBlank { "Unknown Python error (Exit code ${process.exitValue()})" })
+            }
+
+            return Pair(output, if (errors.isNotBlank()) "Python stderr:\n$errors" else null)
+
+        } catch (e: Exception) {
+            return Pair(null, "Execution failed: ${e.message}")
+        }
+    }
+}
+// --- END OF PYTHON INTEGRATION ---
 
 fun main() {
     val specString = System.getenv("PLOT_SPEC")
@@ -43,6 +181,9 @@ fun main() {
 
         val plotSpecDebugger = PlotSpecDebugger()
         try {
+            // Attempt to treat initial load as JSON.
+            // If main() was triggered with Python code in environment, this logic handles it gracefully by failing JSON parse
+            // and letting the UI load the raw string.
             val spec = parsePlotSpec(specString)
             val specToSet = if (spec.containsKey("kind")) {
                 JsonSupport.formatJson(spec, pretty = true)
@@ -54,7 +195,8 @@ fun main() {
             plotSpecDebugger.evaluate()
         } catch (e: Exception) {
             plotSpecDebugger.setSpec(specString)
-            e.printStackTrace()
+            // If it's not JSON, it might be python. Don't print stacktrace on startup, just let UI handle it.
+            //e.printStackTrace()
         }
 
         plotSpecDebugger.isVisible = true
@@ -89,6 +231,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val plotSpecTextArea = JTextArea().apply {
         wrapStyleWord = true
         autoscrolls = true
+        // Set a monospaced font for code
+        font = Font("Monospaced", Font.PLAIN, 12)
     }
     private val specEditorPane = JScrollPane(plotSpecTextArea)
 
@@ -102,6 +246,19 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         addActionListener {
             if (pasteFromClipboard()) {
                 evaluate()
+            }
+        }
+    }
+
+    private val pythonConfigButton = JButton("Python Path").apply {
+        addActionListener {
+            val current = PythonRunner.getPythonPath() ?: "python"
+            val input = JOptionPane.showInputDialog(this@PlotSpecDebugger,
+                "Enter path to Python executable (must have 'lets-plot' installed):",
+                current
+            )
+            if (input != null && input.isNotBlank()) {
+                PythonRunner.setPythonPath(input.trim())
             }
         }
     }
@@ -224,8 +381,10 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         add(pixelDensityLabel)
         add(pixelDensitySpinner)
         add(Box.createHorizontalStrut(10))
-        add(exportPngButton) // Added the button here
+        add(exportPngButton)
         add(exportSvgButton)
+        add(Box.createHorizontalStrut(10))
+        add(pythonConfigButton) // Add config button here
     }
 
     // Favorites components
@@ -264,7 +423,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
     init {
         defaultCloseOperation = EXIT_ON_CLOSE
-        preferredSize = Dimension(1400, 600)
+        preferredSize = Dimension(1400, 800)
 
         this.addWindowListener(object : WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
@@ -330,7 +489,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         val leftSplitPane = JSplitPane(
             JSplitPane.HORIZONTAL_SPLIT, controlPanel, plotAreaPanel
         ).apply {
-            dividerLocation = 420
+            dividerLocation = 500
         }
 
         mainSplitPane = JSplitPane(
@@ -368,25 +527,20 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         toggleSpecPanelButton.addActionListener {
             if (toggleSpecPanelButton.isSelected) {
-                // Show panel
                 processedSpecScrollPane.isVisible = true
-                mainSplitPane.dividerSize = defaultDividerSize // Restore splitter
-
-                // FIX: Use invokeLater to set the divider location after the layout is updated.
+                mainSplitPane.dividerSize = defaultDividerSize
                 SwingUtilities.invokeLater {
                     val targetLocation = if (lastProcessedSpecDividerLocation != -1) {
                         lastProcessedSpecDividerLocation
                     } else {
-                        // First time opening: occupy 25% of the width
                         (mainSplitPane.width * 0.75).toInt()
                     }
                     mainSplitPane.setDividerLocation(targetLocation)
                 }
             } else {
-                // Hide panel
-                lastProcessedSpecDividerLocation = mainSplitPane.dividerLocation // Store current size
+                lastProcessedSpecDividerLocation = mainSplitPane.dividerLocation
                 processedSpecScrollPane.isVisible = false
-                mainSplitPane.dividerSize = 0 // Hide splitter
+                mainSplitPane.dividerSize = 0
             }
             updateToggleButtonText()
         }
@@ -394,11 +548,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
 
     private fun updateToggleButtonText() {
-        val text = if (toggleSpecPanelButton.isSelected) {
-            "Hide processed spec"
-        } else {
-            "Show processed spec"
-        }
+        val text = if (toggleSpecPanelButton.isSelected) "Hide processed spec" else "Show processed spec"
         toggleSpecPanelButton.text = text.toCharArray().joinToString("\n")
     }
 
@@ -417,12 +567,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             favoritesFile.writeText(json)
         } catch (e: IOException) {
             e.printStackTrace()
-            JOptionPane.showMessageDialog(
-                this,
-                "Error saving favorites: ${e.message}",
-                "Favorites Error",
-                JOptionPane.ERROR_MESSAGE
-            )
+            JOptionPane.showMessageDialog(this, "Error saving favorites: ${e.message}", "Favorites Error", JOptionPane.ERROR_MESSAGE)
         }
     }
 
@@ -435,19 +580,11 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     val parsed = JsonSupport.parseJson(jsonText) as Map<*, *>
                     favorites.clear()
                     parsed.forEach { (key, value) ->
-                        if (key is String && value is String) {
-                            favorites[key] = value
-                        }
+                        if (key is String && value is String) favorites[key] = value
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Error loading favorites: ${e.message}",
-                    "Favorites Error",
-                    JOptionPane.ERROR_MESSAGE
-                )
             }
         }
     }
@@ -457,7 +594,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         favoritesComboBox.removeAllItems()
         favorites.keys.sorted().forEach { favoritesComboBox.addItem(it) }
         favoritesComboBox.selectedItem = selected
-
         val hasFavorites = favoritesComboBox.itemCount > 0
         loadFavoriteButton.isEnabled = hasFavorites
         removeFavoriteButton.isEnabled = hasFavorites
@@ -466,13 +602,11 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private fun updateSaveButtonState() {
         val selectedName = favoritesComboBox.selectedItem as? String
         if (selectedName == null) {
-            saveFavoriteButton.isEnabled = true // Can always save as a new favorite
+            saveFavoriteButton.isEnabled = true
             return
         }
-
         val favoriteContent = favorites[selectedName]
         val currentContent = plotSpecTextArea.text
-
         saveFavoriteButton.isEnabled = (favoriteContent != currentContent)
     }
 
@@ -560,9 +694,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         try {
             specFile.parentFile.mkdirs()
             specFile.writeText(plotSpecTextArea.text)
-            println("Plot spec saved to ${specFile.absolutePath}")
         } catch (e: IOException) {
-            println("Error: Could not save plot spec to ${specFile.absolutePath}")
             e.printStackTrace()
         }
     }
@@ -622,22 +754,9 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 plotSpecTextArea.text = clipboardText
                 plotSpecTextArea.caretPosition = 0
                 return true
-            } else {
-                JOptionPane.showMessageDialog(
-                    this,
-                    "No text found on the clipboard.",
-                    "Paste Info",
-                    JOptionPane.INFORMATION_MESSAGE
-                )
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            JOptionPane.showMessageDialog(
-                this,
-                "Could not paste text from clipboard.\nError: ${e.message}",
-                "Paste Error",
-                JOptionPane.ERROR_MESSAGE
-            )
         }
         return false
     }
@@ -653,14 +772,16 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         densityDebouncer.stop()
         saveSpecToFile()
 
-        // Clear and hide messages pane at the start of evaluation
         messagesTextArea.text = ""
         messagesScrollPane.isVisible = false
-
-        val spec = parsePlotSpec(plotSpecTextArea.text)
         plotPanel.removeAll()
+        plotPanel.revalidate()
+        plotPanel.repaint() // Clear immediately so user sees something is happening
 
-        // Message handler to display messages in the UI
+        val rawText = plotSpecTextArea.text.trim()
+        val isJson = rawText.startsWith("{")
+
+        // Helper to update messages UI
         val messageHandler: (List<String>) -> Unit = { messages ->
             if (messages.isNotEmpty()) {
                 SwingUtilities.invokeLater {
@@ -668,79 +789,126 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                         messagesScrollPane.isVisible = true
                         plotAndMessagesSplitPane.setDividerLocation(0.8)
                     }
-                    messagesTextArea.text = messages.joinToString("\n")
+                    val currentText = messagesTextArea.text
+                    val newText = if (currentText.isBlank()) messages.joinToString("\n") else currentText + "\n" + messages.joinToString("\n")
+                    messagesTextArea.text = newText
                     messagesTextArea.caretPosition = messagesTextArea.document.length
                 }
             }
         }
 
-        try {
-            val processedSpec: Map<String, Any>
-            val newPlotComponent: JComponent
+        // Logic to obtain the spec map
+        fun processSpec(specMap: Map<String, Any>) {
+            try {
+                val processedSpec: Map<String, Any>
+                val newPlotComponent: JComponent
 
-            when (frontendComboBox.selectedItem) {
-                "batik" -> {
-                    processedSpec = MonolithicCommon.processRawSpecs(spec)
-                    newPlotComponent = DefaultPlotPanelBatik(
-                        processedSpec = processedSpec,
-                        preferredSizeFromPlot = false,
-                        repaintDelay = 300,
-                        preserveAspectRatio = false,
-                        computationMessagesHandler = messageHandler
-                    )
-                }
-
-                "CanvasPane" -> {
-                    processedSpec = MonolithicCommon.processRawSpecs(spec)
-                    val plotFig = PlotCanvasFigure()
-                    plotFig.onHrefClick {
-                        Desktop.getDesktop().browse(java.net.URI.create(it))
+                when (frontendComboBox.selectedItem) {
+                    "batik" -> {
+                        processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
+                        newPlotComponent = DefaultPlotPanelBatik(
+                            processedSpec = processedSpec,
+                            preferredSizeFromPlot = false,
+                            repaintDelay = 300,
+                            preserveAspectRatio = false,
+                            computationMessagesHandler = messageHandler
+                        )
                     }
-                    plotFig.update(
-                        processedSpec,
-                        sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
-                        computationMessagesHandler = messageHandler
-                    )
-                    newPlotComponent = CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                    "CanvasPane" -> {
+                        processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
+                        val plotFig = PlotCanvasFigure()
+                        plotFig.onHrefClick { Desktop.getDesktop().browse(java.net.URI.create(it)) }
+                        plotFig.update(
+                            processedSpec,
+                            sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
+                            computationMessagesHandler = messageHandler
+                        )
+                        newPlotComponent = CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                    }
+                    "DefaultPlotPanelCanvas" -> {
+                        processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
+                        newPlotComponent = DefaultPlotPanelCanvas(
+                            processedSpec = processedSpec,
+                            preferredSizeFromPlot = false,
+                            repaintDelay = 0,
+                            preserveAspectRatio = false,
+                            computationMessagesHandler = messageHandler
+                        )
+                    }
+                    else -> throw IllegalArgumentException("Unknown frontend")
                 }
 
-                "DefaultPlotPanelCanvas" -> {
-                    processedSpec = MonolithicCommon.processRawSpecs(spec)
-                    newPlotComponent = DefaultPlotPanelCanvas(
-                        processedSpec = processedSpec,
-                        preferredSizeFromPlot = false,
-                        repaintDelay = 0,
-                        preserveAspectRatio = false,
-                        computationMessagesHandler = messageHandler
-                    )
+                processedSpecTextArea.text = JsonSupport.formatJson(processedSpec, pretty = true)
+                processedSpecTextArea.caretPosition = 0
+
+                if (newPlotComponent is DefaultPlotPanelBatik) sharedToolbar.attach(newPlotComponent.figureModel)
+                else if (newPlotComponent is DefaultPlotPanelCanvas) sharedToolbar.attach(newPlotComponent.figureModel)
+
+                plotPanel.add(newPlotComponent, BorderLayout.CENTER)
+                plotPanel.revalidate()
+                plotPanel.repaint()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                val errorText = "Error rendering plot:\n${e.message}\n${e.stackTraceToString()}"
+                messageHandler(listOf(errorText))
+                JOptionPane.showMessageDialog(this, "Error building plot: ${e.message}", "Plot Error", JOptionPane.ERROR_MESSAGE)
+            }
+        }
+
+        if (isJson) {
+            try {
+                val spec = parsePlotSpec(rawText)
+                processSpec(spec)
+            } catch (e: Exception) {
+                messageHandler(listOf("JSON Parse Error: ${e.message}"))
+                JOptionPane.showMessageDialog(this, "Invalid JSON: ${e.message}", "Error", JOptionPane.ERROR_MESSAGE)
+            }
+        } else {
+            // Assume Python
+            val pythonPath = PythonRunner.getPythonPath() ?: "python"
+
+            // Show a "Running..." cursor
+            cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
+            evaluateButton.isEnabled = false
+
+            // Run in background to avoid freezing UI
+            val worker = object : SwingWorker<Pair<String?, String?>, Void>() {
+                override fun doInBackground(): Pair<String?, String?> {
+                    return PythonRunner.runPythonScript(rawText, pythonPath)
                 }
 
-                else -> throw IllegalArgumentException("Unknown frontend: ${frontendComboBox.selectedItem}")
+                override fun done() {
+                    cursor = Cursor.getDefaultCursor()
+                    evaluateButton.isEnabled = true
+                    try {
+                        val result = get()
+                        val jsonOutput = result.first
+                        val errorOutput = result.second
+
+                        if (errorOutput != null) {
+                            messageHandler(listOf(errorOutput))
+                        }
+
+                        if (jsonOutput != null) {
+                            try {
+                                val spec = parsePlotSpec(jsonOutput)
+                                processSpec(spec)
+                            } catch (e: Exception) {
+                                messageHandler(listOf(
+                                    "Error parsing JSON from Python output: ${e.message}",
+                                    "Output was:\n$jsonOutput"
+                                ))
+                            }
+                        } else if (errorOutput == null) {
+                            messageHandler(listOf("Python script finished but produced no output."))
+                        }
+                    } catch (e: Exception) {
+                        messageHandler(listOf("Execution Error: ${e.message}"))
+                        e.printStackTrace()
+                    }
+                }
             }
-
-            processedSpecTextArea.text = JsonSupport.formatJson(processedSpec, pretty = true)
-            processedSpecTextArea.caretPosition = 0
-
-            if (newPlotComponent is DefaultPlotPanelBatik) {
-                sharedToolbar.attach(newPlotComponent.figureModel)
-            } else if (newPlotComponent is DefaultPlotPanelCanvas) {
-                sharedToolbar.attach(newPlotComponent.figureModel)
-            }
-
-            plotPanel.add(newPlotComponent, BorderLayout.CENTER)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            val errorText = "Error processing spec:\n\n${e.message}\n\n${e.stackTraceToString()}"
-            processedSpecTextArea.text = errorText
-            messageHandler(listOf(errorText)) // Show error in the new message panel
-            JOptionPane.showMessageDialog(
-                this,
-                "Error building plot: ${e.message}",
-                "Plot Error",
-                JOptionPane.ERROR_MESSAGE
-            )
-        } finally {
-            plotPanel.revalidate()
+            worker.execute()
         }
     }
 

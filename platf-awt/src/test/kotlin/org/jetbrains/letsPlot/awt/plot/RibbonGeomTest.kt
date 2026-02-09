@@ -61,9 +61,7 @@ class RibbonGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_geom_1.png", plotSpec)
+        assertPlot("ribbon_geom_1.png", spec)
     }
 
     @Test
@@ -148,9 +146,7 @@ class RibbonGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_geom_2.png", plotSpec)
+        assertPlot("ribbon_geom_2.png", spec)
     }
 
     @Test
@@ -235,9 +231,7 @@ class RibbonGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_geom_3.png", plotSpec)
+        assertPlot("ribbon_geom_3.png", spec)
     }
 
     @Test
@@ -284,9 +278,7 @@ class RibbonGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_geom_4.png", plotSpec)
+        assertPlot("ribbon_geom_4.png", spec)
     }
 
     @Test
@@ -351,9 +343,7 @@ class RibbonGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_geom_5.png", plotSpec)
+        assertPlot("ribbon_geom_5.png", spec)
     }
 
     @Test
@@ -523,8 +513,6 @@ class RibbonGeomTest: VisualPlotTestBase() {
             |}
         """.trimMargin())
 
-        val plotSpec = spec.themeTextNotoSans()
-
-        assertPlot("ribbon_geom_6.png", plotSpec)
+        assertPlot("ribbon_geom_6.png", spec)
     }
 }

@@ -22,23 +22,22 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager
+import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.HorizontalAlignment
+import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.MeasuredTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TransformedTargetLocator
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.BORDER_RADIUS
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.CrosshairComponent
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.RetainableComponents
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LocatedTargetsPicker
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.TransformedTargetLocator
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpecFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -70,7 +69,7 @@ internal class TooltipRenderer(
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
-        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
+        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, MARGIN_BETWEEN_TOOLTIPS)
         measuringTooltipBox = TooltipBox(styleSheet).apply {
             rootGroup.visibility().set(Visibility.HIDDEN)
         }
@@ -306,7 +305,7 @@ internal class TooltipRenderer(
                     }
                 }
             }
-            return targetsPicker.picked
+            return targetsPicker.chooseBestResult()
         }
 
         operator fun contains(plotCoord: DoubleVector) = geomBounds.contains(plotCoord)

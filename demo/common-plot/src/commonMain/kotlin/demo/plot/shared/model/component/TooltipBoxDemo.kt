@@ -11,12 +11,12 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 
 class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

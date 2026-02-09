@@ -15,13 +15,17 @@ import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.applyPath
 import org.jetbrains.letsPlot.core.canvas.transform
+import org.jetbrains.letsPlot.core.canvasFigure.AsyncRenderer
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContextListener
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.raster.mapping.svg.DebugOptions.drawBoundingBoxes
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgCanvasPeer
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgSvgElementMapper
+import org.jetbrains.letsPlot.raster.scene.CanvasNode
 import org.jetbrains.letsPlot.raster.scene.Container
 import org.jetbrains.letsPlot.raster.scene.Node
 import org.jetbrains.letsPlot.raster.scene.reversedDepthFirstTraversal
@@ -41,7 +45,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             return Vector(contentWidth, contentHeight)
         }
 
-    override val eventPeer: MouseEventPeer = MouseEventPeer()
+    override val mouseEventPeer: MouseEventPeer = MouseEventPeer()
 
     var svgSvgElement: SvgSvgElement = svg
         set(value) {
@@ -55,6 +59,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
     private var repaintManager: RepaintManager? = null
+    private var canvasNodes: MutableMap<CanvasNode, Registration> = mutableMapOf()
 
     internal lateinit var rootMapper: SvgSvgElementMapper
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
@@ -65,7 +70,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
     }
 
     override fun mapToCanvas(canvasPeer: CanvasPeer): Registration {
-        svgCanvasPeer = SvgCanvasPeer(canvasPeer)
+        svgCanvasPeer = SvgCanvasPeer(canvasPeer, onRepaintRequested = { requestRedraw() })
         repaintManager = RepaintManager(canvasPeer).also {
             val overscanFactor = renderingHints[RenderingHints.KEY_OVERSCAN_FACTOR] as? Double
             if (overscanFactor != null) {
@@ -91,7 +96,7 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
         setRenderingHint(RenderingHints.KEY_OFFSCREEN_BUFFERING, RenderingHints.VALUE_OFFSCREEN_BUFFERING_ON)
         setRenderingHint(RenderingHints.KEY_OVERSCAN_FACTOR, 2.5)
 
-        eventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
+        mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_CLICKED, object : EventHandler<MouseEvent> {
             override fun onEvent(event: MouseEvent) {
                 val hrefClickHandler = onHrefClick ?: return
                 val coord = event.location.toDoubleVector()
@@ -117,7 +122,24 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             override fun onNodeDetached(node: SvgNode) = requestRedraw()
         })
         rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-        rootMapper.attachRoot(MappingContext())
+        val ctx = MappingContext()
+        ctx.addListener(object : MappingContextListener {
+            override fun onMapperRegistered(mapper: Mapper<*, *>) {
+                val node = mapper.target
+                if (node is CanvasNode) {
+                    canvasNodes[node] = node.mouseEventPeer.addEventSource(mouseEventPeer)
+                }
+            }
+
+            override fun onMapperUnregistered(mapper: Mapper<*, *>) {
+                val node = mapper.target
+                if (node is AsyncRenderer) {
+                    val reg = canvasNodes.remove(node)
+                    reg?.remove()
+                }
+            }
+        })
+        rootMapper.attachRoot(ctx)
     }
 
     override fun paint(context2d: Context2d) {
@@ -206,5 +228,32 @@ class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
             repaintManager?.overscanFactor = factor
         }
         renderingHints[key] = value
+    }
+
+    override fun isReady(): Boolean {
+        return canvasNodes.keys.all(AsyncRenderer::isReady)
+    }
+
+    override fun onReady(listener: () -> Unit): Registration {
+        if (isReady()) {
+            listener()
+            return Registration.EMPTY
+        } else {
+            val notReadyRenderers = canvasNodes.keys.filterNot(AsyncRenderer::isReady).toMutableSet()
+            val regs = notReadyRenderers.map { renderer ->
+                renderer.onReady {
+                    notReadyRenderers.remove(renderer)
+                    if (notReadyRenderers.isEmpty()) {
+                        listener()
+                    }
+                }
+            }
+
+            return Registration.from(*regs.toTypedArray())
+        }
+    }
+
+    override fun onFrame(millisTime: Long) {
+        canvasNodes.forEach { (canvasNode, _) -> canvasNode.onFrame(millisTime) }
     }
 }

@@ -11,10 +11,21 @@ data class Font(
     val fontSize: Double = DEFAULT_SIZE,
     val fontFamily: String = DEFAULT_FAMILY
 ) {
-    val isNormal: Boolean = fontStyle == FontStyle.NORMAL && fontWeight == FontWeight.NORMAL
-    val isBold: Boolean = fontStyle == FontStyle.NORMAL && fontWeight == FontWeight.BOLD
-    val isItalic: Boolean = fontStyle == FontStyle.ITALIC && fontWeight == FontWeight.NORMAL
-    val isBoldItalic: Boolean = fontStyle == FontStyle.ITALIC && fontWeight == FontWeight.BOLD
+
+    enum class FontVariant {
+        NORMAL,
+        BOLD,
+        ITALIC,
+        BOLD_ITALIC;
+    }
+
+    val variant = when (fontWeight to fontStyle) {
+        FontWeight.NORMAL to FontStyle.NORMAL -> FontVariant.NORMAL
+        FontWeight.BOLD to FontStyle.NORMAL -> FontVariant.BOLD
+        FontWeight.NORMAL to FontStyle.ITALIC -> FontVariant.ITALIC
+        FontWeight.BOLD to FontStyle.ITALIC -> FontVariant.BOLD_ITALIC
+        else -> FontVariant.NORMAL
+    }
 
     companion object {
         const val DEFAULT_SIZE = 10.0

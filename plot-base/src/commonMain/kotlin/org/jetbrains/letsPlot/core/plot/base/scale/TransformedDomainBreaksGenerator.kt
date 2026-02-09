@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.LinearBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.LinearFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NonlinearBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NonlinearFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
 /**
@@ -47,6 +49,25 @@ class TransformedDomainBreaksGenerator(
                 Transforms.LOG10 -> NonlinearBreaksGen(Transforms.LOG10, providedFormatter, expFormat)
                 Transforms.LOG2 -> NonlinearBreaksGen(Transforms.LOG2, providedFormatter, expFormat)
                 Transforms.SYMLOG -> NonlinearBreaksGen(Transforms.SYMLOG, providedFormatter, expFormat)
+                else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
+            }
+
+            return TransformedDomainBreaksGenerator(transform, breaksGenerator)
+        }
+
+        fun forTransformWithFixedBreakWidth(
+            transform: ContinuousTransform,
+            breakWidth: Double,
+            providedFormatter: ((Any) -> String)? = null,
+            expFormat: StringFormat.ExponentFormat
+        ): TransformedDomainBreaksGenerator {
+            val breaksGenerator: OriginalDomainBreaksGenerator = when (transform.unwrap()) {
+                Transforms.IDENTITY -> LinearFixedBreaksGen(breakWidth, providedFormatter, expFormat)
+                Transforms.REVERSE -> LinearFixedBreaksGen(breakWidth, providedFormatter, expFormat)
+                Transforms.SQRT -> NonlinearFixedBreaksGen(breakWidth, Transforms.SQRT, providedFormatter, expFormat)
+                Transforms.LOG10 -> NonlinearFixedBreaksGen(breakWidth, Transforms.LOG10, providedFormatter, expFormat)
+                Transforms.LOG2 -> NonlinearFixedBreaksGen(breakWidth, Transforms.LOG2, providedFormatter, expFormat)
+                Transforms.SYMLOG -> NonlinearFixedBreaksGen(breakWidth, Transforms.SYMLOG, providedFormatter, expFormat)
                 else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
             }
 

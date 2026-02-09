@@ -59,7 +59,7 @@ if (enablePythonPackage) {
 
         val imagickLibPath = (rootProject.project.extra.getOrNull("imagemagick_lib_path") as? String) ?: ""
         if (imagickLibPath.isNotBlank()) {
-            environment("LP_IMAGEMAGICK_PATH", imagickLibPath)
+            environment("IMAGICK_LIB_PATH", imagickLibPath)
         }
 
         commandLine(commandLine)
