@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 class BracketGeom : TextGeom() {
     var bracketShorten: Double = 1.0
+    var tipLengthUnit: DimensionUnit = DEF_TIP_LENGTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineLegendKeyElementFactory(TextHelper::toSegmentAes)
@@ -31,7 +32,7 @@ class BracketGeom : TextGeom() {
         linesHelper.setResamplingEnabled(false) // TODO
         val pathData = linesHelper.createPathData(
             aesthetics.dataPoints().map(TextHelper::toSegmentAes),
-            bracketBuilder(linesHelper, bracketShorten)
+            bracketBuilder(linesHelper, bracketShorten, tipLengthUnit)
         )
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
@@ -59,7 +60,9 @@ class BracketGeom : TextGeom() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun bracketBuilder(helper: LinesHelper, bracketShorten: Double): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
+        val DEF_TIP_LENGTH_UNIT = DimensionUnit.SIZE
+
+        private fun bracketBuilder(helper: LinesHelper, bracketShorten: Double, tipLengthUnit: DimensionUnit): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
             val xMin = p.finiteOrNull(Aes.XMIN) ?: return@builder null
             val xMax = p.finiteOrNull(Aes.XMAX) ?: return@builder null
             val y = p.finiteOrNull(Aes.Y) ?: return@builder null
@@ -69,12 +72,12 @@ class BracketGeom : TextGeom() {
             val bracketLength = xMax - xMin
             val xStart = x - bracketShorten * bracketLength / 2.0
             val xEnd = x + bracketShorten * bracketLength / 2.0
-            val tipLengthUnit = helper.getUnitResolution(DimensionUnit.SIZE, Aes.Y) // TODO
+            val tipLengthUnitResolution = helper.getUnitResolution(tipLengthUnit, Aes.Y)
             listOf(
-                DoubleVector(xStart, y - tipLengthStart * tipLengthUnit),
+                DoubleVector(xStart, y - tipLengthStart * tipLengthUnitResolution),
                 DoubleVector(xStart, y),
                 DoubleVector(xEnd, y),
-                DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnit),
+                DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),
             )
         }
 

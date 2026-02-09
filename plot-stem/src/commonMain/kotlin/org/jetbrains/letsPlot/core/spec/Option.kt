@@ -458,6 +458,7 @@ object Option {
 
         object Bracket {
             const val BRACKET_SHORTEN = "bracket_shorten"
+            const val TIP_LENGTH_UNIT = "tip_length_unit"
         }
 
         object LiveMap {
