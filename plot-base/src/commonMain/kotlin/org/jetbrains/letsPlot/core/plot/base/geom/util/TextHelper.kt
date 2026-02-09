@@ -142,7 +142,6 @@ class TextHelper(
 
             val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
             val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-            //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
             val yPosition = TextUtil.vAnchor(p, location, boundsCenter).let { vjust ->
                 location.y + (vjust - 1) * textSize.y + (1 - 0.3 * vjust) * fontSize
