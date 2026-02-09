@@ -207,7 +207,8 @@ object PlotReprGenerator {
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
-        antialiasing: Boolean = true
+        antialiasing: Boolean = true,
+        timeoutSeconds: Long? = null,
     ): Pair<Bitmap, Double> {
         val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
 
@@ -233,7 +234,7 @@ object PlotReprGenerator {
         var canvasReg: Registration? = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
 
         runBlocking() {
-            if (!plotCanvasFigure.waitForReady(15.seconds)) {
+            if (!plotCanvasFigure.waitForReady(timeoutSeconds?.seconds ?: 15.seconds)) {
                 println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
             }
         }
@@ -268,7 +269,8 @@ object PlotReprGenerator {
         height: Float,
         unit: CPointer<ByteVar>,
         dpi: Int,
-        scale: Float
+        scale: Float,
+        timeoutSeconds: Long
     ): CPointer<PyObject>? {
         try {
 
@@ -278,6 +280,7 @@ object PlotReprGenerator {
                 sizeUnit = SizeUnit.fromName(unit.toKString()),
                 dpi = if (dpi >= 0) dpi.toDouble() else null,
                 scale = if (scale >= 0) scale.toDouble() else null,
+                timeoutSeconds = timeoutSeconds,
                 fontManager = defaultFontManager
             )
             // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
@@ -306,7 +309,8 @@ object PlotReprGenerator {
         height: Float,
         unit: CPointer<ByteVar>,
         dpi: Int,
-        scale: Float
+        scale: Float,
+        timeoutSeconds: Long
     ): CPointer<PyObject>? {
         try {
 
@@ -315,7 +319,8 @@ object PlotReprGenerator {
                 plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
                 sizeUnit = SizeUnit.fromName(unit.toKString()),
                 dpi = if (dpi >= 0) dpi.toDouble() else null,
-                scale = if (scale >= 0) scale.toDouble() else null
+                scale = if (scale >= 0) scale.toDouble() else null,
+                timeoutSeconds = if (timeoutSeconds >= 0) timeoutSeconds else null
             )
             return Py_BuildValue("s", mvg)
         } catch (e: Throwable) {
@@ -335,6 +340,7 @@ object PlotReprGenerator {
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
+        timeoutSeconds: Long? = null,
     ): String {
         var canvasReg: Registration? = null
             val start = TimeSource.Monotonic.markNow()
@@ -367,7 +373,7 @@ object PlotReprGenerator {
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
 
             runBlocking() {
-                if (!plotCanvasFigure.waitForReady(15.seconds)) {
+                if (!plotCanvasFigure.waitForReady(timeoutSeconds?.seconds ?: 15.seconds)) {
                     println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
                 }
             }

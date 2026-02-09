@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.LiveMapLocation
-import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.Clipboard
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
@@ -210,7 +209,7 @@ class LiveMapUiSystem(
 
         override fun update(context: LiveMapContext) {
             shouldShowResetPosition = context.camera.canReset
-            shouldShowSpinner = componentManager.containsEntity<BusyStateComponent>()
+            shouldShowSpinner = false//componentManager.containsEntity<BusyStateComponent>()
             if (shouldShowResetPosition != (myResetPositionButton in verticalPanel)) {
                 updateVerticalPanel()
             } else if (shouldShowSpinner != (mySpinner in verticalPanel)) {

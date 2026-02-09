@@ -1171,6 +1171,7 @@ class PlotTest {
             |    {
             |      "geom": "livemap",
             |      "zoom": 1.0,
+            |      "dev_params": { "debug_grid": true },
             |      "tiles": {
             |        "kind": "vector_lets_plot",
             |        "url": "wss://tiles.datalore.jetbrains.com",
@@ -1178,8 +1179,7 @@ class PlotTest {
             |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
             |      },
             |      "geocoding": { "url": "https://geo2.datalore.jetbrains.com/map_data/geocoding" }
-            |    },
-            |    { "geom": "point", "x": 0.0, "y": 0.0 }
+            |    }
             |  ]
             |}            
         """.trimMargin()
@@ -1304,10 +1304,67 @@ class PlotTest {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_vector_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_vector_tiles.png", spec)
         }
     }
+
+    @Test
+    fun `geom_livemap prod washington dc`() {
+        val spec = """
+            |{
+            |  "ggsize": {
+            |    "width": 800.0,
+            |    "height": 534.0
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "zoom": 10.0,
+            |      "tiles": {
+            |        "kind": "vector_lets_plot",
+            |        "url": "wss://tiles.datalore.jetbrains.com",
+            |        "theme": "color",
+            |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |      }
+            |    },
+            |    {
+            |      "geom": "point", "x": -76.9879975677786, "y": 38.8937935978174 }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("geom_livemap_prod_washington_dc.png", plotSpec)
+    }
+
+
+    @Test
+    fun `geom_livemap test washington dc`() {
+        runStubVectorTileServer { url ->
+            val spec = """
+            |{
+            |  "ggsize": {
+            |    "width": 800.0,
+            |    "height": 534.0
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "zoom": 10.0,
+            |      "tiles": { "kind": "vector_lets_plot", "url": "$url", "attribution": "Lets-Plot" }
+            |    },
+            |    {
+            |      "geom": "point", "x": -76.9879975677786, "y": 38.8937935978174 }
+            |  ]
+            |}""".trimMargin()
+
+            val plotSpec = parsePlotSpec(spec)
+            assertPlot("geom_livemap_test_washington_dc.png", plotSpec)
+        }
+    }
+
 
     private fun assertMemoryLeakFree(plotSpec: MutableMap<String, Any>) {
         MagickUtil.startCountAllocations()

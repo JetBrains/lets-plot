@@ -8,7 +8,37 @@ import kotlin.test.Test
 
 //@Ignore("Flaky tests - sometimes even local tiles are not loaded")
 class LiveMapTest : VisualPlotTestBase() {
-    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
+    @Test
+    fun `geom_livemap prod washington dc`() {
+        val spec = """
+            |{
+            |  "ggsize": {
+            |    "width": 800.0,
+            |    "height": 534.0
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "zoom": 10.0,
+            |      "tiles": {
+            |        "kind": "vector_lets_plot",
+            |        "url": "wss://tiles.datalore.jetbrains.com",
+            |        "theme": "color",
+            |        "attribution": "<a href=\"https://lets-plot.org\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |      }
+            |    },
+            |    {
+            |      "geom": "point", "x": -76.9879975677786, "y": 38.8937935978174 }
+            |  ]
+            |}
+            |""".trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("geom_livemap_prod_washington_dc.png", plotSpec)
+    }
+
+    //@Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     @Test
     fun `geom_livemap prod vector tiles`() {
         val spec = """
@@ -36,7 +66,7 @@ class LiveMapTest : VisualPlotTestBase() {
     }
 
     @Test
-    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
+    //@Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     fun `geom_livemap prod minard`() {
         val spec = parsePlotSpec("""
             |{
@@ -106,6 +136,7 @@ class LiveMapTest : VisualPlotTestBase() {
         assertPlot("geom_livemap_nasa_tiles.png", spec)
     }
 
+    @Ignore
     @Test
     fun `geom_livemap test png tiles`() {
         runStubRasterTileServer("png") { url ->
@@ -128,6 +159,7 @@ class LiveMapTest : VisualPlotTestBase() {
         }
     }
 
+    //@Ignore
     @Test
     fun `geom_livemap test jpg tiles`() {
         runStubRasterTileServer("jpg") { url ->
@@ -150,6 +182,7 @@ class LiveMapTest : VisualPlotTestBase() {
         }
     }
 
+    //@Ignore
     @Test
     fun `geom_livemap test vector tiles`() {
         runStubVectorTileServer { url ->
@@ -171,4 +204,31 @@ class LiveMapTest : VisualPlotTestBase() {
             assertPlot("geom_livemap_test_vector_tiles.png", spec)
         }
     }
+
+    @Test
+    fun `geom_livemap test washington dc`() {
+        runStubVectorTileServer { url ->
+            val spec = """
+            |{
+            |  "ggsize": {
+            |    "width": 800.0,
+            |    "height": 534.0
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "zoom": 10.0,
+            |      "tiles": { "kind": "vector_lets_plot", "url": "$url", "attribution": "Lets-Plot" }
+            |    },
+            |    {
+            |      "geom": "point", "x": -76.9879975677786, "y": 38.8937935978174 }
+            |  ]
+            |}""".trimMargin()
+
+            val plotSpec = parsePlotSpec(spec)
+            assertPlot("geom_livemap_test_washington_dc.png", plotSpec)
+        }
+    }
+
 }

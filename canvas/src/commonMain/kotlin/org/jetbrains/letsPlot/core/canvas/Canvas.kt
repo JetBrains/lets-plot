@@ -14,6 +14,7 @@ interface Canvas {
     val size: Vector // TODO: should be in pixels, not in points
 
     fun takeSnapshot(): Snapshot
+    fun takeSnapshot(tag: String?) = takeSnapshot()
 
     interface Snapshot {
         val size: Vector

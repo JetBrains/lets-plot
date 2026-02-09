@@ -429,9 +429,7 @@ class LiveMap(
     }
 
     fun paint(context2d: Context2d) {
-        myLayerManager.layers.forEach { layer ->
-            context2d.drawImage(layer.snapshot())
-        }
+        myLayerManager.paint(context2d)
     }
 
     private class UpdateController(

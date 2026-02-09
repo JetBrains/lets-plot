@@ -1025,7 +1025,7 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None, timeout_seconds=None) -> Union[
     str, None]:
     import base64
     from .. import _kbridge
@@ -1037,7 +1037,7 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
         file_like_object = path
         file_path = None
 
-    png_base64 = _kbridge._generate_png(spec.as_dict(), w, h, unit, dpi, scale)
+    png_base64 = _kbridge._generate_png(spec.as_dict(), w, h, unit, dpi, scale, timeout_seconds)
     png = base64.b64decode(png_base64)
 
     if export_format.lower() == 'png':
@@ -1074,10 +1074,10 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
         raise ValueError("Unknown export format: {}".format(export_format))
 
 
-def _to_mvg(spec, path, scale: float, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+def _to_mvg(spec, path, scale: float, w=None, h=None, unit=None, dpi=None, timeout_seconds=None) -> Union[str, None]:
     from .. import _kbridge
 
-    mvg = _kbridge._generate_mvg(spec.as_dict(), w, h, unit, dpi, scale)
+    mvg = _kbridge._generate_mvg(spec.as_dict(), w, h, unit, dpi, scale, timeout_seconds)
 
     if path is None:
         return mvg

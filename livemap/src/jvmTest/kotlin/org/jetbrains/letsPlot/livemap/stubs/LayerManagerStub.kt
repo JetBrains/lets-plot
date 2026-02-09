@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.livemap.stubs
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.layers.CanvasLayer
 import org.jetbrains.letsPlot.livemap.core.layers.CanvasLayerComponent
@@ -21,5 +22,6 @@ class LayerManagerStub: LayerManager() {
     override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>): Unit = TODO("Not yet implemented")
     override fun repaint(dirtyLayers: List<CanvasLayer>): Unit = TODO("Not yet implemented")
     override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>): Unit = TODO("Not yet implemented")
+    override fun paint(ctx: Context2d): Unit = TODO("Not yet implemented")
 }
 

@@ -27,6 +27,8 @@ kotlin {
             dependencies {
                 compileOnly("io.ktor:ktor-client-core:$ktorVersion")
                 compileOnly(project(":commons"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-io-core:0.8.2")
             }
         }
 

@@ -34,7 +34,7 @@ def _generate_svg(plot_spec: Dict, w: float = None, h: float = None, unit: str =
 
 
 def _generate_png(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int,
-                  scale: float) -> str:
+                  scale: float, timeout_seconds: int) -> str:
     """
     Export a plot to PNG format. Returns base64 encoded string of the PNG image.
     """
@@ -44,11 +44,12 @@ def _generate_png(bytestring: Dict, output_width: float, output_height: float, u
     unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
     dpi = -1 if dpi is None else int(dpi)
     scale = -1.0 if scale is None else float(scale)
-    return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, unit, dpi, scale)
+    timeout_seconds = -1 if timeout_seconds is None else int(timeout_seconds)
+    return lets_plot_kotlin_bridge.export_png(plot_spec, output_width, output_height, unit, dpi, scale, timeout_seconds)
 
 
 def _generate_mvg(bytestring: Dict, output_width: float, output_height: float, unit: str, dpi: int,
-                  scale: float) -> str:
+                  scale: float, timeout_seconds: int) -> str:
     """
     Export a plot to MVG format. For internal use.
     """
@@ -58,7 +59,8 @@ def _generate_mvg(bytestring: Dict, output_width: float, output_height: float, u
     unit = '' if unit is None else str(unit)  # None is not a valid value for str type - PyArg_ParseTuple will fail
     dpi = -1 if dpi is None else int(dpi)
     scale = -1.0 if scale is None else float(scale)
-    return lets_plot_kotlin_bridge.export_mvg(plot_spec, output_width, output_height, unit, dpi, scale)
+    timeout_seconds = -1 if timeout_seconds is None else int(timeout_seconds)
+    return lets_plot_kotlin_bridge.export_mvg(plot_spec, output_width, output_height, unit, dpi, scale, timeout_seconds)
 
 
 def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:

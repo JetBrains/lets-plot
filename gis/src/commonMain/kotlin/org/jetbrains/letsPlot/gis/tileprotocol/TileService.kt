@@ -3,8 +3,16 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+
 package org.jetbrains.letsPlot.gis.tileprotocol
 
+import kotlinx.io.buffered
+import kotlinx.io.files.FileSystem
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.writeString
+import org.jetbrains.letsPlot.commons.encoding.Base64
+import org.jetbrains.letsPlot.commons.formatting.string.ByteSizeFormatter.formatByteSize
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
@@ -12,7 +20,7 @@ import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.formatJson
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.gis.tileprotocol.Request.ConfigureConnectionRequest
 import org.jetbrains.letsPlot.gis.tileprotocol.Request.GetBinaryGeometryRequest
 import org.jetbrains.letsPlot.gis.tileprotocol.TileService.SocketStatus.*
@@ -23,6 +31,8 @@ import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SafeSocketHandler
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketHandler
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.TileWebSocket
+
+val fileSystem: FileSystem = SystemFileSystem
 
 open class TileService(url: String, private val myTheme: Theme) {
     enum class Theme {
@@ -44,7 +54,7 @@ open class TileService(url: String, private val myTheme: Theme) {
         val key = myIncrement++.toString()
         val async = ThreadSafeAsync<List<TileLayer>>()
 
-        pendingRequests.put(key, async)
+        pendingRequests.put(key, bbox to async)
 
         try {
             GetBinaryGeometryRequest(key, zoom, bbox)
@@ -53,7 +63,7 @@ open class TileService(url: String, private val myTheme: Theme) {
                 .run(this::sendGeometryRequest)
 
         } catch (err: Throwable) {
-            pendingRequests.poll(key).failure(err)
+            pendingRequests.poll(key).second.failure(err)
         }
 
         return async
@@ -116,30 +126,57 @@ open class TileService(url: String, private val myTheme: Theme) {
         override fun onBinaryMessage(message: ByteArray) {
             try {
                 ResponseTileDecoder(message)
-                    .let { (key, tiles) -> pendingRequests.poll(key).success(tiles) }
+                    .let { (key, tiles) ->
+                        val (rect, async) = pendingRequests.poll(key)
+                        println("$rect -> ${formatByteSize(message.size)}")
+
+                        // Open a sink to the file, and buffer it
+                        val className = "TileX${rect.origin.x}Y${rect.origin.y}W${rect.dimension.x}H${rect.dimension.y}"
+                            .replace('.', '_')
+                            .replace('-', 'm')
+                        val fileName = "$className.kt"
+                        val path = Path(fileName)
+                        SystemFileSystem.sink(path).buffered().use { sink ->
+                            sink.writeString(
+                                """|import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+                                   |import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+                                   |import org.jetbrains.letsPlot.commons.encoding.Base64
+                                   |
+                                   |
+                                   |object $className {
+                                   |    val rect = Rect.XYWH<LonLat>(${rect.left}, ${rect.top}, ${rect.width}, ${rect.height})
+                                   |    val data = ${"\"\"\""}${Base64.encode(message)}${"\"\"\""}
+                                   |    val entry = rect to Base64.decode(data)
+                                   |}""".trimMargin())
+                        }
+
+                        println(SystemFileSystem.resolve(path))
+
+                        async.success(tiles)
+                    }
             } catch (e: Throwable) {
                 failPending(e)
             }
         }
 
         private fun failPending(cause: Throwable) {
-            pendingRequests.pollAll().values.forEach { it.failure(cause) }
+            pendingRequests.pollAll().values.forEach { it.second.failure(cause) }
         }
     }
 
     class RequestMap {
         private val lock = Lock()
-        private val myAsyncMap = HashMap<String, ThreadSafeAsync<List<TileLayer>>>()
+        private val myAsyncMap = HashMap<String, Pair<Rect<LonLat>, ThreadSafeAsync<List<TileLayer>>>>()
 
-        fun put(key: String, async: ThreadSafeAsync<List<TileLayer>>) = lock.execute {
+        fun put(key: String, async: Pair<Rect<LonLat>, ThreadSafeAsync<List<TileLayer>>>) = lock.execute {
             myAsyncMap[key] = async
         }
 
-        fun pollAll(): Map<String, ThreadSafeAsync<List<TileLayer>>> = lock.execute {
+        fun pollAll(): Map<String, Pair<Rect<LonLat>, ThreadSafeAsync<List<TileLayer>>>> = lock.execute {
             return HashMap(myAsyncMap).also { myAsyncMap.clear() }
         }
 
-        fun poll(key: String): ThreadSafeAsync<List<TileLayer>> = lock.execute {
+        fun poll(key: String): Pair<Rect<LonLat>, ThreadSafeAsync<List<TileLayer>>> = lock.execute {
             return myAsyncMap.remove(key)!!
         }
     }

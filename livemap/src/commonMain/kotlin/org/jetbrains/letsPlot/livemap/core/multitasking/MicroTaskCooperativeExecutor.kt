@@ -11,6 +11,12 @@ class MicroTaskCooperativeExecutor(
     private val myClock: EcsClock,
     private val myFrameDurationLimit: Long
 ) : MicroTaskExecutor {
+    private val logEnabled = true
+    private fun log(message: () -> String) {
+        if (logEnabled) {
+            println(message())
+        }
+    }
 
     override fun start() {}
 
@@ -23,24 +29,25 @@ class MicroTaskCooperativeExecutor(
         while (enoughTime && tasks.isNotEmpty()) {
             val taskIterator = tasks.iterator()
             while (taskIterator.hasNext()) {
-                if (myClock.frameDurationMs > myFrameDurationLimit) {
-                    //println("MicroTaskCooperativeExecutor: frame time limit exceeded: ${myClock.frameDurationMs}ms > $myFrameDurationLimit ms")
+                if (false && myClock.frameDurationMs > myFrameDurationLimit) {
+                    log { "MicroTaskCooperativeExecutor: frame time limit exceeded: ${myClock.frameDurationMs}ms > $myFrameDurationLimit ms" }
                     enoughTime = false
                     break
                 }
 
                 taskIterator.next().run {
-                    var resumesCountdown = resumesBeforeTimeCheck
+                    var resumesCountdown = 100_000_000//resumesBeforeTimeCheck
 
                     while (resumesCountdown-- > 0 && microTask.alive()) {
-                        //println("MicroTaskCooperativeExecutor: resuming task. Tasks left: ${tasks.size}")
                         microTask.resume()
                     }
 
                     if (!microTask.alive()) {
-                        //println("MicroTaskCooperativeExecutor: task finished. Tasks left: ${tasks.size - 1}")
+                        log { "MicroTaskCooperativeExecutor: task finished. Tasks left: ${tasks.size - 1}" }
                         finishedTasks.add(this)
                         taskIterator.remove()
+                    } else {
+                        log { "MicroTaskCooperativeExecutor: task not finished. Tasks left: ${tasks.size}" }
                     }
                 }
             }

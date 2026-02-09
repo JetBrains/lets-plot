@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 
+import org.jetbrains.letsPlot.commons.formatting.string.ByteSizeFormatter.formatByteSize
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import org.jetbrains.letsPlot.commons.intern.math.round
@@ -25,12 +26,20 @@ import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.debug.DebugTileDa
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.debug.DebugTileDataRenderer
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportGridUpdateSystem.Companion.CELL_STATE_REQUIRED_COMPONENTS
+import kotlin.time.measureTime
 
 class TileLoadingSystem(
     private val myQuantumIterations: Int,
     private val myTileService: TileService,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
+    private val logEnabled = true
+    private fun log(message: () -> String) {
+        if (logEnabled) {
+            println(message())
+        }
+    }
+
     private lateinit var myMapRect: org.jetbrains.letsPlot.livemap.WorldRectangle
     private lateinit var myCanvasSupplier: () -> Canvas
     private lateinit var myTileDataFetcher: TileDataFetcher
@@ -66,9 +75,10 @@ class TileLoadingSystem(
                     +tileResponseComponent
                 }
 
+            log { "Requesting tile: $cellKey" }
             myTileDataFetcher.fetch(cellKey).onResult(
-                { tileResponseComponent.tileData = it },
-                { tileResponseComponent.tileData = emptyList() }
+                { layers -> tileResponseComponent.tileData = layers; log { "Tile $cellKey loaded - ${formatByteSize(layers.sumOf { it.size.toLong() })}" } },
+                { tileResponseComponent.tileData = emptyList(); log { "Tile $cellKey loading failed: ${it.message}" } }
             )
         }
 
@@ -92,10 +102,19 @@ class TileLoadingSystem(
                                 .render(canvas, tileFeatures, cellKey, tileLayerEntity.get<KindComponent>().layerKind)
                                 .map {
                                     runLaterBySystem(tileLayerEntity) { theEntity ->
-                                        val snapshot = canvas.takeSnapshot()
-                                        theEntity.get<BasemapTileComponent>().tile =
-                                            SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
+
+                                        val snapshotTime = measureTime {
+                                            val snapshot = canvas.takeSnapshot(cellKey.key + "_" + tileLayerEntity.get<KindComponent>().layerKind)
+                                            theEntity.get<BasemapTileComponent>().tile =
+                                                SnapshotTile(snapshot, context.mapRenderContext.pixelDensity)
+                                        }
+
+                                        log { "${snapshotTime.inWholeMilliseconds}ms - ${cellKey.key}, ${tileLayerEntity.get<KindComponent>().layerKind}" }
                                         theEntity.remove<BusyStateComponent>()
+
+                                        val totalBusy = getEntities3<BusyStateComponent, BasemapCellComponent, KindComponent>().count()
+                                        log { "Total busy: $totalBusy" }
+
                                         ParentLayerComponent.tagDirtyParentLayer(theEntity)
                                     }
                                     return@map

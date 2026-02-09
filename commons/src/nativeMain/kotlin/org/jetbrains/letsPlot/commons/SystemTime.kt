@@ -5,13 +5,12 @@
 
 package org.jetbrains.letsPlot.commons
 
-import kotlin.time.TimeSource
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 actual open class SystemTime actual constructor() {
-
     actual open fun getTimeMs(): Long {
-        val timeSource = TimeSource.Monotonic
-        val startTime = timeSource.markNow()
-        return startTime.elapsedNow().inWholeMilliseconds
+        return Clock.System.now().toEpochMilliseconds()
     }
 }

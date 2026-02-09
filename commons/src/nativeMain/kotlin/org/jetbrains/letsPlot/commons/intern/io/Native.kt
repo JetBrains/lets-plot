@@ -32,11 +32,11 @@ object Native {
         }
     }
 
-    fun writeToFile(path: String, data: ByteArray) {
+    fun writeToFile(path: String, data: ByteArray): String? {
         if (data.isEmpty()) {
             val file = fopen(path, "wb") ?: throw Error("Failed to open file for writing (empty): $path")
             fclose(file)
-            return
+            return null
         }
 
         val file: CPointer<FILE> = fopen(path, "wb") ?: throw Error("Failed to open file for writing: $path")
@@ -51,10 +51,17 @@ object Native {
                 val errorNum = ferror(file)
                 throw Error("Failed to write all data to file: $path. Wrote $written of ${data.size} bytes. ferror=$errorNum")
             }
+
+            memScoped {
+                val fullPath = allocArray<ByteVar>(PATH_MAX)
+                realpath(path, fullPath)
+                return fullPath.toKString()
+            }
         } finally {
             fclose(file)
         }
     }
+
     fun readFromFile(path: String): ByteArray {
         val file: CPointer<FILE> = fopen(path, "rb") ?: throw Error("Failed to open file for reading: $path")
         try {

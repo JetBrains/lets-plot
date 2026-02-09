@@ -86,7 +86,9 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) :
                     "tile_${layerKind}_$cellKey"
                 )
                     .addComponents {
-                        +BusyStateComponent() // tile is loading
+                        if (!layer.contains<DebugCellLayerComponent>()) {
+                            +BusyStateComponent() // tile is loading
+                        }
                         +WorldOriginComponent(tileRect.origin)
                         +RenderableComponent().apply {
                             renderer = NULL_RENDERER

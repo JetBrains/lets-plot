@@ -35,6 +35,8 @@ abstract class LayerManager {
         children[layer.kind]?.remove(layer)
         layers.remove(layer)
     }
+
+    abstract fun paint(ctx: Context2d)
 }
 
 class OffscreenCanvasLayerManager(val canvasPeer: CanvasPeer, val size: Vector) : LayerManager() {
@@ -88,6 +90,14 @@ class OffscreenCanvasLayerManager(val canvasPeer: CanvasPeer, val size: Vector) 
         layer.render()
         myBackingStore[layer] = layer.snapshot()
         myPanningOffsets[layer] = offset
+    }
+
+    override fun paint(ctx: Context2d) {
+        layers.forEach {
+            myBackingStore[it]?.let { s ->
+                ctx.drawImage(s, 0.0, 0.0, rect.width, rect.height)
+            }
+        }
     }
 
     override fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent {
@@ -153,6 +163,14 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
         layer.render()
         myBackingStore[layer] = layer.snapshot()
         myPanningOffsets[layer] = offset
+    }
+
+    override fun paint(ctx: Context2d) {
+        layers.forEach {
+            myBackingStore[it]?.let { s ->
+                ctx.drawImage(s, 0.0, 0.0, rect.width, rect.height)
+            }
+        }
     }
 
     override fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent {
@@ -232,5 +250,11 @@ class ScreenLayerManager(
     override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>) {
         layer.clear()
         layer.render()
+    }
+
+    override fun paint(ctx: Context2d) {
+            myBackingStore.forEach { (layer, snapshot) ->
+                ctx.drawImage(snapshot, 0.0, 0.0, layer.size.x.toDouble(), layer.size.y.toDouble())
+            }
     }
 }

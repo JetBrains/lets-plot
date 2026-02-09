@@ -69,14 +69,15 @@ static PyObject* export_png(PyObject* self, PyObject* args) {
     const char* unit;
     int dpi;
     float scale;
-    if (!PyArg_ParseTuple(args, "Offsif", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale)) {
+    int timeoutSeconds;
+    if (!PyArg_ParseTuple(args, "Offsifi", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale, &timeoutSeconds)) {
         PyErr_SetString(PyExc_TypeError, "export_png: failed to parse arguments");
         return NULL;
     }
 
-    //printf("export_png: width=%f, height=%f, unit=%s, dpi=%d, scale=%f\n", width, height, unit, dpi, scale);
+    //printf("export_png: width=%f, height=%f, unit=%s, dpi=%d, scale=%f, timeoutSeconds=%d\n", width, height, unit, dpi, scale, timeoutSeconds);
 
-    PyObject* imageData = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportPng(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale);
+    PyObject* imageData = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportPng(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale, timeoutSeconds);
     return imageData; // base64 encoded PNG
 }
 
@@ -89,14 +90,15 @@ static PyObject* export_mvg(PyObject* self, PyObject* args) {
     const char* unit;
     int dpi;
     float scale;
-    if (!PyArg_ParseTuple(args, "Offsif", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale)) {
+    int timeout_seconds;
+    if (!PyArg_ParseTuple(args, "Offsifi", &rawPlotSpecDict, &width, &height, &unit, &dpi, &scale, &timeout_seconds)) {
         PyErr_SetString(PyExc_TypeError, "export_mvg: failed to parse arguments");
         return NULL;
     }
 
-    //printf("export_mvg: width=%f, height=%f, unit=%s, dpi=%d, scale=%f\n", width, height, unit, dpi, scale);
+    //printf("export_mvg: width=%f, height=%f, unit=%s, dpi=%d, scale=%f, timeout_seconds=%d\n", width, height, unit, dpi, scale, timeout_seconds);
 
-    PyObject* mvg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportMvg(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale);
+    PyObject* mvg = __ kotlin.root.org.jetbrains.letsPlot.pythonExtension.interop.PlotReprGenerator.exportMvg(reprGen, rawPlotSpecDict, width, height, unit, dpi, scale, timeout_seconds);
     return mvg;
 }
 

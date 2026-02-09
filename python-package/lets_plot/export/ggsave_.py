@@ -17,7 +17,7 @@ _DEF_EXPORT_DIR = "lets-plot-images"
 
 def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True,
            scale: float = None, w: Optional[float] = None, h: Optional[float] = None, unit: Optional[str] = None,
-           dpi: Optional[int] = None) -> str:
+           dpi: Optional[int] = None, timeout_seconds: Optional[int] = None) -> str:
     """
     Export plot to a file.
     Supported formats: PNG, SVG, PDF, HTML.
@@ -58,6 +58,8 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
         - for 'px' it is 96 (output image will have the same pixel size as ``w``, and ``h`` values)
         - for physical units ('in', 'cm', 'mm') it is 300.
+    timeout_seconds : int, default=15
+        Timeout for raster export in seconds. Only applicable when exporting to PNG or PDF.
 
     Returns
     -------
@@ -163,9 +165,9 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
     elif ext in ['png', 'pdf']:
-        return _export_as_raster(plot, pathname, scale, export_format=ext, w=w, h=h, unit=unit, dpi=dpi)
+        return _export_as_raster(plot, pathname, scale, export_format=ext, w=w, h=h, unit=unit, dpi=dpi, timeout_seconds=timeout_seconds)
     elif ext == 'mvg':
-        return _to_mvg(plot, pathname, scale, w=w, h=h, unit=unit, dpi=dpi)
+        return _to_mvg(plot, pathname, scale, w=w, h=h, unit=unit, dpi=dpi, timeout_seconds=timeout_seconds)
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
