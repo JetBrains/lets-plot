@@ -13,6 +13,7 @@ class Bracket {
         return listOf(
             basic(),
             grouped(),
+            negativeTips(),
         )
     }
 
@@ -96,6 +97,49 @@ class Bracket {
                     'y': [53, 61, 53, 61, 53, 61],
                     'p': [0.01, 0.04, 0.02, 0.05, 0.03, 0.06],
                     'g': ['US', 'US', 'Asia', 'Asia', 'Europe', 'Europe']
+                  }
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = AutoMpg.df
+        return plotSpec
+
+    }
+
+    private fun negativeTips(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'origin of car',
+                'y': 'miles per gallon'
+              },
+              'ggtitle': {
+                'text': 'Negative tips'
+              },
+              'layers': [
+                {
+                  'geom': 'boxplot'
+                },
+                {
+                  'geom': 'bracket',
+                  'mapping': {
+                    'xmin': 'min',
+                    'xmax': 'max',
+                    'y': 'y',
+                    'label': 'p'
+                  },
+                  'tip_length_start': -5,
+                  'tip_length_end': -5,
+                  'vjust': 2,
+                  'data': {
+                    'min': ['US', 'US'],
+                    'max': ['Asia', 'Europe'],
+                    'y': [5, 2],
+                    'p': [0.01, 0.02]
                   }
                 }
               ]
