@@ -38,7 +38,8 @@ open class VisualPlotTestBase {
         unit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
-        fontManager: FontManager = NotoFontManager.INSTANCE
+        fontManager: FontManager = NotoFontManager.INSTANCE,
+        timeoutSeconds: Int = 120,
     ) {
         val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
@@ -50,7 +51,8 @@ open class VisualPlotTestBase {
                 targetDPI = dpi,
                 plotSize = plotSize,
                 unit = unit,
-                fontManager = fontManager
+                fontManager = fontManager,
+                timeoutSeconds = timeoutSeconds
             )
         }
         val image = ImageIO.read(imageData.bytes.inputStream())

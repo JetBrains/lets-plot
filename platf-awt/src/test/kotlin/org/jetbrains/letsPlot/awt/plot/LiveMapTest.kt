@@ -8,6 +8,7 @@ import kotlin.test.Test
 
 //@Ignore("Flaky tests - sometimes even local tiles are not loaded")
 class LiveMapTest : VisualPlotTestBase() {
+    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     @Test
     fun `geom_livemap prod washington dc`() {
         val spec = """
@@ -38,7 +39,7 @@ class LiveMapTest : VisualPlotTestBase() {
         assertPlot("geom_livemap_prod_washington_dc.png", plotSpec)
     }
 
-    //@Ignore("External service - may cause test instability. Enable for debugging purposes only.")
+    @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     @Test
     fun `geom_livemap prod vector tiles`() {
         val spec = """
@@ -136,7 +137,7 @@ class LiveMapTest : VisualPlotTestBase() {
         assertPlot("geom_livemap_nasa_tiles.png", spec)
     }
 
-    @Ignore
+    //@Ignore
     @Test
     fun `geom_livemap test png tiles`() {
         runStubRasterTileServer("png") { url ->

@@ -88,7 +88,8 @@ object PlotImageExport {
         targetDPI: Number? = null,
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
-        fontManager: FontManager = FontManager.DEFAULT
+        fontManager: FontManager = FontManager.DEFAULT,
+        timeoutSeconds: Int = 15,
     ): ImageData {
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
@@ -104,7 +105,7 @@ object PlotImageExport {
         val canvasReg = plotFigure.mapToCanvas(awtCanvasPeer)
 
         try {
-            if (!plotFigure.waitForReady(15.seconds)) {
+            if (!plotFigure.waitForReady(timeoutSeconds.seconds)) {
                 println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
             }
 

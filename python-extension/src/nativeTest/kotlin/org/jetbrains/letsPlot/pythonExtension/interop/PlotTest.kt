@@ -8,6 +8,7 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.formatting.string.ByteSizeFormatter.formatByteSize
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
@@ -906,7 +907,7 @@ class PlotTest {
                 mvg = PlotReprGenerator.generateMvg(plotSpec)
             }.inWholeMilliseconds
         }
-        //println(mvg)
+        println("MVG size: ${formatByteSize(mvg?.length ?: 0)}")
         println("Time for plotting $n points: ${times.joinToString()} ms")
         //assertPlot("perf.png", plotSpec)
 
@@ -1308,6 +1309,7 @@ class PlotTest {
         }
     }
 
+    @Ignore
     @Test
     fun `geom_livemap prod washington dc`() {
         val spec = """
@@ -1389,7 +1391,8 @@ class PlotTest {
         unit: SizeUnit? = SizeUnit.PX,
         dpi: Number? = null,
         scale: Number? = 1,
-        antialiasing: Boolean = true
+        antialiasing: Boolean = true,
+        timeoutSeconds: Long? = 120,
     ) {
         val (bitmap, _) = PlotReprGenerator.exportBitmap(
             plotSpec = plotSpec,
@@ -1399,7 +1402,8 @@ class PlotTest {
             scale = scale,
             fontManager = embeddedFontsManager,
             //fontManager = MagickFontManager.default() // For manual testing
-            antialiasing = antialiasing
+            antialiasing = antialiasing,
+            timeoutSeconds = timeoutSeconds
         )
 
         imageComparer.assertBitmapEquals(expectedFileName, bitmap)

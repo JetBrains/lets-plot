@@ -29,14 +29,14 @@ class MicroTaskCooperativeExecutor(
         while (enoughTime && tasks.isNotEmpty()) {
             val taskIterator = tasks.iterator()
             while (taskIterator.hasNext()) {
-                if (false && myClock.frameDurationMs > myFrameDurationLimit) {
+                if (myClock.frameDurationMs > myFrameDurationLimit) {
                     log { "MicroTaskCooperativeExecutor: frame time limit exceeded: ${myClock.frameDurationMs}ms > $myFrameDurationLimit ms" }
                     enoughTime = false
                     break
                 }
 
                 taskIterator.next().run {
-                    var resumesCountdown = 100_000_000//resumesBeforeTimeCheck
+                    var resumesCountdown = resumesBeforeTimeCheck
 
                     while (resumesCountdown-- > 0 && microTask.alive()) {
                         microTask.resume()
