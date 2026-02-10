@@ -213,6 +213,9 @@ internal class DomContext2d(
         ctx.lineDashOffset = lineDashOffset
     }
     override fun measureTextWidth(str: String): Double = ctx.measureText(str).width
+    override fun clear() {
+        TODO("Not yet implemented")
+    }
 
     override fun clearRect(rect: DoubleRectangle) = clearRect(rect.left, rect.top, rect.width, rect.height)
     override fun clearRect(x: Double, y: Double, w: Double, h: Double) {

@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
+import ImageMagick.DrawSetStrokeDashArray
 import kotlinx.cinterop.*
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
@@ -23,6 +25,7 @@ import kotlin.math.tan
 
 
 class MagickContext2d(
+    private val size: Vector,
     override val contentScale: Double,
     private val fontManager: MagickFontManager,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(),
@@ -30,11 +33,13 @@ class MagickContext2d(
     private val img: CPointer<ImageMagick.MagickWand> = newMagickWand("MagickContext2d.img")
     private val none = newPixelWand("MagickContext2d.none")
     private val pixelWand = newPixelWand("MagickContext2d.pixelWand")
+    private val strokeColorWand = newPixelWand("MagickContext2d.strokeColorWand")
+    private val fillColorWand = newPixelWand("MagickContext2d.fillColorWand")
     private val eraser = newMagickWand("MagickContext2d.eraser")
     private val currentFillWand = newPixelWand("MagickContext2d.currentFillWand")
     private val currentStrokeWand = newPixelWand("MagickContext2d.currentStrokeWand")
 
-    val wand = newDrawingWand("MagickContext2d.wand")
+    var wand = newDrawingWand("MagickContext2d.wand")
     private var currentFillRule: ImageMagick.FillRule // perf: reduce the number of calls to DrawSetFillRule
 
     private var dirtyFont = true
@@ -55,8 +60,22 @@ class MagickContext2d(
         ImageMagick.MagickNewImage(eraser, 1.convert(), 1.convert(), none)
         ImageMagick.MagickSetImageAlphaChannel(eraser, ImageMagick.AlphaChannelOption.SetAlphaChannel)
 
-
         transform(wand, AffineTransform.makeScale(contentScale, contentScale))
+    }
+
+    override fun clear() {
+        // Fast path for clearing the entire canvas
+        destroyDrawingWand(wand)
+        wand = newDrawingWand("MagickContext2d.wand")
+
+        dirtyFont = true
+
+        ImageMagick.DrawSetFillColor(wand, fillColorWand)
+        ImageMagick.DrawSetStrokeColor(wand, strokeColorWand)
+        ImageMagick.DrawSetStrokeWidth(wand, stateDelegate.getLineWidth())
+        applyLineDash(stateDelegate.getLineDash().toDoubleArray())
+        //ImageMagick.DrawSetStrokeLineCap(wand, stateDelegate.getLineCap().convert())
+
     }
 
     override fun clearRect(rect: DoubleRectangle) {
@@ -150,7 +169,10 @@ class MagickContext2d(
 
         stateDelegate.setFillStyle(color)
 
+
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
+        ImageMagick.PixelSetColor(fillColorWand, color?.toCssColor() ?: "none")
+
         ImageMagick.DrawSetFillColor(wand, pixelWand)
     }
 
@@ -162,6 +184,8 @@ class MagickContext2d(
         stateDelegate.setStrokeStyle(color)
 
         ImageMagick.PixelSetColor(pixelWand, color?.toCssColor() ?: "none")
+        ImageMagick.PixelSetColor(strokeColorWand, color?.toCssColor() ?: "none")
+
         ImageMagick.DrawSetStrokeColor(wand, pixelWand)
     }
 
@@ -181,14 +205,18 @@ class MagickContext2d(
 
         stateDelegate.setLineDash(lineDash)
 
+        applyLineDash(lineDash)
+    }
+
+    private fun applyLineDash(lineDash: DoubleArray) {
         if (lineDash.isNotEmpty()) {
             memScoped {
                 val lineDashPatternSize = lineDash.size
                 val lineDashArray = allocArray<DoubleVar>(lineDashPatternSize) { i -> value = lineDash[i] }
-                ImageMagick.DrawSetStrokeDashArray(wand, lineDashPatternSize.toULong(), lineDashArray)
+                DrawSetStrokeDashArray(wand, lineDashPatternSize.toULong(), lineDashArray)
             }
         } else {
-            ImageMagick.DrawSetStrokeDashArray(wand, 0u, null)
+            DrawSetStrokeDashArray(wand, 0u, null)
         }
     }
 
@@ -209,6 +237,10 @@ class MagickContext2d(
     }
 
     override fun setFont(f: Font) {
+        if (ignoreSameParams && stateDelegate.getFont() == f) {
+            return
+        }
+
         stateDelegate.setFont(f)
         dirtyFont = true
     }
@@ -457,6 +489,8 @@ class MagickContext2d(
         destroyMagickWand(img)
         destroyMagickWand(eraser)
         destroyPixelWand(pixelWand)
+        destroyPixelWand(strokeColorWand)
+        destroyPixelWand(fillColorWand)
         destroyPixelWand(currentFillWand)
         destroyPixelWand(currentStrokeWand)
         destroyPixelWand(none)

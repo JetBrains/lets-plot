@@ -35,7 +35,6 @@ internal class CanvasPathTest(
         registerTest(::ellipseInsidePath)
         registerTest(::roundedRectWithCurves)
         registerTest(::fillRectWithTransparentColor)
-        registerTest(::clearRect)
         registerTest(::fillTransparentRectWithTransparentColor)
         //registerTest(::perf_5_000_points)
 
@@ -49,16 +48,6 @@ internal class CanvasPathTest(
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
 
-    private fun clearRect() {
-        val (canvas, ctx) = createCanvas()
-
-        ctx.fillStyle = fillColor
-        ctx.fillRect(0.0, 0.0, w, h)
-
-        ctx.clearRect(10.0, 10.0, w - 20.0, h - 20.0)
-
-        assertCanvas("path_clear_rect.png", canvas)
-    }
 
     private fun fillRectWithTransparentColor() {
         val (canvas, ctx) = createCanvas()

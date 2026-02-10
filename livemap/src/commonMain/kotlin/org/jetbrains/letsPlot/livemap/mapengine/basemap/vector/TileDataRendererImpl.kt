@@ -52,8 +52,10 @@ internal class TileDataRendererImpl(
         val tasks = ArrayList<() -> Unit>()
 
         if (tileFeatures.isNotEmpty() && mapConfig != null) {
-            tasks.add { ctx.setFillStyle(mapConfig.tileSheetBackgrounds[layerKind.toString()]) }
-            tasks.add { ctx.fillRect(0.0, 0.0, size.x, size.y) }
+            tasks.add {
+                ctx.setFillStyle(mapConfig.tileSheetBackgrounds[layerKind.toString()])
+                ctx.fillRect(0.0, 0.0, size.x, size.y)
+            }
             tasks.addAll(tileFeaturesDrawTasks(ctx, tileFeatures, layerKind, cellKey.length))
         } else {
             if (layerKind == BasemapLayerKind.WORLD) {
@@ -81,10 +83,11 @@ internal class TileDataRendererImpl(
             val featuresByRule = getFeaturesByRule(zoom, tileFeatures[layerName]!!, rules)
 
             for (rule in rules) {
-                tasks.add(ctx::save)
-
                 val symbolizer = Symbolizer.create(rule.style, labelBounds)
-                tasks.add { symbolizer.applyTo(ctx) }
+                tasks.add {
+                    ctx.save()
+                    symbolizer.applyTo(ctx)
+                }
 
                 featuresByRule
                     .getOrElse(rule, ::emptyList)

@@ -107,7 +107,7 @@ class RasterTileLoadingSystem(
                     dh = TILE_PIXEL_SIZE
                 )
 
-                Tile.SnapshotTile(tileCanvas.takeSnapshot(), context.mapRenderContext.pixelDensity)
+                Tile.SnapshotTile(tileCanvas.takeSnapshot("ImageTile"), context.mapRenderContext.pixelDensity)
             }
     }
 

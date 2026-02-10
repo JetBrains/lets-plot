@@ -11,6 +11,7 @@ object CanvasTck {
         failedTestsCount += CanvasPathTest(canvasPeer, imageComparer).runTests()
         failedTestsCount += CanvasDrawImageTest(canvasPeer, imageComparer).runTests()
         failedTestsCount += CanvasTextTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += CanvasGeneralTest(canvasPeer, imageComparer).runTests()
 
         if (failedTestsCount > 0) {
             error("$failedTestsCount tests failed!")

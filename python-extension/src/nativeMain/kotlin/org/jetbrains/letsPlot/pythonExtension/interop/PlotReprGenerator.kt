@@ -247,7 +247,7 @@ object PlotReprGenerator {
             val ctx = canvas.context2d
             plotCanvasFigure.paint(ctx)
 
-            val snapshot = canvas.takeSnapshot()
+            val snapshot = canvas.takeSnapshot("exportBitmap()")
             val bitmap = snapshot.bitmap
 
             canvasReg?.dispose()

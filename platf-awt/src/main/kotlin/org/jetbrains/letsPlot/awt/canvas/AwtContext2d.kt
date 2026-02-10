@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
@@ -21,6 +22,7 @@ import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
 
 internal class AwtContext2d(
+    private val size: Vector,
     initialGraphics: Graphics2D,
     contentScale: Double,
     private val stateDelegate: ContextStateDelegate = ContextStateDelegate(contentScale = contentScale),
@@ -47,6 +49,11 @@ internal class AwtContext2d(
 
     override fun dispose() {
         graphics.dispose()
+    }
+
+    override fun clear() {
+        val rect = Rectangle2D.Double(0.0, 0.0, size.x.toDouble(), size.y.toDouble())
+        graphics.clearRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
     }
 
     override fun clearRect(rect: DoubleRectangle) {

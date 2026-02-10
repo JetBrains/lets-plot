@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 import kotlin.experimental.ExperimentalNativeApi
 
-val logEnabled = false
+val logEnabled = true
 
 fun log(msg: () -> String) {
     if (logEnabled) {
@@ -31,7 +31,7 @@ class MagickCanvas(
     fontManager: MagickFontManager,
     private val antialiasing: Boolean,
 ) : Canvas {
-    private val magickContext2d = MagickContext2d(pixelDensity, fontManager)
+    private val magickContext2d = MagickContext2d(size, pixelDensity, fontManager)
     override val context2d: MagickContext2d = magickContext2d
 
     override fun takeSnapshot(tag: String?): MagickSnapshot {
@@ -59,7 +59,6 @@ class MagickCanvas(
                 val length = ImageMagick.DrawGetVectorGraphics(context2d.wand)?.toKString()?.length ?: 0
 
                 if (formatByteSize(length) == "184.71 KB") {
-                    // log MVG data for 34.49 KB case, which is the most common one
                     val mvgData = ImageMagick.DrawGetVectorGraphics(context2d.wand)?.toKString() ?: ""
                     if (tag != null) {
                         val outFilePath = Native.writeToFile("$tag.mvg", mvgData.encodeToByteArray())
@@ -68,7 +67,7 @@ class MagickCanvas(
                         "MVG data:\n$mvgData"
                     }
                 } else {
-                    "MagickCanvas.takeSnapshot: MVG data length: ${formatByteSize(length)}"
+                    "MagickCanvas.takeSnapshot(${tag ?: hashCode().toULong().toString(16)}): MVG data length: ${formatByteSize(length)}"
                 }
             }
         }

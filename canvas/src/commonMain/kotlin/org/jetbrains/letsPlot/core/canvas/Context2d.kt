@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.canvas.Path2d.*
 interface Context2d : Disposable {
     val contentScale: Double
 
+    fun clear()
     fun clearRect(rect: DoubleRectangle)
     fun clearRect(x: Double, y: Double, w: Double, h: Double)
     fun drawImage(snapshot: Snapshot)
@@ -277,4 +278,8 @@ fun Context2d.transform(
 
 fun Context2d.fillRect(x: Number, y: Number, width: Number, height: Number) {
     fillRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+}
+
+fun Context2d.strokeRect(x: Number, y: Number, width: Number, height: Number) {
+    strokeRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
 }
