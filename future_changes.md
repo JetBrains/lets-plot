@@ -10,7 +10,7 @@
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
 
 - Color Scales:
-  - New `palette()` method for color scales: generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots [[#1444](https://github.com/JetBrains/lets-plot-kotlin/issues/1444)].
+  - New `palette()` method for color scales: generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_color_palette.html).
 
@@ -28,7 +28,7 @@
     - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
 - `geom_imshow()`: 
-  - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot-kotlin/issues/780)].
+  - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
   - New `cguide` parameter: use to customize the colorbar for greyscale images.
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).

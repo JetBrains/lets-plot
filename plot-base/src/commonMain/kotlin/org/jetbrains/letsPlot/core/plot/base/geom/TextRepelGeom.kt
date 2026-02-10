@@ -89,7 +89,7 @@ open class TextRepelGeom: TextGeom() {
             circles[dp.index()] = DoubleCircle(pointLocation, pointRadius + pointPadding(sizeUnitRatio))
 
             val hjust = TextUtil.hAnchor(dp, loc, aesBoundsCenter).toDouble()
-            val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter).toDouble()
+            val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter)
 
             val box = TransformedRectangle(textHelper.getRect(dp, loc, text, 1.0 , ctx, aesBoundsCenter))
 
