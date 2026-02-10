@@ -9,13 +9,14 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelBase
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil.applySpecOverride
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy.Companion.keepFigureDefaultSize
 import org.jetbrains.letsPlot.raster.view.PlotDrawable
-import org.jetbrains.letsPlot.raster.view.PlotFigureModel
 import org.jetbrains.letsPlot.raster.view.RenderingHints
 import kotlin.test.Test
 
@@ -99,7 +100,7 @@ class InteractivityTest : VisualPlotTestBase() {
 
         var specOverrideList = emptyList<Map<String, Any>>()
 
-        val plotFigureModel = PlotFigureModel(
+        val figureModel = TestingFigureModel(
             onUpdateView = { specOverride ->
                 specOverrideList = FigureModelHelper.updateSpecOverrideList(
                     specOverrideList = specOverrideList,
@@ -113,9 +114,9 @@ class InteractivityTest : VisualPlotTestBase() {
             }
         )
 
-        val controller = DefaultFigureToolsController(plotFigureModel, errorMessageHandler = ::println)
-        plotFigureModel.setDefaultInteractions(listOf(InteractionSpec(InteractionSpec.Name.DRAG_PAN)))
-        plotFigureModel.addToolEventCallback(controller::handleToolFeedback)
+        val controller = DefaultFigureToolsController(figureModel, errorMessageHandler = ::println)
+        figureModel.setDefaultInteractions(listOf(InteractionSpec(InteractionSpec.Name.DRAG_PAN)))
+        figureModel.addToolEventCallback(controller::handleToolFeedback)
 
         plotCanvasFigure.update(processedPlotSpec, keepFigureDefaultSize(), computationMessagesHandler = { })
 
@@ -123,7 +124,7 @@ class InteractivityTest : VisualPlotTestBase() {
         plotCanvasFigure.mapToCanvas(awtCanvasPeer)
 
         // IMPORTANT: should be set after mapping to canvas
-        plotFigureModel.toolEventDispatcher = plotCanvasFigure.toolEventDispatcher
+        figureModel.setTestingToolEventDispatcher(plotCanvasFigure.toolEventDispatcher)
 
         plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
         plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
@@ -143,5 +144,18 @@ class InteractivityTest : VisualPlotTestBase() {
         val canvas = canvasPeer.createCanvas(size)
         paint(canvas.context2d)
         return canvas.takeSnapshot()
+    }
+
+    class TestingFigureModel(
+        val onUpdateView: (Map<String, Any>?) -> Unit
+    ) : FigureModelBase() {
+
+        fun setTestingToolEventDispatcher(dispatcher: ToolEventDispatcher?) {
+            super.toolEventDispatcher = dispatcher
+        }
+
+        override fun updateView(specOverride: Map<String, Any>?) {
+            onUpdateView(specOverride)
+        }
     }
 }
