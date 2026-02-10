@@ -10,16 +10,15 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.SomeFig
 
-interface Drawable : SomeFig {
+interface Drawable {
     fun bounds(): ReadableProperty<Rectangle>
 
     fun mapToCanvas(canvasControl: CanvasControl): Registration
 
 }
 
-interface Drawable2 : SomeFig, AsyncRenderer {
+interface Drawable2 : AsyncRenderer {
     // V2 API. Default impl. to not break existing implementations
     val size: Vector
     val mouseEventPeer: MouseEventPeer

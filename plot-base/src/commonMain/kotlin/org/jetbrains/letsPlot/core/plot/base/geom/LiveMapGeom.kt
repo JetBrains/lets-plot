@@ -30,7 +30,7 @@ class LiveMapGeom : Geom {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val livemapCanvasFigure = liveMapData?.canvasFigure as? Drawable2 ?: error("LiveMap data missing")
+        val livemapCanvasFigure = liveMapData?.drawable as? Drawable2 ?: error("LiveMap data missing")
         root.add(SvgCanvasFigureElement(livemapCanvasFigure))
     }
 

@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.awt.canvas.AwtMouseEventMapper
 import org.jetbrains.letsPlot.awt.util.AwtContainerDisposer
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 import java.awt.Color
@@ -24,7 +23,7 @@ import javax.swing.JLayeredPane
 
 // Have to be 'public' because "Lets-plot IDEA plugin" must access: `if (plotComponent is AwtLiveMapPanel)`
 /*internal*/ class AwtLiveMapPanel(
-    liveMapFigures: List<SomeFig>,
+    liveMapDrawables: List<Drawable>,
     private val plotOverlayComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val cursorServiceConfig: CursorServiceConfig
@@ -50,10 +49,9 @@ import javax.swing.JLayeredPane
         add(plotOverlayComponent)
 
 //        plotContainer.liveMapFigures
-        liveMapFigures
-            .map { it as Drawable }
-            .forEach { liveMapFigure ->
-                val liveMapBounds = liveMapFigure.bounds().get()
+        liveMapDrawables
+            .forEach { liveMapDrawable ->
+                val liveMapBounds = liveMapDrawable.bounds().get()
                 val liveMapCanvasControl = AwtCanvasControl(
                     size = liveMapBounds.dimension,
                     animationTimerPeer = AwtAnimationTimerPeer(executor).also { registrations.add(Registration.from(it)) },
@@ -61,7 +59,7 @@ import javax.swing.JLayeredPane
                 )
 
                 mappers.add {
-                    liveMapFigure.mapToCanvas(liveMapCanvasControl).also(registrations::add)
+                    liveMapDrawable.mapToCanvas(liveMapCanvasControl).also(registrations::add)
                 }
 
                 add(

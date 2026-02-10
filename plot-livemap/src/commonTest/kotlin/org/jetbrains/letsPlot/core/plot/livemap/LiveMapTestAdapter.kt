@@ -41,7 +41,7 @@ class LiveMapTestAdapter(
         val plotContainer = PlotContainer(svgRoot)
         mouseEventPeer = plotContainer.mouseEventPeer
 
-        val fig = plotContainer.liveMapFigures.single() as LiveMapDrawable
+        val fig = plotContainer.liveMapDrawables.single() as LiveMapDrawable
         var timerHandler: AnimationProvider.AnimationEventHandler? = null
 
         val canvasControl = object : CanvasControlDelegate(600, 400) {

@@ -6,14 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.values.SomeFig
+import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 
 interface LiveMapProvider {
     fun createLiveMap(bounds: DoubleRectangle): LiveMapData
 
     class LiveMapData(
-        val canvasFigure: SomeFig,
+        val drawable: Drawable,
         // emulate separated layers for TargetPicker so tooltips will work in the same way as in non-livemap plot
         val targetLocators: List<GeomTargetLocator>
     )

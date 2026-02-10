@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.SomeFig
+import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgUID
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCssResource
@@ -22,11 +22,11 @@ class PlotSvgRoot constructor(
     origin: DoubleVector
 ) : FigureSvgRoot(DoubleRectangle(origin, plot.figureSize)) {
 
-    val liveMapFigures: List<SomeFig>
-        get() = plot.liveMapFigures
+    val liveMapDrawables: List<Drawable>
+        get() = plot.liveMapDrawables
 
     val isLiveMap: Boolean
-        get() = plot.liveMapFigures.isNotEmpty()
+        get() = plot.liveMapDrawables.isNotEmpty()
 
     private val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID_PREFIX)
     val decorationLayer = SvgGElement().apply {

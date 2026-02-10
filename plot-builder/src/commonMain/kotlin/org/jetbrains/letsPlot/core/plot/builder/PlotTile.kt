@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
+import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
@@ -60,7 +60,7 @@ internal class PlotTile constructor(
 
     private val _targetLocators = ArrayList<GeomTargetLocator>()
 
-    var liveMapFigure: SomeFig? = null
+    var liveMapDrawable: Drawable? = null
         private set
 
     val targetLocators: List<GeomTargetLocator>
@@ -99,7 +99,7 @@ internal class PlotTile constructor(
             val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
             val liveMapData = (liveMapGeomLayer.geom as LiveMapGeom).createCanvasFigure(realBounds)
 
-            liveMapFigure = liveMapData?.canvasFigure
+            liveMapDrawable = liveMapData?.drawable
             liveMapData?.targetLocators?.let { _targetLocators.addAll(it) }
 
             //val layerComponent = frameOfReference.buildGeomComponent(liveMapGeomLayer, NullGeomTargetCollector())
@@ -274,7 +274,7 @@ internal class PlotTile constructor(
      * Throws UnsupportedInteractionException if not supported
      */
     fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
-        if (liveMapFigure != null) {
+        if (liveMapDrawable != null) {
             throw UnsupportedInteractionException("$eventSpec denied by LiveMap component.")
         }
         frameOfReference.checkMouseInteractionSupported(eventSpec)

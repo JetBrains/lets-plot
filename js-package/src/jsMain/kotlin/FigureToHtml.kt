@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -227,8 +226,8 @@ internal class FigureToHtml(
 
             plotContainer.mouseEventPeer.addEventSource(plotMouseEventMapper)
 
-            plotContainer.liveMapFigures.forEach { liveMapFigure ->
-                val bounds = (liveMapFigure as Drawable).bounds().get()
+            plotContainer.liveMapDrawables.forEach { liveMapFigure ->
+                val bounds = liveMapFigure.bounds().get()
                 val liveMapDiv = document.createElement("div") as HTMLElement
 
                 liveMapDiv.style.run {
