@@ -1,7 +1,7 @@
 package demo.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.canvas.CanvasComponent
 import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotPanelCanvas
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotDrawable
+import org.jetbrains.letsPlot.raster.view.SvgDrawable
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
@@ -345,9 +345,9 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             if (plotPanel.width > 0 && plotPanel.height > 0) {
                 try {
                     val canvaPanel = plotPanel.components.first() as DefaultPlotPanelCanvas
-                    val canvasPane = canvaPanel.components.first() as CanvasPane
-                    val svgCanvasFigure = canvasPane.figure as SvgCanvasFigure
-                    val svgString = SvgToString.render(svgCanvasFigure.svgSvgElement)
+                    val canvasComponent = canvaPanel.components.first() as CanvasComponent
+                    val svgDrawable = canvasComponent.content as SvgDrawable
+                    val svgString = SvgToString.render(svgDrawable.svgSvgElement)
 
                     // Show Save Dialog
                     val fileChooser = JFileChooser().apply {
@@ -816,14 +816,14 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     }
                     "CanvasPane" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
-                        val plotFig = PlotCanvasFigure()
-                        plotFig.onHrefClick { Desktop.getDesktop().browse(java.net.URI.create(it)) }
-                        plotFig.update(
+                        val plotDrawable = PlotDrawable()
+                        plotDrawable.onHrefClick { Desktop.getDesktop().browse(java.net.URI.create(it)) }
+                        plotDrawable.update(
                             processedSpec,
                             sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
                             computationMessagesHandler = messageHandler
                         )
-                        newPlotComponent = CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                        newPlotComponent = CanvasComponent(plotDrawable, pixelDensity = (pixelDensitySpinner.value as Double))
                     }
                     "DefaultPlotPanelCanvas" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)

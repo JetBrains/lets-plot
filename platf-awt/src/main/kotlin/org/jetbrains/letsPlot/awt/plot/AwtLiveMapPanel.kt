@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.awt.util.AwtContainerDisposer
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.SomeFig
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 import java.awt.Color
 import java.awt.Cursor
@@ -51,7 +51,7 @@ import javax.swing.JLayeredPane
 
 //        plotContainer.liveMapFigures
         liveMapFigures
-            .map { it as CanvasFigure }
+            .map { it as Drawable }
             .forEach { liveMapFigure ->
                 val liveMapBounds = liveMapFigure.bounds().get()
                 val liveMapCanvasControl = AwtCanvasControl(

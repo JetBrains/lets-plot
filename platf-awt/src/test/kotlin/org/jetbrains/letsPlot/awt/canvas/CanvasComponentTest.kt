@@ -8,17 +8,17 @@ import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotDrawable
 import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import kotlin.test.Test
 
-class CanvasPaneTest {
+class CanvasComponentTest {
     @Test
     fun `should handle zero size`() {
         val pane = paneWithNotoFonts()
-        pane.figure = createPlotFigure(plotSpec)
+        pane.content = createPlotFigure(plotSpec)
 
         // do layout after figure set
         pane.bounds = Rectangle(0, 0)
@@ -42,7 +42,7 @@ class CanvasPaneTest {
         pane.doLayout()
 
         // set figure after layout
-        pane.figure = createPlotFigure(plotSpec)
+        pane.content = createPlotFigure(plotSpec)
 
         val bufferedImage = BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB)
         val g = bufferedImage.createGraphics() as Graphics2D
@@ -56,7 +56,7 @@ class CanvasPaneTest {
     @Test
     fun `figure set before layout`() {
         val pane = paneWithNotoFonts()
-        pane.figure = createPlotFigure(plotSpec)
+        pane.content = createPlotFigure(plotSpec)
 
         // do layout after figure set
         pane.bounds = Rectangle(200, 200)
@@ -74,7 +74,7 @@ class CanvasPaneTest {
     @Test
     fun `paint with clip`() {
         val pane = paneWithNotoFonts()
-        pane.figure = createPlotFigure(plotSpec)
+        pane.content = createPlotFigure(plotSpec)
         pane.bounds = Rectangle(150, 50)
         pane.doLayout()
 
@@ -94,7 +94,7 @@ class CanvasPaneTest {
     fun `paint on retina`() {
         val pane = paneWithNotoFonts()
 
-        pane.figure = createPlotFigure(plotSpec)
+        pane.content = createPlotFigure(plotSpec)
         pane.bounds = Rectangle(150, 50)
         pane.doLayout()
 
@@ -112,8 +112,8 @@ class CanvasPaneTest {
         imageComparer.assertBitmapEquals("canvas_pane_paint_on_retina.png", bitmap)
     }
 
-    private fun paneWithNotoFonts(): CanvasPane {
-        val pane = CanvasPane()
+    private fun paneWithNotoFonts(): CanvasComponent {
+        val pane = CanvasComponent()
         pane.canvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
         return pane
     }
@@ -121,9 +121,9 @@ class CanvasPaneTest {
     private fun createPlotFigure(
         rawSpec: Map<String, Any>,
         sizingPolicy: SizingPolicy = SizingPolicy.fitContainerSize(false)
-    ): PlotCanvasFigure {
+    ): PlotDrawable {
         val spec = MonolithicCommon.processRawSpecs(plotSpec = rawSpec.toMutableMap(), frontendOnly = false)
-        return PlotCanvasFigure().apply {
+        return PlotDrawable().apply {
             update(
                 processedSpec = spec,
                 sizingPolicy = sizingPolicy,

@@ -2,7 +2,7 @@ package org.jetbrains.letsPlot.core.util
 
 import kotlinx.coroutines.delay
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.canvasFigure.AsyncRenderer
+import org.jetbrains.letsPlot.core.canvas.AsyncRenderer
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds

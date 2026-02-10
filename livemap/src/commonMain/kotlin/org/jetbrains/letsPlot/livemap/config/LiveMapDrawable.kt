@@ -14,17 +14,13 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapCanvasFigure(
+class LiveMapDrawable(
     private val liveMap: LiveMap
-) : CanvasFigure, CanvasFigure2 {
+) : Drawable, Drawable2 {
     private val myBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val myLiveMapPresenter = LiveMapPresenter()
     private val repaintRequestListeners = mutableListOf<() -> Unit>()

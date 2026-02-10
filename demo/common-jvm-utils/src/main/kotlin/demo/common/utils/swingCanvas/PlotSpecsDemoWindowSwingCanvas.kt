@@ -5,10 +5,10 @@
 
 package demo.common.utils.swingCanvas
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.canvas.CanvasComponent
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotDrawable
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.GridLayout
@@ -66,15 +66,15 @@ class PlotSpecsDemoWindowSwingCanvas(
         }
 
         val components = specs.map { rawSpec ->
-            val plot = PlotCanvasFigure()
+            val plot = PlotDrawable()
             val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
             plot.update(processedSpec, sizingPolicy, computationMessagesHandler = ::printAllMessages)
 
-            val canvasPane = CanvasPane()
-            canvasPane.figure = plot
-            canvasPane.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
-            canvasPane.preferredSize = plotSize ?: canvasPane.preferredSize
-            canvasPane
+            val canvasComponent = CanvasComponent()
+            canvasComponent.content = plot
+            canvasComponent.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
+            canvasComponent.preferredSize = plotSize ?: canvasComponent.preferredSize
+            canvasComponent
         }
 
         components.forEach { rootPanel.add(it) }

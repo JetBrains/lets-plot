@@ -11,13 +11,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.canvas.Drawable
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
-import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.interact.CompositeToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
@@ -228,7 +228,7 @@ internal class FigureToHtml(
             plotContainer.mouseEventPeer.addEventSource(plotMouseEventMapper)
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
-                val bounds = (liveMapFigure as CanvasFigure).bounds().get()
+                val bounds = (liveMapFigure as Drawable).bounds().get()
                 val liveMapDiv = document.createElement("div") as HTMLElement
 
                 liveMapDiv.style.run {

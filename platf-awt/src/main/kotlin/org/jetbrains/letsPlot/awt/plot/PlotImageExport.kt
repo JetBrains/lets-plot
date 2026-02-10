@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.waitForReady
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotDrawable
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -92,7 +92,7 @@ object PlotImageExport {
     ): ImageData {
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
-        val plotFigure = PlotCanvasFigure()
+        val plotFigure = PlotDrawable()
         plotFigure.update(
             processedSpec = MonolithicCommon.processRawSpecs(plotSpec = plotSpec, frontendOnly = false),
             sizingPolicy = sizingPolicy,
