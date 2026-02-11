@@ -10,9 +10,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable2
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.Drawable2
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
@@ -20,9 +20,9 @@ import org.jetbrains.letsPlot.raster.builder.ViewModel
 import kotlin.math.ceil
 
 @Deprecated("Migrate to PlotCanvasFigure and CanvasPane", replaceWith = ReplaceWith("PlotDrawable"))
-typealias PlotCanvasFigure2 = PlotDrawable
+typealias PlotCanvasFigure2 = PlotCanvasDrawable
 
-class PlotDrawable : Drawable2 {
+class PlotCanvasDrawable : CanvasDrawable2 {
     fun setRenderingHint(key: Any, value: Any) {
         plotSvgFigure.setRenderingHint(key, value)
     }
@@ -35,7 +35,7 @@ class PlotDrawable : Drawable2 {
 
         return Vector(ceil(w).toInt(), ceil(h).toInt())
     }
-    private val plotSvgFigure: SvgDrawable = SvgDrawable().also {
+    private val plotSvgFigure: SvgCanvasDrawable = SvgCanvasDrawable().also {
         it.mouseEventPeer.addEventSource(mouseEventPeer)
     }
 

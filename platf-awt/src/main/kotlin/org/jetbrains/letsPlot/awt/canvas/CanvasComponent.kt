@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.awt.canvas
 import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.registration.*
-import org.jetbrains.letsPlot.core.canvas.Drawable2
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable2
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -19,7 +19,7 @@ import javax.swing.Timer
 typealias CanvasPane2 = CanvasComponent
 
 class CanvasComponent(
-    content: Drawable2? = null,
+    content: CanvasDrawable2? = null,
     pixelDensity: Double = 1.0
 ) : DisposingHub, Disposable, JComponent() {
     private var isFigureAttached = false
@@ -35,7 +35,7 @@ class CanvasComponent(
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
     private val systemTime: SystemTime = SystemTime()
 
-    var content: Drawable2? = null
+    var content: CanvasDrawable2? = null
         set(content) {
             if (field == content) {
                 return

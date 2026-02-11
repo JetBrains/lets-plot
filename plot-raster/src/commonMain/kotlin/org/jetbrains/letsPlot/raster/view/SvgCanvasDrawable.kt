@@ -30,9 +30,9 @@ import kotlin.math.ceil
     "Migrate to SvgCanvasFigure and CanvasPane",
     replaceWith = ReplaceWith("SvgCanvasFigure", "org.jetbrains.letsPlot.raster.view")
 )
-typealias SvgCanvasFigure2 = SvgDrawable
+typealias SvgCanvasFigure2 = SvgCanvasDrawable
 
-class SvgDrawable(svg: SvgSvgElement = SvgSvgElement()) : Drawable2 {
+class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable2 {
     override val size: Vector
         get() {
             val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0

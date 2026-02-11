@@ -8,7 +8,7 @@ import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.view.PlotDrawable
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
@@ -121,9 +121,9 @@ class CanvasComponentTest {
     private fun createPlotFigure(
         rawSpec: Map<String, Any>,
         sizingPolicy: SizingPolicy = SizingPolicy.fitContainerSize(false)
-    ): PlotDrawable {
+    ): PlotCanvasDrawable {
         val spec = MonolithicCommon.processRawSpecs(plotSpec = rawSpec.toMutableMap(), frontendOnly = false)
-        return PlotDrawable().apply {
+        return PlotCanvasDrawable().apply {
             update(
                 processedSpec = spec,
                 sizingPolicy = sizingPolicy,

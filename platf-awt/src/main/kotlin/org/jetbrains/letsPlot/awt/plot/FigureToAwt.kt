@@ -140,7 +140,7 @@ internal class FigureToAwt(
 
         return if (svgRoot.isLiveMap) {
             AwtLiveMapPanel(
-                svgRoot.liveMapDrawables,
+                svgRoot.liveMapCanvasDrawables,
                 plotComponent,
                 executor,
                 svgRoot.liveMapCursorServiceConfig as CursorServiceConfig

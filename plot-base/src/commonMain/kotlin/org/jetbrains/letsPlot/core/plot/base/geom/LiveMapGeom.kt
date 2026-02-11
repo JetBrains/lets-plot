@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
-import org.jetbrains.letsPlot.core.canvas.Drawable2
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable2
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.GenericLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
@@ -30,8 +30,8 @@ class LiveMapGeom : Geom {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val livemapCanvasFigure = liveMapData?.drawable as? Drawable2 ?: error("LiveMap data missing")
-        root.add(SvgCanvasFigureElement(livemapCanvasFigure))
+        val livemapCanvasFigure = liveMapData?.canvasDrawable as? CanvasDrawable2 ?: error("LiveMap data missing")
+        root.add(SvgCanvasDrawableElement(livemapCanvasFigure))
     }
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
@@ -48,20 +48,20 @@ class LiveMapGeom : Geom {
         const val HANDLES_GROUPS = false
     }
 
-    class SvgCanvasFigureElement(content: Drawable2) : SvgStylableElement() {
+    class SvgCanvasDrawableElement(content: CanvasDrawable2) : SvgStylableElement() {
         companion object {
-            val FIGURE: SvgAttributeSpec<Drawable2> =
-                SvgAttributeSpec.createSpec("figure")
+            val CONTENT: SvgAttributeSpec<CanvasDrawable2> =
+                SvgAttributeSpec.createSpec("content")
         }
 
         init {
-            figure().set(content)
+            content().set(content)
         }
 
         override val elementName: String = "canvasfigure"
 
-        fun figure(): Property<Drawable2?> {
-            return getAttribute(FIGURE)
+        fun content(): Property<CanvasDrawable2?> {
+            return getAttribute(CONTENT)
         }
     }
 

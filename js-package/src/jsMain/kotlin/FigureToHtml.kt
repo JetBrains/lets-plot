@@ -226,8 +226,8 @@ internal class FigureToHtml(
 
             plotContainer.mouseEventPeer.addEventSource(plotMouseEventMapper)
 
-            plotContainer.liveMapDrawables.forEach { liveMapFigure ->
-                val bounds = liveMapFigure.bounds().get()
+            plotContainer.liveMapCanvasDrawables.forEach { liveMapCanvasDrawable ->
+                val bounds = liveMapCanvasDrawable.bounds().get()
                 val liveMapDiv = document.createElement("div") as HTMLElement
 
                 liveMapDiv.style.run {
@@ -252,7 +252,7 @@ internal class FigureToHtml(
                     mouseEventSource = canvasMouseEventMapper
                 )
 
-                val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)
+                val liveMapReg = liveMapCanvasDrawable.mapToCanvas(canvasControl)
                 parentElement.appendChild(liveMapDiv)
 
                 liveMapDiv.onDisconnect(liveMapReg::dispose)

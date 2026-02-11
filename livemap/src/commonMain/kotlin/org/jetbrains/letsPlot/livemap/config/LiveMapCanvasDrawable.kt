@@ -18,9 +18,9 @@ import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
 
-class LiveMapDrawable(
+class LiveMapCanvasDrawable(
     private val liveMap: LiveMap
-) : Drawable, Drawable2 {
+) : CanvasDrawable, CanvasDrawable2 {
     private val myBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val myLiveMapPresenter = LiveMapPresenter()
     private val repaintRequestListeners = mutableListOf<() -> Unit>()

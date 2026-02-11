@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
-import org.jetbrains.letsPlot.core.canvas.Drawable
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -76,7 +76,7 @@ class PlotSvgComponent constructor(
             field = value
         }
 
-    internal var liveMapDrawables: List<Drawable> = emptyList()
+    internal var liveMapCanvasDrawables: List<CanvasDrawable> = emptyList()
         private set
 
     val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
@@ -131,7 +131,7 @@ class PlotSvgComponent constructor(
         reg(object : Registration() {
             override fun doRemove() {
                 interactor?.dispose()
-                liveMapDrawables = emptyList()
+                liveMapCanvasDrawables = emptyList()
             }
         })
     }
@@ -209,8 +209,8 @@ class PlotSvgComponent constructor(
 
             add(tile)
 
-            tile.liveMapDrawable?.run {
-                liveMapDrawables = liveMapDrawables + listOf(this)
+            tile.liveMapCanvasDrawable?.run {
+                liveMapCanvasDrawables = liveMapCanvasDrawables + listOf(this)
             }
 
             val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)

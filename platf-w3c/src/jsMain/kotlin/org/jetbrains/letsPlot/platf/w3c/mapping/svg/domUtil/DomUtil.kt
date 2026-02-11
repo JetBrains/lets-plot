@@ -248,7 +248,7 @@ object DomUtil {
             return el
         }
 
-        if (source::class.simpleName == "SvgCanvasFigureElement") {
+        if (source::class.simpleName == "SvgCanvasDrawableElement") {
             return createSVGElement("canvas")
         }
 

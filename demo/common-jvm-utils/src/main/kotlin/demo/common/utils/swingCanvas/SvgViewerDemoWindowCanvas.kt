@@ -7,7 +7,7 @@ package demo.common.utils.swingCanvas
 
 import org.jetbrains.letsPlot.awt.canvas.CanvasComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.view.SvgDrawable
+import org.jetbrains.letsPlot.raster.view.SvgCanvasDrawable
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
@@ -42,8 +42,8 @@ class SvgViewerDemoWindowCanvas(
     fun open() {
         SwingUtilities.invokeLater {
             for (svgRoot in svgRoots) {
-                val svgDrawable = SvgDrawable(svgRoot)
-                val canvasComponent = CanvasComponent(svgDrawable)
+                val svgCanvasDrawable = SvgCanvasDrawable(svgRoot)
+                val canvasComponent = CanvasComponent(svgCanvasDrawable)
                 rootPanel.add(canvasComponent)
             }
 

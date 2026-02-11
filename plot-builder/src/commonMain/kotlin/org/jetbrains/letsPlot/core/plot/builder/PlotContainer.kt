@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
-import org.jetbrains.letsPlot.core.canvas.Drawable
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.PlotToolEventDispatcher
@@ -21,8 +21,8 @@ class PlotContainer constructor(
     val svg: SvgSvgElement
         get() = svgRoot.svg
 
-    val liveMapDrawables: List<Drawable>
-        get() = svgRoot.liveMapDrawables
+    val liveMapCanvasDrawables: List<CanvasDrawable>
+        get() = svgRoot.liveMapCanvasDrawables
 
     val isLiveMap: Boolean
         get() = svgRoot.isLiveMap
