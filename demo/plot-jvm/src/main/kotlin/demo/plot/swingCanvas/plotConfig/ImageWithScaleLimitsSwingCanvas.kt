@@ -5,12 +5,12 @@
 
 package demo.plot.swingCanvas.plotConfig
 
-import demo.common.utils.swingCanvas.PlotSpecsDemoWindowSwingCanvas
+import demo.common.utils.swingCanvas.PlotSpecsDemoWindowCanvas
 import demo.plot.common.model.plotConfig.ImageWithScaleLimits
 
 fun main() {
     with(ImageWithScaleLimits()) {
-        PlotSpecsDemoWindowSwingCanvas(
+        PlotSpecsDemoWindowCanvas(
             "image_geom",
             plotSpecList()
         ).open()

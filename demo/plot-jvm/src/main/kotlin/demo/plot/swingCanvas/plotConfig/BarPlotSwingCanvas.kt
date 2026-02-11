@@ -5,12 +5,13 @@
 
 package demo.plot.swingCanvas.plotConfig
 
-import demo.common.utils.swingCanvas.PlotSpecsDemoWindowSwingCanvas
+import demo.common.utils.swingCanvas.PlotSpecsDemoWindowCanvas
+//import demo.common.utils.swingCanvas.PlotSpecsDemoWindowSwingCanvas
 import demo.plot.common.model.plotConfig.BarPlot
 
 fun main() {
     with(BarPlot()) {
-        PlotSpecsDemoWindowSwingCanvas(
+        PlotSpecsDemoWindowCanvas(
             "Bar plot",
             plotSpecList()
         ).open()

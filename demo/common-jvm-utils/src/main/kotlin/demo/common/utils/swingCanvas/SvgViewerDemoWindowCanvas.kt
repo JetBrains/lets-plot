@@ -13,7 +13,7 @@ import java.awt.GridLayout
 import javax.swing.*
 import kotlin.math.min
 
-class SvgViewerDemoWindowSwingCanvas(
+class SvgViewerDemoWindowCanvas(
     title: String,
     private val svgRoots: List<SvgSvgElement>,
     maxCol: Int = 2,
