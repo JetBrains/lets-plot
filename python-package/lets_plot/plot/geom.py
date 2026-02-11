@@ -9015,6 +9015,11 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None, in
                  manual_key=None,
                  sampling=None,
                  tooltips=None,
+                 orientation=None,
+                 label_format=None, na_text=None,
+                 nudge_x=None, nudge_y=None, nudge_unit=None,
+                 size_unit=None,
+                 bracket_shorten=None, tip_length_unit=None,
                  color_by=None, fill_by=None,
                  **other_args):
     return _geom('bracket',
@@ -9026,6 +9031,15 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None, in
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
+                 label_format=label_format,
+                 na_text=na_text,
+                 nudge_x=nudge_x,
+                 nudge_y=nudge_y,
+                 nudge_unit=nudge_unit,
+                 size_unit=size_unit,
+                 bracket_shorten=bracket_shorten,
+                 tip_length_unit=tip_length_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
