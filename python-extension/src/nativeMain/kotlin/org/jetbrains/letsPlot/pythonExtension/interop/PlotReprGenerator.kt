@@ -29,7 +29,7 @@ import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.raster.view.RenderingHints.KEY_OFFSCREEN_BUFFERING
 import org.jetbrains.letsPlot.raster.view.RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
 import kotlin.time.Duration.Companion.seconds
@@ -215,11 +215,11 @@ object PlotReprGenerator {
         @Suppress("UNCHECKED_CAST")
         val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-        val plotCanvasFigure = PlotCanvasFigure()
+        val plotCanvasDrawable = PlotCanvasDrawable()
 
-        plotCanvasFigure.setRenderingHint(KEY_OFFSCREEN_BUFFERING, VALUE_OFFSCREEN_BUFFERING_OFF)
+        plotCanvasDrawable.setRenderingHint(KEY_OFFSCREEN_BUFFERING, VALUE_OFFSCREEN_BUFFERING_OFF)
 
-        plotCanvasFigure.update(
+        plotCanvasDrawable.update(
             processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
             sizingPolicy = exportParameters.sizingPolicy,
             computationMessagesHandler = { }
@@ -231,21 +231,21 @@ object PlotReprGenerator {
             antialiasing = antialiasing
         )
 
-        var canvasReg: Registration? = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+        var canvasReg: Registration? = plotCanvasDrawable.mapToCanvas(magickCanvasPeer)
 
         runBlocking() {
-            if (!plotCanvasFigure.waitForReady(timeoutSeconds?.seconds ?: 15.seconds)) {
+            if (!plotCanvasDrawable.waitForReady(timeoutSeconds?.seconds ?: 15.seconds)) {
                 println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
             }
         }
 
         try {
             val canvas = magickCanvasPeer.createCanvas(
-                plotCanvasFigure.size,
+                plotCanvasDrawable.size,
                 contentScale = exportParameters.scaleFactor
             )
             val ctx = canvas.context2d
-            plotCanvasFigure.paint(ctx)
+            plotCanvasDrawable.paint(ctx)
 
             val snapshot = canvas.takeSnapshot("exportBitmap()")
             val bitmap = snapshot.bitmap
@@ -354,26 +354,26 @@ object PlotReprGenerator {
             @Suppress("UNCHECKED_CAST")
             val rawPlotSpec = plotSpec as MutableMap<String, Any>
 
-            val plotCanvasFigure = PlotCanvasFigure()
-            plotCanvasFigure.update(
+            val plotCanvasDrawable = PlotCanvasDrawable()
+            plotCanvasDrawable.update(
                 processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
                 sizingPolicy = exportParameters.sizingPolicy,
                 computationMessagesHandler = { }
             )
 
-            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure built, size=${plotCanvasFigure.size}")
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure built, size=${plotCanvasDrawable.size}")
 
             val magickCanvasPeer = MagickCanvasPeer(
                 pixelDensity = exportParameters.scaleFactor,
                 fontManager = defaultFontManager,
             )
 
-            canvasReg = plotCanvasFigure.mapToCanvas(magickCanvasPeer)
+            canvasReg = plotCanvasDrawable.mapToCanvas(magickCanvasPeer)
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
 
             runBlocking() {
-                if (!plotCanvasFigure.waitForReady(timeoutSeconds?.seconds ?: 15.seconds)) {
+                if (!plotCanvasDrawable.waitForReady(timeoutSeconds?.seconds ?: 15.seconds)) {
                     println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
                 }
             }
@@ -381,12 +381,12 @@ object PlotReprGenerator {
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure loaded")
 
         try {
-            val canvas = magickCanvasPeer.createCanvas(plotCanvasFigure.size)
+            val canvas = magickCanvasPeer.createCanvas(plotCanvasDrawable.size)
             val ctx = canvas.context2d
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}")
 
-            plotCanvasFigure.paint(ctx)
+            plotCanvasDrawable.paint(ctx)
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot painted")
 

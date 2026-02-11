@@ -88,7 +88,7 @@ internal object SvgUtils {
             is SvgDefsElement -> Group()
 //            is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> Image()
-            is LiveMapGeom.SvgCanvasFigureElement -> CanvasNode()
+            is LiveMapGeom.SvgCanvasDrawableElement -> CanvasNode()
             else -> Group().also { println("SvgUtils.newElement: Unsupported source type: ${source::class.simpleName}") }
         }.also {
             it.peer = peer

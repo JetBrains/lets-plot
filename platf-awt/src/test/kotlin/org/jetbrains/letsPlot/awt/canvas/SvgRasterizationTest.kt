@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.awt.canvas
 
 import demo.svgMapping.model.ReferenceSvgModel
 import org.jetbrains.letsPlot.awt.plot.VisualPlotTestBase
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import org.jetbrains.letsPlot.raster.view.SvgCanvasDrawable
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -16,7 +16,7 @@ class SvgRasterizationTest : VisualPlotTestBase() {
     @Test
     fun referenceTest() {
         val svg = ReferenceSvgModel.createModel()
-        val fig = SvgCanvasFigure(svg)
+        val fig = SvgCanvasDrawable(svg)
         val canvasPeer = AwtCanvasPeer(FontManager.DEFAULT, pixelDensity = 1.0)
         fig.mapToCanvas(canvasPeer)
 

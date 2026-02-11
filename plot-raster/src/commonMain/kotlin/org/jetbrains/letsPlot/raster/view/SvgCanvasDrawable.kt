@@ -11,12 +11,7 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.applyPath
-import org.jetbrains.letsPlot.core.canvas.transform
-import org.jetbrains.letsPlot.core.canvasFigure.AsyncRenderer
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure2
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContextListener
@@ -35,9 +30,9 @@ import kotlin.math.ceil
     "Migrate to SvgCanvasFigure and CanvasPane",
     replaceWith = ReplaceWith("SvgCanvasFigure", "org.jetbrains.letsPlot.raster.view")
 )
-typealias SvgCanvasFigure2 = SvgCanvasFigure
+typealias SvgCanvasFigure2 = SvgCanvasDrawable
 
-class SvgCanvasFigure(svg: SvgSvgElement = SvgSvgElement()) : CanvasFigure2 {
+class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     override val size: Vector
         get() {
             val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0

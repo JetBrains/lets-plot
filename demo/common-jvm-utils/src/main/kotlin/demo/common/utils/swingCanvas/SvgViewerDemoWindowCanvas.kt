@@ -5,15 +5,15 @@
 
 package demo.common.utils.swingCanvas
 
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
+import org.jetbrains.letsPlot.awt.canvas.CanvasComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import org.jetbrains.letsPlot.raster.view.SvgCanvasDrawable
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
 import kotlin.math.min
 
-class SvgViewerDemoWindowSwingCanvas(
+class SvgViewerDemoWindowCanvas(
     title: String,
     private val svgRoots: List<SvgSvgElement>,
     maxCol: Int = 2,
@@ -42,9 +42,9 @@ class SvgViewerDemoWindowSwingCanvas(
     fun open() {
         SwingUtilities.invokeLater {
             for (svgRoot in svgRoots) {
-                val svgCanvasFigure = SvgCanvasFigure(svgRoot)
-                val canvasPane = CanvasPane(svgCanvasFigure)
-                rootPanel.add(canvasPane)
+                val svgCanvasDrawable = SvgCanvasDrawable(svgRoot)
+                val canvasComponent = CanvasComponent(svgCanvasDrawable)
+                rootPanel.add(canvasComponent)
             }
 
             pack()

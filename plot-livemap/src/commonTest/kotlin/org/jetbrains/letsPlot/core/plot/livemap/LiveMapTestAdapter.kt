@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
+import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasDrawable
 
 class LiveMapTestAdapter(
     plotSpec: String
@@ -41,7 +41,7 @@ class LiveMapTestAdapter(
         val plotContainer = PlotContainer(svgRoot)
         mouseEventPeer = plotContainer.mouseEventPeer
 
-        val fig = plotContainer.liveMapFigures.single() as LiveMapCanvasFigure
+        val fig = plotContainer.liveMapCanvasDrawables.single() as LiveMapCanvasDrawable
         var timerHandler: AnimationProvider.AnimationEventHandler? = null
 
         val canvasControl = object : CanvasControlDelegate(600, 400) {

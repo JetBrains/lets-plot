@@ -95,7 +95,7 @@ internal object Utils {
             return el
         }
 
-        if (source::class.simpleName == "SvgCanvasFigureElement") {
+        if (source::class.simpleName == "SvgCanvasDrawableElement") {
             return SVGOMForeignObjectElement(null, myDoc)
         }
 

@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.waitForReady
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
@@ -93,8 +93,8 @@ object PlotImageExport {
     ): ImageData {
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
 
-        val plotFigure = PlotCanvasFigure()
-        plotFigure.update(
+        val plotCanvasDrawable = PlotCanvasDrawable()
+        plotCanvasDrawable.update(
             processedSpec = MonolithicCommon.processRawSpecs(plotSpec = plotSpec, frontendOnly = false),
             sizingPolicy = sizingPolicy,
             computationMessagesHandler = {}
@@ -102,17 +102,17 @@ object PlotImageExport {
 
         val awtCanvasPeer = AwtCanvasPeer(fontManager = fontManager, scaleFactor)
 
-        val canvasReg = plotFigure.mapToCanvas(awtCanvasPeer)
+        val canvasReg = plotCanvasDrawable.mapToCanvas(awtCanvasPeer)
 
         try {
-            if (!plotFigure.waitForReady(timeoutSeconds.seconds)) {
+            if (!plotCanvasDrawable.waitForReady(timeoutSeconds.seconds)) {
                 println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
             }
 
-            val canvas = awtCanvasPeer.createCanvas(plotFigure.size)
+            val canvas = awtCanvasPeer.createCanvas(plotCanvasDrawable.size)
             val ctx = canvas.context2d
 
-            plotFigure.paint(ctx)
+            plotCanvasDrawable.paint(ctx)
 
             val image = if (format is JPEG) {
                 // JPEGs require no transparency (Alpha), so we composite over White
@@ -134,8 +134,8 @@ object PlotImageExport {
             return ImageData(
                 bytes = outputStream.toByteArray(),
                 plotSize = DoubleVector(
-                    x = plotFigure.size.x.toDouble(),
-                    y = plotFigure.size.y.toDouble()
+                    x = plotCanvasDrawable.size.x.toDouble(),
+                    y = plotCanvasDrawable.size.y.toDouble()
                 )
             )
         } finally {

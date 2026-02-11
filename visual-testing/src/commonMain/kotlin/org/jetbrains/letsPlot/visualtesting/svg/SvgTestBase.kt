@@ -2,7 +2,7 @@ package org.jetbrains.letsPlot.visualtesting.svg
 
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import org.jetbrains.letsPlot.raster.view.SvgCanvasDrawable
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
 abstract class SvgTestBase {
@@ -10,7 +10,7 @@ abstract class SvgTestBase {
     abstract val canvasPeer: CanvasPeer
 
     fun assertSvg(expectedFileName: String, svg: SvgSvgElement) {
-        val fig = SvgCanvasFigure(svg)
+        val fig = SvgCanvasDrawable(svg)
 
         fig.mapToCanvas(canvasPeer)
 
