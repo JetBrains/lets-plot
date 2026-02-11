@@ -6,7 +6,7 @@
 package demo.common.utils.swingCanvas
 
 import demo.common.utils.swing.PlotSpecsDemoWindowBase
-import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotPanelCanvas
+import org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Color
 import java.awt.Dimension
@@ -29,7 +29,7 @@ class PlotSpecsDemoWindowCanvas(
     override fun createPlotComponent(rawSpec: MutableMap<String, Any>, plotSize: Dimension?): JComponent {
         // Pre-process figure specifications
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
-        val plotPanel = DefaultPlotPanelCanvas(
+        val plotPanel = SwingPlotPanel(
             processedSpec = processedSpec,
             preferredSizeFromPlot = plotSize == null,
             repaintDelay = 300,

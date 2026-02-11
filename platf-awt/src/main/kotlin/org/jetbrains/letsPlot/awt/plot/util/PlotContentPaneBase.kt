@@ -1,16 +1,18 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.awt.plot.component
+package org.jetbrains.letsPlot.awt.plot.util
 
+import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
+import org.jetbrains.letsPlot.awt.plot.component.CenteredPlotPanel
+import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.util.PlotSizeHelper
 import java.awt.Color
-import java.awt.Component
 import javax.swing.BorderFactory
 import javax.swing.BoxLayout
 import javax.swing.JLabel
@@ -21,7 +23,7 @@ import javax.swing.JPanel
  *
  * In IDEA plugin: inherit and implement 'com.intellij.openapi.Disposable'.
  */
-abstract class DefaultPlotContentPane(
+abstract class PlotContentPaneBase(
     processedSpec: MutableMap<String, Any>,
     private val preferredSizeFromPlot: Boolean,
     private val repaintDelay: Int,  // ms
@@ -89,7 +91,7 @@ abstract class DefaultPlotContentPane(
         }
 
 //        plotPanel.alignmentX = Component.CENTER_ALIGNMENT
-        messagesArea.alignmentX = Component.CENTER_ALIGNMENT
+        messagesArea.alignmentX = CENTER_ALIGNMENT
 
         return Pair(plotPanel, messagesArea)
     }

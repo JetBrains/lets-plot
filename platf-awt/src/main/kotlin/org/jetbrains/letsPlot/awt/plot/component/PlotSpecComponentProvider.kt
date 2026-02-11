@@ -78,10 +78,10 @@ abstract class PlotSpecComponentProvider(
      * Provids an "error message" component
      * in the case of a failure while building a plot.
      *
-     * Override this method if your application requires better "error message" component.
+     * Override this method if your application requires a better "error message" component.
      */
     protected open fun createErrorMessageComponent(message: String): JComponent {
-        return DefaultErrorMessageComponent(message)
+        return SimpleErrorMessageComponent(message)
     }
 
     companion object {

@@ -1,13 +1,16 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.awt.plot.component
+package org.jetbrains.letsPlot.awt.plot.util
 
 import java.awt.Color
 import java.awt.Dimension
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.JComponent
+import javax.swing.JFrame
+import javax.swing.SwingUtilities
 
 abstract class PlotViewerWindowBase(
     title: String,
@@ -15,7 +18,7 @@ abstract class PlotViewerWindowBase(
 ) : JFrame(title) {
 
     init {
-        defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        defaultCloseOperation = EXIT_ON_CLOSE
     }
 
     fun open() {

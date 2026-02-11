@@ -9,7 +9,7 @@ import java.awt.Color
 import javax.swing.JComponent
 import javax.swing.JTextArea
 
-internal class DefaultErrorMessageComponent(
+internal class SimpleErrorMessageComponent(
     message: String
 ) : JTextArea() {
     init {
@@ -19,7 +19,7 @@ internal class DefaultErrorMessageComponent(
 
     companion object {
         val factory: (String) -> JComponent = { message ->
-            DefaultErrorMessageComponent(message)
+            SimpleErrorMessageComponent(message)
         }
     }
 }
