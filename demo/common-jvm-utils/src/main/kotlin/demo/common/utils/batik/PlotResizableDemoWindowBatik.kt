@@ -5,7 +5,7 @@
 
 package demo.common.utils.batik
 
-import demo.common.utils.swing.PlotResizableDemoWindowBase
+import demo.common.utils.swingbase.PlotResizableDemoWindowBase
 import org.jetbrains.letsPlot.awt.plot.component.PlotComponentProvider
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.batik.plot.component.DefaultSwingContextBatik

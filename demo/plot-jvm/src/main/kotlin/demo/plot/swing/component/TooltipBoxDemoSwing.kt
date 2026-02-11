@@ -3,9 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.plot.swingCanvas.component
+package demo.plot.swing.component
 
-import demo.common.utils.swingCanvas.SvgViewerDemoWindowCanvas
+import demo.common.utils.swing.SvgViewerDemoWindowSwing
 import demo.plot.shared.model.component.TooltipBoxDemo
 import java.awt.EventQueue.invokeLater
 
@@ -13,7 +13,8 @@ fun main() {
     with(TooltipBoxDemo()) {
         //val models = listOf(createModels()[3])
         val models = createModels()
-        SvgViewerDemoWindowCanvas(
+//        SvgViewerDemoWindowCanvas(
+        SvgViewerDemoWindowSwing(
             "Tooltip box",
             createSvgRoots(models.map { it.first })
         ).open()

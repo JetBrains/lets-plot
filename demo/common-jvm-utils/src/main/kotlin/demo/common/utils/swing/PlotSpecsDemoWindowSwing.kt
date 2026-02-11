@@ -3,16 +3,16 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.common.utils.swingCanvas
+package demo.common.utils.swing
 
-import demo.common.utils.swing.PlotSpecsDemoWindowBase
+import demo.common.utils.swingbase.PlotSpecsDemoWindowBase
 import org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class PlotSpecsDemoWindowCanvas(
+class PlotSpecsDemoWindowSwing(
     title: String,
     specList: List<MutableMap<String, Any>>,
     maxCol: Int = 3,

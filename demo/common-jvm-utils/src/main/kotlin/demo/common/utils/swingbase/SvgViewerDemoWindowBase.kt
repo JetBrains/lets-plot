@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.common.utils.swing
+package demo.common.utils.swingbase
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.GridLayout

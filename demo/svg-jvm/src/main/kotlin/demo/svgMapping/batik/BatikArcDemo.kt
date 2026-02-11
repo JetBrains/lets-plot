@@ -3,18 +3,18 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.svMapping.swingCanvas
+package demo.svgMapping.batik
 
-import demo.common.utils.swingCanvas.SvgViewerDemoWindowCanvas
-import demo.svgMapping.model.DemoModelA
+import demo.common.utils.batik.SvgViewerDemoWindowBatik
+import demo.svgMapping.model.ArcSvgModel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 fun main() {
-    val svgGroup = DemoModelA.createModel()
+    val svgGroup = ArcSvgModel.createModel()
     val svgRoot = SvgSvgElement(500.0, 500.0)
     svgRoot.children().add(svgGroup)
-    SvgViewerDemoWindowCanvas(
-        "Svg Elements (A)",
+    SvgViewerDemoWindowBatik(
+        "ArcSvgModel",
         listOf(svgRoot)
     ).open()
 }
