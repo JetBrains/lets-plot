@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.base.StatKind.*
 import org.jetbrains.letsPlot.core.plot.base.stat.*
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat.Method
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin2d
@@ -125,7 +126,7 @@ object StatProto {
             }
 
             SMOOTH -> configureSmoothStat(options)
-            SMOOTH_SUMMARY -> configureSmoothStat2(options)
+            SMOOTH_SUMMARY -> configureSmoothStatInfo(options)
 
             BOXPLOT -> {
                 Stats.boxplot(
@@ -191,23 +192,9 @@ object StatProto {
         // seed  - random seed for LOESS sampling
         // max_n (1000)  - maximum points in DF for LOESS
 
-        val smoothingMethod = options.getString(Smooth.METHOD)?.let {
-            when (it.lowercase()) {
-                "lm" -> SmoothStat.Method.LM
-                "loess", "lowess" -> SmoothStat.Method.LOESS
-                "glm" -> SmoothStat.Method.GLM
-                "gam" -> SmoothStat.Method.GAM
-                "rlm" -> SmoothStat.Method.RLM
-                else -> throw IllegalArgumentException(
-                    "Unsupported smoother method: '$it'\n" +
-                            "Use one of: lm, loess, lowess, glm, gam, rlm."
-                )
-            }
-        }
-
         return SmoothStat(
             smootherPointCount = options.getIntegerDef(Smooth.POINT_COUNT, SmoothStat.DEF_EVAL_POINT_COUNT),
-            smoothingMethod = smoothingMethod ?: SmoothStat.DEF_SMOOTHING_METHOD,
+            smoothingMethod = smoothingMethod(options.getString(Smooth.METHOD)) ?: SmoothStat.DEF_SMOOTHING_METHOD,
             confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStat.DEF_CONFIDENCE_LEVEL),
             displayConfidenceInterval = options.getBoolean(
                 Smooth.DISPLAY_CONFIDENCE_INTERVAL,
@@ -220,7 +207,7 @@ object StatProto {
         )
     }
 
-    private fun configureSmoothStat2(options: OptionsAccessor): SmoothStatInfo {
+    private fun configureSmoothStatInfo(options: OptionsAccessor): SmoothStatInfo {
         // Params:
         //  method - smoothing method: lm, glm, gam, loess, rlm
         //  n (80) - number of points to evaluate smoother at
@@ -230,28 +217,30 @@ object StatProto {
         // seed  - random seed for LOESS sampling
         // max_n (1000)  - maximum points in DF for LOESS
 
-        val smoothingMethod = options.getString(Smooth.METHOD)?.let {
+        return SmoothStatInfo(
+            smoothingMethod = smoothingMethod(options.getString(Smooth.METHOD)) ?: SmoothStat.DEF_SMOOTHING_METHOD,
+            confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStat.DEF_CONFIDENCE_LEVEL),
+            span = options.getDoubleDef(Smooth.SPAN, SmoothStat.DEF_SPAN),
+            polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStat.DEF_DEG),
+            loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_LOESS_CRITICAL_SIZE),
+            samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStat.DEF_SAMPLING_SEED)
+        )
+    }
+
+    private fun smoothingMethod(method: String?): Method? {
+        return method?.let {
             when (it.lowercase()) {
-                "lm" -> SmoothStatInfo.Method.LM
-                "loess", "lowess" -> SmoothStatInfo.Method.LOESS
-                "glm" -> SmoothStatInfo.Method.GLM
-                "gam" -> SmoothStatInfo.Method.GAM
-                "rlm" -> SmoothStatInfo.Method.RLM
+                "lm" -> Method.LM
+                "loess", "lowess" -> Method.LOESS
+                "glm" -> Method.GLM
+                "gam" -> Method.GAM
+                "rlm" -> Method.RLM
                 else -> throw IllegalArgumentException(
                     "Unsupported smoother method: '$it'\n" +
                             "Use one of: lm, loess, lowess, glm, gam, rlm."
                 )
             }
         }
-
-        return SmoothStatInfo(
-            smoothingMethod = smoothingMethod ?: SmoothStatInfo.DEF_SMOOTHING_METHOD,
-            confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStatInfo.DEF_CONFIDENCE_LEVEL),
-            span = options.getDoubleDef(Smooth.SPAN, SmoothStatInfo.DEF_SPAN),
-            polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStatInfo.DEF_DEG),
-            loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStatInfo.DEF_LOESS_CRITICAL_SIZE),
-            samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStatInfo.DEF_SAMPLING_SEED)
-        )
     }
 
     private fun configureDensityRidgesStat(options: OptionsAccessor): DensityRidgesStat {

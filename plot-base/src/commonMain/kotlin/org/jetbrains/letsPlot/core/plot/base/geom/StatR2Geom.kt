@@ -30,13 +30,6 @@ class StatR2Geom : GeomBase() {
         ctx.annotation?.let { StatAnnotation.build(root, aesthetics.dataPoints(), labelX, labelY, coord, ctx) }
     }
 
-    fun toString(label: Any?, geomContext: GeomContext): String {
-        if (label == null) return ""
-
-        val formatter = geomContext.getDefaultFormatter(Aes.LABEL)
-        return formatter(label)
-    }
-
     companion object {
         const val DEF_NA_VALUE = "n/a"
         const val HANDLES_GROUPS = false
