@@ -32,7 +32,7 @@ import kotlin.math.ceil
 )
 typealias SvgCanvasFigure2 = SvgCanvasDrawable
 
-class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable2 {
+class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     override val size: Vector
         get() {
             val contentWidth = svgSvgElement.width().get()?.let { ceil(it).toInt() } ?: 0

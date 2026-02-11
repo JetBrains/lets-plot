@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasDrawable2
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -22,7 +22,7 @@ import kotlin.math.ceil
 @Deprecated("Migrate to PlotCanvasFigure and CanvasPane", replaceWith = ReplaceWith("PlotDrawable"))
 typealias PlotCanvasFigure2 = PlotCanvasDrawable
 
-class PlotCanvasDrawable : CanvasDrawable2 {
+class PlotCanvasDrawable : CanvasDrawable {
     fun setRenderingHint(key: Any, value: Any) {
         plotSvgFigure.setRenderingHint(key, value)
     }

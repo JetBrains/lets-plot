@@ -6,12 +6,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AsyncRenderer
-import org.jetbrains.letsPlot.core.canvas.CanvasDrawable2
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.canvas.Context2d
 
 internal class CanvasNode : Node(), AsyncRenderer {
     val mouseEventPeer: MouseEventPeer = MouseEventPeer()
-    var content: CanvasDrawable2? by variableAttr(null)
+    var content: CanvasDrawable? by variableAttr(null)
     private var onReadyListeners = mutableListOf<() -> Unit>()
 
     private var reg = Registration.EMPTY

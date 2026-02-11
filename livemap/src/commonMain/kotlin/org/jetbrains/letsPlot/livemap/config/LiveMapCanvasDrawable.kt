@@ -14,13 +14,16 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.LiveMap
 import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
 
 class LiveMapCanvasDrawable(
     private val liveMap: LiveMap
-) : CanvasDrawable, CanvasDrawable2 {
+) : CanvasDrawable {
     private val myBounds = ValueProperty(Rectangle(0, 0, 0, 0))
     private val myLiveMapPresenter = LiveMapPresenter()
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
@@ -32,10 +35,12 @@ class LiveMapCanvasDrawable(
         myBounds.set(bounds)
     }
 
+    @Deprecated("Use size property instead")
     override fun bounds(): ReadableProperty<Rectangle> {
         return myBounds
     }
 
+    @Deprecated("Use mapToCanvas(canvasPeer: CanvasPeer) instead")
     override fun mapToCanvas(canvasControl: CanvasControl): Registration {
         myLiveMapPresenter.render(canvasControl, liveMap)
 

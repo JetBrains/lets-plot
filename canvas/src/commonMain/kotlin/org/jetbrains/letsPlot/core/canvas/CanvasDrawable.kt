@@ -11,15 +11,14 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
 
-interface CanvasDrawable {
-    fun bounds(): ReadableProperty<Rectangle>
+interface CanvasDrawable: AsyncRenderer {
+    @Deprecated("Use size property instead")
+    fun bounds(): ReadableProperty<Rectangle> = error("CanvasDrawable.bounds() is deprecated, use size property instead")
 
-    fun mapToCanvas(canvasControl: CanvasControl): Registration
+    @Deprecated("Use mapToCanvas(canvasPeer: CanvasPeer) instead")
+    fun mapToCanvas(canvasControl: CanvasControl): Registration = error("CanvasDrawable.mapToCanvas(canvasControl: CanvasControl) is deprecated, use mapToCanvas(canvasPeer: CanvasPeer) instead")
 
-}
-
-interface CanvasDrawable2 : AsyncRenderer {
-    // V2 API. Default impl. to not break existing implementations
+    // V2 API
     val size: Vector
     val mouseEventPeer: MouseEventPeer
 
