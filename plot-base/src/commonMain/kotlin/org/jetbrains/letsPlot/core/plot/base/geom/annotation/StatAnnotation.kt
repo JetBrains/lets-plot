@@ -25,8 +25,8 @@ object StatAnnotation {
     fun build(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
-        labelX: LabelX,
-        labelY: LabelY,
+        labelX: List<Pair<Double?, LabelX>>,
+        labelY: List<Pair<Double?, LabelY>>,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
@@ -35,7 +35,7 @@ object StatAnnotation {
         val textSizeGetter = AnnotationUtil.textSizeGetter(annotation.textStyle, ctx)
         val labels = ArrayList<AnnotationLabel>()
 
-        for ((i, dp) in dataPoints.withIndex()) {
+        for (dp in dataPoints) {
 
             val text = annotation.getAnnotationText(dp.index(), ctx.plotContext)
             val (textColor, _) = textColorAndLabelAlpha(
@@ -52,36 +52,86 @@ object StatAnnotation {
             labels.add(label)
         }
 
-        val startLocation = getLocation(labels, labelX, labelY, viewPort)
+        val locations = getLocations(labels, labelX, labelY, viewPort, coord)
 
-        var verticalOffset = 0.0
-        labels.forEach { label ->
-            val location = startLocation.add(DoubleVector(0.0, verticalOffset))
-
-            root.add(createAnnotationElement(label, location, annotation.textStyle, ctx))
-
-            verticalOffset += label.textSize.y
+        labels.forEachIndexed { index, label ->
+            root.add(createAnnotationElement(label, locations[index], annotation.textStyle, ctx))
         }
     }
 
-    private fun getLocation(labels: List<AnnotationLabel>, labelX: LabelX, labelY: LabelY, viewPort: DoubleRectangle): DoubleVector {
+    private fun getLocations(
+        labels: List<AnnotationLabel>,
+        labelX: List<Pair<Double?, LabelX>>,
+        labelY: List<Pair<Double?, LabelY>>,
+        viewPort: DoubleRectangle,
+        coord: CoordinateSystem
+    ): List<DoubleVector> {
+        val positionsCount = minOf(labels.size, maxOf(labelX.size, labelY.size))
+
+        val positionedLabels = ArrayList<AnnotationLabel>()
+        val otherLabels = ArrayList<AnnotationLabel>()
+
+        if (positionsCount > 1) {
+            positionedLabels.addAll(labels.subList(0, positionsCount - 1))
+            otherLabels.addAll(labels.subList(positionsCount - 1, labels.size))
+        } else {
+            otherLabels.addAll(labels)
+        }
+
+        val locations = ArrayList<DoubleVector>()
+
+        positionedLabels.forEachIndexed { i, label ->
+            locations.add(getLocation(
+                listOf(label),
+                labelX.getOrNull(i) ?: labelX.lastOrNull() ?: (null to LabelX.LEFT),
+                labelY.getOrNull(i) ?: labelY.lastOrNull() ?: (null to LabelY.TOP),
+                viewPort,
+                coord
+            ))
+        }
+
+        val startLocation = getLocation(
+            otherLabels,
+            labelX.getOrNull(positionsCount - 1) ?: labelX.lastOrNull() ?: (null to LabelX.LEFT),
+            labelY.getOrNull(positionsCount - 1) ?: labelY.lastOrNull() ?: (null to LabelY.TOP),
+            viewPort,
+            coord
+        )
+
+        var verticalOffset = 0.0
+        otherLabels.forEach { label ->
+            locations.add(startLocation.add(DoubleVector(0.0, verticalOffset)))
+            verticalOffset += label.textSize.y
+        }
+
+        return locations
+    }
+
+    private fun getLocation(
+        labels: List<AnnotationLabel>,
+        labelX: Pair<Double?, LabelX>,
+        labelY: Pair<Double?, LabelY>,
+        viewPort: DoubleRectangle,
+        coord: CoordinateSystem
+    ): DoubleVector {
         val blockSize = DoubleVector(
             labels.maxOf { it.textSize.x },
             labels.sumOf { it.textSize.y } // todo: paddings
         )
 
-        val x = when (labelX) {
-            LabelX.LEFT -> viewPort.left + PADDING
-            LabelX.CENTER -> viewPort.center.x - blockSize.x / 2
-            LabelX.RIGHT -> viewPort.right - blockSize.x
+        val x = labelX.first?.let { coord.toClient(DoubleVector(it, 0))?.x }
+            ?: when (labelX.second) {
+                LabelX.LEFT -> viewPort.left + PADDING
+                LabelX.CENTER -> viewPort.center.x - blockSize.x / 2
+                LabelX.RIGHT -> viewPort.right - blockSize.x - PADDING
+            }
 
-        }
-
-        val y = when (labelY) {
-            LabelY.TOP -> viewPort.top + PADDING
-            LabelY.MIDDLE -> viewPort.center.y - blockSize.y / 2
-            LabelY.BOTTOM -> viewPort.bottom - blockSize.y
-        }
+        val y = labelY.first?.let { coord.toClient(DoubleVector(0, it))?.y }
+            ?: when (labelY.second) {
+                LabelY.TOP -> viewPort.top + PADDING
+                LabelY.MIDDLE -> viewPort.center.y - blockSize.y / 2
+                LabelY.BOTTOM -> viewPort.bottom - blockSize.y - PADDING
+            }
 
         return DoubleVector(x, y)
     }

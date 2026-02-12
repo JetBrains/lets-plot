@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
+import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelX
+import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelY
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
@@ -18,8 +20,9 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
-import org.jetbrains.letsPlot.core.spec.Option.Geom.StatR2.LABEL_X
-import org.jetbrains.letsPlot.core.spec.Option.Geom.StatR2.LABEL_Y
+import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.LABEL_X
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.LABEL_Y
 import org.jetbrains.letsPlot.core.spec.config.ArrowSpecConfig
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
@@ -455,8 +458,11 @@ internal object GeomProviderFactory {
 
             GeomKind.STAT_R2 -> GeomProvider.statR2 {
                 val geom = StatR2Geom()
-                layerConfig.getString(LABEL_X)?.let { geom.labelX = it }
-                layerConfig.getString(LABEL_Y)?.let { geom.labelY = it }
+                val labels = layerConfig[ANNOTATIONS]
+                if (labels != null && labels is Map<*, *>) {
+                    geom.labelX = labelPositionList(labels[LABEL_X]) { labelPosition(it, ::positionX, LabelX.LEFT) }
+                    geom.labelY = labelPositionList(labels[LABEL_Y]) { labelPosition(it, ::positionY, LabelY.TOP) }
+                }
 
                 geom
             }
@@ -465,6 +471,42 @@ internal object GeomProviderFactory {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 PROVIDER.getValue(geomKind)
             }
+        }
+    }
+
+    private fun <T> labelPositionList(v: Any?, mapper: (Any?) -> T): List<T> =
+        when (v) {
+            null -> emptyList()
+            is List<*> -> v.map(mapper)
+            else -> listOf(mapper(v))
+        }
+
+    private fun <T> labelPosition(
+        v: Any?,
+        parsePos: (String) -> T,
+        defaultPos: T
+    ): Pair<Double?, T> =
+        when (v) {
+            is String -> null to parsePos(v)
+            is Number -> v.toDouble() to defaultPos
+            else -> null to defaultPos
+        }
+
+    fun positionX(x: String): LabelX {
+        return when (x) {
+            "left" -> LabelX.LEFT
+            "center" -> LabelX.CENTER
+            "right" -> LabelX.RIGHT
+            else -> LabelX.LEFT
+        }
+    }
+
+    fun positionY(y: String): LabelY {
+        return when (y) {
+            "top" -> LabelY.TOP
+            "middle" -> LabelY.MIDDLE
+            "bottom" -> LabelY.BOTTOM
+            else -> LabelY.TOP
         }
     }
 

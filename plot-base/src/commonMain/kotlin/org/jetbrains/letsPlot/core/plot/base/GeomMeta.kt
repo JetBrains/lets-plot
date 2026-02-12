@@ -89,9 +89,14 @@ object GeomMeta {
             )
 
             GeomKind.STAT_R2 -> listOf(
+                Aes.X, Aes.Y,
+
+                // Copy from GeomKind.SMOOTH to sync grouping
+                Aes.SIZE,
+                Aes.LINETYPE,
                 Aes.COLOR,
-                Aes.ALPHA,
-                Aes.LABEL
+                Aes.FILL,
+                Aes.ALPHA
             )
 
             GeomKind.BAR -> listOf(

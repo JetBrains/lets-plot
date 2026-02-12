@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable.Source.STAT
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat.Method
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LinearRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LocalPolynomialRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.PolynomialRegression
@@ -35,26 +36,11 @@ class SmoothStatInfo(
 
     private var myVariables: List<DataFrame.Variable>? = null
 
-    enum class Method {
-        LM, // linear model
-        GLM,
-        GAM,
-        LOESS,
-        RLM
-    }
-
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-            Aes.LABEL to Stats.R2
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
         )
-        const val DEF_EVAL_POINT_COUNT = 80
-        val DEF_SMOOTHING_METHOD = Method.LM
-        const val DEF_CONFIDENCE_LEVEL = 0.95    // 95 %
-        const val DEF_DISPLAY_CONFIDENCE_INTERVAL = true
-        const val DEF_SPAN = 0.5
-        const val DEF_DEG = 1
-        const val DEF_LOESS_CRITICAL_SIZE = 1_000
-        const val DEF_SAMPLING_SEED = 37L
     }
 
     override fun consumes(): List<Aes<*>> {
@@ -129,6 +115,8 @@ class SmoothStatInfo(
         } ?: return DataFrame.Builder.emptyFrame()
 
         val dfb = DataFrame.Builder()
+            .put(Stats.X, listOf(0.0))
+            .put(Stats.Y, listOf(0.0))
             .put(Stats.R2, listOf(regression.r2))
             .put(Stats.R2_ADJ, listOf(regression.adjR2))
 

@@ -16,8 +16,7 @@ import kotlin.math.sign
 class EqDataFrameField(
     private val name: String,
     private val format: String? = null,
-    private val lhs: String? = null,
-    private val rhs: String?,
+    private val eq: EqSpecification,
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
@@ -40,19 +39,21 @@ class EqDataFrameField(
     private fun initFormatters(expFormat: StringFormat.ExponentFormat, tz: TimeZone?): List<(Any) -> String> {
         require(myFormatters == null)
 
-        myFormatters = myVariables.map {
-            val f: (Any) -> String = when (format) {
-                null -> TooltipFormatting.createFormatter(
-                    it,
+        myFormatters = myVariables.mapIndexed { i, variable ->
+            val coefFormat = eq.formats.getOrNull(i)
+                ?: eq.formats.lastOrNull()
+                ?: format
+
+            if (coefFormat != null) {
+                FormatterUtil.byPattern(coefFormat, expFormat = expFormat, tz = tz)::format
+            } else {
+                TooltipFormatting.createFormatter(
+                    variable,
                     myDataAccess.defaultFormatters,
                     expFormat,
                     tz = tz
                 )
-
-                else -> FormatterUtil.byPattern(format, expFormat = expFormat, tz = tz)::format
             }
-
-            f
         }
 
         return myFormatters!!
@@ -72,32 +73,44 @@ class EqDataFrameField(
     }
 
     override fun copy(): EqDataFrameField {
-        return EqDataFrameField(name, format, lhs, rhs)
+        return EqDataFrameField(name, format, eq)
     }
 
     fun makeEq(coefficients: List<Double>, ctx: PlotContext): String {
-        val formatters = myFormatters ?: initFormatters(ctx.expFormat, ctx.tz)
         val sb = StringBuilder()
 
-        for (i in coefficients.lastIndex downTo 0) {
+        val lhs = eq.lhs ?: "y"
+        val formatters = (myFormatters ?: initFormatters(ctx.expFormat, ctx.tz))
+            .reversed()     //Adjust the order of formatters to match the coefficients
 
-            if (coefficients[i] != 0.0) {
+        for (i in coefficients.lastIndex downTo 0) {
+            var coef = coefficients[i]
+
+            if (eq.threshold != null && abs(coef) < eq.threshold) {
+                coef = 0.0
+            }
+
+            if (coef != 0.0) {
 
                 if (!sb.isEmpty())
-                    sb.append(if (sign(coefficients[i]) < 0 ) " - " else " + ")
+                    sb.append(if (sign(coef) < 0 ) " - " else " + ")
 
-                sb.append(formatters[i].invoke(abs(coefficients[i])))
+                sb.append(formatters[i].invoke(abs(coef)))
 
-                if (i > 0)
-                    sb.append(rhs ?: "x")
+                if (i > 0) {
+                    sb.append("\\(")
+                    sb.append(eq.rhs ?: "x")
 
-                if (i > 1)
-                    sb.append("^").append(i)
+                    if (i > 1) {
+                        sb.append("^").append(i)
+                    }
+                    sb.append("\\)")
+                }
             }
         }
 
-        sb.insert(0, if (lhs != null) "$lhs=" else "")
+        sb.insert(0, if (lhs != "") "\\($lhs=\\)" else "")
 
-        return "\\($sb\\)"
+        return "$sb"
     }
 }

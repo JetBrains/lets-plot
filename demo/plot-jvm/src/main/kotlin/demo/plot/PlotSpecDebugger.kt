@@ -2,7 +2,7 @@ package demo.plot
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.awt.canvas.CanvasComponent
-import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotPanelCanvas
+import org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
@@ -344,7 +344,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         addActionListener {
             if (plotPanel.width > 0 && plotPanel.height > 0) {
                 try {
-                    val canvaPanel = plotPanel.components.first() as DefaultPlotPanelCanvas
+                    val canvaPanel = plotPanel.components.first() as SwingPlotPanel
                     val canvasComponent = canvaPanel.components.first() as CanvasComponent
                     val svgCanvasDrawable = canvasComponent.content as SvgCanvasDrawable
                     val svgString = SvgToString.render(svgCanvasDrawable.svgSvgElement)
@@ -827,7 +827,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     }
                     "DefaultPlotPanelCanvas" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
-                        newPlotComponent = DefaultPlotPanelCanvas(
+                        newPlotComponent = SwingPlotPanel(
                             processedSpec = processedSpec,
                             preferredSizeFromPlot = false,
                             repaintDelay = 0,
@@ -842,7 +842,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 processedSpecTextArea.caretPosition = 0
 
                 if (newPlotComponent is DefaultPlotPanelBatik) sharedToolbar.attach(newPlotComponent.figureModel)
-                else if (newPlotComponent is DefaultPlotPanelCanvas) sharedToolbar.attach(newPlotComponent.figureModel)
+                else if (newPlotComponent is SwingPlotPanel) sharedToolbar.attach(newPlotComponent.figureModel)
 
                 plotPanel.add(newPlotComponent, BorderLayout.CENTER)
                 plotPanel.revalidate()

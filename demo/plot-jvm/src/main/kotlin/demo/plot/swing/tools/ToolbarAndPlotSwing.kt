@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) 2025. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package demo.plot.swing.tools
+
+import org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel
+import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
+import java.awt.BorderLayout
+import javax.swing.JComponent
+import javax.swing.JFrame
+import javax.swing.JLabel
+import javax.swing.SwingUtilities
+
+fun main() {
+    SwingUtilities.invokeLater { createAndShowGui() }
+}
+
+private fun createAndShowGui() {
+    val frame = JFrame("Toolbar and Plot").apply {
+        defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        layout = BorderLayout()
+    }
+
+    // Toolbar
+    val toolbar = SandboxToolbarAwt()
+    frame.add(toolbar, BorderLayout.NORTH)
+
+    // Plot
+    val plotPanel = createPlotPanel(ScatterModel().plotSpec())
+    val figureModel = (plotPanel as WithFigureModel).figureModel
+    toolbar.attach(figureModel)
+
+    // Figure default interactions
+    val defaultInteractions = listOf(
+        InteractionSpec(
+            InteractionSpec.Name.WHEEL_ZOOM,
+            keyModifiers = listOf(
+                InteractionSpec.KeyModifier.CTRL,
+                InteractionSpec.KeyModifier.SHIFT
+            )
+        ),
+        InteractionSpec(
+            InteractionSpec.Name.DRAG_PAN,
+            keyModifiers = listOf(
+                InteractionSpec.KeyModifier.CTRL,
+                InteractionSpec.KeyModifier.SHIFT
+            )
+        )
+    )
+
+    figureModel.setDefaultInteractions(defaultInteractions)
+
+    frame.add(plotPanel, BorderLayout.CENTER)
+
+    // Instructions
+    frame.add(JLabel("Use Ctrl+Shift+Wheel to zoom, Ctrl+Shift+Drag to pan"), BorderLayout.SOUTH)
+
+    frame.apply {
+//        setSize(400, 400)
+        pack()
+        setLocationRelativeTo(null) // Center on screen
+        isVisible = true
+    }
+}
+
+private fun createPlotPanel(rawSpec: MutableMap<String, Any>): JComponent {
+    val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
+    return SwingPlotPanel(
+        processedSpec = processedSpec,
+        preserveAspectRatio = false,
+        preferredSizeFromPlot = true,
+        repaintDelay = 300,
+        computationMessagesHandler = { messages -> messages.forEach { println("[!] $it") } }
+    )
+}
