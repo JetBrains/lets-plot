@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.TileFeature
 
 internal class PointTextSymbolizer internal constructor(
     private val myStyle: Style,
-    private val myLabelBounds: MutableList<DoubleRectangle>
+    private val symbolizerContext: SymbolizerContext
 ) : Symbolizer {
     private val font: Font
     private val wrapWidth = myStyle.wrapWidth
@@ -83,11 +83,11 @@ internal class PointTextSymbolizer internal constructor(
         multiPoint.forEach { point ->
             val bbox = bboxFromPoint(point, width, font.fontSize)
 
-            if (!labelInBounds(bbox)) {
+            if (!symbolizerContext.intersectsAnyLabel(bbox)) {
                 strokeText(label, point.x, point.y)
                 fillText(label, point.x, point.y)
 
-                myLabelBounds.add(bbox)
+                symbolizerContext.pinLabel(bbox)
             }
         }
     }
@@ -117,20 +117,16 @@ internal class PointTextSymbolizer internal constructor(
         multiPoint.forEach { point ->
             val bbox = bboxFromPoint(point, width, font.fontSize)
 
-            if (!labelInBounds(bbox)) {
+            if (!symbolizerContext.intersectsAnyLabel(bbox)) {
                 rows.forEachIndexed { i, row ->
                     val y = bbox.origin.y + font.fontSize / 2 + font.fontSize * i
                     strokeText(row, point.x, y)
                     fillText(row, point.x, y)
                 }
 
-                myLabelBounds.add(bbox)
+                symbolizerContext.pinLabel(bbox)
             }
         }
-    }
-
-    private fun labelInBounds(bbox: DoubleRectangle): Boolean {
-        return myLabelBounds.find(bbox::intersects) != null
     }
 
     private fun getLabel(feature: TileFeature): String? {

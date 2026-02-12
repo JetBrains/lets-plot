@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
@@ -16,6 +15,7 @@ import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapLayerKind
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.symbolizer.Symbolizer
+import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.symbolizer.SymbolizerContext
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 
 internal class TileDataRendererImpl(
@@ -76,15 +76,14 @@ internal class TileDataRendererImpl(
         val mapConfig = myMapConfigSupplier() ?: return emptyList()
 
         val tasks = ArrayList<() -> Unit>()
-        val labelBounds = ArrayList<DoubleRectangle>()
-
+        val symbolizerContext = SymbolizerContext()
 
         for (layerName in mapConfig.getLayersByZoom(zoom)) {
             val rules = mapConfig.getLayerConfig(layerName).getRules(layerKind.toString()).flatten()
             val featuresByRule = getFeaturesByRule(zoom, tileFeatures[layerName]!!, rules)
 
             for (rule in rules) {
-                val symbolizer = Symbolizer.create(rule.style, labelBounds)
+                val symbolizer = Symbolizer.create(rule.style, symbolizerContext)
                 tasks.add {
                     ctx.save()
                     symbolizer.applyTo(ctx)

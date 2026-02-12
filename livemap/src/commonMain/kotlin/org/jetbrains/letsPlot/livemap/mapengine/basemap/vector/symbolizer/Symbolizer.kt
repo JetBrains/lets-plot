@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.symbolizer
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Style
@@ -17,13 +16,13 @@ internal interface Symbolizer {
     fun applyTo(ctx: Context2d)
 
     companion object {
-        fun create(style: Style, labelBounds: MutableList<DoubleRectangle>): Symbolizer {
+        fun create(style: Style, symbolizerContext: SymbolizerContext): Symbolizer {
             return when (style.type) {
                 LINE -> LineSymbolizer(style)
                 POLYGON -> PolygonSymbolizer(style)
-                POINT_TEXT -> PointTextSymbolizer(style, labelBounds)
-                SHIELD_TEXT -> ShieldTextSymbolizer(style, labelBounds)
-                LINE_TEXT -> LineTextSymbolizer(style, labelBounds)
+                POINT_TEXT -> PointTextSymbolizer(style, symbolizerContext)
+                SHIELD_TEXT -> ShieldTextSymbolizer(style, symbolizerContext)
+                LINE_TEXT -> LineTextSymbolizer(style, symbolizerContext)
                 null -> error("Empty symbolizer type.")
                 else -> error("Unknown symbolizer type.")
             }
