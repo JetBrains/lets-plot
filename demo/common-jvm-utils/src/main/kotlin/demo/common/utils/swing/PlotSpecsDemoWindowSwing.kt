@@ -19,7 +19,7 @@ class PlotSpecsDemoWindowSwing(
     plotSize: Dimension? = null,
     background: Color = Color.WHITE
 ) : PlotSpecsDemoWindowBase(
-    "$title (Batik)",
+    "$title (Pure Swing)",
     specList = specList,
     maxCol = maxCol,
     plotSize = plotSize,

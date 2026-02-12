@@ -11,7 +11,7 @@ import demo.livemap.common.plot.LiveMap
 fun main() {
     with(LiveMap()) {
         PlotSpecsDemoWindowBatik(
-            "LiveMap (Batik)",
+            "LiveMap",
             plotSpecList(),
             maxCol = 4
         ).open()
