@@ -54,9 +54,9 @@ internal class PointTextSymbolizer internal constructor(
                 getLabel(feature)?.let { label ->
                     tasks.add {
                         if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureTextWidth(label)) {
-                            ctx.drawWrapText(multiPoint, label, wrapWidth)
+                            drawWrapText(ctx, multiPoint, label, wrapWidth)
                         } else {
-                            ctx.drawTextFast(multiPoint, label)
+                            drawTextFast(ctx, multiPoint, label)
                         }
                     }
                 }
@@ -77,35 +77,35 @@ internal class PointTextSymbolizer internal constructor(
         )
     }
 
-    private fun Context2d.drawTextFast(multiPoint: List<Vec<*>>, label: String) {
-        val width = measureTextWidth(label)
+    private fun drawTextFast(ctx: Context2d, multiPoint: List<Vec<*>>, label: String) {
+        val width = ctx.measureTextWidth(label)
 
         multiPoint.forEach { point ->
             val bbox = bboxFromPoint(point, width, font.fontSize)
 
             if (!symbolizerContext.intersectsAnyLabel(bbox)) {
-                strokeText(label, point.x, point.y)
-                fillText(label, point.x, point.y)
+                ctx.strokeText(label, point.x, point.y)
+                ctx.fillText(label, point.x, point.y)
 
                 symbolizerContext.pinLabel(bbox)
             }
         }
     }
 
-    private fun Context2d.drawWrapText(multiPoint: List<Vec<*>>, label: String, wrapWidth: Double) {
+    private fun drawWrapText(ctx: Context2d, multiPoint: List<Vec<*>>, label: String, wrapWidth: Double) {
         var width = wrapWidth
         var words = splitLabel(label)
         var next = ArrayList<String>()
         val rows = ArrayList<String>()
 
         while (words.isNotEmpty()) {
-            while (measureTextWidth(words.joinToString(" ")) > width && words.size != 1) {
+            while (ctx.measureTextWidth(words.joinToString(" ")) > width && words.size != 1) {
                 next.add(0, words.removeAt(words.size - 1))
             }
 
-            if (words.size == 1 && measureTextWidth(words[0]) > width) {
+            if (words.size == 1 && ctx.measureTextWidth(words[0]) > width) {
                 rows.add(words[0])
-                width = measureTextWidth(words[0])
+                width = ctx.measureTextWidth(words[0])
             } else {
                 rows.add(words.joinToString(" "))
             }
@@ -120,8 +120,8 @@ internal class PointTextSymbolizer internal constructor(
             if (!symbolizerContext.intersectsAnyLabel(bbox)) {
                 rows.forEachIndexed { i, row ->
                     val y = bbox.origin.y + font.fontSize / 2 + font.fontSize * i
-                    strokeText(row, point.x, y)
-                    fillText(row, point.x, y)
+                    ctx.strokeText(row, point.x, y)
+                    ctx.fillText(row, point.x, y)
                 }
 
                 symbolizerContext.pinLabel(bbox)
