@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
-import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelBase
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
@@ -124,7 +123,7 @@ class InteractivityTest : VisualPlotTestBase() {
         plotCanvasFigure.mapToCanvas(awtCanvasPeer)
 
         // IMPORTANT: should be set after mapping to canvas
-        figureModel.setTestingToolEventDispatcher(plotCanvasFigure.toolEventDispatcher)
+        figureModel.toolEventDispatcher = plotCanvasFigure.toolEventDispatcher
 
         plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
         plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
@@ -149,10 +148,6 @@ class InteractivityTest : VisualPlotTestBase() {
     class TestingFigureModel(
         val onUpdateView: (Map<String, Any>?) -> Unit
     ) : FigureModelBase() {
-
-        fun setTestingToolEventDispatcher(dispatcher: ToolEventDispatcher?) {
-            super.toolEventDispatcher = dispatcher
-        }
 
         override fun updateView(specOverride: Map<String, Any>?) {
             onUpdateView(specOverride)

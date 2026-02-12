@@ -16,7 +16,7 @@ abstract class FigureModelBase : FigureModel {
     private val disposableTools = mutableListOf<Disposable>()
     private var defaultInteractions: List<InteractionSpec> = emptyList()
 
-    protected var toolEventDispatcher: ToolEventDispatcher? = null
+    var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
             val wereInteractions = if (value != null) {
                 // De-activate and re-activate ongoing interactions when replacing the dispatcher.
