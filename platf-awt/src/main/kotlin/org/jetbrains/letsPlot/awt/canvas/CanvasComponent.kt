@@ -90,7 +90,7 @@ class CanvasComponent(
         val g2d = g!!.create() as Graphics2D
 
         if (content != null) {
-            val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
+            val ctx = AwtContext2d(content!!.size, g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
             content!!.paint(ctx)
         }
     }

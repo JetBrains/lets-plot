@@ -42,7 +42,7 @@ class CanvasLayer(
     fun snapshot(): Canvas.Snapshot = canvas.takeSnapshot(kind.toString() + "_" + name)
 
     fun clear() {
-        canvas.context2d.clearRect(myRect)
+        canvas.context2d.clear()
     }
 
     fun removeFrom(canvasControl: CanvasControl) {
