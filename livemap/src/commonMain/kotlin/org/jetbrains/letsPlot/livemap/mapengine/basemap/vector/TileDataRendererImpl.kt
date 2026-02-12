@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Rule
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapLayerKind
+import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.symbolizer.Symbolizer
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 
 internal class TileDataRendererImpl(
