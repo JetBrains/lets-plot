@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.raster.view.SvgCanvasDrawable
 import java.awt.Desktop
 import java.net.URI
 
-class SwingPlotComponentProvider(
+open class SwingPlotComponentProvider(
     processedSpec: MutableMap<String, Any>,
     executor: (() -> Unit) -> Unit,
     computationMessagesHandler: (List<String>) -> Unit
