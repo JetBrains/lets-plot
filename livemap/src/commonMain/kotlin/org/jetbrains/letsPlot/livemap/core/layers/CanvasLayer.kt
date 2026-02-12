@@ -42,7 +42,7 @@ class CanvasLayer(
     fun snapshot(): Canvas.Snapshot = canvas.takeSnapshot(kind.toString() + "_" + name)
 
     fun clear() {
-        canvas.context2d.clear()
+        canvas.context2d.clearRect(myRect)
     }
 
     fun removeFrom(canvasControl: CanvasControl) {
@@ -50,7 +50,7 @@ class CanvasLayer(
     }
 
     override fun toString(): String {
-        return "layer_" + name
+        return "layer_$name"
     }
 
     fun containsRenderTasks() = myRenderTaskList.isNotEmpty()

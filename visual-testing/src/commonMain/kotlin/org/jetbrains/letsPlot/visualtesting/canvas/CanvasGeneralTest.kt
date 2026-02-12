@@ -44,7 +44,7 @@ internal class CanvasGeneralTest(
 
         draw()
 
-        ctx.clear()
+        ctx.clearRect(0.0, 0.0, canvas.size.x.toDouble(), canvas.size.y.toDouble())
 
         // check that context state is not reset by clearRect and can be used after it
         draw()

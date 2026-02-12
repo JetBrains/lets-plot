@@ -6,11 +6,13 @@
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Rule
+import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapLayerKind
@@ -57,7 +59,7 @@ internal class TileDataRendererImpl(
                 ctx.setFillStyle(mapConfig.tileSheetBackgrounds[layerKind.toString()])
                 ctx.fillRect(0.0, 0.0, size.x, size.y)
             }
-            tasks.addAll(tileFeaturesDrawTasks(ctx, tileFeatures, layerKind, cellKey.length))
+            tasks.addAll(tileFeaturesDrawTasks(ctx, tileFeatures, layerKind, cellKey.length, Vec(canvas.size.x, canvas.size.y)))
         } else {
             if (layerKind == BasemapLayerKind.WORLD) {
                 tasks.add { ctx.drawDummyTile(size) }
@@ -71,12 +73,13 @@ internal class TileDataRendererImpl(
         ctx: Context2d,
         tileFeatures: Map<String, List<TileFeature>>,
         layerKind: BasemapLayerKind,
-        zoom: Int
+        zoom: Int,
+        size: Vec<Client>
     ): Collection<() -> Unit> {
         val mapConfig = myMapConfigSupplier() ?: return emptyList()
 
         val tasks = ArrayList<() -> Unit>()
-        val symbolizerContext = SymbolizerContext()
+        val symbolizerContext = SymbolizerContext(size)
 
         for (layerName in mapConfig.getLayersByZoom(zoom)) {
             val rules = mapConfig.getLayerConfig(layerName).getRules(layerKind.toString()).flatten()

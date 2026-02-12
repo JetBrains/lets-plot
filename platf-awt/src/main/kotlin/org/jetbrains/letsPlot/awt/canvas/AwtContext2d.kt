@@ -51,11 +51,6 @@ internal class AwtContext2d(
         graphics.dispose()
     }
 
-    override fun clear() {
-        val rect = Rectangle2D.Double(0.0, 0.0, size.x.toDouble(), size.y.toDouble())
-        graphics.clearRect(rect.x.toInt(), rect.y.toInt(), rect.width.toInt(), rect.height.toInt())
-    }
-
     override fun clearRect(rect: DoubleRectangle) {
         clearRect(rect.left, rect.top, rect.width, rect.height)
     }

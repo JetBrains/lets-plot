@@ -52,11 +52,15 @@ internal class PointTextSymbolizer internal constructor(
             .map { Geometries.floor(it) } // To make text look sharper
             .let { multiPoint ->
                 getLabel(feature)?.let { label ->
+                    val visiblePoints = multiPoint//.filter { symbolizerContext.isInsideTile(label, font, it, ctx) }
+                    if (visiblePoints.isEmpty()) {
+                        return tasks
+                    }
                     tasks.add {
-                        if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureTextWidth(label)) {
-                            drawWrapText(ctx, multiPoint, label, wrapWidth)
+                        if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < symbolizerContext.measureTextWidth(label, font, ctx)) {
+                            drawWrapText(ctx, visiblePoints, label, wrapWidth)
                         } else {
-                            drawTextFast(ctx, multiPoint, label)
+                            drawTextFast(ctx, visiblePoints, label)
                         }
                     }
                 }
@@ -78,7 +82,7 @@ internal class PointTextSymbolizer internal constructor(
     }
 
     private fun drawTextFast(ctx: Context2d, multiPoint: List<Vec<*>>, label: String) {
-        val width = ctx.measureTextWidth(label)
+        val width = symbolizerContext.measureTextWidth(label, font, ctx)
 
         multiPoint.forEach { point ->
             val bbox = bboxFromPoint(point, width, font.fontSize)
@@ -99,13 +103,13 @@ internal class PointTextSymbolizer internal constructor(
         val rows = ArrayList<String>()
 
         while (words.isNotEmpty()) {
-            while (ctx.measureTextWidth(words.joinToString(" ")) > width && words.size != 1) {
+            while (symbolizerContext.measureTextWidth(words.joinToString(" "), font, ctx) > width && words.size != 1) {
                 next.add(0, words.removeAt(words.size - 1))
             }
 
-            if (words.size == 1 && ctx.measureTextWidth(words[0]) > width) {
+            if (words.size == 1 && symbolizerContext.measureTextWidth(words[0], font, ctx) > width) {
                 rows.add(words[0])
-                width = ctx.measureTextWidth(words[0])
+                width = symbolizerContext.measureTextWidth(words[0], font, ctx)
             } else {
                 rows.add(words.joinToString(" "))
             }

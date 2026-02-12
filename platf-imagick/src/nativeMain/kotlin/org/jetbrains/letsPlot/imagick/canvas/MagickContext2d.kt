@@ -54,27 +54,12 @@ class MagickContext2d(
 
         ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
         ImageMagick.DrawSetFillColor(wand, none) // default fill color to make DrawRectangle work with transparent fill
+        transform(wand, AffineTransform.makeScale(contentScale, contentScale))
 
         currentFillRule = ImageMagick.FillRule.NonZeroRule
 
         ImageMagick.MagickNewImage(eraser, 1.convert(), 1.convert(), none)
         ImageMagick.MagickSetImageAlphaChannel(eraser, ImageMagick.AlphaChannelOption.SetAlphaChannel)
-
-        transform(wand, AffineTransform.makeScale(contentScale, contentScale))
-    }
-
-    override fun clear() {
-        // Fast path for clearing the entire canvas
-        destroyDrawingWand(wand)
-        wand = newDrawingWand("MagickContext2d.wand")
-
-        dirtyFont = true
-
-        ImageMagick.DrawSetFillColor(wand, fillColorWand)
-        ImageMagick.DrawSetStrokeColor(wand, strokeColorWand)
-        ImageMagick.DrawSetStrokeWidth(wand, stateDelegate.getLineWidth())
-        applyLineDash(stateDelegate.getLineDash().toDoubleArray())
-        //ImageMagick.DrawSetStrokeLineCap(wand, stateDelegate.getLineCap().convert())
 
     }
 
@@ -83,9 +68,28 @@ class MagickContext2d(
     }
 
     override fun clearRect(x: Double, y: Double, w: Double, h: Double) {
-        // CopyCompositeOp ignores blending and replaces the destination pixels
-        // with the source (eraserWand), which is transparent.
-        ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.CopyCompositeOp, x, y, w, h, eraser)
+        if (x == 0.0 && y == 0.0 && w == size.x.toDouble() && h == size.y.toDouble()) {
+            // Fast path for clearing the entire canvas
+            destroyDrawingWand(wand)
+            wand = newDrawingWand("MagickContext2d.wand")
+
+            // TODO: IK: extract initialization from init block
+            ImageMagick.DrawSetFillRule(wand, ImageMagick.FillRule.NonZeroRule)
+            ImageMagick.DrawSetFillColor(wand, none) // default fill color to make DrawRectangle work with transparent fill
+            transform(wand, AffineTransform.makeScale(contentScale, contentScale))
+
+            dirtyFont = true
+
+            ImageMagick.DrawSetFillColor(wand, fillColorWand)
+            ImageMagick.DrawSetStrokeColor(wand, strokeColorWand)
+            ImageMagick.DrawSetStrokeWidth(wand, stateDelegate.getLineWidth())
+            applyLineDash(stateDelegate.getLineDash().toDoubleArray())
+            //ImageMagick.DrawSetStrokeLineCap(wand, stateDelegate.getLineCap().convert())
+        } else {
+            // CopyCompositeOp ignores blending and replaces the destination pixels
+            // with the source (eraserWand), which is transparent.
+            ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.CopyCompositeOp, x, y, w, h, eraser)
+        }
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
