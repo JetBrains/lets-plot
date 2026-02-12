@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.plot.batik.tools
+package demo.plot.swing.tools
 
+import org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
-import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
@@ -98,7 +98,7 @@ private fun createAndShowGui() {
 
 private fun createPlotPanel(rawSpec: MutableMap<String, Any>): JComponent {
     val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
-    return DefaultPlotPanelBatik(
+    return SwingPlotPanel(
         processedSpec = processedSpec,
         preserveAspectRatio = false,
         preferredSizeFromPlot = false,
