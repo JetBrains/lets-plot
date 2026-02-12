@@ -9,7 +9,6 @@ plugins {
 
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
-val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val slf4jVersion = project.extra["slf4j.version"] as String
 
 dependencies {
@@ -24,6 +23,5 @@ dependencies {
 
     compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinxHtmlVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("org.slf4j:slf4j-simple:$slf4jVersion")  // Enable logging to console
 }

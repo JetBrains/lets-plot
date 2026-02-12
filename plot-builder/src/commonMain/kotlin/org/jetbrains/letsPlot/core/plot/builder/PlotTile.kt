@@ -13,12 +13,10 @@ import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
-import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
-import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
@@ -32,7 +30,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.NullGeomT
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -97,34 +94,10 @@ internal class PlotTile constructor(
         val liveMapGeomLayer = coreLayers.firstOrNull(GeomLayer::isLiveMap)
         if (liveMapGeomLayer != null) {
             val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
-            val liveMapData = (liveMapGeomLayer.geom as LiveMapGeom).createCanvasFigure(realBounds)
+            val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
 
-            liveMapCanvasDrawable = liveMapData?.canvasDrawable
-            liveMapData?.targetLocators?.let { _targetLocators.addAll(it) }
-
-            //val layerComponent = frameOfReference.buildGeomComponent(liveMapGeomLayer, NullGeomTargetCollector())
-            val aesthetics = AestheticsBuilder().build()
-            val geomContext = GeomContextBuilder().build()
-            val positionAdjustment = PositionAdjustments.identity()
-            val coordinateSystem = object : CoordinateSystem {
-                override val isLinear: Boolean get() = TODO("Not yet implemented")
-                override val isPolar: Boolean get() = TODO("Not yet implemented")
-                override fun toClient(p: DoubleVector) = TODO("Not yet implemented")
-                override fun fromClient(p: DoubleVector) = TODO("Not yet implemented")
-                override fun unitSize(p: DoubleVector) = TODO("Not yet implemented")
-                override fun flip() = TODO("Not yet implemented")
-            }
-
-            val layerComponent = SvgLayerRenderer(
-                aesthetics,
-                liveMapGeomLayer.geom,
-                positionAdjustment,
-                coordinateSystem,
-                geomContext
-            )
-            layerComponent.rootGroup.setAttribute("buffered-rendering", "static")
-            geomInteractionGroup.add(layerComponent.rootGroup)
-            //frameOfReference.setClip(clipGroup)
+            liveMapCanvasDrawable = liveMapData.canvasDrawable
+            _targetLocators.addAll(liveMapData.targetLocators)
         } else {
             // Normal plot tiles
 
@@ -281,6 +254,10 @@ internal class PlotTile constructor(
     }
 
     companion object {
+        private fun createCanvasFigure(layer: GeomLayer, bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
+            return (layer.geom as LiveMapGeom).createCanvasFigure(bounds)
+        }
+
         private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
     }
 

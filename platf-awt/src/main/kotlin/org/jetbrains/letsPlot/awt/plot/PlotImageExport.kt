@@ -5,23 +5,17 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
-import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.JPEG
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.waitForReady
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
-import kotlin.time.Duration.Companion.seconds
 
 object PlotImageExport {
     sealed class Format {
@@ -68,26 +62,6 @@ object PlotImageExport {
         targetDPI: Number? = null,
         plotSize: DoubleVector? = null,
         unit: SizeUnit? = null,
-    ): ImageData {
-        return runBlocking {
-            buildImageFromRawSpecsInternal(
-                plotSpec = plotSpec,
-                format = format,
-                scalingFactor = scalingFactor,
-                targetDPI = targetDPI,
-                plotSize = plotSize,
-                unit = unit
-            )
-        }
-    }
-
-    internal suspend fun buildImageFromRawSpecsInternal(
-        plotSpec: MutableMap<String, Any>,
-        format: Format,
-        scalingFactor: Number? = null,
-        targetDPI: Number? = null,
-        plotSize: DoubleVector? = null,
-        unit: SizeUnit? = null,
         fontManager: FontManager = FontManager.DEFAULT
     ): ImageData {
         val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, targetDPI, unit, scalingFactor)
@@ -100,45 +74,34 @@ object PlotImageExport {
         )
 
         val awtCanvasPeer = AwtCanvasPeer(fontManager = fontManager, scaleFactor)
+        plotCanvasDrawable.mapToCanvas(awtCanvasPeer)
 
-        val canvasReg = plotCanvasDrawable.mapToCanvas(awtCanvasPeer)
+        val canvas = awtCanvasPeer.createCanvas(plotCanvasDrawable.size)
 
-        try {
-            if (!plotCanvasDrawable.waitForReady(15.seconds)) {
-                println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-            }
+        // Note: the scale is already applied in AwtCanvas constructor
+        //canvas.context2d.scale(scaleFactor, scaleFactor)
 
-            val canvas = awtCanvasPeer.createCanvas(plotCanvasDrawable.size)
-            val ctx = canvas.context2d
+        plotCanvasDrawable.paint(canvas.context2d)
 
-            plotCanvasDrawable.paint(ctx)
+        val outputStream = ByteArrayOutputStream()
 
-            val image = if (format is JPEG) {
-                // JPEGs require no transparency (Alpha), so we composite over White
-                val rgbBufferedImage =
-                    BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
-                val g = rgbBufferedImage.createGraphics()
-                g.drawImage(canvas.image, 0, 0, Color.WHITE, null)
-                g.dispose()
-                rgbBufferedImage
-            } else {
-                canvas.image
-            }
-
-            val outputStream = ByteArrayOutputStream()
-            withContext(Dispatchers.IO) {
-                ImageIO.write(image, format.defFileExt, outputStream)
-            }
-
-            return ImageData(
-                bytes = outputStream.toByteArray(),
-                plotSize = DoubleVector(
-                    x = plotCanvasDrawable.size.x.toDouble(),
-                    y = plotCanvasDrawable.size.y.toDouble()
-                )
-            )
-        } finally {
-            canvasReg.dispose()
+        if (format.defFileExt == "jpg") {
+            // JPEG does not support transparency. We need to fill the background with white color.
+            val rgbBufferedImage = BufferedImage(canvas.image.width, canvas.image.height, BufferedImage.TYPE_INT_RGB)
+            val g = rgbBufferedImage.createGraphics()
+            g.drawImage(canvas.image, 0, 0, Color.WHITE, null)
+            g.dispose()
+            ImageIO.write(rgbBufferedImage, format.defFileExt, outputStream)
+        } else {
+            ImageIO.write(canvas.image, format.defFileExt, outputStream)
         }
+
+        return ImageData(
+            bytes = outputStream.toByteArray(),
+            plotSize = DoubleVector(
+                x = plotCanvasDrawable.size.x.toDouble(),
+                y = plotCanvasDrawable.size.y.toDouble()
+            )
+        )
     }
 }

@@ -6,14 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.intern.observable.property.Property
-import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.GenericLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAttributeSpec
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgStylableElement
 
 
 class LiveMapGeom : Geom {
@@ -30,39 +26,20 @@ class LiveMapGeom : Geom {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val livemapCanvasFigure = liveMapData?.canvasDrawable as? CanvasDrawable ?: error("LiveMap data missing")
-        root.add(SvgCanvasDrawableElement(livemapCanvasFigure))
+        throw IllegalStateException("Not applicable to live map")
     }
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
         this.liveMapProvider = liveMapProvider
     }
 
-    fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData? {
+    fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
         val liveMapProvider = liveMapProvider ?: error("LiveMapProvider not initialized")
         liveMapData = liveMapProvider.createLiveMap(bounds)
-        return liveMapData
+        return liveMapData!!
     }
 
     companion object {
         const val HANDLES_GROUPS = false
     }
-
-    class SvgCanvasDrawableElement(content: CanvasDrawable) : SvgStylableElement() {
-        companion object {
-            val CONTENT: SvgAttributeSpec<CanvasDrawable> =
-                SvgAttributeSpec.createSpec("content")
-        }
-
-        init {
-            content().set(content)
-        }
-
-        override val elementName: String = "canvasfigure"
-
-        fun content(): Property<CanvasDrawable?> {
-            return getAttribute(CONTENT)
-        }
-    }
-
 }

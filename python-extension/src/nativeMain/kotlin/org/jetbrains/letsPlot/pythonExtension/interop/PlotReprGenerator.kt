@@ -15,7 +15,6 @@ import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -24,7 +23,6 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.util.*
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.waitForReady
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
@@ -32,7 +30,6 @@ import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.raster.view.RenderingHints.KEY_OFFSCREEN_BUFFERING
 import org.jetbrains.letsPlot.raster.view.RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
 object PlotReprGenerator {
@@ -232,12 +229,6 @@ object PlotReprGenerator {
 
         var canvasReg: Registration? = plotCanvasDrawable.mapToCanvas(magickCanvasPeer)
 
-        runBlocking() {
-            if (!plotCanvasDrawable.waitForReady(15.seconds)) {
-                println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-            }
-        }
-
         try {
             val canvas = magickCanvasPeer.createCanvas(
                 plotCanvasDrawable.size,
@@ -365,14 +356,6 @@ object PlotReprGenerator {
             canvasReg = plotCanvasDrawable.mapToCanvas(magickCanvasPeer)
 
             println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
-
-            runBlocking() {
-                if (!plotCanvasDrawable.waitForReady(15.seconds)) {
-                    println("WARNING: Plot export timed out waiting for tiles to load. Image may be incomplete.")
-                }
-            }
-
-            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure loaded")
 
         try {
             val canvas = magickCanvasPeer.createCanvas(plotCanvasDrawable.size)
