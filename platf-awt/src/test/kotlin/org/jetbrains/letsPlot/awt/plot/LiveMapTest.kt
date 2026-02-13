@@ -6,7 +6,7 @@ import org.jetbrains.letsPlot.visualtesting.plot.runStubVectorTileServer
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-//@Ignore("Flaky tests - sometimes even local tiles are not loaded")
+@Ignore("WIP - enable and adjust tests when the feature is ready")
 class LiveMapTest : VisualPlotTestBase() {
     @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     @Test

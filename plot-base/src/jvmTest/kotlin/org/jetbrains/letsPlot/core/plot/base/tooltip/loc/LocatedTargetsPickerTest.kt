@@ -77,6 +77,14 @@ class LocatedTargetsPickerTest {
     }
 
     @Test
+    fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomSmooth_ShouldSelectBoth() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.SMOOTH)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.SMOOTH)
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
+    }
+
+    @Test
     fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectSecond() {
         firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
         secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)

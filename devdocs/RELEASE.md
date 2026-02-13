@@ -123,9 +123,7 @@ Build release JVM artifacts from one of build machines:
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
-          publishLetsPlotJvmJfxPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
-          publishLetsPlotImageExportPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository \
           publishLetsPlotIdeaPluginPublicationToMavenRepository

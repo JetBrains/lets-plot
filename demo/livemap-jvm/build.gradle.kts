@@ -33,7 +33,6 @@ dependencies {
     implementation(project(":platf-awt"))
 
     implementation("org.apache.xmlgraphics:batik-codec:${batikVersion}")
-//    implementation("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
     implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
     compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
 

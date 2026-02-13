@@ -27,8 +27,7 @@ internal class LayerTargetLocator(
     private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
     targetPrototypes: List<TargetPrototype>
-) :
-    GeomTargetLocator {
+) : GeomTargetLocator {
 
     private val myTargets = ArrayList<Target>()
     private val myTargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
@@ -109,6 +108,8 @@ internal class LayerTargetLocator(
                 max(0.0, collector.closestPointChecker.distance),
                 geomKind,
                 contextualMapping,
+                contextualMapping.hasGeneralTooltip,
+                contextualMapping.hasAxisTooltip,
                 contextualMapping.isCrosshairEnabled,
                 hitShapeKind
             )
@@ -137,10 +138,10 @@ internal class LayerTargetLocator(
 
         val lookupResults = ArrayList<GeomTargetLocator.LookupResult>()
 
-        addLookupResults(pathCollector, lookupResults, HitShape.Kind.PATH)
-        addLookupResults(rectCollector, lookupResults, HitShape.Kind.RECT)
-        addLookupResults(pointCollector, lookupResults, HitShape.Kind.POINT)
-        addLookupResults(polygonCollector, lookupResults, HitShape.Kind.POLYGON)
+        addLookupResults(pathCollector, lookupResults, PATH)
+        addLookupResults(rectCollector, lookupResults, RECT)
+        addLookupResults(pointCollector, lookupResults, POINT)
+        addLookupResults(polygonCollector, lookupResults, POLYGON)
 
         return getClosestTarget(lookupResults)
     }
@@ -167,12 +168,12 @@ internal class LayerTargetLocator(
             val rect = target.prototype.hitShape.rect
             val yOffset = when {
                 target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
-                lookupSpec.lookupSpace == LookupSpace.Y -> rect.height / 2.0
+                lookupSpec.lookupSpace == Y -> rect.height / 2.0
                 else -> 0.0
             }
             val hintOffset = when (lookupSpec.lookupSpace) {
-                LookupSpace.X -> rect.width / 2
-                LookupSpace.Y -> rect.height / 2
+                X -> rect.width / 2
+                Y -> rect.height / 2
                 else -> 0.0
             }
 
@@ -259,8 +260,8 @@ internal class LayerTargetLocator(
     ) {
         private val result = ArrayList<T>()
         val closestPointChecker: ClosestPointChecker = when (lookupSpace) {
-            LookupSpace.X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
-            LookupSpace.Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))
+            X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
+            Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))
             else -> ClosestPointChecker(cursor)
         }
         private var myLastAddedDistance: Double = -1.0

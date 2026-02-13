@@ -177,7 +177,7 @@ object GeomInteractionUtil {
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
                 GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             } else {
-                GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+                GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
             }
 
             GeomKind.PIE,

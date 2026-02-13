@@ -29,13 +29,10 @@ object TextUtil {
         0.5 to Text.HorizontalAnchor.MIDDLE,
         1.0 to Text.HorizontalAnchor.RIGHT
     )
-    private val VJUST_MAP: Map<Any, Text.VerticalAnchor> = mapOf(
-        "bottom" to Text.VerticalAnchor.BOTTOM,
-        "center" to Text.VerticalAnchor.CENTER,
-        "top" to Text.VerticalAnchor.TOP,
-        0.0 to Text.VerticalAnchor.BOTTOM,
-        0.5 to Text.VerticalAnchor.CENTER,
-        1.0 to Text.VerticalAnchor.TOP
+    private val VJUST_MAP: Map<Any, Double> = mapOf(
+        "bottom" to 0.0,
+        "center" to 0.5,
+        "top" to 1.0,
     )
     private val FONT_FAMILY_MAP = mapOf(
         "sans" to "sans-serif",
@@ -53,9 +50,9 @@ object TextUtil {
         return hAnchor(hjust)
     }
 
-    fun vAnchor(vjust: Any) = VJUST_MAP[vjust] ?: Text.VerticalAnchor.CENTER
+    fun vAnchor(vjust: Any): Double = VJUST_MAP[vjust] ?: (vjust as? Double) ?: 0.5
 
-    fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.VerticalAnchor {
+    fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Double {
         var vjust = p.vjust()
         if (vjust in listOf("inward", "outward") && center != null) {
             vjust = computeJustification(vjust, p.angle()!!, location, center, isHorizontal = false)
@@ -186,7 +183,7 @@ object TextUtil {
         textSize: DoubleVector,
         padding: Double,
         hAnchor: Text.HorizontalAnchor,
-        vAnchor: Text.VerticalAnchor
+        vAnchor: Double
     ): DoubleRectangle {
         val width = textSize.x + padding * 2
         val height = textSize.y + padding * 2
@@ -196,11 +193,7 @@ object TextUtil {
             Text.HorizontalAnchor.RIGHT -> location.x - width
             Text.HorizontalAnchor.MIDDLE -> location.x - width / 2
         }
-        val originY = when (vAnchor) {
-            Text.VerticalAnchor.TOP -> location.y
-            Text.VerticalAnchor.BOTTOM -> location.y - height
-            Text.VerticalAnchor.CENTER -> location.y - height / 2
-        }
+        val originY = location.y + (vAnchor - 1) * height
         return DoubleRectangle(originX, originY, width, height)
     }
 }

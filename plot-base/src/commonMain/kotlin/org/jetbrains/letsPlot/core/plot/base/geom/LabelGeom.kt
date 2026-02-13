@@ -28,6 +28,6 @@ open class LabelGeom : TextGeom() {
         textSize: DoubleVector,
         fontSize: Double,
         hAnchor: Text.HorizontalAnchor,
-        vAnchor: Text.VerticalAnchor
+        vAnchor: Double
     ) = TextHelper.labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
 }

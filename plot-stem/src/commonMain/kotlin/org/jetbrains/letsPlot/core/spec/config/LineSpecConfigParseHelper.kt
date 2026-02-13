@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.*
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -34,8 +33,7 @@ open class LineSpecConfigParser(
             },
             formats = getList(Option.LinesSpec.FORMATS),
             variables = getStringList(Option.LinesSpec.VARIABLES),
-            lhs = getString(Option.LinesSpec.LHS),
-            rhs = getString(Option.LinesSpec.RHS),
+            eqSpec = getMap(Option.LinesSpec.EQ),
             titleLine = getString(Option.LinesSpec.TITLE)
         ).parse()
     }
@@ -45,8 +43,7 @@ open class LineSpecConfigParser(
         private val lines: List<String>?,
         formats: List<*>,
         variables: List<String>,
-        private val lhs: String?,
-        private val rhs: String?,
+        private val eqSpec: Map<String, Any>,
         private val titleLine: String?
     ) {
         private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(formats)
@@ -119,8 +116,8 @@ open class LineSpecConfigParser(
                     }
                }
 
-                fieldName == Stats.EQ.name -> {
-                    EqDataFrameField(fieldName, format, lhs, rhs)
+                fieldName == EQ_PATTERN -> {
+                    EqDataFrameField(fieldName, format, EqSpecConfigParser(eqSpec).create())
                 }
 
                 else -> {
@@ -235,6 +232,10 @@ open class LineSpecConfigParser(
                     varField(detachVariableName(fieldString))
                 }
 
+                fieldString.startsWith(EQ_PATTERN) -> {
+                    eqField()
+                }
+
                 else -> error("Unknown type of the field with name = \"$fieldString\"")
             }
 
@@ -254,6 +255,7 @@ open class LineSpecConfigParser(
 
         private fun aesField(aesName: String) = Field(aesName, true)
         private fun varField(varName: String) = Field(varName, false)
+        private fun eqField() = Field(EQ_PATTERN, false)
     }
 
     private data class Field(val name: String, val isAes: Boolean)
@@ -262,8 +264,9 @@ open class LineSpecConfigParser(
         private const val AES_NAME_PREFIX = "^"
         private const val VARIABLE_NAME_PREFIX = "@"
         private const val LABEL_SEPARATOR = "|"
+        private const val EQ_PATTERN = "~eq"
 
         // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|~eq|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
     }
 }

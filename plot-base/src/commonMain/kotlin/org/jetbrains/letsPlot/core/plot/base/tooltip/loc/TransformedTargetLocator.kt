@@ -22,12 +22,14 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
 
     private fun convertLookupResult(lookupResult: GeomTargetLocator.LookupResult): GeomTargetLocator.LookupResult {
         return GeomTargetLocator.LookupResult(
-            convertGeomTargets(lookupResult.targets),
-            convertToPlotDistance(lookupResult.distance),
-            lookupResult.geomKind,
-            lookupResult.contextualMapping,
-            lookupResult.contextualMapping.isCrosshairEnabled,
-            lookupResult.hitShapeKind
+            targets = convertGeomTargets(lookupResult.targets),
+            distance = convertToPlotDistance(lookupResult.distance),
+            geomKind = lookupResult.geomKind,
+            contextualMapping = lookupResult.contextualMapping,
+            hasGeneralTooltip = lookupResult.hasGeneralTooltip,
+            hasAxisTooltip = lookupResult.hasAxisTooltip,
+            isCrosshairEnabled = lookupResult.isCrosshairEnabled,
+            hitShapeKind = lookupResult.hitShapeKind
         )
     }
 

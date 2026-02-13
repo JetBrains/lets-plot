@@ -30,8 +30,8 @@ private fun createAndShowGui() {
         background = Color.LIGHT_GRAY
 
         // Add components to the column
-        add(JLabel("Click 'Pan off' to enable mouse wheel zooming and to block scrolling."))
-        add(JLabel("Click 'Pan on' to disable mouse wheel zooming and to enable scrolling."))
+        add(JLabel("Select 'Pan' to enable mouse wheel zooming and to block scrolling."))
+        add(JLabel("Unselect 'Pan' to disable mouse wheel zooming and to enable scrolling."))
 
         val toolbar = SandboxToolbarAwt()
         add(toolbar.apply {

@@ -26,9 +26,9 @@ class LocatedTargetsPicker(
     }
 
     fun chooseBestResult(): List<LookupResult> {
-        fun hasGeneralTooltip(lookupResult: LookupResult) = lookupResult.contextualMapping.hasGeneralTooltip
+        fun hasGeneralTooltip(lookupResult: LookupResult) = lookupResult.hasGeneralTooltip
         fun hasAxisTooltip(lookupResult: LookupResult): Boolean {
-            return lookupResult.contextualMapping.hasAxisTooltip ||
+            return lookupResult.hasAxisTooltip ||
                     // actually hline/vline have axis info in the general tooltip
                     lookupResult.geomKind in listOf(V_LINE, H_LINE)
         }
@@ -120,7 +120,9 @@ class LocatedTargetsPicker(
             ERROR_BAR,
             CROSS_BAR,
             LINE_RANGE,
-            POINT_RANGE
+            POINT_RANGE,
+            SMOOTH,
+            STEP
         )
 
         private fun distance(lookupResult: LookupResult, coord: DoubleVector): Double {
@@ -152,6 +154,8 @@ class LocatedTargetsPicker(
             distance = distance,
             geomKind = geomKind,
             contextualMapping = contextualMapping,
+            hasGeneralTooltip = hasGeneralTooltip,
+            hasAxisTooltip = hasAxisTooltip,
             isCrosshairEnabled = isCrosshairEnabled,
             hitShapeKind = hitShapeKind
         )

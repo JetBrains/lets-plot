@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import org.jetbrains.letsPlot.awt.plot.component.DefaultErrorMessageComponent
+import org.jetbrains.letsPlot.awt.plot.component.SimpleErrorMessageComponent
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.spec.FailureHandler
@@ -24,7 +24,7 @@ object MonolithicAwt {
         sizingPolicy: SizingPolicy,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
-        errorMessageComponentFactory: (String) -> JComponent = DefaultErrorMessageComponent.factory,
+        errorMessageComponentFactory: (String) -> JComponent = SimpleErrorMessageComponent.factory,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
 
@@ -51,7 +51,7 @@ object MonolithicAwt {
         sizingPolicy: SizingPolicy,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
-        errorMessageComponentFactory: (message: String) -> JComponent = DefaultErrorMessageComponent.factory,
+        errorMessageComponentFactory: (message: String) -> JComponent = SimpleErrorMessageComponent.factory,
         computationMessagesHandler: (List<String>) -> Unit,
     ): JComponent {
 

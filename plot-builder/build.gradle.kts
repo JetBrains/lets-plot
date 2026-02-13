@@ -28,6 +28,7 @@ kotlin {
                 compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 
                 compileOnly(project(":commons"))
+                compileOnly(project(":canvas"))
                 compileOnly(project(":datamodel"))
                 compileOnly(project(":plot-base"))
             }

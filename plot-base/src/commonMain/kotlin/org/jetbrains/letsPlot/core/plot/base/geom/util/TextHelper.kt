@@ -30,7 +30,7 @@ class TextHelper(
     private val naValue: String,
     private val sizeUnit: String?,
     private val checkOverlap: Boolean,
-    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Text.VerticalAnchor) -> DoubleRectangle,
+    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Double) -> DoubleRectangle,
     private val componentFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgGElement
 ) : GeomHelper(pos, coord, ctx) {
 
@@ -120,10 +120,8 @@ class TextHelper(
             val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
             //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
-            val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
-                Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
-                Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
-                Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
+            val yPosition = TextUtil.vAnchor(p, location, boundsCenter).let { vjust ->
+                location.y + (vjust - 1) * textHeight + (1 - 0.3 * vjust) * fontSize
             }
 
             val textLocation = DoubleVector(location.x, yPosition)
@@ -193,7 +191,7 @@ class TextHelper(
             location: DoubleVector,
             textSize: DoubleVector,
             hAnchor: Text.HorizontalAnchor,
-            vAnchor: Text.VerticalAnchor,
+            vAnchor: Double,
         ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
         internal fun labelRectangle(
@@ -201,7 +199,7 @@ class TextHelper(
             textSize: DoubleVector,
             fontSize: Double,
             hAnchor: Text.HorizontalAnchor,
-            vAnchor: Text.VerticalAnchor,
+            vAnchor: Double,
             labelOptions: LabelOptions
         ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
 

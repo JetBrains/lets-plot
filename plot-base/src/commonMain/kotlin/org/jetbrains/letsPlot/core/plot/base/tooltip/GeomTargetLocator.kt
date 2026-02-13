@@ -37,6 +37,8 @@ interface GeomTargetLocator {
         open val distance: Double,
         open val geomKind: GeomKind,
         open val contextualMapping: ContextualMapping,
+        val hasGeneralTooltip: Boolean,
+        val hasAxisTooltip: Boolean,
         val isCrosshairEnabled: Boolean,
         val hitShapeKind: HitShape.Kind
     )

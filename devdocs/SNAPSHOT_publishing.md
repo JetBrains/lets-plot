@@ -8,9 +8,7 @@
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository \
-          publishLetsPlotJvmJfxPublicationToMavenLocalRepository \
           publishLetsPlotJvmBatikPublicationToMavenLocalRepository \
-          publishLetsPlotImageExportPublicationToMavenLocalRepository \
           publishLetsPlotGISPublicationToMavenLocalRepository \
           publishLetsPlotCoreModulesToMavenLocalRepository \
           publishLetsPlotIdeaPluginPublicationToMavenLocalRepository
@@ -35,9 +33,7 @@ Make sure the `version` in the root `build.gradle.kts` file is a SNAPSHOT versio
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
-          publishLetsPlotJvmJfxPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
-          publishLetsPlotImageExportPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository \
           publishLetsPlotIdeaPluginPublicationToMavenRepository
@@ -51,7 +47,7 @@ https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/org/
                 
 #### Using SNAPSHOT artifacts
 
-Add snapshots repository to the `repositories` section of the `build.gradle.kts` file:
+Add snapshot repository to the `repositories` section of the `build.gradle.kts` file:
 
 ```kotlin
 repositories {
@@ -61,5 +57,5 @@ repositories {
 }
 ```
 
-#### Snapshot Vertsion of JS Artifacts
+#### Snapshot Version of JS Artifacts
 ToDo.

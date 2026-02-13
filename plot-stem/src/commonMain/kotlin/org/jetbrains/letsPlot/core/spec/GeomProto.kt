@@ -404,7 +404,7 @@ class GeomProto(val geomKind: GeomKind) {
 
         private fun statR2Defaults(): Map<String, Any> {
             return mapOf(
-                Layer.STAT to "smooth2",
+                Layer.STAT to "smooth_summary",
                 Layer.ANNOTATIONS to mapOf("formats" to emptyList<String>(), "lines" to listOf("@{..r2..}"))
             )
         }

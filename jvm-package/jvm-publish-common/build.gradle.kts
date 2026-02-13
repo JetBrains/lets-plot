@@ -35,10 +35,12 @@ val jvmJarCommon by tasks.named<Jar>("jvmJar") {
 val pomDependencies = listOf(
     // Lets-Plot core artifacts.
     listOf(project.group, "commons-jvm", project.version),
+    listOf(project.group, "canvas-jvm", project.version),
     listOf(project.group, "datamodel-jvm", project.version),
     listOf(project.group, "plot-base-jvm", project.version),
     listOf(project.group, "plot-builder-jvm", project.version),
     listOf(project.group, "plot-stem-jvm", project.version),
+    listOf(project.group, "plot-raster-jvm", project.version),
 
     // Libs
     // ToDo: coroutines ?

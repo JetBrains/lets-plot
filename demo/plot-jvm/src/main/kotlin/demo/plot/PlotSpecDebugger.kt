@@ -1,8 +1,8 @@
 package demo.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.canvas.CanvasPane
-import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotPanelCanvas
+import org.jetbrains.letsPlot.awt.canvas.CanvasComponent
+import org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel
 import org.jetbrains.letsPlot.awt.sandbox.SandboxToolbarAwt
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
-import org.jetbrains.letsPlot.raster.view.SvgCanvasFigure
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
+import org.jetbrains.letsPlot.raster.view.SvgCanvasDrawable
 import java.awt.*
 import java.awt.datatransfer.DataFlavor
 import java.awt.event.*
@@ -344,10 +344,10 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         addActionListener {
             if (plotPanel.width > 0 && plotPanel.height > 0) {
                 try {
-                    val canvaPanel = plotPanel.components.first() as DefaultPlotPanelCanvas
-                    val canvasPane = canvaPanel.components.first() as CanvasPane
-                    val svgCanvasFigure = canvasPane.figure as SvgCanvasFigure
-                    val svgString = SvgToString.render(svgCanvasFigure.svgSvgElement)
+                    val canvaPanel = plotPanel.components.first() as SwingPlotPanel
+                    val canvasComponent = canvaPanel.components.first() as CanvasComponent
+                    val svgCanvasDrawable = canvasComponent.content as SvgCanvasDrawable
+                    val svgString = SvgToString.render(svgCanvasDrawable.svgSvgElement)
 
                     // Show Save Dialog
                     val fileChooser = JFileChooser().apply {
@@ -816,18 +816,18 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     }
                     "CanvasPane" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
-                        val plotFig = PlotCanvasFigure()
-                        plotFig.onHrefClick { Desktop.getDesktop().browse(java.net.URI.create(it)) }
-                        plotFig.update(
+                        val plotCanvasDrawable = PlotCanvasDrawable()
+                        plotCanvasDrawable.onHrefClick { Desktop.getDesktop().browse(java.net.URI.create(it)) }
+                        plotCanvasDrawable.update(
                             processedSpec,
                             sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
                             computationMessagesHandler = messageHandler
                         )
-                        newPlotComponent = CanvasPane(plotFig, pixelDensity = (pixelDensitySpinner.value as Double))
+                        newPlotComponent = CanvasComponent(plotCanvasDrawable, pixelDensity = (pixelDensitySpinner.value as Double))
                     }
                     "DefaultPlotPanelCanvas" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
-                        newPlotComponent = DefaultPlotPanelCanvas(
+                        newPlotComponent = SwingPlotPanel(
                             processedSpec = processedSpec,
                             preferredSizeFromPlot = false,
                             repaintDelay = 0,
@@ -842,7 +842,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 processedSpecTextArea.caretPosition = 0
 
                 if (newPlotComponent is DefaultPlotPanelBatik) sharedToolbar.attach(newPlotComponent.figureModel)
-                else if (newPlotComponent is DefaultPlotPanelCanvas) sharedToolbar.attach(newPlotComponent.figureModel)
+                else if (newPlotComponent is SwingPlotPanel) sharedToolbar.attach(newPlotComponent.figureModel)
 
                 plotPanel.add(newPlotComponent, BorderLayout.CENTER)
                 plotPanel.revalidate()
