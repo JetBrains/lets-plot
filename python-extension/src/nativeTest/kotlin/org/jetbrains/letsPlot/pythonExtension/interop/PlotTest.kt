@@ -203,7 +203,6 @@ class PlotTest {
             |      "x": 0.0,
             |      "label": "\\( e^{i \\cdot \\pi} = -1 \\)",
             |      "size": 70.0,
-            |      "family": "Noto Sans",
             |      "fontface": "italic"
             |    }
             |  ]
@@ -260,7 +259,6 @@ class PlotTest {
                   },
                   "data_meta": {},
                   "x": 0.0,
-                  "family": "Noto Sans",
                   "fontface": "italic",
                   "size": 12.0
                 }
@@ -284,7 +282,7 @@ class PlotTest {
             |    {
             |      "kind": "plot",
             |      "ggtitle": { "text": "Default limits" },
-            |      "theme": { "exponent_format": "pow", "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "theme": { "exponent_format": "pow", "axis_title_y": { "blank": true } },
             |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
             |      "layers": [
             |        {
@@ -293,7 +291,6 @@ class PlotTest {
             |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
             |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
             |          },
-            |          "family": "Noto Sans",
             |          "size": 10.0
             |        }
             |      ]
@@ -301,7 +298,7 @@ class PlotTest {
             |    {
             |      "kind": "plot",
             |      "ggtitle": { "text": "Scientific notation for \\( x \\leq 10^{-3} \\) and \\( x \\geq 10^3 \\)" },
-            |      "theme": { "exponent_format": [ "pow", -3.0, 3.0 ], "text": { "family": "Noto Sans" }, "axis_title_y": { "blank": true } },
+            |      "theme": { "exponent_format": [ "pow", -3.0, 3.0 ], "axis_title_y": { "blank": true } },
             |      "scales": [ { "aesthetic": "y", "limits": [ 1e-08, 10000000.0 ], "trans": "log10" } ],
             |      "layers": [
             |        {
@@ -310,7 +307,6 @@ class PlotTest {
             |            "y": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ],
             |            "label": [ 1e-07, 1e-06, 1e-05, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0 ]
             |          },
-            |          "family": "Noto Sans",
             |          "size": 10.0
             |        }
             |      ]

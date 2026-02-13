@@ -64,6 +64,11 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1,
 
     For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
+    ----
+
+    When using ``facet_grid(scales='free')`` (or ``'free_x'`` / ``'free_y'``) with ``geom_histogram()``,
+    set ``threshold=0`` in ``geom_histogram()`` to avoid empty tail bins at the left and right edges.
+
     Examples
     --------
     .. jupyter-execute::
@@ -97,6 +102,25 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1,
         ggplot({'x': x, 'y': y}, aes(x='x')) + \\
             geom_histogram() + \\
             facet_grid(y='y', y_order=-1, y_format='.2f')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 50
+        data = {'x': np.concatenate([np.random.normal(loc=-2, size=n),
+                                     np.random.normal(loc=0, size=n),
+                                     np.random.normal(loc=2, size=n)]),
+                'g': ['a'] * n + ['b'] * n + ['c'] * n}
+        ggplot(data, aes(x='x')) + \\
+            geom_histogram(threshold=0) + \\
+            facet_grid('g', scales='free')
 
     """
     return _facet('grid',
@@ -160,6 +184,11 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
 
     For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
+    ----
+
+    When using ``facet_wrap(scales='free')`` (or ``'free_x'`` / ``'free_y'``) with ``geom_histogram()``,
+    set ``threshold=0`` in ``geom_histogram()`` to avoid empty tail bins at the left and right edges.
+
     Examples
     --------
     .. jupyter-execute::
@@ -193,6 +222,25 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         ggplot({'x': x, 'y': y}, aes(x='x')) + \\
             geom_histogram() + \\
             facet_wrap(facets='y', order=-1, ncol=2, dir='v', format='.2f')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 50
+        data = {'x': np.concatenate([np.random.normal(loc=-2, size=n),
+                                     np.random.normal(loc=0, size=n),
+                                     np.random.normal(loc=2, size=n)]),
+                'g': ['a'] * n + ['b'] * n + ['c'] * n}
+        ggplot(data, aes(x='x')) + \\
+            geom_histogram(threshold=0) + \\
+            facet_wrap('g', scales='free')
 
     """
     return _facet('wrap',
