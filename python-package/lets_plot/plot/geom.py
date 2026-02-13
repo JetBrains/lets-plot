@@ -9011,7 +9011,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None, inherit_aes=False,
+def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
                  manual_key=None,
                  sampling=None,
                  orientation=None,
@@ -9039,8 +9039,6 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None, in
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge() <https://lets-plot.org/python/pages/api/lets_plot.position_dodge.html>`__ etc.).
     show_legend : bool, default=False
         True - show legend for this layer.
-    inherit_aes : bool, default=False
-        True - combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or ``layer_key``
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key() <https://lets-plot.org/python/pages/api/lets_plot.layer_key.html>`__ function.
@@ -9193,7 +9191,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None, in
                  stat=None,
                  position=position,
                  show_legend=show_legend,
-                 inherit_aes=inherit_aes,
+                 inherit_aes=False,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=None,
