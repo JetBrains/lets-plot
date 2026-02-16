@@ -39,3 +39,10 @@ fun Vector.subtract(other: DoubleVector): DoubleVector {
 fun Vector.mul(d: Double): DoubleVector {
     return DoubleVector(x * d, y * d)
 }
+
+fun Rectangle.toDoubleRectangle(): DoubleRectangle {
+    return DoubleRectangle(
+        origin = origin.toDoubleVector(),
+        dimension = dimension.toDoubleVector()
+    )
+}

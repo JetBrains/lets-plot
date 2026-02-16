@@ -65,6 +65,146 @@ class InteractivityTest : VisualPlotTestBase() {
     }
 
     @Test
+    fun `gggrid tooltip`() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "ggsize": {
+            |    "width": 600.0,
+            |    "height": 150.0
+            |  },
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "data": {
+            |        "x": [ 1.0, 2.0, 3.0 ],
+            |        "c": [ "a", "b", "c" ],
+            |        "g": [ 0.0, 0.0, 0.0 ]
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [ 
+            |          { "type": "int", "column": "x" },
+            |          { "type": "str", "column": "c" },
+            |          { "type": "int", "column": "g" }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "mapping": { "x": "x", "color": "c" },
+            |          "tooltips": {
+            |            "formats": [],
+            |            "lines": [ "^color" ]
+            |          }
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 4.0, 5.0, 6.0 ],
+            |        "c": [ "d", "e", "f" ],
+            |        "g": [ 1.0, 1.0, 1.0 ]
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" },
+            |          { "type": "str", "column": "c" },
+            |          { "type": "int", "column": "g" }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "mapping": { "x": "x", "color": "c" },
+            |          "tooltips": {
+            |            "formats": [],
+            |            "lines": [ "^color" ]
+            |          }
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val rawPlotSpec = parsePlotSpec(spec)
+        val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
+        val plotCanvasDrawable = PlotCanvasDrawable()
+        plotCanvasDrawable.update(
+            processedSpec = processedPlotSpec,
+            sizingPolicy = keepFigureDefaultSize(),
+            computationMessagesHandler = { }
+        )
+
+        val awtCanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+        plotCanvasDrawable.mapToCanvas(awtCanvasPeer)
+
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(450, 80))
+
+        val snapshot = plotCanvasDrawable.takeSnapshot(awtCanvasPeer)
+
+        imageComparer.assertBitmapEquals("interactivity_gggrid_tooltip.png", snapshot.bitmap)
+    }
+
+    @Test
+    fun `facet grid tooltip`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ],
+            |    "c": [ "a", "b", "c", "d", "e", "f" ],
+            |    "g": [ 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "int", "column": "x" },
+            |      { "type": "str", "column": "c" },
+            |      { "type": "int", "column": "g" }
+            |    ]
+            |  },
+            |  "facet": {
+            |    "name": "grid",
+            |    "x": "g",
+            |    "x_order": 1.0,
+            |    "y_order": 1.0
+            |  },
+            |  "ggsize": { "width": 600.0, "height": 150.0 },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "color": "c" },
+            |      "tooltips": {
+            |        "formats": [],
+            |        "lines": [ "^color" ]
+            |      }
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val rawPlotSpec = parsePlotSpec(spec)
+        val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
+        val plotCanvasDrawable = PlotCanvasDrawable()
+        plotCanvasDrawable.update(
+            processedSpec = processedPlotSpec,
+            sizingPolicy = keepFigureDefaultSize(),
+            computationMessagesHandler = { }
+        )
+
+        val awtCanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+        plotCanvasDrawable.mapToCanvas(awtCanvasPeer)
+
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(500, 80))
+
+        val snapshot = plotCanvasDrawable.takeSnapshot(awtCanvasPeer)
+
+        imageComparer.assertBitmapEquals("interactivity_facet_grid_tooltip.png", snapshot.bitmap)
+    }
+
+    @Test
     fun `repaint manager updates buffer during pan when cached buffer incomplete`() {
         // With xlim = [20, 40] and overscan factor = 1, the repaint manager creates a buffer covering the range [20, 40].
         // Dragging left by half the plot width (200 px out of 400 px) shifts the visible range to [30, 50].

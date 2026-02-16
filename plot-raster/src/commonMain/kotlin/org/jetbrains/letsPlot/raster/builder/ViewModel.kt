@@ -5,13 +5,12 @@
 
 package org.jetbrains.letsPlot.raster.builder
 
-import org.jetbrains.letsPlot.commons.event.MouseEvent
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.event.child
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.geometry.toDoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
@@ -19,8 +18,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 internal sealed class ViewModel(
     val svg: SvgSvgElement,
     val toolEventDispatcher: ToolEventDispatcher,
-    val eventDispatcher: CanvasEventDispatcher,
 ) : Disposable {
+    val mouseEventPeer: MouseEventPeer = MouseEventPeer()
     internal abstract val bounds: Rectangle
 
     @Suppress("unused")
@@ -41,16 +40,7 @@ internal sealed class ViewModel(
 internal class SimpleModel(
     svg: SvgSvgElement,
     toolEventDispatcher: ToolEventDispatcher,
-) : ViewModel(
-    svg,
-    toolEventDispatcher,
-    eventDispatcher = object : CanvasEventDispatcher {
-        override fun dispatchMouseEvent(kind: MouseEventSpec, e: MouseEvent) {} // ignore events
-        override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-            return Registration.EMPTY
-        }
-    }
-) {
+) : ViewModel(svg, toolEventDispatcher) {
     override val bounds: Rectangle
         get() = throw IllegalStateException("Not supported: SimpleModel.bounds")
 
@@ -59,12 +49,10 @@ internal class SimpleModel(
 
 internal class SinglePlotModel(
     svg: SvgSvgElement,
-    eventDispatcher: CanvasEventDispatcher,
     toolEventDispatcher: ToolEventDispatcher,
     override val bounds: Rectangle,
     private val registration: Registration
-) : ViewModel(svg, toolEventDispatcher, eventDispatcher) {
-
+) : ViewModel(svg, toolEventDispatcher) {
     override fun dispose() {
         registration.dispose()
     }
@@ -74,15 +62,13 @@ internal class CompositeFigureModel(
     svg: SvgSvgElement,
     toolEventDispatcher: ToolEventDispatcher,
     override val bounds: Rectangle,
-) : ViewModel(svg, toolEventDispatcher, CompositeFigureEventDispatcher()) {
+) : ViewModel(svg, toolEventDispatcher) {
     private val children = ArrayList<ViewModel>()
 
     fun addChildFigure(childModel: ViewModel) {
         children.add(childModel)
-        (eventDispatcher as CompositeFigureEventDispatcher).addEventDispatcher(
-            bounds = childModel.bounds,
-            eventDispatcher = childModel.eventDispatcher
-        )
+        val childMouseEventSource = mouseEventPeer.child { childModel.bounds.toDoubleRectangle() }
+        childModel.mouseEventPeer.addEventSource(childMouseEventSource)
     }
 
     fun assembleAsRoot() {

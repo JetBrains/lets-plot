@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.CanvasEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
@@ -22,33 +21,22 @@ internal object FigureToViewModel {
         @Suppress("NAME_SHADOWING")
         val buildInfo = buildInfo.layoutedByOuterSize()
         return when (val svgRoot = buildInfo.createSvgRoot()) {
-            is CompositeFigureSvgRoot -> processCompositeFigure(
-                svgRoot = svgRoot,
-                origin = DoubleVector.ZERO
-            ).also {
+            is PlotSvgRoot -> processPlotFigure(svgRoot, origin = DoubleVector.ZERO)
+            is CompositeFigureSvgRoot -> processCompositeFigure(svgRoot, origin = DoubleVector.ZERO).also {
                 it.assembleAsRoot()
             }
-
-            is PlotSvgRoot -> processPlotFigure(
-                svgRoot = svgRoot,
-                origin = DoubleVector.ZERO
-            )
 
             else -> error("Unsupported figure: ${svgRoot::class.simpleName}")
         }
     }
 
-    private fun processCompositeFigure(
-        svgRoot: CompositeFigureSvgRoot,
-        origin: DoubleVector,
-    ): CompositeFigureModel {
+    private fun processCompositeFigure(svgRoot: CompositeFigureSvgRoot, origin: DoubleVector): CompositeFigureModel {
         svgRoot.ensureContentBuilt()
         val figureSvgSvg = svgRoot.svg
         if (origin != DoubleVector.ZERO) {
             figureSvgSvg.x().set(origin.x)
             figureSvgSvg.y().set(origin.y)
         }
-
 
         // Sub-figures
         val subFigures = mutableListOf<ViewModel>()
@@ -57,16 +45,8 @@ internal object FigureToViewModel {
         for (element in svgRoot.elements) {
             val elementOrigin = element.bounds.origin.add(origin)
             val elementModel = when (element) {
-                is CompositeFigureSvgRoot -> processCompositeFigure(
-                    svgRoot = element,
-                    origin = elementOrigin,
-                )
-
-                is PlotSvgRoot -> processPlotFigure(
-                    svgRoot = element,
-                    origin = elementOrigin
-                )
-
+                is CompositeFigureSvgRoot -> processCompositeFigure(svgRoot = element, origin = elementOrigin)
+                is PlotSvgRoot -> processPlotFigure(svgRoot = element, origin = elementOrigin)
                 else -> error("Unsupported figure: ${svgRoot::class.simpleName}")
             }
 
@@ -97,13 +77,15 @@ internal object FigureToViewModel {
 
         val plotContainer = PlotContainer(svgRoot)
 
-        return SinglePlotModel(
+        val plotModel = SinglePlotModel(
             svg = figureSvgSvg,
-            eventDispatcher = CanvasEventDispatcher.from(plotContainer.mouseEventPeer),
             toolEventDispatcher = plotContainer.toolEventDispatcher,
             bounds = toModelBounds(svgRoot.bounds),
             registration = Registration.from(plotContainer)
         )
+        plotContainer.mouseEventPeer.addEventSource(plotModel.mouseEventPeer)
+
+        return plotModel
     }
 
     private fun toModelBounds(from: DoubleRectangle): Rectangle {

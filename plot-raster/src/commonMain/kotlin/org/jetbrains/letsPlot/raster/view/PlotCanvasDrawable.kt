@@ -109,7 +109,7 @@ class PlotCanvasDrawable : CanvasDrawable {
         )
 
         plotSvgFigure.svgSvgElement = vm.svg
-        eventReg = vm.eventDispatcher.addEventSource(mouseEventPeer)
+        eventReg = vm.mouseEventPeer.addEventSource(mouseEventPeer)
 
         viewModel = vm
     }
