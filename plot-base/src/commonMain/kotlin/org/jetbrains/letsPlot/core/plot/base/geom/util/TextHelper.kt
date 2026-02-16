@@ -5,14 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -22,17 +20,18 @@ class TextHelper(
     pos: PositionAdjustment,
     coord: CoordinateSystem,
     ctx: GeomContext,
+    private val labelOptions: LabelOptions?,
     private val formatter: ((Any) -> String)?,
     private val naValue: String,
     private val sizeUnit: String?,
     private val checkOverlap: Boolean,
     private val flipAngle: Boolean,
-    private val coordOrNull: (DataPointAesthetics) -> DoubleVector?,
-    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Double) -> DoubleRectangle,
-    private val componentFactory: (DataPointAesthetics, DoubleVector, String, Boolean, Double, GeomContext, DoubleVector?) -> SvgGElement
+    private val coordOrNull: (DataPointAesthetics) -> DoubleVector?
 ) : GeomHelper(pos, coord, ctx) {
 
-    internal fun createSvgComponents(): List<SvgGElement> {
+    internal fun createSvgComponents(
+        labelNudge: (DoubleVector, DoubleVector) -> DoubleVector = TextUtil.DEF_NUDGE
+    ): List<SvgGElement> {
         val restrictions = mutableListOf<List<DoubleVector>>()
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         return myAesthetics.dataPoints().mapNotNull { p ->
@@ -52,7 +51,11 @@ class TextHelper(
                 restrictions.add(rectangle)
             }
 
-            componentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, aesBoundsCenter)
+            if (labelOptions == null) {
+                TextUtil.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, aesBoundsCenter, labelNudge)
+            } else {
+                TextUtil.labelComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, aesBoundsCenter, labelOptions, labelNudge)
+            }
         }
     }
 
@@ -96,7 +99,11 @@ class TextHelper(
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val angle = toRadians(TextUtil.orientedAngle(p, flipAngle, ctx))
 
-        return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
-            .rotate(angle, location)
+        val rectangle = if (labelOptions == null) {
+            TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
+        } else {
+            TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
+        }
+        return rectangle.rotate(angle, location)
     }
 }

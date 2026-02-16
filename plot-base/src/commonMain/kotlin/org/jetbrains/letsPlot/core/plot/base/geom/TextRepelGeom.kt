@@ -55,7 +55,7 @@ open class TextRepelGeom: TextGeom() {
             return coord.toClient(point)
         }
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = null, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull)
         val svgHelper = GeomHelper.SvgElementHelper(::toClient)
             .setStrokeAlphaEnabled(true)
             .setArrowSpec(arrowSpec)
@@ -125,7 +125,7 @@ open class TextRepelGeom: TextGeom() {
             val pointLocation = coord.toClient(point) ?: continue
             val text = textHelper.toString(dp.label())
 
-            val tc = componentFactory(toLabelAes(dp), result.position, text, flipAngle = false, 1.0, ctx, aesBoundsCenter)
+            val tc = TextUtil.textComponentFactory(toLabelAes(dp), result.position, text, flipAngle = false, 1.0, ctx, aesBoundsCenter)
             root.add(tc)
 
             val pointDp = toPointAes(dp)

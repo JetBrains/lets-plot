@@ -39,24 +39,14 @@ class BracketGeom : TextGeom() {
         root.appendNodes(svgPath)
 
         // Label
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap = false, flipAngle = true, ::coordOrNull, ::objectRectangle, ::componentFactory)
-        textHelper.createSvgComponents().forEach(root::add)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = null, formatter, naValue, sizeUnit, checkOverlap = false, flipAngle = true, ::coordOrNull)
+        textHelper.createSvgComponents(labelNudge = ::labelNudge).forEach(root::add)
     }
 
     override fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
         val (xmin, xmax, y) = p.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
         return DoubleVector((xmin + xmax) / 2.0, y)
     }
-
-    override fun componentFactory(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        flipAngle: Boolean,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ) = TextUtil.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, ::labelNudge)
 
     companion object {
         const val HANDLES_GROUPS = false

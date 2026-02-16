@@ -8,10 +8,8 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -31,7 +29,7 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = null, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull)
         textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
@@ -39,24 +37,6 @@ open class TextGeom : GeomBase() {
     }
 
     open fun coordOrNull(p: DataPointAesthetics): DoubleVector? = p.finiteVectorOrNull(Aes.X, Aes.Y)
-
-    open fun componentFactory(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        flipAngle: Boolean,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ) = TextUtil.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter)
-
-    open fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Double,
-    ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
     companion object {
         const val DEF_NA_VALUE = "n/a"

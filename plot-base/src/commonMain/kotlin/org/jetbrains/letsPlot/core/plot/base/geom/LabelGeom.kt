@@ -5,31 +5,30 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
+import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 open class LabelGeom : TextGeom() {
     val labelOptions = LabelOptions()
 
-    override fun componentFactory(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        flipAngle: Boolean,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ) = TextUtil.labelComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, labelOptions)
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
+        val targetCollector = getGeomTargetCollector(ctx)
 
-    override fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Double
-    ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = labelOptions, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull)
+        textHelper.createSvgComponents().forEach { svgElement ->
+            root.add(svgElement)
+        }
+        textHelper.buildHints(targetCollector)
+    }
 }
