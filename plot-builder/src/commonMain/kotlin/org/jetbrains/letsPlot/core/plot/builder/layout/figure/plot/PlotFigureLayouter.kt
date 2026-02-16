@@ -29,6 +29,7 @@ internal class PlotFigureLayouter(
     private var title: String?,
     private var subtitle: String?,
     private var caption: String?,
+    private var tag: String?,
 ) {
     private val flipAxis = coordProvider.flipped
 
@@ -59,6 +60,7 @@ internal class PlotFigureLayouter(
             title,
             subtitle,
             caption,
+            tag,
             hAxisTitle,
             vAxisTitle,
             axisEnabled,
@@ -139,6 +141,7 @@ internal class PlotFigureLayouter(
             title,
             subtitle,
             caption,
+            tag,
             hAxisTitle,
             vAxisTitle,
             axisEnabled,
@@ -177,18 +180,26 @@ internal class PlotFigureLayouter(
             )
         }
 
-        val figureBoundsWithoutTitleAndCaption = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
-            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
-            DoubleRectangle(
-                figureLayoutedBounds.origin.add(titleSizeDelta),
-                figureLayoutedBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
-            )
+        val figureBoundsWithoutTitleCaptionAndMargin = run {
+            val titleDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
+            val captionDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
+            val tagDelta = PlotLayoutUtil.tagMarginDelta(tag, theme.plot())
+
+            val origin = figureLayoutedBounds.origin
+                .add(titleDelta)
+                .add(tagDelta.leftTop)
+
+            val dimension = figureLayoutedBounds.dimension
+                .subtract(titleDelta)
+                .subtract(captionDelta)
+                .subtract(tagDelta.size)
+
+            DoubleRectangle(origin, dimension)
         }
 
         // Inner bounds - all without titles and legends.
         // Plot origin: the origin of the plot area: geoms, axis and facet labels (no titles, legends).
-        val plotOrigin = figureBoundsWithoutTitleAndCaption.origin
+        val plotOrigin = figureBoundsWithoutTitleCaptionAndMargin.origin
             .add(legendsSpaceLeftTopDelta(listOfNotNull(legendsBlockInfo), theme.legend()))
             .add(
                 axisTitlesOriginOffset(
@@ -207,7 +218,7 @@ internal class PlotFigureLayouter(
 
         return PlotFigureLayoutInfo(
             figureLayoutedBounds = figureLayoutedBounds,
-            figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleAndCaption,
+            figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleCaptionAndMargin,
             plotAreaOrigin = plotOrigin,
             geomAreaBounds = geomAreaBounds,
             figurePreferredSize = figurePreferredSize ?: figureLayoutedBounds.dimension,

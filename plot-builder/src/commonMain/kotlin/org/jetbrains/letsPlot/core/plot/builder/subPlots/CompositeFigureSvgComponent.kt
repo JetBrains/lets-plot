@@ -34,6 +34,7 @@ class CompositeFigureSvgComponent constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
+    private val tag: String?,
     private val layoutInfo: CompositeFigureLayoutInfo,
     val theme: Theme,
     val styleSheet: StyleSheet,

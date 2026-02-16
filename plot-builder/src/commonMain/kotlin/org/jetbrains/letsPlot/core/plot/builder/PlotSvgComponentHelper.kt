@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -139,6 +140,71 @@ internal object PlotSvgComponentHelper {
         return Pair(elementRect, textRect)
     }
 
+    fun tagElementAndTextBounds(
+        tag: String?,
+        plotOuterBounds: DoubleRectangle,
+        geomAreaBounds: DoubleRectangle,
+        plotTheme: PlotTheme
+    ): Pair<DoubleRectangle?, DoubleRectangle?> {
+        if (tag == null) return Pair(null, null)
+
+        val location = plotTheme.tagLocation()
+        val position = plotTheme.tagPosition()
+        val margins = plotTheme.tagMargins()
+
+        val alignmentArea = when (location) {
+            TagLocation.PANEL -> geomAreaBounds
+            TagLocation.PLOT, TagLocation.MARGIN -> plotOuterBounds
+        }
+
+        val spec = PlotLabelSpecFactory.plotTag(plotTheme)
+        val textDims = PlotLayoutUtil.textDimensions(tag, spec)
+
+        val baseElementWidth = textDims.x + margins.width
+        val baseElementHeight = textDims.y + margins.height
+
+        val targetX = alignmentArea.left + position.x * alignmentArea.width
+        val targetY = alignmentArea.top + (1.0 - position.y) * alignmentArea.height
+
+        val baseElementLeft = when {
+            baseElementWidth >= alignmentArea.width -> alignmentArea.left
+            else -> (targetX - 0.5 * baseElementWidth).coerceIn(
+                alignmentArea.left,
+                alignmentArea.right - baseElementWidth
+            )
+        }
+
+        val baseElementTop = when {
+            baseElementHeight >= alignmentArea.height -> alignmentArea.top
+            else -> (targetY - 0.5 * baseElementHeight).coerceIn(
+                alignmentArea.top,
+                alignmentArea.bottom - baseElementHeight
+            )
+        }
+
+        val isVerticalSide = position.x in setOf(0.0, 1.0)
+        val isHorizontalSide = position.y in setOf(0.0, 1.0)
+
+        val (elementLeft, elementWidth) = when {
+            location == TagLocation.MARGIN && isHorizontalSide && !isVerticalSide ->
+                alignmentArea.left to alignmentArea.width
+            else ->
+                baseElementLeft to baseElementWidth
+        }
+
+        val (elementTop, elementHeight) = when {
+            location == TagLocation.MARGIN && isVerticalSide && !isHorizontalSide ->
+                alignmentArea.top to alignmentArea.height
+            else ->
+                baseElementTop to baseElementHeight
+        }
+
+        val elementRect = DoubleRectangle(elementLeft, elementTop, elementWidth, elementHeight)
+        val textRect = textRectangle(elementRect, margins)
+
+        return Pair(elementRect, textRect)
+    }
+
     fun addTitle(
         svgComponent: SvgComponent,
         text: String?,
@@ -234,6 +300,29 @@ internal object PlotSvgComponentHelper {
             )
         }
     }
+
+    fun drawTagDebugInfo(
+        svgComponent: SvgComponent,
+        tag: String?,
+        elementRect: DoubleRectangle?,
+        textRect: DoubleRectangle?,
+        plotTheme: PlotTheme
+    ) {
+        textRect?.let { svgComponent.drawDebugRect(it, Color.MAGENTA) }
+        elementRect?.let { svgComponent.drawDebugRect(it, Color.GRAY) }
+        if (tag != null && textRect != null) {
+            svgComponent.drawDebugRect(
+                textBoundingBox(
+                    tag,
+                    textRect,
+                    PlotLabelSpecFactory.plotTag(plotTheme),
+                    plotTheme.tagJustification()
+                ),
+                Color.DARK_GREEN
+            )
+        }
+    }
+
 
     // for debug drawing
     fun textBoundingBox(

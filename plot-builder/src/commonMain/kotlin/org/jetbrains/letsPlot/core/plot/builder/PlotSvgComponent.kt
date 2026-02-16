@@ -31,8 +31,10 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionEl
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.createTextRectangle
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawCaptionDebugInfo
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawSubtitleDebugInfo
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawTagDebugInfo
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawTitleDebugInfo
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.subtitleElementAndTextBounds
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.tagElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.textBoundingBox
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.titleElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
@@ -53,6 +55,7 @@ class PlotSvgComponent constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
+    private val tag: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private val figureLayoutInfo: PlotFigureLayoutInfo,
@@ -273,13 +276,45 @@ class PlotSvgComponent constructor(
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
         }
 
-        // plot title, subtitle, caption rectangles:
+        // plot tag, title, subtitle, caption rectangles:
         //   xxxElementRect - rectangle for element, including margins
         //   xxxTextRect - for text only
 
+        val (tagElementRect, tagTextRect) = tagElementAndTextBounds(
+            tag,
+            plotOuterBounds,
+            geomAreaBounds,
+            plotTheme
+        )
+        if (DEBUG_DRAWING) {
+            drawTagDebugInfo(this, tag, tagElementRect, tagTextRect, plotTheme)
+        }
+
+        // add plot tag
+        tagElementRect?.let {
+            addTitle(
+                svgComponent = this,
+                tag,
+                labelSpec = PlotLabelSpecFactory.plotTag(plotTheme),
+                justification = plotTheme.tagJustification(),
+                boundRect = it,
+                className = Style.PLOT_TAG
+            )
+        }
+
+        val tagDelta = PlotLayoutUtil.tagMarginDelta(tag, theme.plot())
+        val plotOuterBoundsForTitles = DoubleRectangle(
+            plotOuterBounds.left,
+            plotOuterBounds.top + tagDelta.top,
+            plotOuterBounds.width,
+            plotOuterBounds.height - tagDelta.top - tagDelta.bottom
+        )
+
+        val plotOuterBoundsForCaption = plotOuterBoundsForTitles
+
         val (plotTitleElementRect, plotTitleTextRect) = titleElementAndTextBounds(
             title,
-            plotOuterBounds,
+            plotOuterBoundsForTitles,
             geomAreaBounds,
             plotTheme
         )
@@ -289,7 +324,7 @@ class PlotSvgComponent constructor(
 
         val (subtitleElementRect, subtitleTextRect) = subtitleElementAndTextBounds(
             subtitle,
-            plotOuterBounds,
+            plotOuterBoundsForTitles,
             geomAreaBounds,
             plotTitleElementRect,
             plotTheme
@@ -300,7 +335,7 @@ class PlotSvgComponent constructor(
 
         val (captionElementRect, captionTextRect) = captionElementAndTextBounds(
             caption,
-            plotOuterBounds,
+            plotOuterBoundsForCaption,
             geomAreaBounds,
             plotTheme
         )

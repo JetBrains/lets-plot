@@ -22,6 +22,8 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
@@ -65,6 +67,14 @@ class CompositeFigureConfig constructor(
         get() = getMap(TITLE)[SUBTITLE_TEXT] as String?
     internal val caption: String?
         get() = getMap(CAPTION)[CAPTION_TEXT] as String?
+    internal val tag: String?
+        get() = getMap(TAG)[TAG_TEXT] as String?
+
+    internal val fullTag: String?
+        get() {
+            val text = tag ?: return null
+            return theme.plot().tagPrefix() + text + theme.plot().tagSuffix()
+        }
 
     init {
         val fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
