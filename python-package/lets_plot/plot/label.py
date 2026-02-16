@@ -110,7 +110,7 @@ def ylab(label):
     return labs(y=label)
 
 
-def labs(title=None, subtitle=None, caption=None, **labels):
+def labs(title=None, subtitle=None, caption=None, tag=None, **labels):
     """
     Change plot title, axis labels and legend titles.
 
@@ -122,6 +122,8 @@ def labs(title=None, subtitle=None, caption=None, **labels):
         The text for the plot subtitle.
     caption : str
         The text for the plot caption.
+    tag : str
+        The text for the plot tag.
     labels
         Name-value pairs where the name can be:
 
@@ -177,6 +179,9 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     # plot caption
     if caption is not None:
         specs.append(FeatureSpec('caption', name=None, text=caption))
+
+    if tag is not None:
+        specs.append(FeatureSpec('tag', name=None, text=tag))
 
     # guides
     for key, label in labels.items():

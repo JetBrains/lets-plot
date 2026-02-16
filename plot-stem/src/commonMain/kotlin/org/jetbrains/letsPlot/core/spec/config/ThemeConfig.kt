@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
+import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
@@ -44,6 +45,8 @@ class ThemeConfig constructor(
             value = convertInset(key, value)
             value = convertExponentFormat(key, value)
             value = convertTitlePosition(key, value)
+            value = convertTagPosition(key, value)
+            value = convertTagLocation(key, value)
             return LegendThemeConfig.convertValue(key, value)
         }
 
@@ -216,6 +219,74 @@ class ThemeConfig constructor(
             }
         }
 
+        private fun convertTagPosition(key: String, value: Any): Any {
+            if (key != ThemeOption.PLOT_TAG_POSITION) {
+                return value
+            }
+
+            return when (value) {
+
+                is String -> {
+                    val normalized = value
+                        .lowercase()
+                        .replace("_", "")
+                        .replace("-", "")
+                        .replace(" ", "")
+
+                    val map = mapOf(
+                        "left" to (0.0 to 0.5),
+                        "topleft" to (0.0 to 1.0),
+                        "top" to (0.5 to 1.0),
+                        "topright" to (1.0 to 1.0),
+                        "right" to (1.0 to 0.5),
+                        "bottomright" to (1.0 to 0.0),
+                        "bottom" to (0.5 to 0.0),
+                        "bottomleft" to (0.0 to 0.0)
+                    )
+
+                    map[normalized] ?: throw IllegalArgumentException(
+                        "Illegal value: '$value' for $key. " +
+                                "Expected position keyword (left, top-left, topleft, etc.) " +
+                                "or a pair of numbers."
+                    )
+                }
+
+                is List<*> -> {
+                    if (value.size != 2 || value.any { it !is Number }) {
+                        throw IllegalArgumentException(
+                            "Illegal value: '$value' for $key. " +
+                                    "Expected a list of two numeric values."
+                        )
+                    }
+
+                    (value[0] as Number).toDouble() to
+                            (value[1] as Number).toDouble()
+                }
+
+                else -> throw IllegalArgumentException(
+                    "Illegal value type: '${value::class}'. " +
+                            "Expected a string or a list of two numbers."
+                )
+            }
+        }
+
+        private fun convertTagLocation(key: String, value: Any): Any {
+            return when (key) {
+                ThemeOption.PLOT_TAG_LOCATION -> {
+                    when (value) {
+                        "plot" -> TagLocation.PLOT
+                        "panel" -> TagLocation.PANEL
+                        "margin" -> TagLocation.MARGIN
+                        else -> throw IllegalArgumentException(
+                            "Illegal value: '$value', $key. Expected values are: 'plot', 'panel', or 'margin'."
+                        )
+                    }
+                }
+
+                else -> value
+            }
+        }
+
         private fun mergeUserOptions(
             ownThemeUserOptions: Map<String, Any>,
             containerTheme: Theme?
@@ -238,6 +309,11 @@ class ThemeConfig constructor(
                                 ThemeOption.LEGEND_JUSTIFICATION,
                                 ThemeOption.LEGEND_DIRECTION,
                                 ThemeOption.LEGEND_BOX_JUST,
+                                ThemeOption.PLOT_TAG_POSITION,
+                                ThemeOption.PLOT_TAG_LOCATION,
+                                ThemeOption.PLOT_TAG,
+                                ThemeOption.PLOT_TAG_PREFIX,
+                                ThemeOption.PLOT_TAG_SUFFIX
                             )
                         }
                     }

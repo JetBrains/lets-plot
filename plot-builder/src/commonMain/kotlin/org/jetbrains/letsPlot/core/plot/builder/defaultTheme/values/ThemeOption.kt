@@ -19,12 +19,18 @@ object ThemeOption {
     const val PLOT_TITLE = "plot_title"
     const val PLOT_SUBTITLE = "plot_subtitle"
     const val PLOT_CAPTION = "plot_caption"
+    const val PLOT_TAG = "plot_tag"
     const val PLOT_MESSAGE = "plot_message"
     const val PLOT_MARGIN = "plot_margin"
     const val PLOT_INSET = "plot_inset"
 
     const val PLOT_TITLE_POSITION = "plot_title_position" // also applied to 'subtitle'
     const val PLOT_CAPTION_POSITION = "plot_caption_position"
+    const val PLOT_TAG_POSITION = "plot_tag_position"
+    const val PLOT_TAG_LOCATION = "plot_tag_location"
+
+    const val PLOT_TAG_PREFIX = "plot_tag_prefix"
+    const val PLOT_TAG_SUFFIX = "plot_tag_suffix"
 
     // ToDo: "text_width_scale" is used Violin demo - update.
 //    const val TEXT_WIDTH_FACTOR = "text_width_scale"
@@ -250,6 +256,7 @@ object ThemeOption {
             PLOT_TITLE,
             PLOT_SUBTITLE,
             PLOT_CAPTION,
+            PLOT_TAG,
             AXIS_TITLE_X,
             AXIS_TITLE_Y,
             AXIS_TEXT_X,
@@ -284,6 +291,7 @@ object ThemeOption {
             PLOT_TITLE,
             PLOT_SUBTITLE,
             PLOT_CAPTION,
+            PLOT_TAG,
             AXIS_TITLE_X,
             AXIS_TITLE_Y,
             AXIS_TEXT_X,

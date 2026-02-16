@@ -328,6 +328,7 @@ object MonolithicCommon {
         val title: String? = config.title?.takeIf { theme.plot().showTitle() }
         val subtitle: String? = config.subtitle?.takeIf { theme.plot().showSubtitle() }
         val caption: String? = config.caption?.takeIf { theme.plot().showCaption() }
+        val tag: String? = config.fullTag?.takeIf { theme.plot().showTag() }
 
         return CompositeFigureBuildInfo(
             elements = elements,
@@ -336,6 +337,7 @@ object MonolithicCommon {
             title = title,
             subtitle = subtitle,
             caption = caption,
+            tag = tag,
             theme = theme,
             computationMessages,
             legendBlocks = legendBlocks

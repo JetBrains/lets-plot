@@ -40,6 +40,7 @@ class PlotAssembler constructor(
     private val title: String? = null,
     private val subtitle: String? = null,
     private val caption: String? = null,
+    private val tag: String? = null,
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
     private val plotSpecId: String?,
     private val tz: TimeZone?,
@@ -149,7 +150,8 @@ class PlotAssembler constructor(
             legendBoxInfos = legendBoxInfosForLayout,
             title = title,
             subtitle = subtitle,
-            caption = caption
+            caption = caption,
+            tag = tag
         )
     }
 
@@ -180,6 +182,7 @@ class PlotAssembler constructor(
             title = title,
             subtitle = subtitle,
             caption = caption,
+            tag = tag,
             coreLayersByTile = geomTiles.coreLayersByTile(),
             marginalLayersByTile = geomTiles.marginalLayersByTile(),
             figureLayoutInfo = figureLayoutInfo,
