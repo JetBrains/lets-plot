@@ -10,18 +10,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class TextHelper(
     private val myAesthetics: Aesthetics,
@@ -100,183 +94,9 @@ class TextHelper(
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val angle = toRadians(toAngle(p, flipAngle, ctx))
+        val angle = toRadians(TextUtil.orientedAngle(p, flipAngle, ctx))
 
         return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
             .rotate(angle, location)
-    }
-
-    companion object {
-        val DEF_NUDGE: (DoubleVector, DoubleVector) -> DoubleVector = { location, _ -> location }
-
-        internal fun toSegmentAes(p: DataPointAesthetics): DataPointAesthetics {
-            return object : DataPointAestheticsDelegate(p) {
-
-                override operator fun <T> get(aes: Aes<T>): T? {
-                    val value: Any? = when (aes) {
-                        Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
-                        Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
-                        Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
-                        else -> super.get(aes)
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    return value as T?
-                }
-            }
-        }
-
-        internal fun textComponentFactory(
-            p: DataPointAesthetics,
-            location: DoubleVector,
-            text: String,
-            flipAngle: Boolean,
-            sizeUnitRatio: Double,
-            ctx: GeomContext,
-            boundsCenter: DoubleVector?,
-            nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
-        ): SvgGElement {
-            val label = Label(text)
-            TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-            val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-            label.setHorizontalAnchor(hAnchor)
-
-            val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-            val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-
-            val yPosition = TextUtil.vAnchor(p, location, boundsCenter).let { vjust ->
-                location.y + (vjust - 1) * textSize.y + (1 - 0.3 * vjust) * fontSize
-            }
-
-            val textLocation = DoubleVector(location.x, yPosition)
-            label.moveTo(nudge(textLocation, textSize))
-
-            val g = SvgGElement()
-            g.children().add(label.rootGroup)
-            SvgUtils.transformRotate(g, toAngle(p, flipAngle, ctx), location.x, location.y)
-            return g
-        }
-
-        internal fun labelComponentFactory(
-            p: DataPointAesthetics,
-            location: DoubleVector,
-            text: String,
-            flipAngle: Boolean,
-            sizeUnitRatio: Double,
-            ctx: GeomContext,
-            boundsCenter: DoubleVector?,
-            labelOptions: LabelOptions,
-            nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
-        ): SvgGElement {
-            // text size estimation
-            val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-
-            val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-            val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
-
-            // Background rectangle
-            val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-            val rectangle = labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
-            val backgroundRect = SvgPathElement().apply {
-                d().set(
-                    roundedRectangle(rectangle, labelOptions.radiusFactor * rectangle.height).build()
-                )
-            }
-            decorate(backgroundRect, p, applyAlphaToAll = labelOptions.alphaStroke)
-            backgroundRect.strokeWidth().set(labelOptions.borderWidth)
-
-            // Text element
-            val label = Label(text)
-            TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
-
-            val padding = fontSize * labelOptions.paddingFactor
-            val xPosition = when (hAnchor) {
-                Text.HorizontalAnchor.LEFT -> location.x + padding
-                Text.HorizontalAnchor.RIGHT -> location.x - padding
-                Text.HorizontalAnchor.MIDDLE -> location.x
-            }
-            val textPosition = DoubleVector(
-                xPosition,
-                rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
-            )
-            label.setHorizontalAnchor(hAnchor)
-            label.moveTo(nudge(textPosition, textSize))
-
-            // group elements and apply rotation
-            val g = SvgGElement()
-            g.children().add(backgroundRect)
-            g.children().add(label.rootGroup)
-
-            // rotate all
-            SvgUtils.transformRotate(g, toAngle(p, flipAngle, ctx), location.x, location.y)
-
-            return g
-        }
-
-        internal fun textRectangle(
-            location: DoubleVector,
-            textSize: DoubleVector,
-            hAnchor: Text.HorizontalAnchor,
-            vAnchor: Double,
-        ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
-
-        internal fun labelRectangle(
-            location: DoubleVector,
-            textSize: DoubleVector,
-            fontSize: Double,
-            hAnchor: Text.HorizontalAnchor,
-            vAnchor: Double,
-            labelOptions: LabelOptions
-        ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
-
-        private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
-            return SvgPathDataBuilder().apply {
-                with(rect) {
-                    // Ensure normal radius
-                    val r = minOf(radius, width / 2, height / 2)
-
-                    moveTo(right - r, bottom)
-                    curveTo(
-                        right - r, bottom,
-                        right, bottom,
-                        right, bottom - r
-                    )
-
-                    lineTo(right, top + r)
-                    curveTo(
-                        right, top + r,
-                        right, top,
-                        right - r, top
-                    )
-
-                    lineTo(left + r, top)
-                    curveTo(
-                        left + r, top,
-                        left, top,
-                        left, top + r
-                    )
-
-                    lineTo(left, bottom - r)
-                    curveTo(
-                        left, bottom - r,
-                        left, bottom,
-                        left + r, bottom
-                    )
-
-                    closePath()
-                }
-            }
-        }
-
-        private fun toAngle(p: DataPointAesthetics, flipAngle: Boolean, ctx: GeomContext): Double {
-            return p.angle()!!.let { angle ->
-                if (flipAngle && ctx.flipped) {
-                    // ggplot angle: counter-clockwise
-                    // SVG angle: clockwise
-                    TextUtil.angle(angle - 90)
-                } else {
-                    TextUtil.angle(angle)
-                }
-            }
-        }
     }
 }

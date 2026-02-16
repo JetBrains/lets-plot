@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
@@ -47,7 +48,7 @@ open class TextGeom : GeomBase() {
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter)
+    ) = TextUtil.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter)
 
     open fun objectRectangle(
         location: DoubleVector,
@@ -55,7 +56,7 @@ open class TextGeom : GeomBase() {
         fontSize: Double,
         hAnchor: Text.HorizontalAnchor,
         vAnchor: Double,
-    ) = TextHelper.textRectangle(location, textSize, hAnchor, vAnchor)
+    ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
     companion object {
         const val DEF_NA_VALUE = "n/a"

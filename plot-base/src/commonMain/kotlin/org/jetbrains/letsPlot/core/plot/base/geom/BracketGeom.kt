@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
@@ -18,7 +19,7 @@ class BracketGeom : TextGeom() {
     var tipLengthUnit: DimensionUnit = DEF_TIP_LENGTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = HLineLegendKeyElementFactory(TextHelper::toSegmentAes)
+        get() = HLineLegendKeyElementFactory(TextUtil::toSegmentAes)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -31,7 +32,7 @@ class BracketGeom : TextGeom() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(false)
         val pathData = linesHelper.createPathData(
-            aesthetics.dataPoints().map(TextHelper::toSegmentAes),
+            aesthetics.dataPoints().map(TextUtil::toSegmentAes),
             bracketBuilder(linesHelper, bracketShorten, tipLengthUnit)
         )
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
@@ -55,7 +56,7 @@ class BracketGeom : TextGeom() {
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, ::labelNudge)
+    ) = TextUtil.textComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, ::labelNudge)
 
     companion object {
         const val HANDLES_GROUPS = false

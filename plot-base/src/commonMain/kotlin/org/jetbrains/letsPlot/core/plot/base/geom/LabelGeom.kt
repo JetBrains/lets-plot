@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 
 open class LabelGeom : TextGeom() {
@@ -23,7 +23,7 @@ open class LabelGeom : TextGeom() {
         sizeUnitRatio: Double,
         ctx: GeomContext,
         boundsCenter: DoubleVector?
-    ) = TextHelper.labelComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, labelOptions)
+    ) = TextUtil.labelComponentFactory(p, location, text, flipAngle, sizeUnitRatio, ctx, boundsCenter, labelOptions)
 
     override fun objectRectangle(
         location: DoubleVector,
@@ -31,5 +31,5 @@ open class LabelGeom : TextGeom() {
         fontSize: Double,
         hAnchor: Text.HorizontalAnchor,
         vAnchor: Double
-    ) = TextHelper.labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
+    ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
 }

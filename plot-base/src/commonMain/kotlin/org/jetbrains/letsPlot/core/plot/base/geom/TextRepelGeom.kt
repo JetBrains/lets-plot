@@ -40,7 +40,7 @@ open class TextRepelGeom: TextGeom() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(
             TextLegendKeyElementFactory(),
-            HLineLegendKeyElementFactory(TextHelper::toSegmentAes)
+            HLineLegendKeyElementFactory(TextUtil::toSegmentAes)
         )
 
     override fun buildIntern(
@@ -137,7 +137,7 @@ open class TextRepelGeom: TextGeom() {
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
-                root.add(buildSegmentComponent(TextHelper.toSegmentAes(dp), segment, svgHelper))
+                root.add(buildSegmentComponent(TextUtil.toSegmentAes(dp), segment, svgHelper))
             }
 
             targetCollector.addPoint(
