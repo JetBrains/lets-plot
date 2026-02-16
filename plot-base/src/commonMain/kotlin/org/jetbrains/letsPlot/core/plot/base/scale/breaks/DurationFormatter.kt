@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.DAY
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
-import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import kotlin.math.abs
 
 internal object DurationFormatter {
@@ -16,9 +16,9 @@ internal object DurationFormatter {
         formatDuration((v as Number).toLong())
     }
 
-    private val DAY_FORMAT = FormatterUtil.byPattern("{d}d")
-    private val HMS_FORMAT = FormatterUtil.byPattern("{d}:{02d}:{02d}")
-    private val HM_FORMAT = FormatterUtil.byPattern("{d}:{02d}")
+    private val DAY_FORMAT = StringFormat.of("{d}d")
+    private val HMS_FORMAT = StringFormat.of("{d}:{02d}:{02d}")
+    private val HM_FORMAT = StringFormat.of("{d}:{02d}")
 
     private fun formatTotalDays(duration: Duration) = DAY_FORMAT.format(duration.totalDays)
     private fun formatHms(duration: Duration) = HMS_FORMAT.format(duration.hour, duration.minute, duration.second)
