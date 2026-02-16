@@ -71,8 +71,8 @@ object GeomMeta {
 
     private fun renderedAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
-            GeomKind.POINT,
-            GeomKind.BLANK -> POINT
+            GeomKind.POINT -> POINT
+
 
             GeomKind.PATH -> PATH
             GeomKind.LINE -> PATH
@@ -88,7 +88,7 @@ object GeomMeta {
                 Aes.ALPHA
             )
 
-            GeomKind.STAT_R2 -> listOf(
+            GeomKind.BLANK -> listOf(
                 Aes.X, Aes.Y,
 
                 // Copy from GeomKind.SMOOTH to sync grouping

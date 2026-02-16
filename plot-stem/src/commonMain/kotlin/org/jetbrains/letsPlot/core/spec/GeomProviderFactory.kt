@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
-import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelY
+import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelX
+import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelY
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
@@ -465,17 +465,6 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.Bracket.TIP_LENGTH_UNIT)) {
                     geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIP_LENGTH_UNIT) ?: BracketGeom.DEF_TIP_LENGTH_UNIT
                 }
-                geom
-            }
-
-            GeomKind.STAT_R2 -> GeomProvider.statR2 {
-                val geom = StatR2Geom()
-                val labels = layerConfig[ANNOTATIONS]
-                if (labels != null && labels is Map<*, *>) {
-                    geom.labelX = labelPositionList(labels[LABEL_X]) { labelPosition(it, ::positionX, LabelX.LEFT) }
-                    geom.labelY = labelPositionList(labels[LABEL_Y]) { labelPosition(it, ::positionY, LabelY.TOP) }
-                }
-
                 geom
             }
 

@@ -1127,7 +1127,6 @@ object Option {
         const val IMAGE = "image"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
-        const val STAT_R2 = "stat_r2"
         const val BRACKET = "bracket"
         const val BLANK = "blank"
 
@@ -1189,7 +1188,6 @@ object Option {
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
             map[STAT_R2] = GeomKind.STAT_R2
-            map[BRACKET] = GeomKind.BRACKET
             map[BLANK] = GeomKind.BLANK
 
             GEOM_KIND_MAP = map

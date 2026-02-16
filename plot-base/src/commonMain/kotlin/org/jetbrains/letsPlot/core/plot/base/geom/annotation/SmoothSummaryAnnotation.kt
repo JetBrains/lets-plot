@@ -11,15 +11,15 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelX
+import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelY
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase.Companion.overallAesBounds
-import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.StatR2Geom.Companion.LabelY
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
-object StatAnnotation {
+object SmoothSummaryAnnotation {
     const val PADDING = 20
 
     fun build(

@@ -117,7 +117,6 @@ class GeomProto(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE,
-            STAT_R2,
             BLANK -> Samplings.NONE
         }
     }
@@ -224,7 +223,6 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
             DEFAULTS[BRACKET] = bracketDefaults()
-            DEFAULTS[STAT_R2] = statR2Defaults()
         }
 
         private fun commonDefaults(): Map<String, Any> {
@@ -409,13 +407,6 @@ class GeomProto(val geomKind: GeomKind) {
             defaults[Layer.STAT] = "identity"
             defaults[Layer.SHOW_LEGEND] = false
             return defaults
-        }
-
-        private fun statR2Defaults(): Map<String, Any> {
-            return mapOf(
-                Layer.STAT to "smooth_summary",
-                Layer.ANNOTATIONS to mapOf("formats" to emptyList<String>(), "lines" to listOf("@{..r2..}"))
-            )
         }
     }
 }

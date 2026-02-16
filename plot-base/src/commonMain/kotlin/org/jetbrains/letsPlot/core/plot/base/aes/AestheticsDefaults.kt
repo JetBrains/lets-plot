@@ -203,7 +203,6 @@ class AestheticsDefaults private constructor(
                 GeomKind.STEP,
                 GeomKind.RASTER,
                 GeomKind.IMAGE,
-                GeomKind.STAT_R2,
                 GeomKind.BRACKET,
                 GeomKind.LIVE_MAP -> base(geomTheme)
             }

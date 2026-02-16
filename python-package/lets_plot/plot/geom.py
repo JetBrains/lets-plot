@@ -6,6 +6,7 @@ from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
 from .tooltip import layer_tooltips
+from .annotation import smooth_labels
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 #
@@ -574,6 +575,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                 manual_key=None, sampling=None,
                 tooltips=None,
+                labels=None,
                 orientation=None,
                 method=None,
                 n=None,
@@ -584,7 +586,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                 seed=None,
                 max_n=None,
                 color_by=None, fill_by=None,
-                labels=None,
+
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -623,6 +625,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
+    labels: ``smooth_labels``
+        Result of the call to the `smooth_labels() <https://lets-plot.org/python/pages/api/lets_plot.smooth_labels.html>`__ function.
+        Specify style and content of the annotations.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -765,17 +770,19 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
-    if labels is not None:
-        smooth_layer += _geom('stat_r2',
+
+    if labels is not None and isinstance(labels, smooth_labels) and (stat is None or stat == "smooth"):
+        smooth_layer += _geom('blank',
                               mapping=mapping,
                               data=data,
-                              stat=stat,
+                              stat="smooth_summary",
                               position=position,
                               show_legend=show_legend,
                               inherit_aes=inherit_aes,
                               manual_key=manual_key,
                               sampling=sampling,
                               tooltips=tooltips,
+                              labels=labels,
                               orientation=orientation,
                               method=method,
                               n=n,
@@ -786,7 +793,6 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                               seed=seed,
                               max_n=max_n,
                               color_by=color_by, fill_by=fill_by,
-                              labels=labels,
                               **other_args)
 
     return smooth_layer
@@ -9334,6 +9340,10 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
+# rename summary
+# unneeded params: sampling, orientation, ? method, n, se, level, span, deg, seed, max_n
+# dont add to import * - user will not use it directly
+# remove it - just use geom_blank with stat='r2'
 def geom_stat_r2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                  manual_key=None, sampling=None,
                  tooltips=None,
