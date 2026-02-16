@@ -37,13 +37,10 @@ object FormatterUtil {
         }
     }
 
-    // pattern example:
-    // - string placeholder: "Value: {}"
-    // - number placeholder without braces: ",.2f"
-    // - number placeholder with braces: "{,.2f}"
-    // - datetime placeholder without braces: "%Y-%m-%d"
-    // - datetime placeholder with braces: "{%Y-%m-%d}"
-    // - string with two or more placeholders: "Value: {,.2f}, Date: {%Y-%m-%d}"
+    // Can handle single number/datetime patterns without braces (e.g., ",.2f", "%Y-%m-%d", etc.),
+    // unlike StringFormat.of (which expects "{,.2f}")
+    // Used for user-provided patterns in tooltips.format, axis labels, etc.,
+    // where a single placeholder is expected, but the pattern may be provided without braces.
     fun byPattern(
         pattern: String,
         expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW),

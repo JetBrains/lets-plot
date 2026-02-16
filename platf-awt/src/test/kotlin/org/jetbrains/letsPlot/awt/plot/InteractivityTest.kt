@@ -10,12 +10,12 @@ import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelBase
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil.applySpecOverride
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy.Companion.keepFigureDefaultSize
-import org.jetbrains.letsPlot.raster.view.PlotCanvasFigure
-import org.jetbrains.letsPlot.raster.view.PlotFigureModel
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.raster.view.RenderingHints
 import kotlin.test.Test
 
@@ -47,19 +47,19 @@ class InteractivityTest : VisualPlotTestBase() {
 
         val rawPlotSpec = parsePlotSpec(spec)
         val processedPlotSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false)
-        val plotCanvasFigure = PlotCanvasFigure()
-        plotCanvasFigure.update(
+        val plotCanvasDrawable = PlotCanvasDrawable()
+        plotCanvasDrawable.update(
             processedSpec = processedPlotSpec,
             sizingPolicy = keepFigureDefaultSize(),
             computationMessagesHandler = { }
         )
 
         val awtCanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
-        plotCanvasFigure.mapToCanvas(awtCanvasPeer)
+        plotCanvasDrawable.mapToCanvas(awtCanvasPeer)
 
-        plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 100))
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 100))
 
-        val snapshot = plotCanvasFigure.takeSnapshot(awtCanvasPeer)
+        val snapshot = plotCanvasDrawable.takeSnapshot(awtCanvasPeer)
 
         imageComparer.assertBitmapEquals("interactivity_simple_tooltip.png", snapshot.bitmap)
     }
@@ -70,7 +70,7 @@ class InteractivityTest : VisualPlotTestBase() {
         // Dragging left by half the plot width (200 px out of 400 px) shifts the visible range to [30, 50].
         // This makes a buffer incomplete and triggers update to ensure the range [30, 50] is fully covered.
 
-        val plotCanvasFigure = PlotCanvasFigure()
+        val plotCanvasFigure = PlotCanvasDrawable()
         plotCanvasFigure.setRenderingHint(RenderingHints.KEY_OVERSCAN_FACTOR, 1.0)
 
         val spec = """
@@ -99,7 +99,7 @@ class InteractivityTest : VisualPlotTestBase() {
 
         var specOverrideList = emptyList<Map<String, Any>>()
 
-        val plotFigureModel = PlotFigureModel(
+        val figureModel = TestingFigureModel(
             onUpdateView = { specOverride ->
                 specOverrideList = FigureModelHelper.updateSpecOverrideList(
                     specOverrideList = specOverrideList,
@@ -113,9 +113,9 @@ class InteractivityTest : VisualPlotTestBase() {
             }
         )
 
-        val controller = DefaultFigureToolsController(plotFigureModel, errorMessageHandler = ::println)
-        plotFigureModel.setDefaultInteractions(listOf(InteractionSpec(InteractionSpec.Name.DRAG_PAN)))
-        plotFigureModel.addToolEventCallback(controller::handleToolFeedback)
+        val controller = DefaultFigureToolsController(figureModel, errorMessageHandler = ::println)
+        figureModel.setDefaultInteractions(listOf(InteractionSpec(InteractionSpec.Name.DRAG_PAN)))
+        figureModel.addToolEventCallback(controller::handleToolFeedback)
 
         plotCanvasFigure.update(processedPlotSpec, keepFigureDefaultSize(), computationMessagesHandler = { })
 
@@ -123,7 +123,7 @@ class InteractivityTest : VisualPlotTestBase() {
         plotCanvasFigure.mapToCanvas(awtCanvasPeer)
 
         // IMPORTANT: should be set after mapping to canvas
-        plotFigureModel.toolEventDispatcher = plotCanvasFigure.toolEventDispatcher
+        figureModel.toolEventDispatcher = plotCanvasFigure.toolEventDispatcher
 
         plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
         plotCanvasFigure.mouseEventPeer.dispatch(MOUSE_PRESSED, leftButton(200, 200))
@@ -139,9 +139,18 @@ class InteractivityTest : VisualPlotTestBase() {
         imageComparer.assertBitmapEquals("interactivity_pan_in_progress_with_incomplete_buffer.png", snapshot.bitmap)
     }
 
-    private fun PlotCanvasFigure.takeSnapshot(canvasPeer: CanvasPeer): Canvas.Snapshot {
+    private fun PlotCanvasDrawable.takeSnapshot(canvasPeer: CanvasPeer): Canvas.Snapshot {
         val canvas = canvasPeer.createCanvas(size)
         paint(canvas.context2d)
         return canvas.takeSnapshot()
+    }
+
+    class TestingFigureModel(
+        val onUpdateView: (Map<String, Any>?) -> Unit
+    ) : FigureModelBase() {
+
+        override fun updateView(specOverride: Map<String, Any>?) {
+            onUpdateView(specOverride)
+        }
     }
 }

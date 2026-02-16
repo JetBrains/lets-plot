@@ -585,8 +585,6 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                 max_n=None,
                 color_by=None, fill_by=None,
                 labels=None,
-                label_x=None,
-                label_y=None,
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -789,8 +787,6 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                               max_n=max_n,
                               color_by=color_by, fill_by=fill_by,
                               labels=labels,
-                              label_x=label_x,
-                              label_y=label_y,
                               **other_args)
 
     return smooth_layer
@@ -1121,18 +1117,20 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8-10
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
-        x = np.random.normal(scale=3, size=1000)
-        y = 2 * (np.round(x) % 2) - 1
-        ggplot({'x': x, 'y': y}) + \\
-            geom_histogram(aes(x='x', weight='y'), \\
-                           center=0, binwidth=1, \\
-                           color='black', fill='gray', size=1)
+        n = 50
+        data = {'x': np.concatenate([np.random.normal(loc=-2, size=n),
+                                     np.random.normal(loc=0, size=n),
+                                     np.random.normal(loc=2, size=n)]),
+                'g': ['a'] * n + ['b'] * n + ['c'] * n}
+        ggplot(data, aes(x='x')) + \\
+            geom_histogram(threshold=0) + \\
+            facet_wrap('g', scales='free')
 
     """
     return _geom('histogram',

@@ -5,7 +5,7 @@
 
 package demo.common.utils.batik
 
-import demo.common.utils.swing.PlotSpecsDemoWindowBase
+import demo.common.utils.swingbase.PlotSpecsDemoWindowBase
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Color

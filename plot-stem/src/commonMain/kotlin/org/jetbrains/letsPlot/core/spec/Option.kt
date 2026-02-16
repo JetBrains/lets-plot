@@ -259,8 +259,16 @@ object Option {
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
-        const val LHS = "lhs"
-        const val RHS = "rhs"
+        const val EQ = "eq"
+        const val LABEL_X = "label_x"
+        const val LABEL_Y = "label_y"
+
+        object Eq {
+            const val LHS = "lhs"
+            const val RHS = "rhs"
+            const val FORMAT = "format"
+            const val THRESHOLD = "threshold"
+        }
 
         object Format {
             const val FIELD = "field"
@@ -502,11 +510,6 @@ object Option {
             const val Y = "y"
             const val MIN = "min"
             const val MAX = "max"
-        }
-
-        object StatR2 {
-            const val LABEL_X = "label_x"
-            const val LABEL_Y = "label_y"
         }
     }
 

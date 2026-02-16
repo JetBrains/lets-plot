@@ -43,7 +43,7 @@ import org.jetbrains.letsPlot.livemap.api.liveMapVectorTiles
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
 import org.jetbrains.letsPlot.livemap.chart.HoverObjectKind
 import org.jetbrains.letsPlot.livemap.config.DevParams
-import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
+import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasDrawable
 import org.jetbrains.letsPlot.livemap.core.Clipboard
 import org.jetbrains.letsPlot.livemap.core.Projections.azimuthalEqualArea
 import org.jetbrains.letsPlot.livemap.core.Projections.conicEqualArea
@@ -133,7 +133,7 @@ object LiveMapProviderUtil {
             }
 
             val liveMap = liveMapBuilder.build()
-            val liveMapCanvasFigure = LiveMapCanvasFigure(liveMap).apply {
+            val liveMapCanvasFigure = LiveMapCanvasDrawable(liveMap).apply {
                 setBounds(
                     Rectangle(
                         bounds.origin.x.roundToInt(),

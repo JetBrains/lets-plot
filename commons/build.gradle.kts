@@ -46,12 +46,12 @@ kotlin {
             dependencies {
                 compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
-                compileOnly("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
             }
         }
 
         nativeMain {
             dependencies {
+                implementation("org.jetbrains.kotlinx:atomicfu:$kotlinxAtomicfuVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
