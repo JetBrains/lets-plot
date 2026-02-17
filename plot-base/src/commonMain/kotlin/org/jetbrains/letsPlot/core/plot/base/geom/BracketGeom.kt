@@ -30,7 +30,6 @@ class BracketGeom : TextGeom() {
     ) {
         // Bracket
         val linesHelper = LinesHelper(pos, coord, ctx)
-        linesHelper.setResamplingEnabled(false)
         val pathData = linesHelper.createPathData(
             aesthetics.dataPoints().map(TextUtil::toSegmentAes),
             bracketBuilder(linesHelper, bracketShorten, tipLengthUnit)
