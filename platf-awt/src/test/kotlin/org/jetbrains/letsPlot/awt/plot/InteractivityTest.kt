@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelBase
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil.applySpecOverride
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy.Companion.keepFigureDefaultSize
@@ -247,7 +249,13 @@ class InteractivityTest : VisualPlotTestBase() {
                 )
 
                 plotCanvasFigure.update(
-                    processedSpec = applySpecOverride(processedPlotSpec, specOverrideList),
+                    processedSpec = applySpecOverride(
+                        processedPlotSpec,
+                        state = SpecOverrideState(
+                            specOverrideList,
+                            activeTargetId = specOverride?.get(TARGET_ID) as? String
+                        )
+                    ),
                     sizingPolicy = keepFigureDefaultSize(),
                     computationMessagesHandler = { })
             }

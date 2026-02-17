@@ -9,6 +9,8 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingOption
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -70,12 +72,20 @@ class FigureModelJs internal constructor(
             newSpecOverride = specOverride
         )
 
+        val activeTargetId = specOverride?.get(TARGET_ID) as? String
+        val state = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
 
         figureRegistration?.dispose()
         figureRegistration = null
 
-        val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, currSpecOverrideList)
+        val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, state)
+
+        // Read back expanded overrides (non-empty only when expansion occurred).
+        if (state.expandedOverrides.isNotEmpty()) {
+            currSpecOverrideList = state.expandedOverrides
+        }
 
 //        LOG.info { "New sizing policy: $sizingPolicy" }
         val newFigureModel = buildPlotFromProcessedSpecsIntern(

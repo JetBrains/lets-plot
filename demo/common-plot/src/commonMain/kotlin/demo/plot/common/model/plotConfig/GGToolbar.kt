@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.FIGURES
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NCOLS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NROWS
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.SHARE_X_SCALE
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.Scales.SHARE_ROW
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.LAYOUT
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.NAME
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.SUBPLOTS_GRID
@@ -108,6 +110,7 @@ class GGToolbar {
                 NAME to SUBPLOTS_GRID,
                 NCOLS to 2,
                 NROWS to 1,
+                SHARE_X_SCALE to SHARE_ROW,
             )
         ).also {
             if (dark) {
