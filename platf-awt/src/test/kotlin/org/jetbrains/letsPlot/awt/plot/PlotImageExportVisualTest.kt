@@ -56,6 +56,76 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
     }
 
     @Test
+    fun `gggrid with nested gggrid`() {
+        val spec = """
+            |{
+            |  "ggsize": { "width": 400.0, "height": 300.0 },
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 1.0, "nrow": 2.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "data": {
+            |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 ],
+            |        "y": [ 0.4967141530112327, -0.13826430117118466, 0.6476885381006925, 1.5230298564080254, -0.23415337472333597, -0.23413695694918055, 1.5792128155073915, 0.7674347291529088, -0.4694743859349521, 0.5425600435859647 ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" },
+            |          { "type": "float", "column": "y" }
+            |        ]
+            |      },
+            |      "ggsize": { "width": 200.0, "height": 150.0 },
+            |      "kind": "plot",
+            |      "layers": [ { "geom": "line" } ]
+            |    },
+            |    {
+            |      "kind": "subplots",
+            |      "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |      "figures": [
+            |        {
+            |          "data": {
+            |            "x": [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 ],
+            |            "y": [ 0.4967141530112327, -0.13826430117118466, 0.6476885381006925, 1.5230298564080254, -0.23415337472333597, -0.23413695694918055, 1.5792128155073915, 0.7674347291529088, -0.4694743859349521, 0.5425600435859647 ]
+            |          },
+            |          "mapping": { "x": "x", "y": "y" },
+            |          "data_meta": {
+            |            "series_annotations": [
+            |              { "type": "int", "column": "x" },
+            |              { "type": "float", "column": "y" }
+            |            ]
+            |          },
+            |          "ggsize": { "width": 200.0, "height": 150.0 },
+            |          "kind": "plot",
+            |          "layers": [ { "geom": "point" } ]
+            |        },
+            |        {
+            |          "data": {
+            |            "x": [ 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 ],
+            |            "y": [ 0.4967141530112327, -0.13826430117118466, 0.6476885381006925, 1.5230298564080254, -0.23415337472333597, -0.23413695694918055, 1.5792128155073915, 0.7674347291529088, -0.4694743859349521, 0.5425600435859647 ]
+            |          },
+            |          "mapping": { "x": "x", "y": "y" },
+            |          "data_meta": {
+            |            "series_annotations": [
+            |              { "type": "int", "column": "x" },
+            |              { "type": "float", "column": "y" }
+            |            ]
+            |          },
+            |          "ggsize": { "width": 200.0, "height": 150.0 },
+            |          "kind": "plot",
+            |          "layers": [ { "geom": "histogram", "bins": 3.0 } ]
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotSpec = parsePlotSpec(spec)
+        assertPlot("plot_gggrid_with_nested_gggrid_test.png", plotSpec)
+    }
+
+    @Test
     fun `geom_point with stroke`() {
         val spec = """
             |{

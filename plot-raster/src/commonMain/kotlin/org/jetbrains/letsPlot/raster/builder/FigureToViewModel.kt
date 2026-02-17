@@ -5,15 +5,10 @@
 
 package org.jetbrains.letsPlot.raster.builder
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
-import org.jetbrains.letsPlot.core.plot.builder.interact.CompositeToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 
 internal object FigureToViewModel {
@@ -21,8 +16,8 @@ internal object FigureToViewModel {
         @Suppress("NAME_SHADOWING")
         val buildInfo = buildInfo.layoutedByOuterSize()
         return when (val svgRoot = buildInfo.createSvgRoot()) {
-            is PlotSvgRoot -> processPlotFigure(svgRoot, origin = DoubleVector.ZERO)
-            is CompositeFigureSvgRoot -> processCompositeFigure(svgRoot, origin = DoubleVector.ZERO).also {
+            is PlotSvgRoot -> processPlotFigure(svgRoot)
+            is CompositeFigureSvgRoot -> processCompositeFigure(svgRoot).also {
                 it.assembleAsRoot()
             }
 
@@ -30,70 +25,38 @@ internal object FigureToViewModel {
         }
     }
 
-    private fun processCompositeFigure(svgRoot: CompositeFigureSvgRoot, origin: DoubleVector): CompositeFigureModel {
+    private fun processCompositeFigure(svgRoot: CompositeFigureSvgRoot): CompositeFigureModel {
         svgRoot.ensureContentBuilt()
-        val figureSvgSvg = svgRoot.svg
-        if (origin != DoubleVector.ZERO) {
-            figureSvgSvg.x().set(origin.x)
-            figureSvgSvg.y().set(origin.y)
-        }
 
-        // Sub-figures
-        val subFigures = mutableListOf<ViewModel>()
-        val subFiguresToolEventDispatchers = mutableListOf<ToolEventDispatcher>()
+        val compositeModel = CompositeFigureModel(svgRoot.svg)
 
-        for (element in svgRoot.elements) {
-            val elementOrigin = element.bounds.origin.add(origin)
-            val elementModel = when (element) {
-                is CompositeFigureSvgRoot -> processCompositeFigure(svgRoot = element, origin = elementOrigin)
-                is PlotSvgRoot -> processPlotFigure(svgRoot = element, origin = elementOrigin)
+        for (childSvg in svgRoot.elements) {
+            val childBounds = childSvg.bounds.add(svgRoot.bounds.origin)
+
+            childSvg.svg.x().set(childBounds.left)
+            childSvg.svg.y().set(childBounds.top)
+
+            val childModel = when (childSvg) {
+                is CompositeFigureSvgRoot -> processCompositeFigure(childSvg)
+                is PlotSvgRoot -> processPlotFigure(childSvg)
                 else -> error("Unsupported figure: ${svgRoot::class.simpleName}")
             }
 
-            subFigures += elementModel
-            subFiguresToolEventDispatchers.add(elementModel.toolEventDispatcher)
+            compositeModel.addChild(childModel, childBounds)
         }
-
-        val compositeFigureModel = CompositeFigureModel(
-            svg = figureSvgSvg,
-            bounds = toModelBounds(svgRoot.bounds),
-            toolEventDispatcher = CompositeToolEventDispatcher(subFiguresToolEventDispatchers),
-        )
-
-        subFigures.forEach(compositeFigureModel::addChildFigure)
-        return compositeFigureModel
+        return compositeModel
     }
 
-    private fun processPlotFigure(
-        svgRoot: PlotSvgRoot,
-        origin: DoubleVector,
-    ): SinglePlotModel {
-
-        val figureSvgSvg = svgRoot.svg
-        if (origin != DoubleVector.ZERO) {
-            figureSvgSvg.x().set(origin.x)
-            figureSvgSvg.y().set(origin.y)
-        }
-
+    private fun processPlotFigure(svgRoot: PlotSvgRoot): SinglePlotModel {
         val plotContainer = PlotContainer(svgRoot)
 
         val plotModel = SinglePlotModel(
-            svg = figureSvgSvg,
+            svg = svgRoot.svg,
             toolEventDispatcher = plotContainer.toolEventDispatcher,
-            bounds = toModelBounds(svgRoot.bounds),
             registration = Registration.from(plotContainer)
         )
         plotContainer.mouseEventPeer.addEventSource(plotModel.mouseEventPeer)
 
         return plotModel
-    }
-
-    private fun toModelBounds(from: DoubleRectangle): Rectangle {
-        return Rectangle(
-            from.origin.x.toInt(),
-            from.origin.y.toInt(),
-            (from.dimension.x + 0.5).toInt(),
-            (from.dimension.y + 0.5).toInt()
-        )
     }
 }

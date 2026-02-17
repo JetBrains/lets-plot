@@ -7,20 +7,20 @@ package org.jetbrains.letsPlot.raster.builder
 
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.child
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.geometry.toDoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
+import org.jetbrains.letsPlot.core.plot.builder.interact.CompositeToolEventDispatcher
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 internal sealed class ViewModel(
     val svg: SvgSvgElement,
-    val toolEventDispatcher: ToolEventDispatcher,
 ) : Disposable {
     val mouseEventPeer: MouseEventPeer = MouseEventPeer()
-    internal abstract val bounds: Rectangle
+    abstract val toolEventDispatcher: ToolEventDispatcher
 
     @Suppress("unused")
     fun activateInteractions(origin: String, interactionSpecList: List<InteractionSpec>) {
@@ -37,51 +37,54 @@ internal sealed class ViewModel(
     }
 }
 
-internal class SimpleModel(
-    svg: SvgSvgElement,
-    toolEventDispatcher: ToolEventDispatcher,
-) : ViewModel(svg, toolEventDispatcher) {
-    override val bounds: Rectangle
-        get() = throw IllegalStateException("Not supported: SimpleModel.bounds")
+internal class SimpleModel(svg: SvgSvgElement) : ViewModel(svg) {
+    override val toolEventDispatcher: ToolEventDispatcher
+        get() = UnsupportedToolEventDispatcher()
 
     override fun dispose() {}
 }
 
 internal class SinglePlotModel(
     svg: SvgSvgElement,
-    toolEventDispatcher: ToolEventDispatcher,
-    override val bounds: Rectangle,
+    override val toolEventDispatcher: ToolEventDispatcher,
     private val registration: Registration
-) : ViewModel(svg, toolEventDispatcher) {
-    override fun dispose() {
-        registration.dispose()
-    }
+) : ViewModel(svg) {
+    override fun dispose() = registration.dispose()
 }
 
-internal class CompositeFigureModel(
-    svg: SvgSvgElement,
-    toolEventDispatcher: ToolEventDispatcher,
-    override val bounds: Rectangle,
-) : ViewModel(svg, toolEventDispatcher) {
-    private val children = ArrayList<ViewModel>()
+internal class CompositeFigureModel(svg: SvgSvgElement) : ViewModel(svg) {
+    private val children = ArrayList<Pair<ViewModel, Disposable>>()
+    private var _toolEventDispatcher: ToolEventDispatcher? = null
 
-    fun addChildFigure(childModel: ViewModel) {
-        children.add(childModel)
-        val childMouseEventSource = mouseEventPeer.child { childModel.bounds.toDoubleRectangle() }
-        childModel.mouseEventPeer.addEventSource(childMouseEventSource)
+    override val toolEventDispatcher: ToolEventDispatcher
+        get() {
+            if (_toolEventDispatcher == null) {
+                _toolEventDispatcher = CompositeToolEventDispatcher(children.map { (vm, _) -> vm.toolEventDispatcher })
+            }
+            return _toolEventDispatcher!!
+        }
+
+    fun addChild(childModel: ViewModel, childBounds: DoubleRectangle) {
+        val childMouseEventSource = mouseEventPeer.child { childBounds }
+        val eventSourceReg = childModel.mouseEventPeer.addEventSource(childMouseEventSource)
+
+        children.add(childModel to Registration.from(childModel, childMouseEventSource, eventSourceReg))
+        _toolEventDispatcher = null
     }
 
     fun assembleAsRoot() {
-        children.forEach { it.collect(dest = this.svg) }
+        children.forEach { (vm, _) -> vm.collect(dest = this.svg) }
     }
 
     override fun collect(dest: SvgSvgElement) {
         dest.children().add(this.svg)
-        children.forEach { it.collect(dest) }
+        children.forEach { (vm, _) -> vm.collect(dest) }
     }
 
     override fun dispose() {
-        children.forEach { it.dispose() }
+        children.forEach { (_, finalizer) ->
+            finalizer.dispose()
+        }
         children.clear()
     }
 }
