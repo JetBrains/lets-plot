@@ -35,7 +35,7 @@ internal class FontFamilyRegistryConfig(private val plotOptions: OptionsAccessor
             }
             familyRegistry.put(
                 name = it.getStringSafe(Option.FontMetainfo.FAMILY),
-                isMonospased = mono,
+                isMonospaced = mono,
                 widthFactor = it.getDouble(Option.FontMetainfo.WIDTH_CORRECTION)
             )
         }
