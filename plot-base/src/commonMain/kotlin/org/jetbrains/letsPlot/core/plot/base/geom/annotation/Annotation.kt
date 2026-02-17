@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 @Suppress("RedundantConstructorKeyword")
-class Annotation constructor(
+open class Annotation constructor(
     private val lines: List<LineSpec>,
     val textStyle: TextStyle,
     private val useCustomColor: Boolean,

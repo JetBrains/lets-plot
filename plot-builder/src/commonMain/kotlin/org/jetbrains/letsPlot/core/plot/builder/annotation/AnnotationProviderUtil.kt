@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.annotation
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothAnnotation
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
@@ -27,6 +28,22 @@ object AnnotationProviderUtil {
         )
         if (mappedLines.isEmpty()) {
             return null
+        }
+
+        if (spec is SmoothAnnotationSpecification) {
+            return SmoothAnnotation(
+                mappedLines,
+                textStyle = TextStyle(
+                    themeTextStyle.family.name,
+                    themeTextStyle.face,
+                    spec.textSize ?: themeTextStyle.size,
+                    themeTextStyle.color
+                ),
+                useCustomColor,
+                useLayerColor = spec.useLayerColor,
+                labelX = spec.labelX,
+                labelY = spec.labelY
+            )
         }
 
         return Annotation(

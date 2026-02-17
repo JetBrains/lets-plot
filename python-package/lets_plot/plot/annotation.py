@@ -289,28 +289,126 @@ class layer_labels(FeatureSpec):
         self._useLayerColor = True
         return self
 
-# todo docs
+
 class smooth_labels(layer_labels):
+
+    """
+    Configure annotations for `geom_smooth()` layers.
+
+    This class extends :class:`layer_labels` and provides additional options
+    for displaying statistics produced by the ``smooth`` stat, such as
+    :math:`R^2`, adjusted :math:`R^2`, and the fitted model equation.
+
+    It allows placing a multi-line annotation near the smooth curve and
+    mixing custom text, computed variables (e.g. ``..r2..``), and a generated
+    equation block.
+
+    Default behavior
+    ----------------
+    If created without any additional configuration the annotation displays
+    a single line with :math:`R^2`
+
+    Notes
+    -----
+    - Supported smooth-stat variables and markers that can be used in
+      :meth:`line()` templates:
+
+      - ``..r2..`` — :math:`R^2`.
+      - ``..adjr2..`` — adjusted :math:`R^2`.
+      - ``~eq`` — equation block marker. When a line equals ``'~eq'``,
+        an equation for the fitted model is rendered (can be configured
+        with :meth:`eq()`).
+    - `smooth_labels` **inherits** all features of :class:`layer_labels`.
+      Methods such as :meth:`format()`, :meth:`line()`, and :meth:`size()`
+      work exactly the same.
+    - The only difference is :meth:`inherit_color()`: it is applied
+      **automatically** during initialization, so annotation text inherits
+      the layer's color by default. Calling :meth:`inherit_color()` manually
+      is not required.
+
+
+    Examples
+    --------
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+
+        n = 100
+        x = np.linspace(-2, 2, n)
+        y = x**2 + np.random.normal(size=n)
+
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \
+            geom_smooth(deg=2, labels=smooth_labels())
+
+    """
 
     def __init__(self, variables: List[str] = None):
         super().__init__(variables)
 
-        self._kind = "smooth"
+        self._kind = "smooth_annotation"
         self._eq = {}
         self._label_x = None
         self._label_y = None
 
         self.inherit_color()
 
-    def label_x(self, position=None) -> "smooth_labels":
-        self._label_x = position
-        return self
+    def eq(self, lhs=None, rhs=None, format=None, threshold=None) -> "smooth_labels":
 
-    def label_y(self, position=None) -> "smooth_labels":
-        self._label_y = position
-        return self
+        """
+        Configure the equation block for the smooth annotation.
 
-    def eq(self, *, lhs=None, rhs=None, format=None, threshold=None) -> "smooth_labels":
+        The equation block is typically inserted into the label using a line
+        containing the special marker ``'~eq'``. When present, the backend
+        will render a fitted model equation (and may also include related
+        statistics depending on configuration).
+
+        Parameters
+        ----------
+        lhs : str, optional
+            Left-hand side label for the equation (default ``'y'``).
+        rhs : str, optional
+            Right-hand side variable representation (default ``'x'``).
+        format : str or list of str, optional
+            Formatting specification(s) for displaying numeric coefficients in the equation.
+            Each item can be either a number format (e.g. ``'.1f'``).
+            If a single format is provided, it is applied to all coefficients.
+        threshold : float, optional
+            A threshold value that can be used to control presentation of small
+            coefficients (e.g. hide or simplify terms below the threshold).
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Notes
+        -----
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 8-10
+
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+
+            x = np.linspace(-2, 2, 50)
+            y = x**2 + np.random.normal(size=len(x))
+
+            ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \
+                geom_smooth(deg=2, labels=smooth_labels()
+                    .line('~eq')
+                    .eq(lhs='f(x)', rhs='x', format='.2f', threshold=0.1))
+        """
+
         if format is not None:
             if isinstance(format, list):
                 self._eq["format"] = format
@@ -327,14 +425,115 @@ class smooth_labels(layer_labels):
 
         return self
 
-    def as_dict(self):
-        d = super().as_dict()
+    def label_x(self, position=None) -> "smooth_labels":
+        """
+        Set horizontal positioning of the smooth annotation.
 
-        d["kind"] = self._kind
-        d['label_x'] = self._label_x
-        d['label_y'] = self._label_y
+        Parameters
+        ----------
+        position : str or float or list, optional
+            Horizontal position for the annotation label.
+
+            - String values set an anchor position: ``'left'``, ``'center'``, ``'right'``.
+            - A numeric value sets an exact x-coordinate in plot data units.
+            - A list can be used to control the position of each group separately.
+              Each list item can be either a string anchor or a numeric coordinate.
+
+        Notes
+        -----
+        By default, the annotation is placed in the top-left corner.
+        When multiple groups are present, annotations are arranged in a vertical
+        stack by default; passing a list to `label_x()` and/or `label_y()` allows
+        positioning each group's annotation independently.
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Examples
+            --------
+            .. jupyter-execute::
+                :linenos:
+                :emphasize-lines: 6
+
+                from lets_plot import *
+                LetsPlot.setup_html()
+
+                ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \
+                    geom_smooth(deg=2, labels=smooth_labels().line('~eq').label_x('center'))
+        """
+
+        self._label_x = position
+        return self
+
+    def label_y(self, position=None) -> "smooth_labels":
+        """
+        Set vertical positioning of the smooth annotation.
+
+        Parameters
+        ----------
+        position : str or float or list, optional
+            Vertical position for the annotation label.
+
+            - String values set an anchor position: ``'top'``, ``'middle'``, ``'bottom'``.
+            - A numeric value sets an exact y-coordinate in plot data units.
+            - A list can be used to control the position of each group separately.
+              Each list item can be either a string anchor or a numeric coordinate.
+
+        Notes
+        -----
+        By default, the annotation is placed in the top-left corner.
+        When multiple groups are present, annotations are arranged in a vertical
+        stack by default; passing a list to `label_x()` and/or `label_y()` allows
+        positioning each group's annotation independently.
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Examples
+            --------
+            .. jupyter-execute::
+                :linenos:
+                :emphasize-lines: 6
+
+                from lets_plot import *
+                LetsPlot.setup_html()
+
+                ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \
+                    geom_smooth(deg=2, labels=smooth_labels().line('~eq').label_y('middle'))
+        """
+
+        self._label_y = position
+        return self
+
+    def as_dict(self):
+        """
+        Return a dictionary of all properties of the object.
+
+        In addition to the fields provided by :meth:`layer_labels.as_dict`,
+        this method includes:
+        - ``kind='smooth_annotation'``
+        - ``options`` (may contain ``label_x``, ``label_y``, and ``eq``)
+
+        Returns
+        -------
+        dict
+            Dictionary of properties.
+        """
+
+        d = super().as_dict()
+        opts = {
+            'label_x': self._label_x,
+            'label_y': self._label_y
+        }
 
         if self._eq:
-            d['eq'] = self._eq
+            opts['eq'] = self._eq
+
+        d['kind'] = self._kind
+        d["options"] = _filter_none(opts)
 
         return _filter_none(d)

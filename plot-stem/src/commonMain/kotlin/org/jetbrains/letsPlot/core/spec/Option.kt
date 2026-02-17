@@ -259,6 +259,19 @@ object Option {
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
+        const val OPTIONS = "options"
+
+        object Format {
+            const val FIELD = "field"
+            const val FORMAT = "format"
+        }
+
+        object Kind {
+            const val SMOOTH_ANNOTATION = "smooth_annotation"
+        }
+    }
+
+    object SmoothOptions {
         const val EQ = "eq"
         const val LABEL_X = "label_x"
         const val LABEL_Y = "label_y"
@@ -269,13 +282,9 @@ object Option {
             const val FORMAT = "format"
             const val THRESHOLD = "threshold"
         }
-
-        object Format {
-            const val FIELD = "field"
-            const val FORMAT = "format"
-        }
     }
 
+    // todo: investigate if we can unify options with LinesSpec
     object AnnotationSpec {
         const val LINES = "lines"
         const val FORMATS = "formats"

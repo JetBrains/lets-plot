@@ -39,6 +39,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.SHOW_LEGEND
 import org.jetbrains.letsPlot.core.spec.Option.Layer.STAT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.KIND
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Kind.SMOOTH_ANNOTATION
 import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
@@ -565,13 +567,23 @@ class LayerConfig constructor(
         ): AnnotationSpecification {
             return when (annotationOptions) {
                 is Map<*, *> -> {
-                    @Suppress("UNCHECKED_CAST")
-                    AnnotationConfig(
-                        opts = annotationOptions as Map<String, Any>,
-                        varBindings = varBindings,
-                        constantsMap = constantsMap,
-                        groupingVarNames = explicitGroupingVarNames
-                    ).createAnnotations()
+                    if (annotationOptions[KIND] == SMOOTH_ANNOTATION) {
+                        @Suppress("UNCHECKED_CAST")
+                        SmoothAnnotationConfig(
+                            opts = annotationOptions as Map<String, Any>,
+                            varBindings = varBindings,
+                            constantsMap = constantsMap,
+                            groupingVarNames = explicitGroupingVarNames
+                        ).createAnnotations()
+                    } else {
+                        @Suppress("UNCHECKED_CAST")
+                        AnnotationConfig(
+                            opts = annotationOptions as Map<String, Any>,
+                            varBindings = varBindings,
+                            constantsMap = constantsMap,
+                            groupingVarNames = explicitGroupingVarNames
+                        ).createAnnotations()
+                    }
                 }
 
                 NONE -> {

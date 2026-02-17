@@ -16,7 +16,7 @@ class TooltipConfig(
     constantsMap: Map<Aes<*>, Any>,
     groupingVarNames: List<String>?,
     varBindings: List<VarBinding>
-) : LineSpecConfigParser(opts, constantsMap, groupingVarNames, varBindings) {
+) : LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
 
     fun createTooltips(): TooltipSpecification {
         return create().run {

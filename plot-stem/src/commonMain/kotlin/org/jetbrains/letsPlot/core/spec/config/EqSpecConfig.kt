@@ -6,13 +6,13 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.EqSpecification
-import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.FORMAT
-import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.LHS
-import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.RHS
-import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Eq.THRESHOLD
+import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.Eq.FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.Eq.LHS
+import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.Eq.RHS
+import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.Eq.THRESHOLD
 
 
-class EqSpecConfigParser(
+class EqSpecConfig(
     opts: Map<String, Any>
 ): OptionsAccessor(opts) {
 
