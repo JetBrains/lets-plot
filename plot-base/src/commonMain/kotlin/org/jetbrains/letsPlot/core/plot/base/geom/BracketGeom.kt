@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
-import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
@@ -30,11 +28,12 @@ class BracketGeom : TextGeom() {
     ) {
         // Bracket
         val linesHelper = LinesHelper(pos, coord, ctx)
-        val pathData = linesHelper.createPathData(
+        val pathData = createPaths(
             aesthetics.dataPoints().map(TextUtil::toSegmentAes),
             bracketBuilder(linesHelper, bracketShorten, tipLengthUnit)
         )
-        val svgPath = linesHelper.renderPaths(pathData, filled = false)
+        val clientPathData = linesHelper.toClientPaths(pathData)
+        val svgPath = linesHelper.renderPaths(clientPathData, filled = false)
         root.appendNodes(svgPath)
 
         // Label
@@ -67,6 +66,17 @@ class BracketGeom : TextGeom() {
                 DoubleVector(xEnd, y),
                 DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),
             )
+        }
+
+        private fun createPaths(
+            dataPoints: Iterable<DataPointAesthetics>,
+            pointToPath: ((DataPointAesthetics) -> List<DoubleVector>?)
+        ): List<PathData> {
+            return dataPoints.mapNotNull { p ->
+                pointToPath(p)?.
+                    map { coord -> PathPoint(p, coord) }?.
+                    let { pathPoints -> PathData.create(pathPoints) }
+            }
         }
 
         private fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
