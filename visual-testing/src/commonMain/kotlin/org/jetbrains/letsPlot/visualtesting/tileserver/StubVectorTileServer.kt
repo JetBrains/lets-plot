@@ -1,4 +1,4 @@
-package org.jetbrains.letsPlot.visualtesting.plot
+package org.jetbrains.letsPlot.visualtesting.tileserver
 
 import io.ktor.server.application.*
 import io.ktor.server.cio.*

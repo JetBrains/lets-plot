@@ -3,7 +3,7 @@ package org.jetbrains.letsPlot.visualtesting.canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
-object CanvasTck {
+object AllCanvasTests {
     fun runAllTests(canvasPeer: CanvasPeer, imageComparer: ImageComparer) {
         var failedTestsCount = 0
 

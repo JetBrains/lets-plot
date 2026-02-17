@@ -1,10 +1,10 @@
 package org.jetbrains.letsPlot.visualtesting.plot
 
-internal class LiveMapTest : PlotTestBase() {
-    init {
-
-    }
-
+//internal class LiveMapTest : PlotTestBase() {
+//    init {
+//
+//    }
+//
 //    fun `geom_livemap stub png tile test`() {
 //        runStubRasterTileServer("png") { url ->
 //            val spec = JsonSupport.parseJson("""
@@ -27,4 +27,4 @@ internal class LiveMapTest : PlotTestBase() {
 //        }
 //
 //    }
-}
+//}

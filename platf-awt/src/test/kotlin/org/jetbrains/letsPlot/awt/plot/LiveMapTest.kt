@@ -1,8 +1,8 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.visualtesting.plot.runStubRasterTileServer
-import org.jetbrains.letsPlot.visualtesting.plot.runStubVectorTileServer
+import org.jetbrains.letsPlot.visualtesting.tileserver.runStubRasterTileServer
+import org.jetbrains.letsPlot.visualtesting.tileserver.runStubVectorTileServer
 import kotlin.test.Ignore
 import kotlin.test.Test
 

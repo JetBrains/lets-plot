@@ -2,7 +2,6 @@ package org.jetbrains.letsPlot.awt
 
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.core.canvas.Font.FontVariant.*
-import org.jetbrains.letsPlot.visualtesting.AwtCanvasTck
 import org.jetbrains.letsPlot.visualtesting.AwtFont
 import java.io.IOException
 
@@ -54,7 +53,7 @@ object NotoFontManager {
     )
 
     private fun createFont(resourceName: String): AwtFont {
-        val fontStream = AwtCanvasTck::class.java.getClassLoader().getResourceAsStream(resourceName)
+        val fontStream = NotoFontManager::class.java.getClassLoader().getResourceAsStream(resourceName)
             ?: error("Font resource not found: $resourceName")
         try {
             return AwtFont.createFont(AwtFont.TRUETYPE_FONT, fontStream)
