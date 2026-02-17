@@ -235,10 +235,10 @@ object TextUtil {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        flipAngle: Boolean,
-        sizeUnitRatio: Double,
         ctx: GeomContext,
-        boundsCenter: DoubleVector?,
+        flipAngle: Boolean = false,
+        sizeUnitRatio: Double = 1.0,
+        boundsCenter: DoubleVector? = null,
         nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
     ): SvgGElement {
         val label = Label(text)
@@ -266,11 +266,11 @@ object TextUtil {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        flipAngle: Boolean,
-        sizeUnitRatio: Double,
         ctx: GeomContext,
-        boundsCenter: DoubleVector?,
         labelOptions: LabelOptions,
+        flipAngle: Boolean = false,
+        sizeUnitRatio: Double = 1.0,
+        boundsCenter: DoubleVector? = null,
         nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
     ): SvgGElement {
         // text size estimation

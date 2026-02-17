@@ -25,8 +25,11 @@ open class LabelGeom : TextGeom() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = labelOptions, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull)
-        textHelper.createSvgComponents().forEach { svgElement ->
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx).apply {
+            setLabelOptions(labelOptions)
+            sizeUnit?.let(::setSizeUnit)
+        }
+        textHelper.createSvgComponents(formatter, naValue, checkOverlap).forEach { svgElement ->
             root.add(svgElement)
         }
         textHelper.buildHints(targetCollector)

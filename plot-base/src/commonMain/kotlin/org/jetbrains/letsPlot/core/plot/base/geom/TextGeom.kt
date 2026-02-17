@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -29,14 +31,13 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = null, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull)
-        textHelper.createSvgComponents().forEach { svgElement ->
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx)
+        sizeUnit?.let(textHelper::setSizeUnit)
+        textHelper.createSvgComponents(formatter, naValue, checkOverlap).forEach { svgElement ->
             root.add(svgElement)
         }
         textHelper.buildHints(targetCollector)
     }
-
-    open fun coordOrNull(p: DataPointAesthetics): DoubleVector? = p.finiteVectorOrNull(Aes.X, Aes.Y)
 
     companion object {
         const val DEF_NA_VALUE = "n/a"

@@ -38,13 +38,11 @@ class BracketGeom : TextGeom() {
         root.appendNodes(svgPath)
 
         // Label
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = null, formatter, naValue, sizeUnit, checkOverlap = false, flipAngle = true, ::coordOrNull)
-        textHelper.createSvgComponents(labelNudge = ::labelNudge).forEach(root::add)
-    }
-
-    override fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
-        val (xmin, xmax, y) = p.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
-        return DoubleVector((xmin + xmax) / 2.0, y)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx).apply {
+            sizeUnit?.let(::setSizeUnit)
+            setCoordOrNull(::coordOrNull)
+        }
+        textHelper.createSvgComponents(formatter, naValue, flipAngle = true, labelNudge = ::labelNudge).forEach(root::add)
     }
 
     companion object {
@@ -69,6 +67,11 @@ class BracketGeom : TextGeom() {
                 DoubleVector(xEnd, y),
                 DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),
             )
+        }
+
+        private fun coordOrNull(p: DataPointAesthetics): DoubleVector? {
+            val (xmin, xmax, y) = p.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
+            return DoubleVector((xmin + xmax) / 2.0, y)
         }
 
         private fun labelNudge(location: DoubleVector, textSize: DoubleVector): DoubleVector =

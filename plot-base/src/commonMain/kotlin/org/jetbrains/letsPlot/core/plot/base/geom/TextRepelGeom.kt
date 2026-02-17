@@ -55,7 +55,7 @@ open class TextRepelGeom: TextGeom() {
             return coord.toClient(point)
         }
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, labelOptions = null, formatter, naValue, sizeUnit, checkOverlap, flipAngle = false, ::coordOrNull)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx)
         val svgHelper = GeomHelper.SvgElementHelper(::toClient)
             .setStrokeAlphaEnabled(true)
             .setArrowSpec(arrowSpec)
@@ -77,7 +77,7 @@ open class TextRepelGeom: TextGeom() {
             val pointLocation = coord.toClient(point) ?: continue
             if (!bounds.contains(pointLocation)) continue
 
-            val text = textHelper.toString(dp.label())
+            val text = textHelper.toString(dp.label(), formatter, naValue)
             if (text.isEmpty()) continue
 
             val pointDp = toPointAes(dp)
@@ -89,7 +89,7 @@ open class TextRepelGeom: TextGeom() {
             val hjust = TextUtil.hAnchor(dp, loc, aesBoundsCenter).toDouble()
             val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter)
 
-            val box = TransformedRectangle(textHelper.getRect(dp, loc, text, 1.0 , ctx, aesBoundsCenter))
+            val box = TransformedRectangle(textHelper.getRect(dp, loc, text, ctx, boundsCenter = aesBoundsCenter))
 
             boxes[dp.index()] = box
             hjusts[dp.index()] = hjust
@@ -123,9 +123,9 @@ open class TextRepelGeom: TextGeom() {
             val dp = aesthetics.dataPointAt(result.dpIndex)
             val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val pointLocation = coord.toClient(point) ?: continue
-            val text = textHelper.toString(dp.label())
+            val text = textHelper.toString(dp.label(), formatter, naValue)
 
-            val tc = TextUtil.textComponentFactory(toLabelAes(dp), result.position, text, flipAngle = false, 1.0, ctx, aesBoundsCenter)
+            val tc = TextUtil.textComponentFactory(toLabelAes(dp), result.position, text, ctx, boundsCenter = aesBoundsCenter)
             root.add(tc)
 
             val pointDp = toPointAes(dp)
