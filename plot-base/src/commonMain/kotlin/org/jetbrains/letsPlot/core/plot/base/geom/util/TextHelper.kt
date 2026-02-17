@@ -22,40 +22,40 @@ class TextHelper(
     ctx: GeomContext
 ) : GeomHelper(pos, coord, ctx) {
 
-    private var myLabelOptions: LabelOptions? = null
-    private var myFormatter: ((Any) -> String)? = null
-    private var myNaValue: String = DEF_NA_VALUE
-    private var mySizeUnit: String? = null
-    private var myCheckOverlap: Boolean = false
-    private var myToLocation: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
+    private var labelOptions: LabelOptions? = null
+    private var formatter: ((Any) -> String)? = null
+    private var naValue: String = DEF_NA_VALUE
+    private var sizeUnit: String? = null
+    private var checkOverlap: Boolean = false
+    private var toLocation: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
 
     fun setLabelOptions(labelOptions: LabelOptions): TextHelper {
-        myLabelOptions = labelOptions
+        this.labelOptions = labelOptions
         return this
     }
 
     fun setFormatter(formatter: ((Any) -> String)?): TextHelper {
-        myFormatter = formatter
+        this.formatter = formatter
         return this
     }
 
-    fun setNaValue(value: String): TextHelper {
-        myNaValue = value
+    fun setNaValue(naValue: String): TextHelper {
+        this.naValue = naValue
         return this
     }
 
     fun setCheckOverlap(checkOverlap: Boolean): TextHelper {
-        myCheckOverlap = checkOverlap
+        this.checkOverlap = checkOverlap
         return this
     }
 
     fun setSizeUnit(sizeUnit: String?): TextHelper {
-        mySizeUnit = sizeUnit
+        this.sizeUnit = sizeUnit
         return this
     }
 
     fun toLocation(toLocation: (DataPointAesthetics) -> DoubleVector?): TextHelper {
-        myToLocation = toLocation
+        this.toLocation = toLocation
         return this
     }
 
@@ -68,24 +68,24 @@ class TextHelper(
         return myAesthetics.dataPoints().mapNotNull { p ->
             val text = toString(p.label())
             if (text.isEmpty()) return@mapNotNull null
-            val point = myToLocation(p) ?: return@mapNotNull null
+            val point = toLocation(p) ?: return@mapNotNull null
             val location = toClient(point, p) ?: return@mapNotNull null
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, mySizeUnit, BASELINE_TEXT_WIDTH)
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
 
             val rectangle = getRect(p, location, text, ctx, flipAngle, sizeUnitRatio, aesBoundsCenter)
-            if (myCheckOverlap) {
+            if (checkOverlap) {
                 if (restrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
                     return@mapNotNull null
                 }
                 restrictions.add(rectangle)
             }
 
-            if (myLabelOptions == null) {
+            if (labelOptions == null) {
                 TextUtil.textComponentFactory(p, location, text, ctx, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
             } else {
-                TextUtil.labelComponentFactory(p, location, text, ctx, myLabelOptions!!, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
+                TextUtil.labelComponentFactory(p, location, text, ctx, labelOptions!!, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
             }
         }
     }
@@ -94,9 +94,9 @@ class TextHelper(
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
 
         myAesthetics.dataPoints().forEach { p ->
-            val point = myToLocation(p) ?: return
+            val point = toLocation(p) ?: return
             val location = toClient(point, p) ?: return
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, mySizeUnit, BASELINE_TEXT_WIDTH)
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
             targetCollector.addPoint(
                 p.index(),
                 location,
@@ -112,9 +112,9 @@ class TextHelper(
     internal fun toString(
         label: Any?
     ): String {
-        if (label == null) return myNaValue
+        if (label == null) return naValue
 
-        val formatter = myFormatter ?: ctx.getDefaultFormatter(Aes.LABEL)
+        val formatter = formatter ?: ctx.getDefaultFormatter(Aes.LABEL)
         return formatter(label)
     }
 
@@ -133,10 +133,10 @@ class TextHelper(
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val angle = toRadians(TextUtil.orientedAngle(p, flipAngle, ctx))
 
-        val rectangle = if (myLabelOptions == null) {
+        val rectangle = if (labelOptions == null) {
             TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
         } else {
-            TextUtil.rectangleForText(location, textSize, padding = fontSize * myLabelOptions!!.paddingFactor, hAnchor, vAnchor)
+            TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions!!.paddingFactor, hAnchor, vAnchor)
         }
         return rectangle.rotate(angle, location)
     }
