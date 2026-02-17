@@ -45,6 +45,21 @@ abstract class PlotSpecComponentProvider(
             computationMessagesHandler
         )
 
+        // ToDo: create 'scrollPane' if 'sizing policy' is 'fixed'.
+//        val isGGBunch =
+//            !PlotConfig.isFailure(processedSpec) && PlotConfig.figSpecKind(processedSpec) == FigKind.GG_BUNCH_SPEC
+//        return if (isGGBunch) {
+//            // GGBunch is always 'original' size => add a scroll pane.
+//            val scrollPane = createScrollPane(plotComponent)
+//            containerSize?.run {
+//                scrollPane.preferredSize = containerSize
+//                scrollPane.size = containerSize
+//            }
+//            scrollPane
+//        } else {
+//            plotComponent
+//        }
+
         return plotComponent
     }
 
