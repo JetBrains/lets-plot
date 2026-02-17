@@ -456,6 +456,18 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.BRACKET -> GeomProvider.bracket {
+                val geom = BracketGeom()
+                applyTextOptions(layerConfig, geom, expFormat, tz)
+                if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
+                    geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.TIP_LENGTH_UNIT)) {
+                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIP_LENGTH_UNIT) ?: BracketGeom.DEF_TIP_LENGTH_UNIT
+                }
+                geom
+            }
+
             GeomKind.STAT_R2 -> GeomProvider.statR2 {
                 val geom = StatR2Geom()
                 val labels = layerConfig[ANNOTATIONS]
@@ -589,7 +601,7 @@ internal object GeomProviderFactory {
                 "px" -> DimensionUnit.PIXEL
                 else -> throw IllegalArgumentException(
                     "Unsupported value for $option parameter: '$it'. " +
-                            "Use one of: res, identity, size, px."
+                    "Use one of: res, identity, size, px."
                 )
             }
         }

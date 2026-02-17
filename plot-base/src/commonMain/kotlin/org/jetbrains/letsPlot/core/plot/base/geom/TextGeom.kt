@@ -5,16 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
-    var naValue = DEF_NA_VALUE
+    var naValue = TextHelper.DEF_NA_VALUE
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
 
@@ -30,32 +31,18 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::objectRectangle, ::componentFactory)
+        val textHelper = TextHelper(aesthetics, pos, coord, ctx)
+            .setFormatter(formatter)
+            .setNaValue(naValue)
+            .setSizeUnit(sizeUnit)
+            .setCheckOverlap(checkOverlap)
         textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
         textHelper.buildHints(targetCollector)
     }
 
-    open fun componentFactory(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ) = TextHelper.textComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter)
-
-    open fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Double,
-    ) = TextHelper.textRectangle(location, textSize, hAnchor, vAnchor)
-
     companion object {
-        const val DEF_NA_VALUE = "n/a"
         const val HANDLES_GROUPS = false
 
         // Current implementation works for label_format ='.2f'

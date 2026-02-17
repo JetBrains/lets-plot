@@ -22,32 +22,34 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_STROKE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -256,6 +258,12 @@ abstract class AesVisitor<T> {
         if (aes == STROKE_END) {
             return strokeEnd()
         }
+        if (aes == TIP_LENGTH_START) {
+            return tipLengthStart()
+        }
+        if (aes == TIP_LENGTH_END) {
+            return tipLengthEnd()
+        }
         if (aes == POINT_SIZE) {
             return pointSize()
         }
@@ -386,6 +394,10 @@ abstract class AesVisitor<T> {
     protected abstract fun strokeStart(): T
 
     protected abstract fun strokeEnd(): T
+
+    protected abstract fun tipLengthStart(): T
+
+    protected abstract fun tipLengthEnd(): T
 
     protected abstract fun pointSize(): T
 

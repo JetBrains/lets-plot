@@ -88,7 +88,7 @@ class LayerConfig constructor(
     val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
     val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
     val isLegendDisabled: Boolean
-        get() = when (hasOwn(SHOW_LEGEND)) {
+        get() = when (has(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
         }
@@ -392,6 +392,10 @@ class LayerConfig constructor(
 
             geomProto.geomKind == GeomKind.BOX_PLOT -> {
                 isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
+            }
+
+            geomProto.geomKind == GeomKind.BRACKET -> {
+                isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
             }
 
             geomProto.geomKind in listOf(

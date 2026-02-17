@@ -5,31 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
-import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 
 
 class LabelRepelGeom() : TextRepelGeom() {
     val labelOptions = LabelOptions()
-
-    override fun componentFactory(
-        p: DataPointAesthetics,
-        location: DoubleVector,
-        text: String,
-        sizeUnitRatio: Double,
-        ctx: GeomContext,
-        boundsCenter: DoubleVector?
-    ) = TextHelper.labelComponentFactory(p, location, text, sizeUnitRatio, ctx, boundsCenter, labelOptions)
-
-    override fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Double
-    ) = TextHelper.labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
 }

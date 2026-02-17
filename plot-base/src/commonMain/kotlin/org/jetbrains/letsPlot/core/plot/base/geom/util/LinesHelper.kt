@@ -263,6 +263,31 @@ open class LinesHelper(
         }
     }
 
+    fun toClientPaths(domainPathData: List<PathData>): List<PathData> {
+        return when (myResamplingEnabled) {
+            true -> {
+                domainPathData
+                    .map { path -> splitByStyle(path).let(::midPointsPathInterpolator) }
+                    .flatMap { paths -> paths.mapNotNull { PathData.create(resample(it.points)) } }
+            }
+
+            false -> {
+                val clientPathData = domainPathData.mapNotNull { segment ->
+                    // Note that PathPoint have to be recreated with the point aes, not with a segment aes
+                    val points = segment.points.mapNotNull { p ->
+                        toClient(p.coord, p.aes)
+                            ?.let { PathPoint(p.aes, coord = it) }
+                    }
+                    PathData.create(points)
+                }
+
+                clientPathData
+                    .map { splitByStyle(it).let(::midPointsPathInterpolator) }
+                    .flatten()
+            }
+        }
+    }
+
     fun decorate(
         path: LinePath,
         p: DataPointAesthetics,
@@ -291,31 +316,6 @@ open class LinesHelper(
         val fill = p.fill()
         val fillAlpha = AestheticsUtil.alpha(fill!!, p)
         path.fill().set(withOpacity(fill, fillAlpha))
-    }
-
-    private fun toClientPaths(domainPathData: List<PathData>): List<PathData> {
-        return when (myResamplingEnabled) {
-            true -> {
-                domainPathData
-                    .map { path -> splitByStyle(path).let(::midPointsPathInterpolator) }
-                    .flatMap { paths -> paths.mapNotNull { PathData.create(resample(it.points)) } }
-            }
-
-            false -> {
-                val clientPathData = domainPathData.mapNotNull { segment ->
-                    // Note that PathPoint have to be recreated with the point aes, not with a segment aes
-                    val points = segment.points.mapNotNull { p ->
-                        toClient(p.coord, p.aes)
-                            ?.let { PathPoint(p.aes, coord = it) }
-                    }
-                    PathData.create(points)
-                }
-
-                clientPathData
-                    .map { splitByStyle(it).let(::midPointsPathInterpolator) }
-                    .flatten()
-            }
-        }
     }
 
     companion object {

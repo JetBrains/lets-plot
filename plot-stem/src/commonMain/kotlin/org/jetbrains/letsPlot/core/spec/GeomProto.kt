@@ -113,6 +113,7 @@ class GeomProto(val geomKind: GeomKind) {
             TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP
+            BRACKET -> DefaultSampling.BRACKET
             LIVE_MAP,
             RASTER,
             IMAGE,
@@ -149,7 +150,7 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, BRACKET -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
                     Geom.Text.NUDGE_Y
                 )
             ) {
@@ -222,6 +223,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[BIN_2D] = bin2dDefaults()
             DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
+            DEFAULTS[BRACKET] = bracketDefaults()
             DEFAULTS[STAT_R2] = statR2Defaults()
         }
 
@@ -400,6 +402,13 @@ class GeomProto(val geomKind: GeomKind) {
                 Layer.STAT to "count2d",
                 Geom.Pie.SPACER_COLOR to "paper"
             )
+        }
+
+        private fun bracketDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "identity"
+            defaults[Layer.SHOW_LEGEND] = false
+            return defaults
         }
 
         private fun statR2Defaults(): Map<String, Any> {

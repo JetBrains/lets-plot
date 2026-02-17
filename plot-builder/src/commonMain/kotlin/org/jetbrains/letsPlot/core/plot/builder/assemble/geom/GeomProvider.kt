@@ -433,6 +433,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun bracket(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.BRACKET,
+                BracketGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun blank(): GeomProvider {
             return GeomProvider(
                 GeomKind.BLANK,

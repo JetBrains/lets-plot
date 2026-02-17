@@ -5,48 +5,76 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class TextHelper(
     private val myAesthetics: Aesthetics,
     pos: PositionAdjustment,
     coord: CoordinateSystem,
-    ctx: GeomContext,
-    private val formatter: ((Any) -> String)?,
-    private val naValue: String,
-    private val sizeUnit: String?,
-    private val checkOverlap: Boolean,
-    private val objectRectangle: (DoubleVector, DoubleVector, Double, Text.HorizontalAnchor, Double) -> DoubleRectangle,
-    private val componentFactory: (DataPointAesthetics, DoubleVector, String, Double, GeomContext, DoubleVector?) -> SvgGElement
+    ctx: GeomContext
 ) : GeomHelper(pos, coord, ctx) {
 
-    internal fun createSvgComponents(): List<SvgGElement> {
+    private var labelOptions: LabelOptions? = null
+    private var formatter: ((Any) -> String)? = null
+    private var naValue: String = DEF_NA_VALUE
+    private var sizeUnit: String? = null
+    private var checkOverlap: Boolean = false
+    private var toLocation: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
+
+    fun setLabelOptions(labelOptions: LabelOptions): TextHelper {
+        this.labelOptions = labelOptions
+        return this
+    }
+
+    fun setFormatter(formatter: ((Any) -> String)?): TextHelper {
+        this.formatter = formatter
+        return this
+    }
+
+    fun setNaValue(naValue: String): TextHelper {
+        this.naValue = naValue
+        return this
+    }
+
+    fun setCheckOverlap(checkOverlap: Boolean): TextHelper {
+        this.checkOverlap = checkOverlap
+        return this
+    }
+
+    fun setSizeUnit(sizeUnit: String?): TextHelper {
+        this.sizeUnit = sizeUnit
+        return this
+    }
+
+    fun toLocation(toLocation: (DataPointAesthetics) -> DoubleVector?): TextHelper {
+        this.toLocation = toLocation
+        return this
+    }
+
+    internal fun createSvgComponents(
+        flipAngle: Boolean = false,
+        labelNudge: (DoubleVector, DoubleVector) -> DoubleVector = TextUtil.DEF_LABEL_NUDGE
+    ): List<SvgGElement> {
         val restrictions = mutableListOf<List<DoubleVector>>()
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         return myAesthetics.dataPoints().mapNotNull { p ->
             val text = toString(p.label())
             if (text.isEmpty()) return@mapNotNull null
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return@mapNotNull null
+            val point = toLocation(p) ?: return@mapNotNull null
             val location = toClient(point, p) ?: return@mapNotNull null
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
 
-            val rectangle = getRect(p, location, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            val rectangle = getRect(p, location, text, ctx, flipAngle, sizeUnitRatio, aesBoundsCenter)
             if (checkOverlap) {
                 if (restrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
                     return@mapNotNull null
@@ -54,7 +82,11 @@ class TextHelper(
                 restrictions.add(rectangle)
             }
 
-            componentFactory(p, location, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            if (labelOptions == null) {
+                TextUtil.textComponentFactory(p, location, text, ctx, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
+            } else {
+                TextUtil.labelComponentFactory(p, location, text, ctx, labelOptions!!, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
+            }
         }
     }
 
@@ -62,7 +94,7 @@ class TextHelper(
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
 
         myAesthetics.dataPoints().forEach { p ->
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: return
+            val point = toLocation(p) ?: return
             val location = toClient(point, p) ?: return
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
             targetCollector.addPoint(
@@ -77,7 +109,9 @@ class TextHelper(
         }
     }
 
-    internal fun toString(label: Any?): String {
+    internal fun toString(
+        label: Any?
+    ): String {
         if (label == null) return naValue
 
         val formatter = formatter ?: ctx.getDefaultFormatter(Aes.LABEL)
@@ -88,158 +122,27 @@ class TextHelper(
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        sizeUnitRatio: Double,
         ctx: GeomContext,
-        boundsCenter: DoubleVector?
+        flipAngle: Boolean = false,
+        sizeUnitRatio: Double = 1.0,
+        boundsCenter: DoubleVector? = null
     ): List<DoubleVector> {
         val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val angle = toRadians(TextUtil.angle(p))
+        val angle = toRadians(TextUtil.orientedAngle(p, flipAngle, ctx))
 
-        return objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
-            .rotate(angle, location)
+        val rectangle = if (labelOptions == null) {
+            TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
+        } else {
+            TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions!!.paddingFactor, hAnchor, vAnchor)
+        }
+        return rectangle.rotate(angle, location)
     }
 
     companion object {
-        internal fun textComponentFactory(
-            p: DataPointAesthetics,
-            location: DoubleVector,
-            text: String,
-            sizeUnitRatio: Double,
-            ctx: GeomContext,
-            boundsCenter: DoubleVector?
-        ): SvgGElement {
-            val label = Label(text)
-            TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-            val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-            label.setHorizontalAnchor(hAnchor)
-
-            val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-            val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
-            //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
-
-            val yPosition = TextUtil.vAnchor(p, location, boundsCenter).let { vjust ->
-                location.y + (vjust - 1) * textHeight + (1 - 0.3 * vjust) * fontSize
-            }
-
-            val textLocation = DoubleVector(location.x, yPosition)
-            label.moveTo(textLocation)
-
-            val g = SvgGElement()
-            g.children().add(label.rootGroup)
-            SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
-            return g
-        }
-
-        internal fun labelComponentFactory(
-            p: DataPointAesthetics,
-            location: DoubleVector,
-            text: String,
-            sizeUnitRatio: Double,
-            ctx: GeomContext,
-            boundsCenter: DoubleVector?,
-            labelOptions: LabelOptions
-        ): SvgGElement {
-            // text size estimation
-            val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-
-            val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-            val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
-
-            // Background rectangle
-            val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-            val rectangle = labelRectangle(location, textSize, fontSize, hAnchor, vAnchor, labelOptions)
-            val backgroundRect = SvgPathElement().apply {
-                d().set(
-                    roundedRectangle(rectangle, labelOptions.radiusFactor * rectangle.height).build()
-                )
-            }
-            GeomHelper.decorate(backgroundRect, p, applyAlphaToAll = labelOptions.alphaStroke)
-            backgroundRect.strokeWidth().set(labelOptions.borderWidth)
-
-            // Text element
-            val label = Label(text)
-            TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = labelOptions.alphaStroke)
-
-            val padding = fontSize * labelOptions.paddingFactor
-            val xPosition = when (hAnchor) {
-                Text.HorizontalAnchor.LEFT -> location.x + padding
-                Text.HorizontalAnchor.RIGHT -> location.x - padding
-                Text.HorizontalAnchor.MIDDLE -> location.x
-            }
-            val textPosition = DoubleVector(
-                xPosition,
-                rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
-            )
-            label.setHorizontalAnchor(hAnchor)
-            label.moveTo(textPosition)
-
-            // group elements and apply rotation
-            val g = SvgGElement()
-            g.children().add(backgroundRect)
-            g.children().add(label.rootGroup)
-
-            // rotate all
-            SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
-
-            return g
-        }
-
-        internal fun textRectangle(
-            location: DoubleVector,
-            textSize: DoubleVector,
-            hAnchor: Text.HorizontalAnchor,
-            vAnchor: Double,
-        ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
-
-        internal fun labelRectangle(
-            location: DoubleVector,
-            textSize: DoubleVector,
-            fontSize: Double,
-            hAnchor: Text.HorizontalAnchor,
-            vAnchor: Double,
-            labelOptions: LabelOptions
-        ) = TextUtil.rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
-
-        private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
-            return SvgPathDataBuilder().apply {
-                with(rect) {
-                    // Ensure normal radius
-                    val r = minOf(radius, width / 2, height / 2)
-
-                    moveTo(right - r, bottom)
-                    curveTo(
-                        right - r, bottom,
-                        right, bottom,
-                        right, bottom - r
-                    )
-
-                    lineTo(right, top + r)
-                    curveTo(
-                        right, top + r,
-                        right, top,
-                        right - r, top
-                    )
-
-                    lineTo(left + r, top)
-                    curveTo(
-                        left + r, top,
-                        left, top,
-                        left, top + r
-                    )
-
-                    lineTo(left, bottom - r)
-                    curveTo(
-                        left, bottom - r,
-                        left, bottom,
-                        left + r, bottom
-                    )
-
-                    closePath()
-                }
-            }
-        }
+        const val DEF_NA_VALUE = "n/a"
+        val DEF_COORD_OR_NULL: (DataPointAesthetics) -> DoubleVector? = { it.finiteVectorOrNull(Aes.X, Aes.Y) }
     }
 }

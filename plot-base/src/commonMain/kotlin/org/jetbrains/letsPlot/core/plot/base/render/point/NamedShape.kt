@@ -86,7 +86,7 @@ enum class NamedShape(
         return if (isSolid)
             0.0
         else
-            AesScaling.pointStrokeWidth(dataPoint)
+            AesScaling.strokeWidth(dataPoint, DataPointAesthetics::stroke)
     }
 
     companion object {

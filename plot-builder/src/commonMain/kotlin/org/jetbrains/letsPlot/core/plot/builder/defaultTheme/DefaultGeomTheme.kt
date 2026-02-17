@@ -82,7 +82,8 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.TEXT,
                 GeomKind.LABEL,
                 GeomKind.TEXT_REPEL,
-                GeomKind.LABEL_REPEL -> TEXT_SIZE
+                GeomKind.LABEL_REPEL,
+                GeomKind.BRACKET -> TEXT_SIZE
 
                 GeomKind.PIE -> PIE_SIZE
 
@@ -101,7 +102,8 @@ internal class DefaultGeomTheme private constructor(
 
             val segmentColor = when (geomKind) {
                 GeomKind.TEXT_REPEL,
-                GeomKind.LABEL_REPEL -> DEFAULT_SEGMENT_COLOR
+                GeomKind.LABEL_REPEL,
+                GeomKind.BRACKET-> DEFAULT_SEGMENT_COLOR
                 else -> Color.TRANSPARENT
             }
             val segmentSize = COMMON_LINE_WIDTH

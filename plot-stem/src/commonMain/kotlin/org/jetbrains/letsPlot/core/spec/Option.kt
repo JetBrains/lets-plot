@@ -464,6 +464,11 @@ object Option {
             const val PIVOT = "pivot"
         }
 
+        object Bracket {
+            const val BRACKET_SHORTEN = "bracket_shorten"
+            const val TIP_LENGTH_UNIT = "tip_length_unit"
+        }
+
         object LiveMap {
             const val INTERACTIVE = "interactive"
             const val LOCATION = "location"
@@ -1123,6 +1128,7 @@ object Option {
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
         const val STAT_R2 = "stat_r2"
+        const val BRACKET = "bracket"
         const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
@@ -1183,6 +1189,7 @@ object Option {
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
             map[STAT_R2] = GeomKind.STAT_R2
+            map[BRACKET] = GeomKind.BRACKET
             map[BLANK] = GeomKind.BLANK
 
             GEOM_KIND_MAP = map
