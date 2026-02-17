@@ -88,11 +88,11 @@ class CanvasComponent(
             return
         }
 
-        val g2d = g!!.create() as Graphics2D
-
         if (content != null) {
+            val g2d = g!!.create() as Graphics2D
             val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
             content!!.paint(ctx)
+            g2d.dispose()
         }
     }
 
