@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
-    var naValue = DEF_NA_VALUE
+    var naValue = TextHelper.DEF_NA_VALUE
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
 
@@ -32,15 +32,17 @@ open class TextGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
 
         val textHelper = TextHelper(aesthetics, pos, coord, ctx)
-        sizeUnit?.let(textHelper::setSizeUnit)
-        textHelper.createSvgComponents(formatter, naValue, checkOverlap).forEach { svgElement ->
+            .setFormatter(formatter)
+            .setNaValue(naValue)
+            .setSizeUnit(sizeUnit)
+            .setCheckOverlap(checkOverlap)
+        textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
         textHelper.buildHints(targetCollector)
     }
 
     companion object {
-        const val DEF_NA_VALUE = "n/a"
         const val HANDLES_GROUPS = false
 
         // Current implementation works for label_format ='.2f'

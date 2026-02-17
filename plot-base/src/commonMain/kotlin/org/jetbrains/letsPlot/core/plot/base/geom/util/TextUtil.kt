@@ -27,7 +27,7 @@ import kotlin.math.max
 
 object TextUtil {
 
-    val DEF_NUDGE: (DoubleVector, DoubleVector) -> DoubleVector = { location, _ -> location }
+    val DEF_LABEL_NUDGE: (DoubleVector, DoubleVector) -> DoubleVector = { location, _ -> location }
 
     private val HJUST_MAP: Map<Any, Text.HorizontalAnchor> = mapOf(
         "right" to Text.HorizontalAnchor.RIGHT,
@@ -239,7 +239,7 @@ object TextUtil {
         flipAngle: Boolean = false,
         sizeUnitRatio: Double = 1.0,
         boundsCenter: DoubleVector? = null,
-        nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
+        labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
     ): SvgGElement {
         val label = Label(text)
         decorate(label, p, sizeUnitRatio, applyAlpha = true)
@@ -254,7 +254,7 @@ object TextUtil {
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
-        label.moveTo(nudge(textLocation, textSize))
+        label.moveTo(labelNudge(textLocation, textSize))
 
         val g = SvgGElement()
         g.children().add(label.rootGroup)
@@ -271,7 +271,7 @@ object TextUtil {
         flipAngle: Boolean = false,
         sizeUnitRatio: Double = 1.0,
         boundsCenter: DoubleVector? = null,
-        nudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_NUDGE
+        labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
     ): SvgGElement {
         // text size estimation
         val textSize = measure(text, p, ctx, sizeUnitRatio)
@@ -305,7 +305,7 @@ object TextUtil {
             rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
         )
         label.setHorizontalAnchor(hAnchor)
-        label.moveTo(nudge(textPosition, textSize))
+        label.moveTo(labelNudge(textPosition, textSize))
 
         // group elements and apply rotation
         val g = SvgGElement()

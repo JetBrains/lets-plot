@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -24,41 +23,59 @@ class TextHelper(
 ) : GeomHelper(pos, coord, ctx) {
 
     private var myLabelOptions: LabelOptions? = null
+    private var myFormatter: ((Any) -> String)? = null
+    private var myNaValue: String = DEF_NA_VALUE
     private var mySizeUnit: String? = null
-    private var myCoordOrNull: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
+    private var myCheckOverlap: Boolean = false
+    private var myToLocation: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
 
-    fun setLabelOptions(labelOptions: LabelOptions) {
-        this.myLabelOptions = labelOptions
+    fun setLabelOptions(labelOptions: LabelOptions): TextHelper {
+        myLabelOptions = labelOptions
+        return this
     }
 
-    fun setSizeUnit(sizeUnit: String) {
-        this.mySizeUnit = sizeUnit
+    fun setFormatter(formatter: ((Any) -> String)?): TextHelper {
+        myFormatter = formatter
+        return this
     }
 
-    fun setCoordOrNull(f: (DataPointAesthetics) -> DoubleVector?) {
-        this.myCoordOrNull = f
+    fun setNaValue(value: String): TextHelper {
+        myNaValue = value
+        return this
+    }
+
+    fun setCheckOverlap(checkOverlap: Boolean): TextHelper {
+        myCheckOverlap = checkOverlap
+        return this
+    }
+
+    fun setSizeUnit(sizeUnit: String?): TextHelper {
+        mySizeUnit = sizeUnit
+        return this
+    }
+
+    fun toLocation(toLocation: (DataPointAesthetics) -> DoubleVector?): TextHelper {
+        myToLocation = toLocation
+        return this
     }
 
     internal fun createSvgComponents(
-        formatter: ((Any) -> String)? = null,
-        naValue: String = TextGeom.DEF_NA_VALUE,
-        checkOverlap: Boolean = false,
         flipAngle: Boolean = false,
-        labelNudge: (DoubleVector, DoubleVector) -> DoubleVector = TextUtil.DEF_NUDGE
+        labelNudge: (DoubleVector, DoubleVector) -> DoubleVector = TextUtil.DEF_LABEL_NUDGE
     ): List<SvgGElement> {
         val restrictions = mutableListOf<List<DoubleVector>>()
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         return myAesthetics.dataPoints().mapNotNull { p ->
-            val text = toString(p.label(), formatter, naValue)
+            val text = toString(p.label())
             if (text.isEmpty()) return@mapNotNull null
-            val point = myCoordOrNull(p) ?: return@mapNotNull null
+            val point = myToLocation(p) ?: return@mapNotNull null
             val location = toClient(point, p) ?: return@mapNotNull null
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, mySizeUnit, BASELINE_TEXT_WIDTH)
 
             val rectangle = getRect(p, location, text, ctx, flipAngle, sizeUnitRatio, aesBoundsCenter)
-            if (checkOverlap) {
+            if (myCheckOverlap) {
                 if (restrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
                     return@mapNotNull null
                 }
@@ -77,7 +94,7 @@ class TextHelper(
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, this.ctx)
 
         myAesthetics.dataPoints().forEach { p ->
-            val point = myCoordOrNull(p) ?: return
+            val point = myToLocation(p) ?: return
             val location = toClient(point, p) ?: return
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, mySizeUnit, BASELINE_TEXT_WIDTH)
             targetCollector.addPoint(
@@ -93,13 +110,11 @@ class TextHelper(
     }
 
     internal fun toString(
-        label: Any?,
-        formatter: ((Any) -> String)? = null,
-        naValue: String = TextGeom.DEF_NA_VALUE
+        label: Any?
     ): String {
-        if (label == null) return naValue
+        if (label == null) return myNaValue
 
-        val formatter = formatter ?: ctx.getDefaultFormatter(Aes.LABEL)
+        val formatter = myFormatter ?: ctx.getDefaultFormatter(Aes.LABEL)
         return formatter(label)
     }
 
@@ -127,6 +142,7 @@ class TextHelper(
     }
 
     companion object {
+        const val DEF_NA_VALUE = "n/a"
         val DEF_COORD_OR_NULL: (DataPointAesthetics) -> DoubleVector? = { it.finiteVectorOrNull(Aes.X, Aes.Y) }
     }
 }
