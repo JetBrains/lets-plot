@@ -42,7 +42,11 @@ internal object FigureToViewModel {
                 else -> error("Unsupported figure: ${svgRoot::class.simpleName}")
             }
 
-            compositeModel.addChild(childModel, childBounds)
+            // Use childSvg.bounds (local to this composite) for mouse event dispatch,
+            // not childBounds (which includes the parent's origin offset).
+            // Events arriving here are already translated to local coordinates
+            // by the parent's ChildMouseEventSource.
+            compositeModel.addChild(childModel, childSvg.bounds)
         }
         return compositeModel
     }
