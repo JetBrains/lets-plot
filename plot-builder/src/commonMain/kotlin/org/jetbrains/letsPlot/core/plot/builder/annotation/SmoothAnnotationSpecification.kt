@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.annotation
 
-import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelY
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelX
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelY
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
