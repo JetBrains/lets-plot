@@ -1196,6 +1196,7 @@ object Option {
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
+            map[BRACKET] = GeomKind.BRACKET
             map[BLANK] = GeomKind.BLANK
 
             GEOM_KIND_MAP = map
