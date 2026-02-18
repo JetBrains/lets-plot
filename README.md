@@ -125,28 +125,28 @@ Also read:
   <a href="https://lets-plot.org/examples/demo/cities_density.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/bcc63703214b5b02a8a374668d8bba7a451a9152/source/_static/images/changelog/4.8.0/square-cities_density.png?raw=true" alt="images/changelog/4.8.0/square-cities_density.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/raincloud.ipynb">
+  <a href="https://lets-plot.org/examples/demo/raincloud.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-raincloud.png?raw=true" alt="images/changelog/4.7.0/square-raincloud.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/europe_capitals.ipynb">
+  <a href="https://lets-plot.org/examples/demo/europe_capitals.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-europe_capitals.png?raw=true" alt="images/changelog/4.7.0/square-europe_capitals.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/trading_chart.ipynb">
+  <a href="https://lets-plot.org/examples/demo/trading_chart.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-trading_chart.png?raw=true" alt="images/changelog/4.7.0/square-trading_chart.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/magnifier_inset.ipynb">
+  <a href="https://lets-plot.org/examples/demo/magnifier_inset.html">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/magnifier_inset.png" alt="f-25a/images/magnifier_inset.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/ggbunch_indonesia.ipynb">
+  <a href="https://lets-plot.org/examples/demo/ggbunch_indonesia.html">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/ggbunch_indonesia.png" alt="f-25a/images/ggbunch_indonesia.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/lets_plot_in_2024.ipynb">
+  <a href="https://lets-plot.org/examples/demo/lets_plot_in_2024.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-lets_plot_in_2024.png?raw=true" alt="images/changelog/4.7.0/square-lets_plot_in_2024.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/plot_layout_scheme.ipynb">
+  <a href="https://lets-plot.org/examples/demo/plot_layout_scheme.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-plot_layout_scheme.png?raw=true" alt="images/changelog/4.7.0/square-plot_layout_scheme.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/theme_legend_scheme.ipynb">
+  <a href="https://lets-plot.org/examples/demo/theme_legend_scheme.html">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/theme_legend_scheme.png" alt="f-24g/images/theme_legend_scheme.png" width="128" height="128">
   </a>
 
