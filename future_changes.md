@@ -31,7 +31,11 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
 
-- `geom_imshow()`: 
+- `gggrid()`: interactive pan/zoom now propagates across subplots with shared axes (`sharex`/`sharey`) [[#1413](https://github.com/JetBrains/lets-plot/issues/1413)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
+
+- `geom_imshow()`:
   - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
   - New `cguide` parameter: use to customize the colorbar for greyscale images.
 
