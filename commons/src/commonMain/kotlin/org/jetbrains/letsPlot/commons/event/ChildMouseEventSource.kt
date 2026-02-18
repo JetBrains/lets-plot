@@ -139,6 +139,8 @@ class ChildMouseEventSource(
                 MouseEventSpec.MOUSE_ENTERED -> {}
                 MouseEventSpec.MOUSE_LEFT -> {}
                 MouseEventSpec.MOUSE_MOVED -> {}
+                MouseEventSpec.MOUSE_CLICKED -> {}
+                MouseEventSpec.MOUSE_DOUBLE_CLICKED -> {}
                 else -> state = HoverState()
             }
         }
