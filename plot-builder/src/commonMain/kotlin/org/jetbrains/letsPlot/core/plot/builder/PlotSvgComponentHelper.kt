@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 
 internal object PlotSvgComponentHelper {
     private fun textRectangle(elementRect: DoubleRectangle, margins: Thickness) = createTextRectangle(
@@ -348,5 +349,169 @@ internal object PlotSvgComponentHelper {
             }
             DoubleRectangle(boundRect.center.x - textDimensions.y / 2, y, textDimensions.y, textDimensions.x)
         }
+    }
+
+    data class FigureTextLayout(
+        //   xxxElementRect - rectangle for element, including margins
+        //   xxxTextRect - for text only
+
+        val tagElementRect: DoubleRectangle?,
+        val tagTextRect: DoubleRectangle?,
+
+        val titleElementRect: DoubleRectangle?,
+        val titleTextRect: DoubleRectangle?,
+
+        val subtitleElementRect: DoubleRectangle?,
+        val subtitleTextRect: DoubleRectangle?,
+
+        val captionElementRect: DoubleRectangle?,
+        val captionTextRect: DoubleRectangle?,
+
+        // Bounds to be used by other layout steps (legends etc.)
+        val outerBoundsWithoutTitleCaption: DoubleRectangle,
+
+        // Bounds used when computing title/subtitle/caption
+        val outerBoundsForTitlesAndCaption: DoubleRectangle
+    )
+
+    fun figureTextLayout(
+        title: String?,
+        subtitle: String?,
+        caption: String?,
+        tag: String?,
+        outerBounds: DoubleRectangle,
+        geomOrElementsAreaBounds: DoubleRectangle,
+        plotTheme: PlotTheme
+    ): FigureTextLayout {
+        val (tagElementRect, tagTextRect) = tagElementAndTextBounds(
+            tag, outerBounds, geomOrElementsAreaBounds, plotTheme
+        )
+
+        val tagThickness = PlotLayoutUtil.tagMarginThickness(tag, plotTheme)
+        val outerBoundsForTitlesAndCaption = DoubleRectangle(
+            outerBounds.left,
+            outerBounds.top + tagThickness.top,
+            outerBounds.width,
+            outerBounds.height - tagThickness.height
+        )
+        val (titleElementRect, titleTextRect) = titleElementAndTextBounds(
+            title, outerBoundsForTitlesAndCaption, geomOrElementsAreaBounds, plotTheme
+        )
+        val (subtitleElementRect, subtitleTextRect) = subtitleElementAndTextBounds(
+            subtitle, outerBoundsForTitlesAndCaption, geomOrElementsAreaBounds, titleElementRect, plotTheme
+        )
+        val (captionElementRect, captionTextRect) = captionElementAndTextBounds(
+            caption, outerBoundsForTitlesAndCaption, geomOrElementsAreaBounds, plotTheme
+        )
+        val outerBoundsWithoutTitleCaption = PlotLayoutUtil.boundsWithoutTitleAndCaption(
+            outerBounds = outerBoundsForTitlesAndCaption,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            plotTheme = plotTheme
+        )
+
+        return FigureTextLayout(
+            tagElementRect, tagTextRect,
+            titleElementRect, titleTextRect,
+            subtitleElementRect, subtitleTextRect,
+            captionElementRect, captionTextRect,
+            outerBoundsWithoutTitleCaption,
+            outerBoundsForTitlesAndCaption
+        )
+    }
+
+    fun renderFigureTextElements(
+        svg: SvgComponent,
+        title: String?,
+        subtitle: String?,
+        caption: String?,
+        tag: String?,
+        textLayout: FigureTextLayout,
+        plotTheme: PlotTheme
+    ) {
+        textLayout.tagElementRect?.let {
+            addTitle(
+                svgComponent = svg,
+                text = tag,
+                labelSpec = PlotLabelSpecFactory.plotTag(plotTheme),
+                justification = plotTheme.tagJustification(),
+                boundRect = it,
+                className = Style.PLOT_TAG
+            )
+        }
+        textLayout.titleTextRect?.let {
+            addTitle(
+                svgComponent = svg,
+                text = title,
+                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
+                justification = plotTheme.titleJustification(),
+                boundRect = it,
+                className = Style.PLOT_TITLE
+            )
+        }
+        textLayout.subtitleTextRect?.let {
+            addTitle(
+                svgComponent = svg,
+                text = subtitle,
+                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                justification = plotTheme.subtitleJustification(),
+                boundRect = it,
+                className = Style.PLOT_SUBTITLE
+            )
+        }
+        textLayout.captionTextRect?.let {
+            addTitle(
+                svgComponent = svg,
+                text = caption,
+                labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
+                justification = plotTheme.captionJustification(),
+                boundRect = it,
+                className = Style.PLOT_CAPTION
+            )
+        }
+    }
+
+    fun drawFigureTextFrames(
+        svg: SvgComponent,
+        title: String?,
+        subtitle: String?,
+        caption: String?,
+        tag: String?,
+        textLayout: FigureTextLayout,
+        plotTheme: PlotTheme
+    ) {
+        drawTagDebugInfo(
+            svg,
+            tag,
+            textLayout.tagElementRect,
+            textLayout.tagTextRect,
+            plotTheme
+        )
+
+        drawTitleDebugInfo(
+            svg,
+            title,
+            textLayout.titleElementRect,
+            textLayout.titleTextRect,
+            plotTheme
+        )
+
+        drawSubtitleDebugInfo(
+            svg,
+            subtitle,
+            textLayout.subtitleElementRect,
+            textLayout.subtitleTextRect,
+            plotTheme
+        )
+
+        drawCaptionDebugInfo(
+            svg,
+            caption,
+            textLayout.captionElementRect,
+            textLayout.captionTextRect,
+            plotTheme
+        )
     }
 }

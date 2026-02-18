@@ -74,13 +74,16 @@ object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
-        theme: Theme,
+        tag: String?,
+        plotTheme: PlotTheme,
     ): DoubleRectangle {
-        val titleDelta = titleSizeDelta(title, subtitle, theme.plot())
-        val captionDelta = captionSizeDelta(caption, theme.plot())
-        val sizeDelta = titleDelta.add(captionDelta)
+        val titleDelta = titleSizeDelta(title, subtitle, plotTheme)
+        val captionDelta = captionSizeDelta(caption, plotTheme)
+        val tagThickness = tagMarginThickness(tag, plotTheme)
+        val sizeDelta = titleDelta.add(captionDelta).add(tagThickness.size)
+
         return DoubleRectangle(
-            origin = outerBounds.origin.add(titleDelta),
+            origin = outerBounds.origin.add(titleDelta).add(tagThickness.leftTop),
             dimension = outerBounds.dimension.subtract(sizeDelta)
         )
     }
@@ -158,7 +161,7 @@ object PlotLayoutUtil {
         flippedAxis: Boolean
     ): DoubleVector {
         val titleDelta = titleSizeDelta(title, subtitle, theme.plot())
-        val tagDelta = tagMarginDelta(tag, theme.plot())
+        val tagThickness = tagMarginThickness(tag, theme.plot())
         val axisTitlesDelta = axisTitlesSizeDelta(
             hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
             vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
@@ -167,7 +170,7 @@ object PlotLayoutUtil {
         )
         val legendBlockDelta = legendsSpaceTotalDelta(listOfNotNull(legendsBlockInfo), theme.legend())
         val captionDelta = captionSizeDelta(caption, theme.plot())
-        return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta).add(tagDelta.size)
+        return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta).add(tagThickness.size)
     }
 
     internal fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {
@@ -185,7 +188,7 @@ object PlotLayoutUtil {
         )
     }
 
-    internal fun tagMarginDelta(
+    internal fun tagMarginThickness(
         tag: String?,
         plotTheme: PlotTheme
     ): Thickness {

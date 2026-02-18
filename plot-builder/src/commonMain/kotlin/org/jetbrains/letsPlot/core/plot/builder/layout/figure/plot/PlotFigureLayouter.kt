@@ -183,16 +183,16 @@ internal class PlotFigureLayouter(
         val figureBoundsWithoutTitleCaptionAndMargin = run {
             val titleDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
             val captionDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
-            val tagDelta = PlotLayoutUtil.tagMarginDelta(tag, theme.plot())
+            val tagThickness = PlotLayoutUtil.tagMarginThickness(tag, theme.plot())
 
             val origin = figureLayoutedBounds.origin
                 .add(titleDelta)
-                .add(tagDelta.leftTop)
+                .add(tagThickness.leftTop)
 
             val dimension = figureLayoutedBounds.dimension
                 .subtract(titleDelta)
                 .subtract(captionDelta)
-                .subtract(tagDelta.size)
+                .subtract(tagThickness.size)
 
             DoubleRectangle(origin, dimension)
         }

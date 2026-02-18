@@ -97,7 +97,7 @@ class CompositeFigureBuildInfo constructor(
 
         val withoutTitles = PlotLayoutUtil.boundsWithoutTitleAndCaption(
             outerBounds = contentAreaBounds,
-            title, subtitle, caption, theme
+            title, subtitle, caption, tag, plotTheme
         )
 
         val withoutPlotInset = plotTheme.plotInset().shrinkRect(withoutTitles)
