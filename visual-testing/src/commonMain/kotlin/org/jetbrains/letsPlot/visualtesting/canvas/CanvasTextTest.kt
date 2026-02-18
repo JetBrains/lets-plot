@@ -1,5 +1,8 @@
+@file:Suppress("FunctionName")
+
 package org.jetbrains.letsPlot.visualtesting.canvas
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
@@ -11,13 +14,13 @@ internal class CanvasTextTest(
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
     init {
-        registerTest(::monospace)
-        registerTest(::monospaceItalic)
-        registerTest(::monospaceBold)
-        registerTest(::monospaceBoldItalic)
+        registerTest(::canvas_path_monospace)
+        registerTest(::canvas_path_monospaceItalic)
+        registerTest(::canvas_path_monospaceBold)
+        registerTest(::canvas_path_monospaceBoldItalic)
     }
 
-    private fun monospace() {
+    private fun canvas_path_monospace(): Bitmap {
         // Test that regular monospaced font is rendered correctly
         val (canvas, ctx) = createCanvas()
 
@@ -25,10 +28,10 @@ internal class CanvasTextTest(
         ctx.setFont(Font(fontFamily = "Noto Sans Mono", fontSize = 16.0))
         ctx.fillText("monospace", 5.0, 30.0)
 
-        assertCanvas("text_monospace.png", canvas)
+        return paint(canvas)
     }
 
-    private fun monospaceItalic() {
+    private fun canvas_path_monospaceItalic(): Bitmap {
         val fontSize = 16.0
 
         val (canvas, ctx) = createCanvas()
@@ -40,10 +43,10 @@ internal class CanvasTextTest(
         ctx.translate(5.0, 70.0)
         ctx.fillText("monospace", 0.0, 0.0)
 
-        assertCanvas("text_monospace_italic.png", canvas)
+        return paint(canvas)
     }
 
-    private fun monospaceBold() {
+    private fun canvas_path_monospaceBold(): Bitmap {
         val fontSize = 16.0
 
         val (canvas, ctx) = createCanvas()
@@ -52,10 +55,10 @@ internal class CanvasTextTest(
         ctx.setFont(Font(fontFamily = "Noto Sans Mono", fontSize = fontSize, fontWeight = FontWeight.BOLD))
         ctx.fillText("monospace", 5.0, 30.0)
 
-        assertCanvas("text_monospace_bold.png", canvas)
+        return paint(canvas)
     }
 
-    private fun monospaceBoldItalic() {
+    private fun canvas_path_monospaceBoldItalic(): Bitmap {
         val fontSize = 16.0
         val (canvas, ctx) = createCanvas()
 
@@ -68,7 +71,7 @@ internal class CanvasTextTest(
         ))
         ctx.fillText("monospace", 0.0, 30.0)
 
-        assertCanvas("text_monospace_bold_italic.png", canvas)
+        return paint(canvas)
     }
 
 }

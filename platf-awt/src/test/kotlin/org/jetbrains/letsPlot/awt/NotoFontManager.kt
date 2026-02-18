@@ -2,10 +2,13 @@ package org.jetbrains.letsPlot.awt
 
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.core.canvas.Font.FontVariant.*
-import org.jetbrains.letsPlot.visualtesting.AwtFont
+import java.awt.Font
 import java.io.IOException
 
+typealias AwtFont = Font
+
 object NotoFontManager {
+
     val INSTANCE = FontManager(
         fontResolver = { font ->
             when (font.fontFamily) {

@@ -3,6 +3,7 @@
 package org.jetbrains.letsPlot.visualtesting.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
@@ -12,17 +13,17 @@ internal class CanvasDrawImageTest(
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
     init {
-        registerTest(::drawImage_Simple)
-        registerTest(::drawImage_Transformed)
-        registerTest(::drawImage_Overlay)
-        registerTest(::drawImage_Pixelated)
-        registerTest(::drawImage_snapshotSeries)
-        registerTest(::drawImage_srcToDstMatchingSizes)
-        registerTest(::drawImage_cropFromSourceStretchToDest)
-        registerTest(::drawImage_cropFromSourceToDest)
+        registerTest(::canva_drawImage_Simple)
+        registerTest(::canvas_drawImage_Transformed)
+        registerTest(::canvas_drawImage_Overlay)
+        registerTest(::canva_drawImage_Pixelated)
+        registerTest(::canvas_drawImage_snapshotSeries)
+        registerTest(::canvas_drawImage_srcToDstMatchingSizes)
+        registerTest(::canvas_drawImage_cropFromSourceStretchToDest)
+        registerTest(::canvas_drawImage_cropFromSourceToDest)
     }
 
-    private fun drawImage_cropFromSourceStretchToDest() {
+    private fun canvas_drawImage_cropFromSourceStretchToDest(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
         tempCtx.fillStyle = Color.GREEN
         tempCtx.fillRect(x = 0, y = 0, width = 100, height = 100)
@@ -39,10 +40,10 @@ internal class CanvasDrawImageTest(
             dx = 5.0, dy = 5.0, dw = 90.0, dh = 90.0 // draw it stretched
         )
 
-        assertCanvas("draw_image_crop_from_source_stretch_to_dest.png", canvas)
+        return paint(canvas)
     }
 
-    private fun drawImage_cropFromSourceToDest() {
+    private fun canvas_drawImage_cropFromSourceToDest(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
         tempCtx.fillStyle = Color.GREEN
         tempCtx.fillRect(x = 0, y = 0, width = 100, height = 100)
@@ -59,10 +60,10 @@ internal class CanvasDrawImageTest(
             dx = 5.0, dy = 5.0, dw = 60.0, dh = 60.0 // draw it without stretching
         )
 
-        assertCanvas("draw_image_crop_from_source_to_dest.png", canvas)
+        return paint(canvas)
     }
 
-    private fun drawImage_srcToDstMatchingSizes() {
+    private fun canvas_drawImage_srcToDstMatchingSizes(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
         tempCtx.fillStyle = Color.BLACK
         tempCtx.fillRect(25, 25, 50, 50)
@@ -72,10 +73,10 @@ internal class CanvasDrawImageTest(
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot, 0.0, 0.0, 100.0, 100.0, 0.0, 0.0, 100.0, 100.0)
 
-        assertCanvas("draw_image_src_to_dst_matching_sizes.png", canvas)
+        return paint(canvas)
     }
 
-    private fun drawImage_Simple() {
+    private fun canva_drawImage_Simple(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
         tempCtx.fillStyle = Color.BLACK
         tempCtx.fillRect(25, 25, 50, 50)
@@ -85,10 +86,10 @@ internal class CanvasDrawImageTest(
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot)
 
-        assertCanvas("draw_image_simple.png", canvas)
+        return paint(canvas)
     }
 
-    private fun drawImage_snapshotSeries() {
+    private fun canvas_drawImage_snapshotSeries(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
         tempCtx.fillStyle = Color.BLACK.changeAlpha(0.5)
         tempCtx.fillRect(0, 0, 50, 50)
@@ -108,10 +109,11 @@ internal class CanvasDrawImageTest(
         ctx.drawImage(snapshot)
         ctx.clearRect(DoubleRectangle.WH(100, 100))
         ctx.drawImage(snapshot)
-        assertCanvas("draw_image_snapshot_series.png", canvas)
+
+        return paint(canvas)
     }
 
-    private fun drawImage_Transformed() {
+    private fun canvas_drawImage_Transformed(): Bitmap {
         val (rectCanvas, rectCtx) = createCanvas(20, 20)
         rectCtx.fillStyle = Color.BLUE
         rectCtx.fillRect(0, 0, 20, 20)
@@ -143,10 +145,10 @@ internal class CanvasDrawImageTest(
         ctx.fillRect(0, 0, 20, 20)
         ctx.restore()
 
-        assertCanvas("draw_image_transformed.png", canvas)
+        return paint(canvas)
     }
 
-    private fun drawImage_Overlay() {
+    private fun canvas_drawImage_Overlay(): Bitmap {
         val (rect, rectCtx) = createCanvas(50, 50)
         rectCtx.fillStyle = "rgba(0, 0, 255, 0.7)" // semi-transparent blue
         rectCtx.fillRect(0, 0, 50, 50)
@@ -176,10 +178,10 @@ internal class CanvasDrawImageTest(
         ctx.lineTo(100, 50)
         ctx.stroke()
 
-        assertCanvas("draw_image_overlay.png", canvas)
+        return paint(canvas)
     }
 
-    private fun drawImage_Pixelated() {
+    private fun canva_drawImage_Pixelated(): Bitmap {
         val (img, imgCtx) = createCanvas(3, 2)
         imgCtx.fillStyle = "rgb(255, 0, 0)"
         imgCtx.fillRect(0, 0, 1, 1)
@@ -204,7 +206,7 @@ internal class CanvasDrawImageTest(
         val (canvas, ctx) = createCanvas()
         ctx.drawImage(snapshot, x = 5.0, y = 20.0, dw = 90.0, dh = 60.0)
 
-        assertCanvas("draw_image_pixelated.png", canvas)
+        return paint(canvas)
     }
 
 }
