@@ -11,8 +11,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelY
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase.Companion.overallAesBounds
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -25,8 +23,7 @@ object SmoothSummaryAnnotation {
     fun build(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
-        labelX: List<Pair<Double?, LabelX>>,
-        labelY: List<Pair<Double?, LabelY>>,
+        smoothAnnotation: SmoothAnnotation,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
@@ -52,7 +49,7 @@ object SmoothSummaryAnnotation {
             labels.add(label)
         }
 
-        val locations = getLocations(labels, labelX, labelY, viewPort, coord)
+        val locations = getLocations(labels, smoothAnnotation.labelX, smoothAnnotation.labelY, viewPort, coord)
 
         labels.forEachIndexed { index, label ->
             root.add(createAnnotationElement(label, locations[index], annotation.textStyle, ctx))
@@ -116,7 +113,7 @@ object SmoothSummaryAnnotation {
     ): DoubleVector {
         val blockSize = DoubleVector(
             labels.maxOf { it.textSize.x },
-            labels.sumOf { it.textSize.y } // todo: paddings
+            labels.sumOf { it.textSize.y }
         )
 
         val x = labelX.first?.let { coord.toClient(DoubleVector(it, 0))?.x }
@@ -162,4 +159,12 @@ object SmoothSummaryAnnotation {
         val textSize: DoubleVector,
         val textColor: Color
     )
+
+    enum class LabelX {
+        LEFT, CENTER, RIGHT
+    }
+
+    enum class LabelY {
+        TOP, MIDDLE, BOTTOM
+    }
 }

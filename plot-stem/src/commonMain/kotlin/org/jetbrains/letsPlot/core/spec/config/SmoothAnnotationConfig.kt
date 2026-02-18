@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.BlankGeom.Companion.LabelY
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelX
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelY
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.EqDataFrameField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern

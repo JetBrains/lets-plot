@@ -26,19 +26,11 @@ open class BlankGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val smoothAnnotation = ctx.annotation as? SmoothAnnotation ?: return
-        SmoothSummaryAnnotation.build(root, aesthetics.dataPoints(), smoothAnnotation.labelX, smoothAnnotation.labelY, coord, ctx)
+        SmoothSummaryAnnotation.build(root, aesthetics.dataPoints(), smoothAnnotation, coord, ctx)
     }
 
     companion object {
         const val HANDLES_GROUPS = false
-
-        enum class LabelX {
-            LEFT, CENTER, RIGHT
-        }
-
-        enum class LabelY {
-            TOP, MIDDLE, BOTTOM
-        }
     }
 }
 
