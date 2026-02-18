@@ -31,15 +31,24 @@ open class TextGeom : GeomBase() {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx)
-            .setFormatter(formatter)
-            .setNaValue(naValue)
-            .setSizeUnit(sizeUnit)
-            .setCheckOverlap(checkOverlap)
+        val textHelper = getTextHelper(aesthetics, pos, coord, ctx)
         textHelper.createSvgComponents().forEach { svgElement ->
             root.add(svgElement)
         }
         textHelper.buildHints(targetCollector)
+    }
+
+    open fun getTextHelper(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ): TextHelper {
+        return TextHelper(aesthetics, pos, coord, ctx)
+            .setFormatter(formatter)
+            .setNaValue(naValue)
+            .setSizeUnit(sizeUnit)
+            .setCheckOverlap(checkOverlap)
     }
 
     companion object {

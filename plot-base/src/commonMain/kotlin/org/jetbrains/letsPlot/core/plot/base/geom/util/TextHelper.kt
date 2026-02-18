@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.DEF_LABEL_NUDGE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -82,11 +83,23 @@ class TextHelper(
                 restrictions.add(rectangle)
             }
 
-            if (labelOptions == null) {
-                TextUtil.textComponentFactory(p, location, text, ctx, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
-            } else {
-                TextUtil.labelComponentFactory(p, location, text, ctx, labelOptions!!, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
-            }
+            componentFactory(p, location, text, flipAngle, sizeUnitRatio, aesBoundsCenter, labelNudge)
+        }
+    }
+
+    internal fun componentFactory(
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        text: String,
+        flipAngle: Boolean = false,
+        sizeUnitRatio: Double = 1.0,
+        boundsCenter: DoubleVector? = null,
+        labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
+    ): SvgGElement {
+        return if (labelOptions == null) {
+            TextUtil.textComponentFactory(p, location, text, ctx, flipAngle, sizeUnitRatio, boundsCenter, labelNudge)
+        } else {
+            TextUtil.labelComponentFactory(p, location, text, ctx, labelOptions!!, flipAngle, sizeUnitRatio, boundsCenter, labelNudge)
         }
     }
 

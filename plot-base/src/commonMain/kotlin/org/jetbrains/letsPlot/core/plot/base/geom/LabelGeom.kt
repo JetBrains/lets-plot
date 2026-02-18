@@ -11,29 +11,21 @@ import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
-import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 open class LabelGeom : TextGeom() {
     val labelOptions = LabelOptions()
 
-    override fun buildIntern(
-        root: SvgRoot,
+    override fun getTextHelper(
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
-    ) {
-        val targetCollector = getGeomTargetCollector(ctx)
-
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx)
+    ): TextHelper {
+        return TextHelper(aesthetics, pos, coord, ctx)
             .setLabelOptions(labelOptions)
             .setFormatter(formatter)
             .setNaValue(naValue)
             .setSizeUnit(sizeUnit)
             .setCheckOverlap(checkOverlap)
-        textHelper.createSvgComponents().forEach { svgElement ->
-            root.add(svgElement)
-        }
-        textHelper.buildHints(targetCollector)
     }
 }
