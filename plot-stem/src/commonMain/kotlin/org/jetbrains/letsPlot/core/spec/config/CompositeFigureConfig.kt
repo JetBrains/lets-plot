@@ -75,7 +75,11 @@ class CompositeFigureConfig constructor(
             if (spec is Map<*, *>) {
                 @Suppress("UNCHECKED_CAST")
                 spec as Map<String, Any>
-
+                // This was necessary to pass the "size_basis" and "size_zoomin" parameters
+                // through PlotConfigFrontend to MonolithicCommon, where they will be used
+                // when creating the PlotAssembler.
+                // https://github.com/JetBrains/lets-plot/blob/f8ead91e83d508550896b5ebc3dd197b039b0cc1/plot-stem/src/commonMain/kotlin/org/jetbrains/letsPlot/core/util/MonolithicCommon.kt#L192
+                // Discussed here: https://forum.datalore-plot.jetbrains-boston.com/t/528/6
 //                // Add the 'ggtoolbar' option to each subfigure:
 //                val extendedSpec = opts[GG_TOOLBAR]?.let { ggToolbar ->
 //                    spec + (GG_TOOLBAR to ggToolbar)
