@@ -233,5 +233,8 @@ static struct PyModuleDef module_def = {
 
 PyMODINIT_FUNC PyInit_lets_plot_kotlin_bridge(void) {
    PyObject *module = PyModule_Create(&module_def);
+   #ifdef Py_GIL_DISABLED
+       PyUnstable_Module_SetGIL(module, Py_MOD_GIL_NOT_USED);
+   #endif
    return module;
 }

@@ -64,6 +64,9 @@ kotlin {
         target.compilations.getByName("main") {
             val python by cinterops.creating {
                 compilerOpts("-I${rootProject.project.extra["python.include_path"]}")
+                if (os.isWindows) {
+                    compilerOpts("-mcrc32")
+                }
             }
         }
         target

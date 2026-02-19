@@ -5,6 +5,8 @@
 # Script parameters required:
 # - OS architecture ('x86_64' or 'arm64')
 # - CPython version ('cp3XX': cp39, cp310)
+# - ImageMagick libraries path (see 'devdocs/ImageMagick_Installation_Instructions.md')
+# - ABI flag, if presents
 
 
 set -e
@@ -45,6 +47,13 @@ else
   imagemagick_path=$3
 fi
 
+if [[ -n "$4" ]]
+then
+   abi_flag=$4
+else
+    abi_flag=""
+fi
+
 root_path=$PWD
 python_extension_path="${root_path}/python-extension"
 python_package_path="${root_path}/python-package"
@@ -58,11 +67,12 @@ echo "Started manylinux packages build for ${arch} on ${platform_name}..."
 echo "-------------------------"
 docker run --rm \
   -e ARCH="$arch" \
+  -e ABI_FLAG="$abi_flag" \
   -e CPYTHON_VERSION="$cpython_version" \
   -e PLAT="$platform_name" \
   -e USER_ID="$sys_user_id" \
   -e GROUP_ID="$sys_group_id" \
-  -e LP_IMAGEMAGICK_PATH=/tmp/deps \
+  -e IMAGICK_LIB_PATH=/tmp/deps \
   -v "$imagemagick_path":/tmp/deps \
   -v "$python_package_path":/tmp/python-package \
   -v "$python_extension_path":/tmp/python-extension \
