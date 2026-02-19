@@ -27,7 +27,7 @@ open class VisualPlotTestBase {
 
     fun assertPlot(
         expectedFileName: String,
-        plotSpec: MutableMap<String, Any>,
+        plotSpec: MutableMap<*, *>,
         width: Number? = null,
         height: Number? = null,
         unit: SizeUnit? = null,
@@ -35,6 +35,9 @@ open class VisualPlotTestBase {
         scale: Number? = null,
         fontManager: FontManager = NotoFontManager.INSTANCE
     ) {
+        @Suppress("UNCHECKED_CAST")
+        val plotSpec = plotSpec as MutableMap<String, Any>
+
         val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
         val imageData = PlotImageExport.buildImageFromRawSpecs(
