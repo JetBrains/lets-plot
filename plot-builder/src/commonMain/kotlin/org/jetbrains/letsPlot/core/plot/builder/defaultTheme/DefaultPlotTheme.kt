@@ -130,6 +130,7 @@ internal class DefaultPlotTheme(
     }
 
     override fun tagPosition(): DoubleVector {
+        @Suppress("UNCHECKED_CAST")
         val pair = getValue(PLOT_TAG_POSITION) as Pair<Double, Double>
         return DoubleVector(pair.first, pair.second)
     }
