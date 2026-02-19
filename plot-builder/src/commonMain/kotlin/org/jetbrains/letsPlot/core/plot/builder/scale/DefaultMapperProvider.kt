@@ -40,15 +40,17 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -177,6 +179,8 @@ object DefaultMapperProvider {
             this.put(SIZE_END, SizeMapperProvider.DEFAULT)
             this.put(STROKE_START, StrokeMapperProvider.DEFAULT)
             this.put(STROKE_END, StrokeMapperProvider.DEFAULT)
+            this.put(TIP_LENGTH_START, NUMERIC_IDENTITY)
+            this.put(TIP_LENGTH_END, NUMERIC_IDENTITY)
 
             this.put(POINT_SIZE, SizeMapperProvider.DEFAULT)
             this.put(POINT_STROKE, StrokeMapperProvider.DEFAULT)

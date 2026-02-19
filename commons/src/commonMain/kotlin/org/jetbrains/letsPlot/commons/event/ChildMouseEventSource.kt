@@ -139,6 +139,8 @@ class ChildMouseEventSource(
                 MouseEventSpec.MOUSE_ENTERED -> {}
                 MouseEventSpec.MOUSE_LEFT -> {}
                 MouseEventSpec.MOUSE_MOVED -> {}
+                MouseEventSpec.MOUSE_CLICKED -> {}
+                MouseEventSpec.MOUSE_DOUBLE_CLICKED -> {}
                 else -> state = HoverState()
             }
         }
@@ -156,6 +158,14 @@ class ChildMouseEventSource(
 
         val translatedEvent = if (left == 0 && top == 0) {
             e
+        } else if (e is MouseWheelEvent) {
+            MouseWheelEvent(
+                e.x - left,
+                e.y - top,
+                e.button,
+                e.modifiers,
+                e.scrollAmount
+            )
         } else {
             MouseEvent(
                 e.x - left,

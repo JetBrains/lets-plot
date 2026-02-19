@@ -71,8 +71,8 @@ object GeomMeta {
 
     private fun renderedAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
-            GeomKind.POINT,
-            GeomKind.BLANK -> POINT
+            GeomKind.POINT -> POINT
+
 
             GeomKind.PATH -> PATH
             GeomKind.LINE -> PATH
@@ -88,7 +88,7 @@ object GeomMeta {
                 Aes.ALPHA
             )
 
-            GeomKind.STAT_R2 -> listOf(
+            GeomKind.BLANK -> listOf(
                 Aes.X, Aes.Y,
 
                 // Copy from GeomKind.SMOOTH to sync grouping
@@ -521,6 +521,28 @@ object GeomMeta {
                 Aes.ALPHA,
                 Aes.SHAPE,
                 Aes.LINETYPE
+            )
+
+            GeomKind.BRACKET -> listOf(
+                Aes.XMIN,
+                Aes.XMAX,
+                Aes.Y,
+                Aes.TIP_LENGTH_START,
+                Aes.TIP_LENGTH_END,
+                Aes.LABEL,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
             )
         }
     }

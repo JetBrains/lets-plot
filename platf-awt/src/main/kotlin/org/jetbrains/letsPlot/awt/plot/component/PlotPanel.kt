@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.WithFigureModel
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -77,7 +78,7 @@ open class PlotPanel constructor(
         val providedComponent = if (preferredSizeFromPlot) {
             // Build the plot component now with its default size.
             // So that the container could take the plot's preferred size into account.
-            rebuildProvidedComponent(null, sizingPolicy)
+            rebuildProvidedComponent(null, sizingPolicy, SpecOverrideState.empty())
         } else {
             null
         }
@@ -85,11 +86,11 @@ open class PlotPanel constructor(
         figureModel = PlotPanelFigureModel(
             plotPanel = this,
             providedComponent = providedComponent,
-            plotComponentFactory = { containerSize: Dimension, specOverrideList: List<Map<String, Any>> ->
+            plotComponentFactory = { containerSize: Dimension, state: SpecOverrideState ->
                 rebuildProvidedComponent(
                     containerSize,
                     sizingPolicy,
-                    specOverrideList
+                    state
                 )
             },
             applicationContext = applicationContext,
@@ -153,7 +154,7 @@ open class PlotPanel constructor(
     private fun rebuildProvidedComponent(
         containerSize: Dimension?,
         sizingPolicy: SizingPolicy,
-        specOverrideList: List<Map<String, Any>> = emptyList()
+        specOverrideState: SpecOverrideState
     ): JComponent {
         val plotComponentContainer = if (hasToolbar) plotComponentContainer else this
         plotComponentContainer.removeAll()
@@ -168,7 +169,7 @@ open class PlotPanel constructor(
         val providedComponent: JComponent = plotComponentProvider.createComponent(
             adjustedContainerSize,
             sizingPolicy,
-            specOverrideList
+            specOverrideState
         )
 
         // notify

@@ -425,10 +425,10 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun statR2(supplier: (Context) -> Geom): GeomProvider {
+        fun bracket(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
-                GeomKind.STAT_R2,
-                StatR2Geom.HANDLES_GROUPS,
+                GeomKind.BRACKET,
+                BracketGeom.HANDLES_GROUPS,
                 supplier
             )
         }

@@ -14,14 +14,9 @@ object AesScaling {
     const val PIE_UNIT_SIZE = 10.0
     const val TEXT_UNIT_SIZE = 2.0
 
-    fun strokeWidth(p: DataPointAesthetics): Double {
-        // aes Units -> px
-        return p.size()!! * POINT_UNIT_SIZE
-    }
-
-    fun pointStrokeWidth(
+    fun strokeWidth(
         p: DataPointAesthetics,
-        strokeGetter: (DataPointAesthetics) -> Double? = DataPointAesthetics::stroke
+        strokeGetter: (DataPointAesthetics) -> Double? = DataPointAesthetics::size
     ): Double {
         // aes Units -> px
         return strokeGetter(p)!! * POINT_UNIT_SIZE
@@ -64,7 +59,7 @@ object AesScaling {
         // px -> aes Units
         val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
         val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
-        return circleDiameter(p, sizeAes) / 2 + pointStrokeWidth(p, strokeAes)
+        return circleDiameter(p, sizeAes) / 2 + strokeWidth(p, strokeAes)
     }
 
     fun targetStartSize(p: DataPointAesthetics): Double {

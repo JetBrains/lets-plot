@@ -930,7 +930,7 @@ object TextWidthEstimator {
     }
 
     fun widthCalculator(text: String, font: Font): Double {
-        return if (font.isMonospased) {
+        return if (font.isMonospaced) {
             // ToDo: should take in account font family adjustment parameters.
             monospacedWidthCalculator(text.length, font)
         } else {

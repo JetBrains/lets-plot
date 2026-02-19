@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.aes
 
-import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
-import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFamily.Companion.DEF_FAMILY_NAME
+import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
+import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
@@ -26,32 +26,34 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.POINT_STROKE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -139,6 +141,8 @@ object AesInitValue {
         VALUE_MAP[STROKE_START] = 0.0
         VALUE_MAP[STROKE_END] = 0.0
         VALUE_MAP[POINT_SIZE] = 0.5
+        VALUE_MAP[TIP_LENGTH_START] = 5.0
+        VALUE_MAP[TIP_LENGTH_END] = 5.0
         VALUE_MAP[POINT_STROKE] = 0.5
         VALUE_MAP[SEGMENT_COLOR] = DEFAULT_SEGMENT_COLOR
         VALUE_MAP[SEGMENT_SIZE] = 0.5

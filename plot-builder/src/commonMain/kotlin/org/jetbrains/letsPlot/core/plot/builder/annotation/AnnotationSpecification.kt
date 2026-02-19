@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
-class AnnotationSpecification(
+open class AnnotationSpecification(
     val valueSources: List<ValueSource>,
     val linePatterns: List<LinePattern>,
     // other settings

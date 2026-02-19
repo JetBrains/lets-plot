@@ -45,7 +45,7 @@ kotlin {
                 implementation(project(":plot-raster"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
 
                 implementation("io.ktor:ktor-server-core:$ktorVersion")

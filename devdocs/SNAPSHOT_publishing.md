@@ -56,6 +56,12 @@ repositories {
     maven(url = "https://central.sonatype.com/repository/maven-snapshots/")
 }
 ```
+         
+To tell Gradle to bypass the local cache and check remote repositories for newer versions or changed metadata:
+
+```shell
+./gradlew build --refresh-dependencies
+```
 
 #### Snapshot Version of JS Artifacts
 ToDo.

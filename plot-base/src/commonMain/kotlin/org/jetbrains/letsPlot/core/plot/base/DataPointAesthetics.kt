@@ -233,6 +233,14 @@ abstract class DataPointAesthetics {
         return get(Aes.STROKE_END)
     }
 
+    fun tipLengthStart(): Double? {
+        return get(Aes.TIP_LENGTH_START)
+    }
+
+    fun tipLengthEnd(): Double? {
+        return get(Aes.TIP_LENGTH_END)
+    }
+
     fun pointSize(): Double? {
         return get(Aes.POINT_SIZE)
     }

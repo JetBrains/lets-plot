@@ -45,16 +45,17 @@ class CanvasComponent(
             if (content != null) {
                 isFigureAttached = true
                 content.resize(width, height)
-                content.mouseEventPeer.addEventSource(mouseEventSource)
+
                 val animationTimer = Timer(1000 / 60) {
                     content.onFrame(systemTime.getTimeMs())
                 }
                 animationTimer.start()
 
                 figureRegistration = CompositeRegistration(
-                    Registration.onRemove(animationTimer::stop),
+                    content.mouseEventPeer.addEventSource(mouseEventSource),
                     content.mapToCanvas(canvasPeer),
                     content.onRepaintRequested(::repaint),
+                    Registration.onRemove(animationTimer::stop),
                 )
             }
             field = content
@@ -87,11 +88,11 @@ class CanvasComponent(
             return
         }
 
-        val g2d = g!!.create() as Graphics2D
-
         if (content != null) {
+            val g2d = g!!.create() as Graphics2D
             val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
             content!!.paint(ctx)
+            g2d.dispose()
         }
     }
 

@@ -113,10 +113,10 @@ class GeomProto(val geomKind: GeomKind) {
             TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP
+            BRACKET -> DefaultSampling.BRACKET
             LIVE_MAP,
             RASTER,
             IMAGE,
-            STAT_R2,
             BLANK -> Samplings.NONE
         }
     }
@@ -149,7 +149,7 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, BRACKET -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
                     Geom.Text.NUDGE_Y
                 )
             ) {
@@ -222,7 +222,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[BIN_2D] = bin2dDefaults()
             DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
-            DEFAULTS[STAT_R2] = statR2Defaults()
+            DEFAULTS[BRACKET] = bracketDefaults()
         }
 
         private fun commonDefaults(): Map<String, Any> {
@@ -402,11 +402,11 @@ class GeomProto(val geomKind: GeomKind) {
             )
         }
 
-        private fun statR2Defaults(): Map<String, Any> {
-            return mapOf(
-                Layer.STAT to "smooth_summary",
-                Layer.ANNOTATIONS to mapOf("formats" to emptyList<String>(), "lines" to listOf("@{..r2..}"))
-            )
+        private fun bracketDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "identity"
+            defaults[Layer.SHOW_LEGEND] = false
+            return defaults
         }
     }
 }

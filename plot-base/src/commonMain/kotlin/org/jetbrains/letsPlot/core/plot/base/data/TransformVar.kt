@@ -67,6 +67,8 @@ object TransformVar {
     val SIZE_END = DataFrame.Variable("transform.SIZE_END", TRANSFORM)
     val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
     val STROKE_END = DataFrame.Variable("transform.STROKE_END", TRANSFORM)
+    val TIP_LENGTH_START = DataFrame.Variable("transform.TIP_LENGTH_START", TRANSFORM)
+    val TIP_LENGTH_END = DataFrame.Variable("transform.TIP_LENGTH_END", TRANSFORM)
     val POINT_SIZE = DataFrame.Variable("transform.POINT_SIZE", TRANSFORM)
     val POINT_STROKE = DataFrame.Variable("transform.POINT_STROKE", TRANSFORM)
     val SEGMENT_COLOR = DataFrame.Variable("transform.SEGMENT_COLOR", TRANSFORM)
@@ -329,6 +331,14 @@ object TransformVar {
 
         override fun strokeEnd(): DataFrame.Variable {
             return STROKE_END
+        }
+
+        override fun tipLengthStart(): DataFrame.Variable {
+            return TIP_LENGTH_START
+        }
+
+        override fun tipLengthEnd(): DataFrame.Variable {
+            return TIP_LENGTH_END
         }
 
         override fun pointSize(): DataFrame.Variable {

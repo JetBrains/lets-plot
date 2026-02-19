@@ -39,6 +39,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.SHOW_LEGEND
 import org.jetbrains.letsPlot.core.spec.Option.Layer.STAT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.KIND
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Kind.SMOOTH_ANNOTATION
 import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
@@ -88,7 +90,7 @@ class LayerConfig constructor(
     val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
     val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
     val isLegendDisabled: Boolean
-        get() = when (hasOwn(SHOW_LEGEND)) {
+        get() = when (has(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
         }
@@ -394,6 +396,10 @@ class LayerConfig constructor(
                 isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
             }
 
+            geomProto.geomKind == GeomKind.BRACKET -> {
+                isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
+            }
+
             geomProto.geomKind in listOf(
                 GeomKind.CROSS_BAR,
                 GeomKind.ERROR_BAR,
@@ -561,13 +567,23 @@ class LayerConfig constructor(
         ): AnnotationSpecification {
             return when (annotationOptions) {
                 is Map<*, *> -> {
-                    @Suppress("UNCHECKED_CAST")
-                    AnnotationConfig(
-                        opts = annotationOptions as Map<String, Any>,
-                        varBindings = varBindings,
-                        constantsMap = constantsMap,
-                        groupingVarNames = explicitGroupingVarNames
-                    ).createAnnotations()
+                    if (annotationOptions[KIND] == SMOOTH_ANNOTATION) {
+                        @Suppress("UNCHECKED_CAST")
+                        SmoothAnnotationConfig(
+                            opts = annotationOptions as Map<String, Any>,
+                            varBindings = varBindings,
+                            constantsMap = constantsMap,
+                            groupingVarNames = explicitGroupingVarNames
+                        ).createAnnotations()
+                    } else {
+                        @Suppress("UNCHECKED_CAST")
+                        AnnotationConfig(
+                            opts = annotationOptions as Map<String, Any>,
+                            varBindings = varBindings,
+                            constantsMap = constantsMap,
+                            groupingVarNames = explicitGroupingVarNames
+                        ).createAnnotations()
+                    }
                 }
 
                 NONE -> {

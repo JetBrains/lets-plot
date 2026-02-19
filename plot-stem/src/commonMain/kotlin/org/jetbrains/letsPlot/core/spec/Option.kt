@@ -259,6 +259,19 @@ object Option {
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
+        const val OPTIONS = "options"
+
+        object Format {
+            const val FIELD = "field"
+            const val FORMAT = "format"
+        }
+
+        object Kind {
+            const val SMOOTH_ANNOTATION = "smooth_annotation"
+        }
+    }
+
+    object SmoothOptions {
         const val EQ = "eq"
         const val LABEL_X = "label_x"
         const val LABEL_Y = "label_y"
@@ -269,13 +282,9 @@ object Option {
             const val FORMAT = "format"
             const val THRESHOLD = "threshold"
         }
-
-        object Format {
-            const val FIELD = "field"
-            const val FORMAT = "format"
-        }
     }
 
+    // todo: investigate if we can unify options with LinesSpec
     object AnnotationSpec {
         const val LINES = "lines"
         const val FORMATS = "formats"
@@ -462,6 +471,11 @@ object Option {
         object Spoke {
             const val ARROW = "arrow"
             const val PIVOT = "pivot"
+        }
+
+        object Bracket {
+            const val BRACKET_SHORTEN = "bracket_shorten"
+            const val TIP_LENGTH_UNIT = "tip_length_unit"
         }
 
         object LiveMap {
@@ -1122,7 +1136,7 @@ object Option {
         const val IMAGE = "image"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
-        const val STAT_R2 = "stat_r2"
+        const val BRACKET = "bracket"
         const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
@@ -1182,7 +1196,7 @@ object Option {
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
-            map[STAT_R2] = GeomKind.STAT_R2
+            map[BRACKET] = GeomKind.BRACKET
             map[BLANK] = GeomKind.BLANK
 
             GEOM_KIND_MAP = map

@@ -14,20 +14,20 @@ class DefaultFontFamilyRegistry constructor(
     private val familyByName: MutableMap<String, FontFamily> = HashMap()
 
     init {
-        put("monospace", isMonospased = true)
+        put("monospace", isMonospaced = true)
 
         // Monospaced fonts from https://en.wikipedia.org/wiki/List_of_monospaced_typefaces
-        put("Courier", isMonospased = true)
-        put("Consolas", isMonospased = true)
-        put("Fixed", isMonospased = true)
-        put("Fixedsys", isMonospased = true)
-        put("FreeMono", isMonospased = true)
-        put("Lucida Console", isMonospased = true)
-        put("Monaco", isMonospased = true)
-        put("Monofur", isMonospased = true)
-        put("OCR-A", isMonospased = true)
-        put("OCR-B", isMonospased = true)
-        put("Source Code Pro", isMonospased = true)
+        put("Courier", isMonospaced = true)
+        put("Consolas", isMonospaced = true)
+        put("Fixed", isMonospaced = true)
+        put("Fixedsys", isMonospaced = true)
+        put("FreeMono", isMonospaced = true)
+        put("Lucida Console", isMonospaced = true)
+        put("Monaco", isMonospaced = true)
+        put("Monofur", isMonospaced = true)
+        put("OCR-A", isMonospaced = true)
+        put("OCR-B", isMonospaced = true)
+        put("Source Code Pro", isMonospaced = true)
     }
 
     override fun get(name: String): FontFamily {
@@ -35,11 +35,11 @@ class DefaultFontFamilyRegistry constructor(
         return familyByName.getOrPut(key) { guessFamily(name) }
     }
 
-    fun put(name: String, isMonospased: Boolean? = null, widthFactor: Double? = null) {
+    fun put(name: String, isMonospaced: Boolean? = null, widthFactor: Double? = null) {
         val key = name.trim().lowercase()
         val wasFamily = familyByName[key]
 
-        val nowMonospaced = isMonospased ?: wasFamily?.monospaced ?: false
+        val nowMonospaced = isMonospaced ?: wasFamily?.monospaced ?: false
         val nowWidthFactor = widthFactor ?: wasFamily?.widthFactor ?: defaultWidthFactor
         familyByName[key] = FontFamily(name, nowMonospaced, nowWidthFactor)
     }

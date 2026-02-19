@@ -15,9 +15,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
-import org.jetbrains.letsPlot.core.plot.base.geom.LabelGeom
-import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.util.DataPointAestheticsDelegate
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
@@ -125,13 +124,11 @@ internal object AnnotationUtil {
         textParams: TextParams,
         geomContext: GeomContext,
     ): SvgGElement {
-        return TextGeom().componentFactory(
+        return TextUtil.textComponentFactory(
             toTextDataPointAesthetics(textParams = textParams),
             location,
             text,
-            sizeUnitRatio = 1.0,
-            geomContext,
-            boundsCenter = null
+            geomContext
         )
     }
 
@@ -141,15 +138,12 @@ internal object AnnotationUtil {
         textParams: TextParams,
         geomContext: GeomContext
     ): SvgGElement {
-        return LabelGeom()
-            .apply { labelOptions.borderWidth = 0.0; labelOptions.paddingFactor = 0.0 }
-            .componentFactory(
-                toTextDataPointAesthetics(textParams),
-                location,
-                text,
-                sizeUnitRatio = 1.0,
-                geomContext,
-                boundsCenter = null
-            )
+        return TextUtil.labelComponentFactory(
+            toTextDataPointAesthetics(textParams),
+            location,
+            text,
+            geomContext,
+            labelOptions = LabelOptions().apply { borderWidth = 0.0; paddingFactor = 0.0 }
+        )
     }
 }

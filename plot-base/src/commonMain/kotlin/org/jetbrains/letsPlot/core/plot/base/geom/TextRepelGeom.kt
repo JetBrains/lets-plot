@@ -9,12 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling.POINT_UNIT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.CompositeLegendKeyElementFactory
-import org.jetbrains.letsPlot.core.plot.base.geom.legend.TextRepelSegmentLegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.DoubleCircle
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.TransformedRectangle
@@ -42,7 +40,7 @@ open class TextRepelGeom: TextGeom() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(
             TextLegendKeyElementFactory(),
-            TextRepelSegmentLegendKeyElementFactory()
+            HLineLegendKeyElementFactory(TextUtil::toSegmentAes)
         )
 
     override fun buildIntern(
@@ -57,7 +55,7 @@ open class TextRepelGeom: TextGeom() {
             return coord.toClient(point)
         }
 
-        val textHelper = TextHelper(aesthetics, pos, coord, ctx, formatter, naValue, sizeUnit, checkOverlap, ::objectRectangle, ::componentFactory)
+        val textHelper = getTextHelper(aesthetics, pos, coord, ctx)
         val svgHelper = GeomHelper.SvgElementHelper(::toClient)
             .setStrokeAlphaEnabled(true)
             .setArrowSpec(arrowSpec)
@@ -91,7 +89,7 @@ open class TextRepelGeom: TextGeom() {
             val hjust = TextUtil.hAnchor(dp, loc, aesBoundsCenter).toDouble()
             val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter)
 
-            val box = TransformedRectangle(textHelper.getRect(dp, loc, text, 1.0 , ctx, aesBoundsCenter))
+            val box = TransformedRectangle(textHelper.getRect(dp, loc, text, ctx, boundsCenter = aesBoundsCenter))
 
             boxes[dp.index()] = box
             hjusts[dp.index()] = hjust
@@ -127,7 +125,7 @@ open class TextRepelGeom: TextGeom() {
             val pointLocation = coord.toClient(point) ?: continue
             val text = textHelper.toString(dp.label())
 
-            val tc = componentFactory(toLabelAes(dp), result.position, text, 1.0, ctx, aesBoundsCenter)
+            val tc = textHelper.componentFactory(toLabelAes(dp), result.position, text, boundsCenter = aesBoundsCenter)
             root.add(tc)
 
             val pointDp = toPointAes(dp)
@@ -139,7 +137,7 @@ open class TextRepelGeom: TextGeom() {
             val segment = getSegment(segmentLocation, coord)
 
             if (segment != null) {
-                root.add(buildSegmentComponent(toSegmentAes(dp), segment, svgHelper))
+                root.add(buildSegmentComponent(TextUtil.toSegmentAes(dp), segment, svgHelper))
             }
 
             targetCollector.addPoint(
@@ -221,23 +219,6 @@ open class TextRepelGeom: TextGeom() {
                 override operator fun <T> get(aes: Aes<T>): T? {
                     val value: Any? = when (aes) {
                         Aes.LINETYPE -> NamedLineType.SOLID
-                        else -> super.get(aes)
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    return value as T?
-                }
-            }
-        }
-
-
-        internal fun toSegmentAes(p: DataPointAesthetics): DataPointAesthetics {
-            return object : DataPointAestheticsDelegate(p) {
-
-                override operator fun <T> get(aes: Aes<T>): T? {
-                    val value: Any? = when (aes) {
-                        Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
-                        Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
-                        Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
                         else -> super.get(aes)
                     }
                     @Suppress("UNCHECKED_CAST")

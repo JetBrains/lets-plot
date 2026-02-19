@@ -27,7 +27,15 @@
     - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
     - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
-- `geom_imshow()`: 
+- `geom_bracket()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
+
+- `gggrid()`: interactive pan/zoom now propagates across subplots with shared axes (`sharex`/`sharey`) [[#1413](https://github.com/JetBrains/lets-plot/issues/1413)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
+
+- `geom_imshow()`:
   - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
   - New `cguide` parameter: use to customize the colorbar for greyscale images.
 
@@ -35,8 +43,7 @@
 
 ### Changed
 
-- [**BREAKING**]: Added `kotlinx-atomicfu`(v0.31.0) as a new dependency to support LiveMap export.
-- [**BREAKING**]: Added `ktor-client-cio` (v3.1.3) as a new dependency is to support LiveMap export.
+- Upgraded Kotlin version to 2.2.20 (was 1.9.25).
 - [**BREAKING**]: Removed JavaFX artifacts.
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
