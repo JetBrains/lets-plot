@@ -1,10 +1,21 @@
 #  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+from .core import aes
 from .geom import _geom
 
 __all__ = ['geom_bracket']
 
-def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
+
+def _dodged_coord(group_id, subgroup_id, subgroup_count, width):
+    median = (subgroup_count - 1) / 2
+    offset = (subgroup_id - median) * width
+    scaler = 1.0 / subgroup_count
+    return group_id + offset * scaler
+
+
+def geom_bracket(mapping=None, *, data=None,
+                 subgroup1=None, subgroup2=None,
+                 position=None, show_legend=None,
                  manual_key=None,
                  sampling=None,
                  orientation=None,
@@ -12,6 +23,8 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
                  nudge_x=None, nudge_y=None, nudge_unit=None,
                  size_unit=None,
                  bracket_shorten=None, tip_length_unit=None,
+                 dodge_width=None,
+                 ordered_groups=None, ordered_subgroups=None,
                  color_by=None,
                  **other_args):
     """
@@ -178,9 +191,54 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
                          color='maroon', size=9, segment_size=1.25)
 
     """
+    mapping_dict = {} if mapping is None else mapping.as_dict()
+    x_aes_name = orientation
+    if x_aes_name is None and ("x" in mapping_dict or "x" in other_args.keys()) and "ymin" not in mapping_dict and "ymax" not in mapping_dict and "ymin" not in other_args.keys() and "ymax" not in other_args.keys():
+        x_aes_name = "x"
+    if x_aes_name is None or x_aes_name not in mapping_dict:
+        return _geom('bracket',
+                     mapping=mapping,
+                     data=data,
+                     stat=None,
+                     position=position,
+                     show_legend=show_legend,
+                     inherit_aes=False,
+                     manual_key=manual_key,
+                     sampling=sampling,
+                     tooltips=None,
+                     orientation=orientation,
+                     label_format=label_format,
+                     na_text=na_text,
+                     nudge_x=nudge_x,
+                     nudge_y=nudge_y,
+                     nudge_unit=nudge_unit,
+                     size_unit=size_unit,
+                     bracket_shorten=bracket_shorten,
+                     tip_length_unit=tip_length_unit,
+                     color_by=color_by,
+                     **other_args)
+    x_aes = mapping_dict[x_aes_name] if x_aes_name in mapping_dict else other_args[x_aes_name]
+    group_names = dict.fromkeys(data[x_aes]) if ordered_groups is None else ordered_groups
+    groups = {v: k for k, v in enumerate(group_names)}
+    assert subgroup1 in data, f"subgroup1='{subgroup1}' key isn't in the dataset"
+    assert subgroup2 in data, f"subgroup2='{subgroup2}' key isn't in the dataset"
+    subgroup_names = dict.fromkeys(list(data[subgroup1]) + list(data[subgroup2])) if ordered_subgroups is None else ordered_subgroups
+    subgroups = {v: k for k, v in enumerate(subgroup_names)}
+    subgroup_count = len(subgroups.keys())
+    dodge_width = dodge_width or .95
+    new_data = data.copy()
+    new_data["_min"] = [_dodged_coord(groups[group], subgroups[subgroup], subgroup_count, dodge_width)
+                        for (group, subgroup) in zip(data[x_aes], data[subgroup1])]
+    new_data["_max"] = [_dodged_coord(groups[group], subgroups[subgroup], subgroup_count, dodge_width)
+                        for (group, subgroup) in zip(data[x_aes], data[subgroup2])]
+    if x_aes_name in mapping_dict:
+        del mapping_dict[x_aes_name]
+    else:
+        del other_args[x_aes_name]
+    new_mapping = aes(**{**mapping_dict, **{f"{x_aes_name}min": "_min", f"{x_aes_name}max": "_max"}})
     return _geom('bracket',
-                 mapping=mapping,
-                 data=data,
+                 mapping=new_mapping,
+                 data=new_data,
                  stat=None,
                  position=position,
                  show_legend=show_legend,
