@@ -130,8 +130,8 @@ internal class DefaultPlotTheme(
     }
 
     override fun tagPosition(): DoubleVector {
-        val pair = getValue(PLOT_TAG_POSITION) as Pair<Number, Number>
-        return DoubleVector(pair)
+        val pair = getValue(PLOT_TAG_POSITION) as Pair<Double, Double>
+        return DoubleVector(pair.first, pair.second)
     }
 
     override fun tagLocation(): TagLocation {
