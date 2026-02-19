@@ -331,11 +331,12 @@ def theme(*,
         Alignment of the plot caption.
         A value of 'panel' means that caption is aligned to the plot panels.
         A value of 'plot' means that caption is aligned to the entire plot (excluding margins).
-    plot_tag_position : {'left', 'top-left', 'top', 'top-right', 'right', 'bottom-right', 'bottom', 'bottom-left', 'center'} or list[float, float], default='top-left'
+    plot_tag_position : {'left', 'top-left', 'top', 'top-right', 'right', 'bottom-right', 'bottom', 'bottom-left'} or list[float, float], default='top-left'
         Position of the tag within the area defined by plot_tag_location. It can be one of the predefined anchor names,
         or a numeric pair [x, y], where each value is between 0 and 1. [0, 0] is bottom-left and [1, 1] is top-right.
 
-        When plot_tag_location='margin', the anchor point must lie on the border of the positioning area: at least one of x or y must be 0 or 1.
+        When plot_tag_location='margin', only predefined position names are supported. Use hjust/vjust in element_text to fine-tune
+        the tag position within the margin.
     plot_tag_location : {'plot', 'panel', 'margin'}, default='plot'
         Area used for positioning the tag.
         - 'plot'   - the tag is positioned relative to the entire plot area without affecting layout.
@@ -723,13 +724,13 @@ def element_markdown(
         0 - left-justified;
         1 - right-justified;
         0.5 - center-justified.
-        Can be used with values out of range, but behaviour is not specified.
+        Can be used with values out of range, but behavior is not specified.
     vjust : float
         Vertical justification (in [0, 1]).
         0 - bottom-justified;
         1 - top-justified;
         0.5 - middle-justified.
-        Can be used with values out of range, but behaviour is not specified.
+        Can be used with values out of range, but behavior is not specified.
     margin : number or list of numbers
         Margins around the text.
         The margin may be specified using a number or a list of numbers:
@@ -790,16 +791,25 @@ def element_geom(
         # ToDo: fatten
 ) -> dict:
     """
-    Theme element that specifies custom values for named geom colors used in plot elements.
+    Theme element that defines named colors for geoms and plot elements.
+
+    It allows you to specify custom color values for special named geom colors ("pen", "brush", "paper")
+    that can be referenced in geom parameters such as ``color``, ``fill``, etc.
+
+    These names act as indirections: instead of hardcoding a concrete color  in a geom (e.g., ``color="red"``),
+    you can use a semantic name (e.g., ``color="pen"``) and control its actual value centrally via the theme.
 
     Parameters
     ----------
     pen : str
-        Color to use by name "pen".
+        Color assigned to the named color "pen".
+        Typically used for stroke/outline rendering (e.g., ``color='pen'``).
     brush : str
-        Color to use by name "brush".
+        Color assigned to the named color "brush".
+        Typically used for interior fills or secondary stroke styling (e.g., ``fill='brush'``), depending on the geom.
     paper : str
-        Color to use by name "paper".
+        Color assigned to the named color "paper".
+        Commonly used for background-like fills or lighter interior areas (e.g., ``fill='paper'``).
 
     Returns
     -------
@@ -810,15 +820,19 @@ def element_geom(
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 8-11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram(color='pen', fill='paper') + \\
-            theme(geom=element_geom(pen='dark_blue', paper='light_blue'))
+        ggplot(data, aes(x='x')) + \\
+            geom_histogram(color='pen', fill='paper') + \\
+            theme(geom=element_geom(
+                pen='dark_blue',
+                paper='light_blue'
+            ))
 
     """
     return locals()
