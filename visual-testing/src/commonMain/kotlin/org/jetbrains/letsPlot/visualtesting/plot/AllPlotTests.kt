@@ -7,7 +7,8 @@ object AllPlotTests {
     fun runAllTests(canvasPeer: CanvasPeer, imageComparer: ImageComparer) {
         var failedTestsCount = 0
 
-        failedTestsCount += PlotGridTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += PlotCompositeTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += PlotInteractivityTest(canvasPeer, imageComparer).runTests()
         //failedTestsCount += PlotAxisTest().runTests()
         //failedTestsCount += PlotFacetTest().runTests()
         //failedTestsCount += PlotThemeTest().runTests()

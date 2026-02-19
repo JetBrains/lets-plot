@@ -10,7 +10,12 @@ class AwtAllPlotTests {
     @Test
     fun runAllPlotTests() {
         val canvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
-        val imageComparer = ImageComparer(canvasPeer, AwtBitmapIO, silent = true)
+        val awtBitmapIO = AwtBitmapIO(
+            expectedImagesDir = "/src/test/resources/expected-images/plot",
+            outputDir = "/build/reports/actual-images/plot"
+        )
+
+        val imageComparer = ImageComparer(canvasPeer, awtBitmapIO, silent = true)
 
         AllPlotTests.runAllTests(canvasPeer, imageComparer)
     }

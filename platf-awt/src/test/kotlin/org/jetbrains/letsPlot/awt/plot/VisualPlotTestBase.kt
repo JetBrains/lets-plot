@@ -5,26 +5,22 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import demoAndTestShared.AwtBitmapIO
-import demoAndTestShared.AwtTestCanvasProvider
-import demoAndTestShared.ImageComparer
 import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import javax.imageio.ImageIO
 
 open class VisualPlotTestBase {
 
     private fun createImageComparer(): ImageComparer {
-        return ImageComparer(
-            tol = 5,
-            canvasProvider = AwtTestCanvasProvider(),
-            bitmapIO = AwtBitmapIO,
-            expectedDir = System.getProperty("user.dir") + "/src/test/resources/expected-images/",
-            outDir = System.getProperty("user.dir") + "/build/reports/"
-        )
+        val canvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+        val awtBitmapIO = AwtBitmapIO()
+        return ImageComparer(canvasPeer, awtBitmapIO, silent = true)
     }
 
     protected val imageComparer by lazy { createImageComparer() }

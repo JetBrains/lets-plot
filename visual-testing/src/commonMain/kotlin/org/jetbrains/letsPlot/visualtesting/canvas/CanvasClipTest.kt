@@ -3,8 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.letsPlot.visualtesting.canvas
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import kotlin.math.PI
@@ -15,17 +18,17 @@ internal class CanvasClipTest(
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
     init {
-        registerTest(::clip_and_fill)
-        registerTest(::clip_path)
-        registerTest(::clip_with_two_polygons)
-        registerTest(::clip_restore)
-        registerTest(::clip_after_transform)
-        registerTest(::clip_before_transform)
-        registerTest(::clip_text)
-        registerTest(::clip_text_before_transform)
-        registerTest(::clip_text_with_translates_before_transform)
-        registerTest(::clip_text_after_transform)
-        registerTest(::clip_text_with_translates_after_transform)
+        registerTest(::canvas_clip_fill)
+        registerTest(::canvas_clip_path)
+        registerTest(::canva_clip_twoPolygons)
+        registerTest(::canvas_clip_restore)
+        registerTest(::canva_clip_afterTransform)
+        registerTest(::canvas_clip_beforeTransform)
+        registerTest(::canvas_clip_text)
+        registerTest(::canvas_clip_textBeforeTransform)
+        registerTest(::canvas_clip_textWithTranslatesBeforeTransform)
+        registerTest(::canvas_clip_textAfterTransform)
+        registerTest(::canvas_clip_textWithTranslatesAfterTransform)
     }
 
     private fun nwRect(ctx: Context2d) {
@@ -54,7 +57,7 @@ internal class CanvasClipTest(
         ctx.lineTo(50, 100)
     }
 
-    private fun clip_and_fill() {
+    private fun canvas_clip_fill(): Bitmap {
         // Clip and fill without rebuilding a path
         val (canvas, ctx) = createCanvas()
 
@@ -66,10 +69,10 @@ internal class CanvasClipTest(
 
         ctx.fill()
 
-        assertCanvas("clip_and_fill.png", canvas)
+        return paint(canvas)
     }
 
-    private fun clip_path() {
+    private fun canvas_clip_path(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -81,10 +84,11 @@ internal class CanvasClipTest(
         ctx.beginPath()
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
-        assertCanvas("clip_path.png", canvas)
+
+        return paint(canvas)
     }
 
-    private fun clip_with_two_polygons() {
+    private fun canva_clip_twoPolygons(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -101,10 +105,11 @@ internal class CanvasClipTest(
         ctx.beginPath()
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
-        assertCanvas("clip_with_two_polygons.png", canvas)
+
+        return paint(canvas)
     }
 
-    private fun clip_restore() {
+    private fun canvas_clip_restore(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)"
@@ -129,10 +134,10 @@ internal class CanvasClipTest(
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
 
-        assertCanvas("clip_restore.png", canvas)
+        return paint(canvas)
     }
 
-    private fun clip_after_transform() {
+    private fun canva_clip_afterTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -147,10 +152,10 @@ internal class CanvasClipTest(
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
 
-        assertCanvas("clip_after_transform.png", canvas)
+        return paint(canvas)
     }
 
-    private fun clip_before_transform() {
+    private fun canvas_clip_beforeTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -166,10 +171,10 @@ internal class CanvasClipTest(
         ctx.arc(50, 50, 50, 0, 2 * PI)
         ctx.fill()
 
-        assertCanvas("clip_before_transform.png", canvas)
+        return paint(canvas)
     }
 
-    private fun clip_text() {
+    private fun canvas_clip_text(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -183,10 +188,10 @@ internal class CanvasClipTest(
 
         ctx.fillText("Test", 0.0, 47.0)
 
-        assertCanvas("clip_text.png", canvas)
+        return paint(canvas)
     }
 
-    private fun clip_text_before_transform() {
+    private fun canvas_clip_textBeforeTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -203,11 +208,11 @@ internal class CanvasClipTest(
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        assertCanvas("clip_text_before_transform.png", canvas)
+        return paint(canvas)
     }
 
 
-    private fun clip_text_with_translates_before_transform() {
+    private fun canvas_clip_textWithTranslatesBeforeTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -224,11 +229,10 @@ internal class CanvasClipTest(
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        assertCanvas("clip_text_with_translates_before_transform.png", canvas)
+        return paint(canvas)
     }
 
-
-    private fun clip_text_after_transform() {
+    private fun canvas_clip_textAfterTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -245,11 +249,11 @@ internal class CanvasClipTest(
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        assertCanvas("clip_text_after_transform.png", canvas)
+        return paint(canvas)
     }
 
 
-    private fun clip_text_with_translates_after_transform() {
+    private fun canvas_clip_textWithTranslatesAfterTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -266,6 +270,6 @@ internal class CanvasClipTest(
         ctx.stroke()
         ctx.fillText("Test", 0.0, 47.0)
 
-        assertCanvas("clip_text_with_translates_after_transform.png", canvas)
+        return paint(canvas)
     }
 }
