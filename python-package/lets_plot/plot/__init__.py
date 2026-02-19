@@ -9,6 +9,7 @@ from .expand_limits_ import *
 from .facet import *
 from .font_features import *
 from .geom import *
+from .geom_bracket_ import *
 from .geom_extras import *
 from .geom_function_ import *
 from .geom_imshow_ import *
@@ -36,6 +37,7 @@ __all__ = (coord.__all__ +
            core.__all__ +
            facet.__all__ +
            geom.__all__ +
+           geom_bracket_.__all__ +
            geom_extras.__all__ +
            geom_function_.__all__ +
            geom_imshow_.__all__ +
