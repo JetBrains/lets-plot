@@ -348,7 +348,7 @@ def test_with_mapping_annotations():
 # Pandas Categorical variables
 #
 
-def test_pd_categorical_variable():
+def test_pd_str_categorical_variable():
     df = DataFrame({
         'v': Categorical(['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
     })
@@ -373,6 +373,18 @@ def test_pd_int_categorical_variable():
 
     assert p.as_dict()['data_meta']['series_annotations'] == [
         {'column': 'v', 'type': 'int', 'factor_levels': [5, 4, 2, 1]},
+    ]
+
+
+def test_pd_float_categorical_variable():
+    df = DataFrame({
+        'v': Categorical([4, 5, 2, 1], categories=[5.0, 4.0, 2.0, 1.0], ordered=True)
+    })
+
+    p = ggplot(df) + geom_point()
+
+    assert p.as_dict()['data_meta']['series_annotations'] == [
+        {'column': 'v', 'type': 'float', 'factor_levels': [5.0, 4.0, 2.0, 1.0]},
     ]
 
 

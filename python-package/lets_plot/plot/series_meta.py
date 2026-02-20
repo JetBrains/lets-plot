@@ -62,7 +62,10 @@ def _infer_type_pandas_dataframe(var_name: str, var_content) -> str:
     if pandas_dtype == "categorical":
         dtype = var_content.cat.categories.dtype
 
-        if numpy.issubdtype(dtype, numpy.integer):
+        # Check pandas types
+        if isinstance(dtype, pandas.StringDtype):
+            lp_dtype = TYPE_STRING
+        elif numpy.issubdtype(dtype, numpy.integer):
             lp_dtype = TYPE_INTEGER
         elif numpy.issubdtype(dtype, numpy.floating):
             lp_dtype = TYPE_FLOATING
