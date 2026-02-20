@@ -6,7 +6,20 @@
 
 - Python 3.14 free-threading support [[#1454](https://github.com/JetBrains/lets-plot/issues/1454)]
 
+- Plot tags. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)]
+  
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
+
 - Plot Theme:
+  - Tag customization parameters:<br>
+    - `plot_tag` to set tag style via `element_text()`
+    - `plot_tag_location` - the area used for positioning the tag  
+    - `plot_tag_position` - the position of the tag within the specified area
+    - `plot_tag_prefix` - the text to be added before the tag value
+    - `plot_tag_suffix` - the text to be added after the tag value
+   
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
+ 
   - Support of axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
