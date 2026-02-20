@@ -31,8 +31,8 @@ def _resolve_primary_axis(orientation, mapping_dict, other_args):
     axis = orientation
     if axis is None and \
         ("x" in mapping_dict or "x" in other_args.keys()) and \
-        "ymin" not in mapping_dict and "ymax" not in mapping_dict and \
-        "ymin" not in other_args.keys() and "ymax" not in other_args.keys():
+        "ymin" not in mapping_dict and "ymin" not in other_args.keys() and \
+        "ymax" not in mapping_dict and "ymax" not in other_args.keys():
         axis = "x"
     if axis is not None and axis not in mapping_dict and axis not in other_args.keys():
         return None
@@ -43,16 +43,16 @@ def _get_primary_axis_values(axis, mapping_dict, other_args, data):
     if axis in other_args.keys():
         return [other_args[axis]]
     # axis in mapping_dict
-    x_aes = mapping_dict[axis]
-    if isinstance(x_aes, str) and data is not None:
-        return data[x_aes]
-    elif isinstance(x_aes, str) and data is None:
-        raise ValueError(f"Cannot resolve '{axis}' from column name '{x_aes}' because data is None.")
-    elif hasattr(x_aes, '__iter__'):
-        return x_aes
+    axis_aes = mapping_dict[axis]
+    if isinstance(axis_aes, str) and data is not None:
+        return data[axis_aes]
+    elif isinstance(axis_aes, str) and data is None:
+        raise ValueError(f"Cannot resolve '{axis}' from column name '{axis_aes}' because data is None.")
+    elif hasattr(axis_aes, '__iter__'):
+        return axis_aes
     else:
         raise TypeError(f"Invalid mapping for '{axis}': "
-                        f"expected a column name (str) or a sequence of values, got {type(x_aes).__name__}: {x_aes!r}.")
+                        f"expected a column name (str) or a sequence of values, got {type(axis_aes).__name__}: {axis_aes!r}.")
 
 
 def _resolve_subgroup_values(subgroup, data, group_values):
