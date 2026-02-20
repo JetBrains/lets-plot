@@ -112,7 +112,7 @@ class PositionedAnnotation(
 
             val locations = ArrayList<AnnotationLocation>()
 
-            positionedLabels.forEachIndexed { i, label ->
+            positionedLabels.forEachIndexed { i, _ ->
                 locations.add(getLocation(
                     horizontalPlacements.getOrNull(i) ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
                     verticalPlacements.getOrNull(i) ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
@@ -150,7 +150,7 @@ class PositionedAnnotation(
             coord: CoordinateSystem
         ): AnnotationLocation {
 
-            val horizontal = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
+            val (x, hAnchor) = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
                 ?.let { it to Text.HorizontalAnchor.LEFT }
                 ?: when (horizontalPlacement.anchor) {
                     HorizontalAnchor.LEFT -> viewPort.left + PADDING to Text.HorizontalAnchor.LEFT
@@ -158,7 +158,7 @@ class PositionedAnnotation(
                     HorizontalAnchor.RIGHT -> viewPort.right - PADDING to Text.HorizontalAnchor.RIGHT
                 }
 
-            val vertical = verticalPlacement.position?.let { coord.toClient(DoubleVector(0, it))?.y }
+            val (y, vAnchor) = verticalPlacement.position?.let { coord.toClient(DoubleVector(0, it))?.y }
                 ?.let { it to Text.VerticalAnchor.TOP }
                 ?: when (verticalPlacement.anchor) {
                     VerticalAnchor.TOP -> viewPort.top + PADDING to Text.VerticalAnchor.TOP
@@ -166,9 +166,9 @@ class PositionedAnnotation(
                     VerticalAnchor.BOTTOM -> viewPort.bottom - PADDING to Text.VerticalAnchor.BOTTOM
                 }
             return AnnotationLocation(
-                DoubleVector(horizontal.first, vertical.first),
-                horizontal.second,
-                vertical.second
+                DoubleVector(x, y),
+                hAnchor,
+                vAnchor
             )
 
         }
@@ -186,8 +186,8 @@ class PositionedAnnotation(
                 AnnotationUtil.TextParams(
                     style = textStyle,
                     color = label.textColor,
-                    vjust = textLocation.vAnchor.name.lowercase(),
-                    hjust = textLocation.hAnchor.name.lowercase(),
+                    vjust = textLocation.vAnchor.toSvgVAnchor(),
+                    hjust = textLocation.hAnchor.toSvgHAnchor(),
                 ),
                 geomContext = ctx,
             )
@@ -206,5 +206,17 @@ class PositionedAnnotation(
             val hAnchor: Text.HorizontalAnchor,
             val vAnchor: Text.VerticalAnchor
         )
+
+        private fun Text.VerticalAnchor.toSvgVAnchor() = when (this) {
+            Text.VerticalAnchor.TOP -> "top"
+            Text.VerticalAnchor.CENTER -> "center"
+            Text.VerticalAnchor.BOTTOM -> "bottom"
+        }
+
+        private fun Text.HorizontalAnchor.toSvgHAnchor() = when (this) {
+            Text.HorizontalAnchor.LEFT -> "left"
+            Text.HorizontalAnchor.MIDDLE -> "middle"
+            Text.HorizontalAnchor.RIGHT -> "right"
+        }
     }
 }
