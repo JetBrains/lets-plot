@@ -4,7 +4,7 @@ import ImageMagick.*
 import kotlinx.cinterop.*
 import org.jetbraibs.letsPlot.imagick.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.io.Native
+import org.jetbrains.letsPlot.commons.intern.io.NativeIO
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
@@ -46,7 +46,7 @@ class WandPlayground {
         if (saveFile) {
             check(outFile != null) { "outFile is null" }
             MagickWriteImage(img, outFile)
-            println("Image saved to: file://${Native.getCurrentDir()}/$outFile")
+            println("Image saved to: file://${NativeIO.getCurrentDir()}/$outFile")
         }
         saveFile = false
 

@@ -2,7 +2,7 @@ package org.jetbraibs.letsPlot.imagick
 
 import ImageMagick.DrawingWand
 import kotlinx.cinterop.*
-import org.jetbrains.letsPlot.commons.intern.io.Native
+import org.jetbrains.letsPlot.commons.intern.io.NativeIO
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -122,7 +122,7 @@ var Context2d.strokeStyle: Any?
         setStrokeStyle(color)
     }
 
-val resourcesDir = Native.getCurrentDir() + "/src/nativeTest/resources/"
+val resourcesDir = NativeIO.getCurrentDir() + "/src/nativeTest/resources/"
 
 val notoSerifRegularFontPath = resourcesDir + "fonts/NotoSerif-Regular.ttf"
 val notoSerifBoldFontPath = resourcesDir + "fonts/NotoSerif-Bold.ttf"

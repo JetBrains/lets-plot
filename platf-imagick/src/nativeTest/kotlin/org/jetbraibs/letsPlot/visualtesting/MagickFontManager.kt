@@ -1,10 +1,10 @@
 package org.jetbraibs.letsPlot.visualtesting
 
-import org.jetbrains.letsPlot.commons.intern.io.Native
+import org.jetbrains.letsPlot.commons.intern.io.NativeIO
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 
 object MagickFontManager {
-    val fontsDir = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/"
+    val fontsDir = NativeIO.getCurrentDir() + "/src/nativeTest/resources/fonts/"
 
     fun newEmbeddedFontsManager() = MagickFontManager.configured(
         "Noto Sans" to MagickFontManager.FontSet(embedded = true, "NotoSans",

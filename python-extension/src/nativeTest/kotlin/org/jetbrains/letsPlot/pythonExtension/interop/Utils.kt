@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
-import org.jetbrains.letsPlot.commons.intern.io.Native
+import org.jetbrains.letsPlot.commons.intern.io.NativeIO
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.NativeBitmapIO
 
-val fontsDir = Native.getCurrentDir() + "/src/nativeTest/resources/fonts/"
+val fontsDir = NativeIO.getCurrentDir() + "/src/nativeTest/resources/fonts/"
 
 fun newEmbeddedFontsManager() = MagickFontManager.configured(
     "sans" to MagickFontManager.FontSet(embedded = true, "NotoSans",

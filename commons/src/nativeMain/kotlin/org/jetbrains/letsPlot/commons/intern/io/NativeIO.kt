@@ -8,10 +8,12 @@
 package org.jetbrains.letsPlot.commons.intern.io
 
 import kotlinx.cinterop.*
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 import platform.posix.*
 import kotlin.experimental.ExperimentalNativeApi
 
-object Native {
+object NativeIO {
     @OptIn(ExperimentalNativeApi::class)
     fun getOSName(): String {
         if (Platform.osFamily == OsFamily.MACOSX) {
@@ -55,6 +57,7 @@ object Native {
             fclose(file)
         }
     }
+
     fun readFromFile(path: String): ByteArray {
         val file: CPointer<FILE> = fopen(path, "rb") ?: throw Error("Failed to open file for reading: $path")
         try {
@@ -85,23 +88,10 @@ object Native {
     }
 
     fun dirExists(path: String): Boolean {
-        memScoped {
-            val statBuf = alloc<stat>()
-            return stat(path, statBuf.ptr) == 0 && (statBuf.st_mode.toUInt() and S_IFDIR.toUInt()) != 0u
-        }
+        return SystemFileSystem.exists(Path(path))
     }
 
     fun mkdirs(path: String) {
-        val parts = path.split('/').filter { it.isNotEmpty() }
-        var currentPath = ""
-        for (part in parts) {
-            currentPath += "/$part"
-            if (!dirExists(currentPath)) {
-                if (mkdir(currentPath, 0b111101101.convert()) != 0) { // 0755 in octal
-                    val errorNum = errno
-                    throw Error("Failed to create directory: $currentPath. errno=$errorNum")
-                }
-            }
-        }
+        SystemFileSystem.createDirectories(Path(path))
     }
 }
