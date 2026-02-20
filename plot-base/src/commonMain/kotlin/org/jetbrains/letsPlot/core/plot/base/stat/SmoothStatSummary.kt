@@ -18,14 +18,8 @@ import org.jetbrains.letsPlot.core.plot.base.stat.regression.PolynomialRegressio
 import org.jetbrains.letsPlot.core.plot.base.util.SamplingUtil
 import kotlin.random.Random
 
-/**
- * Adds columns:
- *
- * r2       -
- * formula  -
- */
 // TODO: fix duplication SmoothStat
-class SmoothStatInfo(
+class SmoothStatSummary(
     private val smoothingMethod: Method,
     private val confidenceLevel: Double,
     private val span: Double,

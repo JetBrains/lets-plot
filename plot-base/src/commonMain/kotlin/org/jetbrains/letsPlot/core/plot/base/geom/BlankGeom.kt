@@ -9,8 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothAnnotation
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothStatSummaryAnnotation
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
@@ -25,8 +24,9 @@ open class BlankGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val smoothAnnotation = ctx.annotation as? SmoothAnnotation ?: return
-        SmoothSummaryAnnotation.build(root, aesthetics.dataPoints(), smoothAnnotation, coord, ctx)
+        if (SmoothStatSummaryAnnotation.isApplicable(ctx)) {
+            SmoothStatSummaryAnnotation.build(root, aesthetics.dataPoints(), coord, ctx)
+        }
     }
 
     companion object {

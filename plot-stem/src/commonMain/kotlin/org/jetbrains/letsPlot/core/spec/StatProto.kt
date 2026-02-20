@@ -126,7 +126,7 @@ object StatProto {
             }
 
             SMOOTH -> configureSmoothStat(options)
-            SMOOTH_SUMMARY -> configureSmoothStatInfo(options)
+            SMOOTH_SUMMARY -> configureSmoothStatSummary(options)
 
             BOXPLOT -> {
                 Stats.boxplot(
@@ -207,17 +207,8 @@ object StatProto {
         )
     }
 
-    private fun configureSmoothStatInfo(options: OptionsAccessor): SmoothStatInfo {
-        // Params:
-        //  method - smoothing method: lm, glm, gam, loess, rlm
-        //  n (80) - number of points to evaluate smoother at
-        //  se (TRUE ) - display confidence interval around smooth?
-        //  level (0.95) - level of confidence interval to use
-        //  deg ( >= 1 ) - degree of polynomial for regression
-        // seed  - random seed for LOESS sampling
-        // max_n (1000)  - maximum points in DF for LOESS
-
-        return SmoothStatInfo(
+    private fun configureSmoothStatSummary(options: OptionsAccessor): SmoothStatSummary {
+        return SmoothStatSummary(
             smoothingMethod = smoothingMethod(options.getString(Smooth.METHOD)) ?: SmoothStat.DEF_SMOOTHING_METHOD,
             confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStat.DEF_CONFIDENCE_LEVEL),
             span = options.getDoubleDef(Smooth.SPAN, SmoothStat.DEF_SPAN),

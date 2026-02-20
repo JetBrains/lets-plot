@@ -13,22 +13,31 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase.Companion.overallAesBounds
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.DEFAULT_HORIZONTAL_PLACEMENT
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.DEFAULT_VERTICAL_PLACEMENT
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.HorizontalAnchor
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.HorizontalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.VerticalPlacement
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
-object SmoothSummaryAnnotation {
+object SmoothStatSummaryAnnotation {
     const val PADDING = 20
+
+    fun isApplicable(ctx: GeomContext): Boolean {
+        return ctx.annotation is PositionedAnnotation
+    }
 
     fun build(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
-        smoothAnnotation: SmoothAnnotation,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val viewPort = coord.toClient(overallAesBounds(ctx)) ?: return
-        val annotation = ctx.annotation ?: return
+        val annotation = ctx.annotation as? PositionedAnnotation ?: return
         val textSizeGetter = AnnotationUtil.textSizeGetter(annotation.textStyle, ctx)
         val labels = ArrayList<AnnotationLabel>()
 
@@ -49,7 +58,7 @@ object SmoothSummaryAnnotation {
             labels.add(label)
         }
 
-        val locations = getLocations(labels, smoothAnnotation.labelX, smoothAnnotation.labelY, viewPort, coord)
+        val locations = getLocations(labels, annotation.horizontalPlacements, annotation.verticalPlacements, viewPort, coord)
 
         labels.forEachIndexed { index, label ->
             root.add(createAnnotationElement(label, locations[index], annotation.textStyle, ctx))
@@ -58,12 +67,12 @@ object SmoothSummaryAnnotation {
 
     private fun getLocations(
         labels: List<AnnotationLabel>,
-        labelX: List<Pair<Double?, LabelX>>,
-        labelY: List<Pair<Double?, LabelY>>,
+        horizontalPlacements: List<HorizontalPlacement>,
+        verticalPlacements: List<VerticalPlacement>,
         viewPort: DoubleRectangle,
         coord: CoordinateSystem
     ): List<DoubleVector> {
-        val positionsCount = minOf(labels.size, maxOf(labelX.size, labelY.size))
+        val positionsCount = minOf(labels.size, maxOf(horizontalPlacements.size, verticalPlacements.size))
 
         val positionedLabels = ArrayList<AnnotationLabel>()
         val otherLabels = ArrayList<AnnotationLabel>()
@@ -80,8 +89,8 @@ object SmoothSummaryAnnotation {
         positionedLabels.forEachIndexed { i, label ->
             locations.add(getLocation(
                 listOf(label),
-                labelX.getOrNull(i) ?: labelX.lastOrNull() ?: (null to LabelX.LEFT),
-                labelY.getOrNull(i) ?: labelY.lastOrNull() ?: (null to LabelY.TOP),
+                horizontalPlacements.getOrNull(i) ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
+                verticalPlacements.getOrNull(i) ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
                 viewPort,
                 coord
             ))
@@ -89,8 +98,8 @@ object SmoothSummaryAnnotation {
 
         val startLocation = getLocation(
             otherLabels,
-            labelX.getOrNull(positionsCount - 1) ?: labelX.lastOrNull() ?: (null to LabelX.LEFT),
-            labelY.getOrNull(positionsCount - 1) ?: labelY.lastOrNull() ?: (null to LabelY.TOP),
+            horizontalPlacements.getOrNull(positionsCount - 1) ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
+            verticalPlacements.getOrNull(positionsCount - 1) ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
             viewPort,
             coord
         )
@@ -106,8 +115,8 @@ object SmoothSummaryAnnotation {
 
     private fun getLocation(
         labels: List<AnnotationLabel>,
-        labelX: Pair<Double?, LabelX>,
-        labelY: Pair<Double?, LabelY>,
+        horizontalPlacement: HorizontalPlacement,
+        verticalPlacement: VerticalPlacement,
         viewPort: DoubleRectangle,
         coord: CoordinateSystem
     ): DoubleVector {
@@ -116,18 +125,18 @@ object SmoothSummaryAnnotation {
             labels.sumOf { it.textSize.y }
         )
 
-        val x = labelX.first?.let { coord.toClient(DoubleVector(it, 0))?.x }
-            ?: when (labelX.second) {
-                LabelX.LEFT -> viewPort.left + PADDING
-                LabelX.CENTER -> viewPort.center.x - blockSize.x / 2
-                LabelX.RIGHT -> viewPort.right - blockSize.x - PADDING
+        val x = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
+            ?: when (horizontalPlacement.anchor) {
+                HorizontalAnchor.LEFT -> viewPort.left + PADDING
+                HorizontalAnchor.CENTER -> viewPort.center.x - blockSize.x / 2
+                HorizontalAnchor.RIGHT -> viewPort.right - blockSize.x - PADDING
             }
 
-        val y = labelY.first?.let { coord.toClient(DoubleVector(0, it))?.y }
-            ?: when (labelY.second) {
-                LabelY.TOP -> viewPort.top + PADDING
-                LabelY.MIDDLE -> viewPort.center.y - blockSize.y / 2
-                LabelY.BOTTOM -> viewPort.bottom - blockSize.y - PADDING
+        val y = verticalPlacement.position?.let { coord.toClient(DoubleVector(0, it))?.y }
+            ?: when (verticalPlacement.anchor) {
+                VerticalAnchor.TOP -> viewPort.top + PADDING
+                VerticalAnchor.CENTER -> viewPort.center.y - blockSize.y / 2
+                VerticalAnchor.BOTTOM -> viewPort.bottom - blockSize.y - PADDING
             }
 
         return DoubleVector(x, y)
@@ -159,12 +168,4 @@ object SmoothSummaryAnnotation {
         val textSize: DoubleVector,
         val textColor: Color
     )
-
-    enum class LabelX {
-        LEFT, CENTER, RIGHT
-    }
-
-    enum class LabelY {
-        TOP, MIDDLE, BOTTOM
-    }
 }

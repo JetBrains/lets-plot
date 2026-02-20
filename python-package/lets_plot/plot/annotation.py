@@ -350,7 +350,7 @@ class smooth_labels(layer_labels):
     def __init__(self, variables: List[str] = None):
         super().__init__(variables)
 
-        self._kind = "smooth_annotation"
+        self._kind = "smooth_stat_summary_annotation"
         self._eq = {}
         self._label_x = None
         self._label_y = None
@@ -476,7 +476,7 @@ class smooth_labels(layer_labels):
         position : str or float or list, optional
             Vertical position for the annotation label.
 
-            - String values set an anchor position: ``'top'``, ``'middle'``, ``'bottom'``.
+            - String values set an anchor position: ``'top'``, ``'center'``, ``'bottom'``.
             - A numeric value sets an exact y-coordinate in plot data units.
             - A list can be used to control the position of each group separately.
               Each list item can be either a string anchor or a numeric coordinate.
@@ -503,7 +503,7 @@ class smooth_labels(layer_labels):
                 LetsPlot.setup_html()
 
                 ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \
-                    geom_smooth(deg=2, labels=smooth_labels().line('~eq').label_y('middle'))
+                    geom_smooth(deg=2, labels=smooth_labels().line('~eq').label_y('center'))
         """
 
         self._label_y = position
@@ -515,7 +515,7 @@ class smooth_labels(layer_labels):
 
         In addition to the fields provided by :meth:`layer_labels.as_dict`,
         this method includes:
-        - ``kind='smooth_annotation'``
+        - ``kind='smooth_stat_summary_annotation'``
         - ``options`` (may contain ``label_x``, ``label_y``, and ``eq``)
 
         Returns

@@ -21,6 +21,7 @@ internal class PlotInteractivityTest(
         registerTest(::plot_interactivity_panInProgressWithIncompleteBuffer)
         registerTest(::plot_interactivity_compositeTooltip)
         registerTest(::plot_interactivity_nestedCompositeTooltip)
+        registerTest(::plot_interactivity_ggToolbarWithGggrid)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -198,5 +199,155 @@ internal class PlotInteractivityTest(
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_RELEASED, leftButton(dragEndPos))
 
         return paint(plotCanvasDrawable, dragEndPos)
+    }
+
+    private fun plot_interactivity_ggToolbarWithGggrid(): Bitmap {
+        val spec = """
+            {
+              "ggtoolbar": {
+                "size_basis": "x",
+                "size_zoomin": -1.0
+              },
+              "kind": "subplots",
+              "layout": {
+                "ncol": 2.0,
+                "nrow": 1.0,
+                "name": "grid"
+              },
+              "figures": [
+                {
+                  "data": {
+                    "x": [1.0],
+                    "y": [1.0]
+                  },
+                  "mapping": {
+                    "x": "x",
+                    "y": "y"
+                  },
+                  "data_meta": {
+                    "series_annotations": [
+                      {
+                        "type": "int",
+                        "column": "x"
+                      },
+                      {
+                        "type": "int",
+                        "column": "y"
+                      }
+                    ]
+                  },
+                  "kind": "plot",
+                  "scales": [],
+                  "layers": [
+                    {
+                      "geom": "point",
+                      "mapping": {},
+                      "data_meta": {},
+                      "size": 10.0
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "kind": "subplots",
+                  "layout": {
+                    "ncol": 2.0,
+                    "nrow": 1.0,
+                    "name": "grid"
+                  },
+                  "figures": [
+                    {
+                      "data": {
+                        "x": [1.0],
+                        "y": [1.0]
+                      },
+                      "mapping": {
+                        "x": "x",
+                        "y": "y"
+                      },
+                      "data_meta": {
+                        "series_annotations": [
+                          {
+                            "type": "int",
+                            "column": "x"
+                          },
+                          {
+                            "type": "int",
+                            "column": "y"
+                          }
+                        ]
+                      },
+                      "kind": "plot",
+                      "scales": [],
+                      "layers": [
+                        {
+                          "geom": "point",
+                          "mapping": {},
+                          "data_meta": {},
+                          "size": 10.0
+                        }
+                      ],
+                      "metainfo_list": []
+                    },
+                    {
+                      "data": {
+                        "x": [1.0],
+                        "y": [1.0]
+                      },
+                      "mapping": {
+                        "x": "x",
+                        "y": "y"
+                      },
+                      "data_meta": {
+                        "series_annotations": [
+                          {
+                            "type": "int",
+                            "column": "x"
+                          },
+                          {
+                            "type": "int",
+                            "column": "y"
+                          }
+                        ]
+                      },
+                      "kind": "plot",
+                      "scales": [],
+                      "layers": [
+                        {
+                          "geom": "point",
+                          "mapping": {},
+                          "data_meta": {},
+                          "size": 20.0
+                        }
+                      ],
+                      "metainfo_list": []
+                    }
+                  ]
+                }
+              ]
+            }
+        """.trimMargin()
+
+        // With xlim = [20, 40] and overscan factor = 1, the repaint manager creates a buffer covering the range [20, 40].
+        // Dragging left by half the plot width (200 px out of 400 px) shifts the visible range to [30, 50].
+        // This makes a buffer incomplete and triggers update to ensure the range [30, 50] is fully covered.
+        val plotCanvasDrawable = createPlot(
+            plotSpec = parseJson(spec),
+            renderingHints = mapOf(RenderingHints.KEY_OVERSCAN_FACTOR to 1.0)
+        )
+
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(200, 200))
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_WHEEL_ROTATED, noButton(200, 200))
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_WHEEL_ROTATED, noButton(200, 200))
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_WHEEL_ROTATED, noButton(200, 200))
+//        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_DRAGGED, leftButton(200, 200))
+
+        // Paint to create the initial buffer covering the range [20, 40]
+//        paint(plotCanvasDrawable)
+
+        // Drag left by 200 px - this makes the buffer incomplete (visible range is now [30, 50])
+//        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_DRAGGED, leftButton(0, 200))
+
+        return paint(plotCanvasDrawable, Vector(200, 200))
     }
 }
