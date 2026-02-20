@@ -47,10 +47,10 @@ class PositionedAnnotation(
     }
 
     companion object {
-        val DEFAULT_HORIZONTAL_PLACEMENT = HorizontalPlacement(null, HorizontalAnchor.LEFT)
-        val DEFAULT_VERTICAL_PLACEMENT = VerticalPlacement(null, VerticalAnchor.TOP)
+        private val DEFAULT_HORIZONTAL_PLACEMENT = HorizontalPlacement(null, HorizontalAnchor.LEFT)
+        private val DEFAULT_VERTICAL_PLACEMENT = VerticalPlacement(null, VerticalAnchor.TOP)
 
-        const val PADDING = 20
+        private const val PADDING = 20.0
 
         fun isApplicable(ctx: GeomContext): Boolean {
             return ctx.annotation is PositionedAnnotation
@@ -84,7 +84,7 @@ class PositionedAnnotation(
                 labels.add(label)
             }
 
-            val locations = getLocations(labels, annotation.horizontalPlacements, annotation.verticalPlacements, viewPort, coord)
+            val locations = getLocations(labels, annotation.horizontalPlacements, annotation.verticalPlacements, viewPort.inflate(-PADDING), coord)
 
             labels.forEachIndexed { index, label ->
                 root.add(createAnnotationElement(label, locations[index], annotation.textStyle, ctx))
@@ -150,20 +150,22 @@ class PositionedAnnotation(
             coord: CoordinateSystem
         ): AnnotationLocation {
 
+
+
             val (x, hAnchor) = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
                 ?.let { it to Text.HorizontalAnchor.LEFT }
                 ?: when (horizontalPlacement.anchor) {
-                    HorizontalAnchor.LEFT -> viewPort.left + PADDING to Text.HorizontalAnchor.LEFT
+                    HorizontalAnchor.LEFT -> viewPort.left to Text.HorizontalAnchor.LEFT
                     HorizontalAnchor.CENTER -> viewPort.center.x to Text.HorizontalAnchor.MIDDLE
-                    HorizontalAnchor.RIGHT -> viewPort.right - PADDING to Text.HorizontalAnchor.RIGHT
+                    HorizontalAnchor.RIGHT -> viewPort.right to Text.HorizontalAnchor.RIGHT
                 }
 
             val (y, vAnchor) = verticalPlacement.position?.let { coord.toClient(DoubleVector(0, it))?.y }
                 ?.let { it to Text.VerticalAnchor.TOP }
                 ?: when (verticalPlacement.anchor) {
-                    VerticalAnchor.TOP -> viewPort.top + PADDING to Text.VerticalAnchor.TOP
+                    VerticalAnchor.TOP -> viewPort.top to Text.VerticalAnchor.TOP
                     VerticalAnchor.CENTER -> viewPort.center.y to Text.VerticalAnchor.CENTER
-                    VerticalAnchor.BOTTOM -> viewPort.bottom - PADDING to Text.VerticalAnchor.BOTTOM
+                    VerticalAnchor.BOTTOM -> viewPort.bottom to Text.VerticalAnchor.BOTTOM
                 }
             return AnnotationLocation(
                 DoubleVector(x, y),
