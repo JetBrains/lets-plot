@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.livemap
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -199,7 +200,13 @@ object LiveMapProviderUtil {
     private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMap: LiveMap): List<GeomTargetLocator> {
         class LiveMapInteractionAdapter {
             private var myLiveMap: LiveMap = liveMap
-            private val adapters: List<GeomTargetLocatorAdapter> = plotLayers.mapIndexed(::GeomTargetLocatorAdapter)
+            private val adapters: List<GeomTargetLocator> = plotLayers.mapIndexed { layerIndex, layer ->
+                if (layer.contextualMapping == null) {
+                    GeomTargetLocator.NullGeomTargetLocator
+                } else {
+                    GeomTargetLocatorAdapter(layerIndex, layer)
+                }
+            }
             private var lastCoord: DoubleVector? = null
             private var lastResult: Map<Int, GeomTargetLocator.LookupResult> = emptyMap()
 
@@ -213,8 +220,10 @@ object LiveMapProviderUtil {
                         .hoverObjects()
                         .groupBy(HoverObject::layerIndex)
                         .mapValues { (layerIndex, hoverObjects) ->
-                            adapters[layerIndex].buildLookupResult(coord, hoverObjects)
+                            // Skip NullGeomTargetLocator from layers without contextual mapping (tooltips="none")
+                            (adapters[layerIndex] as? GeomTargetLocatorAdapter)?.buildLookupResult(coord, hoverObjects)
                         }
+                        .filterNotNullValues()
                 }
                 return lastResult[layerIndex]
             }
