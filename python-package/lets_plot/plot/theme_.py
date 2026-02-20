@@ -74,12 +74,18 @@ def theme(*,
           plot_title=None,
           plot_subtitle=None,
           plot_caption=None,
+          plot_tag=None,
           plot_message=None,
           plot_margin=None,
           plot_inset=None,
 
           plot_title_position=None,
           plot_caption_position=None,
+          plot_tag_position=None,
+          plot_tag_location=None,
+
+          plot_tag_prefix=None,
+          plot_tag_suffix=None,
 
           strip_background=None, strip_background_x=None, strip_background_y=None,
           strip_text=None, strip_text_x=None, strip_text_y=None,
@@ -289,6 +295,10 @@ def theme(*,
         Style settings for plot caption.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
         Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify plot caption parameters, inherited from ``title``.
+    plot_tag : str or dict
+        Style settings for plot tag.
+        Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify plot tag parameters.
     plot_message : str or dict
         Style settings for plot message (e.g. sampling messages).
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to show nothing.
@@ -321,6 +331,22 @@ def theme(*,
         Alignment of the plot caption.
         A value of 'panel' means that caption is aligned to the plot panels.
         A value of 'plot' means that caption is aligned to the entire plot (excluding margins).
+    plot_tag_position : {'left', 'top-left', 'top', 'top-right', 'right', 'bottom-right', 'bottom', 'bottom-left'} or list[float, float], default='top-left'
+        Position of the tag within the area defined by plot_tag_location. It can be one of the predefined anchor names,
+        or a numeric pair [x, y], where each value is between 0 and 1. [0, 0] is bottom-left and [1, 1] is top-right.
+
+        When plot_tag_location='margin', only predefined position names are supported. Use hjust/vjust in element_text to fine-tune
+        the tag position within the margin.
+    plot_tag_location : {'plot', 'panel', 'margin'}, default='plot'
+        Area used for positioning the tag.
+        - 'plot'   - the tag is positioned relative to the entire plot area without affecting layout.
+        - 'panel'  - the tag is positioned relative to the panel (data) area without affecting layout.
+        - 'margin' - the tag is placed in the plot margin area. Space for the tag is reserved by the layout,
+        so other plot elements are shifted to avoid overlap.
+    plot_tag_prefix : str, default=''
+        Text added before the plot tag.
+    plot_tag_suffix : str, default=''
+        Text added after the plot tag.
     strip_background : str or dict
         Style settings for facet strip background.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing.
@@ -698,13 +724,13 @@ def element_markdown(
         0 - left-justified;
         1 - right-justified;
         0.5 - center-justified.
-        Can be used with values out of range, but behaviour is not specified.
+        Can be used with values out of range, but behavior is not specified.
     vjust : float
         Vertical justification (in [0, 1]).
         0 - bottom-justified;
         1 - top-justified;
         0.5 - middle-justified.
-        Can be used with values out of range, but behaviour is not specified.
+        Can be used with values out of range, but behavior is not specified.
     margin : number or list of numbers
         Margins around the text.
         The margin may be specified using a number or a list of numbers:

@@ -17,6 +17,8 @@ object PlotLabelSpecFactory {
 
     fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleStyle())
 
+    fun plotTag(theme: PlotTheme) = plotLabelSpec(theme.tagStyle())
+
     fun plotCaption(theme: PlotTheme) = plotLabelSpec(theme.captionStyle())
 
     fun legendTitle(theme: LegendTheme) = plotLabelSpec(theme.titleStyle())

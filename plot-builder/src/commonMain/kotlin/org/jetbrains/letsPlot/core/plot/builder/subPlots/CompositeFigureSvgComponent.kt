@@ -14,18 +14,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureSvgRoot
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionElementAndTextBounds
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawCaptionDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawSubtitleDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawTitleDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.subtitleElementAndTextBounds
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.titleElementAndTextBounds
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxesLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureLayoutInfo
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
@@ -34,6 +25,7 @@ class CompositeFigureSvgComponent constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
+    private val tag: String?,
     private val layoutInfo: CompositeFigureLayoutInfo,
     val theme: Theme,
     val styleSheet: StyleSheet,
@@ -56,98 +48,49 @@ class CompositeFigureSvgComponent constructor(
             })
         }
 
-        // plot title, subtitle, caption rectangles:
-        //   xxxElementRect - rectangle for the element, including margins
-        //   xxxTextRect - for text only
+        val contentAreaBounds = layoutInfo.contentAreaBounds
 
         if (DEBUG_DRAWING) {
             drawDebugRect(outerBounds, Color.BLUE, "BLUE: plotOuterBounds")
-        }
-
-        val contentAreaBounds = layoutInfo.contentAreaBounds
-        if (DEBUG_DRAWING) {
             drawDebugRect(outerBounds, Color.BLUE, "BLUE: contentAreaBounds")
-        }
-
-        if (DEBUG_DRAWING) {
             drawDebugRect(elementsAreaBounds, Color.RED, "RED: elementsAreaBounds")
         }
 
-        val (plotTitleElementRect, plotTitleTextRect) = titleElementAndTextBounds(
-            title,
-            contentAreaBounds,
-            elementsAreaBounds,
-            plotTheme
+        val textLayout = PlotSvgComponentHelper.figureTextLayout(
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            outerBounds = contentAreaBounds,
+            geomOrElementsAreaBounds = elementsAreaBounds,
+            plotTheme = plotTheme
         )
-        if (DEBUG_DRAWING) {
-            drawTitleDebugInfo(this, caption, plotTitleElementRect, plotTitleTextRect, plotTheme)
-        }
 
-        val (subtitleElementRect, subtitleTextRect) = subtitleElementAndTextBounds(
-            subtitle,
-            contentAreaBounds,
-            elementsAreaBounds,
-            plotTitleElementRect,
-            plotTheme
+        PlotSvgComponentHelper.renderFigureTextElements(
+            svg = this,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            textLayout = textLayout,
+            plotTheme = plotTheme
         )
-        if (DEBUG_DRAWING) {
-            drawSubtitleDebugInfo(this, subtitle, subtitleElementRect, subtitleTextRect, plotTheme)
-        }
 
-        val (captionElementRect, captionTextRect) = captionElementAndTextBounds(
-            caption,
-            contentAreaBounds,
-            elementsAreaBounds,
-            plotTheme
-        )
         if (DEBUG_DRAWING) {
-            drawCaptionDebugInfo(this, caption, captionElementRect, captionTextRect, plotTheme)
-        }
+            drawDebugRect(elementsAreaBounds, Color.RED, "RED: geomAreaBounds")
 
-        // add plot title
-        plotTitleTextRect?.let {
-            addTitle(
-                svgComponent = this,
+            PlotSvgComponentHelper.drawFigureTextFrames(
+                this,
                 title,
-                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
-                justification = plotTheme.titleJustification(),
-                boundRect = it,
-                className = Style.PLOT_TITLE
-            )
-        }
-        // add plot subtitle
-        subtitleTextRect?.let {
-            addTitle(
-                svgComponent = this,
                 subtitle,
-                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
-                justification = plotTheme.subtitleJustification(),
-                boundRect = it,
-                className = Style.PLOT_SUBTITLE
-            )
-        }
-        // add caption
-        captionTextRect?.let {
-            addTitle(
-                svgComponent = this,
-                text = caption,
-                labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
-                justification = plotTheme.captionJustification(),
-                boundRect = it,
-                className = Style.PLOT_CAPTION
+                caption,
+                tag,
+                textLayout,
+                plotTheme
             )
         }
 
         // Render collected legend blocks
-        // Use bounds without title and caption, similar to PlotSvgComponent
-        val outerBoundsWithoutTitleAndCaption =
-            PlotLayoutUtil.boundsWithoutTitleAndCaption(
-                outerBounds = contentAreaBounds,
-                title = title,
-                subtitle = subtitle,
-                caption = caption,
-                theme = theme
-            )
 
         for (legendBlock in layoutInfo.legendsBlockInfos) {
             val position = legendBlock.position
@@ -158,7 +101,7 @@ class CompositeFigureSvgComponent constructor(
             val legendOrigin = if (position.isFixed) {
                 LegendBoxesLayoutUtil.overlayLegendOriginOutsidePlot(
                     innerBounds = elementsAreaBounds,
-                    outerBounds = outerBoundsWithoutTitleAndCaption,
+                    outerBounds = textLayout.outerBoundsWithoutTitleCaption,
                     legendSize = blockSize,
                     legendPosition = position,
                     legendJustification = justification

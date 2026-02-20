@@ -188,6 +188,8 @@ object Option {
         const val SUBTITLE_TEXT = "subtitle"
         const val CAPTION = "caption"
         const val CAPTION_TEXT = "text"
+        const val TAG = "tag"
+        const val TAG_TEXT = "text"
         const val COORD = "coord"
         const val FACET = "facet"
         const val THEME = "theme"
@@ -899,11 +901,16 @@ object Option {
         const val PLOT_TITLE = ThemeOption.PLOT_TITLE
         const val PLOT_SUBTITLE = ThemeOption.PLOT_SUBTITLE
         const val PLOT_CAPTION = ThemeOption.PLOT_CAPTION
+        const val PLOT_TAG = ThemeOption.PLOT_TAG
         const val PLOT_MESSAGE = ThemeOption.PLOT_MESSAGE
         const val PLOT_MARGIN = ThemeOption.PLOT_MARGIN
         const val PLOT_INSET = ThemeOption.PLOT_INSET
         const val PLOT_TITLE_POSITION = ThemeOption.PLOT_TITLE_POSITION
         const val PLOT_CAPTION_POSITION = ThemeOption.PLOT_CAPTION_POSITION
+        const val PLOT_TAG_POSITION = ThemeOption.PLOT_TAG_POSITION
+        const val PLOT_TAG_LOCATION = ThemeOption.PLOT_TAG_LOCATION
+        const val PLOT_TAG_PREFIX = ThemeOption.PLOT_TAG_PREFIX
+        const val PLOT_TAG_SUFFIX = ThemeOption.PLOT_TAG_SUFFIX
 
         // Axis
         const val AXIS = ThemeOption.AXIS

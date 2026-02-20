@@ -27,14 +27,8 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.createTextRectangle
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawCaptionDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawSubtitleDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawTitleDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.subtitleElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.textBoundingBox
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.titleElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxesLayout
@@ -53,6 +47,7 @@ class PlotSvgComponent constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
+    private val tag: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private val figureLayoutInfo: PlotFigureLayoutInfo,
@@ -269,65 +264,38 @@ class PlotSvgComponent constructor(
         }
 
         val geomAreaBounds = figureLayoutInfo.geomAreaBounds
+
+        val textLayout = PlotSvgComponentHelper.figureTextLayout(
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            outerBounds = plotOuterBounds,
+            geomOrElementsAreaBounds = geomAreaBounds,
+            plotTheme = plotTheme
+        )
+
+        PlotSvgComponentHelper.renderFigureTextElements(
+            svg = this,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            textLayout = textLayout,
+            plotTheme = plotTheme
+        )
+
         if (DEBUG_DRAWING) {
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
-        }
 
-        // plot title, subtitle, caption rectangles:
-        //   xxxElementRect - rectangle for element, including margins
-        //   xxxTextRect - for text only
-
-        val (plotTitleElementRect, plotTitleTextRect) = titleElementAndTextBounds(
-            title,
-            plotOuterBounds,
-            geomAreaBounds,
-            plotTheme
-        )
-        if (DEBUG_DRAWING) {
-            drawTitleDebugInfo(this, caption, plotTitleElementRect, plotTitleTextRect, plotTheme)
-        }
-
-        val (subtitleElementRect, subtitleTextRect) = subtitleElementAndTextBounds(
-            subtitle,
-            plotOuterBounds,
-            geomAreaBounds,
-            plotTitleElementRect,
-            plotTheme
-        )
-        if (DEBUG_DRAWING) {
-            drawSubtitleDebugInfo(this, subtitle, subtitleElementRect, subtitleTextRect, plotTheme)
-        }
-
-        val (captionElementRect, captionTextRect) = captionElementAndTextBounds(
-            caption,
-            plotOuterBounds,
-            geomAreaBounds,
-            plotTheme
-        )
-        if (DEBUG_DRAWING) {
-            drawCaptionDebugInfo(this, caption, captionElementRect, captionTextRect, plotTheme)
-        }
-
-        // add plot title
-        plotTitleTextRect?.let {
-            addTitle(
-                svgComponent = this,
+            PlotSvgComponentHelper.drawFigureTextFrames(
+                this,
                 title,
-                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
-                justification = plotTheme.titleJustification(),
-                boundRect = it,
-                className = Style.PLOT_TITLE
-            )
-        }
-        // add plot subtitle
-        subtitleTextRect?.let {
-            addTitle(
-                svgComponent = this,
                 subtitle,
-                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
-                justification = plotTheme.subtitleJustification(),
-                boundRect = it,
-                className = Style.PLOT_SUBTITLE
+                caption,
+                tag,
+                textLayout,
+                plotTheme
             )
         }
 
@@ -384,18 +352,6 @@ class PlotSvgComponent constructor(
                 legendBox.moveTo(boxWithLocation.location)
                 add(legendBox)
             }
-        }
-
-        // add caption
-        captionTextRect?.let {
-            addTitle(
-                svgComponent = this,
-                text = caption,
-                labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
-                justification = plotTheme.captionJustification(),
-                boundRect = it,
-                className = Style.PLOT_CAPTION
-            )
         }
 
         add(backgroundBorder)

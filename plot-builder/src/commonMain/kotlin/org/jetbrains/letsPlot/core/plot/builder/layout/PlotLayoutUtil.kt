@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil.legendsSpaceTotalDelta
@@ -73,13 +74,16 @@ object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
-        theme: Theme,
+        tag: String?,
+        plotTheme: PlotTheme,
     ): DoubleRectangle {
-        val titleDelta = titleSizeDelta(title, subtitle, theme.plot())
-        val captionDelta = captionSizeDelta(caption, theme.plot())
-        val sizeDelta = titleDelta.add(captionDelta)
+        val titleDelta = titleSizeDelta(title, subtitle, plotTheme)
+        val captionDelta = captionSizeDelta(caption, plotTheme)
+        val tagThickness = tagMarginThickness(tag, plotTheme)
+        val sizeDelta = titleDelta.add(captionDelta).add(tagThickness.size)
+
         return DoubleRectangle(
-            origin = outerBounds.origin.add(titleDelta),
+            origin = outerBounds.origin.add(titleDelta).add(tagThickness.leftTop),
             dimension = outerBounds.dimension.subtract(sizeDelta)
         )
     }
@@ -89,6 +93,7 @@ object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
+        tag: String?,
         hAxisTitle: String?,
         vAxisTitle: String?,
         axisEnabled: Boolean,
@@ -100,6 +105,7 @@ object PlotLayoutUtil {
             title,
             subtitle,
             caption,
+            tag,
             hAxisTitle,
             vAxisTitle,
             axisEnabled,
@@ -119,6 +125,7 @@ object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
+        tag: String?,
         hAxisTitle: String?,
         vAxisTitle: String?,
         axisEnabled: Boolean,
@@ -130,6 +137,7 @@ object PlotLayoutUtil {
             title,
             subtitle,
             caption,
+            tag,
             hAxisTitle,
             vAxisTitle,
             axisEnabled,
@@ -144,6 +152,7 @@ object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
+        tag: String?,
         hAxisTitle: String?,
         vAxisTitle: String?,
         axisEnabled: Boolean,
@@ -152,6 +161,7 @@ object PlotLayoutUtil {
         flippedAxis: Boolean
     ): DoubleVector {
         val titleDelta = titleSizeDelta(title, subtitle, theme.plot())
+        val tagThickness = tagMarginThickness(tag, theme.plot())
         val axisTitlesDelta = axisTitlesSizeDelta(
             hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
             vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
@@ -160,7 +170,7 @@ object PlotLayoutUtil {
         )
         val legendBlockDelta = legendsSpaceTotalDelta(listOfNotNull(legendsBlockInfo), theme.legend())
         val captionDelta = captionSizeDelta(caption, theme.plot())
-        return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
+        return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta).add(tagThickness.size)
     }
 
     internal fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {
@@ -176,6 +186,30 @@ object PlotLayoutUtil {
             0.0,
             titleThickness(caption, PlotLabelSpecFactory.plotCaption(theme), theme.captionMargins())
         )
+    }
+
+    internal fun tagMarginThickness(
+        tag: String?,
+        plotTheme: PlotTheme
+    ): Thickness {
+        if (tag == null || plotTheme.tagLocation() != TagLocation.MARGIN){
+            return Thickness.ZERO
+        }
+
+        val pos = plotTheme.tagPosition()
+        val margins = plotTheme.tagMargins()
+        val spec = PlotLabelSpecFactory.plotTag(plotTheme)
+        val textDims = textDimensions(tag, spec)
+
+        val boxW = textDims.x + margins.width
+        val boxH = textDims.y + margins.height
+
+        val left = if (pos.x == 0.0) boxW else 0.0
+        val right = if (pos.x == 1.0) boxW else 0.0
+        val top = if (pos.y == 1.0) boxH else 0.0
+        val bottom = if (pos.y == 0.0) boxH else 0.0
+
+        return Thickness(top = top, right = right, bottom = bottom, left = left)
     }
 
     internal fun axisMarginDimensions(theme: Theme, flippedAxis: Boolean): DoubleVector {

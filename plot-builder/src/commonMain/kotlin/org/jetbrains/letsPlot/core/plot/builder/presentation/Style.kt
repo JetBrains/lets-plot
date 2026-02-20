@@ -19,6 +19,7 @@ object Style {
     const val PLOT_TITLE = "plot-title"
     const val PLOT_SUBTITLE = "plot-subtitle"
     const val PLOT_CAPTION = "plot-caption"
+    const val PLOT_TAG = "plot-tag"
 
     const val AXIS_TITLE = "axis-title"
     const val AXIS_TEXT = "axis-text"
@@ -90,6 +91,7 @@ object Style {
             PLOT_TITLE to ts(theme.plot().titleStyle()),
             PLOT_SUBTITLE to ts(theme.plot().subtitleStyle()),
             PLOT_CAPTION to ts(theme.plot().captionStyle()),
+            PLOT_TAG to ts(theme.plot().tagStyle()),
 
             RichText.HYPERLINK_ELEMENT_CLASS to TextStyle(
                 color = theme.colors().brush(),

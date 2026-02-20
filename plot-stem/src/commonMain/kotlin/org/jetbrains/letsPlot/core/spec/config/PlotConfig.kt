@@ -24,6 +24,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.FACET
 import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
@@ -61,6 +63,14 @@ abstract class PlotConfig(
         get() = getMap(TITLE)[SUBTITLE_TEXT] as String?
     val caption: String?
         get() = getMap(CAPTION)[CAPTION_TEXT] as String?
+    val tag: String?
+        get() = getMap(TAG)[TAG_TEXT] as String?
+
+    val fullTag: String?
+        get() {
+            val text = tag ?: return null
+            return theme.plot().tagPrefix() + text + theme.plot().tagSuffix()
+        }
 
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)

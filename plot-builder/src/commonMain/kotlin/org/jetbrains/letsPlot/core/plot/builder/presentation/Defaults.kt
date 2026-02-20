@@ -56,6 +56,11 @@ object Defaults {
             const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
+        object Tag {
+            const val FONT_SIZE = FONT_MEDIUM
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+        }
+
         object Legend {
             const val TITLE_FONT_SIZE = FONT_MEDIUM
             const val ITEM_FONT_SIZE = FONT_SMALL
@@ -121,6 +126,7 @@ object Defaults {
         Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE, face = FontFace.BOLD),
         Style.PLOT_SUBTITLE to createTextStyle(size = Common.Subtitle.FONT_SIZE),
         Style.PLOT_CAPTION to createTextStyle(size = Common.Caption.FONT_SIZE),
+        Style.PLOT_TAG to createTextStyle(size = Common.Tag.FONT_SIZE),
         Style.LEGEND_TITLE to createTextStyle(size = Common.Legend.TITLE_FONT_SIZE),
         Style.LEGEND_ITEM to createTextStyle(size = Common.Legend.ITEM_FONT_SIZE),
         Style.TOOLTIP_TEXT to createTextStyle(size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE),

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.theme
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
@@ -20,6 +21,7 @@ interface PlotTheme {
     fun titleStyle(): ThemeTextStyle
     fun subtitleStyle(): ThemeTextStyle
     fun captionStyle(): ThemeTextStyle
+    fun tagStyle(): ThemeTextStyle
 
     fun textColor(): Color
     fun textStyle(): ThemeTextStyle
@@ -27,19 +29,27 @@ interface PlotTheme {
     fun showTitle(): Boolean
     fun showSubtitle(): Boolean
     fun showCaption(): Boolean
+    fun showTag(): Boolean
 
     fun titleJustification(): TextJustification
     fun subtitleJustification(): TextJustification
     fun captionJustification(): TextJustification
+    fun tagJustification(): TextJustification
 
     fun titleMargins(): Thickness
     fun subtitleMargins(): Thickness
     fun captionMargins(): Thickness
+    fun tagMargins(): Thickness
     fun plotMargins(): Thickness
     fun plotInset(): Thickness
 
     fun titlePosition(): TitlePosition
     fun captionPosition(): TitlePosition
+    fun tagPosition(): DoubleVector
+    fun tagLocation(): TagLocation
+
+    fun tagPrefix(): String
+    fun tagSuffix(): String
 
     fun layoutMargins(): Thickness {
         return if (showBackground()) {

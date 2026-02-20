@@ -26,6 +26,7 @@ class CompositeFigureBuildInfo constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
+    private val tag: String?,
     private val theme: Theme,
     override val computationMessages: List<String>,
     private val legendBlocks: List<LegendsBlockInfo>,
@@ -59,6 +60,7 @@ class CompositeFigureBuildInfo constructor(
             title = title,
             subtitle = subtitle,
             caption = caption,
+            tag = tag,
             layoutInfo = layoutInfo,
             theme = theme,
             styleSheet = Style.fromTheme(theme, flippedAxis = false),
@@ -75,7 +77,7 @@ class CompositeFigureBuildInfo constructor(
                 elements,
                 layout,
                 bounds,
-                title, subtitle, caption,
+                title, subtitle, caption, tag,
                 theme,
                 computationMessages,
                 legendBlocks,
@@ -95,7 +97,7 @@ class CompositeFigureBuildInfo constructor(
 
         val withoutTitles = PlotLayoutUtil.boundsWithoutTitleAndCaption(
             outerBounds = contentAreaBounds,
-            title, subtitle, caption, theme
+            title, subtitle, caption, tag, plotTheme
         )
 
         val withoutPlotInset = plotTheme.plotInset().shrinkRect(withoutTitles)
@@ -117,7 +119,7 @@ class CompositeFigureBuildInfo constructor(
             elements = layoutedElements,
             layout,
             bounds,
-            title, subtitle, caption,
+            title, subtitle, caption, tag,
             theme,
             computationMessages,
             legendBlocks
@@ -140,7 +142,7 @@ class CompositeFigureBuildInfo constructor(
             elements,
             layout,
             DoubleRectangle(DoubleVector.Companion.ZERO, size),
-            title, subtitle, caption,
+            title, subtitle, caption, tag,
             theme,
             computationMessages,
             legendBlocks
