@@ -57,7 +57,7 @@ object Defaults {
         }
 
         object Tag {
-            const val FONT_SIZE = FONT_MEDIUM
+            const val FONT_SIZE = FONT_LARGE
             const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 

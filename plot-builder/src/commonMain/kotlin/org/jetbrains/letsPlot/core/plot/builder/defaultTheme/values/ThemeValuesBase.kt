@@ -110,7 +110,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL
             ),
             PLOT_TAG to mapOf(
-                Elem.SIZE to Defaults.FONT_MEDIUM,
+                Elem.SIZE to Defaults.FONT_LARGE,
                 Elem.HJUST to 0.5
             ),
             PANEL_BORDER_RECT to ELEMENT_BLANK,
