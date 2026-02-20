@@ -765,16 +765,25 @@ def element_geom(
         # ToDo: fatten
 ) -> dict:
     """
-    Theme element that specifies custom values for named geom colors used in plot elements.
+    Theme element that defines named colors for geoms and plot elements.
+
+    It allows you to specify custom color values for special named geom colors ("pen", "brush", "paper")
+    that can be referenced in geom parameters such as ``color``, ``fill``, etc.
+
+    These names act as indirections: instead of hardcoding a concrete color in a geom (e.g., ``color="red"``),
+    you can use a semantic name (e.g., ``color="pen"``) and control its actual value centrally via the theme.
 
     Parameters
     ----------
     pen : str
-        Color to use by name "pen".
+        Color assigned to the named color "pen".
+        Typically used for stroke/outline rendering (e.g., ``color='pen'``).
     brush : str
-        Color to use by name "brush".
+        Color assigned to the named color "brush".
+        Typically used for interior fills or secondary stroke styling (e.g., ``fill='brush'``), depending on the geom.
     paper : str
-        Color to use by name "paper".
+        Color assigned to the named color "paper".
+        Commonly used for background-like fills or lighter interior areas (e.g., ``fill='paper'``).
 
     Returns
     -------
@@ -785,15 +794,19 @@ def element_geom(
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 8-11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram(color='pen', fill='paper') + \\
-            theme(geom=element_geom(pen='dark_blue', paper='light_blue'))
+        ggplot(data, aes(x='x')) + \\
+            geom_histogram(color='pen', fill='paper') + \\
+            theme(geom=element_geom(
+                pen='dark_blue',
+                paper='light_blue'
+            ))
 
     """
     return locals()
