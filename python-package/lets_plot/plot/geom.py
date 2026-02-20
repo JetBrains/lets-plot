@@ -3,9 +3,10 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
-from .annotation import smooth_labels
+
 from .core import FeatureSpec, LayerSpec
 from .tooltip import layer_tooltips
+from .annotation import smooth_labels
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 #
