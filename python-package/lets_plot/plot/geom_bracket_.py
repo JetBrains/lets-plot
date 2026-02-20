@@ -35,7 +35,7 @@ def _resolve_primary_axis(orientation, mapping_dict, other_args):
         "ymin" not in other_args.keys() and "ymax" not in other_args.keys():
         axis = "x"
     if axis is not None and axis not in mapping_dict and axis not in other_args.keys():
-        raise ValueError(f"Expected {axis} in mapping or in the list of arguments of the function")
+        return None
     return axis
 
 
@@ -58,19 +58,12 @@ def _get_primary_axis_values(axis, mapping_dict, other_args, data):
 def _resolve_subgroup_values(subgroup, data, group_values):
     if subgroup is None:
         raise ValueError("Subgroups must be provided (either as column names or as explicit values).")
-    elif isinstance(subgroup, str) and data is not None:
-        subgroups = data[subgroup]
-        if len(subgroups) != len(group_values):
-            raise ValueError(f"Subgroup values must have the same length as group values: "
-                             f"expected {len(group_values)}, got {len(subgroups)}.")
-        return subgroups
+    elif isinstance(subgroup, str) and data is not None and subgroup in data:
+        return data[subgroup]
     elif isinstance(subgroup, str) and data is None:
         raise ValueError(f"Cannot resolve subgroup from column name '{subgroup}' because data is None. "
                          "Provide data or pass explicit subgroup values.")
     elif hasattr(subgroup, '__iter__'):
-        if len(subgroup) != len(group_values):
-            raise ValueError(f"Subgroup values must have the same length as group values: "
-                             f"expected {len(group_values)}, got {len(subgroup)}.")
         return subgroup
     else:
         return [subgroup] * len(group_values)
@@ -99,11 +92,24 @@ def _resolve_category_order(values, ordered_categories):
     else:
         if len(set(ordered_categories)) != len(ordered_categories):
             raise ValueError(f"Values in the {ordered_categories} should be distinct.")
-        if next((v for v in distinct_values if v not in ordered_categories)) is not None:
+        if next((v for v in distinct_values if v not in ordered_categories), None) is not None:
             raise ValueError(f"Values in the {ordered_categories} should be exhaustive.")
-        if len(distinct_values) != len(ordered_categories):
-            raise ValueError(f"Too many values in the {ordered_categories}.")
         return ordered_categories
+
+
+def _data_dimension(data, group_values, subgroups1, subgroups2):
+    dim = max(len(group_values), len(subgroups1), len(subgroups2))
+    if data is None:
+        return dim
+    else:
+        if isinstance(data, dict) and len(data.values()) > 0:
+            return max(dim, len(list(data.values())[0]))
+        elif pd is not None and isinstance(data, pd.DataFrame):
+            return max(dim, data.shape[0])
+        elif pl is not None and isinstance(data, pl.DataFrame):
+            return max(dim, data.shape[0])
+        else:
+            raise dim
 
 
 def _build_bracket_data(axis, mapping_dict, data,
@@ -118,6 +124,13 @@ def _build_bracket_data(axis, mapping_dict, data,
     subgroup_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(subgroups1) + list(subgroups2), subgroup_order))}
     n_subgroups = len(subgroup_to_index.keys())
     dodge_width = _DEF_DODGE_WIDTH if dodge_width is None else dodge_width
+    dim = _data_dimension(data, group_values, subgroups1, subgroups2)
+    if len(group_values) == 1 and len(group_values) < dim:
+        group_values = group_values * dim
+    if len(subgroups1) == 1 and len(subgroups1) < dim:
+        subgroups1 = subgroups1 * dim
+    if len(subgroups2) == 1 and len(subgroups2) < dim:
+        subgroups2 = subgroups2 * dim
     axis_min_positions = [_compute_dodged_position(group_to_index[group], subgroup_to_index[subgroup], n_subgroups, dodge_width)
                           for (group, subgroup) in zip(group_values, subgroups1)]
     axis_max_positions = [_compute_dodged_position(group_to_index[group], subgroup_to_index[subgroup], n_subgroups, dodge_width)
