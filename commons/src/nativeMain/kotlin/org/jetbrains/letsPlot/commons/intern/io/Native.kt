@@ -83,4 +83,25 @@ object Native {
             fclose(file)
         }
     }
+
+    fun dirExists(path: String): Boolean {
+        memScoped {
+            val statBuf = alloc<stat>()
+            return stat(path, statBuf.ptr) == 0 && (statBuf.st_mode.toUInt() and S_IFDIR.toUInt()) != 0u
+        }
+    }
+
+    fun mkdirs(path: String) {
+        val parts = path.split('/').filter { it.isNotEmpty() }
+        var currentPath = ""
+        for (part in parts) {
+            currentPath += "/$part"
+            if (!dirExists(currentPath)) {
+                if (mkdir(currentPath, 0b111101101.convert()) != 0) { // 0755 in octal
+                    val errorNum = errno
+                    throw Error("Failed to create directory: $currentPath. errno=$errorNum")
+                }
+            }
+        }
+    }
 }

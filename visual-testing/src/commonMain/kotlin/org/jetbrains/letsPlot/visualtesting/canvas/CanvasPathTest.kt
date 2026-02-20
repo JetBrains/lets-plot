@@ -1,4 +1,7 @@
+@file:Suppress("FunctionName")
+
 package org.jetbrains.letsPlot.visualtesting.canvas
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
@@ -15,28 +18,28 @@ internal class CanvasPathTest(
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
     init {
-        registerTest(::circleFill)
-        registerTest(::circleStroke)
-        registerTest(::circleFillStroke)
-        registerTest(::ellipse)
-        registerTest(::rotatedEllipse)
-        registerTest(::shearedEllipse)
-        registerTest(::shearedCircularArc)
-        registerTest(::nestedTranslates)
-        registerTest(::multiPathFill)
-        registerTest(::multiPathStroke)
-        registerTest(::zigZagFill)
-        registerTest(::zigZagStroke)
-        registerTest(::pathTransformOnBuild)
-        registerTest(::arcTransformsAfterRestore)
-        registerTest(::skewXTransform)
-        registerTest(::simpleBezierCurve)
-        registerTest(::bezierCurveInsidePath)
-        registerTest(::ellipseInsidePath)
-        registerTest(::roundedRectWithCurves)
-        registerTest(::fillRectWithTransparentColor)
-        registerTest(::clearRect)
-        registerTest(::fillTransparentRectWithTransparentColor)
+        registerTest(::canvas_path_circleFill)
+        registerTest(::canvas_path_circleStroke)
+        registerTest(::canvas_path_circleFillStroke)
+        registerTest(::canvas_path_ellipse)
+        registerTest(::canvas_path_rotatedEllipse)
+        registerTest(::canvas_path_shearedEllipse)
+        registerTest(::canvas_path_shearedCircularArc)
+        registerTest(::canvas_path_nestedTranslates)
+        registerTest(::canvas_path_multiPathFill)
+        registerTest(::canvas_path_multiPathStroke)
+        registerTest(::canvas_path_zigZagFill)
+        registerTest(::canvas_path_zigZagStroke)
+        registerTest(::canvas_path_pathTransformOnBuild)
+        registerTest(::canvas_path_arcTransformsAfterRestore)
+        registerTest(::canvas_path_skewXTransform)
+        registerTest(::canvas_path_simpleBezierCurve)
+        registerTest(::canvas_path_bezierCurveInsidePath)
+        registerTest(::canvas_path_ellipseInsidePath)
+        registerTest(::canvas_path_roundedRectWithCurves)
+        registerTest(::canvas_path_fillRectWithTransparentColor)
+        registerTest(::canvas_path_clearRect)
+        registerTest(::canvas_path_fillTransparentRectWithTransparentColor)
         //registerTest(::perf_5_000_points)
 
     }
@@ -49,7 +52,7 @@ internal class CanvasPathTest(
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
 
-    private fun clearRect() {
+    private fun canvas_path_clearRect(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -57,10 +60,10 @@ internal class CanvasPathTest(
 
         ctx.clearRect(10.0, 10.0, w - 20.0, h - 20.0)
 
-        assertCanvas("path_clear_rect.png", canvas)
+        return paint(canvas)
     }
 
-    private fun fillRectWithTransparentColor() {
+    private fun canvas_path_fillRectWithTransparentColor(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -69,10 +72,10 @@ internal class CanvasPathTest(
         ctx.fillStyle = Color.TRANSPARENT
         ctx.fillRect(10.0, 10.0, w - 20.0, h - 20.0)
 
-        assertCanvas("path_fill_rect_with_transparent_color.png", canvas)
+        return paint(canvas)
     }
 
-    private fun fillTransparentRectWithTransparentColor() {
+    private fun canvas_path_fillTransparentRectWithTransparentColor(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = fillColor
@@ -80,10 +83,10 @@ internal class CanvasPathTest(
         ctx.strokeRect(10.0, 10.0, w - 20.0, h - 20.0)
         ctx.fillRect(10.0, 10.0, w - 20.0, h - 20.0)
 
-        assertCanvas("path_fill_transparent_rect_with_transparent_color.png", canvas)
+        return paint(canvas)
     }
 
-    private fun shearedEllipse() {
+    private fun canvas_path_shearedEllipse(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -104,10 +107,10 @@ internal class CanvasPathTest(
         ctx.closePath()
         ctx.stroke()
 
-        assertCanvas("path_sheared_ellipse.png", canvas)
+        return paint(canvas)
     }
 
-    private fun shearedCircularArc() {
+    private fun canvas_path_shearedCircularArc(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -130,10 +133,10 @@ internal class CanvasPathTest(
         ctx.closePath()
         ctx.stroke()
 
-        assertCanvas("path_sheared_circular_arc.png", canvas)
+        return paint(canvas)
     }
     
-    private fun nestedTranslates() {
+    private fun canvas_path_nestedTranslates(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -156,10 +159,10 @@ internal class CanvasPathTest(
 
         ctx.restore()
 
-        assertCanvas("path_nested_translates.png", canvas)
+        return paint(canvas)
     }
 
-    private fun multiPathFill() {
+    private fun canvas_path_multiPathFill(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = strokedFillColor
         ctx.strokeStyle = filledStrokeColor
@@ -182,10 +185,10 @@ internal class CanvasPathTest(
         ctx.fill()
         ctx.stroke()
 
-        assertCanvas("path_multi_path_fill.png", canvas)
+        return paint(canvas)
     }
 
-    private fun multiPathStroke() {
+    private fun canvas_path_multiPathStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -204,13 +207,10 @@ internal class CanvasPathTest(
 
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_multi_path_stroke.png",
-            canvas = canvas,
-        )
+        return paint(canvas)
     }
 
-    private fun zigZagStroke() {
+    private fun canvas_path_zigZagStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = 3.0
@@ -230,13 +230,10 @@ internal class CanvasPathTest(
 
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_zigzag_stroke.png",
-            canvas = canvas,
-        )
+        return paint(canvas)
     }
 
-    private fun zigZagFill() {
+    private fun canvas_path_zigZagFill(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = fillColor
         ctx.lineWidth = 1.0
@@ -258,13 +255,10 @@ internal class CanvasPathTest(
 
         ctx.fill()
 
-        assertCanvas(
-            expectedFileName = "path_zigzag_fill.png",
-            canvas = canvas,
-        )
+        return paint(canvas)
     }
 
-    private fun circleStroke() {
+    private fun canvas_path_circleStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = 1.0
@@ -273,13 +267,10 @@ internal class CanvasPathTest(
         ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_circle_stroke.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun circleFill() {
+    private fun canvas_path_circleFill(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = fillColor
         ctx.lineWidth = 1.0
@@ -290,13 +281,10 @@ internal class CanvasPathTest(
 
         ctx.fill()
 
-        assertCanvas(
-            expectedFileName = "path_circle_fill.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun circleFillStroke() {
+    private fun canvas_path_circleFillStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.beginPath()
         ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
@@ -309,13 +297,10 @@ internal class CanvasPathTest(
         ctx.setLineWidth(2.0)
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_circle_fill_stroke.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun ellipse() {
+    private fun canvas_path_ellipse(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -334,13 +319,10 @@ internal class CanvasPathTest(
         ctx.closePath()
         ctx.fill()
 
-        assertCanvas(
-            expectedFileName = "path_ellipse.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun rotatedEllipse() {
+    private fun canvas_path_rotatedEllipse(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -358,14 +340,11 @@ internal class CanvasPathTest(
         ctx.closePath()
         ctx.fill()
 
-        assertCanvas(
-            expectedFileName = "path_rotated_ellipse.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
 
-    private fun pathTransformOnBuild() {
+    private fun canvas_path_pathTransformOnBuild(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
@@ -380,13 +359,10 @@ internal class CanvasPathTest(
         ctx.restore()
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_path_transform_on_build.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun arcTransformsAfterRestore() {
+    private fun canvas_path_arcTransformsAfterRestore(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = fillColor
 
@@ -399,13 +375,10 @@ internal class CanvasPathTest(
 
         ctx.fill()
 
-        assertCanvas(
-            expectedFileName = "path_arc_transform_after_restore.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun skewXTransform() {
+    private fun canvas_path_skewXTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = strokeColor
@@ -421,11 +394,11 @@ internal class CanvasPathTest(
         ctx.closePath()
         ctx.stroke()
 
-        assertCanvas("path_skew_x_transform.png", canvas)
+        return paint(canvas)
     }
 
 
-    private fun simpleBezierCurve() {
+    private fun canvas_path_simpleBezierCurve(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -436,13 +409,10 @@ internal class CanvasPathTest(
         ctx.bezierCurveTo(50.0, 0.0, 50.0, 100.0, 100.0, 100.0)
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_simple_bezier_curve.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun bezierCurveInsidePath() {
+    private fun canvas_path_bezierCurveInsidePath(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -455,13 +425,10 @@ internal class CanvasPathTest(
         ctx.lineTo(100, 20)
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_bezier_curve_inside_path.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun ellipseInsidePath() {
+    private fun canvas_path_ellipseInsidePath(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -484,13 +451,10 @@ internal class CanvasPathTest(
         ctx.lineTo(0, 10)
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_ellipse_inside_path.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun roundedRectWithCurves() {
+    private fun canvas_path_roundedRectWithCurves(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.lineWidth = 2.0
@@ -512,13 +476,10 @@ internal class CanvasPathTest(
         ctx.fill()
         ctx.stroke()
 
-        assertCanvas(
-            expectedFileName = "path_rounded_rect_with_curves.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 
-    private fun perf_5_000_points() {
+    private fun perf_5_000_points(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -542,9 +503,6 @@ internal class CanvasPathTest(
             ctx.setStrokeStyle(Color.HOT_PINK)
         }
 
-        assertCanvas(
-            expectedFileName = "path_perf_5_000_points.png",
-            canvas = canvas
-        )
+        return paint(canvas)
     }
 }

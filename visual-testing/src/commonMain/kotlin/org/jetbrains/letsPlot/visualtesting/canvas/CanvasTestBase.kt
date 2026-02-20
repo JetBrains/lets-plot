@@ -5,23 +5,15 @@
 
 package org.jetbrains.letsPlot.visualtesting.canvas
 
+import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.TestSuit
 
 
 internal abstract class CanvasTestBase : TestSuit() {
-    abstract val imageComparer: ImageComparer
-    abstract val canvasPeer: CanvasPeer
-
-    fun assertCanvas(expectedFileName: String, canvas: Canvas) {
-        imageComparer.assertBitmapEquals(expectedFileName, canvas.takeSnapshot().bitmap)
-    }
-
     fun createCanvas(width: Int = 100, height: Int = 100): Pair<Canvas, Context2d> {
         val canvas = canvasPeer.createCanvas(width = width, height = height)
         val context2d = canvas.context2d
@@ -60,5 +52,12 @@ internal abstract class CanvasTestBase : TestSuit() {
 
                 setStrokeStyle(color)
             }
+    }
+
+    fun paint(canvas: Canvas): Bitmap {
+        val snapshot = canvas.takeSnapshot()
+        val bitmap = snapshot.bitmap
+        snapshot.dispose()
+        return bitmap
     }
 }
