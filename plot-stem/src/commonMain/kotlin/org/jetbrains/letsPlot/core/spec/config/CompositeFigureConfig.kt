@@ -90,12 +90,12 @@ class CompositeFigureConfig constructor(
                 // when creating the PlotAssembler.
                 // https://github.com/JetBrains/lets-plot/blob/f8ead91e83d508550896b5ebc3dd197b039b0cc1/plot-stem/src/commonMain/kotlin/org/jetbrains/letsPlot/core/util/MonolithicCommon.kt#L192
                 // Discussed here: https://forum.datalore-plot.jetbrains-boston.com/t/528/6
-//                // Add the 'ggtoolbar' option to each subfigure:
-//                val extendedSpec = opts[GG_TOOLBAR]?.let { ggToolbar ->
-//                    spec + (GG_TOOLBAR to ggToolbar)
-//                } ?: spec
+                // todo: Need refactor. Use CompositeFigureLayout to pass parameters to MonolithicCommon.
 
-                val extendedSpec = spec
+                // Add the 'ggtoolbar' option to each subfigure:
+                val extendedSpec = opts[GG_TOOLBAR]?.let { ggToolbar ->
+                    spec + (GG_TOOLBAR to ggToolbar)
+                } ?: spec
 
                 when (PlotConfig.figSpecKind(extendedSpec)) {
                     FigKind.PLOT_SPEC -> PlotConfigFrontend.create(
