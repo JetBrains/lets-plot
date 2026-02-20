@@ -164,6 +164,16 @@ def geom_bracket(mapping=None, *, data=None,
     data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
+    subgroup1 : str or Any or list of Any
+        Subgroup identifier for the first side of the bracket:
+        a column name (str), a single constant value, or a sequence of values.
+        Used to compute the dodged start position.
+        Requires the primary axis mapping (``x`` for ``orientation='x'``, ``y`` for ``orientation='y'``).
+    subgroup2 : str or Any or list of Any
+        Subgroup identifier for the second side of the bracket:
+        a column name (str), a single constant value, or a sequence of values.
+        Used to compute the dodged end position.
+        Requires the primary axis mapping (``x`` for ``orientation='x'``, ``y`` for ``orientation='y'``).
     position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
@@ -179,6 +189,8 @@ def geom_bracket(mapping=None, *, data=None,
     orientation : str, default='x'
         Specify the axis that the geom should run along.
         Possible values: 'x', 'y'.
+        When drawing brackets between subgroups (``subgroup1``, ``subgroup2``) on a rotated plot,
+        ``orientation='y'`` must be specified.
     label_format : str
         Format used to transform text label mapping values to a string.
         Examples:
@@ -212,6 +224,17 @@ def geom_bracket(mapping=None, *, data=None,
         - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
+    dodge_width : float, default=0.95
+        Width of the dodging applied when placing brackets between subgroups (subgroup1/subgroup2).
+        It is expected to match the dodge width used by other layers for proper alignment.
+    group_order : list of Any
+        Order of the primary axis categories used to map group values to discrete positions
+        when ``subgroup1``/``subgroup2`` are provided.
+        If None, the order is inferred from the data.
+    subgroup_order : list of Any
+        Order of subgroup categories used to map subgroup values to dodge positions
+        when ``subgroup1``/``subgroup2`` are provided.
+        If None, the order is inferred from the data.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
         Possible values:
@@ -239,7 +262,8 @@ def geom_bracket(mapping=None, *, data=None,
 
     - xmin or ymin: left or lower end of the bracket for horizontal or vertical brackets, respectively.
     - xmax or ymax: right or upper end of the bracket for horizontal or vertical brackets, respectively.
-    - y or x : y-axis or x-axis coordinates for horizontal or vertical brackets, respectively.
+    - y or x : bracket level (the height/position at which the bracket is drawn) for horizontal or vertical brackets, respectively.
+    - x or y : primary axis category for horizontal or vertical brackets, respectively; used only when drawing brackets between dodged subgroups (``subgroup1``, ``subgroup2``).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : font size.
@@ -314,6 +338,40 @@ def geom_bracket(mapping=None, *, data=None,
             geom_bracket(aes(x='x', ymin='ymin', ymax='ymax', label='label'), data=bracket_data,
                          tip_length_start=-.1, tip_length_end=-.1, tip_length_unit='identity', vjust=2.2,
                          color='maroon', size=9, segment_size=1.25)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 27
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        box_data = {
+            'x': ['a'] * 2 * n + ['b'] * 2 * n + ['c'] * 2 * n,
+            'y': np.concatenate([np.random.normal(size=n, loc=0),
+                                 np.random.normal(size=n, loc=.5),
+                                 np.random.normal(size=n, loc=0),
+                                 np.random.normal(size=n, loc=-.5),
+                                 np.random.normal(size=n, loc=0),
+                                 np.random.normal(size=n, loc=.25)]),
+            'g': (['x'] * n + ['y'] * n) * 3,
+        }
+        bracket_data = {
+            'x': ['a', 'b', 'c'],
+            's1': ['x', 'x', 'x'],
+            's2': ['y', 'y', 'y'],
+            'y': [2.6, 3, 4.4],
+            'label': ['***', '*', 'ns'],
+        }
+        ggplot(box_data, aes(x='x', y='y', color='g')) + \\
+            geom_boxplot(aes(fill='g'), alpha=.25) + \\
+            geom_point(position=position_jitterdodge(jitter_width=.2, jitter_height=0, seed=42),
+                       shape=1, size=2, alpha=.25, show_legend=False) + \\
+            geom_bracket(aes(x='x', y='y', label='label'), data=bracket_data, subgroup1='s1', subgroup2='s2')
 
     """
     mapping_dict = {} if mapping is None else mapping.as_dict()
