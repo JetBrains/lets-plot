@@ -17,85 +17,112 @@ __all__ = ['geom_bracket']
 
 _DEF_DODGE_WIDTH = .95
 
-_min_col_name, _max_col_name = "_min", "_max"
+_bracket_min_col, _bracket_max_col = "..bracket_min..", "..bracket_max.."
 
 
-def _dodged_coord(group_id, subgroup_id, subgroup_count, width):
-    median = (subgroup_count - 1) / 2
+def _compute_dodged_position(group_id, subgroup_id, n_subgroups, width):
+    median = (n_subgroups - 1) / 2
     offset = (subgroup_id - median) * width
-    scaler = 1.0 / subgroup_count
+    scaler = 1.0 / n_subgroups
     return group_id + offset * scaler
 
 
-def _get_x_aes_name(orientation, mapping_dict, other_args):
-    x_aes_name = orientation
-    if x_aes_name is None and \
+def _resolve_primary_axis(orientation, mapping_dict, other_args):
+    axis = orientation
+    if axis is None and \
         ("x" in mapping_dict or "x" in other_args.keys()) and \
         "ymin" not in mapping_dict and "ymax" not in mapping_dict and \
         "ymin" not in other_args.keys() and "ymax" not in other_args.keys():
-        x_aes_name = "x"
-    return x_aes_name
+        axis = "x"
+    if axis is not None and axis not in mapping_dict and axis not in other_args.keys():
+        raise ValueError(f"Expected {axis} in mapping or in the list of arguments of the function")
+    return axis
 
 
-def _get_xs(x_aes_name, mapping_dict, other_args, data):
-    if x_aes_name in other_args.keys():
-        return [other_args[x_aes_name]]
-    # x_aes_name in mapping_dict
-    x_aes = mapping_dict[x_aes_name]
+def _get_primary_axis_values(axis, mapping_dict, other_args, data):
+    if axis in other_args.keys():
+        return [other_args[axis]]
+    # axis in mapping_dict
+    x_aes = mapping_dict[axis]
     if isinstance(x_aes, str) and data is not None:
         return data[x_aes]
+    elif isinstance(x_aes, str) and data is None:
+        raise ValueError(f"Cannot resolve '{axis}' from column name '{x_aes}' because data is None.")
     elif hasattr(x_aes, '__iter__'):
         return x_aes
     else:
-        raise Exception(f"Unknown column name {x_aes} in dataset")
+        raise TypeError(f"Invalid mapping for '{axis}': "
+                        f"expected a column name (str) or a sequence of values, got {type(x_aes).__name__}: {x_aes!r}.")
 
 
-def _get_subgroups(subgroup, data, xs):
-    if isinstance(subgroup, str) and data is not None:
+def _resolve_subgroup_values(subgroup, data, group_values):
+    if subgroup is None:
+        raise ValueError("Subgroups must be provided (either as column names or as explicit values).")
+    elif isinstance(subgroup, str) and data is not None:
         subgroups = data[subgroup]
-        assert len(subgroups) == len(xs), f"Wrong size of subgroup: {len(xs)} != {len(subgroups)}"
+        if len(subgroups) != len(group_values):
+            raise ValueError(f"Subgroup values must have the same length as group values: "
+                             f"expected {len(group_values)}, got {len(subgroups)}.")
         return subgroups
+    elif isinstance(subgroup, str) and data is None:
+        raise ValueError(f"Cannot resolve subgroup from column name '{subgroup}' because data is None. "
+                         "Provide data or pass explicit subgroup values.")
     elif hasattr(subgroup, '__iter__'):
-        assert len(subgroup) == len(xs), f"Wrong size of subgroup: {len(xs)} != {len(subgroup)}"
+        if len(subgroup) != len(group_values):
+            raise ValueError(f"Subgroup values must have the same length as group values: "
+                             f"expected {len(group_values)}, got {len(subgroup)}.")
         return subgroup
     else:
-        return [subgroup] * len(xs)
+        return [subgroup] * len(group_values)
 
 
-def _construct_data(data, min_col, max_col):
+def _attach_bracket_columns(data, axis_min_positions, axis_max_positions):
     if data is None:
-        return {_min_col_name: min_col, _max_col_name: max_col}
+        return {_bracket_min_col: axis_min_positions, _bracket_max_col: axis_max_positions}
     else:
         if isinstance(data, dict):
-            return {**data, **{_min_col_name: min_col, _max_col_name: max_col}}
+            return {**data, **{_bracket_min_col: axis_min_positions, _bracket_max_col: axis_max_positions}}
         elif pd is not None and isinstance(data, pd.DataFrame):
-            return data.assign(**{_min_col_name: min_col, _max_col_name: max_col})
+            return data.assign(**{_bracket_min_col: axis_min_positions, _bracket_max_col: axis_max_positions})
         elif pl is not None and isinstance(data, pl.DataFrame):
-            return data.with_columns(**{_min_col_name: pl.Series(values=min_col), _max_col_name: pl.Series(values=max_col)})
+            return data.with_columns([pl.Series(_bracket_min_col, axis_min_positions), pl.Series(_bracket_max_col, axis_max_positions)])
         else:
-            raise Exception("Unsupported type of data: {0}".format(data))
+            raise TypeError(f"Unsupported data type: {type(data).__name__}. "
+                            f"Expected dict, pandas.DataFrame, or polars.DataFrame.")
 
 
-def _get_new_data(x_aes_name, mapping_dict, data,
-                  subgroup1, subgroup2,
-                  dodge_width,
-                  ordered_groups, ordered_subgroups,
-                  other_args):
-    xs = _get_xs(x_aes_name, mapping_dict, other_args, data)
+def _resolve_category_order(values, ordered_categories):
     # dict.fromkeys() takes unique values and preserves an order
-    group_names = dict.fromkeys(xs) if ordered_groups is None else ordered_groups
-    groups = {v: k for k, v in enumerate(group_names)}
-    subgroups1 = _get_subgroups(subgroup1, data, xs)
-    subgroups2 = _get_subgroups(subgroup2, data, xs)
-    subgroup_names = dict.fromkeys(list(subgroups1) + list(subgroups2)) if ordered_subgroups is None else ordered_subgroups
-    subgroups = {v: k for k, v in enumerate(subgroup_names)}
-    subgroup_count = len(subgroups.keys())
-    dodge_width = dodge_width or _DEF_DODGE_WIDTH
-    min_col = [_dodged_coord(groups[group], subgroups[subgroup], subgroup_count, dodge_width)
-               for (group, subgroup) in zip(xs, subgroups1)]
-    max_col = [_dodged_coord(groups[group], subgroups[subgroup], subgroup_count, dodge_width)
-               for (group, subgroup) in zip(xs, subgroups2)]
-    return _construct_data(data, min_col, max_col)
+    distinct_values = list(dict.fromkeys(values).keys())
+    if ordered_categories is None:
+        return distinct_values
+    else:
+        if len(set(ordered_categories)) != len(ordered_categories):
+            raise ValueError(f"Values in the {ordered_categories} should be distinct.")
+        if next((v for v in distinct_values if v not in ordered_categories)) is not None:
+            raise ValueError(f"Values in the {ordered_categories} should be exhaustive.")
+        if len(distinct_values) != len(ordered_categories):
+            raise ValueError(f"Too many values in the {ordered_categories}.")
+        return ordered_categories
+
+
+def _build_bracket_data(axis, mapping_dict, data,
+                        subgroup1, subgroup2,
+                        dodge_width,
+                        group_order, subgroup_order,
+                        other_args):
+    group_values = _get_primary_axis_values(axis, mapping_dict, other_args, data)
+    group_to_index = {g: i for i, g in enumerate(_resolve_category_order(group_values, group_order))}
+    subgroups1 = _resolve_subgroup_values(subgroup1, data, group_values)
+    subgroups2 = _resolve_subgroup_values(subgroup2, data, group_values)
+    subgroup_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(subgroups1) + list(subgroups2), subgroup_order))}
+    n_subgroups = len(subgroup_to_index.keys())
+    dodge_width = _DEF_DODGE_WIDTH if dodge_width is None else dodge_width
+    axis_min_positions = [_compute_dodged_position(group_to_index[group], subgroup_to_index[subgroup], n_subgroups, dodge_width)
+                          for (group, subgroup) in zip(group_values, subgroups1)]
+    axis_max_positions = [_compute_dodged_position(group_to_index[group], subgroup_to_index[subgroup], n_subgroups, dodge_width)
+                          for (group, subgroup) in zip(group_values, subgroups2)]
+    return _attach_bracket_columns(data, axis_min_positions, axis_max_positions)
 
 
 def geom_bracket(mapping=None, *, data=None,
@@ -109,7 +136,7 @@ def geom_bracket(mapping=None, *, data=None,
                  size_unit=None,
                  bracket_shorten=None, tip_length_unit=None,
                  dodge_width=None,
-                 ordered_groups=None, ordered_subgroups=None,
+                 group_order=None, subgroup_order=None,
                  color_by=None,
                  **other_args):
     """
@@ -277,8 +304,8 @@ def geom_bracket(mapping=None, *, data=None,
 
     """
     mapping_dict = {} if mapping is None else mapping.as_dict()
-    x_aes_name = _get_x_aes_name(orientation, mapping_dict, other_args)
-    if x_aes_name is None:
+    axis = _resolve_primary_axis(orientation, mapping_dict, other_args)
+    if axis is None:
         return _geom('bracket',
                      mapping=mapping,
                      data=data,
@@ -300,16 +327,16 @@ def geom_bracket(mapping=None, *, data=None,
                      tip_length_unit=tip_length_unit,
                      color_by=color_by,
                      **other_args)
-    new_data = _get_new_data(x_aes_name, mapping_dict, data,
-                             subgroup1, subgroup2,
-                             dodge_width,
-                             ordered_groups, ordered_subgroups,
-                             other_args)
-    if x_aes_name in mapping_dict.keys():
-        del mapping_dict[x_aes_name]
+    new_data = _build_bracket_data(axis, mapping_dict, data,
+                                   subgroup1, subgroup2,
+                                   dodge_width,
+                                   group_order, subgroup_order,
+                                   other_args)
+    if axis in mapping_dict.keys():
+        del mapping_dict[axis]
     else:
-        del other_args[x_aes_name]
-    new_mapping = aes(**{**mapping_dict, **{f"{x_aes_name}min": _min_col_name, f"{x_aes_name}max": _max_col_name}})
+        del other_args[axis]
+    new_mapping = aes(**{**mapping_dict, **{f"{axis}min": _bracket_min_col, f"{axis}max": _bracket_max_col}})
     return _geom('bracket',
                  mapping=new_mapping,
                  data=new_data,
