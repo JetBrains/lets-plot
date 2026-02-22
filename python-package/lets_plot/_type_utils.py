@@ -134,4 +134,4 @@ def _standardize_value(v):
 
         return repr(v)
     except Exception as e:
-        raise Exception('Unsupported type: {0}\nValue: {1}'.format(type(v), str(v)[:100])) from e
+        raise Exception('Failed to standardize type {0} ({1})'.format(type(v), str(v)[:100])) from e
