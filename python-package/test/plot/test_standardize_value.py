@@ -195,3 +195,27 @@ def test_standardize_value_polars_enum_and_categorical():
 
     assert all(isinstance(v, str) for v in standardized_df['enum_col'])
     assert all(isinstance(v, str) for v in standardized_df['categorical_col'])
+
+
+def test_standardize_value_pandas_array():
+    import pandas as pd
+
+    # Happens with pandas 3.0+ when do df.foo.unique() - it returns pandas array instead of python array.
+
+    assert ['foo', None] == _standardize_value(pd.array(['foo', None], dtype=pd.StringDtype()))
+
+    assert [1.0, None] == _standardize_value(pd.array([1.0, None], dtype=pd.Float64Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1.0, None], dtype=pd.Float32Dtype()))
+
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.Int64Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.Int32Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.Int16Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.Int8Dtype()))
+
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.UInt64Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.UInt32Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.UInt16Dtype()))
+    assert [1.0, None] == _standardize_value(pd.array([1, None], dtype=pd.UInt8Dtype()))
+
+    assert [True, None] == _standardize_value(pd.array([True, None], dtype=pd.BooleanDtype()))
+
