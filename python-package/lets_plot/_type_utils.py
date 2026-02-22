@@ -133,5 +133,5 @@ def _standardize_value(v):
             return json.dumps(shapely.geometry.mapping(v))
 
         return repr(v)
-    except Exception:
-        raise Exception('Unsupported type: {0}\nValue: {1}'.format(type(v), str(v)[:100]))
+    except Exception as e:
+        raise Exception('Unsupported type: {0}\nValue: {1}'.format(type(v), str(v)[:100])) from e
