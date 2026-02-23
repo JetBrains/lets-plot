@@ -132,7 +132,7 @@ class PositionedAnnotation(
         ): AnnotationLocation {
 
             val x = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
-            val y = verticalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.y }
+            val y = verticalPlacement.position?.let { coord.toClient(DoubleVector(0, it))?.y }
 
             val hAnchor = if (x != null) HorizontalAnchor.LEFT else horizontalPlacement.anchor
             val vAnchor = if (y != null) VerticalAnchor.TOP else verticalPlacement.anchor
