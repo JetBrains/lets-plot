@@ -17,7 +17,7 @@ __all__ = ['geom_bracket']
 
 _DEF_DODGE_WIDTH = .95
 
-_bracket_min_col, _bracket_max_col = "..bracket_min..", "..bracket_max.."
+_bracket_start_col, _bracket_end_col = "..bracket_min..", "..bracket_max.."
 
 
 def _compute_dodged_position(axis_value_id, dodge_group_id, n_dodge_groups, width):
@@ -28,57 +28,45 @@ def _compute_dodged_position(axis_value_id, dodge_group_id, n_dodge_groups, widt
 
 
 def _resolve_primary_axis(orientation, mapping_dict, other_args):
-    axis = orientation
-    if axis is None and \
-        ("x" in mapping_dict or "x" in other_args.keys()) and \
-        "ymin" not in mapping_dict and "ymin" not in other_args.keys() and \
-        "ymax" not in mapping_dict and "ymax" not in other_args.keys():
-        axis = "x"
-    if axis is not None and axis not in mapping_dict and axis not in other_args.keys():
-        return None
-    return axis
+    if orientation is not None:
+        return orientation
+    if "xmin" in mapping_dict.keys() or "xmin" in other_args.keys() or \
+       "xmax" in mapping_dict.keys() or "xmax" in other_args.keys():
+        return "x"
+    if "ymin" in mapping_dict.keys() or "ymin" in other_args.keys() or \
+       "ymax" in mapping_dict.keys() or "ymax" in other_args.keys():
+        return "y"
+    return "x"
 
 
-def _get_primary_axis_values(axis, mapping_dict, other_args, data):
-    if axis in other_args.keys():
-        return [other_args[axis]]
-    # axis in mapping_dict
-    axis_aes = mapping_dict[axis]
-    if isinstance(axis_aes, str) and data is not None:
-        return data[axis_aes]
-    elif isinstance(axis_aes, str) and data is None:
-        raise ValueError(f"Cannot resolve '{axis}' from column name '{axis_aes}' because data is None.")
-    elif hasattr(axis_aes, '__iter__'):
-        return axis_aes
+def _get_values_list(aes_name, mapping_dict, other_args, data):
+    if aes_name in other_args.keys():
+        return [other_args[aes_name]]
+    if aes_name not in mapping_dict.keys():
+        raise ValueError(f"'{aes_name}' must be provided in dodged mode.")
+    # aes_name in mapping_dict
+    mapped_aes = mapping_dict[aes_name]
+    if isinstance(mapped_aes, str) and data is not None:
+        return data[mapped_aes]
+    elif isinstance(mapped_aes, str) and data is None:
+        raise ValueError(f"Cannot resolve '{aes_name}' from column name '{mapped_aes}' because data is None.")
+    elif hasattr(mapped_aes, '__iter__'):
+        return mapped_aes
     else:
-        raise TypeError(f"Invalid mapping for '{axis}': "
-                        f"expected a column name (str) or a sequence of values, got {type(axis_aes).__name__}: {axis_aes!r}.")
+        raise TypeError(f"Invalid mapping for '{aes_name}': "
+                        f"expected a column name (str) or a sequence of values, got {type(mapped_aes).__name__}: {mapped_aes!r}.")
 
 
-def _resolve_dodge_group_values(dodge_group, data, axis_values):
-    if dodge_group is None:
-        raise ValueError("Subgroups must be provided (either as column names or as explicit values).")
-    elif isinstance(dodge_group, str) and data is not None and dodge_group in data:
-        return data[dodge_group]
-    elif isinstance(dodge_group, str) and data is None:
-        raise ValueError(f"Cannot resolve group from column name '{dodge_group}' because data is None. "
-                         "Provide data or pass explicit group values.")
-    elif hasattr(dodge_group, '__iter__'):
-        return dodge_group
-    else:
-        return [dodge_group] * len(axis_values)
-
-
-def _attach_bracket_columns(data, axis_min_positions, axis_max_positions):
+def _attach_bracket_columns(data, bracket_start_pos, bracket_end_pos):
     if data is None:
-        return {_bracket_min_col: axis_min_positions, _bracket_max_col: axis_max_positions}
+        return {_bracket_start_col: bracket_start_pos, _bracket_end_col: bracket_end_pos}
     else:
         if isinstance(data, dict):
-            return {**data, **{_bracket_min_col: axis_min_positions, _bracket_max_col: axis_max_positions}}
+            return {**data, **{_bracket_start_col: bracket_start_pos, _bracket_end_col: bracket_end_pos}}
         elif pd is not None and isinstance(data, pd.DataFrame):
-            return data.assign(**{_bracket_min_col: axis_min_positions, _bracket_max_col: axis_max_positions})
+            return data.assign(**{_bracket_start_col: bracket_start_pos, _bracket_end_col: bracket_end_pos})
         elif pl is not None and isinstance(data, pl.DataFrame):
-            return data.with_columns([pl.Series(_bracket_min_col, axis_min_positions), pl.Series(_bracket_max_col, axis_max_positions)])
+            return data.with_columns([pl.Series(_bracket_start_col, bracket_start_pos), pl.Series(_bracket_end_col, bracket_end_pos)])
         else:
             raise TypeError(f"Unsupported data type: {type(data).__name__}. "
                             f"Expected dict, pandas.DataFrame, or polars.DataFrame.")
@@ -97,8 +85,8 @@ def _resolve_category_order(values, ordered_categories):
         return ordered_categories
 
 
-def _data_dimension(data, axis_values, dodge_groups_1, dodge_groups_2):
-    dim = max(len(axis_values), len(dodge_groups_1), len(dodge_groups_2))
+def _data_dimension(data, axis_values, dodge_group1, dodge_group2):
+    dim = max(len(axis_values), len(dodge_group1), len(dodge_group2))
     if data is None:
         return dim
     else:
@@ -109,37 +97,56 @@ def _data_dimension(data, axis_values, dodge_groups_1, dodge_groups_2):
         elif pl is not None and isinstance(data, pl.DataFrame):
             return max(dim, data.shape[0])
         else:
-            raise dim
+            raise TypeError(f"Unsupported data type: {type(data).__name__}. "
+                            f"Expected dict, pandas.DataFrame, or polars.DataFrame.")
 
 
 def _build_bracket_data(axis, mapping_dict, data,
-                        subgroup1, subgroup2,
                         dodge_width,
                         axis_order, dodge_order,
                         other_args):
-    axis_values = _get_primary_axis_values(axis, mapping_dict, other_args, data)
-    axis_value_to_index = {g: i for i, g in enumerate(_resolve_category_order(axis_values, axis_order))}
-    dodge_groups_1 = _resolve_dodge_group_values(subgroup1, data, axis_values)
-    dodge_groups_2 = _resolve_dodge_group_values(subgroup2, data, axis_values)
-    dodge_group_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(dodge_groups_1) + list(dodge_groups_2), dodge_order))}
-    n_dodge_groups = len(dodge_group_to_index.keys())
+    axis_values = _get_values_list(axis, mapping_dict, other_args, data)
+    axis_level_to_index = {g: i for i, g in enumerate(_resolve_category_order(axis_values, axis_order))}
+    dodge_group1 = _get_values_list(f"{axis}min", mapping_dict, other_args, data)
+    dodge_group2 = _get_values_list(f"{axis}max", mapping_dict, other_args, data)
+    dodge_level_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(dodge_group1) + list(dodge_group2), dodge_order))}
+    n_dodge_groups = len(dodge_level_to_index.keys())
     dodge_width = _DEF_DODGE_WIDTH if dodge_width is None else dodge_width
-    dim = _data_dimension(data, axis_values, dodge_groups_1, dodge_groups_2)
+    dim = _data_dimension(data, axis_values, dodge_group1, dodge_group2)
     if len(axis_values) == 1 and len(axis_values) < dim:
         axis_values = axis_values * dim
-    if len(dodge_groups_1) == 1 and len(dodge_groups_1) < dim:
-        dodge_groups_1 = dodge_groups_1 * dim
-    if len(dodge_groups_2) == 1 and len(dodge_groups_2) < dim:
-        dodge_groups_2 = dodge_groups_2 * dim
-    axis_min_positions = [_compute_dodged_position(axis_value_to_index[axis_value], dodge_group_to_index[dodge_group], n_dodge_groups, dodge_width)
-                          for (axis_value, dodge_group) in zip(axis_values, dodge_groups_1)]
-    axis_max_positions = [_compute_dodged_position(axis_value_to_index[axis_value], dodge_group_to_index[dodge_group], n_dodge_groups, dodge_width)
-                          for (axis_value, dodge_group) in zip(axis_values, dodge_groups_2)]
-    return _attach_bracket_columns(data, axis_min_positions, axis_max_positions)
+    if len(dodge_group1) == 1 and len(dodge_group1) < dim:
+        dodge_group1 = dodge_group1 * dim
+    if len(dodge_group2) == 1 and len(dodge_group2) < dim:
+        dodge_group2 = dodge_group2 * dim
+    bracket_start_pos = [_compute_dodged_position(axis_level_to_index[axis_value], dodge_level_to_index[dodge_group], n_dodge_groups, dodge_width)
+                         for (axis_value, dodge_group) in zip(axis_values, dodge_group1)]
+    bracket_end_pos = [_compute_dodged_position(axis_level_to_index[axis_value], dodge_level_to_index[dodge_group], n_dodge_groups, dodge_width)
+                       for (axis_value, dodge_group) in zip(axis_values, dodge_group2)]
+    return _attach_bracket_columns(data, bracket_start_pos, bracket_end_pos)
+
+
+def _bracket_mapping(axis, mapping_dict):
+    if axis in mapping_dict.keys():
+        del mapping_dict[axis]
+    if f"{axis}min" in mapping_dict.keys():
+        del mapping_dict[f"{axis}min"]
+    if f"{axis}max" in mapping_dict.keys():
+        del mapping_dict[f"{axis}max"]
+    return aes(**{**mapping_dict, **{f"{axis}min": _bracket_start_col, f"{axis}max": _bracket_end_col}})
+
+
+def _bracket_other_args(axis, other_args):
+    if axis in other_args.keys():
+        del other_args[axis]
+    if f"{axis}min" in other_args.keys():
+        del other_args[f"{axis}min"]
+    if f"{axis}max" in other_args.keys():
+        del other_args[f"{axis}max"]
+    return other_args
 
 
 def geom_bracket(mapping=None, *, data=None,
-                 subgroup1=None, subgroup2=None,
                  position=None, show_legend=None,
                  manual_key=None,
                  sampling=None,
@@ -148,7 +155,7 @@ def geom_bracket(mapping=None, *, data=None,
                  nudge_x=None, nudge_y=None, nudge_unit=None,
                  size_unit=None,
                  bracket_shorten=None, tip_length_unit=None,
-                 dodge_width=None,
+                 dodged=False, dodge_width=None,
                  axis_order=None, dodge_order=None,
                  color_by=None,
                  **other_args):
@@ -164,16 +171,6 @@ def geom_bracket(mapping=None, *, data=None,
     data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    subgroup1 : str or Any or list of Any
-        Subgroup identifier for the first side of the bracket:
-        a column name (str), a single constant value, or a sequence of values.
-        Used to compute the dodged start position.
-        Requires the primary axis mapping (``x`` for ``orientation='x'``, ``y`` for ``orientation='y'``).
-    subgroup2 : str or Any or list of Any
-        Subgroup identifier for the second side of the bracket:
-        a column name (str), a single constant value, or a sequence of values.
-        Used to compute the dodged end position.
-        Requires the primary axis mapping (``x`` for ``orientation='x'``, ``y`` for ``orientation='y'``).
     position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
@@ -374,9 +371,7 @@ def geom_bracket(mapping=None, *, data=None,
             geom_bracket(aes(x='x', y='y', label='label'), data=bracket_data, subgroup1='s1', subgroup2='s2')
 
     """
-    mapping_dict = {} if mapping is None else mapping.as_dict()
-    axis = _resolve_primary_axis(orientation, mapping_dict, other_args)
-    if axis is None:
+    if not dodged:
         return _geom('bracket',
                      mapping=mapping,
                      data=data,
@@ -398,18 +393,14 @@ def geom_bracket(mapping=None, *, data=None,
                      tip_length_unit=tip_length_unit,
                      color_by=color_by,
                      **other_args)
+    mapping_dict = {} if mapping is None else mapping.as_dict()
+    axis = _resolve_primary_axis(orientation, mapping_dict, other_args)
     new_data = _build_bracket_data(axis, mapping_dict, data,
-                                   subgroup1, subgroup2,
                                    dodge_width,
                                    axis_order, dodge_order,
                                    other_args)
-    if axis in mapping_dict.keys():
-        del mapping_dict[axis]
-    else:
-        del other_args[axis]
-    new_mapping = aes(**{**mapping_dict, **{f"{axis}min": _bracket_min_col, f"{axis}max": _bracket_max_col}})
     return _geom('bracket',
-                 mapping=new_mapping,
+                 mapping=_bracket_mapping(axis, mapping_dict),
                  data=new_data,
                  stat=None,
                  position=position,
@@ -428,4 +419,4 @@ def geom_bracket(mapping=None, *, data=None,
                  bracket_shorten=bracket_shorten,
                  tip_length_unit=tip_length_unit,
                  color_by=color_by,
-                 **other_args)
+                 **_bracket_other_args(axis, other_args.copy()))
