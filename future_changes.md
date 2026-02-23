@@ -43,7 +43,7 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
-- `geom_smooth()`: `smooth_labels()` has been added. It can compute and display additional smooth statistics that describe the fitted model quality and the fitted equation.
+- `geom_smooth()`: introduced `smooth_labels()` to provide automated labeling of goodness-of-fit metrics and the regression equation.
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_labels.html).
 
