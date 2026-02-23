@@ -150,35 +150,18 @@ class ChildMouseEventSource(
         return getViewportBounds().contains(Vector(event.x, event.y))
     }
 
-    private fun dispatch(eventSpec: MouseEventSpec, e: MouseEvent) {
+    private fun dispatch(eventSpec: MouseEventSpec, event: MouseEvent) {
         val viewportBounds = getViewportBounds()
 
         val left = viewportBounds.left.roundToInt()
         val top = viewportBounds.top.roundToInt()
 
-        val translatedEvent = if (left == 0 && top == 0) {
-            e
-        } else if (e is MouseWheelEvent) {
-            MouseWheelEvent(
-                e.x - left,
-                e.y - top,
-                e.button,
-                e.modifiers,
-                e.scrollAmount
-            )
-        } else {
-            MouseEvent(
-                e.x - left,
-                e.y - top,
-                e.button,
-                e.modifiers
-            )
-        }
+        val translatedEvent = event.at(event.x - left, event.y - top)
 
         mouseEventPeer.dispatch(eventSpec, translatedEvent)
 
         if (translatedEvent.preventDefault) {
-            e.preventDefault = true
+            event.preventDefault = true
         }
     }
 

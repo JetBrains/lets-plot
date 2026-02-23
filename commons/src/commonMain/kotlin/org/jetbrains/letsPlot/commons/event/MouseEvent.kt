@@ -14,6 +14,17 @@ open class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModi
 
     constructor(v: Vector, button: Button, modifiers: KeyModifiers) : this(v.x, v.y, button, modifiers)
 
+    override fun at(location: Vector): MouseEvent {
+        return at(location.x, location.y)
+    }
+
+    override fun at(x: Int, y: Int): MouseEvent {
+        if (this.x == x && this.y == y) {
+            return this
+        }
+        return MouseEvent(x, y, button, modifiers)
+    }
+
     companion object {
 
         fun noButton(x: Int, y: Int): MouseEvent {
