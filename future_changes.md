@@ -11,12 +11,12 @@
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
 
 - Plot Theme:
-  - Tag customization parameters:<br>
-    - `plot_tag` to set tag style via `element_text()`
-    - `plot_tag_location` - the area used for positioning the tag  
-    - `plot_tag_position` - the position of the tag within the specified area
-    - `plot_tag_prefix` - the text to be added before the tag value
-    - `plot_tag_suffix` - the text to be added after the tag value
+  - Tag customization parameters:
+    - `plot_tag` - sets the tag style via `element_text()`
+    - `plot_tag_location` - specifies the area used for positioning the tag  
+    - `plot_tag_position` - specifies the position of the tag within the selected area
+    - `plot_tag_prefix` - text added before the tag value
+    - `plot_tag_suffix` - text added after the tag value
    
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
  
@@ -35,7 +35,7 @@
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_brewer_overflow.html).
 
 - Positional Scales:
-  - New `break_width` parameter specifying a fixed distance between axis breaks.
+  - New `break_width` parameter that specifies a fixed distance between axis breaks.
 
     See examples:
     - [datetime scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_datetime.html)
@@ -52,7 +52,7 @@
 
 - `geom_imshow()`:
   - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
-  - New `cguide` parameter: use to customize the colorbar for greyscale images.
+  - New `cguide` parameter: use to customize the colorbar for grayscale images.
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
@@ -62,13 +62,13 @@
 - [**BREAKING**]: Removed JavaFX artifacts.
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
-- [wip] Added warning messages about the removal of invalid points during geometry construction for geom_point(), geom_path(), and geom_line() layers. [[#81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)].
+- [wip] Added warning messages about the removal of invalid points during geometry construction for `geom_point()`, `geom_path()`, and `geom_line()` layers. [[#81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)].
 - [**BREAKING**]: ColorBrewer palettes: changed default behavior when the requested number of colors exceeds the palette's maximum size. \
   Now defaults to `'interpolate'` for sequential/diverging palettes and `'generate'` for qualitative palettes. \
   Previously, depending on the palette type, this either resulted in duplicate colors or random additional colors. \
   Use the new `overflow` parameter to explicitly control this behavior.
-- Discrete color scales (Brewer, Manual) now produce a 'colorbar' guide when used with continuous data. \
-  Previously they produced a 'legend' guide regardless of the data type.
+- Discrete color scales (Brewer, Manual) now produce a `colorbar` guide when used with continuous data. \
+  Previously they produced a `legend` guide regardless of the data type.
 
 ### Fixed
 
@@ -78,5 +78,5 @@
 - geom_imshow: unclear error message when mixing transparencies [[#1088](https://github.com/JetBrains/lets-plot/issues/1088)].
 - geom_imshow and scale_y_reverse [[#1210](https://github.com/JetBrains/lets-plot/issues/1210)].
 - Nice to be able to get a list of colors from a color scale object [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
-- allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
+- Allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
 - Allow grouped tooltips for plots with multiple univariate geoms [[#1460](https://github.com/JetBrains/lets-plot/issues/1460)].
