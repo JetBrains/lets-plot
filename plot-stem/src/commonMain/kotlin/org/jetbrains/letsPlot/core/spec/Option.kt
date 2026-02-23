@@ -269,7 +269,7 @@ object Option {
         }
 
         object Kind {
-            const val SMOOTH_ANNOTATION = "smooth_annotation"
+            const val SMOOTH_STAT_SUMMARY_ANNOTATION = "smooth_stat_summary_annotation"
         }
     }
 

@@ -76,7 +76,7 @@ class EqDataFrameField(
         return EqDataFrameField(name, format, eq)
     }
 
-    fun makeEq(coefficients: List<Double>, ctx: PlotContext): String {
+    private fun makeEq(coefficients: List<Double>, ctx: PlotContext): String {
         val sb = StringBuilder()
 
         val lhs = eq.lhs ?: "y"

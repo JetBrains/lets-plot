@@ -5,29 +5,29 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.annotation
 
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelY
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.HorizontalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.VerticalPlacement
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
-class SmoothAnnotationSpecification(
+class PositionedAnnotationSpecification(
     valueSources: List<ValueSource>,
     linePatterns: List<LinePattern>,
     // other settings
     textSize: Double?,
     useLayerColor: Boolean,
-    val labelX: List<Pair<Double?, LabelX>>,
-    val labelY: List<Pair<Double?, LabelY>>
+    val horizontalPlacements: List<HorizontalPlacement>,
+    val verticalPlacements: List<VerticalPlacement>
 ): AnnotationSpecification(valueSources, linePatterns, textSize, useLayerColor) {
 
      companion object {
-         val NONE = SmoothAnnotationSpecification(
+         val NONE = PositionedAnnotationSpecification(
                  valueSources = emptyList(),
                  linePatterns = emptyList(),
                  textSize = null,
                  useLayerColor = false,
-                 labelX = emptyList(),
-                 labelY = emptyList()
+                 horizontalPlacements = emptyList(),
+                 verticalPlacements = emptyList()
              )
      }
 }

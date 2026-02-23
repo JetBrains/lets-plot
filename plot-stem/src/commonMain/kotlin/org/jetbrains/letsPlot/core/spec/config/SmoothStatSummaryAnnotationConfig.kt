@@ -6,14 +6,16 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelX
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothSummaryAnnotation.LabelY
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.HorizontalAnchor
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.HorizontalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.VerticalPlacement
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.EqDataFrameField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.plot.builder.annotation.SmoothAnnotationSpecification
+import org.jetbrains.letsPlot.core.plot.builder.annotation.PositionedAnnotationSpecification
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.AnnotationSpec.ANNOTATION_SIZE
 import org.jetbrains.letsPlot.core.spec.Option.AnnotationSpec.USE_LAYER_COLOR
@@ -21,7 +23,7 @@ import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.EQ
 import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.LABEL_X
 import org.jetbrains.letsPlot.core.spec.Option.SmoothOptions.LABEL_Y
 
-class SmoothAnnotationConfig(
+class SmoothStatSummaryAnnotationConfig(
     opts: Map<String, Any>,
     varBindings: List<VarBinding>,
     constantsMap: Map<Aes<*>, Any>,
@@ -29,17 +31,17 @@ class SmoothAnnotationConfig(
 ): LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
     override val sourceRePattern = SOURCE_RE_PATTERN
 
-    fun createAnnotations(): SmoothAnnotationSpecification {
+    fun createAnnotations(): PositionedAnnotationSpecification {
         return create().run {
             val smoothOption = getMap(Option.LinesSpec.OPTIONS)
 
-            SmoothAnnotationSpecification(
+            PositionedAnnotationSpecification(
                 valueSources = valueSources,
                 linePatterns = linePatterns ?: emptyList(),
                 textSize = getDouble(ANNOTATION_SIZE),
                 useLayerColor = getBoolean(USE_LAYER_COLOR, false),
-                labelX = labelPositionList(smoothOption[LABEL_X]) { labelPosition(it, ::positionX, LabelX.LEFT) },
-                labelY = labelPositionList(smoothOption[LABEL_Y]) { labelPosition(it, ::positionY, LabelY.TOP) }
+                horizontalPlacements = labelPositionList(smoothOption[LABEL_X], ::labelHorizontalPlacement),
+                verticalPlacements = labelPositionList(smoothOption[LABEL_Y], ::labelVerticalPlacement)
             )
         }
     }
@@ -92,32 +94,35 @@ class SmoothAnnotationConfig(
                 else -> listOf(mapper(v))
             }
 
-        private fun <T> labelPosition(
-            v: Any?,
-            parsePos: (String) -> T,
-            defaultPos: T
-        ): Pair<Double?, T> =
+        private fun labelHorizontalPlacement(v: Any?): HorizontalPlacement =
             when (v) {
-                is String -> null to parsePos(v)
-                is Number -> v.toDouble() to defaultPos
-                else -> null to defaultPos
+                is String -> HorizontalPlacement(null, horizontalAnchor(v))
+                is Number -> HorizontalPlacement(v.toDouble(), HorizontalAnchor.LEFT)
+                else -> HorizontalPlacement(null, HorizontalAnchor.LEFT)
             }
 
-        fun positionX(x: String): LabelX {
+        private fun labelVerticalPlacement(v: Any?): VerticalPlacement =
+            when (v) {
+                is String -> VerticalPlacement(null, verticalAnchor(v))
+                is Number -> VerticalPlacement(v.toDouble(), VerticalAnchor.TOP)
+                else -> VerticalPlacement(null, VerticalAnchor.TOP)
+            }
+
+        fun horizontalAnchor(x: String): HorizontalAnchor {
             return when (x) {
-                "left" -> LabelX.LEFT
-                "center" -> LabelX.CENTER
-                "right" -> LabelX.RIGHT
-                else -> LabelX.LEFT
+                "left" -> HorizontalAnchor.LEFT
+                "center" -> HorizontalAnchor.CENTER
+                "right" -> HorizontalAnchor.RIGHT
+                else -> HorizontalAnchor.LEFT
             }
         }
 
-        fun positionY(y: String): LabelY {
+        fun verticalAnchor(y: String): VerticalAnchor {
             return when (y) {
-                "top" -> LabelY.TOP
-                "middle" -> LabelY.MIDDLE
-                "bottom" -> LabelY.BOTTOM
-                else -> LabelY.TOP
+                "top" -> VerticalAnchor.TOP
+                "center" -> VerticalAnchor.CENTER
+                "bottom" -> VerticalAnchor.BOTTOM
+                else -> VerticalAnchor.TOP
             }
         }
     }

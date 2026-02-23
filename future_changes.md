@@ -56,6 +56,11 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
+- `geom_smooth()`: introduced `smooth_labels()` to provide automated labeling of goodness-of-fit metrics and the regression equation.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_labels.html).
+
+
 ### Changed
 
 - Upgraded Kotlin version to 2.2.20 (was 1.9.25).

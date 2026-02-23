@@ -746,7 +746,6 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                         method='loess', span=.3, level=.7, seed=42)
 
     """
-    # todo: docs
     smooth_layer = _geom('smooth',
                  mapping=mapping,
                  data=data,
@@ -780,12 +779,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                               inherit_aes=inherit_aes,
                               manual_key=manual_key,
                               sampling=sampling,
-                              tooltips=tooltips,
                               labels=labels,
                               orientation=orientation,
                               method=method,
-                              n=n,
-                              se=se,
                               level=level,
                               span=span,
                               deg=deg,

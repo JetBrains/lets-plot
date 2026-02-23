@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.annotation
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.SmoothAnnotation
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
@@ -30,8 +30,8 @@ object AnnotationProviderUtil {
             return null
         }
 
-        if (spec is SmoothAnnotationSpecification) {
-            return SmoothAnnotation(
+        if (spec is PositionedAnnotationSpecification) {
+            return PositionedAnnotation(
                 mappedLines,
                 textStyle = TextStyle(
                     themeTextStyle.family.name,
@@ -41,8 +41,8 @@ object AnnotationProviderUtil {
                 ),
                 useCustomColor,
                 useLayerColor = spec.useLayerColor,
-                labelX = spec.labelX,
-                labelY = spec.labelY
+                horizontalPlacements = spec.horizontalPlacements,
+                verticalPlacements = spec.verticalPlacements
             )
         }
 
