@@ -30,19 +30,19 @@ def _compute_dodged_position(axis_value_id, dodge_group_id, n_dodge_groups, widt
 def _resolve_primary_axis(orientation, mapping_dict, other_args):
     if orientation is not None:
         return orientation
-    if "xmin" in mapping_dict.keys() or "xmin" in other_args.keys() or \
-       "xmax" in mapping_dict.keys() or "xmax" in other_args.keys():
+    if "xmin" in mapping_dict or "xmin" in other_args or \
+       "xmax" in mapping_dict or "xmax" in other_args:
         return "x"
-    if "ymin" in mapping_dict.keys() or "ymin" in other_args.keys() or \
-       "ymax" in mapping_dict.keys() or "ymax" in other_args.keys():
+    if "ymin" in mapping_dict or "ymin" in other_args or \
+       "ymax" in mapping_dict or "ymax" in other_args:
         return "y"
     return "x"
 
 
 def _get_values_list(aes_name, mapping_dict, other_args, data):
-    if aes_name in other_args.keys():
+    if aes_name in other_args:
         return [other_args[aes_name]]
-    if aes_name not in mapping_dict.keys():
+    if aes_name not in mapping_dict:
         raise ValueError(f"'{aes_name}' must be provided in dodged mode.")
     # aes_name in mapping_dict
     mapped_aes = mapping_dict[aes_name]
@@ -110,7 +110,7 @@ def _build_bracket_data(axis, mapping_dict, data,
     dodge_group1 = _get_values_list(f"{axis}min", mapping_dict, other_args, data)
     dodge_group2 = _get_values_list(f"{axis}max", mapping_dict, other_args, data)
     dodge_level_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(dodge_group1) + list(dodge_group2), dodge_order))}
-    n_dodge_groups = len(dodge_level_to_index.keys())
+    n_dodge_groups = len(dodge_level_to_index)
     dodge_width = _DEF_DODGE_WIDTH if dodge_width is None else dodge_width
     dim = _data_dimension(data, axis_values, dodge_group1, dodge_group2)
     if len(axis_values) == 1 and len(axis_values) < dim:
@@ -127,21 +127,21 @@ def _build_bracket_data(axis, mapping_dict, data,
 
 
 def _bracket_mapping(axis, mapping_dict):
-    if axis in mapping_dict.keys():
+    if axis in mapping_dict:
         del mapping_dict[axis]
-    if f"{axis}min" in mapping_dict.keys():
+    if f"{axis}min" in mapping_dict:
         del mapping_dict[f"{axis}min"]
-    if f"{axis}max" in mapping_dict.keys():
+    if f"{axis}max" in mapping_dict:
         del mapping_dict[f"{axis}max"]
     return aes(**{**mapping_dict, **{f"{axis}min": _bracket_start_col, f"{axis}max": _bracket_end_col}})
 
 
 def _bracket_other_args(axis, other_args):
-    if axis in other_args.keys():
+    if axis in other_args:
         del other_args[axis]
-    if f"{axis}min" in other_args.keys():
+    if f"{axis}min" in other_args:
         del other_args[f"{axis}min"]
-    if f"{axis}max" in other_args.keys():
+    if f"{axis}max" in other_args:
         del other_args[f"{axis}max"]
     return other_args
 
