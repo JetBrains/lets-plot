@@ -20,11 +20,11 @@ _DEF_DODGE_WIDTH = .95
 _bracket_min_col, _bracket_max_col = "..bracket_min..", "..bracket_max.."
 
 
-def _compute_dodged_position(group_id, subgroup_id, n_subgroups, width):
-    median = (n_subgroups - 1) / 2
-    offset = (subgroup_id - median) * width
-    scaler = 1.0 / n_subgroups
-    return group_id + offset * scaler
+def _compute_dodged_position(axis_value_id, dodge_group_id, n_dodge_groups, width):
+    median = (n_dodge_groups - 1) / 2
+    offset = (dodge_group_id - median) * width
+    scaler = 1.0 / n_dodge_groups
+    return axis_value_id + offset * scaler
 
 
 def _resolve_primary_axis(orientation, mapping_dict, other_args):
@@ -55,18 +55,18 @@ def _get_primary_axis_values(axis, mapping_dict, other_args, data):
                         f"expected a column name (str) or a sequence of values, got {type(axis_aes).__name__}: {axis_aes!r}.")
 
 
-def _resolve_subgroup_values(subgroup, data, group_values):
-    if subgroup is None:
+def _resolve_dodge_group_values(dodge_group, data, axis_values):
+    if dodge_group is None:
         raise ValueError("Subgroups must be provided (either as column names or as explicit values).")
-    elif isinstance(subgroup, str) and data is not None and subgroup in data:
-        return data[subgroup]
-    elif isinstance(subgroup, str) and data is None:
-        raise ValueError(f"Cannot resolve subgroup from column name '{subgroup}' because data is None. "
-                         "Provide data or pass explicit subgroup values.")
-    elif hasattr(subgroup, '__iter__'):
-        return subgroup
+    elif isinstance(dodge_group, str) and data is not None and dodge_group in data:
+        return data[dodge_group]
+    elif isinstance(dodge_group, str) and data is None:
+        raise ValueError(f"Cannot resolve group from column name '{dodge_group}' because data is None. "
+                         "Provide data or pass explicit group values.")
+    elif hasattr(dodge_group, '__iter__'):
+        return dodge_group
     else:
-        return [subgroup] * len(group_values)
+        return [dodge_group] * len(axis_values)
 
 
 def _attach_bracket_columns(data, axis_min_positions, axis_max_positions):
@@ -97,8 +97,8 @@ def _resolve_category_order(values, ordered_categories):
         return ordered_categories
 
 
-def _data_dimension(data, group_values, subgroups1, subgroups2):
-    dim = max(len(group_values), len(subgroups1), len(subgroups2))
+def _data_dimension(data, axis_values, dodge_groups_1, dodge_groups_2):
+    dim = max(len(axis_values), len(dodge_groups_1), len(dodge_groups_2))
     if data is None:
         return dim
     else:
@@ -115,26 +115,26 @@ def _data_dimension(data, group_values, subgroups1, subgroups2):
 def _build_bracket_data(axis, mapping_dict, data,
                         subgroup1, subgroup2,
                         dodge_width,
-                        group_order, subgroup_order,
+                        axis_order, dodge_order,
                         other_args):
-    group_values = _get_primary_axis_values(axis, mapping_dict, other_args, data)
-    group_to_index = {g: i for i, g in enumerate(_resolve_category_order(group_values, group_order))}
-    subgroups1 = _resolve_subgroup_values(subgroup1, data, group_values)
-    subgroups2 = _resolve_subgroup_values(subgroup2, data, group_values)
-    subgroup_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(subgroups1) + list(subgroups2), subgroup_order))}
-    n_subgroups = len(subgroup_to_index.keys())
+    axis_values = _get_primary_axis_values(axis, mapping_dict, other_args, data)
+    axis_value_to_index = {g: i for i, g in enumerate(_resolve_category_order(axis_values, axis_order))}
+    dodge_groups_1 = _resolve_dodge_group_values(subgroup1, data, axis_values)
+    dodge_groups_2 = _resolve_dodge_group_values(subgroup2, data, axis_values)
+    dodge_group_to_index = {s: i for i, s in enumerate(_resolve_category_order(list(dodge_groups_1) + list(dodge_groups_2), dodge_order))}
+    n_dodge_groups = len(dodge_group_to_index.keys())
     dodge_width = _DEF_DODGE_WIDTH if dodge_width is None else dodge_width
-    dim = _data_dimension(data, group_values, subgroups1, subgroups2)
-    if len(group_values) == 1 and len(group_values) < dim:
-        group_values = group_values * dim
-    if len(subgroups1) == 1 and len(subgroups1) < dim:
-        subgroups1 = subgroups1 * dim
-    if len(subgroups2) == 1 and len(subgroups2) < dim:
-        subgroups2 = subgroups2 * dim
-    axis_min_positions = [_compute_dodged_position(group_to_index[group], subgroup_to_index[subgroup], n_subgroups, dodge_width)
-                          for (group, subgroup) in zip(group_values, subgroups1)]
-    axis_max_positions = [_compute_dodged_position(group_to_index[group], subgroup_to_index[subgroup], n_subgroups, dodge_width)
-                          for (group, subgroup) in zip(group_values, subgroups2)]
+    dim = _data_dimension(data, axis_values, dodge_groups_1, dodge_groups_2)
+    if len(axis_values) == 1 and len(axis_values) < dim:
+        axis_values = axis_values * dim
+    if len(dodge_groups_1) == 1 and len(dodge_groups_1) < dim:
+        dodge_groups_1 = dodge_groups_1 * dim
+    if len(dodge_groups_2) == 1 and len(dodge_groups_2) < dim:
+        dodge_groups_2 = dodge_groups_2 * dim
+    axis_min_positions = [_compute_dodged_position(axis_value_to_index[axis_value], dodge_group_to_index[dodge_group], n_dodge_groups, dodge_width)
+                          for (axis_value, dodge_group) in zip(axis_values, dodge_groups_1)]
+    axis_max_positions = [_compute_dodged_position(axis_value_to_index[axis_value], dodge_group_to_index[dodge_group], n_dodge_groups, dodge_width)
+                          for (axis_value, dodge_group) in zip(axis_values, dodge_groups_2)]
     return _attach_bracket_columns(data, axis_min_positions, axis_max_positions)
 
 
@@ -149,7 +149,7 @@ def geom_bracket(mapping=None, *, data=None,
                  size_unit=None,
                  bracket_shorten=None, tip_length_unit=None,
                  dodge_width=None,
-                 group_order=None, subgroup_order=None,
+                 axis_order=None, dodge_order=None,
                  color_by=None,
                  **other_args):
     """
@@ -227,11 +227,11 @@ def geom_bracket(mapping=None, *, data=None,
     dodge_width : float, default=0.95
         Width of the dodging applied when placing brackets between subgroups (subgroup1/subgroup2).
         It is expected to match the dodge width used by other layers for proper alignment.
-    group_order : list of Any
+    axis_order : list of Any
         Order of the primary axis categories used to map group values to discrete positions
         when ``subgroup1``/``subgroup2`` are provided.
         If None, the order is inferred from the data.
-    subgroup_order : list of Any
+    dodge_order : list of Any
         Order of subgroup categories used to map subgroup values to dodge positions
         when ``subgroup1``/``subgroup2`` are provided.
         If None, the order is inferred from the data.
@@ -401,7 +401,7 @@ def geom_bracket(mapping=None, *, data=None,
     new_data = _build_bracket_data(axis, mapping_dict, data,
                                    subgroup1, subgroup2,
                                    dodge_width,
-                                   group_order, subgroup_order,
+                                   axis_order, dodge_order,
                                    other_args)
     if axis in mapping_dict.keys():
         del mapping_dict[axis]
