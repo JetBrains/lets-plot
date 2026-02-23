@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase.Companion.overallAesBounds
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.AnnotationUtil.textColorAndLabelAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
@@ -27,24 +26,6 @@ class PositionedAnnotation(
     val horizontalPlacements: List<HorizontalPlacement>,
     val verticalPlacements: List<VerticalPlacement>
 ): Annotation(lines, textStyle, useCustomColor, useLayerColor) {
-
-    data class HorizontalPlacement(
-        val position: Double?,
-        val anchor: HorizontalAnchor
-    )
-
-    data class VerticalPlacement(
-        val position: Double?,
-        val anchor: VerticalAnchor
-    )
-
-    enum class HorizontalAnchor {
-        LEFT, CENTER, RIGHT
-    }
-
-    enum class VerticalAnchor {
-        TOP, CENTER, BOTTOM
-    }
 
     companion object {
         private val DEFAULT_HORIZONTAL_PLACEMENT = HorizontalPlacement(null, HorizontalAnchor.LEFT)
@@ -150,27 +131,29 @@ class PositionedAnnotation(
             coord: CoordinateSystem
         ): AnnotationLocation {
 
-            val (x, hAnchor) = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
-                ?.let { it to Text.HorizontalAnchor.LEFT }
-                ?: when (horizontalPlacement.anchor) {
-                    HorizontalAnchor.LEFT -> viewPort.left to Text.HorizontalAnchor.LEFT
-                    HorizontalAnchor.CENTER -> viewPort.center.x to Text.HorizontalAnchor.MIDDLE
-                    HorizontalAnchor.RIGHT -> viewPort.right to Text.HorizontalAnchor.RIGHT
-                }
+            val x = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
+            val y = verticalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.y }
 
-            val (y, vAnchor) = verticalPlacement.position?.let { coord.toClient(DoubleVector(0, it))?.y }
-                ?.let { it to Text.VerticalAnchor.TOP }
-                ?: when (verticalPlacement.anchor) {
-                    VerticalAnchor.TOP -> viewPort.top to Text.VerticalAnchor.TOP
-                    VerticalAnchor.CENTER -> viewPort.center.y to Text.VerticalAnchor.CENTER
-                    VerticalAnchor.BOTTOM -> viewPort.bottom to Text.VerticalAnchor.BOTTOM
-                }
+            val hAnchor = if (x != null) HorizontalAnchor.LEFT else horizontalPlacement.anchor
+            val vAnchor = if (y != null) VerticalAnchor.TOP else verticalPlacement.anchor
+
+            val finalX = x ?: when (horizontalPlacement.anchor) {
+                HorizontalAnchor.LEFT -> viewPort.left
+                HorizontalAnchor.CENTER -> viewPort.center.x
+                HorizontalAnchor.RIGHT -> viewPort.right
+            }
+
+            val finalY = y ?: when (verticalPlacement.anchor) {
+                VerticalAnchor.TOP -> viewPort.top
+                VerticalAnchor.CENTER -> viewPort.center.y
+                VerticalAnchor.BOTTOM -> viewPort.bottom
+            }
+
             return AnnotationLocation(
-                DoubleVector(x, y),
+                DoubleVector(finalX, finalY),
                 hAnchor,
                 vAnchor
             )
-
         }
 
         private fun createAnnotationElement(
@@ -195,6 +178,24 @@ class PositionedAnnotation(
             return g
         }
 
+        data class HorizontalPlacement(
+            val position: Double?,
+            val anchor: HorizontalAnchor
+        )
+
+        data class VerticalPlacement(
+            val position: Double?,
+            val anchor: VerticalAnchor
+        )
+
+        enum class HorizontalAnchor {
+            LEFT, CENTER, RIGHT
+        }
+
+        enum class VerticalAnchor {
+            TOP, CENTER, BOTTOM
+        }
+
         private data class AnnotationLabel(
             val text: String,
             val textSize: DoubleVector,
@@ -203,20 +204,20 @@ class PositionedAnnotation(
 
         private data class AnnotationLocation(
             val position: DoubleVector,
-            val hAnchor: Text.HorizontalAnchor,
-            val vAnchor: Text.VerticalAnchor
+            val hAnchor: HorizontalAnchor,
+            val vAnchor: VerticalAnchor
         )
 
-        private fun Text.VerticalAnchor.toSvgVAnchor() = when (this) {
-            Text.VerticalAnchor.TOP -> "top"
-            Text.VerticalAnchor.CENTER -> "center"
-            Text.VerticalAnchor.BOTTOM -> "bottom"
+        private fun VerticalAnchor.toSvgVAnchor() = when (this) {
+            VerticalAnchor.TOP -> "top"
+            VerticalAnchor.CENTER -> "center"
+            VerticalAnchor.BOTTOM -> "bottom"
         }
 
-        private fun Text.HorizontalAnchor.toSvgHAnchor() = when (this) {
-            Text.HorizontalAnchor.LEFT -> "left"
-            Text.HorizontalAnchor.MIDDLE -> "middle"
-            Text.HorizontalAnchor.RIGHT -> "right"
+        private fun HorizontalAnchor.toSvgHAnchor() = when (this) {
+            HorizontalAnchor.LEFT -> "left"
+            HorizontalAnchor.CENTER -> "middle"
+            HorizontalAnchor.RIGHT -> "right"
         }
     }
 }

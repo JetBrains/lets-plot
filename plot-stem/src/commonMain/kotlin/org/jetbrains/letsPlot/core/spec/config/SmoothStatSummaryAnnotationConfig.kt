@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.HorizontalAnchor
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.HorizontalPlacement
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.VerticalAnchor
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.VerticalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.HorizontalAnchor
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.HorizontalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.VerticalPlacement
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.R2
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.EqDataFrameField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern

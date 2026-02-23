@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.annotation
 
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.HorizontalPlacement
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.VerticalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.HorizontalPlacement
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation.Companion.VerticalPlacement
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
