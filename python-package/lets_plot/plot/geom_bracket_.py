@@ -17,7 +17,7 @@ __all__ = ['geom_bracket']
 
 _DEF_DODGE_WIDTH = .95
 
-_bracket_start_col, _bracket_end_col = "..bracket_min..", "..bracket_max.."
+_bracket_start_col, _bracket_end_col = "..bracket_start..", "..bracket_end.."
 
 
 def _compute_dodged_position(axis_value_id, dodge_group_id, n_dodge_groups, width):
