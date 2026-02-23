@@ -58,7 +58,7 @@ class PositionedAnnotation(
 
                 val label = AnnotationLabel(
                     text = text,
-                    textSize = textSizeGetter(text, dp),
+                    height = textSizeGetter(text, dp).y,
                     textColor = textColor
                 )
 
@@ -79,46 +79,28 @@ class PositionedAnnotation(
             viewPort: DoubleRectangle,
             coord: CoordinateSystem
         ): List<AnnotationLocation> {
-            val positionsCount = minOf(labels.size, maxOf(horizontalPlacements.size, verticalPlacements.size))
-
-            val positionedLabels = ArrayList<AnnotationLabel>()
-            val otherLabels = ArrayList<AnnotationLabel>()
-
-            if (positionsCount > 1) {
-                positionedLabels.addAll(labels.subList(0, positionsCount - 1))
-                otherLabels.addAll(labels.subList(positionsCount - 1, labels.size))
-            } else {
-                otherLabels.addAll(labels)
-            }
 
             val locations = ArrayList<AnnotationLocation>()
 
-            for (i in 0 until positionedLabels.size) {
-                 locations.add(getLocation(
-                    horizontalPlacements.getOrNull(i) ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
-                    verticalPlacements.getOrNull(i) ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
-                    viewPort,
-                    coord
-                ))
-            }
-
-            val startLocation = getLocation(
-                horizontalPlacements.getOrNull(positionsCount - 1) ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
-                verticalPlacements.getOrNull(positionsCount - 1) ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
-                viewPort,
-                coord
-            )
-
-            var verticalOffset = 0.0
-            otherLabels.forEach { label ->
-                val loc = AnnotationLocation(
-                    startLocation.position.add(DoubleVector(0.0, verticalOffset)),
-                    startLocation.hAnchor,
-                    startLocation.vAnchor
-                )
-
-                locations.add(loc)
-                verticalOffset += label.textSize.y
+            for (index in labels.indices) {
+                val vp = verticalPlacements.getOrNull(index)
+                val hp = horizontalPlacements.getOrNull(index)
+                if (vp != null || hp != null || locations.isEmpty()) {
+                    locations.add(getLocation(
+                        hp ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
+                        vp ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
+                        viewPort,
+                        coord
+                    ))
+                } else {
+                    val lastLocation = locations.last()
+                    val prevLabel = labels[index - 1]
+                    locations.add(AnnotationLocation(
+                        DoubleVector(lastLocation.position.x, lastLocation.position.y + prevLabel.height),
+                        lastLocation.hAnchor,
+                        lastLocation.vAnchor
+                    ))
+                }
             }
 
             return locations
@@ -198,7 +180,7 @@ class PositionedAnnotation(
 
         private data class AnnotationLabel(
             val text: String,
-            val textSize: DoubleVector,
+            val height: Double,
             val textColor: Color
         )
 
