@@ -62,7 +62,7 @@ class PositionedAnnotation(
             coord: CoordinateSystem,
             ctx: GeomContext
         ) {
-            val viewPort = coord.toClient(overallAesBounds(ctx)) ?: return
+            val viewPort = coord.toClient(overallAesBounds(ctx))?.inflate(-PADDING) ?: return
             val annotation = ctx.annotation as? PositionedAnnotation ?: return
             val textSizeGetter = AnnotationUtil.textSizeGetter(annotation.textStyle, ctx)
             val labels = ArrayList<AnnotationLabel>()
@@ -84,7 +84,7 @@ class PositionedAnnotation(
                 labels.add(label)
             }
 
-            val locations = getLocations(labels, annotation.horizontalPlacements, annotation.verticalPlacements, viewPort.inflate(-PADDING), coord)
+            val locations = getLocations(labels, annotation.horizontalPlacements, annotation.verticalPlacements, viewPort, coord)
 
             labels.forEachIndexed { index, label ->
                 root.add(createAnnotationElement(label, locations[index], annotation.textStyle, ctx))
@@ -112,8 +112,8 @@ class PositionedAnnotation(
 
             val locations = ArrayList<AnnotationLocation>()
 
-            positionedLabels.forEachIndexed { i, _ ->
-                locations.add(getLocation(
+            for (i in 0 until positionedLabels.size) {
+                 locations.add(getLocation(
                     horizontalPlacements.getOrNull(i) ?: horizontalPlacements.lastOrNull() ?: DEFAULT_HORIZONTAL_PLACEMENT,
                     verticalPlacements.getOrNull(i) ?: verticalPlacements.lastOrNull() ?: DEFAULT_VERTICAL_PLACEMENT,
                     viewPort,
@@ -149,8 +149,6 @@ class PositionedAnnotation(
             viewPort: DoubleRectangle,
             coord: CoordinateSystem
         ): AnnotationLocation {
-
-
 
             val (x, hAnchor) = horizontalPlacement.position?.let { coord.toClient(DoubleVector(it, 0))?.x }
                 ?.let { it to Text.HorizontalAnchor.LEFT }
