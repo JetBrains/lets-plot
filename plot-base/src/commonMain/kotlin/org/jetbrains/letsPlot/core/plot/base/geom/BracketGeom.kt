@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 class BracketGeom : TextGeom() {
-    var bracketShorten: Double = 1.0
+    var bracketShorten: Double = 0.0
     var tipLengthUnit: DimensionUnit = DEF_TIP_LENGTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -58,8 +58,8 @@ class BracketGeom : TextGeom() {
             val tipLengthEnd = p.finiteOrNull(Aes.TIP_LENGTH_END) ?: return@builder null
             val x = (xMin + xMax) / 2.0
             val bracketLength = xMax - xMin
-            val xStart = x - bracketShorten * bracketLength / 2.0
-            val xEnd = x + bracketShorten * bracketLength / 2.0
+            val xStart = x - (1 - bracketShorten) * bracketLength / 2.0
+            val xEnd = x + (1 - bracketShorten) * bracketLength / 2.0
             val tipLengthUnitResolution = helper.getUnitResolution(tipLengthUnit, Aes.Y)
             listOf(
                 DoubleVector(xStart, y - tipLengthStart * tipLengthUnitResolution),
