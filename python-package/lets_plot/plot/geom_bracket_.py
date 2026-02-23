@@ -186,8 +186,6 @@ def geom_bracket(mapping=None, *, data=None,
     orientation : str, default='x'
         Specify the axis that the geom should run along.
         Possible values: 'x', 'y'.
-        When drawing brackets between subgroups (``subgroup1``, ``subgroup2``) on a rotated plot,
-        ``orientation='y'`` must be specified.
     label_format : str
         Format used to transform text label mapping values to a string.
         Examples:
@@ -209,9 +207,9 @@ def geom_bracket(mapping=None, *, data=None,
         'min' uses the smaller of the unit steps along the x- and y-axes.
         'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
-    bracket_shorten : float, default=1
+    bracket_shorten : float, default=0
         Symmetrically shorten the bracket by shifting both ends toward the center.
-        Expect values between 0 and 1.
+        Expect values between 0 and 1, where 0 corresponds to no shortening and 1 to a fully collapsed bracket.
     tip_length_unit : {'res', 'identity', 'size', 'px'}, default='size'
         Unit for ``tip_length_start`` and ``tip_length_end`` aesthetics.
         Possible values:
@@ -221,17 +219,20 @@ def geom_bracket(mapping=None, *, data=None,
         - 'size': a unit of 1 corresponds to the diameter of a point with ``size=1``;
         - 'px': the unit is measured in screen pixels.
 
+    dodged : bool, default=False
+        If True, interpret ``xmin``/``xmax`` (or ``ymin``/``ymax`` for ``orientation='y'``)
+        as dodged group ids and compute bracket positions accordingly.
     dodge_width : float, default=0.95
-        Width of the dodging applied when placing brackets between subgroups (subgroup1/subgroup2).
-        It is expected to match the dodge width used by other layers for proper alignment.
+        Width used to compute bracket positions in ``dodged=True`` mode.
+        Expected to match the dodge width used by other layers for proper alignment.
     axis_order : list of Any
-        Order of the primary axis categories used to map group values to discrete positions
-        when ``subgroup1``/``subgroup2`` are provided.
-        If None, the order is inferred from the data.
+        Order of primary axis categories used to map ``x`` (or ``y`` for ``orientation='y'``)
+        to discrete positions in ``dodged=True`` mode.
+        If None, inferred from this layer's data.
     dodge_order : list of Any
-        Order of subgroup categories used to map subgroup values to dodge positions
-        when ``subgroup1``/``subgroup2`` are provided.
-        If None, the order is inferred from the data.
+        Order of dodged group levels used to map ``xmin``/``xmax`` (or ``ymin``/``ymax``)
+        to dodge offsets in ``dodged=True`` mode.
+        If None, inferred from this layer's data.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
         Possible values:
@@ -260,7 +261,7 @@ def geom_bracket(mapping=None, *, data=None,
     - xmin or ymin: left or lower end of the bracket for horizontal or vertical brackets, respectively.
     - xmax or ymax: right or upper end of the bracket for horizontal or vertical brackets, respectively.
     - y or x : bracket level (the height/position at which the bracket is drawn) for horizontal or vertical brackets, respectively.
-    - x or y : primary axis category for horizontal or vertical brackets, respectively; used only when drawing brackets between dodged subgroups (``subgroup1``, ``subgroup2``).
+    - x or y : primary axis category for horizontal or vertical brackets, respectively; used only in ``dodged=True`` mode.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : font size.
@@ -359,8 +360,8 @@ def geom_bracket(mapping=None, *, data=None,
         }
         bracket_data = {
             'x': ['a', 'b', 'c'],
-            's1': ['x', 'x', 'x'],
-            's2': ['y', 'y', 'y'],
+            'gstart': ['x', 'x', 'x'],
+            'gend': ['y', 'y', 'y'],
             'y': [2.6, 3, 4.4],
             'label': ['***', '*', 'ns'],
         }
@@ -368,7 +369,7 @@ def geom_bracket(mapping=None, *, data=None,
             geom_boxplot(aes(fill='g'), alpha=.25) + \\
             geom_point(position=position_jitterdodge(jitter_width=.2, jitter_height=0, seed=42),
                        shape=1, size=2, alpha=.25, show_legend=False) + \\
-            geom_bracket(aes(x='x', y='y', label='label'), data=bracket_data, subgroup1='s1', subgroup2='s2')
+            geom_bracket(aes(x='x', y='y', xmin='gstart', xmax='gend', label='label'), data=bracket_data, dodged=True)
 
     """
     if not dodged:
