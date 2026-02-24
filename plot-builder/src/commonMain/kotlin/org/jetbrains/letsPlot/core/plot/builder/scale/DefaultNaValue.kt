@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
@@ -133,6 +135,8 @@ object DefaultNaValue {
         VALUE_MAP.put(RADIUS, 0.0)
         VALUE_MAP.put(SLICE, 0.0)
         VALUE_MAP.put(EXPLODE, 0.0)
+        VALUE_MAP.put(GSTART, 0.0)
+        VALUE_MAP.put(GEND, 0.0)
         VALUE_MAP.put(SIZE_START, 0.0)
         VALUE_MAP.put(SIZE_END, 0.0)
         VALUE_MAP.put(STROKE_START, 0.0)

@@ -16,6 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
@@ -246,6 +248,12 @@ abstract class AesVisitor<T> {
         if (aes == EXPLODE) {
             return explode()
         }
+        if (aes == GSTART) {
+            return gstart()
+        }
+        if (aes == GEND) {
+            return gend()
+        }
         if (aes == SIZE_START) {
             return sizeStart()
         }
@@ -386,6 +394,10 @@ abstract class AesVisitor<T> {
     protected abstract fun slice(): T
 
     protected abstract fun explode(): T
+
+    protected abstract fun gstart(): T
+
+    protected abstract fun gend(): T
 
     protected abstract fun sizeStart(): T
 

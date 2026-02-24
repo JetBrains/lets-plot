@@ -19,6 +19,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
@@ -216,6 +218,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun explode(v: (Int) -> Double?): AestheticsBuilder {
         return aes(EXPLODE, v)
+    }
+
+    fun gstart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(GSTART, v)
+    }
+
+    fun gend(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(GEND, v)
     }
 
     fun sizeStart(v: (Int) -> Double?): AestheticsBuilder {
