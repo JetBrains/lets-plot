@@ -457,6 +457,9 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.Bracket.DODGE_WIDTH)) {
                     geom.dodgeWidth = layerConfig.getDouble(Option.Geom.Bracket.DODGE_WIDTH)!!
                 }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.GROUP_COUNT)) {
+                    geom.groupCount = layerConfig.getInteger(Option.Geom.Bracket.GROUP_COUNT)
+                }
                 if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
                     geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
                 }

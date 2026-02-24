@@ -31,7 +31,7 @@ class BracketGeom : TextGeom() {
         ctx: GeomContext
     ) {
         // Initialization
-        if (dodged) {
+        if (dodged && groupCount == null) {
             groupCount = aesthetics.dataPoints().mapNotNull { p ->
                 p.finiteOrNull(Aes.GSTART, Aes.GEND)?.let { (gstart, gend) -> max(gstart, gend) }
             }.maxOrNull()?.toInt()?.let { it + 1 }

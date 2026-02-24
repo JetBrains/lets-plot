@@ -477,6 +477,7 @@ object Option {
 
         object Bracket {
             const val DODGE_WIDTH = "dodge_width"
+            const val GROUP_COUNT = "group_count"
             const val BRACKET_SHORTEN = "bracket_shorten"
             const val TIP_LENGTH_UNIT = "tip_length_unit"
         }
