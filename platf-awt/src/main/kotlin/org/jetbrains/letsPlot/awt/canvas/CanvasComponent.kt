@@ -15,55 +15,43 @@ import java.awt.Graphics2D
 import javax.swing.JComponent
 import javax.swing.Timer
 
-@Deprecated("Migrate to CanvasComponent", ReplaceWith("CanvasComponent", "org.jetbrains.letsPlot.awt.canvas.CanvasComponent"))
+@Deprecated(
+    "Migrate to CanvasComponent",
+    ReplaceWith("CanvasComponent", "org.jetbrains.letsPlot.awt.canvas.CanvasComponent")
+)
 typealias CanvasPane2 = CanvasComponent
 
 class CanvasComponent(
-    content: CanvasDrawable? = null,
-    pixelDensity: Double = 1.0
+    content: CanvasDrawable? = null
 ) : DisposingHub, Disposable, JComponent() {
-    private var isFigureAttached = false
-    private val registrations = CompositeRegistration()
-    private var figureRegistration: Registration = Registration.EMPTY
-    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT, pixelDensity)
-        set(value) {
-            if (isFigureAttached) {
-                throw IllegalStateException("Can't change canvasPeer after figure is attached")
-            }
-            field = value
-        }
+    private val animationTimer = Timer(1000 / 60) { onTimer() }
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
     private val systemTime: SystemTime = SystemTime()
 
-    var content: CanvasDrawable? = null
+    private var isContentAttached = false
+    private var contentReg: Registration = Registration.EMPTY
+    private var disposables = CompositeRegistration()
+
+    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT)
+        set(value) {
+            check(!isContentAttached) { "Can't change canvasPeer after figure is attached" }
+            field = value
+        }
+
+    var content: CanvasDrawable? = content
         set(content) {
             if (field == content) {
                 return
             }
 
-            figureRegistration.remove()
-            if (content != null) {
-                isFigureAttached = true
-                content.resize(width, height)
-
-                val animationTimer = Timer(1000 / 60) {
-                    content.onFrame(systemTime.getTimeMs())
-                }
-                animationTimer.start()
-
-                figureRegistration = CompositeRegistration(
-                    content.mouseEventPeer.addEventSource(mouseEventSource),
-                    content.mapToCanvas(canvasPeer),
-                    content.onRepaintRequested(::repaint),
-                    Registration.onRemove(animationTimer::stop),
-                )
-            }
             field = content
+
+            detachContent()
+            attachContent()
         }
 
     init {
         isOpaque = false
-        this.content = content
     }
 
     override fun getPreferredSize(): Dimension? {
@@ -84,24 +72,68 @@ class CanvasComponent(
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
 
+        val content = content ?: return
+
         if (width <= 0 || height <= 0) {
             return
         }
 
-        if (content != null) {
-            val g2d = g!!.create() as Graphics2D
-            val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
-            content!!.paint(ctx)
-            g2d.dispose()
-        }
+        val g2d = g!!.create() as Graphics2D
+        val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
+        content.paint(ctx)
+        g2d.dispose()
     }
 
     override fun registerDisposable(disposable: Disposable) {
-        registrations.add(DisposableRegistration(disposable))
+        disposables.add(DisposableRegistration(disposable))
     }
 
     override fun dispose() {
-        registrations.dispose()
-        figureRegistration.dispose()
+        detachContent()
+
+        disposables.dispose()
+        disposables = CompositeRegistration()
+    }
+
+    override fun addNotify() {
+        super.addNotify()
+        attachContent()
+    }
+
+    override fun removeNotify() {
+        super.removeNotify()
+        detachContent()
+    }
+
+    private fun onTimer() {
+        content?.onFrame(systemTime.getTimeMs())
+    }
+
+    private fun detachContent() {
+        if (isContentAttached) {
+            isContentAttached = false
+            contentReg.dispose()
+            contentReg = Registration.EMPTY
+        }
+    }
+
+    private fun attachContent() {
+        if (!isContentAttached) {
+            isContentAttached = true
+
+            val content = content
+            if (content == null) {
+                contentReg = Registration.EMPTY
+            } else {
+                animationTimer.start()
+                content.resize(width, height)
+                contentReg = CompositeRegistration(
+                    content.mouseEventPeer.addEventSource(mouseEventSource),
+                    content.mapToCanvas(canvasPeer),
+                    content.onRepaintRequested(::repaint),
+                    Registration.onRemove(animationTimer::stop),
+                )
+            }
+        }
     }
 }
