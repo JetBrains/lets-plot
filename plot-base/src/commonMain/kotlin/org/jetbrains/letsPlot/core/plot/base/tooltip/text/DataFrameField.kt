@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 
-open class DataFrameField(
+class DataFrameField(
     private val name: String,
     private val format: String? = null
 ) : ValueSource {
