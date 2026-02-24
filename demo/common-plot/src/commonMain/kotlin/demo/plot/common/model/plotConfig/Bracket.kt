@@ -12,7 +12,7 @@ class Bracket {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            grouped(),
+            betweenGroups(),
             negativeTips(),
         )
     }
@@ -40,6 +40,7 @@ class Bracket {
                     'y': 'y',
                     'label': 'p'
                   },
+                  'inherit_aes': false,
                   'data': {
                     'min': ['US', 'US'],
                     'max': ['Asia', 'Europe'],
@@ -57,7 +58,7 @@ class Bracket {
 
     }
 
-    private fun grouped(): MutableMap<String, Any> {
+    private fun betweenGroups(): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
@@ -75,7 +76,7 @@ class Bracket {
                 ]
               },
               'ggtitle': {
-                'text': 'Grouping demo'
+                'text': 'Brackets between groups'
               },
               'layers': [
                 {
@@ -84,19 +85,19 @@ class Bracket {
                 {
                   'geom': 'bracket',
                   'mapping': {
-                    'xmin': 'min',
-                    'xmax': 'max',
+                    'x': 'number of cylinders',
+                    'gstart': 'gstart',
+                    'gend': 'gend',
                     'y': 'y',
-                    'label': 'p',
-                    'color': 'g'
+                    'label': 'p'
                   },
-                  'position': {'name': 'dodgev'},
+                  'inherit_aes': false,
                   'data': {
-                    'min': [6, 6, 6, 6, 6, 6],
-                    'max': [4, 3, 4, 3, 4, 3],
-                    'y': [53, 61, 53, 61, 53, 61],
-                    'p': [0.01, 0.04, 0.02, 0.05, 0.03, 0.06],
-                    'g': ['US', 'US', 'Asia', 'Asia', 'Europe', 'Europe']
+                    'number of cylinders': [6, 6, 6, 4, 4, 4],
+                    'gstart': [0, 0, 1, 0, 0, 1],
+                    'gend': [1, 2, 2, 1, 2, 2],
+                    'y': [53, 61, 69, 53, 61, 69],
+                    'p': [0.01, 0.04, 0.02, 0.05, 0.03, 0.06]
                   }
                 }
               ]
@@ -132,6 +133,7 @@ class Bracket {
                     'y': 'y',
                     'label': 'p'
                   },
+                  'inherit_aes': false,
                   'tip_length_start': -5,
                   'tip_length_end': -5,
                   'vjust': 2,
