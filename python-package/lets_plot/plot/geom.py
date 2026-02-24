@@ -3,10 +3,9 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
-
+from .annotation import smooth_labels
 from .core import FeatureSpec, LayerSpec
 from .tooltip import layer_tooltips
-from .annotation import smooth_labels
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 #
@@ -9069,9 +9068,9 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
         'min' uses the smaller of the unit steps along the x- and y-axes.
         'max' uses the larger of the unit steps along the x- and y-axes.
         If None, no fitting is performed.
-    bracket_shorten : float, default=1
+    bracket_shorten : float, default=0
         Symmetrically shorten the bracket by shifting both ends toward the center.
-        Expect values between 0 and 1.
+        Expect values between 0 and 1, where 0 corresponds to no shortening and 1 to a fully collapsed bracket.
     tip_length_unit : {'res', 'identity', 'size', 'px'}, default='size'
         Unit for ``tip_length_start`` and ``tip_length_end`` aesthetics.
         Possible values:
