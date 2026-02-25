@@ -451,25 +451,32 @@ internal object GeomProviderFactory {
                 geom
             }
 
-            GeomKind.BRACKET -> GeomProvider.bracket { ctx ->
+            GeomKind.BRACKET -> GeomProvider.bracket {
                 val geom = BracketGeom()
                 applyTextOptions(layerConfig, geom, expFormat, tz)
-                if (layerConfig.hasOwn(Option.Geom.Bracket.DODGE_WIDTH)) {
-                    geom.dodgeWidth = layerConfig.getDouble(Option.Geom.Bracket.DODGE_WIDTH)!!
-                }
-                if (layerConfig.hasOwn(Option.Geom.Bracket.GROUP_COUNT)) {
-                    geom.groupCount = layerConfig.getInteger(Option.Geom.Bracket.GROUP_COUNT)
-                }
                 if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
                     geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
                 }
                 if (layerConfig.hasOwn(Option.Geom.Bracket.TIPLENGTH_UNIT)) {
                     geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIPLENGTH_UNIT) ?: BracketGeom.DEF_TIPLENGTH_UNIT
                 }
-                when {
-                    setOf(Aes.XMIN, Aes.XMAX, Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) } -> geom.dodged = false
-                    setOf(Aes.GSTART, Aes.GEND).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) } -> geom.dodged = true
-                    else -> geom.dodged = false
+                geom
+            }
+
+            GeomKind.BRACKET_DODGE -> GeomProvider.bracketDodge {
+                val geom = BracketDodgeGeom()
+                applyTextOptions(layerConfig, geom, expFormat, tz)
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.DODGE_WIDTH)) {
+                    geom.dodgeWidth = layerConfig.getDouble(Option.Geom.BracketDodge.DODGE_WIDTH)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.GROUP_COUNT)) {
+                    geom.groupCount = layerConfig.getInteger(Option.Geom.BracketDodge.GROUP_COUNT)
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
+                    geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.TIPLENGTH_UNIT)) {
+                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIPLENGTH_UNIT) ?: BracketGeom.DEF_TIPLENGTH_UNIT
                 }
                 geom
             }

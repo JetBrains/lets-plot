@@ -11,12 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFa
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import kotlin.math.max
 
-class BracketGeom : TextGeom() {
-    var dodged: Boolean = false
-    var groupCount: Int? = null
-    var dodgeWidth: Double = DEF_DODGE_WIDTH
+open class BracketGeom : TextGeom() {
     var bracketShorten: Double = 0.0
     var tipLengthUnit: DimensionUnit = DEF_TIPLENGTH_UNIT
 
@@ -30,13 +26,6 @@ class BracketGeom : TextGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        // Initialization
-        if (dodged && groupCount == null) {
-            groupCount = aesthetics.dataPoints().mapNotNull { p ->
-                p.finiteOrNull(Aes.GSTART, Aes.GEND)?.let { (gstart, gend) -> max(gstart, gend) }
-            }.maxOrNull()?.toInt()?.let { it + 1 }
-        }
-
         // Bracket
         val linesHelper = LinesHelper(pos, coord, ctx)
         val pathData = createPaths(
@@ -56,18 +45,12 @@ class BracketGeom : TextGeom() {
         textHelper.createSvgComponents(flipAngle = true, labelNudge = ::labelNudge).forEach(root::add)
     }
 
+    protected open fun getLimits(p: DataPointAesthetics, ctx: GeomContext): Pair<Double, Double>? {
+        return p.finiteOrNull(Aes.XMIN, Aes.XMAX)
+    }
+
     private fun bracketBuilder(helper: LinesHelper, ctx: GeomContext): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
-        val (xmin, xmax) = if (dodged) {
-            val x = p.finiteOrNull(Aes.X) ?: return@builder null
-            val gstart = p.finiteOrNull(Aes.GSTART) ?: return@builder null
-            val gend = p.finiteOrNull(Aes.GEND) ?: return@builder null
-            val resolution = ctx.getResolution(Aes.X)
-            val xmin = computeDodgedPosition(x, gstart, groupCount ?: 1, dodgeWidth, resolution)
-            val xmax = computeDodgedPosition(x, gend, groupCount ?: 1, dodgeWidth, resolution)
-            Pair(xmin, xmax)
-        } else {
-            p.finiteOrNull(Aes.XMIN, Aes.XMAX) ?: return@builder null
-        }
+        val (xmin, xmax) = getLimits(p, ctx) ?: return@builder null
         val y = p.finiteOrNull(Aes.Y) ?: return@builder null
         val tipLengthStart = p.finiteOrNull(Aes.TIPLENGTH_START) ?: return@builder null
         val tipLengthEnd = p.finiteOrNull(Aes.TIPLENGTH_END) ?: return@builder null
@@ -86,15 +69,7 @@ class BracketGeom : TextGeom() {
 
     private fun toLocation(ctx: GeomContext): (DataPointAesthetics) -> DoubleVector? = location@{ p ->
         val y = p.finiteOrNull(Aes.Y) ?: return@location null
-        val (xmin, xmax) = if (dodged) {
-            val (x, gstart, gend) = p.finiteOrNull(Aes.X, Aes.GSTART, Aes.GEND) ?: return@location null
-            val resolution = ctx.getResolution(Aes.X)
-            val xmin = computeDodgedPosition(x, gstart, groupCount ?: 1, dodgeWidth, resolution)
-            val xmax = computeDodgedPosition(x, gend, groupCount ?: 1, dodgeWidth, resolution)
-            Pair(xmin, xmax)
-        } else {
-            p.finiteOrNull(Aes.XMIN, Aes.XMAX) ?: return@location null
-        }
+        val (xmin, xmax) = getLimits(p, ctx) ?: return@location null
         DoubleVector((xmin + xmax) / 2.0, y)
     }
 
@@ -117,13 +92,5 @@ class BracketGeom : TextGeom() {
 
         private fun labelNudge(location: DoubleVector, textSize: DoubleVector): DoubleVector =
             location.add(DoubleVector(0.0, -textSize.y / 2.0))
-
-        // See DodgePos::translate()
-        private fun computeDodgedPosition(x: Double, group: Double, groupCount: Int, dodgeWidth: Double, dataResolution: Double): Double {
-            val median = (groupCount - 1) / 2.0
-            val offset = (group - median) * dataResolution * dodgeWidth
-            val scaler = 1.0 / groupCount
-            return x + offset * scaler
-        }
     }
 }

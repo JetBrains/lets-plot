@@ -476,10 +476,13 @@ object Option {
         }
 
         object Bracket {
-            const val DODGE_WIDTH = "dodge_width"
-            const val GROUP_COUNT = "group_count"
             const val BRACKET_SHORTEN = "bracket_shorten"
             const val TIPLENGTH_UNIT = "tiplength_unit"
+        }
+
+        object BracketDodge {
+            const val DODGE_WIDTH = "dodge_width"
+            const val GROUP_COUNT = "group_count"
         }
 
         object LiveMap {
@@ -1146,6 +1149,7 @@ object Option {
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
         const val BRACKET = "bracket"
+        const val BRACKET_DODGE = "bracket_dodge"
         const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
@@ -1206,6 +1210,7 @@ object Option {
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
             map[BRACKET] = GeomKind.BRACKET
+            map[BRACKET_DODGE] = GeomKind.BRACKET_DODGE
             map[BLANK] = GeomKind.BLANK
 
             GEOM_KIND_MAP = map

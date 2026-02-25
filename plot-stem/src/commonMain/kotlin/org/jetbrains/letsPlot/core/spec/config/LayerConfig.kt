@@ -397,7 +397,10 @@ class LayerConfig constructor(
             }
 
             geomProto.geomKind == GeomKind.BRACKET -> {
-                (!isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)) || isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
+                isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
+            }
+            geomProto.geomKind == GeomKind.BRACKET_DODGE -> {
+                !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
             }
 
             geomProto.geomKind in listOf(
