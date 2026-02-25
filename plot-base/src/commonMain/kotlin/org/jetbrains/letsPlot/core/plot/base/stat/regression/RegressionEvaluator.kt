@@ -10,7 +10,7 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 abstract class RegressionEvaluator protected constructor(
-    private val n: Int,
+    val n: Int,
     private val meanX: Double,
     private val sumXX: Double,
     private val model: (Double) -> Double,
