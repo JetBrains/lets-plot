@@ -823,7 +823,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                             sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false),
                             computationMessagesHandler = messageHandler
                         )
-                        newPlotComponent = CanvasComponent(plotCanvasDrawable, pixelDensity = (pixelDensitySpinner.value as Double))
+                        newPlotComponent = CanvasComponent(plotCanvasDrawable)
                     }
                     "DefaultPlotPanelCanvas" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
