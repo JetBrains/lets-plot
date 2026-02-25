@@ -134,8 +134,8 @@ class Bracket {
                     'label': 'p'
                   },
                   'inherit_aes': false,
-                  'tip_length_start': -5,
-                  'tip_length_end': -5,
+                  'tiplength_start': -5,
+                  'tiplength_end': -5,
                   'vjust': 2,
                   'data': {
                     'min': ['US', 'US'],

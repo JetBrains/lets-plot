@@ -50,8 +50,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -266,10 +266,10 @@ abstract class AesVisitor<T> {
         if (aes == STROKE_END) {
             return strokeEnd()
         }
-        if (aes == TIP_LENGTH_START) {
+        if (aes == TIPLENGTH_START) {
             return tipLengthStart()
         }
-        if (aes == TIP_LENGTH_END) {
+        if (aes == TIPLENGTH_END) {
             return tipLengthEnd()
         }
         if (aes == POINT_SIZE) {

@@ -43,8 +43,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WEIGHT
@@ -245,11 +245,11 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     }
 
     fun tipLengthStart(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(TIP_LENGTH_START, v)
+        return aes(TIPLENGTH_START, v)
     }
 
     fun tipLengthEnd(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(TIP_LENGTH_END, v)
+        return aes(TIPLENGTH_END, v)
     }
 
     fun pointSize(v: (Int) -> Double?): AestheticsBuilder {

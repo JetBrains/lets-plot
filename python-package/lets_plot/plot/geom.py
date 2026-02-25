@@ -9071,7 +9071,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
         Symmetrically shorten the bracket by shifting both ends toward the center.
         Expect values between 0 and 1, where 0 corresponds to no shortening and 1 to a fully collapsed bracket.
     tip_length_unit : {'res', 'identity', 'size', 'px'}, default='size'
-        Unit for ``tip_length_start`` and ``tip_length_end`` aesthetics.
+        Unit for ``tiplength_start`` and ``tiplength_end`` aesthetics.
         Possible values:
 
         - 'res': the unit equals the smallest distance between data points along the corresponding axis;
@@ -9121,8 +9121,8 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
     - segment_color : color of the bracket line (the segments forming the bracket).
     - segment_size : width of the bracket line (the segments forming the bracket).
     - segment_alpha : transparency level of the bracket line. Accept values between 0 and 1.
-    - tip_length_start : length of the tip at the bracket start (at ``xmin`` for horizontal brackets, or ``ymin`` for vertical).
-    - tip_length_end : length of the tip at the bracket end (at ``xmax`` for horizontal brackets, or ``ymax`` for vertical).
+    - tiplength_start : length of the tip at the bracket start (at ``xmin`` for horizontal brackets, or ``ymin`` for vertical).
+    - tiplength_end : length of the tip at the bracket end (at ``xmax`` for horizontal brackets, or ``ymax`` for vertical).
 
     Examples
     --------
@@ -9179,7 +9179,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
             geom_violin(aes(fill='y'), alpha=.25) + \\
             geom_sina(seed=42) + \\
             geom_bracket(aes(x='x', ymin='ymin', ymax='ymax', label='label'), data=bracket_data,
-                         tip_length_start=-.1, tip_length_end=-.1, tip_length_unit='identity', vjust=2.2,
+                         tiplength_start=-.1, tiplength_end=-.1, tip_length_unit='identity', vjust=2.2,
                          color='maroon', size=9, segment_size=1.25)
 
     """

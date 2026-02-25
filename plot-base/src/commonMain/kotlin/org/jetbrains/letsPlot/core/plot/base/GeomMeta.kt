@@ -526,8 +526,8 @@ object GeomMeta {
             GeomKind.BRACKET -> listOf(
                 Aes.XMIN, Aes.XMAX, Aes.Y,
                 Aes.X, Aes.GSTART, Aes.GEND,
-                Aes.TIP_LENGTH_START,
-                Aes.TIP_LENGTH_END,
+                Aes.TIPLENGTH_START,
+                Aes.TIPLENGTH_END,
                 Aes.LABEL,
                 Aes.SIZE,
                 Aes.LINETYPE,

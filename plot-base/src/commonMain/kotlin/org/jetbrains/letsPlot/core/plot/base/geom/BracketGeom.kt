@@ -69,8 +69,8 @@ class BracketGeom : TextGeom() {
             p.finiteOrNull(Aes.XMIN, Aes.XMAX) ?: return@builder null
         }
         val y = p.finiteOrNull(Aes.Y) ?: return@builder null
-        val tipLengthStart = p.finiteOrNull(Aes.TIP_LENGTH_START) ?: return@builder null
-        val tipLengthEnd = p.finiteOrNull(Aes.TIP_LENGTH_END) ?: return@builder null
+        val tipLengthStart = p.finiteOrNull(Aes.TIPLENGTH_START) ?: return@builder null
+        val tipLengthEnd = p.finiteOrNull(Aes.TIPLENGTH_END) ?: return@builder null
         val x = (xmin + xmax) / 2.0
         val bracketLength = xmax - xmin
         val xStart = x - (1 - bracketShorten) * bracketLength / 2.0
