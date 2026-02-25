@@ -9,7 +9,7 @@ from lets_plot.plot.core import FeatureSpec, _filter_none
 # Annotations
 #
 
-__all__ = ['layer_labels', "smooth_labels"]
+__all__ = ['layer_labels', 'smooth_labels']
 
 
 class layer_labels(FeatureSpec):
@@ -291,12 +291,11 @@ class layer_labels(FeatureSpec):
 
 
 class smooth_labels(layer_labels):
-
     """
-    Configure annotations for `geom_smooth()` layers.
+    Configure annotations for `geom_smooth() <https://lets-plot.org/python/pages/api/lets_plot.geom_smooth.html>`__ layers.
 
-    This class extends :class:`layer_labels` and provides additional options
-    for displaying statistics produced by the ``smooth`` stat, such as
+    This class extends `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__
+    and provides additional options for displaying statistics produced by the ``smooth`` stat, such as
     :math:`R^2`, adjusted :math:`R^2`, and the fitted model equation.
 
     It allows placing a multi-line annotation near the smooth curve and
@@ -306,24 +305,24 @@ class smooth_labels(layer_labels):
     Default behavior
     ----------------
     If created without any additional configuration the annotation displays
-    a single line with :math:`R^2`
+    a single line with :math:`R^2`.
 
     Notes
     -----
     - Supported smooth-stat variables and markers that can be used in
-      :meth:`line()` templates:
+      ``line()`` templates:
 
       - ``..r2..`` — :math:`R^2`.
       - ``..adjr2..`` — adjusted :math:`R^2`.
       - ``~eq`` — equation block marker. When a line equals ``'~eq'``,
         an equation for the fitted model is rendered (can be configured
-        with :meth:`eq()`).
-    - `smooth_labels` **inherits** all features of :class:`layer_labels`.
-      Methods such as :meth:`format()`, :meth:`line()`, and :meth:`size()`
+        with ``eq()``).
+    - ``smooth_labels`` **inherits** all features of `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__.
+      Methods such as ``format()``, ``line()``, and ``size()``
       work exactly the same.
-    - The only difference is :meth:`inherit_color()`: it is applied
+    - The only difference is ``inherit_color()``: it is applied
       **automatically** during initialization, so annotation text inherits
-      the layer's color by default. Calling :meth:`inherit_color()` manually
+      the layer's color by default. Calling ``inherit_color()`` manually
       is not required.
 
 
@@ -332,17 +331,15 @@ class smooth_labels(layer_labels):
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-
         n = 100
         x = np.linspace(-2, 2, n)
         y = x**2 + np.random.normal(size=n)
-
-        ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \\
             geom_smooth(deg=2, labels=smooth_labels())
 
     """
@@ -358,7 +355,6 @@ class smooth_labels(layer_labels):
         self.inherit_color()
 
     def eq(self, lhs=None, rhs=None, format=None, threshold=None) -> "smooth_labels":
-
         """
         Configure the equation block for the smooth annotation.
 
@@ -394,19 +390,18 @@ class smooth_labels(layer_labels):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 8-10
+            :emphasize-lines: 9
 
             import numpy as np
             from lets_plot import *
             LetsPlot.setup_html()
-
             x = np.linspace(-2, 2, 50)
             y = x**2 + np.random.normal(size=len(x))
-
-            ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \
+            ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \\
                 geom_smooth(deg=2, labels=smooth_labels()
                     .line('~eq')
                     .eq(lhs='f(x)', rhs='x', format='.2f', threshold=0.1))
+
         """
 
         if format is not None:
@@ -443,7 +438,7 @@ class smooth_labels(layer_labels):
         -----
         By default, the annotation is placed in the top-left corner.
         When multiple groups are present, annotations are arranged in a vertical
-        stack by default; passing a list to `label_x()` and/or `label_y()` allows
+        stack by default; passing a list to ``label_x()`` and/or ``label_y()`` allows
         positioning each group's annotation independently.
 
         Returns
@@ -455,13 +450,13 @@ class smooth_labels(layer_labels):
             --------
             .. jupyter-execute::
                 :linenos:
-                :emphasize-lines: 6
+                :emphasize-lines: 4
 
                 from lets_plot import *
                 LetsPlot.setup_html()
-
-                ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \
+                ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \\
                     geom_smooth(deg=2, labels=smooth_labels().line('~eq').label_x('center'))
+
         """
 
         self._label_x = position
@@ -485,7 +480,7 @@ class smooth_labels(layer_labels):
         -----
         By default, the annotation is placed in the top-left corner.
         When multiple groups are present, annotations are arranged in a vertical
-        stack by default; passing a list to `label_x()` and/or `label_y()` allows
+        stack by default; passing a list to ``label_x()`` and/or ``label_y()`` allows
         positioning each group's annotation independently.
 
         Returns
@@ -497,13 +492,13 @@ class smooth_labels(layer_labels):
             --------
             .. jupyter-execute::
                 :linenos:
-                :emphasize-lines: 6
+                :emphasize-lines: 4
 
                 from lets_plot import *
                 LetsPlot.setup_html()
-
-                ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \
+                ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \\
                     geom_smooth(deg=2, labels=smooth_labels().line('~eq').label_y('center'))
+
         """
 
         self._label_y = position
@@ -513,7 +508,7 @@ class smooth_labels(layer_labels):
         """
         Return a dictionary of all properties of the object.
 
-        In addition to the fields provided by :meth:`layer_labels.as_dict`,
+        In addition to the fields provided by ``layer_labels.as_dict``,
         this method includes:
         - ``kind='smooth_stat_summary_annotation'``
         - ``options`` (may contain ``label_x``, ``label_y``, and ``eq``)
@@ -522,6 +517,7 @@ class smooth_labels(layer_labels):
         -------
         dict
             Dictionary of properties.
+
         """
 
         d = super().as_dict()

@@ -3,10 +3,9 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
-
+from .annotation import smooth_labels
 from .core import FeatureSpec, LayerSpec
 from .tooltip import layer_tooltips
-from .annotation import smooth_labels
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 #
@@ -585,7 +584,6 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                 seed=None,
                 max_n=None,
                 color_by=None, fill_by=None,
-
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -624,7 +622,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the `layer_tooltips() <https://lets-plot.org/python/pages/api/lets_plot.layer_tooltips.html>`__ function.
         Specify appearance, style and content.
         Set tooltips='none' to hide tooltips from the layer.
-    labels: ``smooth_labels``
+    labels : ``smooth_labels``
         Result of the call to the `smooth_labels() <https://lets-plot.org/python/pages/api/lets_plot.smooth_labels.html>`__ function.
         Specify style and content of the annotations.
     orientation : str, default='x'
