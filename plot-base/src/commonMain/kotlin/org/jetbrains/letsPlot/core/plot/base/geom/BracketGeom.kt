@@ -18,7 +18,7 @@ class BracketGeom : TextGeom() {
     var groupCount: Int? = null
     var dodgeWidth: Double = DEF_DODGE_WIDTH
     var bracketShorten: Double = 0.0
-    var tipLengthUnit: DimensionUnit = DEF_TIP_LENGTH_UNIT
+    var tipLengthUnit: DimensionUnit = DEF_TIPLENGTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineLegendKeyElementFactory(TextUtil::toSegmentAes)
@@ -102,7 +102,7 @@ class BracketGeom : TextGeom() {
         const val HANDLES_GROUPS = false
 
         const val DEF_DODGE_WIDTH = 0.95
-        val DEF_TIP_LENGTH_UNIT = DimensionUnit.SIZE
+        val DEF_TIPLENGTH_UNIT = DimensionUnit.SIZE
 
         private fun createPaths(
             dataPoints: Iterable<DataPointAesthetics>,

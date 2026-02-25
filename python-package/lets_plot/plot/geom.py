@@ -9016,7 +9016,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
                  label_format=None, na_text=None,
                  nudge_x=None, nudge_y=None, nudge_unit=None,
                  size_unit=None,
-                 bracket_shorten=None, tip_length_unit=None,
+                 bracket_shorten=None, tiplength_unit=None,
                  color_by=None,
                  **other_args):
     """
@@ -9070,7 +9070,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
     bracket_shorten : float, default=0
         Symmetrically shorten the bracket by shifting both ends toward the center.
         Expect values between 0 and 1, where 0 corresponds to no shortening and 1 to a fully collapsed bracket.
-    tip_length_unit : {'res', 'identity', 'size', 'px'}, default='size'
+    tiplength_unit : {'res', 'identity', 'size', 'px'}, default='size'
         Unit for ``tiplength_start`` and ``tiplength_end`` aesthetics.
         Possible values:
 
@@ -9179,7 +9179,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
             geom_violin(aes(fill='y'), alpha=.25) + \\
             geom_sina(seed=42) + \\
             geom_bracket(aes(x='x', ymin='ymin', ymax='ymax', label='label'), data=bracket_data,
-                         tiplength_start=-.1, tiplength_end=-.1, tip_length_unit='identity', vjust=2.2,
+                         tiplength_start=-.1, tiplength_end=-.1, tiplength_unit='identity', vjust=2.2,
                          color='maroon', size=9, segment_size=1.25)
 
     """
@@ -9201,7 +9201,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
                  nudge_unit=nudge_unit,
                  size_unit=size_unit,
                  bracket_shorten=bracket_shorten,
-                 tip_length_unit=tip_length_unit,
+                 tiplength_unit=tiplength_unit,
                  color_by=color_by,
                  **other_args)
 
