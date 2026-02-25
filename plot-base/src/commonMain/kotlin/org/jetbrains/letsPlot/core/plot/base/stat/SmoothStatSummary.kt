@@ -116,6 +116,8 @@ class SmoothStatSummary(
             .put(Stats.R2_ADJ, listOf(regression.adjR2))
             .put(Stats.N, listOf(regression.n))
             .put(Stats.METHOD, listOf(smoothingMethodLabel(smoothingMethod)))
+            .put(Stats.AIC, listOf(regression.aic))
+            .put(Stats.BIC, listOf(regression.bic))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->

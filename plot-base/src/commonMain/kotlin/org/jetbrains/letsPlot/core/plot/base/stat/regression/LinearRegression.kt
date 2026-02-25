@@ -14,7 +14,9 @@ class LinearRegression private constructor (
     tCritical: Double,
     eq: List<Double>,
     r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2) {
+    aic: Double,
+    bic: Double
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -40,6 +42,9 @@ class LinearRegression private constructor (
             val intercept = meanY - slope * meanX
             val model: (Double) -> Double = { x -> slope * x + intercept }
 
+            val k = 2 // number of predictors (slope, intercept, sigma^2)
+            val rss = calcRss(xVals, yVals, model)
+
             return LinearRegression(
                 n,
                 meanX,
@@ -48,7 +53,9 @@ class LinearRegression private constructor (
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
                 listOf(intercept, slope),
-                calcRSquared(xVals, yVals, model)
+                calcRSquared(xVals, yVals, model),
+                calcAic(n, rss, k),
+                calcBic(n, rss, k)
             )
         }
     }

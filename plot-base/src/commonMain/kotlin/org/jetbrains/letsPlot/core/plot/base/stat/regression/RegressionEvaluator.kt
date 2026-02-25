@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
 import org.jetbrains.letsPlot.core.stat.tQuantile
+import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -18,6 +19,8 @@ abstract class RegressionEvaluator protected constructor(
     private val tCritical: Double,
     val eq: List<Double>,
     val r2: Double,
+    val aic: Double,
+    val bic: Double
 ) {
     val adjR2: Double
         get() {
@@ -111,6 +114,33 @@ abstract class RegressionEvaluator protected constructor(
             } else {
                 1.0 - ssRes / ssTot
             }
+        }
+
+        fun calcRss(xVals: DoubleArray, yVals: DoubleArray, model: (Double) -> Double): Double {
+            var rss = 0.0
+            for (i in xVals.indices) {
+                val e = yVals[i] - model(xVals[i])
+                rss += e * e
+            }
+            return rss
+        }
+
+        fun calcAic(n: Int, rss: Double, k: Int): Double {
+            if (n <= 0 || k <= 0 || !rss.isFinite()) return Double.NaN
+            // Guard against log(0) in a perfect fit
+            val rssSafe = maxOf(rss, 1e-12)
+            return n * kotlin.math.ln(rssSafe / n) +
+                    n * (1.0 + kotlin.math.ln(2.0 * PI)) +
+                    2.0 * k
+        }
+
+        fun calcBic(n: Int, rss: Double, k: Int): Double {
+            if (n <= 0 || k <= 0 || !rss.isFinite()) return Double.NaN
+            // Guard against log(0) in a perfect fit
+            val rssSafe = maxOf(rss, 1e-12)
+            return n * kotlin.math.ln(rssSafe / n) +
+                    n * (1.0 + kotlin.math.ln(2.0 * PI)) +
+                    k * kotlin.math.ln(n.toDouble())
         }
     }
 }

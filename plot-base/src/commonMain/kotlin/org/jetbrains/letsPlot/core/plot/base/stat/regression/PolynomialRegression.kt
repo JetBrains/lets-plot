@@ -18,7 +18,9 @@ class PolynomialRegression private constructor (
     tCritical: Double,
     eq: List<Double>,
     r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2) {
+    aic: Double,
+    bic: Double
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -42,6 +44,8 @@ class PolynomialRegression private constructor (
             val polynomial = calculatePolynomial(deg, xVals, yVals)
             val model: (Double) -> Double = { x -> polynomial.value(x) }
 
+            val rss = calcRss(xVals, yVals, model)
+
             return PolynomialRegression(
                 n,
                 meanX,
@@ -50,7 +54,9 @@ class PolynomialRegression private constructor (
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
                 polynomial.getCoefficients(),
-                calcRSquared(xVals, yVals, model)
+                calcRSquared(xVals, yVals, model),
+                calcAic(n, rss, deg + 2),
+                calcBic(n, rss, deg + 2)
             )
         }
 
