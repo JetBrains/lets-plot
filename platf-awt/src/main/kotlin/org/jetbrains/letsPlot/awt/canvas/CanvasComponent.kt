@@ -24,10 +24,45 @@ typealias CanvasPane2 = CanvasComponent
 class CanvasComponent(
     content: CanvasDrawable? = null
 ) : DisposingHub, Disposable, JComponent() {
+    var content: CanvasDrawable? = content
+        set(content) {
+            if (field == content) {
+                return
+            }
+
+            println("CanvasComponent: content changed, disposing old content registration")
+
+            contentReg.dispose()
+
+            if (content == null) {
+                contentReg = Registration.EMPTY
+            } else {
+                isContentAttached = true
+
+                animationTimer.start()
+                content.resize(this.width, this.height)
+
+                contentReg = CompositeRegistration(
+                    content.mouseEventPeer.addEventSource(mouseEventSource),
+                    content.mapToCanvas(canvasPeer),
+                    content.onRepaintRequested(::repaint),
+                    Registration.onRemove(animationTimer::stop),
+                )
+            }
+
+            field = content
+        }
+
+    init {
+        isOpaque = false
+    }
+
     private val animationTimer = Timer(1000 / 60) { onTimer() }
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
     private val systemTime: SystemTime = SystemTime()
 
+    // For testing purposes, to check that canvasPeer is not changed after content is attached.
+    // Can only change from false to true, never back to false
     private var isContentAttached = false
     private var contentReg: Registration = Registration.EMPTY
     private var disposables = CompositeRegistration()
@@ -37,22 +72,6 @@ class CanvasComponent(
             check(!isContentAttached) { "Can't change canvasPeer after figure is attached" }
             field = value
         }
-
-    var content: CanvasDrawable? = content
-        set(content) {
-            if (field == content) {
-                return
-            }
-
-            field = content
-
-            detachContent()
-            attachContent()
-        }
-
-    init {
-        isOpaque = false
-    }
 
     override fun getPreferredSize(): Dimension? {
         return content?.size?.let { s -> Dimension(s.x, s.y) }
@@ -89,51 +108,12 @@ class CanvasComponent(
     }
 
     override fun dispose() {
-        detachContent()
-
+        contentReg.dispose()
         disposables.dispose()
-        disposables = CompositeRegistration()
-    }
-
-    override fun addNotify() {
-        super.addNotify()
-        attachContent()
-    }
-
-    override fun removeNotify() {
-        super.removeNotify()
-        detachContent()
+        println("CanvasComponent disposed")
     }
 
     private fun onTimer() {
         content?.onFrame(systemTime.getTimeMs())
-    }
-
-    private fun detachContent() {
-        if (isContentAttached) {
-            isContentAttached = false
-            contentReg.dispose()
-            contentReg = Registration.EMPTY
-        }
-    }
-
-    private fun attachContent() {
-        if (!isContentAttached) {
-            isContentAttached = true
-
-            val content = content
-            if (content == null) {
-                contentReg = Registration.EMPTY
-            } else {
-                animationTimer.start()
-                content.resize(width, height)
-                contentReg = CompositeRegistration(
-                    content.mouseEventPeer.addEventSource(mouseEventSource),
-                    content.mapToCanvas(canvasPeer),
-                    content.onRepaintRequested(::repaint),
-                    Registration.onRemove(animationTimer::stop),
-                )
-            }
-        }
     }
 }
