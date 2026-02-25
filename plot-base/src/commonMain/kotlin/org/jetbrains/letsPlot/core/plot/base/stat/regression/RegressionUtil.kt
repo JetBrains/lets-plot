@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.Percentile
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat
 import kotlin.random.Random
 
 internal object RegressionUtil {
@@ -113,4 +114,14 @@ fun averageByX(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleAr
     tp.sortBy { it.first }
     val res = averageByX(tp)
     return Pair(res.first.toDoubleArray(), res.second.toDoubleArray())
+}
+
+fun smoothingMethodLabel(method: SmoothStat.Method): String {
+    return when (method) {
+        SmoothStat.Method.LM -> "lm"
+        SmoothStat.Method.LOESS -> "loess"
+        SmoothStat.Method.GLM -> "glm"
+        SmoothStat.Method.GAM -> "gam"
+        SmoothStat.Method.RLM -> "rlm"
+    }
 }

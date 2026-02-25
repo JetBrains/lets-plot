@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat.Method
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LinearRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LocalPolynomialRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.PolynomialRegression
+import org.jetbrains.letsPlot.core.plot.base.stat.regression.smoothingMethodLabel
 import org.jetbrains.letsPlot.core.plot.base.util.SamplingUtil
 import kotlin.random.Random
 
@@ -114,6 +115,7 @@ class SmoothStatSummary(
             .put(Stats.R2, listOf(regression.r2))
             .put(Stats.R2_ADJ, listOf(regression.adjR2))
             .put(Stats.N, listOf(regression.n))
+            .put(Stats.METHOD, listOf(smoothingMethodLabel(smoothingMethod)))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->

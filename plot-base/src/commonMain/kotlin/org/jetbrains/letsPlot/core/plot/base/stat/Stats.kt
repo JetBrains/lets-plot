@@ -40,6 +40,7 @@ object Stats {
 
     val R2_ADJ = DataFrame.Variable("..adjr2..", STAT, "adjr2")
     val R2 = DataFrame.Variable("..r2..", STAT, "r2")
+    val METHOD = DataFrame.Variable("..method..", STAT, "method")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -79,6 +80,7 @@ object Stats {
             GROUP,
             R2,
             R2_ADJ,
+            METHOD,
         )
 
         val result = HashMap<String, DataFrame.Variable>()
