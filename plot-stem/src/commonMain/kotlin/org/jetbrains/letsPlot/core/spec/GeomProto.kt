@@ -408,6 +408,7 @@ class GeomProto(val geomKind: GeomKind) {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "identity"
             defaults[Layer.SHOW_LEGEND] = false
+            defaults[Layer.INHERIT_AES] = false
             return defaults
         }
     }

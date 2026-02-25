@@ -40,7 +40,6 @@ class Bracket {
                     'y': 'y',
                     'label': 'p'
                   },
-                  'inherit_aes': false,
                   'data': {
                     'min': ['US', 'US'],
                     'max': ['Asia', 'Europe'],
@@ -81,7 +80,6 @@ class Bracket {
                     'y': 'y',
                     'label': 'p'
                   },
-                  'inherit_aes': false,
                   'tiplength_start': -0.5,
                   'tiplength_end': -0.5,
                   'tiplength_unit': 'res',
@@ -131,12 +129,11 @@ class Bracket {
                   'geom': 'bracket_dodge',
                   'mapping': {
                     'x': 'number of cylinders',
+                    'y': 'y',
                     'gstart': 'gstart',
                     'gend': 'gend',
-                    'y': 'y',
                     'label': 'p'
                   },
-                  'inherit_aes': false,
                   'data': {
                     'number of cylinders': [6, 6, 6, 4, 4, 4],
                     'gstart': [0, 0, 1, 0, 0, 1],
