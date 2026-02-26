@@ -10,14 +10,14 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.BINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GEND
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
@@ -144,8 +144,8 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
         this.put(SLICE, DOUBLE_CVT)
         this.put(EXPLODE, DOUBLE_CVT)
 
-        this.put(GSTART, DOUBLE_CVT)
-        this.put(GEND, DOUBLE_CVT)
+        this.put(DODGE_START, DOUBLE_CVT)
+        this.put(DODGE_END, DOUBLE_CVT)
 
         this.put(SIZE_START, DOUBLE_CVT)
         this.put(SIZE_END, DOUBLE_CVT)

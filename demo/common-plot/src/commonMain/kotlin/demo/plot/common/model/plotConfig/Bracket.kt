@@ -130,14 +130,14 @@ class Bracket {
                   'mapping': {
                     'x': 'number of cylinders',
                     'y': 'y',
-                    'gstart': 'gstart',
-                    'gend': 'gend',
+                    'dodge_start': 'start',
+                    'dodge_end': 'end',
                     'label': 'p'
                   },
                   'data': {
                     'number of cylinders': [6, 6, 6, 4, 4, 4],
-                    'gstart': [0, 0, 1, 0, 0, 1],
-                    'gend': [1, 2, 2, 1, 2, 2],
+                    'start': [0, 0, 1, 0, 0, 1],
+                    'end': [1, 2, 2, 1, 2, 2],
                     'y': [48, 52, 56, 48, 52, 56],
                     'p': [0.01, 0.02, 0.03, 0.04, 0.05, 0.06]
                   }

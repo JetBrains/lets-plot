@@ -13,14 +13,14 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GEND
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
@@ -220,12 +220,12 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(EXPLODE, v)
     }
 
-    fun gstart(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(GSTART, v)
+    fun dodgeStart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(DODGE_START, v)
     }
 
-    fun gend(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(GEND, v)
+    fun dodgeEnd(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(DODGE_END, v)
     }
 
     fun sizeStart(v: (Int) -> Double?): AestheticsBuilder {

@@ -22,7 +22,7 @@ class BracketDodgeGeom : BracketGeom() {
     ) {
         if (groupCount == null) {
             groupCount = aesthetics.dataPoints().mapNotNull { p ->
-                p.finiteOrNull(Aes.GSTART, Aes.GEND)?.let { (gstart, gend) -> max(gstart, gend) }
+                p.finiteOrNull(Aes.DODGE_START, Aes.DODGE_END)?.let { (gstart, gend) -> max(gstart, gend) }
             }.maxOrNull()?.toInt()?.let { it + 1 }
         }
 
@@ -30,7 +30,7 @@ class BracketDodgeGeom : BracketGeom() {
     }
 
     override fun getLimits(p: DataPointAesthetics, ctx: GeomContext): Pair<Double, Double>? {
-        val (x, gstart, gend) = p.finiteOrNull(Aes.X, Aes.GSTART, Aes.GEND) ?: return null
+        val (x, gstart, gend) = p.finiteOrNull(Aes.X, Aes.DODGE_START, Aes.DODGE_END) ?: return null
         val resolution = ctx.getResolution(Aes.X)
         val xmin = computeDodgedPosition(x, gstart, groupCount ?: 1, dodgeWidth, resolution)
         val xmax = computeDodgedPosition(x, gend, groupCount ?: 1, dodgeWidth, resolution)

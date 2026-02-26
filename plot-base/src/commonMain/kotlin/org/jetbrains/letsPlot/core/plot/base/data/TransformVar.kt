@@ -319,11 +319,11 @@ object TransformVar {
             return EXPLODE
         }
 
-        override fun gstart(): DataFrame.Variable {
+        override fun dodgeStart(): DataFrame.Variable {
             return GSTART
         }
 
-        override fun gend(): DataFrame.Variable {
+        override fun dodgeEnd(): DataFrame.Variable {
             return GEND
         }
 

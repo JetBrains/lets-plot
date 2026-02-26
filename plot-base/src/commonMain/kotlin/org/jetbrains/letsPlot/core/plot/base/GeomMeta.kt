@@ -546,7 +546,7 @@ object GeomMeta {
 
             GeomKind.BRACKET_DODGE -> listOf(
                 Aes.X, Aes.Y,
-                Aes.GSTART, Aes.GEND,
+                Aes.DODGE_START, Aes.DODGE_END,
                 Aes.TIPLENGTH_START,
                 Aes.TIPLENGTH_END,
                 Aes.LABEL,

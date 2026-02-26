@@ -14,14 +14,14 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.BINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GEND
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.GSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
@@ -138,8 +138,8 @@ object AesInitValue {
         VALUE_MAP[RADIUS] = 0.0
         VALUE_MAP[SLICE] = 0.0
         VALUE_MAP[EXPLODE] = 0.0
-        VALUE_MAP[GSTART] = 0.0
-        VALUE_MAP[GEND] = 0.0
+        VALUE_MAP[DODGE_START] = 0.0
+        VALUE_MAP[DODGE_END] = 0.0
         VALUE_MAP[SIZE_START] = 0.0
         VALUE_MAP[SIZE_END] = 0.0
         VALUE_MAP[STROKE_START] = 0.0
