@@ -5,9 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.pos.BaseDodgePos
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 class BracketDodgeGeom : BracketGeom() {
     var groupCount: Int? = null
@@ -23,7 +26,7 @@ class BracketDodgeGeom : BracketGeom() {
         if (groupCount == null) {
             groupCount = aesthetics.dataPoints().mapNotNull { p ->
                 p.finiteOrNull(Aes.DODGE_START, Aes.DODGE_END)?.let { (gstart, gend) -> max(gstart, gend) }
-            }.maxOrNull()?.toInt()?.let { it + 1 }
+            }.maxOrNull()?.roundToInt()?.let { it + 1 }
         }
 
         super.buildIntern(root, aesthetics, pos, coord, ctx)
@@ -32,20 +35,13 @@ class BracketDodgeGeom : BracketGeom() {
     override fun getLimits(p: DataPointAesthetics, ctx: GeomContext): Pair<Double, Double>? {
         val (x, gstart, gend) = p.finiteOrNull(Aes.X, Aes.DODGE_START, Aes.DODGE_END) ?: return null
         val resolution = ctx.getResolution(Aes.X)
-        val xmin = computeDodgedPosition(x, gstart, groupCount ?: 1, dodgeWidth, resolution)
-        val xmax = computeDodgedPosition(x, gend, groupCount ?: 1, dodgeWidth, resolution)
+        if (groupCount == null || !SeriesUtil.isFinite(dodgeWidth)) return null
+        val xmin = BaseDodgePos.position(x, gstart.roundToInt(), x, groupCount!!, dodgeWidth, resolution)
+        val xmax = BaseDodgePos.position(x, gend.roundToInt(), x, groupCount!!, dodgeWidth, resolution)
         return Pair(xmin, xmax)
     }
 
     companion object {
         const val HANDLES_GROUPS = BracketGeom.HANDLES_GROUPS
-
-        // See DodgePos::translate()
-        private fun computeDodgedPosition(x: Double, group: Double, groupCount: Int, dodgeWidth: Double, dataResolution: Double): Double {
-            val median = (groupCount - 1) / 2.0
-            val offset = (group - median) * dataResolution * dodgeWidth
-            val scaler = 1.0 / groupCount
-            return x + offset * scaler
-        }
     }
 }
