@@ -482,7 +482,7 @@ object Option {
 
         object BracketDodge {
             const val DODGE_WIDTH = "dodge_width"
-            const val GROUP_COUNT = "group_count"
+            const val NGROUP = "ngroup"
         }
 
         object LiveMap {

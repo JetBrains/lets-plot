@@ -469,8 +469,8 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.BracketDodge.DODGE_WIDTH)) {
                     geom.dodgeWidth = layerConfig.getDouble(Option.Geom.BracketDodge.DODGE_WIDTH)!!
                 }
-                if (layerConfig.hasOwn(Option.Geom.BracketDodge.GROUP_COUNT)) {
-                    geom.groupCount = layerConfig.getInteger(Option.Geom.BracketDodge.GROUP_COUNT)
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.NGROUP)) {
+                    geom.groupCount = layerConfig.getInteger(Option.Geom.BracketDodge.NGROUP)
                 }
                 if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
                     geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
