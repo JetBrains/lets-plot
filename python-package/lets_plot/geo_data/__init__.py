@@ -11,7 +11,7 @@ from .geocodes import *
 __all__ = core.__all__
 
 #  Use geo_data package only for executing geocoding requests.
-#  For accessing variuous checks, contants, types etc use package geo_data_internals
+#  For accessing various checks, constants, types etc. use package geo_data_internals
 #  as it won't cause the OSM attribution to appear.
 
 # print on the package import

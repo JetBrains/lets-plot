@@ -94,10 +94,10 @@ def image_matrix(image_data_array,
     """
 
     if not is_ndarray(image_data_array):
-        raise Exception("Invalid image_data_array: 2d ndarray is expacted but was {}".format(type(image_data_array)))
+        raise Exception("Invalid image_data_array: 2d ndarray is expected but was {}".format(type(image_data_array)))
 
     if image_data_array.ndim != 2:
-        raise Exception("Invalid image_data_array: 2-dimentional ndarray is expacted but was {}-dimentional".format(
+        raise Exception("Invalid image_data_array: 2-dimensional ndarray is expected but was {}-dimensional".format(
             image_data_array.ndim))
 
     rows, cols = image_data_array.shape
@@ -173,11 +173,11 @@ def _assert_image_data(image_data: Any) -> None:
     try:
         import numpy as np
         if not isinstance(image_data, np.ndarray):
-            raise Exception("Invalid image_data: ndarray is expacted but was {}".format(type(image_data)))
+            raise Exception("Invalid image_data: ndarray is expected but was {}".format(type(image_data)))
 
         if image_data.ndim not in (2, 3):
             raise Exception(
-                "Invalid image_data: 2d or 3d array is expacted but was {}-dimentional".format(image_data.ndim))
+                "Invalid image_data: 2d or 3d array is expected but was {}-dimensional".format(image_data.ndim))
     except ImportError:
         pass
 

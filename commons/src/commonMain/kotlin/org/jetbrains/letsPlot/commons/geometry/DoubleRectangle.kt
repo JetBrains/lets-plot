@@ -13,7 +13,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     // ToDo: this breaks TooltipBox
 //    init {
-//        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimentions should be positive: $dimension" }
+//        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimensions should be non-negative: $dimension" }
 //    }
 
     val center: DoubleVector
@@ -169,7 +169,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             DoubleVector(newWidth * scaling, height * scaling)
         }
 
-        // The srinked rect has the same center as this one.
+        // The shrunk rect has the same center as this one.
         val newOrigin = DoubleVector(
             x = origin.x + (width - newSize.x) / 2,
             y = origin.y + (height - newSize.y) / 2,

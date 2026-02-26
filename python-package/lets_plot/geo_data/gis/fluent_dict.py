@@ -159,7 +159,7 @@ class FluentDict:
         for e in enum_type:
             if e.value == enum_str:
                 return e
-        raise ValueError('Unknown emum value: ' + enum_str)
+        raise ValueError('Unknown enum value: ' + enum_str)
 
     def visit_str_list(self, key: Union[str, Enum], consumer: Callable[[List[str]], Any]) -> 'FluentDict':
         consumer(self.get(key))
