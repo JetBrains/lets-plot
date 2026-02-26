@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
+import org.jetbrains.letsPlot.core.plot.base.stat.regression.RsquaredCI.ciRsquaredLikeConfintrFromR2
+
 class LinearRegression private constructor (
     n: Int,
     meanX: Double,
@@ -16,8 +18,10 @@ class LinearRegression private constructor (
     r2: Double,
     aic: Double,
     bic: Double,
-    fTest: RegressionEvaluator.Companion.FTestResult
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest) {
+    fTest: RegressionEvaluator.Companion.FTestResult,
+    r2ConfInt: R2ConfIntResult
+
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest, r2ConfInt) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -58,7 +62,8 @@ class LinearRegression private constructor (
                 r2,
                 calcAic(n, rss, k),
                 calcBic(n, rss, k),
-                calcOverallModelFTest(n, 2, r2)
+                calcOverallModelFTest(n, 2, r2),
+                ciRsquaredLikeConfintrFromR2(n, 2, r2, confidenceLevel)
             )
         }
     }

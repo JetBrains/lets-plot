@@ -71,4 +71,48 @@ internal class FDistribution(
 
         return Beta.regularizedBeta(z, d1 / 2.0, d2 / 2.0)
     }
+
+    fun inverseCumulativeProbability(p: Double, absAccuracy: Double = 1e-9): Double {
+        if (p.isNaN() || p < 0.0 || p > 1.0) {
+            error("OutOfRange - p: $p")
+        }
+        if (p == 0.0) return 0.0
+        if (p == 1.0) return Double.POSITIVE_INFINITY
+
+        var lo = 0.0
+        var hi = 1.0
+
+        // Expand upper bound until CDF(hi) >= p
+        while (true) {
+            val cdfHi = cumulativeProbability(hi)
+            if (!cdfHi.isFinite() || cdfHi >= p) break
+
+            hi *= 2.0
+            if (!hi.isFinite() || hi > 1e12) {
+                // F quantiles can be huge for extreme probs / dfs; return best effort bound
+                break
+            }
+        }
+
+        // Binary search
+        repeat(200) {
+            val mid = (lo + hi) / 2.0
+            val cdfMid = cumulativeProbability(mid)
+
+            if (!cdfMid.isFinite()) {
+                hi = mid
+            } else if (cdfMid < p) {
+                lo = mid
+            } else {
+                hi = mid
+            }
+
+            if ((hi - lo) <= absAccuracy * (1.0 + lo + hi)) {
+                return (lo + hi) / 2.0
+            }
+        }
+
+        return (lo + hi) / 2.0
+    }
+
 }

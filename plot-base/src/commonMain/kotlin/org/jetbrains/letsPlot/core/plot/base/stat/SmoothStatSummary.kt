@@ -123,6 +123,9 @@ class SmoothStatSummary(
             .put(Stats.DF1, listOf(regression.fTest.df1))
             .put(Stats.DF2, listOf(regression.fTest.df2))
             .put(Stats.P, listOf(regression.fTest.pValue))
+            .put(Stats.CI_LEVEL, listOf(regression.r2ConfInt.level))
+            .put(Stats.CI_LOW, listOf(regression.r2ConfInt.low))
+            .put(Stats.CI_HIGH, listOf(regression.r2ConfInt.high))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->

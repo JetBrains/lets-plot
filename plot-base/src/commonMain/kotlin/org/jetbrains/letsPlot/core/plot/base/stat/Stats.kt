@@ -47,6 +47,9 @@ object Stats {
     val DF1 = DataFrame.Variable("..df1..", STAT, "df1")
     val DF2 = DataFrame.Variable("..df2..", STAT, "df2")
     val P = DataFrame.Variable("..p..", STAT, "p")
+    val CI_LEVEL = DataFrame.Variable("..cilevel..", STAT, "cilevel")
+    val CI_LOW = DataFrame.Variable("..cilow..", STAT, "cilow")
+    val CI_HIGH = DataFrame.Variable("..cihigh..", STAT, "cihigh")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -93,6 +96,9 @@ object Stats {
             DF1,
             DF2,
             P,
+            CI_LEVEL,
+            CI_LOW,
+            CI_HIGH,
         )
 
         val result = HashMap<String, DataFrame.Variable>()

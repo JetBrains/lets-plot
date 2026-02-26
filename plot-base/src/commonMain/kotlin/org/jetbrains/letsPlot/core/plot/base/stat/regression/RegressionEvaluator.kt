@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
-import org.jetbrains.letsPlot.core.plot.base.stat.regression.FDistribution
 import org.jetbrains.letsPlot.core.stat.tQuantile
 import kotlin.math.PI
 import kotlin.math.pow
@@ -22,7 +21,8 @@ abstract class RegressionEvaluator protected constructor(
     val r2: Double,
     val aic: Double,
     val bic: Double,
-    val fTest: FTestResult
+    val fTest: FTestResult,
+    val r2ConfInt: R2ConfIntResult
 ) {
     val adjR2: Double
         get() {
@@ -211,6 +211,5 @@ abstract class RegressionEvaluator protected constructor(
             // Guard against tiny numerical drift outside [0, 1]
             return (1.0 - cdf).coerceIn(0.0, 1.0)
         }
-
     }
 }

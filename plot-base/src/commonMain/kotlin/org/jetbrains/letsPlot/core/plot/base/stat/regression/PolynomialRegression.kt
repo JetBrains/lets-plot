@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.stat.regression
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.ForsythePolynomialGenerator
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialFunction
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.times
+import org.jetbrains.letsPlot.core.plot.base.stat.regression.RsquaredCI.ciRsquaredLikeConfintrFromR2
 
 class PolynomialRegression private constructor (
     n: Int,
@@ -21,7 +22,8 @@ class PolynomialRegression private constructor (
     aic: Double,
     bic: Double,
     fTest: RegressionEvaluator.Companion.FTestResult,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest) {
+    r2ConfInt: R2ConfIntResult,
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest, r2ConfInt) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -59,7 +61,8 @@ class PolynomialRegression private constructor (
                 r2,
                 calcAic(n, rss, deg + 2),
                 calcBic(n, rss, deg + 2),
-                calcOverallModelFTest(n, deg + 1, r2)
+                calcOverallModelFTest(n, deg + 1, r2),
+                ciRsquaredLikeConfintrFromR2(n, deg + 1, r2, confidenceLevel)
             )
         }
 
