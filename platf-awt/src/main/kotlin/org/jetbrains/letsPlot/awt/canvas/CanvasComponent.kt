@@ -25,7 +25,23 @@ typealias CanvasPane2 = CanvasComponent
 class CanvasComponent(
     content: CanvasDrawable? = null
 ) : DisposingHub, Disposable, JComponent() {
-    var content: CanvasDrawable? = content
+    private val animationTimer = Timer(1000 / 60) { onTimer() }
+    private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
+    private val systemTime: SystemTime = SystemTime()
+
+    // For testing purposes, to check that canvasPeer is not changed after content is attached.
+    // Can only change from false to true, never back to false
+    private var isContentAttached = false
+    private var contentReg: Registration = Registration.EMPTY
+    private var disposables = CompositeRegistration()
+
+    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT)
+        set(value) {
+            check(!isContentAttached) { "Can't change canvasPeer after figure is attached" }
+            field = value
+        }
+
+    var content: CanvasDrawable? = null
         set(content) {
             if (field == content) {
                 return
@@ -56,24 +72,9 @@ class CanvasComponent(
 
     init {
         isOpaque = false
+        this.content = content
         log { "created" }
     }
-
-    private val animationTimer = Timer(1000 / 60) { onTimer() }
-    private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
-    private val systemTime: SystemTime = SystemTime()
-
-    // For testing purposes, to check that canvasPeer is not changed after content is attached.
-    // Can only change from false to true, never back to false
-    private var isContentAttached = false
-    private var contentReg: Registration = Registration.EMPTY
-    private var disposables = CompositeRegistration()
-
-    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT)
-        set(value) {
-            check(!isContentAttached) { "Can't change canvasPeer after figure is attached" }
-            field = value
-        }
 
     override fun getPreferredSize(): Dimension? {
         return content?.size?.let { s -> Dimension(s.x, s.y) }
