@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.logging.identityString
 import org.jetbrains.letsPlot.commons.registration.*
 import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import java.awt.Dimension
@@ -30,8 +31,6 @@ class CanvasComponent(
                 return
             }
 
-            println("CanvasComponent: content changed, disposing old content registration")
-
             contentReg.dispose()
 
             if (content == null) {
@@ -47,14 +46,17 @@ class CanvasComponent(
                     content.mapToCanvas(canvasPeer),
                     content.onRepaintRequested(::repaint),
                     Registration.onRemove(animationTimer::stop),
+                    Registration.onRemove { log { "Content removed: ${content.identityString}" } }
                 )
             }
 
+            log { "Content set: ${content?.identityString ?: "null"}" }
             field = content
         }
 
     init {
         isOpaque = false
+        log { "created" }
     }
 
     private val animationTimer = Timer(1000 / 60) { onTimer() }
@@ -110,10 +112,20 @@ class CanvasComponent(
     override fun dispose() {
         contentReg.dispose()
         disposables.dispose()
-        println("CanvasComponent disposed")
+        log { "disposed" }
     }
 
     private fun onTimer() {
         content?.onFrame(systemTime.getTimeMs())
+    }
+
+    private fun log(message: () -> String) {
+        if (LOG_ENABLED) {
+            println("[${this.identityString}] ${message()}")
+        }
+    }
+
+    companion object {
+        private const val LOG_ENABLED = false
     }
 }
