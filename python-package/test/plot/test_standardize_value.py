@@ -219,3 +219,27 @@ def test_standardize_value_pandas_array():
 
     assert [True, None] == _standardize_value(pd.array([True, None], dtype=pd.BooleanDtype()))
 
+def test_standardize_value_jax():
+    # Test that JAX numeric types are standardized to Python floats
+    assert isinstance(_standardize_value(jnp.int8(8)), float)
+    assert isinstance(_standardize_value(jnp.int16(16)), float)
+    assert isinstance(_standardize_value(jnp.int32(32)), float)
+    assert isinstance(_standardize_value(jnp.float16(1.6)), float)
+    assert isinstance(_standardize_value(jnp.float32(3.2)), float)
+
+    # jnp.integer array
+    jnp_int_array = jnp.array([1, 2, 3], dtype=jnp.int32)
+    standardized_array = _standardize_value(jnp_int_array)
+    assert all(isinstance(v, float) for v in standardized_array)
+
+    # jnp.floating array
+    jnp_float_array = jnp.array([1.5, 2.5, 3.5], dtype=jnp.float32)
+    standardized_float_array = _standardize_value(jnp_float_array)
+    assert all(isinstance(v, float) for v in standardized_float_array)
+
+    # jnp.ndarray
+    jnp_array = jnp.array([[1, 2], [3, 4]], dtype=jnp.int32)
+    standardized_jnp_array = _standardize_value(jnp_array)
+    assert isinstance(standardized_jnp_array, list)
+    assert all(isinstance(row, list) for row in standardized_jnp_array)
+    assert standardized_jnp_array == [[1.0, 2.0], [3.0, 4.0]]

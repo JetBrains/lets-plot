@@ -52,67 +52,24 @@ def is_polars_dataframe(v):
     return polars and isinstance(v, polars.DataFrame)
 
 
-def is_dict_or_dataframe(v):
-    return isinstance(v, dict) or (pandas and isinstance(v, pandas.DataFrame))
-
-
-def is_int(v):
-    return isinstance(v, int) or (numpy and isinstance(v, numpy.integer)) or (jnp and isinstance(v, jnp.integer))
-
-
-def is_float(v):
-    return isinstance(v, float) or (numpy and isinstance(v, numpy.floating)) or (jnp and isinstance(v, jnp.floating))
-
-
 def is_ndarray(data) -> bool:
     return (numpy and isinstance(data, numpy.ndarray)) or (jnp and isinstance(data, jnp.ndarray))
 
 
-def is_number(v):
-    return is_int(v) or is_float(v)
-
-
 def _standardize_value(v):
+    # check for common types first to avoid unnecessary imports of heavy libraries that cause delays
     try:
+        # python types
         if v is None:
             return v
+        if isinstance(v, int):
+            return float(v)
+        if isinstance(v, float):
+            return float(v) if math.isfinite(v) else None  # nan/inf to None (Gson does not handle them well)
         if isinstance(v, bool):
             return bool(v)
         if isinstance(v, str):
             return str(v)
-        if is_float(v):
-            if math.isfinite(v):
-                return float(v)
-            # None for special values like 'nan' etc. because
-            # some JSON parsers (like com.google.gson.Gson) do not handle them well.
-            return None
-        if is_int(v):
-            return float(v)
-        if is_dict_or_dataframe(v):
-            return standardize_dict(v)
-        if is_polars_dataframe(v):
-            return standardize_dict(v.to_dict(as_series=False))
-        if isinstance(v, list):
-            return [_standardize_value(elem) for elem in v]
-        if isinstance(v, tuple):
-            return tuple(_standardize_value(elem) for elem in v)
-
-        if numpy and isinstance(v, numpy.ndarray):
-            # Process each array element individually.
-            # Don't use '.tolist()' because this will implicitly
-            # convert 'datetime64' values to unpredictable 'datetime' objects.
-            return [_standardize_value(x) for x in v]
-
-        if pandas and isinstance(v, (pandas.Series, pandas.api.extensions.ExtensionArray)):
-            return _standardize_value(v.tolist())
-
-        if jnp and isinstance(v, jnp.ndarray):
-            return _standardize_value(v.tolist())
-
-        # Universal NaT/NaN check
-        if pandas and pandas.isna(v):
-            return None
-
         if isinstance(v, datetime):
             # Datetime: to milliseconds since epoch (time zone aware)
             return v.timestamp() * 1000
@@ -122,15 +79,59 @@ def _standardize_value(v):
         if isinstance(v, time):
             # Local time: to milliseconds since midnight
             return float(v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000)
+
+        # python containers
+        if isinstance(v, list):
+            return [_standardize_value(elem) for elem in v]
+        if isinstance(v, tuple):
+            return tuple(_standardize_value(elem) for elem in v)
+        if isinstance(v, set):
+            return {_standardize_value(elem) for elem in v}
+        if isinstance(v, dict):
+            return standardize_dict(v)
+
+        # pandas
+        if pandas and isinstance(v, pandas.DataFrame):
+            return standardize_dict(v)
+        if pandas and isinstance(v, (pandas.Series, pandas.api.extensions.ExtensionArray)):
+            return _standardize_value(v.tolist())
+
+        # numpy
+        if numpy and isinstance(v, numpy.floating):
+            return float(v) if math.isfinite(v) else None
+        if numpy and isinstance(v, numpy.integer):
+            return float(v)
         if numpy and isinstance(v, numpy.datetime64):
             try:
                 # numpy.datetime64: to milliseconds since epoch (Unix time)
                 return float(v.astype('datetime64[ms]').astype(numpy.int64))
             except:
                 return None
+        if numpy and isinstance(v, numpy.ndarray):
+            # Process each array element individually.
+            # Don't use '.tolist()' because this will implicitly
+            # convert 'datetime64' values to unpredictable 'datetime' objects.
+            return [_standardize_value(x) for x in v]
 
+        # polars
+        if polars and isinstance(v, polars.DataFrame):
+            return standardize_dict(v.to_dict(as_series=False))
+
+        # jax
+        if jnp and isinstance(v, jnp.floating):
+            return float(v) if math.isfinite(v) else None
+        if jnp and isinstance(v, jnp.integer):
+            return float(v)
+        if jnp and isinstance(v, jnp.ndarray):
+            return _standardize_value(v.tolist())
+
+        # shapely
         if shapely and isinstance(v, shapely.geometry.base.BaseGeometry):
             return json.dumps(shapely.geometry.mapping(v))
+
+        # Universal NaT/NaN check
+        if pandas and pandas.isna(v):
+            return None
 
         return repr(v)
     except Exception as e:

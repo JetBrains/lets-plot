@@ -36,15 +36,15 @@ TYPE_UNKNOWN = 'unknown'
 def _infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Dict[str, str]:
     type_info = {}
 
-    if is_pandas_data_frame(data):
+    if isinstance(data, dict):
+        for var_name, var_content in data.items():
+            type_info[var_name] = _infer_type_dict(var_name, var_content)
+    elif is_pandas_data_frame(data):
         for var_name, var_content in data.items():
             type_info[var_name] = _infer_type_pandas_dataframe(var_name, var_content)
     elif is_polars_dataframe(data):
         for var_name, var_type in data.schema.items():
             type_info[var_name] = _infer_type_polars_dataframe(var_name, var_type)
-    elif isinstance(data, dict):
-        for var_name, var_content in data.items():
-            type_info[var_name] = _infer_type_dict(var_name, var_content)
 
     return type_info
 
