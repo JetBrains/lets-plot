@@ -59,7 +59,7 @@ Put `local.properties` in the project root. See `local.properties.template` for 
 
  `git clone --branch vX.X.X git@github.com:JetBrains/lets-plot lets-plot-release`
 
-### 2. Prepare config file with Python paths for release script
+### 2. Prepare a config file with Python paths for the release script
 
 File must be in the YAML format and contain paths to bin and include directories for
 each Python version: from 3.9 to 3.14.
@@ -119,10 +119,11 @@ Fill `pypi` and `sonatype` sections with credentials in the `local.properties` f
  
 ### 2. JVM artifacts (Sonatype Central Repository)
 
-Build release JVM artifacts from one of build machines:
+Build release JVM artifacts from one of the build machines:
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
+          publishLetsPlotJvmSwingPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository \
@@ -144,7 +145,7 @@ Check all artifacts were uploaded and verified, then push the "Publish" button.
      
  - Open the link: https://github.com/JetBrains/lets-plot/releases/new
  - Fill `Tag version` and `Release title` with the released version "vX.X.X".
- - Fill the description field - copy from the CHANGELOG.md.
+ - Fill the description field – copy from the CHANGELOG.md.
  - Add JS artifacts from the `js-package/distr` directory to the binaries box.
  - Select `This is a pre-release` checkbox if you are releasing a pre-release version.
  - Click `Publish release`.
